@@ -50,10 +50,6 @@ If you have a suggestion that would make this better, please fork the repo and c
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## Contributors & Credits.
-<a href = "https://github.com/SlayHorizon/simple-sqlite/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo=SlayHorizon/godot-tiny-mmo-demo"/>
-</a>  
-
-Screen shots from @WithinAmnesia.  
-Also thanks to [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for an open source project!
+## Credits
+Screenshots from [@WithinAmnesia](https://github.com/WithinAmnesia).  
+Thanks to [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for an open source project!
