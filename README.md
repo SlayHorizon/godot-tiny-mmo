@@ -3,10 +3,7 @@
 A minimalistic MMO demo built using the Godot Engine 4.3.  
 Feel free to take a look at my ![Wiki](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki) to better understand the project.
 
-Old screenshot showing 16 clients at the same time on multiple different instances:  
-![M.M.O.A.R.P.G. (V.000.007) Godot-Tiny-MMO-Template-0.0.3 Godot 4.3 NET+ Dungeon Gathering Online (0)(Frontpage Github Contributor)(Image showing the early state of the project)](https://github.com/user-attachments/assets/017df4d6-a6fa-465c-a9ea-d74cf1c27393)
-Login menu:  
-![login-menu-screenshot](https://github.com/user-attachments/assets/3d47c8e1-ace1-4452-83b5-a4d73584fdc4)
+![M.M.O.A.R.P.G](https://github.com/user-attachments/assets/8831d50b-7350-47b2-adbc-5d1cb3992301)
 
 ## Project Goals
 
@@ -20,9 +17,7 @@ The list below indicates the current progress and goals:
 - [X] **Hosting different map instances on a single server and allowing traveling between them.**
 - [ ] **Basic RPG class system with 3 classes to get started with: Knight, Rogue, Wizard.**
 - [ ] **Private instance for individual players or groups.**
-- [ ] **Mobs hosted and managed by the server.**
 - [ ] **Basic combat system with PvE and PvP.**
-- [ ] **Experience and leveling systems.**
 - [ ] **Entity interpolation (rubber banding).**
 - [ ] **Server clock.**
 - [ ] **Instance based chat.**
@@ -43,7 +38,7 @@ To get started with the project:
 6. Play the project.
 
 Example:  
-![multiple-instances-screenshot](https://github.com/user-attachments/assets/07b0b609-3712-4e3d-bbe0-f5151ddfe8a6)
+![multiple-instances-screenshot](https://github.com/user-attachments/assets/5cf7cc61-e8e6-468d-b917-b505a59168cf)
 
 ## Contributing
 
