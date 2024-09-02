@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="InstanceResource" load_steps=3 format=3 uid="uid://4utja3eou6l6"]
 
-[ext_resource type="Script" path="res://source/common/resources/custom/instance_resources/instance_resource.gd" id="1_7giwh"]
+[ext_resource type="Script" path="res://source/common/resources/custom/instance/instance_resource.gd" id="1_7giwh"]
 [ext_resource type="PackedScene" uid="uid://5ke1s1ydu7ty" path="res://source/common/maps/second_map.tscn" id="1_hb21q"]
 
 [resource]

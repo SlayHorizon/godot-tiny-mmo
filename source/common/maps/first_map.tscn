@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://digkg4swbl27x" path="res://source/client/map_objects/collectibles/coin.tscn" id="3_ef1ij"]
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/client/map_objects/doors/activable_door/activable_door.tscn" id="4_0lkki"]
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/client/map_objects/ground_button/ground_button.tscn" id="5_mlcfb"]
-[ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/warper/warper.tscn" id="6_dfiuk"]
-[ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/maps/map_components/teleporter/teleporter.tscn" id="7_mnpu2"]
+[ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_dfiuk"]
+[ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/maps/map_components/interaction_areas/teleporter/teleporter.tscn" id="7_mnpu2"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_i8exw"]
 resource_name = "coins"

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="InstanceResource" load_steps=3 format=3 uid="uid://ditnocjiqmbsu"]
 
 [ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/tutorial_dungeon.tscn" id="1_vjk70"]
-[ext_resource type="Script" path="res://source/common/resources/custom/instance_resources/instance_resource.gd" id="2_as7yv"]
+[ext_resource type="Script" path="res://source/common/resources/custom/instance/instance_resource.gd" id="2_as7yv"]
 
 [resource]
 script = ExtResource("2_as7yv")

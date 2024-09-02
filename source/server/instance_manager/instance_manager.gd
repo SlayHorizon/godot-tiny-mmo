@@ -65,7 +65,7 @@ func get_instance_resource_from_name(instance_name) -> InstanceResource:
 	return null
 
 func build_instance_collection() -> void:
-	for file_path in get_all_file_paths("res://source/common/resources/custom/instance_resources/instance_collection/"):
+	for file_path in get_all_file_paths("res://source/common/resources/custom/instance/instance_collection/"):
 		instance_collection.append(ResourceLoader.load(file_path))
 	for instance_resource: InstanceResource in instance_collection:
 		if instance_resource.load_at_startup:

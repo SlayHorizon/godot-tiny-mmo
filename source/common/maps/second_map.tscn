@@ -2,7 +2,7 @@
 
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="1_mdlle"]
 [ext_resource type="Script" path="res://source/common/maps/map_script/map.gd" id="1_xrjwu"]
-[ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/warper/warper.tscn" id="6_0mhht"]
+[ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_0mhht"]
 
 [node name="SecondMap" type="Node2D"]
 script = ExtResource("1_xrjwu")

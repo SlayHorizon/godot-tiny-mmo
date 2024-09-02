@@ -1,8 +1,6 @@
 class_name InstanceClient
 extends Node2D
 
-## Base class for instances. Instances are used as a base of a multiplayer scene,
-## which can contain a map, entities (NPCs, players, mobs, objects).
 const LOCAL_PLAYER = preload("res://source/client/local_player/local_player.tscn")
 const DUMMY_PLAYER = preload("res://source/common/entities/player/player.tscn")
 
