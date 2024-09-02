@@ -5,9 +5,9 @@ Feel free to take a look at my ![Wiki](https://github.com/SlayHorizon/godot-tiny
 
 ![M.M.O.A.R.P.G](https://github.com/user-attachments/assets/8831d50b-7350-47b2-adbc-5d1cb3992301)
 
-## Project Goals
+## Features
 
-The list below indicates the current progress and goals:
+The list below indicates the current features and goals:
 
 - [X] **Client-Server connection through WebSocketMultiplayerPeer.**
 - [ ] **Client side working on web browser.**
