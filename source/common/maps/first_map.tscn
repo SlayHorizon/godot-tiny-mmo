@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://sscb58nigni8"]
+[gd_scene load_steps=11 format=4 uid="uid://sscb58nigni8"]
 
 [ext_resource type="Script" path="res://source/common/maps/map_script/map.gd" id="1_x70sj"]
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="2_c4reb"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/client/map_objects/ground_button/ground_button.tscn" id="5_mlcfb"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_dfiuk"]
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/maps/map_components/interaction_areas/teleporter/teleporter.tscn" id="7_mnpu2"]
+[ext_resource type="Resource" uid="uid://4utja3eou6l6" path="res://source/common/resources/custom/instance/instance_collection/entrance.tres" id="7_xnjdx"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_i8exw"]
 resource_name = "coins"
@@ -53,7 +54,7 @@ tile_set = SubResource("TileSet_ethdr")
 [node name="Warper" parent="." instance=ExtResource("6_dfiuk")]
 position = Vector2(312, -19)
 scale = Vector2(2.37041, 0.841242)
-target_instance_name = &"AnotherInstance"
+target_instance = ExtResource("7_xnjdx")
 warper_id = 1
 
 [node name="Warper2" parent="." instance=ExtResource("6_dfiuk")]
@@ -67,35 +68,3 @@ target = NodePath("../TestTP2")
 [node name="TestTP2" parent="." node_paths=PackedStringArray("target") instance=ExtResource("7_mnpu2")]
 position = Vector2(346, 53)
 target = NodePath("../TestTP")
-
-[connection signal="body_entered" from="Props/Coin" to="Props/Coin" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32700" to="Props/@Area2D@32700" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32701" to="Props/@Area2D@32701" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32702" to="Props/@Area2D@32702" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32703" to="Props/@Area2D@32703" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32706" to="Props/@Area2D@32706" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32707" to="Props/@Area2D@32707" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32708" to="Props/@Area2D@32708" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32709" to="Props/@Area2D@32709" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32710" to="Props/@Area2D@32710" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32711" to="Props/@Area2D@32711" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32712" to="Props/@Area2D@32712" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32713" to="Props/@Area2D@32713" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32714" to="Props/@Area2D@32714" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32715" to="Props/@Area2D@32715" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32716" to="Props/@Area2D@32716" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32717" to="Props/@Area2D@32717" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32718" to="Props/@Area2D@32718" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32719" to="Props/@Area2D@32719" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32720" to="Props/@Area2D@32720" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32721" to="Props/@Area2D@32721" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32722" to="Props/@Area2D@32722" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32723" to="Props/@Area2D@32723" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32724" to="Props/@Area2D@32724" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32725" to="Props/@Area2D@32725" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32726" to="Props/@Area2D@32726" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32727" to="Props/@Area2D@32727" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32728" to="Props/@Area2D@32728" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32729" to="Props/@Area2D@32729" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/@Area2D@32730" to="Props/@Area2D@32730" method="_on_body_entered"]
-[connection signal="body_entered" from="Props/GroundButton" to="Props/GroundButton" method="_on_body_entered"]

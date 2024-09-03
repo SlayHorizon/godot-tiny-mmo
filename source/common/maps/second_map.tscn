@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=4 uid="uid://5ke1s1ydu7ty"]
+[gd_scene load_steps=6 format=4 uid="uid://5ke1s1ydu7ty"]
 
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="1_mdlle"]
 [ext_resource type="Script" path="res://source/common/maps/map_script/map.gd" id="1_xrjwu"]
+[ext_resource type="Resource" uid="uid://ditnocjiqmbsu" path="res://source/common/resources/custom/instance/instance_collection/tutorial.tres" id="4_lap57"]
+[ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/resources/custom/instance/instance_collection/main.tres" id="5_u4doc"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_0mhht"]
 
 [node name="SecondMap" type="Node2D"]
@@ -26,10 +28,10 @@ tile_set = ExtResource("1_mdlle")
 
 [node name="Warper" parent="." instance=ExtResource("6_0mhht")]
 position = Vector2(0, -101)
-target_instance_name = &"Tutorial"
+target_instance = ExtResource("4_lap57")
 warper_id = 1
 
 [node name="Warper2" parent="." instance=ExtResource("6_0mhht")]
 position = Vector2(3, 65)
-target_instance_name = &"MainInstance"
+target_instance = ExtResource("5_u4doc")
 target_id = 1

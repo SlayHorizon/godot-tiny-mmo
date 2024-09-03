@@ -11,7 +11,7 @@ var connected_peers: PackedInt64Array = []
 ## Peers coming from another instance.
 var awaiting_peers: Dictionary = {}#[int, Player]
 
-var map: Map
+var instance_map: Map
 var instance_resource: InstanceResource
 
 func _ready() -> void:
@@ -30,13 +30,12 @@ func _physics_process(_delta: float) -> void:
 		fetch_instance_state.rpc_id(peer_id, state)
 
 
-func load_map(map_scene: PackedScene) -> void:
-	if not map_scene: return;
-	if map:
-		map.queue_free()
-	map = map_scene.instantiate()
-	add_child(map)
-	for child in map.get_children():
+func load_map(map_path: String) -> void:
+	if instance_map:
+		instance_map.queue_free()
+	instance_map = load(map_path).instantiate()
+	add_child(instance_map)
+	for child in instance_map.get_children():
 		if child is InteractionArea:
 			child.player_entered_interaction_area.connect(_on_player_entered_interaction_area)
 
@@ -80,7 +79,7 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 		awaiting_peers.erase(peer_id)
 	else:
 		player = instantiate_player(peer_id)
-	player.spawn_state["position"] = map.get_spawn_position(spawn_index)
+	player.spawn_state["position"] = instance_map.get_spawn_position(spawn_index)
 	player.just_teleported = true
 	add_child(player, true)
 	entity_collection[peer_id] = player
