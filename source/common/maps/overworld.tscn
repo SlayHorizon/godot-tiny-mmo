@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/client/map_objects/ground_button/ground_button.tscn" id="5_mlcfb"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_dfiuk"]
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/maps/map_components/interaction_areas/teleporter/teleporter.tscn" id="7_mnpu2"]
-[ext_resource type="Resource" uid="uid://4utja3eou6l6" path="res://source/common/resources/custom/instance/instance_collection/entrance.tres" id="7_xnjdx"]
+[ext_resource type="Resource" uid="uid://4utja3eou6l6" path="res://source/common/resources/custom/instance/instance_collection/dungeon_entrance.tres" id="7_xnjdx"]
 
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_i8exw"]
 resource_name = "coins"
@@ -20,7 +20,7 @@ physics_layer_0/collision_layer = 4
 physics_layer_0/collision_mask = 3
 sources/2 = SubResource("TileSetScenesCollectionSource_i8exw")
 
-[node name="FirstMap" type="Node2D"]
+[node name="Overworld" type="Node2D"]
 script = ExtResource("1_x70sj")
 
 [node name="Dark" type="TileMapLayer" parent="."]
@@ -68,3 +68,35 @@ target = NodePath("../TestTP2")
 [node name="TestTP2" parent="." node_paths=PackedStringArray("target") instance=ExtResource("7_mnpu2")]
 position = Vector2(346, 53)
 target = NodePath("../TestTP")
+
+[connection signal="body_entered" from="Props/Coin" to="Props/Coin" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29103" to="Props/@Area2D@29103" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29104" to="Props/@Area2D@29104" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29105" to="Props/@Area2D@29105" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29106" to="Props/@Area2D@29106" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29109" to="Props/@Area2D@29109" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29110" to="Props/@Area2D@29110" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29111" to="Props/@Area2D@29111" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29112" to="Props/@Area2D@29112" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29113" to="Props/@Area2D@29113" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29114" to="Props/@Area2D@29114" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29115" to="Props/@Area2D@29115" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29116" to="Props/@Area2D@29116" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29117" to="Props/@Area2D@29117" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29118" to="Props/@Area2D@29118" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29119" to="Props/@Area2D@29119" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29120" to="Props/@Area2D@29120" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29121" to="Props/@Area2D@29121" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29122" to="Props/@Area2D@29122" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29123" to="Props/@Area2D@29123" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29124" to="Props/@Area2D@29124" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29125" to="Props/@Area2D@29125" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29126" to="Props/@Area2D@29126" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29127" to="Props/@Area2D@29127" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29128" to="Props/@Area2D@29128" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29129" to="Props/@Area2D@29129" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29130" to="Props/@Area2D@29130" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29131" to="Props/@Area2D@29131" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29132" to="Props/@Area2D@29132" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@29133" to="Props/@Area2D@29133" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/GroundButton" to="Props/GroundButton" method="_on_body_entered"]

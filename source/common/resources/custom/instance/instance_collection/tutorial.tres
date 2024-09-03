@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="InstanceResource" load_steps=2 format=3 uid="uid://ditnocjiqmbsu"]
-
-[ext_resource type="Script" path="res://source/common/resources/custom/instance/instance_resource.gd" id="2_as7yv"]
-
-[resource]
-script = ExtResource("2_as7yv")
-instance_name = &"Tutorial"
-map_path = "res://source/common/maps/tutorial_dungeon.tscn"
-load_at_startup = false

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="InstanceResource" load_steps=2 format=3 uid="uid://ditnocjiqmbsu"]
+
+[ext_resource type="Script" path="res://source/common/resources/custom/instance/instance_resource.gd" id="1_yll11"]
+
+[resource]
+script = ExtResource("1_yll11")
+instance_name = &"Dungeon"
+map_path = "res://source/common/maps/dungeon.tscn"
+load_at_startup = false

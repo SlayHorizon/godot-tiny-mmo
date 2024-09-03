@@ -10,7 +10,7 @@ func _ready() -> void:
 	var default_instance: InstanceResource
 	for instance: InstanceResource in instance_collection:
 		print("instance_collection[*] = ", instance.instance_name)
-		if instance.instance_name == "MainInstance":
+		if instance.instance_name == "Overworld":
 			default_instance = instance
 	multiplayer.peer_connected.connect(func(peer_id: int):
 		charge_new_instance.rpc_id(peer_id,

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
-[ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/tutorial_dungeon.tscn" id="2_w18df"]
+[ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/dungeon.tscn" id="2_w18df"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="3_xkqbx"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="4_iraby"]
 
