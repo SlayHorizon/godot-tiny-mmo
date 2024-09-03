@@ -7,11 +7,15 @@ var instance_collection: Array[InstanceResource]
 
 func _ready() -> void:
 	build_instance_collection()
+	var default_instance: InstanceResource
+	for instance: InstanceResource in instance_collection:
+		print("instance_collection[*] = ", instance.instance_name)
+		if instance.instance_name == "MainInstance":
+			default_instance = instance
 	multiplayer.peer_connected.connect(func(peer_id: int):
-		print(instance_collection)
 		charge_new_instance.rpc_id(peer_id,
-		instance_collection[0].map_path, 
-		instance_collection[0].charged_instances[0].name)
+		default_instance.map_path,
+		default_instance.charged_instances[0].name)
 	)
 	Server.start_server()
 
@@ -49,24 +53,8 @@ func charge_instance(instance_resource: InstanceResource) -> void:
 		await new_instance.ready
 
 func build_instance_collection() -> void:
-	for file_path in get_all_file_paths("res://source/common/resources/custom/instance/instance_collection/"):
+	for file_path in Utils.get_all_file_at("res://source/common/resources/custom/instance/instance_collection/"):
 		instance_collection.append(ResourceLoader.load(file_path))
 	for instance_resource: InstanceResource in instance_collection:
 		if instance_resource.load_at_startup:
 			charge_instance(instance_resource)
-
-func get_all_file_paths(path: String) -> Array[String]:  
-	var file_paths: Array[String] = []  
-	var dir := DirAccess.open(path)  
-	dir.list_dir_begin()  
-	var file_name: String = dir.get_next()  
-	while file_name != "":
-		if '.tres.remap' in file_name:
-			file_name = file_name.trim_suffix('.remap')
-		var file_path = path + "/" + file_name  
-		if dir.current_is_dir():  
-			file_paths += get_all_file_paths(file_path)  
-		else:  
-			file_paths.append(file_path)  
-		file_name = dir.get_next()  
-	return file_paths
