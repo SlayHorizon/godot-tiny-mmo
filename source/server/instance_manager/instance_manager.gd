@@ -6,7 +6,7 @@ var online_instances: Dictionary
 var instance_collection: Array[InstanceResource]
 
 func _ready() -> void:
-	build_instance_collection()
+	set_instance_collection()
 	var default_instance: InstanceResource
 	for instance: InstanceResource in instance_collection:
 		print("instance_collection[*] = ", instance.instance_name)
@@ -52,8 +52,8 @@ func charge_instance(instance_resource: InstanceResource) -> void:
 	if not new_instance.is_node_ready():
 		await new_instance.ready
 
-func build_instance_collection() -> void:
-	for file_path in Utils.get_all_file_at("res://source/common/resources/custom/instance/instance_collection/"):
+func set_instance_collection() -> void:
+	for file_path in FileUtils.get_all_file_at("res://source/common/resources/custom/instance/instance_collection/"):
 		instance_collection.append(ResourceLoader.load(file_path))
 	for instance_resource: InstanceResource in instance_collection:
 		if instance_resource.load_at_startup:

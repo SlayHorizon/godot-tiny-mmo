@@ -1,5 +1,4 @@
-class_name Utils
-extends Node
+class_name FileUtils
 
 static func get_all_file_at(path: String) -> PackedStringArray:
 	var result_files := PackedStringArray()
