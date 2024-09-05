@@ -60,6 +60,6 @@ one_way = true
 target = NodePath("../Teleporter4")
 
 [node name="Warper" parent="." instance=ExtResource("4_g1jod")]
-position = Vector2(591, 367)
+position = Vector2(590, 365)
 target_instance = ExtResource("5_ik5qj")
 target_id = 1

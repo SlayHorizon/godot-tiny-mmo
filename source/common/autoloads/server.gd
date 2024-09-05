@@ -8,6 +8,7 @@ var peer: WebSocketMultiplayerPeer
 
 var player_list: Dictionary
 
+## For autocomplention
 @onready var scene_multiplayer := multiplayer as SceneMultiplayer
 
 func start_server() -> void:
@@ -44,7 +45,7 @@ func _on_peer_authenticating(peer_id: int) -> void:
 func _on_peer_authentication_failed(peer_id: int) -> void:
 	print("Peer: %d failed to authenticate." % peer_id)
 
-# Quick and dirty. It needs serious rework.
+# Quick and dirty, needs rework.
 func authentication_call(peer_id: int, data: PackedByteArray) -> void:
 	var dict := bytes_to_var(data) as Dictionary
 	print("Peer: %d is trying to connect with data: \"%s\"." % [peer_id, dict])

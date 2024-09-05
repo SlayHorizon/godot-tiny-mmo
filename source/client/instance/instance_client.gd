@@ -16,6 +16,14 @@ func fetch_instance_state(new_state: Dictionary):
 		last_state = new_state
 		update_entity_collection(new_state["EC"]) #EC=EntityCollection
 
+func update_entity_collection(collection_state: Dictionary) -> void:
+	collection_state.erase(Client.peer_id)
+	for entity_id: int in collection_state:
+		if entity_collection.has(entity_id):
+			(entity_collection[entity_id] as Entity).sync_state = collection_state[entity_id]
+		#else:
+			#ask_to_spawn_player() ?
+
 @rpc("any_peer", "call_remote", "unreliable", 0)
 func fetch_player_state(_sync_state: Dictionary):
 	pass
@@ -49,12 +57,6 @@ func despawn_player(player_id: int) -> void:
 	if entity_collection.has(player_id):
 		(entity_collection[player_id] as Entity).queue_free()
 		entity_collection.erase(player_id)
-
-func update_entity_collection(collection_state: Dictionary) -> void:
-	collection_state.erase(Client.peer_id)
-	for entity_id: int in entity_collection:
-		if collection_state.has(entity_id):
-			(entity_collection[entity_id] as Entity).sync_state = collection_state[entity_id]
 
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:

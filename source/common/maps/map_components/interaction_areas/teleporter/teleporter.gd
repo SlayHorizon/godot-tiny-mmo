@@ -49,6 +49,3 @@ func _draw() -> void:
 	if Engine.is_editor_hint():
 		if target:
 			draw_line(Vector2.ZERO, target.position-position,Color.RED, 1, true)
-
-func _on_player_entered_interaction_area(player: Player, interaction_area: InteractionArea) -> void:
-	print(player, interaction_area)

@@ -172,5 +172,6 @@ size_flags_horizontal = 4
 text = "Login"
 
 [node name="TutorialDungeon" parent="." instance=ExtResource("2_w18df")]
+position = Vector2(60, 120)
 
 [connection signal="pressed" from="CanvasLayer/VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]

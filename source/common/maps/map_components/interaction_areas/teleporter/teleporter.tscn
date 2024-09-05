@@ -11,5 +11,3 @@ script = ExtResource("1_ctuaa")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_atxum")
-
-[connection signal="player_entered_interaction_area" from="." to="." method="_on_player_entered_interaction_area"]
