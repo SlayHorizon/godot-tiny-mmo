@@ -1,4 +1,4 @@
-# Godot Tiny MMO Demo
+# Godot Tiny MMO
 
 A small-scale MMO / MMORPG developed with Godot Engine 4.3, without relying on the built-in multiplayer nodes.  
 Both the client and server are included within the same project, utilizing export presets to manage the separation.  
@@ -54,5 +54,6 @@ If you have ideas or improvements in mind, fork this repository and submit a pul
 5. Open a **Pull Request**
 
 ## Credits
+- Maps designed by [@d-Cadrius](https://github.com/d-Cadrius).
 - Screenshots provided by [@WithinAmnesia](https://github.com/WithinAmnesia).  
-- Thanks to [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for this open source project!
+- Also thanks to [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for this open source project!
