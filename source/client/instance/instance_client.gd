@@ -10,6 +10,10 @@ var last_state: Dictionary = {"T" = 0.0}
 
 var local_player: LocalPlayer
 
+func _ready() -> void:
+	ClientEvents.message_entered.connect(self.player_submit_message)
+
+
 @rpc("authority", "call_remote", "unreliable", 0)
 func fetch_instance_state(new_state: Dictionary):
 	if new_state["T"] > last_state["T"]:
@@ -61,3 +65,18 @@ func despawn_player(player_id: int) -> void:
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:
 	ready_to_enter_instance.rpc_id(1)
+
+#region chat
+@rpc("any_peer", "call_remote", "reliable", 1)
+func player_submit_message(new_message: String) -> void:
+	player_submit_message.rpc_id(1, new_message)
+
+@rpc("authority", "call_remote", "reliable", 1)
+func fetch_message(message: String, sender_id: int) -> void:
+	var sender_name: String = "Unknown"
+	if sender_id == 1:
+		sender_name = "Server"
+	elif entity_collection.has(sender_id):
+		sender_name = (entity_collection[sender_id] as Player).display_name
+	ClientEvents.message_received.emit(message, sender_name)
+#endregion

@@ -17,10 +17,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-ClientEvents="*res://source/common/autoloads/client_events.gd"
-Client="*res://source/common/autoloads/client.gd"
-Server="*res://source/common/autoloads/server.gd"
-DevTool="*res://source/common/autoloads/dev_tool.gd"
+ClientEvents="*res://source/client/autoloads/client_events.gd"
+Client="*res://source/client/autoloads/client.gd"
+Server="*res://source/server/autoloads/server.gd"
+DevTool="*res://source/client/autoloads/dev_tool.gd"
 
 [debug]
 
