@@ -12,7 +12,7 @@ Feel free to explore the project details in the [**Wiki**](https://github.com/Sl
 The current and planned features are listed below:
 
 - [X] **Client-Server connection** through `WebSocketMultiplayerPeer`
-- [x] *Playable on web browser**
+- [x] **Playable on web browser**
 - [X] **Authentication system** with Login UI
 - [X] **Entity synchronization** for players within the same instance
 - [X] **Instance-based maps** with traveling between different map instances
@@ -20,10 +20,10 @@ The current and planned features are listed below:
 - [ ] **Private instances** for solo players or small groups
 - [ ] **Basic combat system**
 - [ ] **Entity interpolation** to handle rubber banding
-- [ ] **Instance-based chat**
+- [x] **Instance-based chat**
 - [ ] **Persistent data saving** on the server
 
-*...and more features in the pipeline.*
+*...and maybe more features later.*
 
 You can track development and report issues by checking the [**open issues**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) page.
 
