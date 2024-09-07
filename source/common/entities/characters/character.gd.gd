@@ -8,9 +8,9 @@ enum Animations {
 	DEATH,
 }
 
-#const POSSIBLE_SYNC := ["position", "sprite_frames", "anim", "flipped"]
-
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var hand_pivot: Node2D = $HandPivot
+
 
 var sprite_frames: String = "knight":
 	set = _set_sprite_frames
@@ -20,6 +20,9 @@ var anim: Animations = Animations.IDLE:
 
 var flipped: bool = false:
 	set = _set_flip
+
+var pivot: float = 0.0:
+	set = _set_pivot
 
 func _set_sprite_frames(new_sprite_frames: String) -> void:
 	animated_sprite.sprite_frames = ResourceLoader.load(
@@ -38,6 +41,10 @@ func _set_anim(new_anim: Animations) -> void:
 func _set_flip(new_flip: bool) -> void:
 	flipped = new_flip
 	animated_sprite.flip_h = flipped
+
+func _set_pivot(new_pivot: float) -> void:
+	pivot = new_pivot
+	hand_pivot.rotation = new_pivot
 
 func _set_sync_state(new_state: Dictionary) -> void:
 	sync_state = new_state

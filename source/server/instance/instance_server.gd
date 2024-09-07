@@ -73,6 +73,12 @@ func fetch_player_state(sync_state: Dictionary) -> void:
 				entity.sync_state[key] = sync_state[key]
 			entity.sync_state = entity.sync_state
 
+@rpc("any_peer", "call_remote", "reliable", 0)
+func ready_to_enter_instance() -> void:
+	var peer_id: int = multiplayer.get_remote_sender_id()
+	spawn_player(peer_id)
+
+#region spawn/despawn
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	var player: Player
@@ -118,11 +124,7 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 		entity_collection.erase(peer_id)
 	for id: int in connected_peers:
 		despawn_player.rpc_id(id, peer_id)
-
-@rpc("any_peer", "call_remote", "reliable", 0)
-func ready_to_enter_instance() -> void:
-	var peer_id: int = multiplayer.get_remote_sender_id()
-	spawn_player(peer_id)
+#endregion
 
 #region chat
 @rpc("any_peer", "call_remote", "reliable", 1)
@@ -130,7 +132,6 @@ func player_submit_message(new_message: String) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	for id: int in connected_peers:
 		fetch_message.rpc_id(id, new_message, peer_id)
-	#Utils.add_log(str(peer_id) + ": " + new_essage, "msg")
 
 @rpc("authority", "call_remote", "reliable", 1)
 func fetch_message(_message: String, _sender_id: int) -> void:

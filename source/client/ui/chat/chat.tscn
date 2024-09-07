@@ -12,6 +12,7 @@ anchors_preset = 0
 script = ExtResource("1_hxcw4")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 310.0

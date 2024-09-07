@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://nffl5k174bp8"]
+
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="1_kpw4b"]
+
+[node name="Sword" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -15)
+texture = ExtResource("1_kpw4b")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 48)

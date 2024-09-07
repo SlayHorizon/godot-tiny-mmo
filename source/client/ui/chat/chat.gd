@@ -13,6 +13,7 @@ func open_chat() -> void:
 	%MessageDisplay.show()
 	%MessageEdit.show()
 	%MessageEdit.grab_focus()
+	%FadeOutTimer.stop()
 
 func hide_chat() -> void:
 	%MessageDisplay.hide()

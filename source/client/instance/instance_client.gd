@@ -38,6 +38,11 @@ func update_entity(entity_id, to_update: Dictionary) -> void:
 	for thing in to_update:
 		entity.set_indexed(thing, to_update[thing])
 
+@rpc("any_peer", "call_remote", "reliable", 0)
+func ready_to_enter_instance() -> void:
+	ready_to_enter_instance.rpc_id(1)
+
+#region spwawn/despawn
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	var new_player: Player
@@ -61,10 +66,7 @@ func despawn_player(player_id: int) -> void:
 	if entity_collection.has(player_id):
 		(entity_collection[player_id] as Entity).queue_free()
 		entity_collection.erase(player_id)
-
-@rpc("any_peer", "call_remote", "reliable", 0)
-func ready_to_enter_instance() -> void:
-	ready_to_enter_instance.rpc_id(1)
+#endregion
 
 #region chat
 @rpc("any_peer", "call_remote", "reliable", 1)
@@ -78,6 +80,5 @@ func fetch_message(message: String, sender_id: int) -> void:
 		sender_name = "Server"
 	elif entity_collection.has(sender_id):
 		sender_name = (entity_collection[sender_id] as Player).display_name
-		print("sender = ", sender_name)
 	ClientEvents.message_received.emit(message, sender_name)
 #endregion

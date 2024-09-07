@@ -15,8 +15,6 @@ var state: String = "idle"
 @onready var mouse: Node2D = $MouseComponent
 
 func _ready() -> void:
-	#animated_sprite.play(&"idle")
-	display_name = "Player"
 	pass
 
 func _physics_process(_delta: float) -> void:
@@ -40,6 +38,7 @@ func check_inputs() -> void:
 
 func update_animation() -> void:
 	flipped = (mouse.position.x < global_position.x)
+	hand_pivot.look_at(mouse.position)
 	anim = Animations.RUN if input_direction else Animations.IDLE
 
 func define_sync_state() -> void:
@@ -48,7 +47,7 @@ func define_sync_state() -> void:
 		"position": get_global_position(),
 		"flipped": flipped,
 		"anim": anim,
-		#"hands_rotation": snappedf(hands_rotation, 0.001),
+		"pivot": snappedf(hand_pivot.rotation, 0.05)
 	}
 
 func _set_sync_state(new_state: Dictionary) -> void:
