@@ -2,7 +2,7 @@ class_name InstanceClient
 extends Node2D
 
 const LOCAL_PLAYER = preload("res://source/client/local_player/local_player.tscn")
-const DUMMY_PLAYER = preload("res://source/common/entities/player/player.tscn")
+const DUMMY_PLAYER = preload("res://source/common/entities/characters/player/player.tscn")
 
 var entity_collection: Dictionary = {}
 
@@ -14,7 +14,7 @@ func _ready() -> void:
 	ClientEvents.message_entered.connect(self.player_submit_message)
 
 
-@rpc("authority", "call_remote", "unreliable", 0)
+@rpc("authority", "call_remote", "reliable", 0)
 func fetch_instance_state(new_state: Dictionary):
 	if new_state["T"] > last_state["T"]:
 		last_state = new_state
@@ -28,7 +28,7 @@ func update_entity_collection(collection_state: Dictionary) -> void:
 		#else:
 			#ask_to_spawn_player() ?
 
-@rpc("any_peer", "call_remote", "unreliable", 0)
+@rpc("any_peer", "call_remote", "reliable", 0)
 func fetch_player_state(_sync_state: Dictionary):
 	pass
 
@@ -78,5 +78,6 @@ func fetch_message(message: String, sender_id: int) -> void:
 		sender_name = "Server"
 	elif entity_collection.has(sender_id):
 		sender_name = (entity_collection[sender_id] as Player).display_name
+		print("sender = ", sender_name)
 	ClientEvents.message_received.emit(message, sender_name)
 #endregion

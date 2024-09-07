@@ -1,0 +1,65 @@
+[gd_scene load_steps=9 format=3 uid="uid://6bcg7fwcl6mi"]
+
+[ext_resource type="Script" path="res://source/common/entities/characters/character.gd.gd" id="1_uqmoo"]
+[ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nkgjx"]
+atlas = ExtResource("2_l11e3")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lch8y"]
+atlas = ExtResource("2_l11e3")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bdco0"]
+atlas = ExtResource("2_l11e3")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tqe77"]
+atlas = ExtResource("2_l11e3")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5u7au"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nkgjx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lch8y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bdco0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tqe77")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
+size = Vector2(14, 6)
+
+[node name="Character" type="CharacterBody2D"]
+y_sort_enabled = true
+texture_filter = 1
+collision_mask = 6
+script = ExtResource("1_uqmoo")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -2)
+sprite_frames = SubResource("SpriteFrames_5u7au")
+animation = &"idle"
+speed_scale = 1.5
+offset = Vector2(0, -30)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_3w1m3")

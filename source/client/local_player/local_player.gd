@@ -12,8 +12,12 @@ var interact_input: bool = false
 
 var state: String = "idle"
 
+@onready var mouse: Node2D = $MouseComponent
+
 func _ready() -> void:
-	animated_sprite.play(&"idle")
+	#animated_sprite.play(&"idle")
+	display_name = "Player"
+	pass
 
 func _physics_process(_delta: float) -> void:
 	check_inputs()
@@ -24,7 +28,6 @@ func _physics_process(_delta: float) -> void:
 
 func move() -> void:
 	velocity = input_direction * speed
-	state = "run" if velocity else "idle"
 	move_and_slide()
 
 func check_inputs() -> void:
@@ -36,19 +39,25 @@ func check_inputs() -> void:
 	interact_input = Input.is_action_just_pressed("interact")
 
 func update_animation() -> void:
-	var mouse_position := get_global_mouse_position()
-	flipped = (mouse_position.x < global_position.x)
-	animation = state
+	flipped = (mouse.position.x < global_position.x)
+	anim = Animations.RUN if input_direction else Animations.IDLE
 
 func define_sync_state() -> void:
-	# Should convert sync_state to packedbytes for optimization ?
 	sync_state = {
 		"T": Time.get_unix_time_from_system(),
 		"position": get_global_position(),
 		"flipped": flipped,
-		"animation": animation,
+		"anim": anim,
+		#"hands_rotation": snappedf(hands_rotation, 0.001),
 	}
 
-func _set_sync_state(new_state) -> void:
+func _set_sync_state(new_state: Dictionary) -> void:
+	var update_state: Dictionary
+
+	for key: String in new_state:
+		if not sync_state.has(key) or sync_state[key] != new_state[key]:
+			update_state[key] = new_state[key]
+
 	sync_state = new_state
-	sync_state_defined.emit(new_state)
+	if update_state.size() > 1:
+		sync_state_defined.emit(update_state)

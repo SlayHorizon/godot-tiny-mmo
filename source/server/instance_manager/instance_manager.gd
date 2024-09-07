@@ -1,5 +1,5 @@
 class_name InstanceManagerServer
-extends Node
+extends SubViewportContainer
 
 
 var online_instances: Dictionary

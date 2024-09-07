@@ -25,8 +25,12 @@ var sync_state: Dictionary = {}:
 ## else, sync_state won't be synchronized and updated each frame.
 var to_sync: bool = true
 
-func _set_spawn_state(new_state) -> void:
+func _set_spawn_state(new_state: Dictionary) -> void:
 	spawn_state = new_state
 
-func _set_sync_state(new_state) -> void:
+#func _set_sync_state(new_state: Dictionary) -> void:
+	#sync_state = new_state
+func _set_sync_state(new_state: Dictionary) -> void:
 	sync_state = new_state
+	for property: String in new_state:
+		set(property, new_state[property])

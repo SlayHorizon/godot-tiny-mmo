@@ -1,10 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://dft2w65wog56o"]
+[gd_scene load_steps=4 format=3 uid="uid://bcojrmcocbq2k"]
 
-[ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/entities/player/player.tscn" id="1_rux1i"]
+[ext_resource type="PackedScene" uid="uid://b3wa3c527k5lx" path="res://source/common/entities/characters/player/player.tscn" id="1_5bye1"]
 [ext_resource type="Script" path="res://source/client/local_player/local_player.gd" id="2_qfdgo"]
+[ext_resource type="Script" path="res://source/client/local_player/mouse_component.gd" id="3_7fqr5"]
 
-[node name="Player" instance=ExtResource("1_rux1i")]
+[node name="LocalPlayer" instance=ExtResource("1_5bye1")]
 script = ExtResource("2_qfdgo")
 
-[node name="Camera2D" type="Camera2D" parent="." index="2"]
+[node name="Camera2D" type="Camera2D" parent="." index="3"]
 zoom = Vector2(3, 3)
+
+[node name="MouseComponent" type="Node2D" parent="." index="4"]
+top_level = true
+script = ExtResource("3_7fqr5")

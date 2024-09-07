@@ -3,7 +3,7 @@ extends SubViewport
 
 signal player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper)
 
-const PLAYER = preload("res://source/common/entities/player/player.tscn")
+const PLAYER = preload("res://source/common/entities/characters/player/player.tscn")
 
 var entity_collection: Dictionary = {}#[int, Entity]
 ## Current connected peers to the instance.
@@ -37,7 +37,7 @@ func load_map(map_path: String) -> void:
 	add_child(instance_map)
 	for child in instance_map.get_children():
 		if child is InteractionArea:
-			child.player_entered_interaction_area.connect(_on_player_entered_interaction_area)
+			child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
 
 func _on_player_entered_interaction_area(player: Player, interaction_area: InteractionArea) -> void:
 	if player.just_teleported:
@@ -57,17 +57,21 @@ func update_entity(entity, to_update: Dictionary) -> void:
 	for peer_id: int in connected_peers:
 		update_entity.rpc_id(peer_id, entity.name.to_int(), to_update)
 
-@rpc("authority", "call_remote", "unreliable", 0)
+@rpc("authority", "call_remote", "reliable", 0)
 func fetch_instance_state(_new_state: Dictionary):
 	pass
 
-@rpc("any_peer", "call_remote", "unreliable", 0)
+@rpc("any_peer", "call_remote", "reliable", 0)
 func fetch_player_state(sync_state: Dictionary) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	if entity_collection.has(peer_id):
 		var entity: Entity = entity_collection[peer_id] as Entity
 		if entity.sync_state["T"] < sync_state["T"]:
-			entity.sync_state = sync_state
+			# Security issue: add a white list
+			#if sync_state.keys().all(func(x): return ["position", "sprite_frames", "animation", "flipped", "T"].any(func(y): return x == y)):
+			for key: String in sync_state:
+				entity.sync_state[key] = sync_state[key]
+			entity.sync_state = entity.sync_state
 
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
@@ -89,7 +93,8 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 func instantiate_player(peer_id: int) -> Player:
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
-	new_player.spawn_state = {"sprite_frames": Server.player_list[peer_id]["class"]}
+	new_player.spawn_state = {"sprite_frames": Server.player_list[peer_id]["class"],
+	"display_name": Server.player_list[peer_id]["username"]}
 	return new_player
 
 ## Spawn the new player on all other client in the current instance
