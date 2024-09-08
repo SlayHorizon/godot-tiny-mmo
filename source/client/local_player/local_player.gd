@@ -4,6 +4,7 @@ extends Player
 signal sync_state_defined(sync_state: Dictionary)
 
 var speed: float = 75.0
+var hand_pivot_speed: float = 17.5
 
 var input_direction: Vector2 = Vector2.ZERO
 var last_input_direction: Vector2 = Vector2.ZERO
@@ -20,7 +21,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	check_inputs()
 	move()
-	update_animation()
+	update_animation(_delta)
 	define_sync_state()
 
 
@@ -36,9 +37,25 @@ func check_inputs() -> void:
 	action_input = Input.is_action_just_pressed("action")
 	interact_input = Input.is_action_just_pressed("interact")
 
-func update_animation() -> void:
+func update_hand_pivot(_delta: float) -> void:
+	if Input.is_action_pressed("attack"):
+		var hands_rot_pos = hand_pivot.global_position - hand_offset.position
+		var flips := -1 if flipped else 1
+		
+		var look_at_mouse := atan2(
+			(mouse.position.y - hands_rot_pos.y), 
+			(mouse.position.x - hands_rot_pos.x) * flips
+			)
+
+		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_at_mouse, _delta * hand_pivot_speed)#look_at_mouse
+		return
+	
+	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, _delta * hand_pivot_speed)
+
+
+func update_animation(_delta: float) -> void:
 	flipped = (mouse.position.x < global_position.x)
-	hand_pivot.look_at(mouse.position)
+	update_hand_pivot(_delta)
 	anim = Animations.RUN if input_direction else Animations.IDLE
 
 func define_sync_state() -> void:
