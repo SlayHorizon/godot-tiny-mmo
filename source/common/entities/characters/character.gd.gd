@@ -9,7 +9,8 @@ enum Animations {
 }
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var hand_pivot: Node2D = $HandPivot
+@onready var hand_offset: Node2D = $HandOffset
+@onready var hand_pivot: Node2D = $HandOffset/HandPivot
 
 
 var sprite_frames: String = "knight":
@@ -41,6 +42,7 @@ func _set_anim(new_anim: Animations) -> void:
 func _set_flip(new_flip: bool) -> void:
 	flipped = new_flip
 	animated_sprite.flip_h = flipped
+	hand_offset.scale = Vector2(-1 if flipped else 1, 1)
 
 func _set_pivot(new_pivot: float) -> void:
 	pivot = new_pivot

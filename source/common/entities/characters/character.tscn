@@ -51,7 +51,6 @@ animations = [{
 size = Vector2(14, 6)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_j20c1"]
-load_path = "res://.godot/imported/human_hands.png-56d180d5b1abfa60157badb3590146dc.ctex"
 
 [sub_resource type="Animation" id="Animation_1c45q"]
 resource_name = "idle_hands"
@@ -78,18 +77,19 @@ offset = Vector2(0, -30)
 position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_3w1m3")
 
-[node name="HandPivot" type="Node2D" parent="."]
+[node name="HandOffset" type="Node2D" parent="."]
 position = Vector2(0, -10)
-rotation = 3.11192
 
-[node name="LeftHand" type="Sprite2D" parent="HandPivot"]
+[node name="HandPivot" type="Node2D" parent="HandOffset"]
+
+[node name="LeftHand" type="Sprite2D" parent="HandOffset/HandPivot"]
 position = Vector2(-14, 0)
 texture = SubResource("CompressedTexture2D_j20c1")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)
 script = ExtResource("4_xrcf7")
 
-[node name="RightHand" type="Sprite2D" parent="HandPivot"]
+[node name="RightHand" type="Sprite2D" parent="HandOffset/HandPivot"]
 position = Vector2(15, 0)
 texture = ExtResource("4_irl2s")
 region_enabled = true
@@ -97,9 +97,9 @@ region_rect = Rect2(0, 16, 16, 16)
 script = ExtResource("4_xrcf7")
 status = 1
 
-[node name="Sword" parent="HandPivot/RightHand" instance=ExtResource("5_1bwj4")]
+[node name="Sword" parent="HandOffset/HandPivot/RightHand" instance=ExtResource("5_1bwj4")]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="HandPivot"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="HandOffset/HandPivot"]
 libraries = {
 "": SubResource("AnimationLibrary_ix34b")
 }
