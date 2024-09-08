@@ -18,10 +18,10 @@ var state: String = "idle"
 func _ready() -> void:
 	pass
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	check_inputs()
 	move()
-	update_animation(_delta)
+	update_animation(delta)
 	define_sync_state()
 
 
@@ -34,29 +34,25 @@ func check_inputs() -> void:
 	match input_direction:
 		Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN:
 			last_input_direction = input_direction
-	action_input = Input.is_action_just_pressed("action")
+	action_input = Input.is_action_pressed("action")
 	interact_input = Input.is_action_just_pressed("interact")
 
-func update_hand_pivot(_delta: float) -> void:
-	if Input.is_action_pressed("attack"):
+func update_animation(delta: float) -> void:
+	flipped = (mouse.position.x < global_position.x)
+	update_hand_pivot(delta)
+
+func update_hand_pivot(delta: float) -> void:
+	if action_input:
 		var hands_rot_pos = hand_pivot.global_position - hand_offset.position
 		var flips := -1 if flipped else 1
-		
 		var look_at_mouse := atan2(
 			(mouse.position.y - hands_rot_pos.y), 
 			(mouse.position.x - hands_rot_pos.x) * flips
 			)
-
-		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_at_mouse, _delta * hand_pivot_speed)#look_at_mouse
-		return
-	
-	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, _delta * hand_pivot_speed)
-
-
-func update_animation(_delta: float) -> void:
-	flipped = (mouse.position.x < global_position.x)
-	update_hand_pivot(_delta)
-	anim = Animations.RUN if input_direction else Animations.IDLE
+		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_at_mouse, delta * hand_pivot_speed)
+	else:
+		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, delta * hand_pivot_speed)
+		anim = Animations.RUN if input_direction else Animations.IDLE
 
 func define_sync_state() -> void:
 	sync_state = {

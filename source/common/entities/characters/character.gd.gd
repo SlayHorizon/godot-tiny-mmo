@@ -40,9 +40,9 @@ func _set_anim(new_anim: Animations) -> void:
 	anim = new_anim
 
 func _set_flip(new_flip: bool) -> void:
+	animated_sprite.flip_h = new_flip
+	hand_offset.scale.x = -1 if new_flip else 1
 	flipped = new_flip
-	animated_sprite.flip_h = flipped
-	hand_offset.scale = Vector2(-1 if flipped else 1, 1)
 
 func _set_pivot(new_pivot: float) -> void:
 	pivot = new_pivot

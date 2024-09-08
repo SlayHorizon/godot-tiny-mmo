@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=14 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" path="res://source/common/entities/characters/character.gd.gd" id="1_uqmoo"]
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
@@ -50,8 +50,6 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
 size = Vector2(14, 6)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_j20c1"]
-
 [sub_resource type="Animation" id="Animation_1c45q"]
 resource_name = "idle_hands"
 
@@ -84,7 +82,7 @@ position = Vector2(0, -10)
 
 [node name="LeftHand" type="Sprite2D" parent="HandOffset/HandPivot"]
 position = Vector2(-14, 0)
-texture = SubResource("CompressedTexture2D_j20c1")
+texture = ExtResource("4_irl2s")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)
 script = ExtResource("4_xrcf7")

@@ -1,7 +1,6 @@
 class_name Player
 extends Character
 
-# Incomplete
 var player_resource: PlayerResource
 var equiped_item: ItemResource
 
@@ -27,9 +26,6 @@ func _init() -> void:
 
 func _set_display_name(new_name: String) -> void:
 	display_name_label.text = new_name
-	#display_name_label.position.x = (display_name_label.size.x * display_name_label.scale.x)
-	#display_name_label.position.x *= -1
-	#display_name_label.position.x /= 2
 	display_name = new_name
 
 func _set_sync_state(new_state: Dictionary) -> void:
