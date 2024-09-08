@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
 [ext_resource type="Texture2D" uid="uid://clc768ctxxvjg" path="res://assets/sprites/items/weapons/hands/human_hands.png" id="4_irl2s"]
 [ext_resource type="Script" path="res://source/common/entities/characters/hands.gd" id="4_xrcf7"]
-[ext_resource type="PackedScene" uid="uid://nffl5k174bp8" path="res://source/common/items/weapons/sword/sword.tscn" id="5_1bwj4"]
+[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/items/weapons/weapon.tscn" id="5_vj7ns"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nkgjx"]
 atlas = ExtResource("2_l11e3")
@@ -95,7 +95,7 @@ region_rect = Rect2(0, 16, 16, 16)
 script = ExtResource("4_xrcf7")
 status = 1
 
-[node name="Sword" parent="HandOffset/HandPivot/RightHand" instance=ExtResource("5_1bwj4")]
+[node name="Weapon" parent="HandOffset/HandPivot/RightHand" instance=ExtResource("5_vj7ns")]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="HandOffset/HandPivot"]
 libraries = {

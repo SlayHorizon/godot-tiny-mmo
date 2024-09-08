@@ -18,7 +18,7 @@ The current and planned features are listed below:
 - [X] **Authentication system** with Login UI
 - [X] **Entity synchronization** for players within the same instance
 - [X] **Instance-based maps** with traveling between different map instances
-- [ ] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
+- [x] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
 - [ ] **Private instances** for solo players or small groups
 - [ ] **Basic combat system**
 - [ ] **Entity interpolation** to handle rubber banding
