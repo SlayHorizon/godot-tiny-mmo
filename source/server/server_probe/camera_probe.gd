@@ -69,6 +69,7 @@ func _draw() -> void:
 		var screen_size: Vector2 = get_screen_transform().get_origin()
 		font_file.antialiasing = TextServer.FONT_ANTIALIASING_NONE
 		font_file.multichannel_signed_distance_field = true
+		
 		draw_string(font_file, Vector2(0, 30 / scrolling["live"]) - (screen_size / scrolling["live"]), "Zoom: " + str(scrolling["desired"]), 0, -1, 32 / scrolling["live"])
 		draw_string(font_file, Vector2(0, 60 / scrolling["live"]) - (screen_size / scrolling["live"]), "Speed*: " + str(speed_mul["desired"]), 0, -1, 32 / scrolling["live"])
 	
