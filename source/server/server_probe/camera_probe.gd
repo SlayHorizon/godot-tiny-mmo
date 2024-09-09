@@ -63,5 +63,9 @@ func _process(_delta: float) -> void:
 	zoom = Vector2(scrolling["live"], scrolling["live"])
 	
 func _draw() -> void:
+	if Input.is_key_pressed(KEY_ALT):
+		draw_string(FontFile.new(), Vector2.ZERO, "Zoom: " + str(scrolling["desired"]))
+		draw_string(FontFile.new(), Vector2(0, 15), "Speed*: " + str(speed_mul["desired"]))
+	
 	if Input.is_action_pressed("action"):
 		draw_line(Vector2.ZERO, mouse.position - global_position, Color.WHITE, 1.0)
