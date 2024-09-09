@@ -1,0 +1,108 @@
+[gd_scene load_steps=5 format=3 uid="uid://dqt8fnt1l33eu"]
+
+[ext_resource type="Script" path="res://source/client/ui/hud/hud.gd" id="1_rchld"]
+[ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/chat/chat.tscn" id="2_xs74v"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_veeea"]
+bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
+border_blend = true
+corner_radius_top_left = 20
+corner_radius_bottom_right = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_24t0k"]
+bg_color = Color(0.211098, 0.630774, 0.235796, 0.627451)
+border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
+border_blend = true
+corner_radius_top_left = 20
+corner_radius_bottom_right = 20
+
+[node name="HUD" type="CanvasLayer"]
+layer = 2
+script = ExtResource("1_rchld")
+
+[node name="HealthBar" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ProgressBar" type="ProgressBar" parent="HealthBar"]
+custom_minimum_size = Vector2(200, 15)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -35.0
+offset_right = 100.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_veeea")
+theme_override_styles/fill = SubResource("StyleBoxFlat_24t0k")
+step = 0.5
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="HealthBar/ProgressBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "100 / 100"
+horizontal_alignment = 1
+
+[node name="Chat" parent="." instance=ExtResource("2_xs74v")]
+
+[node name="ItemSlots" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -2.0
+offset_bottom = 2.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ItemSlots"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -45.0
+offset_right = -20.0
+offset_bottom = 45.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="Button" type="Button" parent="ItemSlots/VBoxContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "1"
+
+[node name="Button2" type="Button" parent="ItemSlots/VBoxContainer"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "2
+"
