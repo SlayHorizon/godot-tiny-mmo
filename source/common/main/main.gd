@@ -11,11 +11,11 @@ func _ready() -> void:
 
 
 func setup_client() -> void:
-	get_node("/root").add_child.call_deferred(load("res://source/client/ui/login_menu/login_menu.tscn").instantiate())
+	get_node("/root").add_child.call_deferred(load("res://source/client/ui/ui.tscn").instantiate())
 	get_tree().change_scene_to_file.call_deferred("res://source/client/instance_manager/instance_manger.tscn")
 
 func setup_server() -> void:
-	Engine.set_physics_ticks_per_second(20)#30 ?
+	Engine.set_physics_ticks_per_second(20) # 60 by default
 	DisplayServer.window_set_title("Server")
-	get_window().position = Vector2(0, 0)
+	get_window().position = Vector2(0, 0) # Used for faster debugging
 	get_tree().change_scene_to_file.call_deferred("res://source/server/instance_manager/instance_manager.tscn")

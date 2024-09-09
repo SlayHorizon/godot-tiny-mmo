@@ -1,4 +1,5 @@
 @tool
+@icon("res://assets/node_icons/blue/icon_hand.png")
 class_name Hand
 extends Sprite2D
 

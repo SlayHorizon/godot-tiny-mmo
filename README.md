@@ -22,6 +22,7 @@ The current and planned features are listed below:
 - [ ] **Private instances** for solo players or small groups
 - [ ] **Basic combat system**
 - [ ] **Entity interpolation** to handle rubber banding
+- [x] **Three different maps:** Overworld, Dungeon Entrance, Dungeon
 - [x] **Instance-based chat**
 - [ ] **Persistent data saving** on the server
 

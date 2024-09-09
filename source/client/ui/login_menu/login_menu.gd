@@ -1,4 +1,7 @@
+class_name LoginMenu
 extends Control
+
+signal connection_succeed
 
 var player_class: String = "knight"
 
@@ -30,10 +33,7 @@ func _on_connection_changed(connection_status: bool) -> void:
 	if connection_status:
 		%ServerStatusLabel.text = "Connected to the server!"
 		%LoginButton.disabled = true
-		var x = CanvasLayer.new()
-		add_sibling(x)
-		x.add_child(load("res://source/client/ui/chat/chat.tscn").instantiate())
-		queue_free()
+		connection_succeed.emit()
 	else:
 		%ServerStatusLabel.text = "Authentication failed.\nEnter a correct name and choose a class."
 		await get_tree().create_timer(1.2).timeout

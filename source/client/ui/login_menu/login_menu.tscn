@@ -17,6 +17,7 @@ script = ExtResource("1_b8eob")
 container = NodePath("CanvasLayer/VBoxContainer/HBoxContainer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
 anchors_preset = 15
