@@ -61,11 +61,16 @@ func _process(_delta: float) -> void:
 	scrolling["live"] = move_toward(scrolling["live"], scrolling["desired"], _delta * scrolling["desired_speed"])
 	speed_mul["live"] = move_toward(speed_mul["live"], speed_mul["desired"], _delta * speed_mul["desired_speed"])
 	zoom = Vector2(scrolling["live"], scrolling["live"])
-	
+
+@onready var font_file: FontFile = FontFile.new()
+
 func _draw() -> void:
 	if Input.is_key_pressed(KEY_ALT):
-		draw_string(FontFile.new(), Vector2.ZERO, "Zoom: " + str(scrolling["desired"]))
-		draw_string(FontFile.new(), Vector2(0, 15), "Speed*: " + str(speed_mul["desired"]))
+		var screen_size: Vector2 = get_screen_transform().get_origin()
+		font_file.antialiasing = TextServer.FONT_ANTIALIASING_NONE
+		font_file.multichannel_signed_distance_field = true
+		draw_string(font_file, Vector2(0, 30 / scrolling["live"]) - (screen_size / scrolling["live"]), "Zoom: " + str(scrolling["desired"]), 0, -1, 32 / scrolling["live"])
+		draw_string(font_file, Vector2(0, 60 / scrolling["live"]) - (screen_size / scrolling["live"]), "Speed*: " + str(speed_mul["desired"]), 0, -1, 32 / scrolling["live"])
 	
 	if Input.is_action_pressed("action"):
 		draw_line(Vector2.ZERO, mouse.position - global_position, Color.WHITE, 1.0)
