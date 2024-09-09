@@ -63,6 +63,16 @@ func define_sync_state() -> void:
 		"pivot": snappedf(hand_pivot.rotation, 0.05)
 	}
 
+func _set_character_class(new_class: String):
+	character_resource = ResourceLoader.load(
+		"res://source/common/resources/custom/character/character_collection/" + new_class + ".tres")
+	animated_sprite.sprite_frames = character_resource.character_sprite
+	ClientEvents.health_changed.emit(
+		character_resource.base_health + character_resource.health_per_level * 0,# Should be player_resource.level
+		true
+	)
+	character_class = new_class
+
 func _set_sync_state(new_state: Dictionary) -> void:
 	var update_state: Dictionary
 

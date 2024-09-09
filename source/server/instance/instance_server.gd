@@ -99,8 +99,10 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 func instantiate_player(peer_id: int) -> Player:
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
-	new_player.spawn_state = {"sprite_frames": Server.player_list[peer_id]["class"],
-	"display_name": Server.player_list[peer_id]["username"]}
+	new_player.spawn_state = {
+		"character_class": Server.player_list[peer_id]["class"],
+		"display_name": Server.player_list[peer_id]["username"]
+	}
 	return new_player
 
 ## Spawn the new player on all other client in the current instance

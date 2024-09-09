@@ -1,6 +1,10 @@
 class_name Player
 extends Character
 
+var character_class: String:
+	set = _set_character_class
+var character_resource: CharacterResource
+# Unused
 var player_resource: PlayerResource
 var equiped_item: ItemResource
 
@@ -23,6 +27,11 @@ func _init() -> void:
 	sync_state = {"T" = 0.0}
 	group = Group.PLAYER
 
+func _set_character_class(new_class: String):
+	character_resource = ResourceLoader.load(
+		"res://source/common/resources/custom/character/character_collection/" + new_class + ".tres")
+	animated_sprite.sprite_frames = character_resource.character_sprite
+	character_class = new_class
 
 func _set_display_name(new_name: String) -> void:
 	display_name_label.text = new_name
