@@ -35,6 +35,8 @@ func load_map(map_path: String) -> void:
 		instance_map.queue_free()
 	instance_map = load(map_path).instantiate()
 	add_child(instance_map)
+	add_child(CameraProbe.new())
+	
 	for child in instance_map.get_children():
 		if child is InteractionArea:
 			child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
