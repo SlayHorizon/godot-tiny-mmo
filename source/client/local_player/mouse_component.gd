@@ -1,3 +1,4 @@
+class_name MouseComponent
 extends Node2D
 
 var mouse_ingame := true
