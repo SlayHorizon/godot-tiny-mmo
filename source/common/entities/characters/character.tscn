@@ -87,17 +87,27 @@ region_enabled = true
 region_rect = Rect2(0, 0, 16, 16)
 script = ExtResource("4_xrcf7")
 
+[node name="Weapon" type="Sprite2D" parent="HandOffset/HandPivot/LeftHand"]
+show_behind_parent = true
+position = Vector2(29, 0)
+
 [node name="RightHand" type="Sprite2D" parent="HandOffset/HandPivot"]
 position = Vector2(15, 0)
 texture = ExtResource("4_irl2s")
 region_enabled = true
-region_rect = Rect2(0, 16, 16, 16)
+region_rect = Rect2(16, 16, 16, 16)
 script = ExtResource("4_xrcf7")
+side = 1
 status = 1
 
-[node name="Weapon" parent="HandOffset/HandPivot/RightHand" instance=ExtResource("5_vj7ns")]
+[node name="Weapon" type="Sprite2D" parent="HandOffset/HandPivot/RightHand"]
+show_behind_parent = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="HandOffset/HandPivot"]
 libraries = {
 "": SubResource("AnimationLibrary_ix34b")
 }
+
+[node name="Weapon" parent="HandOffset/HandPivot" instance=ExtResource("5_vj7ns")]
+visible = false
+position = Vector2(15, 0)
