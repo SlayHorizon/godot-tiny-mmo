@@ -7,7 +7,7 @@
 script = ExtResource("1_aiw52")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -15)
 texture = ExtResource("2_33udu")
+offset = Vector2(0, -15)
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 48)

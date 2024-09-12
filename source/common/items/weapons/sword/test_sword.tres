@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponData" load_steps=4 format=3 uid="uid://b8lxlav7qtxj7"]
+
+[ext_resource type="Script" path="res://source/common/items/weapons/weapon_data.gd" id="1_8540d"]
+[ext_resource type="Texture2D" uid="uid://bl4x3jlsvt3jq" path="res://assets/sprites/items/weapons/bone/bone.png" id="2_tnk8b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aqxmx"]
+atlas = ExtResource("2_tnk8b")
+region = Rect2(0, 0, 16, 48)
+
+[resource]
+script = ExtResource("1_8540d")
+weapon_sprite = SubResource("AtlasTexture_aqxmx")
+flip_sprite = true
+origin_point = Vector2(0, -15)
+class_type = 0

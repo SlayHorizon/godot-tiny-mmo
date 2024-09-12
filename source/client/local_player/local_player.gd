@@ -43,7 +43,7 @@ func update_animation(delta: float) -> void:
 
 func update_hand_pivot(delta: float) -> void:
 	if action_input:
-		var hands_rot_pos = hand_pivot.global_position - hand_offset.position
+		var hands_rot_pos = hand_pivot.global_position
 		var flips := -1 if flipped else 1
 		var look_at_mouse := atan2(
 			(mouse.position.y - hands_rot_pos.y), 
