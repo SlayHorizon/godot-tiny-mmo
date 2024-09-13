@@ -1,3 +1,4 @@
+# Only useful for debug purpose, shouldn't be on server side at all otherwise.
 class_name CameraProbe
 extends Camera2D
 
@@ -70,8 +71,8 @@ func _draw() -> void:
 		font_file.antialiasing = TextServer.FONT_ANTIALIASING_NONE
 		font_file.multichannel_signed_distance_field = true
 		
-		draw_string(font_file, Vector2(0, 30 / scrolling["live"]) - (screen_size / scrolling["live"]), "Zoom: " + str(scrolling["desired"]), 0, -1, 32 / scrolling["live"])
-		draw_string(font_file, Vector2(0, 60 / scrolling["live"]) - (screen_size / scrolling["live"]), "Speed*: " + str(speed_mul["desired"]), 0, -1, 32 / scrolling["live"])
+		draw_string(font_file, Vector2(0, 30 / scrolling["live"]) - (screen_size / scrolling["live"]), "Zoom: " + str(scrolling["desired"]), HORIZONTAL_ALIGNMENT_LEFT, -1, 32 / scrolling["live"])
+		draw_string(font_file, Vector2(0, 60 / scrolling["live"]) - (screen_size / scrolling["live"]), "Speed*: " + str(speed_mul["desired"]), HORIZONTAL_ALIGNMENT_LEFT, -1, 32 / scrolling["live"])
 	
 	if Input.is_action_pressed("action"):
 		draw_line(Vector2.ZERO, mouse.position - global_position, Color.WHITE, 1.0)

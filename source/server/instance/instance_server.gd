@@ -75,6 +75,19 @@ func fetch_player_state(sync_state: Dictionary) -> void:
 				entity.sync_state[key] = sync_state[key]
 			entity.sync_state = entity.sync_state
 
+@rpc("authority", "call_remote", "reliable", 0)
+func change_character_weapon(character_id: int, weapon_path: String, side: bool) -> void:
+	(entity_collection[character_id] as Character).change_weapon(weapon_path, side)
+	for peer_id in connected_peers:
+		change_character_weapon.rpc_id(peer_id, character_id, weapon_path, side)
+
+@rpc("any_peer", "call_remote", "reliable", 0)
+func player_trying_to_change_weapon(weapon_path: String, side: bool = true) -> void:
+	var peer_id: int = multiplayer.get_remote_sender_id()
+	# Check if player has the weapon
+	change_character_weapon(peer_id, weapon_path, side)
+	
+
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()

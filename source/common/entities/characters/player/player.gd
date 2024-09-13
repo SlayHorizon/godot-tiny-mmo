@@ -6,7 +6,6 @@ var character_class: String:
 var character_resource: CharacterResource
 # Unused
 var player_resource: PlayerResource
-var equiped_item: ItemResource
 
 var display_name: String = "Unknown":
 	set = _set_display_name

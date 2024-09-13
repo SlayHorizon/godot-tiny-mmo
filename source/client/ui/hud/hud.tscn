@@ -39,13 +39,16 @@ grow_horizontal = 0
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="Button" type="Button" parent="ItemSlots/VBoxContainer"]
+[node name="ItemSlotButton1" type="Button" parent="ItemSlots/VBoxContainer"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "1"
 
-[node name="Button2" type="Button" parent="ItemSlots/VBoxContainer"]
+[node name="ItemSlotButton2" type="Button" parent="ItemSlots/VBoxContainer"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "2
 "
+
+[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton1" to="." method="_on_item_slot_button_1_pressed" binds= ["sword/sword"]]
+[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton2" to="." method="_on_item_slot_button_2_pressed" binds= ["hammer/hammer"]]

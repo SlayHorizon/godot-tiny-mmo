@@ -1,46 +1,33 @@
-@tool
-@icon("res://assets/node_icons/color/icon_weapon.png")
+@icon("res://assets/node_icons/blue/icon_sword.png")
 class_name Weapon
 extends Node2D
 
-enum Materials {
-	WOOD,
-	BONE,
-}
+@export var has_custom_idle: bool = false
+@export var has_custom_walk: bool = false
 
-enum Types {
-	SWORD,
-	HAMMER,
-	KNIFE,
-	AXE,
-	SPEAR,
-	MAGE_STAFF,
-}
+var character: Character
 
-@export var _material: Materials = Materials.BONE:
-	set = _set_material
+@onready var hand: Hand = $Hand
+@onready var weapon_sprite: Sprite2D = $WeaponSprite
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 
-@export var type: Types = Types.SWORD:
-	set = _set_type
+func _ready() -> void:
+	if hand and character:
+		hand.type = character.hand_type
+	if animation_player.has_animation("custom/idle"):
+		has_custom_idle = true
+	if animation_player.has_animation("custom/walk"):
+		has_custom_walk = true
 
-@onready var sprite: Sprite2D = $Sprite2D
-
-func _set_material(new_material: Materials) -> void:
-	match new_material:
-		Materials.BONE:
-			sprite.texture = preload("res://assets/sprites/items/weapons/bone/bone.png")
-		Materials.WOOD:
-			sprite.texture = preload("res://assets/sprites/items/weapons/wood/wood.png")
-	_material = new_material
-
-func _set_type(new_type: Types) -> void:
-	type = new_type
-	if not sprite:
-		return
-	match new_type:
-		Types.SWORD:
-			sprite.region_rect = Rect2(0, 0, 16, 48)
-		Types.HAMMER:
-			sprite.region_rect = Rect2(16, 16, 16, 32)
-		Types.KNIFE:
-			sprite.region_rect = Rect2(32, 16, 16, 32)
+func play_animation(anim_name: String) -> void:
+	# Bad design
+	if anim_name == "idle":
+		if has_custom_idle:
+			animation_player.play("custom/idle")
+		else:
+			animation_player.play("idle")
+	if anim_name == "walk":
+		if has_custom_idle:
+			animation_player.play("custom/walk")
+		else:
+			animation_player.play("walk")

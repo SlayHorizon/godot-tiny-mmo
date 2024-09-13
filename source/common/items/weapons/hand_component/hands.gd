@@ -36,24 +36,10 @@ const SIZE := 16
 @export var type: Types = Types.HUMAN:
 	set = _set_type
 
-@export var current_weapon: WeaponData:
-	set = _set_weapon
-	
-func _set_weapon(new_data : WeaponData) -> void:
-	current_weapon = new_data
-	
-	var weapon: Sprite2D = $Weapon
-	if not new_data:
-		weapon.texture = null
-		return
-		
-	weapon.texture = new_data.weapon_sprite
-	weapon.position = Vector2.ZERO
-	weapon.offset = new_data.origin_point if side == Sides.RIGHT else Vector2(-new_data.origin_point.x, new_data.origin_point.y)
-	weapon.flip_h = new_data.flip_sprite if side == Sides.RIGHT else not new_data.flip_sprite
 
 func _init() -> void:
 	_update_hands()
+
 
 func _update_hands() -> void:
 	if status == Status.PULL:

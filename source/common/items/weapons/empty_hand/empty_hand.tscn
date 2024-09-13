@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://dslec2qgwwig2"]
+
+[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/items/weapons/weapon.tscn" id="1_2tdu7"]
+
+[node name="EmptyHand" instance=ExtResource("1_2tdu7")]
+
+[node name="WeaponSprite" parent="." index="0"]
+visible = false
+
+[node name="Hand" parent="." index="1"]
+region_rect = Rect2(16, 0, 16, 16)
+status = 0

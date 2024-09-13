@@ -16,7 +16,10 @@ var state: String = "idle"
 @onready var mouse: Node2D = $MouseComponent
 
 func _ready() -> void:
-	pass
+	super()
+	#ClientEvents.item_icon_pressed.connect(func(item_name):
+		#change_weapon(item_name)
+		#)
 
 func _physics_process(delta: float) -> void:
 	check_inputs()

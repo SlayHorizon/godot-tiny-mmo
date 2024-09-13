@@ -1,17 +1,24 @@
 @icon("res://assets/node_icons/blue/icon_character.png")
 class_name Character
 extends Entity
-## Class for all characters (Player, 
+
 enum Animations {
 	IDLE,
 	RUN,
 	DEATH,
 }
 
+var hand_type: Hand.Types
+
+var equiped_weapon_right: Weapon
+var equiped_weapon_left: Weapon
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hand_offset: Node2D = $HandOffset
 @onready var hand_pivot: Node2D = $HandOffset/HandPivot
 
+@onready var right_hand_spot: Node2D = $HandOffset/HandPivot/RightHandSpot
+@onready var left_hand_spot: Node2D = $HandOffset/HandPivot/LeftHandSpot
 
 var sprite_frames: String = "knight":
 	set = _set_sprite_frames
@@ -25,6 +32,31 @@ var flipped: bool = false:
 var pivot: float = 0.0:
 	set = _set_pivot
 
+func _ready() -> void:
+	if right_hand_spot.get_child_count():
+		equiped_weapon_right = right_hand_spot.get_child(0)
+		equiped_weapon_right.hand.type = hand_type
+		equiped_weapon_right.hand.side = Hand.Sides.RIGHT
+	if left_hand_spot.get_child_count():
+		equiped_weapon_left = left_hand_spot.get_child(0)
+		equiped_weapon_right.hand.type = hand_type
+		equiped_weapon_right.hand.side = Hand.Sides.LEFT
+
+func change_weapon(weapon_path: String, _side: bool = true) -> void:
+	if equiped_weapon_right:
+		equiped_weapon_right.queue_free()
+	var new_weapon: Weapon = load("res://source/common/items/weapons/" + 
+		weapon_path + ".tscn").instantiate()
+	new_weapon.character = self
+	right_hand_spot.add_child(new_weapon)
+	equiped_weapon_right = new_weapon
+
+func update_weapon_animation(state: String) -> void:
+	equiped_weapon_right.play_animation(state)
+	equiped_weapon_left.play_animation(state)
+	
+
+
 func _set_sprite_frames(new_sprite_frames: String) -> void:
 	animated_sprite.sprite_frames = ResourceLoader.load(
 		"res://source/common/resources/builtin/sprite_frames/" + new_sprite_frames + ".tres")
@@ -33,8 +65,10 @@ func _set_anim(new_anim: Animations) -> void:
 	match new_anim:
 		Animations.IDLE:
 			animated_sprite.play("idle")
+			update_weapon_animation("idle")
 		Animations.RUN:
 			animated_sprite.play("run")
+			update_weapon_animation("run")
 		Animations.DEATH:
 			animated_sprite.play("death")
 	anim = new_anim

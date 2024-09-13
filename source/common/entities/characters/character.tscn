@@ -1,10 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=10 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" path="res://source/common/entities/characters/character.gd.gd" id="1_uqmoo"]
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
-[ext_resource type="Texture2D" uid="uid://clc768ctxxvjg" path="res://assets/sprites/items/weapons/hands/human_hands.png" id="4_irl2s"]
-[ext_resource type="Script" path="res://source/common/entities/characters/hands.gd" id="4_xrcf7"]
-[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/items/weapons/weapon.tscn" id="5_vj7ns"]
+[ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nkgjx"]
 atlas = ExtResource("2_l11e3")
@@ -50,14 +48,6 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
 size = Vector2(14, 6)
 
-[sub_resource type="Animation" id="Animation_1c45q"]
-resource_name = "idle_hands"
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_ix34b"]
-_data = {
-"idle_hands": SubResource("Animation_1c45q")
-}
-
 [node name="Character" type="CharacterBody2D"]
 y_sort_enabled = true
 texture_filter = 1
@@ -80,34 +70,12 @@ position = Vector2(0, -10)
 
 [node name="HandPivot" type="Node2D" parent="HandOffset"]
 
-[node name="LeftHand" type="Sprite2D" parent="HandOffset/HandPivot"]
-position = Vector2(-14, 0)
-texture = ExtResource("4_irl2s")
-region_enabled = true
-region_rect = Rect2(0, 0, 16, 16)
-script = ExtResource("4_xrcf7")
-
-[node name="Weapon" type="Sprite2D" parent="HandOffset/HandPivot/LeftHand"]
-show_behind_parent = true
-position = Vector2(29, 0)
-
-[node name="RightHand" type="Sprite2D" parent="HandOffset/HandPivot"]
+[node name="RightHandSpot" type="Node2D" parent="HandOffset/HandPivot"]
 position = Vector2(15, 0)
-texture = ExtResource("4_irl2s")
-region_enabled = true
-region_rect = Rect2(16, 16, 16, 16)
-script = ExtResource("4_xrcf7")
-side = 1
-status = 1
 
-[node name="Weapon" type="Sprite2D" parent="HandOffset/HandPivot/RightHand"]
-show_behind_parent = true
+[node name="EmptyHand" parent="HandOffset/HandPivot/RightHandSpot" instance=ExtResource("3_eddh2")]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="HandOffset/HandPivot"]
-libraries = {
-"": SubResource("AnimationLibrary_ix34b")
-}
+[node name="LeftHandSpot" type="Node2D" parent="HandOffset/HandPivot"]
+position = Vector2(-15, 0)
 
-[node name="Weapon" parent="HandOffset/HandPivot" instance=ExtResource("5_vj7ns")]
-visible = false
-position = Vector2(15, 0)
+[node name="EmptyHand" parent="HandOffset/HandPivot/LeftHandSpot" instance=ExtResource("3_eddh2")]
