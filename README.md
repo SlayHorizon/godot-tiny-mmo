@@ -16,15 +16,19 @@ The current and planned features are listed below:
 - [X] **Client-Server connection** through `WebSocketMultiplayerPeer`
 - [x] **Playable on web browser**
 - [X] **Authentication system** with Login UI
+- [ ] **Create account**
+- [ ] **Game version check**
 - [X] **Entity synchronization** for players within the same instance
 - [X] **Instance-based maps** with traveling between different map instances
 - [x] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
 - [ ] **Private instances** for solo players or small groups
+- [ ] **Weapons** at least one usable weapon per class
 - [ ] **Basic combat system**
 - [ ] **Entity interpolation** to handle rubber banding
 - [x] **Three different maps:** Overworld, Dungeon Entrance, Dungeon
 - [x] **Instance-based chat**
-- [ ] **Persistent data saving** on the server
+- [ ] **Database Server**
+- [ ] **Authentication Server** (move the authentication system from game server)
 
 *...and maybe more features later.*
 
