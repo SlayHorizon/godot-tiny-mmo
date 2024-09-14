@@ -39,11 +39,6 @@ func update_entity(entity_id: int, to_update: Dictionary) -> void:
 	for thing in to_update:
 		entity.set_indexed(thing, to_update[thing])
 
-@rpc("authority", "call_remote", "reliable", 0)
-func change_character_weapon(character_id: int, weapon_path: String, side: bool) -> void:
-	(entity_collection[character_id] as Character).change_weapon(weapon_path, side)
-
-
 @rpc("any_peer", "call_remote", "reliable", 0)
 func player_trying_to_change_weapon(weapon_path: String, side: bool = true) -> void:
 	player_trying_to_change_weapon.rpc_id(1, weapon_path, side)

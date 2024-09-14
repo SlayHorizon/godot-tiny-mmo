@@ -10,6 +10,10 @@ enum Animations {
 
 var hand_type: Hand.Types
 
+var weapon_name_right: String:
+	set = _set_right_weapon
+var weapon_name_left: String:
+	set = _set_left_weapon
 var equiped_weapon_right: Weapon
 var equiped_weapon_left: Weapon
 
@@ -54,8 +58,15 @@ func change_weapon(weapon_path: String, _side: bool = true) -> void:
 func update_weapon_animation(state: String) -> void:
 	equiped_weapon_right.play_animation(state)
 	equiped_weapon_left.play_animation(state)
-	
 
+
+func _set_left_weapon(weapon_name: String) -> void:
+	weapon_name_left = weapon_name
+	change_weapon(weapon_name, false)
+
+func _set_right_weapon(weapon_name: String) -> void:
+	weapon_name_right = weapon_name
+	change_weapon(weapon_name, true)
 
 func _set_sprite_frames(new_sprite_frames: String) -> void:
 	animated_sprite.sprite_frames = ResourceLoader.load(

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://source/common/items/weapons/weapon.gd" id="1_aiw52"]
 [ext_resource type="Texture2D" uid="uid://bl4x3jlsvt3jq" path="res://assets/sprites/items/weapons/bone/bone.png" id="2_33udu"]
-[ext_resource type="PackedScene" uid="uid://c4mlxpbwyc1tw" path="res://source/common/items/weapons/hand_component/hand.tscn" id="3_ydnw2"]
+[ext_resource type="PackedScene" uid="uid://c4mlxpbwyc1tw" path="res://source/common/items/hand_component/hand.tscn" id="3_ydnw2"]
 
 [sub_resource type="Animation" id="Animation_bfela"]
 length = 0.001
