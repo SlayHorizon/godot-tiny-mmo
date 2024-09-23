@@ -44,7 +44,8 @@ To get started with the project, follow these steps:
 5. Under **feature tags**, ensure to have:
    - Exactly **one** "server" tag
    - At least **one or more** "client" tags
-6. Run the project!
+6. (Optional) Add **--headless** under **Lauch Arguments** for the server.
+7. Run the project!
 
 Example setup for multiple instances:  
 ![multiple-instances-screenshot](https://github.com/user-attachments/assets/5cf7cc61-e8e6-468d-b917-b505a59168cf)
