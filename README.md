@@ -44,7 +44,7 @@ To get started with the project, follow these steps:
 5. Under **feature tags**, ensure to have:
    - Exactly **one** "server" tag
    - At least **one or more** "client" tags
-6. (Optional) Add **--headless** under **Lauch Arguments** for the server.
+6. (Optional) Add **--headless** under **Launch Arguments** for the server.
 7. Run the project!
 
 Example setup for multiple instances:  
