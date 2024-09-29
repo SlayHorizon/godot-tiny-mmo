@@ -23,7 +23,7 @@ func start_server() -> void:
 	scene_multiplayer.set_auth_callback(self.authentication_call)
 	
 	var server_certificate = load("res://source/common/server_certificate.crt")
-	var server_key = load("res://source/server/server_key.key")
+	var server_key = load("res://source/game_server/server_key.key")
 	if server_certificate == null or server_key == null:
 		print("Failed to load certificate or key.")
 		return
@@ -31,10 +31,10 @@ func start_server() -> void:
 	peer.create_server(PORT, "*", TLSOptions.server(server_key, server_certificate))
 	multiplayer.set_multiplayer_peer(peer)
 
-func _on_peer_connected(peer_id) -> void:
+func _on_peer_connected(peer_id: int) -> void:
 	print("Peer: %d is connected." % peer_id)
 
-func _on_peer_disconnected(peer_id) -> void:
+func _on_peer_disconnected(peer_id: int) -> void:
 	print("Peer: %d is disconnected." % peer_id)
 	player_list.erase(peer_id)
 
