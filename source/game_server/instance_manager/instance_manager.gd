@@ -17,7 +17,7 @@ func _ready() -> void:
 		default_instance.map_path,
 		default_instance.charged_instances[0].name)
 	)
-	Server.start_server()
+	GameServer.start_server()
 
 
 @rpc("authority", "call_remote", "reliable", 0)
