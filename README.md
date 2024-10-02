@@ -1,3 +1,5 @@
+> [!WARNING]  
+> This project is still in experimental state.
 # Godot Tiny MMO
 
 A small-scale MMO / MMORPG developed with Godot Engine 4.3, without relying on the built-in multiplayer nodes.  
