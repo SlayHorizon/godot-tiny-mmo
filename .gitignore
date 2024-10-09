@@ -11,6 +11,5 @@ export_presets.cfg
 
 # System/tool-specific ignores
 .directory
-.DS_Store
-.ds_store
+*DS_Store
 *~
