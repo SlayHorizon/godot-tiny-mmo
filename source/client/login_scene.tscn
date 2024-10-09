@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://u544jciafxaw"]
+
+[ext_resource type="Script" path="res://source/client/login_scene.gd" id="1_y6dui"]
+[ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/login_menu/login_menu.tscn" id="2_1i7tk"]
+[ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/dungeon.tscn" id="2_w18df"]
+
+[node name="LoginScene" type="Node"]
+script = ExtResource("1_y6dui")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="LoginMenu" parent="CanvasLayer" instance=ExtResource("2_1i7tk")]
+
+[node name="LoginMap" parent="." instance=ExtResource("2_w18df")]
+position = Vector2(60, 120)

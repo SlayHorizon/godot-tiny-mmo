@@ -1,9 +1,18 @@
+class_name UI
 extends CanvasLayer
 
-const HUD = preload("res://source/client/ui/hud/hud.tscn")
+const HUD_SCENE = preload("res://source/client/ui/hud/hud.tscn")
+
+#var hud: CanvasLayer:
+	#get():
+		#if not hud:
+			#hud = HUD_SCENE.instantiate()
+			#add_child(hud)
+			#if not hud.is_node_ready():
+				#await hud.ready
+		#return hud
+@onready var hud: CanvasLayer = $HUD
+
 
 func _ready() -> void:
-	var login_menu: LoginMenu = $LoginMenu
-	await login_menu.connection_succeed
-	login_menu.queue_free()
-	add_child(HUD.instantiate())
+	pass

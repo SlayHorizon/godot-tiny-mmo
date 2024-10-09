@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://u544jciafxaw"]
+[gd_scene load_steps=5 format=3 uid="uid://b75u8dbglxgyb"]
 
 [ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
-[ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/dungeon.tscn" id="2_w18df"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="3_xkqbx"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="4_iraby"]
 
@@ -14,12 +13,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_b8eob")
-container = NodePath("CanvasLayer/VBoxContainer/HBoxContainer")
+container = NodePath("VBoxContainer/HBoxContainer")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 2
-
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -27,47 +24,48 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -242.0
-offset_top = -230.5
+offset_top = -180.0
 offset_right = 242.0
-offset_bottom = 129.5
+offset_bottom = 180.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(839, -71.5)
 theme_override_constants/separation = 15
 
-[node name="EnterNameLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
+[node name="EnterNameLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Enter a valid username to login:"
 horizontal_alignment = 1
 
-[node name="EnterNameInput" type="LineEdit" parent="CanvasLayer/VBoxContainer"]
+[node name="EnterNameInput" type="LineEdit" parent="VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unknown"
 placeholder_text = "Enter your name here"
 max_length = 9
 
-[node name="ChooseClassLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
+[node name="ChooseClassLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Choose a class:"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 50
 
-[node name="Button" type="Button" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button"]
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/HBoxContainer/Button"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -75,16 +73,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button/CenterContainer"]
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer/Button/CenterContainer"]
 layout_mode = 2
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button/CenterContainer/Control"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VBoxContainer/HBoxContainer/Button/CenterContainer/Control"]
 position = Vector2(-32, -32)
 sprite_frames = ExtResource("2_8u1v6")
 animation = &"idle"
 centered = false
 
-[node name="Label" type="Label" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/Button"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -95,11 +93,11 @@ offset_bottom = 23.0
 grow_horizontal = 2
 text = "Knight"
 
-[node name="Button2" type="Button" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+[node name="Button2" type="Button" parent="VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button2"]
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/HBoxContainer/Button2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -107,16 +105,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button2/CenterContainer"]
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer/Button2/CenterContainer"]
 layout_mode = 2
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button2/CenterContainer/Control"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VBoxContainer/HBoxContainer/Button2/CenterContainer/Control"]
 position = Vector2(-32, -32)
 sprite_frames = ExtResource("3_xkqbx")
 animation = &"run"
 centered = false
 
-[node name="Label" type="Label" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button2"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/Button2"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -127,11 +125,11 @@ offset_bottom = 23.0
 grow_horizontal = 2
 text = "Rogue"
 
-[node name="Button3" type="Button" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+[node name="Button3" type="Button" parent="VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button3"]
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/HBoxContainer/Button3"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -139,16 +137,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button3/CenterContainer"]
+[node name="Control" type="Control" parent="VBoxContainer/HBoxContainer/Button3/CenterContainer"]
 layout_mode = 2
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button3/CenterContainer/Control"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="VBoxContainer/HBoxContainer/Button3/CenterContainer/Control"]
 position = Vector2(-32, -32)
 sprite_frames = ExtResource("4_iraby")
 animation = &"run"
 centered = false
 
-[node name="Label" type="Label" parent="CanvasLayer/VBoxContainer/HBoxContainer/Button3"]
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/Button3"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -159,20 +157,17 @@ offset_bottom = 23.0
 grow_horizontal = 2
 text = "Wizard"
 
-[node name="ServerStatusLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
+[node name="ServerStatusLabel" type="Label" parent="VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 49)
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="LoginButton" type="Button" parent="CanvasLayer/VBoxContainer"]
+[node name="LoginButton" type="Button" parent="VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Login"
 
-[node name="TutorialDungeon" parent="." instance=ExtResource("2_w18df")]
-position = Vector2(60, 120)
-
-[connection signal="pressed" from="CanvasLayer/VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]

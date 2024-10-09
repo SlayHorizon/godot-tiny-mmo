@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://b20pv25ct6nmt"]
 
 [ext_resource type="Script" path="res://source/client/ui/ui.gd" id="1_wpqoj"]
-[ext_resource type="PackedScene" uid="uid://u544jciafxaw" path="res://source/client/ui/login_menu/login_menu.tscn" id="2_k0cxa"]
+[ext_resource type="PackedScene" uid="uid://dqt8fnt1l33eu" path="res://source/client/ui/hud/hud.tscn" id="2_equq2"]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_wpqoj")
 
-[node name="LoginMenu" parent="." instance=ExtResource("2_k0cxa")]
+[node name="HUD" parent="." instance=ExtResource("2_equq2")]

@@ -1,9 +1,7 @@
 extends Node
-## Client autoload. Keep it clean and minimal.
-## Should only care about connection and authentication stuff.
+
 
 signal connection_changed(connected_to_server: bool)
-signal authentication_requested
 
 # Server configuration.
 ## Server's adress. Use "127.0.0.1" or "localhost" to test locally.
@@ -19,24 +17,15 @@ var is_connected_to_server: bool = false:
 		is_connected_to_server = value
 		connection_changed.emit(value)
 
-var authentication_data := {"username": "Player", "class": "knight"}
-
-## For autocomplention
-@onready var scene_multiplayer := multiplayer as SceneMultiplayer
-
 
 func connect_to_server() -> void:
-	print("Starting connection to the game server.")
+	print("Starting connection to the gateway server.")
 	peer = WebSocketMultiplayerPeer.new()
 	
 	multiplayer.connected_to_server.connect(_on_connection_succeeded)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	
-	scene_multiplayer.peer_authenticating.connect(self._on_peer_authenticating)
-	scene_multiplayer.peer_authentication_failed.connect(self._on_peer_authentication_failed)
-	scene_multiplayer.set_auth_callback(authentication_call)
-	
+
 	var certificate = load("res://source/common/server_certificate.crt")
 	if certificate == null:
 		print("Failed to load certificate.")
@@ -51,9 +40,6 @@ func close_connection() -> void:
 	multiplayer.connected_to_server.disconnect(self._on_connection_succeeded)
 	multiplayer.connection_failed.disconnect(self._on_connection_failed)
 	multiplayer.server_disconnected.disconnect(self._on_server_disconnected)
-	
-	scene_multiplayer.peer_authenticating.disconnect(self._on_peer_authenticating)
-	scene_multiplayer.peer_authentication_failed.disconnect(self._on_peer_authentication_failed)
 	
 	multiplayer.set_multiplayer_peer(null)
 	peer.close()
@@ -77,18 +63,3 @@ func _on_server_disconnected() -> void:
 	print("Server disconnected.")
 	close_connection()
 	get_tree().paused = true
-
-
-func _on_peer_authenticating(_peer_id: int) -> void:
-	print("Trying to authenticate to the server.")
-
-
-func _on_peer_authentication_failed(_peer_id: int) -> void:
-	print("Authentification to the server failed.")
-	close_connection()
-
-
-func authentication_call(_peer_id: int, data: PackedByteArray) -> void:
-	print("Authentification call from server with data: \"%s\"." % data.get_string_from_ascii())
-	scene_multiplayer.send_auth(1, var_to_bytes(authentication_data))
-	scene_multiplayer.complete_auth(1)

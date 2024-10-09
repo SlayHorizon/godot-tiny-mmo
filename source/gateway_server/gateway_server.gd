@@ -3,15 +3,17 @@ extends Node
 ## This gateway server is really cheap and minimal,
 ## consider using different service for commercial project.
 
-const PORT := 8088
+
+const PORT: int = 8088
 
 var server: WebSocketMultiplayerPeer
 var connected_peers: Dictionary
 
-var expiration_time: float = 15000.0 # 15 minutes in seconds
+# 15 minutes in seconds.
+var expiration_time: float = 900.0
 
 var credentials: CredentialsCollectionResource
-var credentials_path: String = "res://source/gateway_server/credentials.tres"
+var credentials_path := "res://source/gateway_server/credentials.tres"
 
 
 func _ready() -> void:
@@ -106,7 +108,6 @@ func create_account_request(username: String, password: String, is_guest: bool) 
 
 @rpc("authority")
 func account_creation_result(_result: bool, _message: String = "") -> void:
-	# Code logic
 	pass
 
 
@@ -131,6 +132,7 @@ func create_accout(username: String, password: String, is_guest: bool) -> void:
 		password = generate_password()
 	var new_account := CredentialsResource.new(account_id, username, password)
 	credentials.collection[username] = new_account
+
 
 # Consider using a better token generator.
 func generate_password() -> String:

@@ -1,11 +1,13 @@
 class_name LoginMenu
 extends Control
 
+
 signal connection_succeed
 
 var player_class: String = "knight"
 
 @export var container : HBoxContainer
+
 
 func _ready() -> void:
 	Client.connection_changed.connect(self._on_connection_changed)
@@ -38,6 +40,7 @@ func _on_connection_changed(connection_status: bool) -> void:
 		%ServerStatusLabel.text = "Authentication failed.\nEnter a correct name and choose a class."
 		await get_tree().create_timer(1.2).timeout
 		%LoginButton.disabled = false
+
 
 func _on_login_button_pressed() -> void:
 	%LoginButton.disabled = true
