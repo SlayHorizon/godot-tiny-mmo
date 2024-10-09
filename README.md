@@ -9,7 +9,7 @@ These presets allow to export only the client-side without including server comp
 
 Feel free to explore the project details in the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).
 
-![image](https://github.com/user-attachments/assets/ed1d527e-d05f-4f57-abd8-2d5af9227839)
+![project-demo-screenshot](https://github.com/user-attachments/assets/ca606976-fd9d-4a92-a679-1f65cb80513a)
 
 ## 🚀 Features
 
@@ -50,7 +50,7 @@ To get started with the project, follow these steps:
 7. Run the project!
 
 Example setup for multiple instances:  
-![multiple-instances-screenshot](https://github.com/user-attachments/assets/5cf7cc61-e8e6-468d-b917-b505a59168cf)
+<img width="1580" alt="multiple-instances-screenshot" src="https://github.com/user-attachments/assets/36225640-fddc-4570-95b5-4896cd2269f9">
 
 ## 🤝 Contributing
 
