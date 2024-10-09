@@ -40,7 +40,9 @@ folder_colors={
 "res://source/": "red",
 "res://source/client/": "blue",
 "res://source/common/": "yellow",
-"res://source/server/": "orange"
+"res://source/database_server/": "orange",
+"res://source/game_server/": "orange",
+"res://source/gateway_server/": "orange"
 }
 
 [input]
