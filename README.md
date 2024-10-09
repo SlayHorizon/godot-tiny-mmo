@@ -30,7 +30,7 @@ The current and planned features are listed below:
 - [x] **Three different maps:** Overworld, Dungeon Entrance, Dungeon
 - [x] **Instance-based chat**
 - [ ] **Database Server**
-- [ ] **Authentication Server** (move the authentication system from game server)
+- [x] **Gateway Server** (move the authentication system from the game server to a dedicated one)
 
 *...and maybe more features later.*
 
@@ -40,13 +40,14 @@ You can track development and report issues by checking the [**open issues**](ht
 
 To get started with the project, follow these steps:
 1. Clone this repository.
-2. Open the project with **Godot 4.3**
-3. In the Debug tab, choose **Customizable Run Instance...**
-4. Enable **Multiple Instances** and set at least 2 or more.
-5. Under **feature tags**, ensure to have:
-   - Exactly **one** "server" tag
+2. Open the project in **Godot 4.3**.
+3. In the Debug tab, select **Customizable Run Instance...**.
+4. Enable **Multiple Instances** and set the count to **3 or more**.
+5. Under **Feature Tags**, ensure you have:
+   - Exactly **one** "game_server" tag
+   - Exactly **one** "gateway_server" tag
    - At least **one or more** "client" tags
-6. (Optional) Add **--headless** under **Launch Arguments** for the server.
+6. (Optional) For game server and gateway server, add **--headless** under **Launch Arguments** to prevent empty windows.
 7. Run the project!
 
 Example setup for multiple instances:  
