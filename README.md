@@ -1,6 +1,6 @@
 > [!WARNING]  
 > This project is still in experimental state.  
-> What might interest you most is in **source/common/main/main.gd**  
+> What might interest you most is in [**source/common/main/main.gd**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/blob/main/source/common/main/main.gd)  
 > and this link which will explain to you how this organization is viable [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project).
 # Godot Tiny MMO
 
