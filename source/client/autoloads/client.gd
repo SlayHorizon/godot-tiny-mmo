@@ -19,13 +19,14 @@ var is_connected_to_server: bool = false:
 		is_connected_to_server = value
 		connection_changed.emit(value)
 
-var authentication_data := {"username": "Player", "class": "knight"}
+#var authentication_data := {"username": "Player", "class": "knight"}
+var authentication_token: String
 
 ## For autocomplention
 @onready var scene_multiplayer := multiplayer as SceneMultiplayer
 
 
-func connect_to_server() -> void:
+func connect_to_server(adress: String, port: int) -> void:
 	print("Starting connection to the game server.")
 	peer = WebSocketMultiplayerPeer.new()
 	
@@ -42,7 +43,7 @@ func connect_to_server() -> void:
 		print("Failed to load certificate.")
 		return
 
-	peer.create_client("wss://" + ADDRESS + ":" + str(PORT), TLSOptions.client_unsafe(certificate))
+	peer.create_client("wss://" + adress + ":" + str(port), TLSOptions.client_unsafe(certificate))
 	multiplayer.set_multiplayer_peer(peer)
 
 
@@ -90,5 +91,5 @@ func _on_peer_authentication_failed(_peer_id: int) -> void:
 
 func authentication_call(_peer_id: int, data: PackedByteArray) -> void:
 	print("Authentification call from server with data: \"%s\"." % data.get_string_from_ascii())
-	scene_multiplayer.send_auth(1, var_to_bytes(authentication_data))
+	scene_multiplayer.send_auth(1, var_to_bytes(authentication_token))
 	scene_multiplayer.complete_auth(1)

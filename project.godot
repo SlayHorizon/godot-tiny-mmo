@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 ClientEvents="*res://source/client/autoloads/client_events.gd"
 Client="*res://source/client/autoloads/client.gd"
-GameServer="*res://source/game_server/autoloads/server.gd"
+GameServer="*res://source/game_server/autoloads/game_server.gd"
 
 [debug]
 
