@@ -34,7 +34,7 @@ The current and planned features are listed below:
 - [ ] **Database Server**
 - [x] **Gateway Server** (move the authentication system from the game server to a dedicated one)
 
-
+Proposed network architecture for this demo (subject to change).  
 ![diagram-export](https://github.com/user-attachments/assets/0f1e917d-6ee2-411c-bd50-6aaf109c46e4)
 
 
