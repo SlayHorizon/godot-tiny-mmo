@@ -3,17 +3,27 @@ extends Node
 ## This gateway server is really cheap and minimal,
 ## consider using different service for commercial project.
 
-
 const PORT: int = 8088
 
+const GameServerListener = preload("res://source/gateway_server/game_server_listener.gd")
+
 var server: WebSocketMultiplayerPeer
+
+var game_server_listener: GameServerListener
+var game_server_1 := {
+	"127.0.0.1": 8087
+}
+var game_server_list := {
+	#GameServerListener.new(): {"127.0.0.1": 8087},
+}
+
 var connected_peers: Dictionary
 
 # 15 minutes in seconds.
 var expiration_time: float = 900.0
 
-var credentials: CredentialsCollectionResource
-var credentials_path := "res://source/gateway_server/credentials.tres"
+var account_collection: AccountResourceCollection
+var account_collection_path := "res://source/gateway_server/account_collection.tres"
 
 
 func _ready() -> void:
@@ -22,16 +32,20 @@ func _ready() -> void:
 	expiration_timer.wait_time = 60.0
 	expiration_timer.timeout.connect(self._on_expiration_timer_timeout)
 	add_child(expiration_timer)
-	CredentialsResource.new(0, "salade", "tomate")
-	if ResourceLoader.exists(credentials_path):
-		credentials = ResourceLoader.load(credentials_path)
+	if ResourceLoader.exists(account_collection_path):
+		account_collection = ResourceLoader.load(account_collection_path)
 	else:
-		credentials = CredentialsCollectionResource.new()
+		account_collection = AccountResourceCollection.new()
 	start_gateway_server()
+	game_server_listener = GameServerListener.new()
+	game_server_listener.name = "GatewayBridge"
+	add_sibling(game_server_listener, true)
+	game_server_listener.start_game_server_listener()
+	
 
 
 func _exit_tree() -> void:
-	ResourceSaver.save(credentials, credentials_path)
+	ResourceSaver.save(account_collection, account_collection_path)
 
 
 func _on_expiration_timer_timeout() -> void:
@@ -65,19 +79,27 @@ func _on_peer_connected(peer_id: int) -> void:
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
+	connected_peers.erase(peer_id)
 	print("Peer: %d is disconnected." % peer_id)
+
+
+@rpc("authority")
+func fetch_authentication_token(_token: String, _adress: String, _port: int) -> void:
+	pass
 
 
 @rpc("any_peer")
 func login_request(username: String, password: String) -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
 	var result := validate_credentials(username, password)
-	var message := "Login successful" if result else "Invalid credentials"
+	if result:
+		connected_peers[peer_id] = account_collection[username]
+	var message := "Login successful." if result else "Invalid information."
 	login_result.rpc_id(peer_id, result, message)
 
 
 @rpc("authority")
-func login_result(_result: bool, _message: String = "") -> void:
+func login_result(_result: bool, _message: String) -> void:
 	pass
 
 
@@ -102,40 +124,84 @@ func create_account_request(username: String, password: String, is_guest: bool) 
 	else:
 		message = "Account creation successful."
 	
-	var is_valid := message == "Account creation successful"
+	var is_valid := message == "Account creation successful."
+	if is_valid:
+		connected_peers[peer_id] = create_accout(username, password, is_guest)
 	account_creation_result.rpc_id(peer_id, is_valid, message)
 
 
 @rpc("authority")
-func account_creation_result(_result: bool, _message: String = "") -> void:
+func account_creation_result(_result: bool, _message: String) -> void:
+	pass
+
+
+# Used to create the player's character.
+@rpc("any_peer")
+func create_player_request(character_class: String) -> void:
+	var peer_id := multiplayer.get_remote_sender_id()
+	var result := true
+	var message := "Character creation successful."
+	if not connected_peers.has(peer_id):
+		result = false
+		message = "Please create an account first."
+	if not character_class in ["knight", "rogue", "wizard"]:
+		result = false
+		message = "Wrong class. Please choose a valid class."
+	if not result:
+		player_creation_result.rpc_id(peer_id, result, message)
+		return
+	var player := PlayerResource.new(account_collection.next_player_id)
+	player.character_class = character_class
+	(connected_peers[peer_id] as AccountResource).player_collection.append(player)
+	player_creation_result.rpc_id(peer_id, result, message)
+	var random_token := generate_random_token()
+	game_server_listener.fetch_token.rpc_id(
+		game_server_listener.game_server_list[0],
+		random_token,
+		{"username": player.display_name,
+		"class": player.character_class}
+	)
+	connect_to_server_request.rpc_id(
+		peer_id,
+		random_token,
+		game_server_1.keys()[0],
+		game_server_1.values()[0],
+	)
+
+@rpc("authority")
+func player_creation_result(_result: bool, _message: String) -> void:
+	pass
+
+
+@rpc("authority")
+func connect_to_server_request(_token: String, _adress: String, _port: int) -> void:
 	pass
 
 
 func validate_credentials(username: String, password: String) -> bool:
-	if credentials.collection.has(username):
-		if (credentials.collection[username] as CredentialsResource)\
-		.password == password:
+	if account_collection.collection.has(username):
+		if (account_collection.collection[username] as AccountResource).password == password:
 			return true
 	return false
 
 
 func username_exists(username: String) -> bool:
-	if credentials.collection.has(username):
+	if account_collection.collection.has(username):
 		return true
 	return false
 
 
-func create_accout(username: String, password: String, is_guest: bool) -> void:
-	var account_id: int = credentials.next_id
-	credentials.next_id += 1
+func create_accout(username: String, password: String, is_guest: bool) -> AccountResource:
+	var account_id: int = account_collection.next_account_id
 	if is_guest:
-		password = generate_password()
-	var new_account := CredentialsResource.new(account_id, username, password)
-	credentials.collection[username] = new_account
+		password = generate_random_token()
+	var new_account := AccountResource.new(account_id, username, password)
+	account_collection.collection[username] = new_account
+	return new_account
 
 
 # Consider using a better token generator.
-func generate_password() -> String:
+func generate_random_token() -> String:
 	var characters := "abcdefghijklmnopqrstuvwxyz#$-+0123456789"
 	var password := ""
 	for i in range(12):
