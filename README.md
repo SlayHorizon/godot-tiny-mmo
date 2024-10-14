@@ -34,7 +34,9 @@ The current and planned features are listed below:
 - [ ] **Database Server**
 - [x] **Gateway Server** (move the authentication system from the game server to a dedicated one)
 
-*...and maybe more features later.*
+
+![diagram-export](https://github.com/user-attachments/assets/0f1e917d-6ee2-411c-bd50-6aaf109c46e4)
+
 
 You can track development and report issues by checking the [**open issues**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) page.
 
