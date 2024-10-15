@@ -35,7 +35,9 @@ The current and planned features are listed below:
 - [x] **Gateway Server** (move the authentication system from the game server to a dedicated one)
 
 Proposed network architecture for this demo (subject to change).  
-![diagram-export](https://github.com/user-attachments/assets/0f1e917d-6ee2-411c-bd50-6aaf109c46e4)
+![diagram-export-dark](https://github.com/user-attachments/assets/0f1e917d-6ee2-411c-bd50-6aaf109c46e4#gh-dark-mode-only)
+![diagram-export-light](https://github.com/user-attachments/assets/be20b8df-c9b4-4adb-b32a-96013bdbea14#gh-light-mode-only)
+
 
 
 You can track development and report issues by checking the [**open issues**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) page.
