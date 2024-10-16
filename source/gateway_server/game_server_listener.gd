@@ -7,6 +7,7 @@ var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
 var game_server_list: Array[int]
 
+
 func _process(_delta: float) -> void:
 	if multiplayer_api and multiplayer_api.has_multiplayer_peer():
 		multiplayer_api.poll()

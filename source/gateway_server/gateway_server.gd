@@ -25,6 +25,7 @@ var account_collection_path := "res://source/gateway_server/account_collection.t
 
 
 func _ready() -> void:
+	printerr("salade")
 	var parsed_arguments := CmdlineUtils.get_parsed_args()
 	print("gateway parsed arguments = ", parsed_arguments)
 	if parsed_arguments.has("port"):
@@ -42,6 +43,7 @@ func _exit_tree() -> void:
 func _on_expiration_timer_timeout() -> void:
 	for peer_id: int in connected_peers:
 		var connection_time: float = Time.get_unix_time_from_system() - connected_peers[peer_id]["time"]
+		print(connection_time)
 		if connection_time > expiration_time:
 			gateway_serer.disconnect_peer(peer_id)
 			connected_peers.erase(peer_id)
@@ -87,7 +89,7 @@ func login_request(username: String, password: String) -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
 	var result := validate_credentials(username, password)
 	if result:
-		connected_peers[peer_id] = account_collection[username]
+		connected_peers[peer_id]["account"] = account_collection[username]
 	var message := "Login successful." if result else "Invalid information."
 	login_result.rpc_id(peer_id, result, message)
 
@@ -120,7 +122,7 @@ func create_account_request(username: String, password: String, is_guest: bool) 
 	
 	var is_valid := message == "Account creation successful."
 	if is_valid:
-		connected_peers[peer_id] = create_accout(username, password, is_guest)
+		connected_peers[peer_id]["account"] = create_accout(username, password, is_guest)
 	account_creation_result.rpc_id(peer_id, is_valid, message)
 
 
@@ -146,7 +148,7 @@ func create_player_request(character_class: String) -> void:
 		return
 	var player := PlayerResource.new(account_collection.next_player_id)
 	player.character_class = character_class
-	(connected_peers[peer_id] as AccountResource).player_collection.append(player)
+	(connected_peers[peer_id]["account"] as AccountResource).player_collection.append(player)
 	player_creation_result.rpc_id(peer_id, result, message)
 	var random_token := generate_random_token()
 	game_server_listener.fetch_token.rpc_id(
@@ -207,6 +209,7 @@ func generate_random_token() -> String:
 func add_experitation_timer() -> void:
 	var expiration_timer := Timer.new()
 	expiration_timer.autostart = true
+	# Check every minute
 	expiration_timer.wait_time = 60.0
 	expiration_timer.timeout.connect(_on_expiration_timer_timeout)
 	add_child(expiration_timer)
