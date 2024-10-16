@@ -1,20 +1,18 @@
-class_name GatewayServer
+# Feel free to refactor this
 extends Node
 ## This gateway server is really cheap and minimal,
 ## consider using different service for commercial project.
 
-const PORT: int = 8088
-
 const GameServerListener = preload("res://source/gateway_server/game_server_listener.gd")
 
-var server: WebSocketMultiplayerPeer
+# Default port can be changed via cmdline arg by doing --port=8088
+var port: int = 8088
+var gateway_serer: WebSocketMultiplayerPeer
 
 var game_server_listener: GameServerListener
-var game_server_1 := {
-	"127.0.0.1": 8087
-}
+
 var game_server_list := {
-	#GameServerListener.new(): {"127.0.0.1": 8087},
+	"127.0.0.1": 8087,
 }
 
 var connected_peers: Dictionary
@@ -27,21 +25,14 @@ var account_collection_path := "res://source/gateway_server/account_collection.t
 
 
 func _ready() -> void:
-	var expiration_timer := Timer.new()
-	expiration_timer.autostart = true
-	expiration_timer.wait_time = 60.0
-	expiration_timer.timeout.connect(self._on_expiration_timer_timeout)
-	add_child(expiration_timer)
-	if ResourceLoader.exists(account_collection_path):
-		account_collection = ResourceLoader.load(account_collection_path)
-	else:
-		account_collection = AccountResourceCollection.new()
+	var parsed_arguments := CmdlineUtils.get_parsed_args()
+	print("gateway parsed arguments = ", parsed_arguments)
+	if parsed_arguments.has("port"):
+		port = parsed_arguments[port]
+	add_experitation_timer()
+	load_account_collection()
+	add_game_server_listener()
 	start_gateway_server()
-	game_server_listener = GameServerListener.new()
-	game_server_listener.name = "GatewayBridge"
-	add_sibling(game_server_listener, true)
-	game_server_listener.start_game_server_listener()
-	
 
 
 func _exit_tree() -> void:
@@ -52,16 +43,16 @@ func _on_expiration_timer_timeout() -> void:
 	for peer_id: int in connected_peers:
 		var connection_time: float = Time.get_unix_time_from_system() - connected_peers[peer_id]["time"]
 		if connection_time > expiration_time:
-			server.disconnect_peer(peer_id)
+			gateway_serer.disconnect_peer(peer_id)
 			connected_peers.erase(peer_id)
 
 
 func start_gateway_server() -> void:
 	print("Start gateway server.")
-	server = WebSocketMultiplayerPeer.new()
+	gateway_serer = WebSocketMultiplayerPeer.new()
 	
-	multiplayer.peer_connected.connect(self._on_peer_connected)
-	multiplayer.peer_disconnected.connect(self._on_peer_disconnected)
+	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	
 	var server_certificate = load("res://source/common/server_certificate.crt")
 	var server_key = load("res://source/game_server/server_key.key")
@@ -69,8 +60,11 @@ func start_gateway_server() -> void:
 		print("Failed to load certificate or key.")
 		return
 	
-	server.create_server(PORT, "*", TLSOptions.server(server_key, server_certificate))
-	multiplayer.set_multiplayer_peer(server)
+	var error := gateway_serer.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
+	if error:
+		print(error_string(error))
+		return
+	multiplayer.set_multiplayer_peer(gateway_serer)
 
 
 func _on_peer_connected(peer_id: int) -> void:
@@ -164,9 +158,10 @@ func create_player_request(character_class: String) -> void:
 	connect_to_server_request.rpc_id(
 		peer_id,
 		random_token,
-		game_server_1.keys()[0],
-		game_server_1.values()[0],
+		game_server_list.keys()[0],
+		game_server_list.values()[0],
 	)
+
 
 @rpc("authority")
 func player_creation_result(_result: bool, _message: String) -> void:
@@ -207,3 +202,25 @@ func generate_random_token() -> String:
 	for i in range(12):
 		password += characters[randi()% len(characters)]
 	return password
+
+
+func add_experitation_timer() -> void:
+	var expiration_timer := Timer.new()
+	expiration_timer.autostart = true
+	expiration_timer.wait_time = 60.0
+	expiration_timer.timeout.connect(_on_expiration_timer_timeout)
+	add_child(expiration_timer)
+
+
+func load_account_collection() -> void:
+	if ResourceLoader.exists(account_collection_path):
+		account_collection = ResourceLoader.load(account_collection_path)
+	else:
+		account_collection = AccountResourceCollection.new()
+
+
+func add_game_server_listener() -> void:
+	game_server_listener = GameServerListener.new()
+	game_server_listener.name = "GatewayBridge"
+	add_sibling(game_server_listener, true)
+	game_server_listener.start_game_server_listener()

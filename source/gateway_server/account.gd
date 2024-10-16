@@ -1,7 +1,6 @@
 class_name AccountResource
 extends Resource
 
-static var last_id: int
 
 @export var id: int
 @export var username: String
