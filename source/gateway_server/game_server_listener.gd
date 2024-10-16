@@ -41,6 +41,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 	game_server_list.erase(peer_id)
 	print("Game Server: %d is disconnected from Gateway." % peer_id)
 
+
 @rpc("authority")
 func fetch_token(_token: String, _player_data: Dictionary) -> void:
 	pass

@@ -18,7 +18,6 @@ var player_list: Dictionary
 
 
 func start_server() -> void:
-	printerr()
 	print("Starting server.")
 	peer = WebSocketMultiplayerPeer.new()
 	

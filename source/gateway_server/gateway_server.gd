@@ -25,7 +25,6 @@ var account_collection_path := "res://source/gateway_server/account_collection.t
 
 
 func _ready() -> void:
-	printerr("salade")
 	var parsed_arguments := CmdlineUtils.get_parsed_args()
 	print("gateway parsed arguments = ", parsed_arguments)
 	if parsed_arguments.has("port"):
