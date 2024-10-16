@@ -4,8 +4,10 @@ extends Node
 ## consider using different service for commercial project.
 
 const GameServerListener = preload("res://source/gateway_server/game_server_listener.gd")
+const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/expiration_timer.gd")
 
-# Default port can be changed via cmdline arg by doing --port=8088
+# Default port;
+# can be changed via cmdline arg by doing --port=8088
 var port: int = 8088
 var gateway_serer: WebSocketMultiplayerPeer
 
@@ -17,19 +19,14 @@ var game_server_list := {
 
 var connected_peers: Dictionary
 
-# 15 minutes in seconds.
-var expiration_time: float = 900.0
+@onready var expiration_timer: ExpirationTimer = $ExpirationTimer
 
 var account_collection: AccountResourceCollection
 var account_collection_path := "res://source/gateway_server/account_collection.tres"
 
 
 func _ready() -> void:
-	var parsed_arguments := CmdlineUtils.get_parsed_args()
-	print("gateway parsed arguments = ", parsed_arguments)
-	if parsed_arguments.has("port"):
-		port = parsed_arguments[port]
-	add_experitation_timer()
+	expiration_timer.gateway = self
 	load_account_collection()
 	add_game_server_listener()
 	start_gateway_server()
@@ -37,15 +34,6 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	ResourceSaver.save(account_collection, account_collection_path)
-
-
-func _on_expiration_timer_timeout() -> void:
-	for peer_id: int in connected_peers:
-		var connection_time: float = Time.get_unix_time_from_system() - connected_peers[peer_id]["time"]
-		print(connection_time)
-		if connection_time > expiration_time:
-			gateway_serer.disconnect_peer(peer_id)
-			connected_peers.erase(peer_id)
 
 
 func start_gateway_server() -> void:
@@ -151,7 +139,7 @@ func create_player_request(character_class: String) -> void:
 	player_creation_result.rpc_id(peer_id, result, message)
 	var random_token := generate_random_token()
 	game_server_listener.fetch_token.rpc_id(
-		game_server_listener.game_server_list[0],
+		game_server_listener.game_server_list.keys()[0],
 		random_token,
 		{"username": player.display_name,
 		"class": player.character_class}
@@ -159,8 +147,9 @@ func create_player_request(character_class: String) -> void:
 	connect_to_server_request.rpc_id(
 		peer_id,
 		random_token,
-		game_server_list.keys()[0],
-		game_server_list.values()[0],
+		# Should be improved later
+		game_server_listener.game_server_list[game_server_listener.game_server_list.keys()[0]]["adress"],
+		game_server_listener.game_server_list[game_server_listener.game_server_list.keys()[0]]["port"]
 	)
 
 
@@ -205,15 +194,6 @@ func generate_random_token() -> String:
 	return password
 
 
-func add_experitation_timer() -> void:
-	var expiration_timer := Timer.new()
-	expiration_timer.autostart = true
-	# Check every minute
-	expiration_timer.wait_time = 60.0
-	expiration_timer.timeout.connect(_on_expiration_timer_timeout)
-	add_child(expiration_timer)
-
-
 func load_account_collection() -> void:
 	if ResourceLoader.exists(account_collection_path):
 		account_collection = ResourceLoader.load(account_collection_path)
@@ -226,3 +206,10 @@ func add_game_server_listener() -> void:
 	game_server_listener.name = "GatewayBridge"
 	add_sibling(game_server_listener, true)
 	game_server_listener.start_game_server_listener()
+
+
+func check_for_config() -> void:
+	var parsed_arguments := CmdlineUtils.get_parsed_args()
+	print("gateway parsed arguments = ", parsed_arguments)
+	if parsed_arguments.has("port"):
+		port = parsed_arguments[port]

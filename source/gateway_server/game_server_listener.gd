@@ -5,7 +5,7 @@ const PORT: int = 8089
 
 var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
-var game_server_list: Array[int]
+var game_server_list: Dictionary
 
 
 func _process(_delta: float) -> void:
@@ -34,12 +34,17 @@ func start_game_server_listener() -> void:
 
 func _on_peer_connected(peer_id: int) -> void:
 	print("Game Server: %d is connected to Gateway." % peer_id)
-	game_server_list.append(peer_id)
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
 	game_server_list.erase(peer_id)
 	print("Game Server: %d is disconnected from Gateway." % peer_id)
+
+
+@rpc("any_peer")
+func fetch_server_info(port: int, adress: String) -> void:
+	var peer_id := multiplayer_api.get_remote_sender_id()
+	game_server_list[peer_id] = {"port": port, "adress": adress}
 
 
 @rpc("authority")

@@ -12,10 +12,11 @@ func _ready() -> void:
 		print("instance_collection[*] = ", instance.instance_name)
 		if instance.instance_name == "Overworld":
 			default_instance = instance
-	multiplayer.peer_connected.connect(func(peer_id: int):
-		charge_new_instance.rpc_id(peer_id,
-		default_instance.map_path,
-		default_instance.charged_instances[0].name)
+	multiplayer.peer_connected.connect(
+		func(peer_id: int):
+			charge_new_instance.rpc_id(peer_id,
+			default_instance.map_path,
+			default_instance.charged_instances[0].name)
 	)
 	GameServer.start_server()
 
@@ -23,6 +24,7 @@ func _ready() -> void:
 @rpc("authority", "call_remote", "reliable", 0)
 func charge_new_instance(_map_path: String, _instance_id: String) -> void:
 	pass
+
 
 func _on_player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper) -> void:
 	var peer_id: int = player.name.to_int()
@@ -41,6 +43,7 @@ func _on_player_entered_warper(player: Player, current_instance: ServerInstance,
 		"target_id": warper.target_id
 	}
 
+
 func charge_instance(instance_resource: InstanceResource) -> void:
 	var new_instance := ServerInstance.new()
 	new_instance.name = str(new_instance.get_instance_id())
@@ -51,6 +54,7 @@ func charge_instance(instance_resource: InstanceResource) -> void:
 	instance_resource.charged_instances.append(new_instance)
 	if not new_instance.is_node_ready():
 		await new_instance.ready
+
 
 func set_instance_collection() -> void:
 	for file_path in FileUtils.get_all_file_at("res://source/common/resources/custom/instance/instance_collection/"):
