@@ -1,10 +1,11 @@
 > [!WARNING]  
-> This project is still in experimental state.  
-> What might interest you most is in [**source/common/main/main.gd**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/blob/main/source/common/main/main.gd)  
-> and this link which will explain to you how this organization is viable [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project).
+> This project is still in experimental state and core features are still missing.  
+> What might interest you most is this link [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project)  
+> which will explain to you how this organization is viable.
+
 # Godot Tiny MMO
 
-A small-scale MMO / MMORPG developed with Godot Engine 4.3, without relying on the built-in multiplayer nodes.  
+A small-scale MMO / MMORPG developed with Godot Engine 4.x - 4.3, without relying on the built-in multiplayer nodes.  
 
 Both the client and server are included within the same project, utilizing export presets to manage the separation.  
 These presets allow to export only the client-side without including server components, and vice versa.  
@@ -34,10 +35,8 @@ The current and planned features are listed below:
 - [ ] **Database Server**
 - [x] **Gateway Server** (move the authentication system from the game server to a dedicated one)
 
-Proposed network architecture for this demo (subject to change).  
-![diagram-export-dark](https://github.com/user-attachments/assets/0f1e917d-6ee2-411c-bd50-6aaf109c46e4#gh-dark-mode-only)
-![diagram-export-light](https://github.com/user-attachments/assets/be20b8df-c9b4-4adb-b32a-96013bdbea14#gh-light-mode-only)
-
+Proposed network architecture for this demo (subject to change):  
+![image](https://github.com/user-attachments/assets/a5a43a0a-c2fd-45f2-aa4f-49b5b97f9b72)
 
 
 You can track development and report issues by checking the [**open issues**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) page.
