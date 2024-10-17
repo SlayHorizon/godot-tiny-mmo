@@ -18,14 +18,6 @@ var player_list: Dictionary
 @onready var scene_multiplayer := multiplayer as SceneMultiplayer
 
 
-func _ready() -> void:
-	add_gateway_connector.call_deferred()
-	var parsed_arguments := CmdlineUtils.get_parsed_args()
-	print("Game Server parsed arguments = ", parsed_arguments)
-	if parsed_arguments.has("port"):
-		port = parsed_arguments[port]
-
-
 func start_server() -> void:
 	print("Starting server.")
 	game_server = WebSocketMultiplayerPeer.new()
@@ -48,7 +40,7 @@ func start_server() -> void:
 		print(error_string(error))
 		return
 	multiplayer.set_multiplayer_peer(game_server)
-	gateway.connect_to_gateway()
+	add_gateway_connector.call_deferred()
 
 
 func _on_peer_connected(peer_id: int) -> void:
@@ -97,3 +89,11 @@ func add_gateway_connector() -> void:
 			token_list[token] = player_data
 	)
 	add_sibling(gateway)
+	gateway.connect_to_gateway()
+
+
+func check_for_config() -> void:
+	var parsed_arguments := CmdlineUtils.get_parsed_args()
+	print("Game Server parsed arguments = ", parsed_arguments)
+	if parsed_arguments.has("port"):
+		port = parsed_arguments[port]
