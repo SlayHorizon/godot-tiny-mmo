@@ -17,8 +17,9 @@ func _ready() -> void:
 	$ServerSelection.hide()
 	$CharacterSelection.hide()
 	$CharacterCreation.hide()
-	#Client.connection_changed.connect(self._on_connection_changed)
-	await get_tree().create_timer(0.5).timeout
+	
+	await get_tree().create_timer(1.0).timeout
+	
 	gateway = GatewayClient.new()
 	gateway.name = "GatewayServer"
 	gateway.connection_changed.connect(_on_gateway_connection_changed)

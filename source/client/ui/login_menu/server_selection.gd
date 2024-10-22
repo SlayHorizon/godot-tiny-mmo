@@ -1,4 +1,4 @@
-# Fast script for proto
+# Fast script for prototyping
 extends Control
 
 

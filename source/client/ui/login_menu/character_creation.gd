@@ -18,6 +18,7 @@ var character_class := "knight":
 func _ready() -> void:
 	create_character_button.disabled = true
 	character_preview.sprite_frames = KNIGHT
+	character_preview.play(&"idle")
 	connect_class_buttons()
 
 
@@ -25,6 +26,7 @@ func _set_character_class(v: String) -> void:
 	character_class = v
 	class_description.text = v
 	character_preview.sprite_frames = get(character_class.to_upper())
+	character_preview.play(&"idle")
 
 
 func generate_random_username() -> String:
@@ -57,6 +59,10 @@ func connect_class_buttons() -> void:
 						.from_current()
 					if not child.has_focus():
 						child.get_node("CenterContainer/Control/AnimatedSprite2D").play("idle")
+			)
+			child.focus_exited.connect(
+				func():
+					child.get_node("CenterContainer/Control/AnimatedSprite2D").play("idle")
 			)
 
 
