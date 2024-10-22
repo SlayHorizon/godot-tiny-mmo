@@ -1,10 +1,9 @@
-class_name GatewayConnect
 extends Node
 
 
 signal login_result_received(result: bool, message: String)
 signal account_creation_result_received(result: bool, message: String)
-signal player_creation_result_received(result: bool, message: String)
+signal player_character_creation_result_received(result: bool, message: String)
 signal connection_changed(connected_to_server: bool)
 
 # Server configuration.
@@ -71,7 +70,9 @@ func _on_server_disconnected() -> void:
 
 @rpc("authority")
 func fetch_authentication_token(_token: String, _adress: String, _port: int) -> void:
-	pass
+	close_connection()
+	Client.authentication_token = _token
+	Client.connect_to_server(_adress, _port)
 
 
 @rpc("any_peer")
@@ -80,8 +81,8 @@ func login_request(_username: String, _password: String) -> void:
 
 
 @rpc("authority")
-func login_result(result: bool, message: String) -> void:
-	login_result_received.emit(result, message)
+func login_result(result_code: int) -> void:
+	login_result_received.emit(result_code)
 
 
 @rpc("any_peer")
@@ -90,21 +91,15 @@ func create_account_request(_username: String, _password: String, _is_guest: boo
 
 
 @rpc("authority")
-func account_creation_result(result: bool, message: String) -> void:
-	account_creation_result_received.emit(result, message)
+func account_creation_result(result_code: int) -> void:
+	account_creation_result_received.emit(result_code)
+
 
 @rpc("any_peer")
-func create_player_request(_character_class: String) -> void:
+func create_player_character_request(_character_data: Dictionary, _world_id: int) -> void:
 	pass
 
 
 @rpc("authority")
-func player_creation_result(result: bool, message: String) -> void:
-	player_creation_result_received.emit(result, message)
-
-
-@rpc("authority")
-func connect_to_server_request(token: String, adress: String, port: int) -> void:
-	close_connection()
-	Client.authentication_token = token
-	Client.connect_to_server(adress, port)
+func player_character_creation_result(result_code: int) -> void:
+	player_character_creation_result_received.emit(result_code)

@@ -2,8 +2,20 @@
 extends Node
 ## This gateway server is really cheap and minimal,
 ## consider using different service for commercial project.
+## Role of the gateway
+## 1. Public-Facing Layer (Security)
+## The Gateway serves as a public-facing layer,
+## acting as a shield for the more sensitive servers (Auth Server, Main Server).
+## It can handle rate limiting, basic request filtering,
+## DDoS protection, and ensure that only valid requests reach the Auth Server.
+## 2. Basic Validation:
+## The Gateway can perform basic request validation, like checking if required parameters are present,
+## before forwarding requests to other servers.
+## 3. Centralized Entry Point
+## For example, if you plan to offer multiple game services or features in the future,
+## the Gateway can route requests to the appropriate service without the client needing to know the full architecture.
 
-const GameServerListener = preload("res://source/gateway_server/game_server_listener.gd")
+const MasterClient = preload("res://source/gateway_server/master_client.gd")
 const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/expiration_timer.gd")
 
 # Default port;
@@ -11,29 +23,25 @@ const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/ex
 var port: int = 8088
 var gateway_serer: WebSocketMultiplayerPeer
 
-var game_server_listener: GameServerListener
-
-var game_server_list := {
-	"127.0.0.1": 8087,
-}
+var master_client: MasterClient
 
 var connected_peers: Dictionary
 
 @onready var expiration_timer: ExpirationTimer = $ExpirationTimer
 
-var account_collection: AccountResourceCollection
-var account_collection_path := "res://source/gateway_server/account_collection.tres"
-
 
 func _ready() -> void:
 	expiration_timer.gateway = self
-	load_account_collection()
-	add_game_server_listener()
+	master_client = MasterClient.new()
+	master_client.name = "GatewayManager"
+	master_client.account_creation_result_received.connect(
+		func(peer_id: int, result_code: int, data: Dictionary):
+			connected_peers[peer_id]["account"] = data
+			account_creation_result.rpc_id(peer_id, result_code)
+	)
+	master_client.gateway = self
+	add_sibling(master_client, true)
 	start_gateway_server()
-
-
-func _exit_tree() -> void:
-	ResourceSaver.save(account_collection, account_collection_path)
 
 
 func start_gateway_server() -> void:
@@ -72,13 +80,14 @@ func fetch_authentication_token(_token: String, _adress: String, _port: int) -> 
 
 
 @rpc("any_peer")
-func login_request(username: String, password: String) -> void:
-	var peer_id := multiplayer.get_remote_sender_id()
-	var result := validate_credentials(username, password)
-	if result:
-		connected_peers[peer_id]["account"] = account_collection[username]
-	var message := "Login successful." if result else "Invalid information."
-	login_result.rpc_id(peer_id, result, message)
+func login_request(_username: String, _password: String) -> void:
+	pass
+	#var peer_id := multiplayer.get_remote_sender_id()
+	#var result := validate_credentials(username, password)
+	#if result:
+		#connected_peers[peer_id]["account"] = account_collection[username]
+	#var message := "Login successful." if result else "Invalid information."
+	#login_result.rpc_id(peer_id, result, message)
 
 
 @rpc("authority")
@@ -89,123 +98,69 @@ func login_result(_result: bool, _message: String) -> void:
 @rpc("any_peer")
 func create_account_request(username: String, password: String, is_guest: bool) -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
-	var message := ""
-	
-	if username.is_empty():
-		message = "Username cannot be empty."
-	elif username.length() < 3:
-		message = "Username too short. Minimum 3 characters."
-	elif username.length() > 12:
-		message = "Username too long. Maximum 12 characters."
-	elif username_exists(username):
-		message = "Username already exists."
-	elif not is_guest:
-		if password.is_empty():
-			message = "Password cannot be empty."
-		elif password.length() < 6:
-			message = "Password too short. Minimum 6 characters."
-	else:
-		message = "Account creation successful."
-	
-	var is_valid := message == "Account creation successful."
-	if is_valid:
-		connected_peers[peer_id]["account"] = create_accout(username, password, is_guest)
-	account_creation_result.rpc_id(peer_id, is_valid, message)
-
-
-@rpc("authority")
-func account_creation_result(_result: bool, _message: String) -> void:
-	pass
-
-
-# Used to create the player's character.
-@rpc("any_peer")
-func create_player_request(character_class: String) -> void:
-	var peer_id := multiplayer.get_remote_sender_id()
-	var result := true
-	var message := "Character creation successful."
-	if not connected_peers.has(peer_id):
-		result = false
-		message = "Please create an account first."
-	if not character_class in ["knight", "rogue", "wizard"]:
-		result = false
-		message = "Wrong class. Please choose a valid class."
-	if not result:
-		player_creation_result.rpc_id(peer_id, result, message)
-		return
-	var player := PlayerResource.new(account_collection.next_player_id)
-	player.character_class = character_class
-	(connected_peers[peer_id]["account"] as AccountResource).player_collection.append(player)
-	player_creation_result.rpc_id(peer_id, result, message)
-	var random_token := generate_random_token()
-	game_server_listener.fetch_token.rpc_id(
-		game_server_listener.game_server_list.keys()[0],
-		random_token,
-		{"username": player.display_name,
-		"class": player.character_class}
-	)
-	connect_to_server_request.rpc_id(
-		peer_id,
-		random_token,
-		# Should be improved later
-		game_server_listener.game_server_list[game_server_listener.game_server_list.keys()[0]]["adress"],
-		game_server_listener.game_server_list[game_server_listener.game_server_list.keys()[0]]["port"]
-	)
-
-
-@rpc("authority")
-func player_creation_result(_result: bool, _message: String) -> void:
-	pass
-
-
-@rpc("authority")
-func connect_to_server_request(_token: String, _adress: String, _port: int) -> void:
-	pass
-
-
-func validate_credentials(username: String, password: String) -> bool:
-	if account_collection.collection.has(username):
-		if (account_collection.collection[username] as AccountResource).password == password:
-			return true
-	return false
-
-
-func username_exists(username: String) -> bool:
-	if account_collection.collection.has(username):
-		return true
-	return false
-
-
-func create_accout(username: String, password: String, is_guest: bool) -> AccountResource:
-	var account_id: int = account_collection.next_account_id
 	if is_guest:
-		password = generate_random_token()
-	var new_account := AccountResource.new(account_id, username, password)
-	account_collection.collection[username] = new_account
-	return new_account
-
-
-# Consider using a better token generator.
-func generate_random_token() -> String:
-	var characters := "abcdefghijklmnopqrstuvwxyz#$-+0123456789"
-	var password := ""
-	for i in range(12):
-		password += characters[randi()% len(characters)]
-	return password
-
-
-func load_account_collection() -> void:
-	if ResourceLoader.exists(account_collection_path):
-		account_collection = ResourceLoader.load(account_collection_path)
+		master_client.create_account_request.rpc_id(1, peer_id, username, password, is_guest)
+		return
+	var result_code: int = 0
+	if username.is_empty():
+		result_code = 1
+	elif username.length() < 3:
+		result_code = 2
+	elif username.length() > 12:
+		result_code = 3
+	elif password.is_empty():
+		result_code = 4
+	elif password.length() < 6:
+		result_code = 5
+	elif password.length() > 30:
+		result_code = 6
+	
+	if result_code == OK:
+		master_client.create_account_request.rpc_id(1, peer_id, username, password, is_guest)
 	else:
-		account_collection = AccountResourceCollection.new()
+		account_creation_result.rpc_id(peer_id, result_code)
 
 
-func add_game_server_listener() -> void:
-	game_server_listener = GameServerListener.new()
-	game_server_listener.name = "GatewayBridge"
-	add_sibling(game_server_listener, true)
-	game_server_listener.start_game_server_listener()
+@rpc("authority")
+func account_creation_result(_result_code: int) -> void:
+	pass
+
+
+@rpc("any_peer")
+func create_player_character_request(character_data: Dictionary, world_id: int) -> void:
+	var peer_id := multiplayer.get_remote_sender_id()
+	var result_code: int = 0
+	var character_name := ""
+	if not character_data.has_all(["name", "class"]):
+		result_code = 9
+	else:
+		character_name = character_data["name"]
+	if not connected_peers[peer_id].has("account"):
+		result_code = 7
+	elif not character_data["class"] in ["knight", "rogue", "wizard"]:
+		result_code = 8
+	elif character_name.is_empty():
+		result_code = 1
+	elif character_name.length() < 3:
+		result_code = 2
+	elif character_name.length() > 12:
+		result_code = 3
+
+	if result_code != OK:
+		player_character_creation_result.rpc_id(peer_id, result_code)
+	else:
+		master_client.create_player_character_request.rpc_id(
+			1,
+			world_id,
+			peer_id,
+			connected_peers[peer_id]["account"]["id"],
+			character_data,
+		)
+
+
+@rpc("authority")
+func player_character_creation_result(_result_code: int) -> void:
+	pass
 
 
 func check_for_config() -> void:
@@ -213,3 +168,12 @@ func check_for_config() -> void:
 	print("gateway parsed arguments = ", parsed_arguments)
 	if parsed_arguments.has("port"):
 		port = parsed_arguments[port]
+
+#
+#func is_valid_username(username: String) -> bool:
+	#if username.is_empty():
+		#message = "Username cannot be empty."
+	#elif username.length() < 3:
+		#message = "Username too short. Minimum 3 characters."
+	#elif username.length() > 12:
+		#message = "Username too long. Maximum 12 characters."

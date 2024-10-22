@@ -2,18 +2,19 @@ extends Node
 ## Server autoload. Keep it clean and minimal.
 ## Should only care about connection and authentication stuff.
 
-const GatewayConnector = preload("res://source/game_server/gateway_connector.gd")
+const MasterClient = preload("res://source/game_server/master_client.gd")
 
 # Default port
 var port: int = 8087
 var game_server: WebSocketMultiplayerPeer
 
-var gateway: GatewayConnector
+var master_client: MasterClient
 # {token: {"username": "salade", "class": "knight"}}
 var token_list: Dictionary
 
 var player_list: Dictionary
-
+var characters: Dictionary
+var next_id: int = 0
 ## For autocomplention
 @onready var scene_multiplayer := multiplayer as SceneMultiplayer
 
@@ -40,7 +41,7 @@ func start_server() -> void:
 		print(error_string(error))
 		return
 	multiplayer.set_multiplayer_peer(game_server)
-	add_gateway_connector.call_deferred()
+	add_master_client_connector.call_deferred()
 
 
 func _on_peer_connected(peer_id: int) -> void:
@@ -69,7 +70,7 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 	if is_valid_authentication_token(token):
 		scene_multiplayer.complete_auth(peer_id)
 		#player_list[peer_id] = dict
-		player_list[peer_id] = token_list[token]
+		player_list[peer_id] = characters[token_list[token]]
 		token_list.erase(token)
 	else:
 		game_server.disconnect_peer(peer_id)
@@ -81,15 +82,15 @@ func is_valid_authentication_token(token: String) -> bool:
 	return false
 
 
-func add_gateway_connector() -> void:
-	gateway = GatewayConnector.new()
-	gateway.name = "GatewayBridge"
-	gateway.token_received.connect(
-		func(token: String, player_data: Dictionary):
-			token_list[token] = player_data
+func add_master_client_connector() -> void:
+	master_client = MasterClient.new()
+	master_client.name = "WorldManager"
+	master_client.token_received.connect(
+		func(token: String, account_id: int):
+			token_list[token] = account_id
 	)
-	add_sibling(gateway)
-	gateway.connect_to_gateway()
+	add_sibling(master_client)
+	master_client.start_master_client()
 
 
 func check_for_config() -> void:

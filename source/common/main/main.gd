@@ -7,10 +7,12 @@ extends Node
 func _ready() -> void:
 	if OS.has_feature("client"):
 		start_as_client()
-	elif OS.has_feature("game_server"):
+	elif OS.has_feature("game-server"):
 		start_as_game_server()
-	elif OS.has_feature("gateway_server"):
+	elif OS.has_feature("gateway-server"):
 		start_as_gateway_server()
+	elif OS.has_feature("master-server"):
+		start_as_master_server()
 
 
 func start_as_client() -> void:
@@ -25,3 +27,7 @@ func start_as_game_server() -> void:
 
 func start_as_gateway_server() -> void:
 	get_tree().change_scene_to_file.call_deferred("res://source/gateway_server/gateway_server.tscn")
+
+
+func start_as_master_server() -> void:
+	get_tree().change_scene_to_file.call_deferred("res://source/master_server/master_server.tscn")
