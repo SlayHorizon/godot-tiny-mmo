@@ -32,8 +32,8 @@ The current and planned features are listed below:
 - [ ] **Entity interpolation** to handle rubber banding
 - [x] **Three different maps:** Overworld, Dungeon Entrance, Dungeon
 - [x] **Instance-based chat**
-- [ ] **Database Server**
-- [x] **Gateway Server** (move the authentication system from the game server to a dedicated one)
+- [x] **Master Server**
+- [x] **Gateway Server**
 
 Proposed network architecture for this demo (subject to change):  
 ![image](https://github.com/user-attachments/assets/a5a43a0a-c2fd-45f2-aa4f-49b5b97f9b72)
@@ -49,14 +49,15 @@ To get started with the project, follow these steps:
 3. In the Debug tab, select **Customizable Run Instance...**.
 4. Enable **Multiple Instances** and set the count to **3 or more**.
 5. Under **Feature Tags**, ensure you have:
-   - Exactly **one** "game_server" tag
-   - Exactly **one** "gateway_server" tag
+   - Exactly **one** "gateway-server" tag
+   - Exactly **one** "master-server" tag
+   - Exactly **one** "game-server" tag
    - At least **one or more** "client" tags
-6. (Optional) For game server and gateway server, add **--headless** under **Launch Arguments** to prevent empty windows.
-7. Run the project!
+7. (Optional) For game server and gateway server, add **--headless** under **Launch Arguments** to prevent empty windows.
+8. Run the project!
 
-Example setup for multiple instances:  
-<img width="1580" alt="multiple-instances-screenshot" src="https://github.com/user-attachments/assets/36225640-fddc-4570-95b5-4896cd2269f9">
+Setup example:  
+![image](https://github.com/user-attachments/assets/abd2fd11-bb29-4d90-92c4-a8aefcdd7d52)  
 
 ## 🤝 Contributing
 
