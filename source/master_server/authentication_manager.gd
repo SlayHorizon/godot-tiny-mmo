@@ -8,7 +8,7 @@ var database: Database
 
 
 func _ready() -> void:
-	pass # Replace with function body.
+	pass
 
 
 # Consider using a better token generator.

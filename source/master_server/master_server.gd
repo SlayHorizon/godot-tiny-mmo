@@ -22,9 +22,8 @@ func _ready() -> void:
 	world_manager.name = "WorldManager"
 	gateway_manager.name = "GatewayManager"
 	
-	world_manager.master_server = self
+	world_manager.master = self
 	gateway_manager.master = self
-	gateway_manager.authentication_manager = authentication_manager
 	authentication_manager.database = database
 	
 	deferred.call_deferred()

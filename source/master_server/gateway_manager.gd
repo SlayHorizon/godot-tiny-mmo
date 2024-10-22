@@ -1,7 +1,6 @@
 extends Node
 
 
-const AuthenticationManager = preload("res://source/master_server/authentication_manager.gd")
 const MasterServer = preload("res://source/master_server/master_server.gd")
 
 # Configuration
@@ -10,7 +9,6 @@ var port: int = 8064
 # References
 var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
-var authentication_manager: AuthenticationManager
 var master: MasterServer
 
 # Keep track of connected gateways
@@ -68,7 +66,7 @@ func fetch_authentication_token(_target_peer: int, _token: String, _adress: Stri
 #@rpc("any_peer")
 #func login_request(user_id: int, username: String, password: String) -> void:
 	#var gateway_id := multiplayer_api.get_remote_sender_id()
-	#var result := authentication_manager.database.validate_credentials(username, password)
+	#var result := master.authentication_manager.database.validate_credentials(username, password)
 	#login_result.rpc_id(gateway_id, user_id, result)
 #
 #
@@ -82,7 +80,7 @@ func create_account_request(peer_id: int, username: String, password: String, is
 	var gateway_id := multiplayer_api.get_remote_sender_id()
 	var result_code: int = 0
 	var return_data := {}
-	var result := authentication_manager.create_accout(username, password, is_guest)
+	var result := master.authentication_manager.create_accout(username, password, is_guest)
 	if result == null:
 		result_code = 30
 	else:

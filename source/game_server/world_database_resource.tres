@@ -1,0 +1,7 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bl4ooalryidpg"]
+
+[ext_resource type="Script" path="res://source/game_server/world_database_resource.gd" id="1_0a3f4"]
+
+[resource]
+script = ExtResource("1_0a3f4")
+player_database = {}
