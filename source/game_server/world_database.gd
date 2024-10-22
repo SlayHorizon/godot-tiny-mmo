@@ -1,5 +1,6 @@
 extends Node
 
+
 const Database = preload("res://source/game_server/world_database_resource.gd")
 
 #var data_folder_path: String = "user://data_server/"
@@ -17,6 +18,7 @@ func load_world_database() -> void:
 		database = ResourceLoader.load(database_file_path)
 	else:
 		database = Database.new()
+
 
 func save_world_database() -> void:
 	var error := ResourceSaver.save(database, database_file_path)

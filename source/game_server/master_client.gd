@@ -1,5 +1,6 @@
 extends Node
 
+const WorldServer = preload("res://source/game_server/autoloads/game_server.gd")
 
 signal token_received(token: String, player_data: Dictionary)
 
@@ -10,7 +11,7 @@ var adress := "127.0.0.1"
 var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
 var game_server_list: Dictionary
-
+var world_server: WorldServer
 
 func _ready() -> void:
 	pass # Replace with function body.
@@ -49,10 +50,10 @@ func _on_connection_succeeded() -> void:
 	fetch_server_info.rpc_id(
 		1,
 		{
-			"port": GameServer.port,
+			"port": world_server.port,
 			"adress": "127.0.0.1",
 			"rules": "None",
-			"population": GameServer.player_list.size()
+			"population": world_server.player_list.size()
 		}
 		)
 
@@ -77,11 +78,11 @@ func fetch_token(token: String, account_id: int) -> void:
 
 @rpc("authority")
 func create_player_character_request(gateway_id: int, peer_id: int, account_id: int, character_data: Dictionary) -> void:
-	if GameServer.characters.has(account_id) and GameServer.characters[account_id].size()  > 3: #max character per account
+	if world_server.characters.has(account_id) and world_server.characters[account_id].size()  > 3: #max character per account
 		player_character_creation_result.rpc_id(1, gateway_id, peer_id, account_id, 22)
 		return
-	GameServer.characters[account_id] = {GameServer.next_id: character_data}
-	GameServer.next_id += 1
+	world_server.characters[account_id] = {world_server.next_id: character_data}
+	world_server.next_id += 1
 	player_character_creation_result.rpc_id(1, gateway_id, peer_id, account_id, 0)
 
 

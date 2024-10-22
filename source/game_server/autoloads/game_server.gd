@@ -15,6 +15,7 @@ var token_list: Dictionary
 var player_list: Dictionary
 var characters: Dictionary
 var next_id: int = 0
+
 ## For autocomplention
 @onready var scene_multiplayer := multiplayer as SceneMultiplayer
 
@@ -41,7 +42,7 @@ func start_server() -> void:
 		print(error_string(error))
 		return
 	multiplayer.set_multiplayer_peer(game_server)
-	add_master_client_connector.call_deferred()
+	add_master_client.call_deferred()
 
 
 func _on_peer_connected(peer_id: int) -> void:
@@ -82,13 +83,14 @@ func is_valid_authentication_token(token: String) -> bool:
 	return false
 
 
-func add_master_client_connector() -> void:
+func add_master_client() -> void:
 	master_client = MasterClient.new()
 	master_client.name = "WorldManager"
 	master_client.token_received.connect(
 		func(token: String, account_id: int):
 			token_list[token] = account_id
 	)
+	master_client.world_server = self
 	add_sibling(master_client)
 	master_client.start_master_client()
 
