@@ -3,7 +3,7 @@ extends Node
 ## Should only care about connection and authentication stuff.
 
 # Loading classes
-const MasterClient = preload("res://source/game_server/master_client.gd")
+const MasterClient: Script = preload("res://source/world_server/master_client.gd")
 
 # Default port
 var port: int = 8087
@@ -33,7 +33,7 @@ func start_server() -> void:
 	scene_multiplayer.set_auth_callback(_authentication_callback)
 	
 	var server_certificate = load("res://source/common/server_certificate.crt")
-	var server_key = load("res://source/game_server/server_key.key")
+	var server_key = load("res://source/common/server_key.key")
 	if server_certificate == null or server_key == null:
 		print("Failed to load certificate or key.")
 		return

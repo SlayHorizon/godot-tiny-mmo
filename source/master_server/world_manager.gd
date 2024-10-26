@@ -32,7 +32,7 @@ func start_world_manager_server() -> void:
 	custom_peer.peer_disconnected.connect(self._on_peer_disconnected)
 	
 	var server_certificate = load("res://source/common/server_certificate.crt")
-	var server_key = load("res://source/game_server/server_key.key")
+	var server_key = load("res://source/common/server_key.key")
 	if server_certificate == null or server_key == null:
 		print("Failed to load certificate or key.")
 		return

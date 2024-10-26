@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cl8pijfirugv"]
 
-[ext_resource type="Script" path="res://source/game_server/instance/instance_server.gd" id="2_86vil"]
+[ext_resource type="Script" path="res://source/world_server/instance/instance_server.gd" id="2_86vil"]
 
 [node name="InstanceServer" type="SubViewport"]
 script = ExtResource("2_86vil")

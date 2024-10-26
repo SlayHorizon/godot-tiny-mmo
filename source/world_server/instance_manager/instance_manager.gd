@@ -2,10 +2,19 @@ class_name InstanceManagerServer
 extends SubViewportContainer
 
 
+# Loading classes
+const WorldServer: Script = preload("res://source/world_server/world_server.gd")
+
+# References
+var world_server: WorldServer
+
 var online_instances: Dictionary
 var instance_collection: Array[InstanceResource]
 
+
 func _ready() -> void:
+	world_server = WorldServer.new()
+	add_sibling(world_server)
 	set_instance_collection()
 	var default_instance: InstanceResource
 	for instance: InstanceResource in instance_collection:
@@ -18,7 +27,7 @@ func _ready() -> void:
 			default_instance.map_path,
 			default_instance.charged_instances[0].name)
 	)
-	GameServer.start_server()
+	world_server.start_server()
 
 
 @rpc("authority", "call_remote", "reliable", 0)
@@ -48,6 +57,7 @@ func charge_instance(instance_resource: InstanceResource) -> void:
 	var new_instance := ServerInstance.new()
 	new_instance.name = str(new_instance.get_instance_id())
 	new_instance.instance_resource = instance_resource
+	new_instance.world_server = world_server
 	add_child(new_instance, true)
 	new_instance.player_entered_warper.connect(self._on_player_entered_warper)
 	new_instance.load_map(instance_resource.map_path)

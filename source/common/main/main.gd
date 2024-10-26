@@ -22,7 +22,7 @@ func start_as_client() -> void:
 
 func start_as_game_server() -> void:
 	Engine.set_physics_ticks_per_second(20) # 60 by default
-	get_tree().change_scene_to_file.call_deferred("res://source/game_server/instance_manager/instance_manager.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/world_server/instance_manager/instance_manager.tscn")
 
 
 func start_as_gateway_server() -> void:

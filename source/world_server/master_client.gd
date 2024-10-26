@@ -2,7 +2,7 @@ extends Node
 
 
 # Loading classes 
-const WorldServer = preload("res://source/game_server/autoloads/game_server.gd")
+const WorldServer: Script = preload("res://source/world_server/world_server.gd")
 
 signal token_received(token: String, player_data: Dictionary)
 
@@ -10,10 +10,12 @@ signal token_received(token: String, player_data: Dictionary)
 var port: int = 8062
 var adress := "127.0.0.1"
 
-var custom_peer: WebSocketMultiplayerPeer
-var multiplayer_api: MultiplayerAPI
-var game_server_list: Dictionary
+# References
 var world_server: WorldServer
+var multiplayer_api: MultiplayerAPI
+var custom_peer: WebSocketMultiplayerPeer
+
+var game_server_list: Dictionary
 
 
 func _ready() -> void:
