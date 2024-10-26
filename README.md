@@ -1,16 +1,15 @@
 > [!WARNING]  
-> This project is still in experimental state and core features are still missing.  
-> What might interest you most is this link [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project)  
-> which will explain to you how this organization is viable.
+> This project is still in experimental state and core features are still missing (see [**#🚀 Features**](#-features)).  
 
 # Godot Tiny MMO
 
-A small-scale MMO / MMORPG developed with Godot Engine 4.x - 4.3, without relying on the built-in multiplayer nodes.  
+A simple web MMO / MMORPG developed with Godot Engine 4.x - 4.3, created without relying on the built-in multiplayer nodes.  
 
-Both the client and server are included within the same project, utilizing export presets to manage the separation.  
-These presets allow to export only the client-side without including server components, and vice versa.  
+This project contains both client and server within the same codebase.  
+Using custom export presets, you can easily separate client and server builds (see the Wiki: [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project)).  
+This setup enables client-only exports without server components and vice versa, keeping your builds optimized and secure.  
 
-Feel free to explore the project details in the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).
+For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).  
 
 ![project-demo-screenshot](https://github.com/user-attachments/assets/ca606976-fd9d-4a92-a679-1f65cb80513a)
 
@@ -22,6 +21,8 @@ The current and planned features are listed below:
 - [x] **Playable on web browser**
 - [X] **Authentication system** with Login UI
 - [ ] **Create account**
+- [x] **Can connect as guest**
+- [x] **Create character**
 - [ ] **Game version check**
 - [X] **Entity synchronization** for players within the same instance
 - [X] **Instance-based maps** with traveling between different map instances
