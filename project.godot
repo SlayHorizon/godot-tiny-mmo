@@ -19,7 +19,6 @@ config/icon="res://icon.svg"
 
 ClientEvents="*res://source/client/autoloads/client_events.gd"
 Client="*res://source/client/autoloads/client.gd"
-GameServer="*res://source/game_server/autoloads/game_server.gd"
 
 [debug]
 
@@ -40,9 +39,9 @@ folder_colors={
 "res://source/": "red",
 "res://source/client/": "blue",
 "res://source/common/": "yellow",
-"res://source/game_server/": "orange",
 "res://source/gateway_server/": "orange",
-"res://source/master_server/": "orange"
+"res://source/master_server/": "orange",
+"res://source/world_server/": "orange"
 }
 
 [input]
