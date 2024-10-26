@@ -2,6 +2,7 @@ extends Node
 ## Server autoload. Keep it clean and minimal.
 ## Should only care about connection and authentication stuff.
 
+# Loading classes
 const MasterClient = preload("res://source/game_server/master_client.gd")
 
 # Default port

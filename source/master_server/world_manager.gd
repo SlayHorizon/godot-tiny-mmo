@@ -1,17 +1,19 @@
 extends Node
 
 
-const MasterServer = preload("res://source/master_server/master_server.gd")
+# Loading classes 
+const MasterServer: Script = preload("res://source/master_server/master_server.gd")
 
 # Configuration
 var port: int = 8062
 
 # References
+var master: MasterServer
 var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
-var master: MasterServer
 
 var connected_game_servers: Dictionary
+
 
 func _ready() -> void:
 	start_world_manager_server()

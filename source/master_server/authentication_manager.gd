@@ -1,9 +1,10 @@
 extends Node
 
 
-const Database = preload("res://source/master_server/database.gd")
+# Loading classes
+const Database: Script = preload("res://source/master_server/database.gd")
 
-
+# References
 var database: Database
 
 

@@ -1,7 +1,8 @@
 extends Node
 
-const GatewayServer = preload("res://source/gateway_server/gateway_server.gd")
 
+# Loading classes 
+const GatewayServer = preload("res://source/gateway_server/gateway_server.gd")
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 
@@ -9,10 +10,13 @@ signal account_creation_result_received(user_id: int, result_code: int, data: Di
 var port: int = 8064
 var adress := "127.0.0.1"
 
+# References
+var gateway: GatewayServer
 var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
+
 var game_server_list: Dictionary
-var gateway: GatewayServer
+
 
 func _ready() -> void:
 	await get_tree().create_timer(1.5).timeout

@@ -1,5 +1,7 @@
 extends Node
 
+
+# Loading classes 
 const WorldServer = preload("res://source/game_server/autoloads/game_server.gd")
 
 signal token_received(token: String, player_data: Dictionary)
@@ -13,8 +15,9 @@ var multiplayer_api: MultiplayerAPI
 var game_server_list: Dictionary
 var world_server: WorldServer
 
+
 func _ready() -> void:
-	pass # Replace with function body.
+	pass
 
 
 func _process(_delta: float) -> void:

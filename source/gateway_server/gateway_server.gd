@@ -15,15 +15,17 @@ extends Node
 ## For example, if you plan to offer multiple game services or features in the future,
 ## the Gateway can route requests to the appropriate service without the client needing to know the full architecture.
 
+# Loading classes 
 const MasterClient = preload("res://source/gateway_server/master_client.gd")
 const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/expiration_timer.gd")
 
 # Default port;
 # can be changed via cmdline arg by doing --port=8088
 var port: int = 8088
-var gateway_serer: WebSocketMultiplayerPeer
 
+# References
 var master_client: MasterClient
+var gateway_serer: WebSocketMultiplayerPeer
 
 var connected_peers: Dictionary
 

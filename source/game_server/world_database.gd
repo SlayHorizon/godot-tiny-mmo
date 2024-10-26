@@ -1,6 +1,7 @@
 extends Node
 
 
+# Loading classes 
 const Database = preload("res://source/game_server/world_database_resource.gd")
 
 #var data_folder_path: String = "user://data_server/"

@@ -1,18 +1,17 @@
 extends Node
 
 
-const MasterServer = preload("res://source/master_server/master_server.gd")
+# Loading classes 
+const MasterServer: Script = preload("res://source/master_server/master_server.gd")
 
 # Configuration
 var port: int = 8064
 
 # References
+var master: MasterServer
 var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
-var master: MasterServer
 
-# Keep track of connected gateways
-var connected_gateways # Really useful?
 
 func _ready() -> void:
 	start_gateway_manager()
@@ -92,6 +91,7 @@ func create_account_request(peer_id: int, username: String, password: String, is
 @rpc("authority")
 func account_creation_result(_peer_id: int, _result_code: int, _data: Dictionary) -> void:
 	pass
+
 
 # Used to create the player's character.
 @rpc("any_peer")
