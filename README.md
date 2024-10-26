@@ -35,8 +35,8 @@ The current and planned features are listed below:
 - [x] **Master Server**
 - [x] **Gateway Server**
 
-Proposed network architecture for this demo (subject to change):  
-![image](https://github.com/user-attachments/assets/a5a43a0a-c2fd-45f2-aa4f-49b5b97f9b72)
+Current network architecture diagram for this demo (subject to change):  
+![architecture-diagram-26-10-2024](https://github.com/user-attachments/assets/78b1cce2-b070-4544-8ecd-59784743c7a0)
 
 
 You can track development and report issues by checking the [**open issues**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) page.
