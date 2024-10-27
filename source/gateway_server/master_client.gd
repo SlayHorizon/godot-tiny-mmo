@@ -9,6 +9,7 @@ signal account_creation_result_received(user_id: int, result_code: int, data: Di
 # Configuration
 var port: int = 8064
 var adress := "127.0.0.1"
+var certificate_path := "res://source/common/server_certificate.crt"
 
 # References
 var gateway: GatewayServer
@@ -32,7 +33,7 @@ func start_master_client() -> void:
 	print("Starting connection to the Master Server as Gateway Server.")
 	custom_peer = WebSocketMultiplayerPeer.new()
 	
-	var certificate := load("res://source/common/server_certificate.crt")
+	var certificate: X509Certificate = load(certificate_path)
 	if certificate == null:
 		print("Failed to load certificate.")
 		return

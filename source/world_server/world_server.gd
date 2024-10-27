@@ -7,12 +7,13 @@ const MasterClient: Script = preload("res://source/world_server/master_client.gd
 
 # Default port
 var port: int = 8087
-var game_server: WebSocketMultiplayerPeer
+var server: WebSocketMultiplayerPeer
 
+# References
 var master_client: MasterClient
+
 # {token: {"username": "salade", "class": "knight"}}
 var token_list: Dictionary
-
 var player_list: Dictionary
 var characters: Dictionary
 var next_id: int = 0
@@ -23,7 +24,7 @@ var next_id: int = 0
 
 func start_server() -> void:
 	print("Starting server.")
-	game_server = WebSocketMultiplayerPeer.new()
+	server = WebSocketMultiplayerPeer.new()
 	
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
@@ -38,11 +39,11 @@ func start_server() -> void:
 		print("Failed to load certificate or key.")
 		return
 	
-	var error := game_server.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
+	var error := server.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
 	if error:
 		print(error_string(error))
 		return
-	multiplayer.set_multiplayer_peer(game_server)
+	multiplayer.set_multiplayer_peer(server)
 	add_master_client.call_deferred()
 
 
@@ -75,7 +76,7 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 		player_list[peer_id] = characters[token_list[token]]
 		token_list.erase(token)
 	else:
-		game_server.disconnect_peer(peer_id)
+		server.disconnect_peer(peer_id)
 
 
 func is_valid_authentication_token(token: String) -> bool:

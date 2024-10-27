@@ -19,9 +19,10 @@ extends Node
 const MasterClient = preload("res://source/gateway_server/master_client.gd")
 const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/expiration_timer.gd")
 
-# Default port;
-# can be changed via cmdline arg by doing --port=8088
+# Configuration;
 var port: int = 8088
+var certificate_path := "res://source/common/server_certificate.crt"
+var key_path := "res://source/common/server_key.key"
 
 # References
 var master_client: MasterClient
@@ -34,6 +35,7 @@ var connected_peers: Dictionary
 
 func _ready() -> void:
 	expiration_timer.gateway = self
+	
 	master_client = MasterClient.new()
 	master_client.name = "GatewayManager"
 	master_client.account_creation_result_received.connect(
@@ -43,6 +45,9 @@ func _ready() -> void:
 	)
 	master_client.gateway = self
 	add_sibling(master_client, true)
+	
+	check_configuration()
+	
 	start_gateway_server()
 
 
@@ -53,8 +58,8 @@ func start_gateway_server() -> void:
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	
-	var server_certificate = load("res://source/common/server_certificate.crt")
-	var server_key = load("res://source/common/server_key.key")
+	var server_certificate: X509Certificate = load(certificate_path)
+	var server_key: CryptoKey = load(key_path)
 	if server_certificate == null or server_key == null:
 		print("Failed to load certificate or key.")
 		return
@@ -165,17 +170,28 @@ func player_character_creation_result(_result_code: int) -> void:
 	pass
 
 
-func check_for_config() -> void:
+func check_configuration() -> void:
 	var parsed_arguments := CmdlineUtils.get_parsed_args()
-	print("gateway parsed arguments = ", parsed_arguments)
+	print("Gateway parsed arguments = %s" % parsed_arguments)
+	
 	if parsed_arguments.has("port"):
-		port = parsed_arguments[port]
-
-#
-#func is_valid_username(username: String) -> bool:
-	#if username.is_empty():
-		#message = "Username cannot be empty."
-	#elif username.length() < 3:
-		#message = "Username too short. Minimum 3 characters."
-	#elif username.length() > 12:
-		#message = "Username too long. Maximum 12 characters."
+		port = parsed_arguments["port"]
+	
+	if parsed_arguments.has("config"):
+		var config_file := ConfigFile.new()
+		var error := config_file.load(parsed_arguments["config"])
+		if error != OK:
+			printerr(
+				"Config file failed to load at path %s with error: %s" \
+				% [parsed_arguments["config"], error_string(error)]
+			)
+		else:
+			port = config_file.get_value("gateway-server", "port", port)
+			certificate_path = config_file.get_value("gateway-server", "certificate_path", certificate_path)
+			key_path = config_file.get_value("gateway-server", "key_path", key_path)
+			
+			master_client.port = config_file.get_value("master-client", "port", master_client.port)
+			master_client.adress = config_file.get_value("master-client", "adress", master_client.adress)
+			master_client.certificate_path = config_file.get_value("master-client", "certificate_path", master_client.certificate_path)
+	else:
+		print("Using default configuration for Gateway Server.")
