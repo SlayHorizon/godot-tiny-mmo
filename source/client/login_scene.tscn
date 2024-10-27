@@ -1,8 +1,24 @@
-[gd_scene load_steps=4 format=3 uid="uid://u544jciafxaw"]
+[gd_scene load_steps=8 format=3 uid="uid://u544jciafxaw"]
 
 [ext_resource type="Script" path="res://source/client/login_scene.gd" id="1_y6dui"]
 [ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/login_menu/login_menu.tscn" id="2_1i7tk"]
 [ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/dungeon.tscn" id="2_w18df"]
+[ext_resource type="Texture2D" uid="uid://bq0ci85i7euf5" path="res://assets/skyboxes/cloudy_skybox_0.png" id="4_37qus"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_h2dk4"]
+panorama = ExtResource("4_37qus")
+
+[sub_resource type="Sky" id="Sky_sspcf"]
+sky_material = SubResource("PanoramaSkyMaterial_h2dk4")
+
+[sub_resource type="Environment" id="Environment_pffib"]
+background_mode = 2
+sky = SubResource("Sky_sspcf")
+sky_rotation = Vector3(3.14159, 0, 0)
+ambient_light_source = 3
+ambient_light_color = Color(0.52549, 0.784314, 0.862745, 1)
+ambient_light_sky_contribution = 0.6
+reflected_light_source = 2
 
 [node name="LoginScene" type="Node"]
 script = ExtResource("1_y6dui")
@@ -13,4 +29,12 @@ layer = 2
 [node name="LoginMenu" parent="CanvasLayer" instance=ExtResource("2_1i7tk")]
 
 [node name="LoginMap" parent="." instance=ExtResource("2_w18df")]
+visible = false
 position = Vector2(60, 120)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_pffib")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-1, 2.99004e-08, -8.21505e-08, 0, 0.939693, 0.34202, 8.74227e-08, 0.34202, -0.939692, 0, 0, 0)
+current = true
