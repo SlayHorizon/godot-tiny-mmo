@@ -6,6 +6,8 @@ const MasterServer: Script = preload("res://source/master_server/master_server.g
 
 # Configuration
 var port: int = 8064
+var certificate_path := "res://source/common/server_certificate.crt"
+var key_path := "res://source/common/server_key.key"
 
 # References
 var master: MasterServer
@@ -29,8 +31,8 @@ func start_gateway_manager() -> void:
 	custom_peer.peer_connected.connect(self._on_peer_connected)
 	custom_peer.peer_disconnected.connect(self._on_peer_disconnected)
 	
-	var server_certificate = load("res://source/common/server_certificate.crt")
-	var server_key = load("res://source/common/server_key.key")
+	var server_certificate: X509Certificate = load(certificate_path)
+	var server_key: CryptoKey = load(key_path)
 	if server_certificate == null or server_key == null:
 		print("Failed to load certificate or key.")
 		return
