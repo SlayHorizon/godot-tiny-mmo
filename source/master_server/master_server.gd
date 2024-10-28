@@ -1,13 +1,13 @@
 extends Node
 
 
-# Loading classes 
+# Class Dependencies
 const Database: Script = preload("res://source/master_server/database.gd")
 const WorldManager: Script = preload("res://source/master_server/world_manager.gd")
 const GatewayManager: Script = preload("res://source/master_server/gateway_manager.gd")
 const AuthenticationManager: Script = preload("res://source/master_server/authentication_manager.gd")
 
-# References
+# Master Components
 var database: Database
 var world_manager: WorldManager
 var gateway_manager: GatewayManager

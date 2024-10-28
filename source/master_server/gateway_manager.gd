@@ -1,22 +1,28 @@
 extends Node
 
 
-# Loading classes 
+# Class Dependencies
 const MasterServer: Script = preload("res://source/master_server/master_server.gd")
 
-# Configuration
+# Server Default Configuration
 var port: int = 8064
 var certificate_path := "res://source/common/server_certificate.crt"
 var key_path := "res://source/common/server_key.key"
 
-# References
+# Loaded server assets
+var server_certificate: X509Certificate
+var server_key: CryptoKey
+
+# Server Components
 var master: MasterServer
 var custom_peer: WebSocketMultiplayerPeer
 var multiplayer_api: MultiplayerAPI
 
 
 func _ready() -> void:
-	start_gateway_manager()
+	if load_server_configuration("gateway-manager"):
+		print("Starting GatewayManager on port %d" % port)
+		start_server()
 
 
 func _process(_delta: float) -> void:
@@ -24,22 +30,47 @@ func _process(_delta: float) -> void:
 		multiplayer_api.poll()
 
 
-func start_gateway_manager() -> void:
-	print("Starting Gateway Manager server.")
+# Parses command-line arguments, loads configuration settings, and loads certificate/key files
+func load_server_configuration(section_key: String) -> bool:
+	var parsed_arguments := CmdlineUtils.get_parsed_args()
+	print("Parsed arguments: %s" % parsed_arguments)
+	
+	# Load configuration from specified config file if available
+	if parsed_arguments.has("config"):
+		var config_file := ConfigFile.new()
+		var error := config_file.load(parsed_arguments["config"])
+		if error != OK:
+			printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
+		else:
+			port = config_file.get_value(section_key, "port", port)
+			certificate_path = config_file.get_value(section_key, "certificate_path", certificate_path)
+			key_path = config_file.get_value(section_key, "key_path", key_path)
+	
+	# Load server certificate and key for TLS connection
+	server_certificate = load(certificate_path)
+	server_key = load(key_path)
+	
+	# Validate loaded assets
+	if server_certificate == null or server_key == null:
+		printerr("Failed to load certificate or key. Check paths: %s, %s" % [certificate_path, key_path])
+		return false
+	return true
+
+
+# Initializes and starts the WebSocket server with the preloaded parameters
+func start_server() -> void:
 	custom_peer = WebSocketMultiplayerPeer.new()
 	
+	# Connect peer signals
 	custom_peer.peer_connected.connect(self._on_peer_connected)
 	custom_peer.peer_disconnected.connect(self._on_peer_disconnected)
 	
-	var server_certificate: X509Certificate = load(certificate_path)
-	var server_key: CryptoKey = load(key_path)
-	if server_certificate == null or server_key == null:
-		print("Failed to load certificate or key.")
-		return
-	
+	# Create WebSocket server with TLS options
 	custom_peer.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
+	
+	# Set up multiplayer API with the custom peer
 	multiplayer_api = MultiplayerAPI.create_default_interface()
-	get_tree().set_multiplayer(multiplayer_api, self.get_path()) 
+	get_tree().set_multiplayer(multiplayer_api, self.get_path())
 	multiplayer_api.multiplayer_peer = custom_peer
 
 

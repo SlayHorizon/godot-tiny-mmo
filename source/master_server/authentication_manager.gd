@@ -1,7 +1,7 @@
 extends Node
 
 
-# Loading classes
+# Class Dependencies
 const Database: Script = preload("res://source/master_server/database.gd")
 
 # References
