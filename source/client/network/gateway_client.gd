@@ -6,10 +6,10 @@ signal account_creation_result_received(result: bool, message: String)
 signal player_character_creation_result_received(result: bool, message: String)
 signal connection_changed(connected_to_server: bool)
 
-# Server configuration.
-## Server's adress. Use "127.0.0.1" or "localhost" to test locally.
+# Gateway server info
+## Server's adress. Use "127.0.0.1" or "localhost" to test locally
 const ADDRESS := "127.0.0.1" 
-## The port the server listens to.
+## The port the server listens to
 const PORT: int = 8088
 
 var peer: WebSocketMultiplayerPeer
@@ -21,28 +21,38 @@ var is_connected_to_server: bool = false:
 		connection_changed.emit(value)
 
 
+func _ready() -> void:
+	pass
+
+
 func connect_to_gateway() -> void:
 	print("Starting connection to the gateway server.")
-	peer = WebSocketMultiplayerPeer.new()
 	
 	multiplayer.connected_to_server.connect(_on_connection_succeeded)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-
-	var certificate = load("res://test_config/server_certificate.crt")
-	if certificate == null:
-		print("Failed to load certificate.")
+	
+	var certificate := X509Certificate.new()
+	var error := certificate.load("res://test_config/server_certificate.crt")
+	if error != OK:
+		printerr("Failed to load certificate with error: %s" % error_string(error))
 		return
+	
+	peer = WebSocketMultiplayerPeer.new()
 
-	peer.create_client("wss://" + ADDRESS + ":" + str(PORT), TLSOptions.client_unsafe(certificate))
+	error = peer.create_client("wss://" + ADDRESS + ":" + str(PORT), TLSOptions.client_unsafe(certificate))
+	if error != OK:
+		printerr("create_client() error on gateway_client.gd: %s" % error_string(error))
+		return
+	
 	multiplayer.set_multiplayer_peer(peer)
 
 
 # Closes the active connection and resets the peer.
 func close_connection() -> void:
-	multiplayer.connected_to_server.disconnect(self._on_connection_succeeded)
-	multiplayer.connection_failed.disconnect(self._on_connection_failed)
-	multiplayer.server_disconnected.disconnect(self._on_server_disconnected)
+	multiplayer.connected_to_server.disconnect(_on_connection_succeeded)
+	multiplayer.connection_failed.disconnect(_on_connection_failed)
+	multiplayer.server_disconnected.disconnect(_on_server_disconnected)
 	
 	multiplayer.set_multiplayer_peer(null)
 	peer.close()

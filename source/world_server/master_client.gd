@@ -29,25 +29,27 @@ func _process(_delta: float) -> void:
 
 func start_master_client() -> void:
 	print("Starting connection to the Master Server as Gateway Server.")
-	custom_peer = WebSocketMultiplayerPeer.new()
 	
-	var certificate := load("res://test_config/server_certificate.crt")
-	if certificate == null:
-		print("Failed to load certificate.")
+	var certificate := X509Certificate.new()
+	var error := certificate.load("res://test_config/server_certificate.crt")
+	if error != OK:
+		printerr("Failed to load certificate with error: %s" % error_string(error))
 		return
 	
-	var error := custom_peer.create_client("wss://" + adress + ":" + str(port), TLSOptions.client_unsafe(certificate))
+	custom_peer = WebSocketMultiplayerPeer.new()
+	
+	error = custom_peer.create_client("wss://" + adress + ":" + str(port), TLSOptions.client_unsafe(certificate))
 	if error:
-		print(error_string(error))
+		print("create_client() error on world_server/master_client.gd: %s" % error_string(error))
 		return
 	
 	multiplayer_api = MultiplayerAPI.create_default_interface()
 	get_tree().set_multiplayer(multiplayer_api, self.get_path()) 
 	multiplayer_api.multiplayer_peer = custom_peer
 	
-	multiplayer.connected_to_server.connect(_on_connection_succeeded)
-	multiplayer.connection_failed.connect(_on_connection_failed)
-	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	multiplayer_api.connected_to_server.connect(_on_connection_succeeded)
+	multiplayer_api.connection_failed.connect(_on_connection_failed)
+	multiplayer_api.server_disconnected.connect(_on_server_disconnected)
 
 
 func _on_connection_succeeded() -> void:
@@ -64,7 +66,7 @@ func _on_connection_succeeded() -> void:
 
 
 func _on_connection_failed() -> void:
-	print("Failed to connect to the Gateway as Game Server.")
+	print("Failed to connect to the MasterServer as WorldServer.")
 
 
 func _on_server_disconnected() -> void:

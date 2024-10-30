@@ -24,6 +24,19 @@ var next_id: int = 0
 
 func start_server() -> void:
 	print("Starting server.")
+	
+	var certificate := X509Certificate.new()
+	var error := certificate.load("res://test_config/server_certificate.crt")
+	if error != OK:
+		printerr("Failed to load certificate with error: %s" % error_string(error))
+		return
+	
+	var key := CryptoKey.new()
+	error = key.load("res://test_config/server_key.key")
+	if error != OK:
+		printerr("Failed loading key with error: %s" % error_string(error))
+		return
+	
 	server = WebSocketMultiplayerPeer.new()
 	
 	multiplayer.peer_connected.connect(_on_peer_connected)
@@ -33,15 +46,9 @@ func start_server() -> void:
 	scene_multiplayer.peer_authentication_failed.connect(_on_peer_authentication_failed)
 	scene_multiplayer.set_auth_callback(_authentication_callback)
 	
-	var server_certificate = load("res://test_config/server_certificate.crt")
-	var server_key = load("res://test_config/server_key.key")
-	if server_certificate == null or server_key == null:
-		print("Failed to load certificate or key.")
-		return
-	
-	var error := server.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
+	error = server.create_server(port, "*", TLSOptions.server(key, certificate))
 	if error:
-		print(error_string(error))
+		print("create_server() failed with error: %s" % error_string(error))
 		return
 	multiplayer.set_multiplayer_peer(server)
 	add_master_client.call_deferred()

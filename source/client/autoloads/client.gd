@@ -5,12 +5,6 @@ extends Node
 signal connection_changed(connected_to_server: bool)
 signal authentication_requested
 
-# Server configuration.
-## Server's adress. Use "127.0.0.1" or "localhost" to test locally.
-const ADDRESS := "127.0.0.1" 
-## The port the server listens to.
-const PORT: int = 8087
-
 var peer: WebSocketMultiplayerPeer
 var peer_id: int
 
@@ -19,7 +13,6 @@ var is_connected_to_server: bool = false:
 		is_connected_to_server = value
 		connection_changed.emit(value)
 
-#var authentication_data := {"username": "Player", "class": "knight"}
 var authentication_token: String
 
 ## For autocomplention
@@ -28,22 +21,28 @@ var authentication_token: String
 
 func connect_to_server(adress: String, port: int) -> void:
 	print("Starting connection to the game server.")
-	peer = WebSocketMultiplayerPeer.new()
 	
 	multiplayer.connected_to_server.connect(_on_connection_succeeded)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	
-	scene_multiplayer.peer_authenticating.connect(self._on_peer_authenticating)
-	scene_multiplayer.peer_authentication_failed.connect(self._on_peer_authentication_failed)
+	scene_multiplayer.peer_authenticating.connect(_on_peer_authenticating)
+	scene_multiplayer.peer_authentication_failed.connect(_on_peer_authentication_failed)
 	scene_multiplayer.set_auth_callback(authentication_call)
 	
-	var certificate = load("res://test_config/server_certificate.crt")
-	if certificate == null:
-		print("Failed to load certificate.")
+	var certificate := X509Certificate.new()
+	var error := certificate.load("res://test_config/server_certificate.crt")
+	if error != OK:
+		printerr("Failed to load certificate with error: %s" % error_string(error))
 		return
-
-	peer.create_client("wss://" + adress + ":" + str(port), TLSOptions.client_unsafe(certificate))
+	
+	peer = WebSocketMultiplayerPeer.new()
+	
+	error = peer.create_client("wss://" + adress + ":" + str(port), TLSOptions.client_unsafe(certificate))
+	if error != OK:
+		printerr("create_client() error on client.gd: %s" % error_string(error))
+		return
+	
 	multiplayer.set_multiplayer_peer(peer)
 
 
