@@ -5,7 +5,7 @@ extends Node
 const MasterServer: Script = preload("res://source/master_server/master_server.gd")
 
 # Server Default Configuration
-var port: int = 8062
+var port: int = 8042
 var certificate_path := "res://source/common/server_certificate.crt"
 var key_path := "res://source/common/server_key.key"
 
@@ -69,7 +69,9 @@ func start_server() -> void:
 	custom_peer.peer_disconnected.connect(self._on_peer_disconnected)
 	
 	# Create WebSocket server with TLS options
-	custom_peer.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
+	var error := custom_peer.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
+	if error != OK:
+		printerr(error_string(error))
 	
 	# Set up multiplayer API with the custom peer
 	multiplayer_api = MultiplayerAPI.create_default_interface()

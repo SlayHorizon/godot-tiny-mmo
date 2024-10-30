@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://source/client/login_scene.gd" id="1_y6dui"]
 [ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/login_menu/login_menu.tscn" id="2_1i7tk"]
 [ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/dungeon.tscn" id="2_w18df"]
-[ext_resource type="Texture2D" uid="uid://bq0ci85i7euf5" path="res://assets/skyboxes/cloudy_skybox_0.png" id="4_37qus"]
+[ext_resource type="Texture2D" uid="uid://bdqnowxsb7oqx" path="res://assets/skyboxes/mountain_skybox_0.png" id="4_ckx75"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_h2dk4"]
-panorama = ExtResource("4_37qus")
+panorama = ExtResource("4_ckx75")
 
 [sub_resource type="Sky" id="Sky_sspcf"]
 sky_material = SubResource("PanoramaSkyMaterial_h2dk4")
@@ -36,5 +36,5 @@ position = Vector2(60, 120)
 environment = SubResource("Environment_pffib")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-1, 2.99004e-08, -8.21505e-08, 0, 0.939693, 0.34202, 8.74227e-08, 0.34202, -0.939692, 0, 0, 0)
+transform = Transform3D(0.617036, -0.0603729, -0.784615, 0, 0.997053, -0.076719, 0.786935, 0.0473384, 0.615217, 0, 0, 0)
 current = true
