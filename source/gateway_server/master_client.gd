@@ -7,9 +7,9 @@ const GatewayServer = preload("res://source/gateway_server/gateway_server.gd")
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 
 # Configuration
-var port: int = 8064
+var port: int = 8044
 var adress := "127.0.0.1"
-var certificate_path := "res://source/common/server_certificate.crt"
+var certificate_path := "res://test_config/server_certificate.crt"
 
 # References
 var gateway: GatewayServer

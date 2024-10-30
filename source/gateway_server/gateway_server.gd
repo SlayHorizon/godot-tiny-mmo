@@ -21,8 +21,8 @@ const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/ex
 
 # Configuration;
 var port: int = 8088
-var certificate_path := "res://source/common/server_certificate.crt"
-var key_path := "res://source/common/server_key.key"
+var certificate_path := "res://test_config/server_certificate.crt"
+var key_path := "res://test_config/server_key.key"
 
 # References
 var master_client: MasterClient
@@ -176,7 +176,7 @@ func check_configuration() -> void:
 	
 	if parsed_arguments.has("port"):
 		port = parsed_arguments["port"]
-	
+	# --config=res://test_config/gateway_config.cfg
 	if parsed_arguments.has("config"):
 		var config_file := ConfigFile.new()
 		var error := config_file.load(parsed_arguments["config"])

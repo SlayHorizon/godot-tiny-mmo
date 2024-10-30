@@ -6,8 +6,8 @@ const MasterServer: Script = preload("res://source/master_server/master_server.g
 
 # Server Default Configuration
 var port: int = 8042
-var certificate_path := "res://source/common/server_certificate.crt"
-var key_path := "res://source/common/server_key.key"
+var certificate_path := "res://test_config/server_certificate.crt"
+var key_path := "res://test_config/server_key.key"
 
 # Loaded server assets
 var server_certificate: X509Certificate

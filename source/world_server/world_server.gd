@@ -33,8 +33,8 @@ func start_server() -> void:
 	scene_multiplayer.peer_authentication_failed.connect(_on_peer_authentication_failed)
 	scene_multiplayer.set_auth_callback(_authentication_callback)
 	
-	var server_certificate = load("res://source/common/server_certificate.crt")
-	var server_key = load("res://source/common/server_key.key")
+	var server_certificate = load("res://test_config/server_certificate.crt")
+	var server_key = load("res://test_config/server_key.key")
 	if server_certificate == null or server_key == null:
 		print("Failed to load certificate or key.")
 		return

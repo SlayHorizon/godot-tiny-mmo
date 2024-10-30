@@ -29,7 +29,7 @@ func connect_to_gateway() -> void:
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
-	var certificate = load("res://source/common/server_certificate.crt")
+	var certificate = load("res://test_config/server_certificate.crt")
 	if certificate == null:
 		print("Failed to load certificate.")
 		return

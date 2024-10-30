@@ -7,7 +7,7 @@ const WorldServer: Script = preload("res://source/world_server/world_server.gd")
 signal token_received(token: String, player_data: Dictionary)
 
 # Configuration
-var port: int = 8062
+var port: int = 8042
 var adress := "127.0.0.1"
 
 # References
@@ -31,7 +31,7 @@ func start_master_client() -> void:
 	print("Starting connection to the Master Server as Gateway Server.")
 	custom_peer = WebSocketMultiplayerPeer.new()
 	
-	var certificate := load("res://source/common/server_certificate.crt")
+	var certificate := load("res://test_config/server_certificate.crt")
 	if certificate == null:
 		print("Failed to load certificate.")
 		return

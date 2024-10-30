@@ -41,7 +41,8 @@ folder_colors={
 "res://source/common/": "yellow",
 "res://source/gateway_server/": "orange",
 "res://source/master_server/": "orange",
-"res://source/world_server/": "orange"
+"res://source/world_server/": "orange",
+"res://test_config/": "purple"
 }
 
 [input]
@@ -89,7 +90,7 @@ chat={
 
 [network]
 
-tls/certificate_bundle_override="res://source/common/server_certificate.crt"
+tls/certificate_bundle_override="res://test_config/server_certificate.crt"
 
 [rendering]
 
