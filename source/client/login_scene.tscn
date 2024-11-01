@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://u544jciafxaw"]
+[gd_scene load_steps=7 format=3 uid="uid://u544jciafxaw"]
 
 [ext_resource type="Script" path="res://source/client/login_scene.gd" id="1_y6dui"]
 [ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/login_menu/login_menu.tscn" id="2_1i7tk"]
-[ext_resource type="PackedScene" uid="uid://bvpi2a6j7k8s0" path="res://source/common/maps/dungeon.tscn" id="2_w18df"]
 [ext_resource type="Texture2D" uid="uid://bdqnowxsb7oqx" path="res://assets/skyboxes/mountain_skybox_0.png" id="4_ckx75"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_h2dk4"]
@@ -28,13 +27,7 @@ layer = 2
 
 [node name="LoginMenu" parent="CanvasLayer" instance=ExtResource("2_1i7tk")]
 
-[node name="LoginMap" parent="." instance=ExtResource("2_w18df")]
-visible = false
-position = Vector2(60, 120)
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_pffib")
-
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.617036, -0.0603729, -0.784615, 0, 0.997053, -0.076719, 0.786935, 0.0473384, 0.615217, 0, 0, 0)
+environment = SubResource("Environment_pffib")
 current = true
