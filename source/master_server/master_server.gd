@@ -2,10 +2,10 @@ extends Node
 
 
 # Class Dependencies
-const Database: Script = preload("res://source/master_server/database.gd")
-const WorldManager: Script = preload("res://source/master_server/world_manager.gd")
-const GatewayManager: Script = preload("res://source/master_server/gateway_manager.gd")
-const AuthenticationManager: Script = preload("res://source/master_server/authentication_manager.gd")
+const Database: GDScript = preload("res://source/master_server/components/database.gd")
+const WorldManager: GDScript = preload("res://source/master_server/components/world_manager.gd")
+const GatewayManager: GDScript = preload("res://source/master_server/components/gateway_manager.gd")
+const AuthenticationManager: GDScript = preload("res://source/master_server/components/authentication_manager.gd")
 
 # Master Components
 var database: Database

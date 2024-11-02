@@ -14,20 +14,20 @@ var instance_collection: Array[InstanceResource]
 
 func _ready() -> void:
 	world_server = WorldServer.new()
-	add_sibling(world_server)
+	add_sibling.call_deferred(world_server)
 	set_instance_collection()
 	var default_instance: InstanceResource
 	for instance: InstanceResource in instance_collection:
 		print("instance_collection[*] = ", instance.instance_name)
 		if instance.instance_name == "Overworld":
 			default_instance = instance
-	multiplayer.peer_connected.connect(
+	await world_server.ready
+	world_server.multiplayer_api.peer_connected.connect(
 		func(peer_id: int):
 			charge_new_instance.rpc_id(peer_id,
 			default_instance.map_path,
 			default_instance.charged_instances[0].name)
 	)
-	world_server.start_server()
 
 
 @rpc("authority", "call_remote", "reliable", 0)

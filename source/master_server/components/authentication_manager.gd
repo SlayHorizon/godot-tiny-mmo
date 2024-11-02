@@ -2,7 +2,7 @@ extends Node
 
 
 # Class Dependencies
-const Database: Script = preload("res://source/master_server/database.gd")
+const Database: Script = preload("res://source/master_server/components/database.gd")
 
 # References
 var database: Database

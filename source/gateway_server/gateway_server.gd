@@ -1,5 +1,4 @@
-# Feel free to refactor this
-extends Node
+extends CustomServer
 ## This gateway server is really cheap and minimal,
 ## consider using different service for commercial project.
 ## Role of the gateway
@@ -19,14 +18,8 @@ extends Node
 const MasterClient = preload("res://source/gateway_server/master_client.gd")
 const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/expiration_timer.gd")
 
-# Configuration;
-var port: int = 8088
-var certificate_path := "res://test_config/server_certificate.crt"
-var key_path := "res://test_config/server_key.key"
-
 # References
 var master_client: MasterClient
-var gateway_serer: WebSocketMultiplayerPeer
 
 var connected_peers: Dictionary
 
@@ -44,31 +37,10 @@ func _ready() -> void:
 			account_creation_result.rpc_id(peer_id, result_code)
 	)
 	master_client.gateway = self
-	add_sibling(master_client, true)
+	add_sibling.call_deferred(master_client, true)
 	
-	check_configuration()
-	
-	start_gateway_server()
-
-
-func start_gateway_server() -> void:
-	print("Start gateway server.")
-	gateway_serer = WebSocketMultiplayerPeer.new()
-	
-	multiplayer.peer_connected.connect(_on_peer_connected)
-	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
-	
-	var server_certificate: X509Certificate = load(certificate_path)
-	var server_key: CryptoKey = load(key_path)
-	if server_certificate == null or server_key == null:
-		print("Failed to load certificate or key.")
-		return
-	
-	var error := gateway_serer.create_server(port, "*", TLSOptions.server(server_key, server_certificate))
-	if error:
-		print(error_string(error))
-		return
-	multiplayer.set_multiplayer_peer(gateway_serer)
+	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
+	start_server()
 
 
 func _on_peer_connected(peer_id: int) -> void:
@@ -168,30 +140,3 @@ func create_player_character_request(character_data: Dictionary, world_id: int) 
 @rpc("authority")
 func player_character_creation_result(_result_code: int) -> void:
 	pass
-
-
-func check_configuration() -> void:
-	var parsed_arguments := CmdlineUtils.get_parsed_args()
-	print("Gateway parsed arguments = %s" % parsed_arguments)
-	
-	if parsed_arguments.has("port"):
-		port = parsed_arguments["port"]
-	# --config=res://test_config/gateway_config.cfg
-	if parsed_arguments.has("config"):
-		var config_file := ConfigFile.new()
-		var error := config_file.load(parsed_arguments["config"])
-		if error != OK:
-			printerr(
-				"Config file failed to load at path %s with error: %s" \
-				% [parsed_arguments["config"], error_string(error)]
-			)
-		else:
-			port = config_file.get_value("gateway-server", "port", port)
-			certificate_path = config_file.get_value("gateway-server", "certificate_path", certificate_path)
-			key_path = config_file.get_value("gateway-server", "key_path", key_path)
-			
-			master_client.port = config_file.get_value("master-client", "port", master_client.port)
-			master_client.adress = config_file.get_value("master-client", "adress", master_client.adress)
-			master_client.certificate_path = config_file.get_value("master-client", "certificate_path", master_client.certificate_path)
-	else:
-		print("Using default configuration for Gateway Server.")

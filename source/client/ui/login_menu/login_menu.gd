@@ -24,7 +24,7 @@ func _ready() -> void:
 	gateway.name = "GatewayServer"
 	gateway.connection_changed.connect(_on_gateway_connection_changed)
 	get_node("/root").add_child(gateway, true)
-	gateway.connect_to_gateway()
+	#gateway.connect_to_gateway()
 
 
 func _on_gateway_connection_changed(connection_status: bool) -> void:

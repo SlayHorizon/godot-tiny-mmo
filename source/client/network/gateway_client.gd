@@ -1,4 +1,4 @@
-extends Node
+extends CustomClient
 
 
 signal login_result_received(result: bool, message: String)
@@ -6,13 +6,7 @@ signal account_creation_result_received(result: bool, message: String)
 signal player_character_creation_result_received(result: bool, message: String)
 signal connection_changed(connected_to_server: bool)
 
-# Gateway server info
-## Server's adress. Use "127.0.0.1" or "localhost" to test locally
-const ADDRESS := "127.0.0.1" 
-## The port the server listens to
-const PORT: int = 8088
-
-var peer: WebSocketMultiplayerPeer
+var config_file: ConfigFile
 var peer_id: int
 
 var is_connected_to_server: bool = false:
@@ -22,40 +16,13 @@ var is_connected_to_server: bool = false:
 
 
 func _ready() -> void:
-	pass
+	load_client_configuration("gateway-client", "res://test_config/client_config.cfg")
+	start_client()
 
 
-func connect_to_gateway() -> void:
-	print("Starting connection to the gateway server.")
-	
-	multiplayer.connected_to_server.connect(_on_connection_succeeded)
-	multiplayer.connection_failed.connect(_on_connection_failed)
-	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	
-	var certificate := X509Certificate.new()
-	var error := certificate.load("res://test_config/server_certificate.crt")
-	if error != OK:
-		printerr("Failed to load certificate with error: %s" % error_string(error))
-		return
-	
-	peer = WebSocketMultiplayerPeer.new()
-
-	error = peer.create_client("wss://" + ADDRESS + ":" + str(PORT), TLSOptions.client_unsafe(certificate))
-	if error != OK:
-		printerr("create_client() error on gateway_client.gd: %s" % error_string(error))
-		return
-	
-	multiplayer.set_multiplayer_peer(peer)
-
-
-# Closes the active connection and resets the peer.
 func close_connection() -> void:
-	multiplayer.connected_to_server.disconnect(_on_connection_succeeded)
-	multiplayer.connection_failed.disconnect(_on_connection_failed)
-	multiplayer.server_disconnected.disconnect(_on_server_disconnected)
-	
 	multiplayer.set_multiplayer_peer(null)
-	peer.close()
+	client.close()
 	is_connected_to_server = false
 
 

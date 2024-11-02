@@ -1,13 +1,10 @@
-extends Node
-## Client autoload. Keep it clean and minimal.
-## Should only care about connection and authentication stuff.
+extends CustomClient
+
 
 signal connection_changed(connected_to_server: bool)
 signal authentication_requested
 
-var peer: WebSocketMultiplayerPeer
 var peer_id: int
-
 var is_connected_to_server: bool = false:
 	set(value):
 		is_connected_to_server = value
@@ -15,48 +12,32 @@ var is_connected_to_server: bool = false:
 
 var authentication_token: String
 
-## For autocomplention
-@onready var scene_multiplayer := multiplayer as SceneMultiplayer
+
+func connect_to_server(_adress: String, _port: int) -> void:
+	adress = _adress
+	port = _port
+	authentication_callback = authentication_call
+	start_client()
 
 
-func connect_to_server(adress: String, port: int) -> void:
-	print("Starting connection to the game server.")
+func init_multiplayer_api() -> void:
+	multiplayer_api = MultiplayerAPI.create_default_interface()
 	
-	multiplayer.connected_to_server.connect(_on_connection_succeeded)
-	multiplayer.connection_failed.connect(_on_connection_failed)
-	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	multiplayer_api.connected_to_server.connect(_on_connection_succeeded)
+	multiplayer_api.connection_failed.connect(_on_connection_failed)
+	multiplayer_api.server_disconnected.connect(_on_server_disconnected)
 	
-	scene_multiplayer.peer_authenticating.connect(_on_peer_authenticating)
-	scene_multiplayer.peer_authentication_failed.connect(_on_peer_authentication_failed)
-	scene_multiplayer.set_auth_callback(authentication_call)
+	if authentication_callback:
+		multiplayer_api.peer_authenticating.connect(_on_peer_authenticating)
+		multiplayer_api.peer_authentication_failed.connect(_on_peer_authentication_failed)
+		multiplayer_api.set_auth_callback(authentication_callback)
 	
-	var certificate := X509Certificate.new()
-	var error := certificate.load("res://test_config/server_certificate.crt")
-	if error != OK:
-		printerr("Failed to load certificate with error: %s" % error_string(error))
-		return
-	
-	peer = WebSocketMultiplayerPeer.new()
-	
-	error = peer.create_client("wss://" + adress + ":" + str(port), TLSOptions.client_unsafe(certificate))
-	if error != OK:
-		printerr("create_client() error on client.gd: %s" % error_string(error))
-		return
-	
-	multiplayer.set_multiplayer_peer(peer)
+	get_tree().set_multiplayer(multiplayer_api)
 
 
-# Closes the active connection and resets the peer.
 func close_connection() -> void:
-	multiplayer.connected_to_server.disconnect(self._on_connection_succeeded)
-	multiplayer.connection_failed.disconnect(self._on_connection_failed)
-	multiplayer.server_disconnected.disconnect(self._on_server_disconnected)
-	
-	scene_multiplayer.peer_authenticating.disconnect(self._on_peer_authenticating)
-	scene_multiplayer.peer_authentication_failed.disconnect(self._on_peer_authentication_failed)
-	
 	multiplayer.set_multiplayer_peer(null)
-	peer.close()
+	client.close()
 	is_connected_to_server = false
 
 
@@ -90,5 +71,5 @@ func _on_peer_authentication_failed(_peer_id: int) -> void:
 
 func authentication_call(_peer_id: int, data: PackedByteArray) -> void:
 	print("Authentification call from server with data: \"%s\"." % data.get_string_from_ascii())
-	scene_multiplayer.send_auth(1, var_to_bytes(authentication_token))
-	scene_multiplayer.complete_auth(1)
+	multiplayer.send_auth(1, var_to_bytes(authentication_token))
+	multiplayer.complete_auth(1)
