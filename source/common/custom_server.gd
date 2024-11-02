@@ -2,7 +2,7 @@ class_name CustomServer
 extends Node
 
 
-# Server Configuration / Set with load_server_configuration()
+# Server Default Configuration / Set with load_server_configuration()
 var port: int = 80443
 var certificate_path := "res://test_config/tls/certificate.crt"
 var key_path := "res://test_config/tls/key.key"
@@ -18,8 +18,11 @@ func _process(_delta: float) -> void:
 		multiplayer_api.poll()
 
 
-func init_multiplayer_api() -> void:
-	multiplayer_api = MultiplayerAPI.create_default_interface()
+func init_multiplayer_api(use_default: bool = false) -> void:
+	multiplayer_api = (
+		MultiplayerAPI.create_default_interface()
+		if not use_default else multiplayer
+	)
 	
 	multiplayer_api.peer_connected.connect(_on_peer_connected)
 	multiplayer_api.peer_disconnected.connect(_on_peer_disconnected)
@@ -29,7 +32,10 @@ func init_multiplayer_api() -> void:
 		multiplayer_api.peer_authentication_failed.connect(_on_peer_authentication_failed)
 		multiplayer_api.set_auth_callback(authentication_callback)
 	
-	get_tree().set_multiplayer(multiplayer_api, get_path())
+	get_tree().set_multiplayer(
+		multiplayer_api,
+		NodePath("") if use_default else get_path()
+	)
 
 
 func load_server_configuration(section_key: String, default_config_path: String = "") -> bool:

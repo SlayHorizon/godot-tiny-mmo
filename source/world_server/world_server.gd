@@ -18,22 +18,9 @@ var next_id: int = 0
 func _ready() -> void:
 	load_server_configuration("world-server", "res://test_config/world_server_config.cfg")
 	authentication_callback = _authentication_callback
+	init_multiplayer_api(true)
 	start_server()
 	add_master_client.call_deferred()
-
-
-func init_multiplayer_api() -> void:
-	multiplayer_api = MultiplayerAPI.create_default_interface()
-	
-	multiplayer_api.peer_connected.connect(_on_peer_connected)
-	multiplayer_api.peer_disconnected.connect(_on_peer_disconnected)
-	
-	if authentication_callback:
-		multiplayer_api.peer_authenticating.connect(_on_peer_authenticating)
-		multiplayer_api.peer_authentication_failed.connect(_on_peer_authentication_failed)
-		multiplayer_api.set_auth_callback(authentication_callback)
-	
-	get_tree().set_multiplayer(multiplayer_api)
 
 
 func _on_peer_connected(peer_id: int) -> void:

@@ -2,7 +2,7 @@ class_name LoginMenu
 extends Control
 
 
-const GatewayClient = preload("res://source/client/network/gateway_client.gd")
+const GatewayClient = preload("res://source/client/gateway_client/gateway_client.gd")
 
 signal connection_succeed
 
@@ -20,11 +20,9 @@ func _ready() -> void:
 	
 	await get_tree().create_timer(1.0).timeout
 	
-	gateway = GatewayClient.new()
-	gateway.name = "GatewayServer"
+	gateway = preload("res://source/client/gateway_client/gateway_client.tscn").instantiate()
 	gateway.connection_changed.connect(_on_gateway_connection_changed)
 	get_node("/root").add_child(gateway, true)
-	#gateway.connect_to_gateway()
 
 
 func _on_gateway_connection_changed(connection_status: bool) -> void:
@@ -75,6 +73,7 @@ func _on_create_character_button_pressed() -> void:
 			await get_tree().create_timer(0.5).timeout
 			if result_code == OK:
 				connection_succeed.emit()
+				#gateway.queue_free()
 			else:
 				create_button.disabled = false,
 		ConnectFlags.CONNECT_ONE_SHOT

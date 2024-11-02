@@ -17,22 +17,8 @@ func connect_to_server(_adress: String, _port: int) -> void:
 	adress = _adress
 	port = _port
 	authentication_callback = authentication_call
+	init_multiplayer_api(true)
 	start_client()
-
-
-func init_multiplayer_api() -> void:
-	multiplayer_api = MultiplayerAPI.create_default_interface()
-	
-	multiplayer_api.connected_to_server.connect(_on_connection_succeeded)
-	multiplayer_api.connection_failed.connect(_on_connection_failed)
-	multiplayer_api.server_disconnected.connect(_on_server_disconnected)
-	
-	if authentication_callback:
-		multiplayer_api.peer_authenticating.connect(_on_peer_authenticating)
-		multiplayer_api.peer_authentication_failed.connect(_on_peer_authentication_failed)
-		multiplayer_api.set_auth_callback(authentication_callback)
-	
-	get_tree().set_multiplayer(multiplayer_api)
 
 
 func close_connection() -> void:
