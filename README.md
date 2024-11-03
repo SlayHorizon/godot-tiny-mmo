@@ -1,13 +1,15 @@
 > [!WARNING]  
-> This project is still in experimental state and core features are still missing (see [**#🚀 Features**](#-features)).  
+> This project is in experimental state and gameplay features are missing (see [**#🚀 Features**](#-features)).  
 
 # Godot Tiny MMO
 
 A simple web MMO / MMORPG developed with Godot Engine 4.x - 4.3, created without relying on the built-in multiplayer nodes.  
 
 This project contains both client and server within the same codebase.  
-Using custom export presets, you can easily separate client and server builds (see the Wiki: [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project)).  
-This setup enables client-only exports without server components and vice versa, keeping your builds optimized and secure.  
+Using custom export presets, you can easily separate client and server builds  
+(see the Wiki: [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project)).  
+This setup enables client-only exports without server components and vice versa,  
+keeping your builds optimized and secure.  
 
 For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).  
 
@@ -55,7 +57,8 @@ To get started with the project, follow these steps:
    - Exactly **one** "game-server" tag
    - At least **one or more** "client" tags
 7. (Optional) For game server and gateway server, add **--headless** under **Launch Arguments** to prevent empty windows.
-8. Run the project!
+8. (Optional) Add **--config=path_to_config.cfg** under **Launch Arguments** to use different config path.
+9. Run the project!
 
 Setup example:  
 ![image](https://github.com/user-attachments/assets/abd2fd11-bb29-4d90-92c4-a8aefcdd7d52)  
