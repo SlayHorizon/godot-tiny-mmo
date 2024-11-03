@@ -50,15 +50,16 @@ To get started with the project, follow these steps:
 1. Clone this repository.
 2. Open the project in **Godot 4.3**.
 3. In the Debug tab, select **Customizable Run Instance...**.
-4. Enable **Multiple Instances** and set the count to **3 or more**.
+4. Enable **Multiple Instances** and set the count to **4 or more**.
 5. Under **Feature Tags**, ensure you have:
-   - Exactly **one** "gateway-server" tag
-   - Exactly **one** "master-server" tag
-   - Exactly **one** "game-server" tag
+   - Exactly **one** "gateway-server" tag.
+   - Exactly **one** "master-server" tag.
+   - Exactly **one** "game-server" tag.
    - At least **one or more** "client" tags
-7. (Optional) For game server and gateway server, add **--headless** under **Launch Arguments** to prevent empty windows.
-8. (Optional) Add **--config=path_to_config.cfg** under **Launch Arguments** to use different config path.
-9. Run the project!
+6. (Optional) Under **Launch Arguments**:
+   - For servers, add **--headless** to prevent empty windows.
+   - For any, add **--config=config_file_path.cfg** to use non-default config path. 
+7. Run the project!
 
 Setup example:  
 ![image](https://github.com/user-attachments/assets/abd2fd11-bb29-4d90-92c4-a8aefcdd7d52)  
