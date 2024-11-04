@@ -1,7 +1,7 @@
 extends CustomServer
 
 
-const GatewayManager = preload("res://source/gateway/gateway_manager/gateway_manager.gd")
+const GatewayManager = preload("res://source/gateway_server/gateway_manager/gateway_manager.gd")
 
 var connected_peers: Dictionary
 

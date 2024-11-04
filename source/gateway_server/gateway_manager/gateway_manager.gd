@@ -1,7 +1,7 @@
 extends CustomClient
 
 
-const GatewayServer = preload("res://source/gateway/gateway_server/gateway_server.gd")
+const GatewayServer = preload("res://source/gateway_server/gateway_server/gateway_server.gd")
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 

@@ -1,7 +1,7 @@
 extends Timer
 
 
-const GatewayServer = preload("res://source/gateway/gateway_server/gateway_server.gd")
+const GatewayServer = preload("res://source/gateway_server/gateway_server/gateway_server.gd")
 
 # 15 minutes in seconds by default.
 @export var expiration_time: float = 900.0

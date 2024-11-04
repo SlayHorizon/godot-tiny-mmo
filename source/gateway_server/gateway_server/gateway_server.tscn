@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://ivd4fflpoft4"]
+
+[ext_resource type="Script" path="res://source/gateway_server/gateway_server/gateway_server.gd" id="1_jgtwn"]
+[ext_resource type="PackedScene" uid="uid://bm2o2xrfamamm" path="res://source/gateway_server/gateway_server/expiration_timer/expiration_timer.tscn" id="2_7wkut"]
+
+[node name="GatewayServer" type="Node"]
+script = ExtResource("1_jgtwn")
+
+[node name="ExpirationTimer" parent="." instance=ExtResource("2_7wkut")]
+expiration_time = null

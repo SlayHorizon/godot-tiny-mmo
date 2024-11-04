@@ -38,7 +38,7 @@ folder_colors={
 "res://source/": "red",
 "res://source/client/": "blue",
 "res://source/common/": "yellow",
-"res://source/gateway/": "orange",
+"res://source/gateway_server/": "orange",
 "res://source/master_server/": "orange",
 "res://source/world_server/": "orange",
 "res://test_config/": "purple"

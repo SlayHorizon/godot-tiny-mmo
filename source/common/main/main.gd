@@ -1,8 +1,7 @@
 extends Node
 ## Main.
 ## Should only care about deciding if the project is either
-## a game server, gateway server or a client,
-## and set basic configuration if needed.
+## a world server, gateway server, master server or a client.
 
 func _ready() -> void:
 	if OS.has_feature("client"):
@@ -16,7 +15,6 @@ func _ready() -> void:
 
 
 func start_as_client() -> void:
-	#get_node("/root").add_child.call_deferred(load("res://source/client/instance_manager/instance_manger.tscn").instantiate())
 	get_tree().change_scene_to_file.call_deferred("res://source/client/client_main.tscn")
 
 
@@ -26,8 +24,8 @@ func start_as_game_server() -> void:
 
 
 func start_as_gateway_server() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/gateway/gateway.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/gateway_server/gateway_main.tscn")
 
 
 func start_as_master_server() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/master_server/master.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/master_server/master_main.tscn")
