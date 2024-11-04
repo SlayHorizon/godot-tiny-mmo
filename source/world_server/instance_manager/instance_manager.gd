@@ -6,28 +6,29 @@ extends SubViewportContainer
 const WorldServer: Script = preload("res://source/world_server/world_server.gd")
 
 # References
-var world_server: WorldServer
+#var world_server: WorldServer
 
 var online_instances: Dictionary
 var instance_collection: Array[InstanceResource]
 
+@onready var world_server: WorldServer = $".."
+
 
 func _ready() -> void:
-	world_server = WorldServer.new()
-	world_server.name = "WorldServer"
-	add_sibling.call_deferred(world_server)
+	await world_server.ready
 	set_instance_collection()
 	var default_instance: InstanceResource
 	for instance: InstanceResource in instance_collection:
 		print("instance_collection[*] = ", instance.instance_name)
 		if instance.instance_name == "Overworld":
 			default_instance = instance
-	await world_server.ready
 	world_server.multiplayer_api.peer_connected.connect(
 		func(peer_id: int):
-			charge_new_instance.rpc_id(peer_id,
-			default_instance.map_path,
-			default_instance.charged_instances[0].name)
+			charge_new_instance.rpc_id(
+				peer_id,
+				default_instance.map_path,
+				default_instance.charged_instances[0].name
+			)
 	)
 
 

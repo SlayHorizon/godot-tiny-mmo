@@ -17,7 +17,7 @@ func connect_to_server(_adress: String, _port: int) -> void:
 	adress = _adress
 	port = _port
 	authentication_callback = authentication_call
-	init_multiplayer_api(true)
+	#init_multiplayer_api(true)
 	start_client()
 
 

@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3 uid="uid://bmbm8el3rcejb"]
+
+[ext_resource type="Script" path="res://source/client/client_main.gd" id="1_hoyng"]
+[ext_resource type="Script" path="res://source/client/autoloads/client.gd" id="2_ey548"]
+[ext_resource type="PackedScene" uid="uid://xij1mlsb0syf" path="res://source/client/instance_manager/instance_manger.tscn" id="3_qp3mu"]
+[ext_resource type="PackedScene" uid="uid://u544jciafxaw" path="res://source/client/login_scene.tscn" id="4_rh1pg"]
+
+[node name="ClientMain" type="Node"]
+script = ExtResource("1_hoyng")
+
+[node name="WorldServer" type="Node" parent="."]
+script = ExtResource("2_ey548")
+
+[node name="InstanceManager" parent="WorldServer" instance=ExtResource("3_qp3mu")]
+
+[node name="LoginScene" parent="." instance=ExtResource("4_rh1pg")]

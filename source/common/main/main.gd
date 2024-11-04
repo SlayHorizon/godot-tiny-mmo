@@ -16,13 +16,13 @@ func _ready() -> void:
 
 
 func start_as_client() -> void:
-	get_node("/root").add_child.call_deferred(load("res://source/client/instance_manager/instance_manger.tscn").instantiate())
-	get_tree().change_scene_to_file.call_deferred("res://source/client/login_scene.tscn")
+	#get_node("/root").add_child.call_deferred(load("res://source/client/instance_manager/instance_manger.tscn").instantiate())
+	get_tree().change_scene_to_file.call_deferred("res://source/client/client_main.tscn")
 
 
 func start_as_game_server() -> void:
 	Engine.set_physics_ticks_per_second(20) # 60 by default
-	get_tree().change_scene_to_file.call_deferred("res://source/world_server/instance_manager/instance_manager.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/world_server/world_main.tscn")
 
 
 func start_as_gateway_server() -> void:

@@ -3,10 +3,10 @@ extends CustomServer
 ## Should only care about connection and authentication stuff.
 
 # Loading classes
-const MasterClient: Script = preload("res://source/world_server/master_client.gd")
+const WorldManager: Script = preload("res://source/world_server/world_manager.gd")
 
 # References
-var master_client: MasterClient
+var world_manager: WorldManager
 
 # {token: {"username": "salade", "class": "knight"}}
 var token_list: Dictionary
@@ -16,11 +16,12 @@ var next_id: int = 0
 
 
 func _ready() -> void:
-	load_server_configuration("world-server", "res://test_config/world_server_config.cfg")
 	authentication_callback = _authentication_callback
-	init_multiplayer_api(true)
+	load_server_configuration("world-server", "res://test_config/world_server_config.cfg")
 	start_server()
-	add_master_client.call_deferred()
+	
+	$InstanceManager.world_server = self
+	#init_multiplayer_api(true)
 
 
 func _on_peer_connected(peer_id: int) -> void:
@@ -59,17 +60,3 @@ func is_valid_authentication_token(token: String) -> bool:
 	if token_list.has(token):
 		return true
 	return false
-
-
-func add_master_client() -> void:
-	var NETWORK = preload("res://source/world_server/network.tscn").instantiate()
-	add_sibling(NETWORK)
-	#master_client = MasterClient.new()
-	master_client = NETWORK.get_node("WorldManager")
-	#master_client.name = "WorldManager"
-	master_client.token_received.connect(
-		func(token: String, account_id: int):
-			token_list[token] = account_id
-	)
-	master_client.world_server = self
-	#add_sibling(master_client)

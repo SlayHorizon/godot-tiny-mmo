@@ -22,7 +22,7 @@ func fetch_instance_state(new_state: Dictionary):
 		update_entity_collection(new_state["EC"]) #EC=EntityCollection
 
 func update_entity_collection(collection_state: Dictionary) -> void:
-	collection_state.erase(Client.peer_id)
+	collection_state.erase(multiplayer.get_unique_id())
 	for entity_id: int in collection_state:
 		if entity_collection.has(entity_id):
 			(entity_collection[entity_id] as Entity).sync_state = collection_state[entity_id]
@@ -51,7 +51,7 @@ func ready_to_enter_instance() -> void:
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	var new_player: Player
-	if player_id == Client.peer_id and not local_player:
+	if player_id == multiplayer.get_unique_id() and not local_player:
 		new_player = LOCAL_PLAYER.instantiate()
 		(new_player as LocalPlayer).sync_state_defined.connect(
 			func(sync_state: Dictionary):

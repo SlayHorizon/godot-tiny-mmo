@@ -1,6 +1,6 @@
 extends CustomClient
 
-
+signal authentication_token_received(_token: String, _adress: String, _port: int)
 signal login_result_received(result: bool, message: String)
 signal account_creation_result_received(result: bool, message: String)
 signal player_character_creation_result_received(result: bool, message: String)
@@ -48,8 +48,7 @@ func _on_server_disconnected() -> void:
 @rpc("authority")
 func fetch_authentication_token(_token: String, _adress: String, _port: int) -> void:
 	close_connection()
-	Client.authentication_token = _token
-	Client.connect_to_server(_adress, _port)
+	authentication_token_received.emit(_token, _adress, _port)
 
 
 @rpc("any_peer")

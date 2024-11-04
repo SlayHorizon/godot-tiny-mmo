@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://deslq4wqsgjbk"]
+
+[ext_resource type="Script" path="res://source/world_server/world_main.gd" id="1_nvmf0"]
+[ext_resource type="Script" path="res://source/world_server/world_manager.gd" id="2_bxid2"]
+[ext_resource type="Script" path="res://source/world_server/world_server.gd" id="3_u7bqt"]
+[ext_resource type="PackedScene" uid="uid://dvslcf4rymt6w" path="res://source/world_server/instance_manager/instance_manager.tscn" id="4_x0f53"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_nvmf0")
+
+[node name="WorldManager" type="Node" parent="."]
+script = ExtResource("2_bxid2")
+
+[node name="WorldServer" type="Node" parent="."]
+script = ExtResource("3_u7bqt")
+
+[node name="InstanceManager" parent="WorldServer" instance=ExtResource("4_x0f53")]

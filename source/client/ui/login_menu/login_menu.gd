@@ -17,12 +17,6 @@ func _ready() -> void:
 	$ServerSelection.hide()
 	$CharacterSelection.hide()
 	$CharacterCreation.hide()
-	
-	await get_tree().create_timer(1.0).timeout
-	
-	gateway = preload("res://source/client/gateway_client/gateway_client.tscn").instantiate()
-	gateway.connection_changed.connect(_on_gateway_connection_changed)
-	get_node("/root").add_child(gateway, true)
 
 
 func _on_gateway_connection_changed(connection_status: bool) -> void:

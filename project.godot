@@ -18,7 +18,6 @@ config/icon="res://assets/project_icon/icon_svg.svg"
 [autoload]
 
 ClientEvents="*res://source/client/autoloads/client_events.gd"
-Client="*res://source/client/autoloads/client.gd"
 
 [debug]
 
@@ -39,7 +38,7 @@ folder_colors={
 "res://source/": "red",
 "res://source/client/": "blue",
 "res://source/common/": "yellow",
-"res://source/gateway_server/": "orange",
+"res://source/gateway/": "orange",
 "res://source/master_server/": "orange",
 "res://source/world_server/": "orange",
 "res://test_config/": "purple"

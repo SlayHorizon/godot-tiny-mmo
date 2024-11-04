@@ -19,9 +19,8 @@ var instance_map: Map
 var instance_resource: InstanceResource
 
 func _ready() -> void:
-	multiplayer.peer_disconnected.connect(
+	world_server.multiplayer_api.peer_disconnected.connect(
 		func(peer_id: int):
-			print("PEER ID = ", peer_id)
 			if connected_peers.has(peer_id):
 				despawn_player(peer_id)
 	)
