@@ -1,5 +1,6 @@
 extends Control
 
+
 func _ready() -> void:
 	ClientEvents.message_received.connect(self._on_message_received)
 
@@ -15,9 +16,11 @@ func open_chat() -> void:
 	%MessageEdit.grab_focus()
 	%FadeOutTimer.stop()
 
+
 func hide_chat() -> void:
 	%MessageDisplay.hide()
 	%MessageEdit.hide()
+
 
 func _on_message_submitted(new_message: String) -> void:
 	%MessageEdit.clear()
@@ -29,6 +32,7 @@ func _on_message_submitted(new_message: String) -> void:
 		ClientEvents.message_entered.emit(new_message)
 	%FadeOutTimer.start()
 
+
 func _on_message_received(message: String, sender_name: String):
 	var color_name: String = "#33caff"
 	if sender_name == "Server":
@@ -39,10 +43,10 @@ func _on_message_received(message: String, sender_name: String):
 	%MessageDisplay.show()
 	%FadeOutTimer.start()
 
+
 func _on_fade_out_timer_timeout() -> void:
 	var tween := create_tween()
 	tween.tween_property(self, "modulate:a", 0, 0.3)
 	await tween.finished
 	hide_chat()
 	modulate.a = 1.0
-	

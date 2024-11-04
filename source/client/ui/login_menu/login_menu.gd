@@ -2,7 +2,7 @@ class_name LoginMenu
 extends Control
 
 
-const GatewayClient = preload("res://source/client/gateway_client/gateway_client.gd")
+const GatewayClient = preload("res://source/client/networking/gateway_client/gateway_client.gd")
 
 signal connection_succeed
 

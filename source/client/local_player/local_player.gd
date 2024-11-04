@@ -1,6 +1,7 @@
 class_name LocalPlayer
 extends Player
 
+
 signal sync_state_defined(sync_state: Dictionary)
 
 var speed: float = 75.0
@@ -15,11 +16,10 @@ var state: String = "idle"
 
 @onready var mouse: Node2D = $MouseComponent
 
+
 func _ready() -> void:
 	super()
-	#ClientEvents.item_icon_pressed.connect(func(item_name):
-		#change_weapon(item_name)
-		#)
+
 
 func _physics_process(delta: float) -> void:
 	check_inputs()
@@ -32,6 +32,7 @@ func move() -> void:
 	velocity = input_direction * speed
 	move_and_slide()
 
+
 func check_inputs() -> void:
 	input_direction = Input.get_vector("left", "right", "up", "down")
 	match input_direction:
@@ -40,9 +41,11 @@ func check_inputs() -> void:
 	action_input = Input.is_action_pressed("action")
 	interact_input = Input.is_action_just_pressed("interact")
 
+
 func update_animation(delta: float) -> void:
 	flipped = (mouse.position.x < global_position.x)
 	update_hand_pivot(delta)
+
 
 func update_hand_pivot(delta: float) -> void:
 	if action_input:
@@ -57,6 +60,7 @@ func update_hand_pivot(delta: float) -> void:
 		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, delta * hand_pivot_speed)
 		anim = Animations.RUN if input_direction else Animations.IDLE
 
+
 func define_sync_state() -> void:
 	sync_state = {
 		"T": Time.get_unix_time_from_system(),
@@ -65,6 +69,7 @@ func define_sync_state() -> void:
 		"anim": anim,
 		"pivot": snappedf(hand_pivot.rotation, 0.05)
 	}
+
 
 func _set_character_class(new_class: String):
 	character_resource = ResourceLoader.load(
@@ -75,6 +80,7 @@ func _set_character_class(new_class: String):
 		true
 	)
 	character_class = new_class
+
 
 func _set_sync_state(new_state: Dictionary) -> void:
 	var update_state: Dictionary

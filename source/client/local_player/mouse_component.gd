@@ -1,8 +1,10 @@
 class_name MouseComponent
 extends Node2D
 
+
 var mouse_ingame := true
 var window_focus := true
+
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_MOUSE_ENTER:
@@ -13,6 +15,7 @@ func _notification(what: int) -> void:
 		window_focus = true
 	elif what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 		window_focus = false
+
 
 func _process(_delta: float) -> void:
 	if mouse_ingame and window_focus:

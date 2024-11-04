@@ -8,9 +8,9 @@
 [node name="ClientMain" type="Node"]
 script = ExtResource("1_hoyng")
 
-[node name="WorldClient" type="Node" parent="."]
+[node name="WorldServer" type="Node" parent="."]
 script = ExtResource("2_ey548")
 
-[node name="InstanceManager" parent="WorldClient" instance=ExtResource("3_qp3mu")]
+[node name="InstanceManager" parent="WorldServer" instance=ExtResource("3_qp3mu")]
 
 [node name="LoginScene" parent="." instance=ExtResource("4_rh1pg")]

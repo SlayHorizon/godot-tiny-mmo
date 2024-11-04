@@ -6,7 +6,7 @@ var selected_server := "Witwitnds"
 
 
 func _on_server_confirm_button_pressed() -> void:
-	pass # Replace with function body.
+	pass
 
 
 func _on_server_button_1_pressed() -> void:
