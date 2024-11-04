@@ -3,13 +3,12 @@
 
 # Godot Tiny MMO
 
-A simple web MMO / MMORPG developed with Godot Engine 4.x - 4.3, created without relying on the built-in multiplayer nodes.  
+A little web-based MMO / MMORPG demo developed with Godot Engine 4.x - 4.3,  
+created without relying on the built-in multiplayer nodes.  
 
 This project contains both client and server within the same codebase.  
-Using custom export presets, you can easily separate client and server builds  
-(see the Wiki: [**Exporting Client and Server separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project)).  
-This setup enables client-only exports without server components and vice versa,  
-keeping your builds optimized and secure.  
+Using custom export presets, you can easily [**Export Client and Server builds separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project).  
+This keeps exports safe and optimized by excluding unnecessary components.    
 
 For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).  
 
