@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://p8wqcxas4eg0"]
+
+[ext_resource type="Script" path="res://source/master_server/components/authentication_manager/authentication_manager.gd" id="1_ksa1k"]
+
+[node name="AuthenticationManager" type="Node"]
+script = ExtResource("1_ksa1k")

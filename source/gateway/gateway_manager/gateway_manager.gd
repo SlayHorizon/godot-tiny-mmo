@@ -1,15 +1,13 @@
 extends CustomClient
 
 
-# Loading classes 
-const GatewayServer = preload("res://source/gateway_server/gateway_server.gd")
+const GatewayServer = preload("res://source/gateway/gateway_server/gateway_server.gd")
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 
-# References
-var gateway: GatewayServer
-
 var game_server_list: Dictionary
+
+@onready var gateway: GatewayServer = $"../GatewayServer"
 
 
 func _ready() -> void:

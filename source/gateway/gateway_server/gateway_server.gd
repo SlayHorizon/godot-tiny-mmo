@@ -1,44 +1,19 @@
 extends CustomServer
-## This gateway server is really cheap and minimal,
-## consider using different service for commercial project.
-## Role of the gateway
-## 1. Public-Facing Layer (Security)
-## The Gateway serves as a public-facing layer,
-## acting as a shield for the more sensitive servers (Auth Server, Main Server).
-## It can handle rate limiting, basic request filtering,
-## DDoS protection, and ensure that only valid requests reach the Auth Server.
-## 2. Basic Validation:
-## The Gateway can perform basic request validation, like checking if required parameters are present,
-## before forwarding requests to other servers.
-## 3. Centralized Entry Point
-## For example, if you plan to offer multiple game services or features in the future,
-## the Gateway can route requests to the appropriate service without the client needing to know the full architecture.
 
-# Loading classes 
-const MasterClient = preload("res://source/gateway_server/master_client.gd")
-const ExpirationTimer = preload("res://source/gateway_server/expiration_timer/expiration_timer.gd")
 
-# References
-var master_client: MasterClient
+const GatewayManager = preload("res://source/gateway/gateway_manager/gateway_manager.gd")
 
 var connected_peers: Dictionary
 
-@onready var expiration_timer: ExpirationTimer = $ExpirationTimer
+@onready var gateway_manager: GatewayManager = $"../GatewayManager"
 
 
 func _ready() -> void:
-	expiration_timer.gateway = self
-	
-	master_client = MasterClient.new()
-	master_client.name = "GatewayManager"
-	master_client.account_creation_result_received.connect(
+	gateway_manager.account_creation_result_received.connect(
 		func(peer_id: int, result_code: int, data: Dictionary):
 			connected_peers[peer_id]["account"] = data
 			account_creation_result.rpc_id(peer_id, result_code)
 	)
-	master_client.gateway = self
-	add_sibling.call_deferred(master_client, true)
-	
 	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
 	start_server()
 
@@ -78,7 +53,7 @@ func login_result(_result: bool, _message: String) -> void:
 func create_account_request(username: String, password: String, is_guest: bool) -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
 	if is_guest:
-		master_client.create_account_request.rpc_id(1, peer_id, username, password, is_guest)
+		gateway_manager.create_account_request.rpc_id(1, peer_id, username, password, is_guest)
 		return
 	var result_code: int = 0
 	if username.is_empty():
@@ -95,7 +70,7 @@ func create_account_request(username: String, password: String, is_guest: bool) 
 		result_code = 6
 	
 	if result_code == OK:
-		master_client.create_account_request.rpc_id(1, peer_id, username, password, is_guest)
+		gateway_manager.create_account_request.rpc_id(1, peer_id, username, password, is_guest)
 	else:
 		account_creation_result.rpc_id(peer_id, result_code)
 
@@ -128,7 +103,7 @@ func create_player_character_request(character_data: Dictionary, world_id: int) 
 	if result_code != OK:
 		player_character_creation_result.rpc_id(peer_id, result_code)
 	else:
-		master_client.create_player_character_request.rpc_id(
+		gateway_manager.create_player_character_request.rpc_id(
 			1,
 			world_id,
 			peer_id,

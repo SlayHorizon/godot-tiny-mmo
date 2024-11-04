@@ -62,11 +62,14 @@ func is_valid_authentication_token(token: String) -> bool:
 
 
 func add_master_client() -> void:
-	master_client = MasterClient.new()
-	master_client.name = "WorldManager"
+	var NETWORK = preload("res://source/world_server/network.tscn").instantiate()
+	add_sibling(NETWORK)
+	#master_client = MasterClient.new()
+	master_client = NETWORK.get_node("WorldManager")
+	#master_client.name = "WorldManager"
 	master_client.token_received.connect(
 		func(token: String, account_id: int):
 			token_list[token] = account_id
 	)
 	master_client.world_server = self
-	add_sibling(master_client)
+	#add_sibling(master_client)

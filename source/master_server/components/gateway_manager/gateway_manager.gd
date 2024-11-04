@@ -1,8 +1,7 @@
 extends CustomServer
 
 
-# Class Dependencies
-const MasterServer: Script = preload("res://source/master_server/master_server.gd")
+const MasterServer: Script = preload("res://source/master_server/master.gd")
 
 # Server Components
 var master: MasterServer

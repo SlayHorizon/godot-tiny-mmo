@@ -26,8 +26,8 @@ func start_as_game_server() -> void:
 
 
 func start_as_gateway_server() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/gateway_server/gateway_server.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/gateway/gateway.tscn")
 
 
 func start_as_master_server() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/master_server/master_server.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/master_server/master.tscn")

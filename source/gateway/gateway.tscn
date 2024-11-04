@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://bvnp50b85cxif"]
+
+[ext_resource type="Script" path="res://source/gateway/gateway.gd" id="1_v0yps"]
+[ext_resource type="PackedScene" uid="uid://ivd4fflpoft4" path="res://source/gateway/gateway_server/gateway_server.tscn" id="2_siajo"]
+[ext_resource type="Script" path="res://source/gateway/gateway_manager/gateway_manager.gd" id="3_m66nj"]
+
+[node name="Gateway" type="Node"]
+script = ExtResource("1_v0yps")
+
+[node name="GatewayServer" parent="." instance=ExtResource("2_siajo")]
+
+[node name="GatewayManager" type="Node" parent="."]
+script = ExtResource("3_m66nj")

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://deslq4wqsgjbk"]
+
+[ext_resource type="Script" path="res://source/world_server/master_client.gd" id="1_od72q"]
+
+[node name="Network" type="Node"]
+
+[node name="WorldManager" type="Node" parent="."]
+script = ExtResource("1_od72q")

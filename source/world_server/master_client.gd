@@ -27,7 +27,7 @@ func _on_connection_succeeded() -> void:
 			"rules": "None",
 			"population": world_server.player_list.size()
 		}
-		)
+	)
 
 
 func _on_connection_failed() -> void:

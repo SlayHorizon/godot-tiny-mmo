@@ -14,6 +14,7 @@ var instance_collection: Array[InstanceResource]
 
 func _ready() -> void:
 	world_server = WorldServer.new()
+	world_server.name = "WorldServer"
 	add_sibling.call_deferred(world_server)
 	set_instance_collection()
 	var default_instance: InstanceResource

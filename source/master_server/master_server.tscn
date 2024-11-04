@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bskg2xljsxctn"]
-
-[ext_resource type="Script" path="res://source/master_server/master_server.gd" id="1_qgtmw"]
-
-[node name="MasterServer" type="Node"]
-script = ExtResource("1_qgtmw")
