@@ -1,4 +1,4 @@
-extends CustomClient
+extends BaseClient
 
 
 signal authentication_token_received(_token: String, _adress: String, _port: int)

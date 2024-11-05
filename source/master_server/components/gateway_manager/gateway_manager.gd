@@ -1,4 +1,4 @@
-extends CustomServer
+extends BaseServer
 
 
 const MasterServer: Script = preload("res://source/master_server/master_main.gd")

@@ -4,7 +4,7 @@ extends SubViewport
 signal player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper)
 
 const PLAYER = preload("res://source/common/entities/characters/player/player.tscn")
-const WorldServer: Script = preload("res://source/world_server/world_server.gd")
+const WorldServer: Script = preload("res://source/world_server/world_server/world_server.gd")
 
 # References
 var world_server: WorldServer

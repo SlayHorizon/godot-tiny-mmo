@@ -1,4 +1,4 @@
-extends CustomServer
+extends BaseServer
 
 
 # Class Dependencies

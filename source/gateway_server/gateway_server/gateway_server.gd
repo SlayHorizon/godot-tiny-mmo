@@ -1,4 +1,4 @@
-extends CustomServer
+extends BaseServer
 
 
 const GatewayManager = preload("res://source/gateway_server/gateway_manager/gateway_manager.gd")

@@ -1,4 +1,4 @@
-extends CustomClient
+extends BaseClient
 
 
 const GatewayServer = preload("res://source/gateway_server/gateway_server/gateway_server.gd")

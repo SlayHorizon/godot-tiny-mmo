@@ -1,4 +1,4 @@
-extends CustomClient
+extends BaseClient
 
 
 signal connection_changed(connected_to_server: bool)

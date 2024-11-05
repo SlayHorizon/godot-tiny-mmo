@@ -1,9 +1,9 @@
-extends CustomServer
+extends BaseServer
 ## Server autoload. Keep it clean and minimal.
 ## Should only care about connection and authentication stuff.
 
 # Loading classes
-const WorldManager: Script = preload("res://source/world_server/world_manager.gd")
+const WorldManager: Script = preload("res://source/world_server/world_manager/world_manager.gd")
 
 # References
 var world_manager: WorldManager
