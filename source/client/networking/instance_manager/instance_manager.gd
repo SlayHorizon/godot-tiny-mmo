@@ -1,6 +1,8 @@
 extends Node
 
+
 var current_instance: InstanceClient
+
 
 @rpc("authority", "call_remote", "reliable", 0)
 func charge_new_instance(map_path: String, instance_id: String) -> void:

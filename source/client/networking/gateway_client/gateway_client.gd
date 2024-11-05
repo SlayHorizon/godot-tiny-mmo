@@ -1,5 +1,6 @@
 extends CustomClient
 
+
 signal authentication_token_received(_token: String, _adress: String, _port: int)
 signal login_result_received(result: bool, message: String)
 signal account_creation_result_received(result: bool, message: String)

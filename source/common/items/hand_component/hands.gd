@@ -3,6 +3,9 @@
 class_name Hand
 extends Sprite2D
 
+
+const SIZE: int = 16
+
 enum Sides {
 	LEFT,
 	RIGHT
@@ -21,13 +24,11 @@ enum Types {
 	GOBLIN,
 }
 
-const SIZE := 16
-
 @export var side: Sides = Sides.LEFT:
 	set(new_side):
 		side = new_side
 		_update_hands()
-		
+
 @export var status: Status = Status.IDLE:
 	set(new_status):
 		status = new_status
@@ -46,6 +47,7 @@ func _update_hands() -> void:
 		region_rect = Rect2(2 * SIZE, 1 * SIZE, SIZE, SIZE)
 	else:
 		region_rect = Rect2(side * SIZE, status * SIZE, SIZE, SIZE)
+
 
 func _set_type(new_type: Types) -> void:
 	match new_type:

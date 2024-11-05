@@ -2,7 +2,9 @@
 class_name Map
 extends Node2D
 
+
 var warpers: Dictionary#[int, Warper]
+
 
 func _ready() -> void:
 	for children in get_children():

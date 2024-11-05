@@ -2,6 +2,7 @@
 class_name Weapon
 extends Node2D
 
+
 @export var has_custom_idle: bool = false
 @export var has_custom_walk: bool = false
 
@@ -11,6 +12,7 @@ var character: Character
 @onready var weapon_sprite: Sprite2D = $WeaponSprite
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
+
 func _ready() -> void:
 	if hand and character:
 		hand.type = character.hand_type
@@ -18,6 +20,7 @@ func _ready() -> void:
 		has_custom_idle = true
 	if animation_player.has_animation("custom/walk"):
 		has_custom_walk = true
+
 
 func play_animation(anim_name: String) -> void:
 	# Bad design

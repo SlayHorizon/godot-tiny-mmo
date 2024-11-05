@@ -1,6 +1,5 @@
 class_name Entity
 extends CharacterBody2D
-
 ## Base class for all entities to synchronize among the network,
 ## can be a player, a NPC or an object like a projectile or a breakable jar.
 
@@ -25,11 +24,11 @@ var sync_state: Dictionary = {}:
 ## else, sync_state won't be synchronized and updated each frame.
 var to_sync: bool = true
 
+
 func _set_spawn_state(new_state: Dictionary) -> void:
 	spawn_state = new_state
 
-#func _set_sync_state(new_state: Dictionary) -> void:
-	#sync_state = new_state
+
 func _set_sync_state(new_state: Dictionary) -> void:
 	sync_state = new_state
 	for property: String in new_state:

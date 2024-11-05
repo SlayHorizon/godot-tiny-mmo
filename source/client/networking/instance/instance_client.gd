@@ -1,6 +1,7 @@
 class_name InstanceClient
 extends Node2D
 
+
 const LOCAL_PLAYER = preload("res://source/client/local_player/local_player.tscn")
 const DUMMY_PLAYER = preload("res://source/common/entities/characters/player/player.tscn")
 
@@ -9,6 +10,7 @@ var entity_collection: Dictionary = {}
 var last_state: Dictionary = {"T" = 0.0}
 
 var local_player: LocalPlayer
+
 
 func _ready() -> void:
 	ClientEvents.message_entered.connect(self.player_submit_message)
@@ -21,6 +23,7 @@ func fetch_instance_state(new_state: Dictionary):
 		last_state = new_state
 		update_entity_collection(new_state["EC"]) #EC=EntityCollection
 
+
 func update_entity_collection(collection_state: Dictionary) -> void:
 	collection_state.erase(multiplayer.get_unique_id())
 	for entity_id: int in collection_state:
@@ -29,9 +32,11 @@ func update_entity_collection(collection_state: Dictionary) -> void:
 		#else:
 			#ask_to_spawn_player() ?
 
+
 @rpc("any_peer", "call_remote", "reliable", 0)
 func fetch_player_state(_sync_state: Dictionary):
 	pass
+
 
 @rpc("authority", "call_remote", "reliable", 1)
 func update_entity(entity_id: int, to_update: Dictionary) -> void:
@@ -39,9 +44,11 @@ func update_entity(entity_id: int, to_update: Dictionary) -> void:
 	for thing in to_update:
 		entity.set_indexed(thing, to_update[thing])
 
+
 @rpc("any_peer", "call_remote", "reliable", 0)
 func player_trying_to_change_weapon(weapon_path: String, side: bool = true) -> void:
 	player_trying_to_change_weapon.rpc_id(1, weapon_path, side)
+
 
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:
@@ -77,6 +84,7 @@ func despawn_player(player_id: int) -> void:
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_submit_message(new_message: String) -> void:
 	player_submit_message.rpc_id(1, new_message)
+
 
 @rpc("authority", "call_remote", "reliable", 1)
 func fetch_message(message: String, sender_id: int) -> void:

@@ -31,11 +31,13 @@ class_name Teleporter
 		queue_redraw()
 		update_configuration_warnings()
 
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSFORM_CHANGED:
 		if target:
 			target.queue_redraw()
 		queue_redraw()
+
 
 func _get_configuration_warnings() -> PackedStringArray:
 	if target == null:
@@ -44,6 +46,7 @@ func _get_configuration_warnings() -> PackedStringArray:
 			"Consider adding one in the inspector tab."
 		])
 	return []
+
 
 func _draw() -> void:
 	if Engine.is_editor_hint():
