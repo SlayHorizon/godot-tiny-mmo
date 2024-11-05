@@ -19,23 +19,25 @@ For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/
 The current and planned features are listed below:
 
 - [X] **Client-Server connection** through `WebSocketMultiplayerPeer`
-- [x] **Playable on web browser**
-- [X] **Authentication system** with Login UI
-- [ ] **Create account**
-- [x] **Can connect as guest**
-- [x] **Create character**
-- [ ] **Game version check**
-- [X] **Entity synchronization** for players within the same instance
-- [X] **Instance-based maps** with traveling between different map instances
+- [x] **Playable on web browser and desktop**
+- [x] **Network architecture** (see diagram below)  
+
+- [X] **Authentication system** through gateway server with Login UI
+- [ ] **Account Creation** for permanent player accounts
+- [x] **Guest Login** option for quick access
+- [ ] **Game version check** to ensure client compatibility
+
+- [x] **Character Creation**
 - [x] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
-- [ ] **Private instances** for solo players or small groups
 - [ ] **Weapons** at least one usable weapon per class
 - [ ] **Basic combat system**
+
+- [X] **Entity synchronization** for players within the same instance
 - [ ] **Entity interpolation** to handle rubber banding
+- [x] **Instance-based chat** for localized communication
+- [X] **Instance-based maps** with traveling between different map instances
 - [x] **Three different maps:** Overworld, Dungeon Entrance, Dungeon
-- [x] **Instance-based chat**
-- [x] **Master Server**
-- [x] **Gateway Server**
+- [ ] **Private instances** for solo players or small groups
 
 Current network architecture diagram for this demo (subject to change):  
 ![architecture-diagram-26-10-2024](https://github.com/user-attachments/assets/78b1cce2-b070-4544-8ecd-59784743c7a0)
