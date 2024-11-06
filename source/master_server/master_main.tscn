@@ -1,19 +1,27 @@
 [gd_scene load_steps=6 format=3 uid="uid://bskg2xljsxctn"]
 
 [ext_resource type="Script" path="res://source/master_server/master_main.gd" id="1_6d3fm"]
-[ext_resource type="PackedScene" uid="uid://o7b5s6mrjgv5" path="res://source/master_server/components/gateway_manager/gateway_manager.tscn" id="2_hxaoe"]
-[ext_resource type="PackedScene" uid="uid://d2h55jybtq0c4" path="res://source/master_server/components/world_manager/world_manager.tscn" id="3_e6sf5"]
-[ext_resource type="PackedScene" uid="uid://p8wqcxas4eg0" path="res://source/master_server/components/authentication_manager/authentication_manager.tscn" id="4_nhf1t"]
+[ext_resource type="Script" path="res://source/master_server/components/gateway_manager_server.gd" id="2_hsh87"]
+[ext_resource type="Script" path="res://source/master_server/components/world_manager_server.gd" id="3_qbesc"]
+[ext_resource type="Script" path="res://source/master_server/components/authentication_manager.gd" id="4_1tf2k"]
 [ext_resource type="Script" path="res://source/master_server/components/database.gd" id="5_mync2"]
 
 [node name="MasterMain" type="Node"]
 script = ExtResource("1_6d3fm")
 
-[node name="GatewayManagerServer" parent="." instance=ExtResource("2_hxaoe")]
+[node name="GatewayManagerServer" type="Node" parent="." node_paths=PackedStringArray("world_manager", "authentication_manager")]
+script = ExtResource("2_hsh87")
+world_manager = NodePath("../WorldManagerServer")
+authentication_manager = NodePath("../AuthenticationManager")
 
-[node name="WorldManagerServer" parent="." instance=ExtResource("3_e6sf5")]
+[node name="WorldManagerServer" type="Node" parent="." node_paths=PackedStringArray("authentication_manager", "gateway_manager")]
+script = ExtResource("3_qbesc")
+authentication_manager = NodePath("../AuthenticationManager")
+gateway_manager = NodePath("../GatewayManagerServer")
 
-[node name="AuthenticationManager" parent="." instance=ExtResource("4_nhf1t")]
+[node name="AuthenticationManager" type="Node" parent="." node_paths=PackedStringArray("database")]
+script = ExtResource("4_1tf2k")
+database = NodePath("../Database")
 
 [node name="Database" type="Node" parent="."]
 script = ExtResource("5_mync2")

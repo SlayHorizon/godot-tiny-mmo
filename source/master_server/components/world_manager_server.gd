@@ -2,18 +2,15 @@ class_name WorldManagerServer
 extends BaseServer
 
 
-# Class Dependencies
-const MasterServer: Script = preload("res://source/master_server/master_main.gd")
-
-# Server Components
-var master: MasterServer
+@export var authentication_manager: AuthenticationManager
+@export var gateway_manager: GatewayManagerServer
 
 # Active Connections
 var connected_game_servers: Dictionary
 
 
 func _ready() -> void:
-	load_server_configuration("world-manager", "res://test_config/master_server_config.cfg")
+	load_server_configuration("world-manager-server", "res://test_config/master_server_config.cfg")
 	start_server()
 
 
@@ -45,16 +42,16 @@ func create_player_character_request(_gateway_id: int, _peer_id: int, _account_i
 func player_character_creation_result(gateway_id: int, peer_id: int, account_id: int, result_code: int) -> void:
 	var world_id := multiplayer_api.get_remote_sender_id()
 	if result_code == OK:
-		var token := master.authentication_manager.generate_random_token()
+		var token := authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, token, account_id)
-		master.gateway_manager.player_character_creation_result.rpc_id(
+		gateway_manager.player_character_creation_result.rpc_id(
 			gateway_id, peer_id, result_code
 		)
 		await get_tree().create_timer(0.5).timeout
-		master.gateway_manager.fetch_authentication_token.rpc_id(
+		gateway_manager.fetch_authentication_token.rpc_id(
 			gateway_id, peer_id, token, "127.0.0.1", 8087
 		)
 	else:
-		master.gateway_manager.player_character_creation_result.rpc_id(
+		gateway_manager.player_character_creation_result.rpc_id(
 			gateway_id, peer_id, result_code
 		)

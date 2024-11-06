@@ -11,7 +11,7 @@ var game_server_list: Dictionary
 
 
 func _ready() -> void:
-	load_client_configuration("master-client", "res://test_config/world_server_config.cfg")
+	load_client_configuration("world-manager-client", "res://test_config/world_server_config.cfg")
 	start_client()
 
 

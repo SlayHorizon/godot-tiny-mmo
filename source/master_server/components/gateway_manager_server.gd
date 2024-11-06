@@ -2,14 +2,12 @@ class_name GatewayManagerServer
 extends BaseServer
 
 
-const MasterServer: Script = preload("res://source/master_server/master_main.gd")
-
-# Server Components
-var master: MasterServer
+@export var world_manager: WorldManagerServer
+@export var authentication_manager: AuthenticationManager
 
 
 func _ready() -> void:
-	load_server_configuration("gateway-manager", "res://test_config/master_server_config.cfg")
+	load_server_configuration("gateway-manager-server", "res://test_config/master_server_config.cfg")
 	start_server()
 
 
@@ -51,7 +49,7 @@ func create_account_request(peer_id: int, username: String, password: String, is
 	var gateway_id := multiplayer_api.get_remote_sender_id()
 	var result_code: int = 0
 	var return_data := {}
-	var result := master.authentication_manager.create_accout(username, password, is_guest)
+	var result := authentication_manager.create_accout(username, password, is_guest)
 	if result == null:
 		result_code = 30
 	else:
@@ -69,8 +67,8 @@ func account_creation_result(_peer_id: int, _result_code: int, _data: Dictionary
 @rpc("any_peer")
 func create_player_character_request(world_id: int, peer_id: int, account_id: int, character_data: Dictionary) -> void:
 	var gateway_id := multiplayer_api.get_remote_sender_id()
-	master.world_manager.create_player_character_request.rpc_id(
-		master.world_manager.connected_game_servers.keys()[world_id],
+	world_manager.create_player_character_request.rpc_id(
+		world_manager.connected_game_servers.keys()[world_id],
 		gateway_id, peer_id, account_id, character_data
 	)
 

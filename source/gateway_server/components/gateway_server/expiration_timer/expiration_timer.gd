@@ -4,7 +4,7 @@ extends Timer
 # 15 minutes in seconds by default.
 @export var expiration_time: float = 900.0
 
-@onready var gateway_server: GatewayServer = $".."
+@export var gateway_server: GatewayServer
 
 
 func _ready() -> void:

@@ -1,18 +1,15 @@
+class_name AuthenticationManager
 extends Node
 
 
-# Class Dependencies
-const Database: Script = preload("res://source/master_server/components/database.gd")
-
-# References
-var database: Database
+@export var database: MasterDatabase
 
 
 func _ready() -> void:
 	pass
 
 
-# Consider using a better token generator.
+# Consider using a real authentication token generator.
 func generate_random_token() -> String:
 	var characters := "abcdefghijklmnopqrstuvwxyz#$-+0123456789"
 	var password := ""

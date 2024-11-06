@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://d2h55jybtq0c4"]
-
-[ext_resource type="Script" path="res://source/master_server/components/world_manager/world_manager.gd" id="1_riayg"]
-
-[node name="WorldManagerServer" type="Node"]
-script = ExtResource("1_riayg")

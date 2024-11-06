@@ -4,7 +4,7 @@ extends BaseServer
 
 var connected_peers: Dictionary
 
-@onready var gateway_manager: GatewayManagerClient = $"../GatewayManagerClient"
+@export var gateway_manager: GatewayManagerClient
 
 
 func _ready() -> void:

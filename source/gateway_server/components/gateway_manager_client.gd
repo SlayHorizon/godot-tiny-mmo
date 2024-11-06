@@ -4,14 +4,14 @@ extends BaseClient
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 
-var game_server_list: Dictionary
+@export var gateway: GatewayServer
 
-@onready var gateway: GatewayServer = $"../GatewayServer"
+var game_server_list: Dictionary
 
 
 func _ready() -> void:
 	await get_tree().create_timer(1.5).timeout
-	load_client_configuration("master-client", "res://test_config/gateway_config.cfg")
+	load_client_configuration("gateway-manager-client", "res://test_config/gateway_config.cfg")
 	start_client()
 
 

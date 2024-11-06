@@ -1,13 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://bvnp50b85cxif"]
+[gd_scene load_steps=5 format=3 uid="uid://bvnp50b85cxif"]
 
 [ext_resource type="Script" path="res://source/gateway_server/gateway_main.gd" id="1_v0yps"]
-[ext_resource type="PackedScene" uid="uid://ivd4fflpoft4" path="res://source/gateway_server/gateway_server/gateway_server.tscn" id="2_siajo"]
-[ext_resource type="Script" path="res://source/gateway_server/gateway_manager/gateway_manager_client.gd" id="3_m66nj"]
+[ext_resource type="Script" path="res://source/gateway_server/components/gateway_server/gateway_server.gd" id="2_fncpu"]
+[ext_resource type="PackedScene" uid="uid://bm2o2xrfamamm" path="res://source/gateway_server/components/gateway_server/expiration_timer/expiration_timer.tscn" id="3_hwig3"]
+[ext_resource type="Script" path="res://source/gateway_server/components/gateway_manager_client.gd" id="3_m66nj"]
 
 [node name="GatewayMain" type="Node"]
 script = ExtResource("1_v0yps")
 
-[node name="GatewayServer" parent="." instance=ExtResource("2_siajo")]
+[node name="GatewayServer" type="Node" parent="." node_paths=PackedStringArray("gateway_manager")]
+script = ExtResource("2_fncpu")
+gateway_manager = NodePath("../GatewayManagerClient")
 
-[node name="GatewayManagerClient" type="Node" parent="."]
+[node name="ExpirationTimer" parent="GatewayServer" node_paths=PackedStringArray("gateway_server") instance=ExtResource("3_hwig3")]
+gateway_server = NodePath("..")
+
+[node name="GatewayManagerClient" type="Node" parent="." node_paths=PackedStringArray("gateway")]
 script = ExtResource("3_m66nj")
+gateway = NodePath("../GatewayServer")
