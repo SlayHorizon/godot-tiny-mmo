@@ -2,9 +2,6 @@ class_name InstanceManagerServer
 extends SubViewportContainer
 
 
-# Loading classes
-const WorldServer: Script = preload("res://source/world_server/world_server/world_server.gd")
-
 # References
 #var world_server: WorldServer
 

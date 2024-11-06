@@ -9,9 +9,9 @@
 [node name="MasterMain" type="Node"]
 script = ExtResource("1_6d3fm")
 
-[node name="GatewayManager" parent="." instance=ExtResource("2_hxaoe")]
+[node name="GatewayManagerServer" parent="." instance=ExtResource("2_hxaoe")]
 
-[node name="WorldManager" parent="." instance=ExtResource("3_e6sf5")]
+[node name="WorldManagerServer" parent="." instance=ExtResource("3_e6sf5")]
 
 [node name="AuthenticationManager" parent="." instance=ExtResource("4_nhf1t")]
 

@@ -1,11 +1,10 @@
+class_name GatewayServer
 extends BaseServer
 
 
-const GatewayManager = preload("res://source/gateway_server/gateway_manager/gateway_manager.gd")
-
 var connected_peers: Dictionary
 
-@onready var gateway_manager: GatewayManager = $"../GatewayManager"
+@onready var gateway_manager: GatewayManagerClient = $"../GatewayManagerClient"
 
 
 func _ready() -> void:

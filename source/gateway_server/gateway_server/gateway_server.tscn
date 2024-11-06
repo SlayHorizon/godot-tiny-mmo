@@ -7,4 +7,3 @@
 script = ExtResource("1_jgtwn")
 
 [node name="ExpirationTimer" parent="." instance=ExtResource("2_7wkut")]
-expiration_time = null

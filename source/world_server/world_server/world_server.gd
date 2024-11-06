@@ -1,12 +1,10 @@
+class_name WorldServer
 extends BaseServer
 ## Server autoload. Keep it clean and minimal.
 ## Should only care about connection and authentication stuff.
 
-# Loading classes
-const WorldManager: Script = preload("res://source/world_server/world_manager/world_manager.gd")
-
 # References
-var world_manager: WorldManager
+var world_manager: WorldManagerClient
 
 # {token: {"username": "salade", "class": "knight"}}
 var token_list: Dictionary
@@ -21,7 +19,6 @@ func _ready() -> void:
 	start_server()
 	
 	$InstanceManager.world_server = self
-	#init_multiplayer_api(true)
 
 
 func _on_peer_connected(peer_id: int) -> void:

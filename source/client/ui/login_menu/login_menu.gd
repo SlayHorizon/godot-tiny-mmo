@@ -2,14 +2,14 @@ class_name LoginMenu
 extends Control
 
 
-const GatewayClient = preload("res://source/client/networking/gateway_client/gateway_client.gd")
-
 signal connection_succeed
 
 var username := ""
 var password := ""
 var selected_world_id: int = 0
-var gateway: GatewayClient
+
+var gateway: GatewayClient:
+	set = _set_gateway
 
 
 func _ready() -> void:
@@ -19,18 +19,24 @@ func _ready() -> void:
 	$CharacterCreation.hide()
 
 
+func _set_gateway(new_gateway: GatewayClient) -> void:
+	gateway = new_gateway
+	gateway.connection_changed.connect(_on_gateway_connection_changed)
+
+
 func _on_gateway_connection_changed(connection_status: bool) -> void:
-	$Main/CenterContainer/MainContainer/WaitingConnectionRect.visible = not connection_status
+	%WaitingConnectionRect.visible = not connection_status
 
 
 func _on_connection_changed(connection_status: bool) -> void:
 	if connection_status:
-		%ServerStatusLabel.text = "Connected to the server!"
+		%ServerStatusLabel.text = "Connected to the gateway!"
 		%LoginButton.disabled = true
 		connection_succeed.emit()
 	else:
 		%ServerStatusLabel.text = "Authentication failed.\nEnter a correct name and choose a class."
-		await get_tree().create_timer(1.2).timeout
+		# Avoid button spamming
+		await get_tree().create_timer(1.5).timeout
 		%LoginButton.disabled = false
 
 
@@ -67,7 +73,6 @@ func _on_create_character_button_pressed() -> void:
 			await get_tree().create_timer(0.5).timeout
 			if result_code == OK:
 				connection_succeed.emit()
-				#gateway.queue_free()
 			else:
 				create_button.disabled = false,
 		ConnectFlags.CONNECT_ONE_SHOT

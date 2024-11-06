@@ -1,10 +1,10 @@
 class_name ServerInstance
 extends SubViewport
 
+
 signal player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper)
 
 const PLAYER = preload("res://source/common/entities/characters/player/player.tscn")
-const WorldServer: Script = preload("res://source/world_server/world_server/world_server.gd")
 
 # References
 var world_server: WorldServer
@@ -18,12 +18,14 @@ var awaiting_peers: Dictionary = {}#[int, Player]
 var instance_map: Map
 var instance_resource: InstanceResource
 
+
 func _ready() -> void:
 	world_server.multiplayer_api.peer_disconnected.connect(
 		func(peer_id: int):
 			if connected_peers.has(peer_id):
 				despawn_player(peer_id)
 	)
+
 
 func _physics_process(_delta: float) -> void:
 	var state: Dictionary = {"EC" = {}}
@@ -45,6 +47,7 @@ func load_map(map_path: String) -> void:
 		if child is InteractionArea:
 			child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
 
+
 func _on_player_entered_interaction_area(player: Player, interaction_area: InteractionArea) -> void:
 	if player.just_teleported:
 		return
@@ -56,6 +59,7 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 			player.just_teleported = true
 			update_entity(player, {"position": interaction_area.target.global_position})
 
+
 @rpc("authority", "call_remote", "reliable", 1)
 func update_entity(entity, to_update: Dictionary) -> void:
 	for thing: String in to_update:
@@ -63,9 +67,11 @@ func update_entity(entity, to_update: Dictionary) -> void:
 	for peer_id: int in connected_peers:
 		update_entity.rpc_id(peer_id, entity.name.to_int(), to_update)
 
+
 @rpc("authority", "call_remote", "reliable", 0)
 func fetch_instance_state(_new_state: Dictionary):
 	pass
+
 
 @rpc("any_peer", "call_remote", "reliable", 0)
 func fetch_player_state(sync_state: Dictionary) -> void:
@@ -79,6 +85,7 @@ func fetch_player_state(sync_state: Dictionary) -> void:
 				entity.sync_state[key] = sync_state[key]
 			entity.sync_state = entity.sync_state
 
+
 @rpc("any_peer", "call_remote", "reliable", 0)
 func player_trying_to_change_weapon(weapon_path: String, _side: bool = true) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
@@ -87,6 +94,7 @@ func player_trying_to_change_weapon(weapon_path: String, _side: bool = true) -> 
 	update_entity(entity, {"weapon_name_right": weapon_path})
 	entity.spawn_state["weapon_name_right"] = weapon_path
 	
+
 
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:
@@ -111,6 +119,7 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	connected_peers.append(peer_id)
 	propagate_spawn(peer_id, player.spawn_state)
 
+
 func instantiate_player(peer_id: int) -> Player:
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
@@ -127,6 +136,7 @@ func propagate_spawn(player_id: int, spawn_state: Dictionary) -> void:
 		spawn_player.rpc_id(peer_id, player_id, spawn_state)
 		if player_id != peer_id:
 			spawn_player.rpc_id(player_id, peer_id, entity_collection[peer_id].spawn_state)
+
 
 @rpc("authority", "call_remote", "reliable", 0)
 func despawn_player(peer_id: int, delete: bool = false) -> void:
@@ -149,6 +159,7 @@ func player_submit_message(new_message: String) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	for id: int in connected_peers:
 		fetch_message.rpc_id(id, new_message, peer_id)
+
 
 @rpc("authority", "call_remote", "reliable", 1)
 func fetch_message(_message: String, _sender_id: int) -> void:

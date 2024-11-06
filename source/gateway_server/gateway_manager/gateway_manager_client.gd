@@ -1,7 +1,6 @@
+class_name GatewayManagerClient
 extends BaseClient
 
-
-const GatewayServer = preload("res://source/gateway_server/gateway_server/gateway_server.gd")
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 

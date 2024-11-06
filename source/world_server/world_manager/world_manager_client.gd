@@ -1,8 +1,6 @@
+class_name WorldManagerClient
 extends BaseClient
 
-
-# Loading classes 
-const WorldServer: Script = preload("res://source/world_server/world_server/world_server.gd")
 
 signal token_received(token: String, player_data: Dictionary)
 

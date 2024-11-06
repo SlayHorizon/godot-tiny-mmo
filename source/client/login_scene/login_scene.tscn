@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://source/client/login_scene/login_scene.gd" id="1_y6dui"]
 [ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/login_menu/login_menu.tscn" id="2_1i7tk"]
 [ext_resource type="Texture2D" uid="uid://bdqnowxsb7oqx" path="res://assets/skyboxes/mountain_skybox_0.png" id="4_ckx75"]
-[ext_resource type="PackedScene" uid="uid://cgjr8n84aunix" path="res://source/client/networking/gateway_client/gateway_client.tscn" id="4_pjy08"]
+[ext_resource type="PackedScene" uid="uid://cgjr8n84aunix" path="res://source/client/network/gateway_client/gateway_client.tscn" id="4_pjy08"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_h2dk4"]
 panorama = ExtResource("4_ckx75")
@@ -33,4 +33,4 @@ transform = Transform3D(0.617036, -0.0603729, -0.784615, 0, 0.997053, -0.076719,
 environment = SubResource("Environment_pffib")
 current = true
 
-[node name="GatewayServer" parent="." instance=ExtResource("4_pjy08")]
+[node name="GatewayClient" parent="." instance=ExtResource("4_pjy08")]
