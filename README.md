@@ -20,18 +20,15 @@ The current and planned features are listed below:
 
 - [X] **Client-Server connection** through `WebSocketMultiplayerPeer`
 - [x] **Playable on web browser and desktop**
-- [x] **Network architecture** (see diagram below)  
-
+- [x] **Network architecture** (see diagram below)
 - [X] **Authentication system** through gateway server with Login UI
 - [ ] **Account Creation** for permanent player accounts
 - [x] **Guest Login** option for quick access
 - [ ] **Game version check** to ensure client compatibility
-
 - [x] **Character Creation**
 - [x] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
 - [ ] **Weapons** at least one usable weapon per class
 - [ ] **Basic combat system**
-
 - [X] **Entity synchronization** for players within the same instance
 - [ ] **Entity interpolation** to handle rubber banding
 - [x] **Instance-based chat** for localized communication
