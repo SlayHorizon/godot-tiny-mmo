@@ -21,7 +21,14 @@ func _ready() -> void:
 
 func _set_gateway(new_gateway: GatewayClient) -> void:
 	gateway = new_gateway
+	gateway.login_succeeded.connect(on_login_succeeded)
 	gateway.connection_changed.connect(_on_gateway_connection_changed)
+
+
+func on_login_succeeded(account_data: Dictionary) -> void:
+	$AccountInfo.set_account_info(account_data)
+	$Main.hide()
+	$ServerSelection.show()
 
 
 func _on_gateway_connection_changed(connection_status: bool) -> void:
@@ -50,8 +57,9 @@ func _on_connect_as_guest_button_pressed() -> void:
 			$Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/Label.text = message
 			await get_tree().create_timer(0.5).timeout
 			if result_code == OK:
-				$Main.hide()
-				$ServerSelection.show()
+				pass
+				#$Main.hide()
+				#$ServerSelection.show()
 			else:
 				%ConnectAsGuestButton.disabled = false,
 		ConnectFlags.CONNECT_ONE_SHOT

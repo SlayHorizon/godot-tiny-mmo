@@ -2,6 +2,7 @@ class_name GatewayClient
 extends BaseClient
 
 
+signal login_succeeded(account_data: Dictionary)
 signal authentication_token_received(_token: String, _adress: String, _port: int)
 signal login_result_received(result: bool, message: String)
 signal account_creation_result_received(result: bool, message: String)
@@ -81,3 +82,8 @@ func create_player_character_request(_character_data: Dictionary, _world_id: int
 @rpc("authority")
 func player_character_creation_result(result_code: int) -> void:
 	player_character_creation_result_received.emit(result_code)
+
+
+@rpc("authority")
+func successful_login(account_data: Dictionary) -> void:
+	login_succeeded.emit(account_data)

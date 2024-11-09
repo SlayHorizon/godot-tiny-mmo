@@ -10,8 +10,11 @@ var connected_peers: Dictionary
 func _ready() -> void:
 	gateway_manager.account_creation_result_received.connect(
 		func(peer_id: int, result_code: int, data: Dictionary):
-			connected_peers[peer_id]["account"] = data
 			account_creation_result.rpc_id(peer_id, result_code)
+			if result_code == OK:
+				connected_peers[peer_id]["account"] = data
+				successful_login.rpc_id(peer_id, data)
+			
 	)
 	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
 	start_server()
@@ -113,4 +116,9 @@ func create_player_character_request(character_data: Dictionary, world_id: int) 
 
 @rpc("authority")
 func player_character_creation_result(_result_code: int) -> void:
+	pass
+
+
+@rpc("authority")
+func successful_login(_account_data: Dictionary) -> void:
 	pass

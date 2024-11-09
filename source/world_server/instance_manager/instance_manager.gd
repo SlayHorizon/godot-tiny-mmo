@@ -2,9 +2,6 @@ class_name InstanceManagerServer
 extends SubViewportContainer
 
 
-# References
-#var world_server: WorldServer
-
 var online_instances: Dictionary
 var instance_collection: Array[InstanceResource]
 
