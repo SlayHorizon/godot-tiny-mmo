@@ -5,7 +5,7 @@ extends SubViewportContainer
 var online_instances: Dictionary
 var instance_collection: Array[InstanceResource]
 
-@onready var world_server: WorldServer = $".."
+@export var world_server: WorldServer
 
 
 func _ready() -> void:

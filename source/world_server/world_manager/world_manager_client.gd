@@ -4,8 +4,8 @@ extends BaseClient
 
 signal token_received(token: String, player_data: Dictionary)
 
-# References
-var world_server: WorldServer
+
+@export var world_server: WorldServer
 
 var game_server_list: Dictionary
 

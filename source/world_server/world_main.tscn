@@ -8,10 +8,13 @@
 [node name="WorldMain" type="Node"]
 script = ExtResource("1_nvmf0")
 
-[node name="WorldManagerClient" type="Node" parent="."]
+[node name="WorldManagerClient" type="Node" parent="." node_paths=PackedStringArray("world_server")]
 script = ExtResource("2_bxid2")
+world_server = NodePath("../WorldServer")
 
-[node name="WorldServer" type="Node" parent="."]
+[node name="WorldServer" type="Node" parent="." node_paths=PackedStringArray("world_manager")]
 script = ExtResource("3_u7bqt")
+world_manager = NodePath("../WorldManagerClient")
 
-[node name="InstanceManager" parent="WorldServer" instance=ExtResource("4_x0f53")]
+[node name="InstanceManager" parent="WorldServer" node_paths=PackedStringArray("world_server") instance=ExtResource("4_x0f53")]
+world_server = NodePath("..")

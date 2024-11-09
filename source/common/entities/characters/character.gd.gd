@@ -76,7 +76,8 @@ func _set_right_weapon(weapon_name: String) -> void:
 
 func _set_sprite_frames(new_sprite_frames: String) -> void:
 	animated_sprite.sprite_frames = ResourceLoader.load(
-		"res://source/common/resources/builtin/sprite_frames/" + new_sprite_frames + ".tres")
+		"res://source/common/resources/builtin/sprite_frames/" + new_sprite_frames + ".tres"
+	)
 
 
 func _set_anim(new_anim: Animations) -> void:
