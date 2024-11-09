@@ -2,11 +2,10 @@ class_name LoginScene
 extends Node
 
 
-var world_server: Node
+@export var world_server: WorldClient
 
 @onready var login_menu: LoginMenu = $CanvasLayer/LoginMenu
 @onready var gateway: Node = $GatewayClient
-
 
 
 func _ready() -> void:

@@ -8,8 +8,7 @@ var username := ""
 var password := ""
 var selected_world_id: int = 0
 
-var gateway: GatewayClient:
-	set = _set_gateway
+@export var gateway: GatewayClient
 
 
 func _ready() -> void:
@@ -17,10 +16,7 @@ func _ready() -> void:
 	$ServerSelection.hide()
 	$CharacterSelection.hide()
 	$CharacterCreation.hide()
-
-
-func _set_gateway(new_gateway: GatewayClient) -> void:
-	gateway = new_gateway
+	$CreateAccount.hide()
 	gateway.login_succeeded.connect(on_login_succeeded)
 	gateway.connection_changed.connect(_on_gateway_connection_changed)
 
@@ -28,6 +24,7 @@ func _set_gateway(new_gateway: GatewayClient) -> void:
 func on_login_succeeded(account_data: Dictionary) -> void:
 	$AccountInfo.set_account_info(account_data)
 	$Main.hide()
+	$CreateAccount.hide()
 	$ServerSelection.show()
 
 
@@ -115,6 +112,10 @@ func get_error_message(error_code: int) -> String:
 		message = "Wrong class. Please choose a valid class."
 	elif error_code == 9:
 		message = "Invalid data format received."
+	elif error_code == 30:
+		message = "Username already exists."
+	else:
+		message = "Unknown error code: %d" % error_code
 	return message
 
 
@@ -126,3 +127,8 @@ func _on_confirm_server_button_pressed() -> void:
 func _on_character_slot_button_pressed() -> void:
 	$CharacterSelection.hide()
 	$CharacterCreation.show()
+
+
+func _on_create_account_button_pressed() -> void:
+	$Main.hide()
+	$CreateAccount.show()
