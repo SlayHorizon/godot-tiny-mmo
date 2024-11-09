@@ -3,7 +3,7 @@
 
 # Godot Tiny MMO
 
-A little web-based MMO / MMORPG demo developed with Godot Engine 4.x - 4.3,  
+A tiny web-based MMO / MMORPG demo developed with Godot Engine 4.x - 4.3,  
 created without relying on the built-in multiplayer nodes.  
 
 This project contains both client and server within the same codebase.  
@@ -23,6 +23,7 @@ The current and planned features are listed below:
 - [x] **Network architecture** (see diagram below)
 - [X] **Authentication system** through gateway server with Login UI
 - [ ] **Account Creation** for permanent player accounts
+- [ ] **QAD Database** to save persistent data
 - [x] **Guest Login** option for quick access
 - [ ] **Game version check** to ensure client compatibility
 - [x] **Character Creation**
@@ -46,8 +47,8 @@ You can track development and report issues by checking the [**open issues**](ht
 
 To get started with the project, follow these steps:
 1. Clone this repository.
-2. Open the project in **Godot 4.3**.
-3. In the Debug tab, select **Customizable Run Instance...**.
+2. Open the project in **Godot 4.3+**.
+3. In the Debug tab, select **"Customizable Run Instance..."**.
 4. Enable **Multiple Instances** and set the count to **4 or more**.
 5. Under **Feature Tags**, ensure you have:
    - Exactly **one** "gateway-server" tag.
