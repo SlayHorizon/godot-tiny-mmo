@@ -14,3 +14,6 @@ export_presets.cfg
 .directory
 *DS_Store
 *~
+
+# Godot tmp files (https://github.com/godotengine/godot/issues/82270)
+*.tmp
