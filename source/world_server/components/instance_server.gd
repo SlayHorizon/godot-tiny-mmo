@@ -6,7 +6,6 @@ signal player_entered_warper(player: Player, current_instance: ServerInstance, w
 
 const PLAYER = preload("res://source/common/entities/characters/player/player.tscn")
 
-# References
 var world_server: WorldServer
 
 var entity_collection: Dictionary = {}#[int, Entity]

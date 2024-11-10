@@ -28,6 +28,7 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -479,10 +480,77 @@ text = "Create Account
 layout_mode = 2
 text = "Back"
 
+[node name="Login" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Login"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainContainer" type="PanelContainer" parent="Login/CenterContainer"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Login/CenterContainer/MainContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Account name"
+
+[node name="LineEdit" type="LineEdit" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Password"
+
+[node name="LineEdit" type="LineEdit" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="ResultLabel" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="CreateAccountButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Login"
+
+[node name="BackButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Back"
+
 [node name="AccountInfo" type="VBoxContainer" parent="."]
 layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
 offset_right = 142.0
-offset_bottom = 50.0
+grow_vertical = 0
 script = ExtResource("7_jdy25")
 
 [node name="Label" type="Label" parent="AccountInfo"]

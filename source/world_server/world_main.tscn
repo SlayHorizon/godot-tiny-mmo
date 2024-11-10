@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://deslq4wqsgjbk"]
 
 [ext_resource type="Script" path="res://source/world_server/world_main.gd" id="1_nvmf0"]
-[ext_resource type="Script" path="res://source/world_server/world_manager/world_manager_client.gd" id="2_bxid2"]
-[ext_resource type="Script" path="res://source/world_server/world_server/world_server.gd" id="3_u7bqt"]
-[ext_resource type="PackedScene" uid="uid://dvslcf4rymt6w" path="res://source/world_server/instance_manager/instance_manager.tscn" id="4_x0f53"]
+[ext_resource type="Script" path="res://source/world_server/components/world_manager_client.gd" id="2_bxid2"]
+[ext_resource type="Script" path="res://source/world_server/components/world_server.gd" id="3_u7bqt"]
+[ext_resource type="Script" path="res://source/world_server/components/instance_manager.gd" id="4_6abmg"]
 
 [node name="WorldMain" type="Node"]
 script = ExtResource("1_nvmf0")
@@ -16,5 +16,12 @@ world_server = NodePath("../WorldServer")
 script = ExtResource("3_u7bqt")
 world_manager = NodePath("../WorldManagerClient")
 
-[node name="InstanceManager" parent="WorldServer" node_paths=PackedStringArray("world_server") instance=ExtResource("4_x0f53")]
+[node name="InstanceManager" type="SubViewportContainer" parent="WorldServer" node_paths=PackedStringArray("world_server")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("4_6abmg")
 world_server = NodePath("..")
