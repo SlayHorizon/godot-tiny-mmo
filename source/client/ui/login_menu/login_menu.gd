@@ -24,8 +24,9 @@ func _ready() -> void:
 	gateway.connection_changed.connect(_on_gateway_connection_changed)
 
 
-func on_login_succeeded(account_data: Dictionary) -> void:
+func on_login_succeeded(account_data: Dictionary, worlds_info: Dictionary) -> void:
 	$AccountInfo.set_account_info(account_data)
+	$ServerSelection.update_worlds_info(worlds_info)
 	$Main.hide()
 	$CreateAccount.hide()
 	$Login.hide()

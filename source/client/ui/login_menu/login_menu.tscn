@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://b75u8dbglxgyb"]
+[gd_scene load_steps=11 format=3 uid="uid://b75u8dbglxgyb"]
 
 [ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
+[ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/ui/login_menu/world_button/world_button.tscn" id="3_r7xrg"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="3_xkqbx"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="4_iraby"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/character_creation.gd" id="6_i5ors"]
@@ -29,6 +30,7 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -98,7 +100,6 @@ horizontal_alignment = 1
 visible_characters_behavior = 1
 
 [node name="ServerSelection" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -128,32 +129,8 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="ServerButton1" type="Button" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer"]
-custom_minimum_size = Vector2(150, 250)
+[node name="ServerButton1" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer" instance=ExtResource("3_r7xrg")]
 layout_mode = 2
-toggle_mode = true
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton1"]
-layout_mode = 2
-offset_right = 150.0
-offset_bottom = 250.0
-
-[node name="ServerName" type="Label" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton1/VBoxContainer"]
-layout_mode = 2
-text = "Sladida"
-horizontal_alignment = 1
-
-[node name="ServerRules" type="Label" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton1/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 6
-text = "Rules:
-None"
-horizontal_alignment = 1
-
-[node name="ServerLocation" type="Label" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton1/VBoxContainer"]
-layout_mode = 2
-text = "International"
-horizontal_alignment = 1
 
 [node name="ServerButton2" type="Button" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(150, 250)
@@ -567,7 +544,6 @@ text = "Account ID: %s"
 [connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="." method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/ConnectAsGuestButton" to="." method="_on_connect_as_guest_button_pressed"]
 [connection signal="pressed" from="ServerSelection/CenterContainer/VBoxContainer/ConfirmButton" to="." method="_on_confirm_server_button_pressed"]
-[connection signal="pressed" from="ServerSelection/CenterContainer/VBoxContainer/ConfirmButton" to="ServerSelection" method="_on_server_confirm_button_pressed"]
 [connection signal="pressed" from="CharacterSelection/CenterContainer/HBoxContainer/VBoxContainer/Button" to="." method="_on_character_slot_button_pressed"]
 [connection signal="text_changed" from="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/LineEdit" to="CharacterCreation" method="_on_line_edit_text_changed"]
 [connection signal="pressed" from="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/Button" to="CharacterCreation" method="_on_rng_button_pressed"]

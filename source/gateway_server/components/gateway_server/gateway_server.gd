@@ -9,9 +9,10 @@ var connected_peers: Dictionary
 
 func _ready() -> void:
 	gateway_manager.login_succeeded.connect(
-		func(peer_id: int, account_info: Dictionary):
+		func(peer_id: int, account_info: Dictionary, worlds_info: Dictionary):
 			connected_peers[peer_id]["account"] = account_info
-			successful_login.rpc_id(peer_id, account_info)
+			print(connected_peers[peer_id]["account"])
+			successful_login.rpc_id(peer_id, account_info, worlds_info)
 	)
 	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
 	start_server()
@@ -25,9 +26,9 @@ func _on_peer_connected(peer_id: int) -> void:
 func _on_peer_disconnected(peer_id: int) -> void:
 	if not connected_peers.has("token_received"):
 		# Too long name
-		#gateway_manager.peer_disconnected_without_joining_world.rpc_id(
-			#1, peer_id
-		#)
+		gateway_manager.peer_disconnected_without_joining_world.rpc_id(
+			1, connected_peers[peer_id]["account"]["name"]
+		)
 		pass
 	connected_peers.erase(peer_id)
 	#gateway_manager.
@@ -108,7 +109,7 @@ func create_player_character_request(character_data: Dictionary, world_id: int) 
 			1,
 			world_id,
 			peer_id,
-			connected_peers[peer_id]["account"]["id"],
+			connected_peers[peer_id]["account"]["name"],
 			character_data,
 		)
 
@@ -119,5 +120,5 @@ func player_character_creation_result(_result_code: int) -> void:
 
 
 @rpc("authority")
-func successful_login(_account_data: Dictionary) -> void:
+func successful_login(_account_data: Dictionary, _worlds_info: Dictionary) -> void:
 	pass

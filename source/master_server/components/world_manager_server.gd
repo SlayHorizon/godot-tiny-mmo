@@ -6,8 +6,8 @@ extends BaseServer
 @export var gateway_manager: GatewayManagerServer
 
 # Active Connections
-var connected_game_servers: Dictionary
-
+var next_world_id: int = 0
+var connected_worlds: Dictionary
 
 func _ready() -> void:
 	load_server_configuration("world-manager-server", "res://test_config/master_server_config.cfg")
@@ -25,7 +25,8 @@ func _on_peer_disconnected(peer_id: int) -> void:
 @rpc("any_peer")
 func fetch_server_info(info: Dictionary) -> void:
 	var game_server_id := multiplayer_api.get_remote_sender_id()
-	connected_game_servers[game_server_id] = info
+	connected_worlds[game_server_id] = info
+	gateway_manager.update_worlds_info.rpc(connected_worlds)
 
 
 @rpc("authority")

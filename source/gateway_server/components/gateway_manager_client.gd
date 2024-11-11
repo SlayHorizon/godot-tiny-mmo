@@ -3,11 +3,11 @@ extends BaseClient
 
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
-signal login_succeeded(account_info: Dictionary)
+signal login_succeeded(account_info: Dictionary, _worlds_info: Dictionary)
 
 @export var gateway: GatewayServer
 
-var game_server_list: Dictionary
+var worlds_info: Dictionary
 
 
 func _ready() -> void:
@@ -29,9 +29,14 @@ func _on_server_disconnected() -> void:
 
 
 @rpc("authority")
+func update_worlds_info(_worlds_info: Dictionary) -> void:
+	print("UPDATE WORLD INFO = ", _worlds_info)
+	worlds_info = _worlds_info
+
+
+@rpc("authority")
 func fetch_authentication_token(target_peer: int, token: String, _adress: String, _port: int) -> void:
 	gateway.fetch_authentication_token.rpc_id(target_peer, token, _adress, _port)
-	(gateway.connected_peers[target_peer] as Dictionary).erase("account")
 	gateway.connected_peers[target_peer]["token_received"] = true
 
 
@@ -46,7 +51,7 @@ func login_result(peer_id: int, result: Dictionary) -> void:
 		gateway.login_result.rpc_id(peer_id, result["error"])
 	else:
 		gateway.login_result.rpc_id(peer_id, 0)
-		login_succeeded.emit(peer_id, result)
+		login_succeeded.emit(peer_id, result, worlds_info)
 
 
 @rpc("any_peer")
@@ -57,8 +62,10 @@ func create_account_request(_peer_id: int, _username: String, _password: String,
 @rpc("authority")
 func account_creation_result(peer_id: int, result_code: int, result: Dictionary) -> void:
 	if result_code == OK:
-		login_succeeded.emit(peer_id, result)
+		print("World info = ", worlds_info)
+		login_succeeded.emit(peer_id, result, worlds_info)
 	gateway.account_creation_result.rpc_id(peer_id, result_code)
+
 
 @rpc("any_peer")
 func create_player_character_request(_peer_id: int , _account_id: int, _character_data: Dictionary, _world_id: int) -> void:
@@ -70,3 +77,8 @@ func player_character_creation_result(peer_id: int, result_code: int) -> void:
 	gateway.player_character_creation_result.rpc_id(
 		peer_id, result_code
 	)
+
+
+@rpc("any_peer")
+func peer_disconnected_without_joining_world(_account_name: String) -> void:
+	pass

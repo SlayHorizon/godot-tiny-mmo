@@ -14,16 +14,16 @@ func _ready() -> void:
 
 func _on_peer_connected(peer_id: int) -> void:
 	print("Gateway: %d is connected to GatewayManager." % peer_id)
+	update_worlds_info.rpc_id(peer_id, world_manager.connected_worlds)
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
 	print("Gateway: %d is disconnected to GatewayManager." % peer_id)
 
 
-# Send the game servers info the the gateway (server name, population etc.)
-#@rpc("authority")
-#func fetch_servers_info(_info: Dictionary) -> void:
-	#pass
+@rpc("authority")
+func update_worlds_info(_worlds_info: Dictionary) -> void:
+	pass
 
 
 # Send an authentication token to the gateway for a specific peer,
@@ -41,10 +41,10 @@ func login_request(peer_id: int, username: String, password: String) -> void:
 	)
 	if not account:
 		login_result.rpc_id(gateway_id, peer_id, {"error": 50})
-	elif account.is_online:
+	elif account.peer_id:
 		login_result.rpc_id(gateway_id, peer_id, {"error": 51})
 	else:
-		account.is_online = true
+		account.peer_id = peer_id
 		login_result.rpc_id(
 			gateway_id, peer_id,
 			{"name": account.username, "id": account.id}
@@ -67,7 +67,7 @@ func create_account_request(peer_id: int, username: String, password: String, is
 		result_code = 30
 	else:
 		return_data = {"name": result.username, "id": result.id}
-		result.is_online = true
+		result.peer_id = peer_id
 	account_creation_result.rpc_id(gateway_id, peer_id, result_code, return_data)
 
 
@@ -78,15 +78,24 @@ func account_creation_result(_peer_id: int, _result_code: int, _data: Dictionary
 
 # Used to create the player's character.
 @rpc("any_peer")
-func create_player_character_request(world_id: int, peer_id: int, account_id: int, character_data: Dictionary) -> void:
+func create_player_character_request(world_id: int, peer_id: int, username: String, character_data: Dictionary) -> void:
 	var gateway_id := multiplayer_api.get_remote_sender_id()
-	# Verification if the peer_id is verified
-	world_manager.create_player_character_request.rpc_id(
-		world_manager.connected_game_servers.keys()[world_id],
-		gateway_id, peer_id, account_id, character_data
-	)
+	if database.account_collection.collection.has(username):
+		var account := database.account_collection.collection[username] as AccountResource
+		if account.peer_id == peer_id:
+			world_manager.create_player_character_request.rpc_id(
+				world_id, gateway_id, peer_id, account.id, character_data
+			)
+		#else:
+			#player_character_creation_result.rpc_id(gateway_id, peer_id, 80)
 
 
 @rpc("authority")
 func player_character_creation_result(_peer_id: int, _result_code: int) -> void:
 	pass
+
+
+@rpc("any_peer")
+func peer_disconnected_without_joining_world(account_name: String) -> void:
+	if database.account_collection.collection.has(account_name):
+		database.account_collection.collection[account_name].peer_id = 0

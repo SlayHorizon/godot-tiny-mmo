@@ -5,12 +5,14 @@ extends BaseClient
 signal token_received(token: String, player_data: Dictionary)
 
 
+@export var world_main: WorldMain
 @export var world_server: WorldServer
 
-var game_server_list: Dictionary
+var world_info: Dictionary
 
 
 func _ready() -> void:
+	await world_main.ready
 	load_client_configuration("world-manager-client", "res://test_config/world_server_config.cfg")
 	start_client()
 
@@ -22,7 +24,7 @@ func _on_connection_succeeded() -> void:
 		{
 			"port": world_server.port,
 			"adress": "127.0.0.1",
-			"rules": "None",
+			"info": world_main.world_info,
 			"population": world_server.player_list.size()
 		}
 	)
