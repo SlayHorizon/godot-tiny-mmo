@@ -9,10 +9,11 @@
 [node name="MasterMain" type="Node"]
 script = ExtResource("1_6d3fm")
 
-[node name="GatewayManagerServer" type="Node" parent="." node_paths=PackedStringArray("world_manager", "authentication_manager")]
+[node name="GatewayManagerServer" type="Node" parent="." node_paths=PackedStringArray("world_manager", "authentication_manager", "database")]
 script = ExtResource("2_hsh87")
 world_manager = NodePath("../WorldManagerServer")
 authentication_manager = NodePath("../AuthenticationManager")
+database = NodePath("../Database")
 
 [node name="WorldManagerServer" type="Node" parent="." node_paths=PackedStringArray("authentication_manager", "gateway_manager")]
 script = ExtResource("3_qbesc")
@@ -25,3 +26,5 @@ database = NodePath("../Database")
 
 [node name="Database" type="Node" parent="."]
 script = ExtResource("5_mync2")
+
+[node name="Node" type="Node" parent="."]

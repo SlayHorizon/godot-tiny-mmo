@@ -6,6 +6,7 @@ extends Resource
 @export var username: String
 @export var password: String
 
+var is_online := false
 
 func _init(_id: int, _username: String, _password: String) -> void:
 	id = _id

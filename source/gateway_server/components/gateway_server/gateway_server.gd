@@ -8,13 +8,10 @@ var connected_peers: Dictionary
 
 
 func _ready() -> void:
-	gateway_manager.account_creation_result_received.connect(
-		func(peer_id: int, result_code: int, data: Dictionary):
-			account_creation_result.rpc_id(peer_id, result_code)
-			if result_code == OK:
-				connected_peers[peer_id]["account"] = data
-				successful_login.rpc_id(peer_id, data)
-			
+	gateway_manager.login_succeeded.connect(
+		func(peer_id: int, account_info: Dictionary):
+			connected_peers[peer_id]["account"] = account_info
+			successful_login.rpc_id(peer_id, account_info)
 	)
 	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
 	start_server()
@@ -26,7 +23,14 @@ func _on_peer_connected(peer_id: int) -> void:
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
+	if not connected_peers.has("token_received"):
+		# Too long name
+		#gateway_manager.peer_disconnected_without_joining_world.rpc_id(
+			#1, peer_id
+		#)
+		pass
 	connected_peers.erase(peer_id)
+	#gateway_manager.
 	print("Peer: %d is disconnected." % peer_id)
 
 
@@ -36,18 +40,13 @@ func fetch_authentication_token(_token: String, _adress: String, _port: int) -> 
 
 
 @rpc("any_peer")
-func login_request(_username: String, _password: String) -> void:
-	pass
-	#var peer_id := multiplayer.get_remote_sender_id()
-	#var result := validate_credentials(username, password)
-	#if result:
-		#connected_peers[peer_id]["account"] = account_collection[username]
-	#var message := "Login successful." if result else "Invalid information."
-	#login_result.rpc_id(peer_id, result, message)
+func login_request(username: String, password: String) -> void:
+	var peer_id := multiplayer.get_remote_sender_id()
+	gateway_manager.login_request.rpc_id(1, peer_id, username, password)
 
 
 @rpc("authority")
-func login_result(_result: bool, _message: String) -> void:
+func login_result(_result_code: bool) -> void:
 	pass
 
 

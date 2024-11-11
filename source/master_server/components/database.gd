@@ -5,6 +5,8 @@ extends Node
 var account_collection: AccountResourceCollection
 var account_collection_path := "res://source/gateway_server/account_collection.tres"
 
+var connected_players: Dictionary
+
 
 func _ready() -> void:
 	load_account_collection()
@@ -23,8 +25,10 @@ func username_exists(username: String) -> bool:
 	return false
 
 
-func validate_credentials(username: String, password: String) -> bool:
+func validate_credentials(username: String, password: String) -> AccountResource:
+	var account: AccountResource = null
 	if account_collection.collection.has(username):
-		if (account_collection.collection[username] as AccountResource).password == password:
-			return true
-	return false
+		account = account_collection.collection[username]
+		if account.password == password:
+			return account
+	return null

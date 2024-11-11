@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b75u8dbglxgyb"]
+[gd_scene load_steps=10 format=3 uid="uid://b75u8dbglxgyb"]
 
 [ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://source/client/ui/login_menu/server_selection.gd" id="7_045sv"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/account_info.gd" id="7_jdy25"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/create_account.gd" id="7_l37t0"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/login.gd" id="8_dy5r0"]
 
 [node name="LoginMenu" type="Control"]
 layout_mode = 3
@@ -28,7 +29,6 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +60,6 @@ layout_mode = 2
 
 [node name="LoginButton" type="Button" parent="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
-disabled = true
 text = "Login"
 
 [node name="CreateAccountButton" type="Button" parent="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
@@ -480,13 +479,16 @@ text = "Create Account
 layout_mode = 2
 text = "Back"
 
-[node name="Login" type="Control" parent="."]
+[node name="Login" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("8_dy5r0")
+login_menu = NodePath("..")
 
 [node name="CenterContainer" type="CenterContainer" parent="Login"]
 layout_mode = 1
@@ -535,7 +537,7 @@ layout_mode = 2
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="CreateAccountButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+[node name="LoginButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "Login"
 
@@ -561,6 +563,7 @@ text = "Account name: %s"
 layout_mode = 2
 text = "Account ID: %s"
 
+[connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
 [connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="." method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/ConnectAsGuestButton" to="." method="_on_connect_as_guest_button_pressed"]
 [connection signal="pressed" from="ServerSelection/CenterContainer/VBoxContainer/ConfirmButton" to="." method="_on_confirm_server_button_pressed"]
@@ -571,3 +574,5 @@ text = "Account ID: %s"
 [connection signal="pressed" from="CharacterCreation/CenterContainer/VBoxContainer/CreateCharacterButton" to="." method="_on_create_character_button_pressed"]
 [connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="CreateAccount" method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="CreateAccount" method="_on_back_button_pressed"]
+[connection signal="pressed" from="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton" to="Login" method="_on_login_button_pressed"]
+[connection signal="pressed" from="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="Login" method="_on_back_button_pressed"]

@@ -4,6 +4,7 @@ extends BaseServer
 
 @export var world_manager: WorldManagerServer
 @export var authentication_manager: AuthenticationManager
+@export var database: MasterDatabase
 
 
 func _ready() -> void:
@@ -32,16 +33,28 @@ func fetch_authentication_token(_target_peer: int, _token: String, _adress: Stri
 	pass
 
 
-#@rpc("any_peer")
-#func login_request(user_id: int, username: String, password: String) -> void:
-	#var gateway_id := multiplayer_api.get_remote_sender_id()
-	#var result := master.authentication_manager.database.validate_credentials(username, password)
-	#login_result.rpc_id(gateway_id, user_id, result)
-#
-#
-#@rpc("authority")
-#func login_result(_user_id: int, _result_code: int) -> void:
-	#pass
+@rpc("any_peer")
+func login_request(peer_id: int, username: String, password: String) -> void:
+	var gateway_id := multiplayer.get_remote_sender_id()
+	var account: AccountResource = database.validate_credentials(
+		username, password
+	)
+	if not account:
+		login_result.rpc_id(gateway_id, peer_id, {"error": 50})
+	elif account.is_online:
+		login_result.rpc_id(gateway_id, peer_id, {"error": 51})
+	else:
+		account.is_online = true
+		login_result.rpc_id(
+			gateway_id, peer_id,
+			{"name": account.username, "id": account.id}
+		)
+
+
+@rpc("authority")
+func login_result(_peer_id: int, _result: Dictionary) -> void:
+	pass
+
 
 
 @rpc("any_peer")
@@ -54,7 +67,7 @@ func create_account_request(peer_id: int, username: String, password: String, is
 		result_code = 30
 	else:
 		return_data = {"name": result.username, "id": result.id}
-		
+		result.is_online = true
 	account_creation_result.rpc_id(gateway_id, peer_id, result_code, return_data)
 
 
@@ -67,6 +80,7 @@ func account_creation_result(_peer_id: int, _result_code: int, _data: Dictionary
 @rpc("any_peer")
 func create_player_character_request(world_id: int, peer_id: int, account_id: int, character_data: Dictionary) -> void:
 	var gateway_id := multiplayer_api.get_remote_sender_id()
+	# Verification if the peer_id is verified
 	world_manager.create_player_character_request.rpc_id(
 		world_manager.connected_game_servers.keys()[world_id],
 		gateway_id, peer_id, account_id, character_data
