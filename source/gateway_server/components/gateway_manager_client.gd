@@ -30,14 +30,13 @@ func _on_server_disconnected() -> void:
 
 @rpc("authority")
 func update_worlds_info(_worlds_info: Dictionary) -> void:
-	print("UPDATE WORLD INFO = ", _worlds_info)
 	worlds_info = _worlds_info
 
 
 @rpc("authority")
 func fetch_authentication_token(target_peer: int, token: String, _adress: String, _port: int) -> void:
-	gateway.fetch_authentication_token.rpc_id(target_peer, token, _adress, _port)
 	gateway.connected_peers[target_peer]["token_received"] = true
+	gateway.fetch_authentication_token.rpc_id(target_peer, token, _adress, _port)
 
 
 @rpc("any_peer")
@@ -62,7 +61,6 @@ func create_account_request(_peer_id: int, _username: String, _password: String,
 @rpc("authority")
 func account_creation_result(peer_id: int, result_code: int, result: Dictionary) -> void:
 	if result_code == OK:
-		print("World info = ", worlds_info)
 		login_succeeded.emit(peer_id, result, worlds_info)
 	gateway.account_creation_result.rpc_id(peer_id, result_code)
 

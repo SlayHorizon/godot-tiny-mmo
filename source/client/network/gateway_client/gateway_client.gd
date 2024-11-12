@@ -87,4 +87,3 @@ func player_character_creation_result(result_code: int) -> void:
 @rpc("authority")
 func successful_login(account_data: Dictionary, worlds_info: Dictionary) -> void:
 	login_succeeded.emit(account_data, worlds_info)
-	print("WORLD INFO = ", worlds_info)

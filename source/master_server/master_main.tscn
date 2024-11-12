@@ -15,10 +15,11 @@ world_manager = NodePath("../WorldManagerServer")
 authentication_manager = NodePath("../AuthenticationManager")
 database = NodePath("../Database")
 
-[node name="WorldManagerServer" type="Node" parent="." node_paths=PackedStringArray("authentication_manager", "gateway_manager")]
+[node name="WorldManagerServer" type="Node" parent="." node_paths=PackedStringArray("authentication_manager", "gateway_manager", "database")]
 script = ExtResource("3_qbesc")
 authentication_manager = NodePath("../AuthenticationManager")
 gateway_manager = NodePath("../GatewayManagerServer")
+database = NodePath("../Database")
 
 [node name="AuthenticationManager" type="Node" parent="." node_paths=PackedStringArray("database")]
 script = ExtResource("4_1tf2k")

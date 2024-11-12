@@ -30,4 +30,3 @@ func load_world_info(config_path: String) -> void:
 		"max_character": config_file.get_value("world-server", "max_character", 5),
 		"pvp": config_file.get_value("world-server", "pvp", true)
 	}
-	print(world_info)

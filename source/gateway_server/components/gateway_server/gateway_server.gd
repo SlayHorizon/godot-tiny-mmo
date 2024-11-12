@@ -11,7 +11,6 @@ func _ready() -> void:
 	gateway_manager.login_succeeded.connect(
 		func(peer_id: int, account_info: Dictionary, worlds_info: Dictionary):
 			connected_peers[peer_id]["account"] = account_info
-			print(connected_peers[peer_id]["account"])
 			successful_login.rpc_id(peer_id, account_info, worlds_info)
 	)
 	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
@@ -24,14 +23,14 @@ func _on_peer_connected(peer_id: int) -> void:
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
-	if not connected_peers.has("token_received"):
-		# Too long name
+	if (
+		connected_peers.has(peer_id) and connected_peers[peer_id].has("account")
+		and not connected_peers[peer_id].has("token_received")
+	):
 		gateway_manager.peer_disconnected_without_joining_world.rpc_id(
 			1, connected_peers[peer_id]["account"]["name"]
 		)
-		pass
 	connected_peers.erase(peer_id)
-	#gateway_manager.
 	print("Peer: %d is disconnected." % peer_id)
 
 

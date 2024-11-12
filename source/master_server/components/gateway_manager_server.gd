@@ -84,7 +84,7 @@ func create_player_character_request(world_id: int, peer_id: int, username: Stri
 		var account := database.account_collection.collection[username] as AccountResource
 		if account.peer_id == peer_id:
 			world_manager.create_player_character_request.rpc_id(
-				world_id, gateway_id, peer_id, account.id, character_data
+				world_id, gateway_id, peer_id, account.username, character_data
 			)
 		#else:
 			#player_character_creation_result.rpc_id(gateway_id, peer_id, 80)

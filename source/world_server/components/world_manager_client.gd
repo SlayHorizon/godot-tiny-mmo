@@ -2,7 +2,7 @@ class_name WorldManagerClient
 extends BaseClient
 
 
-signal token_received(token: String, player_data: Dictionary)
+signal token_received(token: String, username: String, character_id: int)
 
 
 @export var world_main: WorldMain
@@ -44,20 +44,31 @@ func fetch_server_info(_info: Dictionary) -> void:
 
 
 @rpc("authority")
-func fetch_token(token: String, account_id: int) -> void:
-	token_received.emit(token, account_id)
-
-
-@rpc("authority")
-func create_player_character_request(gateway_id: int, peer_id: int, account_id: int, character_data: Dictionary) -> void:
-	if world_server.characters.has(account_id) and world_server.characters[account_id].size()  > 3: #max character per account
-		player_character_creation_result.rpc_id(1, gateway_id, peer_id, account_id, 22)
-		return
-	world_server.characters[account_id] = {world_server.next_id: character_data}
-	world_server.next_id += 1
-	player_character_creation_result.rpc_id(1, gateway_id, peer_id, account_id, 0)
+func fetch_token(token: String, username: String, character_id: int) -> void:
+	token_received.emit(token, username, character_id)
 
 
 @rpc("any_peer")
-func player_character_creation_result(_gateway_id: int, _peer_id: int, _account_id: int, _result_code: int) -> void:
+func player_disconnected(_username: String) -> void:
+	pass
+
+
+@rpc("authority")
+func create_player_character_request(gateway_id: int, peer_id: int, username: String, character_data: Dictionary) -> void:
+	if world_server.player_list.has(username) and world_server.player_list[username].size()  > 3:
+		player_character_creation_result.rpc_id(1, gateway_id, peer_id, username, -1)
+		return
+	#world_server.characters[username] = {world_server.next_id: character_data}
+	#world_server.characters[username][world_server.next_id][character_data]
+	world_server.characters[world_server.next_id] = character_data
+	if world_server.player_list.has(username):
+		world_server.player_list[username].append(world_server.next_id)
+	else:
+		world_server.player_list[username] = [world_server.next_id]
+	player_character_creation_result.rpc_id(1, gateway_id, peer_id, username, world_server.next_id)
+	world_server.next_id += 1
+
+
+@rpc("any_peer")
+func player_character_creation_result(_gateway_id: int, _peer_id: int, _username: String, _result_code: int) -> void:
 	pass

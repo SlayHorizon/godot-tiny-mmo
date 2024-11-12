@@ -9,13 +9,17 @@ extends BaseServer
 var token_list: Dictionary
 var player_list: Dictionary
 var characters: Dictionary
-var next_id: int = 0
+var next_id: int = 1
+
+var players: Dictionary
 
 
 func _ready() -> void:
 	world_manager.token_received.connect(
-		func(token: String, account_id: int):
-			token_list[token] = account_id
+		func(token: String, username: String, character_id: int):
+			var player_data: Dictionary = characters[character_id]
+			player_data["account_name"] = username
+			token_list[token] = player_data
 	)
 	authentication_callback = _authentication_callback
 	load_server_configuration("world-server", "res://test_config/world_server_config.cfg")
@@ -28,7 +32,8 @@ func _on_peer_connected(peer_id: int) -> void:
 
 func _on_peer_disconnected(peer_id: int) -> void:
 	print("Peer: %d is disconnected." % peer_id)
-	player_list.erase(peer_id)
+	world_manager.player_disconnected.rpc_id(1, players[peer_id]["account_name"])
+	players.erase(peer_id)
 
 
 func _on_peer_authenticating(peer_id: int) -> void:
@@ -40,15 +45,12 @@ func _on_peer_authentication_failed(peer_id: int) -> void:
 	print("Peer: %d failed to authenticate." % peer_id)
 
 
-# Quick and dirty, needs rework.
 func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
-	#var dict := bytes_to_var(data) as Dictionary
 	var token := bytes_to_var(data) as String
 	print("Peer: %d is trying to connect with data: \"%s\"." % [peer_id, token])
 	if is_valid_authentication_token(token):
 		multiplayer.complete_auth(peer_id)
-		#player_list[peer_id] = dict
-		player_list[peer_id] = characters[token_list[token]]
+		players[peer_id] = token_list[token]
 		token_list.erase(token)
 	else:
 		server.disconnect_peer(peer_id)
