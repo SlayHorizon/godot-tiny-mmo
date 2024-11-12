@@ -1,20 +1,23 @@
-[gd_scene load_steps=5 format=3 uid="uid://deslq4wqsgjbk"]
+[gd_scene load_steps=6 format=3 uid="uid://deslq4wqsgjbk"]
 
 [ext_resource type="Script" path="res://source/world_server/world_main.gd" id="1_nvmf0"]
 [ext_resource type="Script" path="res://source/world_server/components/world_manager_client.gd" id="2_bxid2"]
 [ext_resource type="Script" path="res://source/world_server/components/world_server.gd" id="3_u7bqt"]
 [ext_resource type="Script" path="res://source/world_server/components/instance_manager.gd" id="4_6abmg"]
+[ext_resource type="Script" path="res://source/world_server/components/world_database.gd" id="5_at7ov"]
 
 [node name="WorldMain" type="Node"]
 script = ExtResource("1_nvmf0")
 
-[node name="WorldManagerClient" type="Node" parent="." node_paths=PackedStringArray("world_main", "world_server")]
+[node name="WorldManagerClient" type="Node" parent="." node_paths=PackedStringArray("database", "world_main", "world_server")]
 script = ExtResource("2_bxid2")
+database = NodePath("../Database")
 world_main = NodePath("..")
 world_server = NodePath("../WorldServer")
 
-[node name="WorldServer" type="Node" parent="." node_paths=PackedStringArray("world_manager")]
+[node name="WorldServer" type="Node" parent="." node_paths=PackedStringArray("database", "world_manager")]
 script = ExtResource("3_u7bqt")
+database = NodePath("../Database")
 world_manager = NodePath("../WorldManagerClient")
 
 [node name="InstanceManager" type="SubViewportContainer" parent="WorldServer" node_paths=PackedStringArray("world_server")]
@@ -26,3 +29,6 @@ grow_vertical = 2
 stretch = true
 script = ExtResource("4_6abmg")
 world_server = NodePath("..")
+
+[node name="Database" type="Node" parent="."]
+script = ExtResource("5_at7ov")

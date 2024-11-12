@@ -123,8 +123,8 @@ func instantiate_player(peer_id: int) -> Player:
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
 	new_player.spawn_state = {
-		"character_class": world_server.players[peer_id]["class"],
-		"display_name": world_server.players[peer_id]["name"]
+		"character_class": world_server.connected_players[peer_id].character_class,
+		"display_name": world_server.connected_players[peer_id].display_name,
 	}
 	return new_player
 

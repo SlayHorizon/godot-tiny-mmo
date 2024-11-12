@@ -4,7 +4,7 @@ extends BaseClient
 
 signal token_received(token: String, username: String, character_id: int)
 
-
+@export var database: WorldDatabase
 @export var world_main: WorldMain
 @export var world_server: WorldServer
 
@@ -25,7 +25,7 @@ func _on_connection_succeeded() -> void:
 			"port": world_server.port,
 			"adress": "127.0.0.1",
 			"info": world_main.world_info,
-			"population": world_server.player_list.size()
+			"population": world_server.connected_players.size()
 		}
 	)
 
@@ -55,18 +55,10 @@ func player_disconnected(_username: String) -> void:
 
 @rpc("authority")
 func create_player_character_request(gateway_id: int, peer_id: int, username: String, character_data: Dictionary) -> void:
-	if world_server.player_list.has(username) and world_server.player_list[username].size()  > 3:
-		player_character_creation_result.rpc_id(1, gateway_id, peer_id, username, -1)
-		return
-	#world_server.characters[username] = {world_server.next_id: character_data}
-	#world_server.characters[username][world_server.next_id][character_data]
-	world_server.characters[world_server.next_id] = character_data
-	if world_server.player_list.has(username):
-		world_server.player_list[username].append(world_server.next_id)
-	else:
-		world_server.player_list[username] = [world_server.next_id]
-	player_character_creation_result.rpc_id(1, gateway_id, peer_id, username, world_server.next_id)
-	world_server.next_id += 1
+	player_character_creation_result.rpc_id(
+		1, gateway_id, peer_id, username,
+		database.player_data.create_player_character(username, character_data)
+	)
 
 
 @rpc("any_peer")

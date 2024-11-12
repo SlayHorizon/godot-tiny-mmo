@@ -6,6 +6,7 @@ var world_info: Dictionary
 
 
 func _ready() -> void:
+	#get_tree().auto_accept_quit = false
 	Engine.set_physics_ticks_per_second(20) # 60 by default
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_title("World Server")
