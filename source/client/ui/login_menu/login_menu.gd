@@ -2,8 +2,6 @@ class_name LoginMenu
 extends Control
 
 
-signal connection_succeed
-
 @export var gateway: GatewayClient
 
 var username := ""
@@ -12,9 +10,15 @@ var selected_world_id: int = 0
 
 @onready var main: Control = $Main
 
+@onready var login_button: Button = $Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton
+@onready var create_account_button: Button = $Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton
+@onready var connect_as_guest_button: Button = $Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/ConnectAsGuestButton
+
+@onready var result_label: Label = $Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/Label
+
 
 func _ready() -> void:
-	$Main.show()
+	main.show()
 	$ServerSelection.hide()
 	$CharacterSelection.hide()
 	$CharacterCreation.hide()
@@ -27,7 +31,7 @@ func _ready() -> void:
 func on_login_succeeded(account_data: Dictionary, worlds_info: Dictionary) -> void:
 	$AccountInfo.set_account_info(account_data)
 	$ServerSelection.update_worlds_info(worlds_info)
-	$Main.hide()
+	main.hide()
 	$CreateAccount.hide()
 	$Login.hide()
 	$ServerSelection.show()
@@ -37,64 +41,20 @@ func _on_gateway_connection_changed(connection_status: bool) -> void:
 	%WaitingConnectionRect.visible = not connection_status
 
 
-func _on_connection_changed(connection_status: bool) -> void:
-	if connection_status:
-		%ServerStatusLabel.text = "Connected to the gateway!"
-		%LoginButton.disabled = true
-		connection_succeed.emit()
-	else:
-		%ServerStatusLabel.text = "Authentication failed.\nEnter a correct name and choose a class."
-		# Avoid button spamming
-		await get_tree().create_timer(1.5).timeout
-		%LoginButton.disabled = false
-
-
 func _on_connect_as_guest_button_pressed() -> void:
-	%ConnectAsGuestButton.disabled = true
+	%WaitingConnectionRect.visible = true
+	connect_as_guest_button.disabled = true
 	gateway.account_creation_result_received.connect(
-		func(result_code: int):
-			var message := "Creation successful."
-			if result_code != OK:
-				message = get_error_message(result_code)
-			$Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/Label.text = message
-			await get_tree().create_timer(0.5).timeout
-			if result_code == OK:
-				pass
-				#$Main.hide()
-				#$ServerSelection.show()
-			else:
-				%ConnectAsGuestButton.disabled = false,
-		ConnectFlags.CONNECT_ONE_SHOT
-	)
-	gateway.create_account_request.rpc_id(1, username, password, true)
-
-
-func _on_create_character_button_pressed() -> void:
-	var create_button := $CharacterCreation/CenterContainer/VBoxContainer/CreateCharacterButton
-	var result_label := $CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ResultMessageLabel
-	var line_edit := $CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/LineEdit
-	create_button.disabled = true
-	gateway.player_character_creation_result_received.connect(
 		func(result_code: int):
 			var message := "Creation successful."
 			if result_code != OK:
 				message = get_error_message(result_code)
 			result_label.text = message
 			await get_tree().create_timer(0.5).timeout
-			if result_code == OK:
-				connection_succeed.emit()
-			else:
-				create_button.disabled = false,
+			%WaitingConnectionRect.visible = false,
 		ConnectFlags.CONNECT_ONE_SHOT
 	)
-	gateway.create_player_character_request.rpc_id(
-		1,
-		{
-			"name": line_edit.text,
-			"class": $CharacterCreation.character_class
-		},
-		selected_world_id
-	)
+	gateway.create_account_request.rpc_id(1, username, password, true)
 
 
 func get_error_message(error_code: int) -> String:
@@ -139,7 +99,7 @@ func _on_character_slot_button_pressed() -> void:
 
 
 func _on_create_account_button_pressed() -> void:
-	$Main.hide()
+	main.hide()
 	$CreateAccount.show()
 
 

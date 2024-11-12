@@ -10,7 +10,7 @@ extends Resource
 var peer_id: int = 0
 
 
-func _init(_id: int, _username: String, _password: String) -> void:
+func init(_id: int, _username: String, _password: String) -> void:
 	id = _id
 	username = _username
 	password = _password

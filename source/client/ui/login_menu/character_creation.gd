@@ -5,6 +5,8 @@ const KNIGHT = preload("res://source/common/resources/builtin/sprite_frames/knig
 const ROGUE = preload("res://source/common/resources/builtin/sprite_frames/rogue.tres")
 const WIZARD = preload("res://source/common/resources/builtin/sprite_frames/wizard.tres")
 
+@export var login_menu: LoginMenu
+
 var character_class := "knight":
 	set = _set_character_class
 
@@ -13,6 +15,8 @@ var character_class := "knight":
 @onready var username_edit: LineEdit = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/LineEdit
 @onready var class_description: Label = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer3/Label
 @onready var create_character_button: Button = $CenterContainer/VBoxContainer/CreateCharacterButton
+
+@onready var result_message_label: Label = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ResultMessageLabel
 
 
 func _ready() -> void:
@@ -81,3 +85,28 @@ func _on_line_edit_text_changed(new_text: String) -> void:
 		create_character_button.disabled = false
 	else:
 		create_character_button.disabled = true
+
+
+func _on_create_character_button_pressed() -> void:
+	create_character_button.disabled = true
+	login_menu.gateway.player_character_creation_result_received.connect(
+		func(result_code: int):
+			var message := "Creation successful."
+			if result_code < 0:
+				message = login_menu.get_error_message(abs(result_code))
+			result_message_label.text = message
+			await get_tree().create_timer(0.5).timeout
+			if result_code != OK:
+				create_character_button.disabled = false,
+		ConnectFlags.CONNECT_ONE_SHOT
+	)
+	login_menu.gateway.create_player_character_request.rpc_id(
+		1,
+		{
+			"name": username_edit.text,
+			"class": character_class
+		},
+		login_menu.selected_world_id
+	)
+	print("SELECT = ", login_menu.selected_world_id)
+	

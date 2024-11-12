@@ -78,7 +78,7 @@ func account_creation_result(_peer_id: int, _result_code: int, _data: Dictionary
 
 # Used to create the player's character.
 @rpc("any_peer")
-func create_player_character_request(world_id: int, peer_id: int, username: String, character_data: Dictionary) -> void:
+func create_player_character_request(peer_id: int, username: String, character_data: Dictionary, world_id: int) -> void:
 	var gateway_id := multiplayer_api.get_remote_sender_id()
 	if database.account_collection.collection.has(username):
 		var account := database.account_collection.collection[username] as AccountResource

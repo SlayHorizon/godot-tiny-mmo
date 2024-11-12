@@ -13,8 +13,8 @@ func _ready() -> void:
 
 
 func load_world_database() -> void:
-	if ResourceLoader.exists(player_data_file_path):
-		player_data = ResourceLoader.load(player_data_file_path)
+	if ResourceLoader.exists(player_data_file_path, "WorldPlayerDataResource"):
+		player_data = ResourceLoader.load(player_data_file_path, "WorldPlayerDataResource")
 	else:
 		player_data = WorldPlayerDataResource.new()
 

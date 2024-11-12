@@ -106,10 +106,10 @@ func create_player_character_request(character_data: Dictionary, world_id: int) 
 	else:
 		gateway_manager.create_player_character_request.rpc_id(
 			1,
-			world_id,
 			peer_id,
 			connected_peers[peer_id]["account"]["name"],
 			character_data,
+			world_id,
 		)
 
 

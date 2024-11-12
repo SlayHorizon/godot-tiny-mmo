@@ -27,7 +27,8 @@ func create_player_character(username: String, character_data: Dictionary) -> in
 		return -1
 	
 	var player_id := next_player_id
-	var player_character := PlayerResource.new(
+	var player_character := PlayerResource.new()
+	player_character.init(
 		player_id, username,
 		character_data["name"], character_data["class"]
 	)

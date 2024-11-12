@@ -66,7 +66,7 @@ func account_creation_result(peer_id: int, result_code: int, result: Dictionary)
 
 
 @rpc("any_peer")
-func create_player_character_request(_peer_id: int , _account_id: int, _character_data: Dictionary, _world_id: int) -> void:
+func create_player_character_request(_peer_id: int , _username: String, _character_data: Dictionary, _world_id: int) -> void:
 	pass
 
 

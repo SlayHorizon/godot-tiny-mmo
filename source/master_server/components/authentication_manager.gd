@@ -25,6 +25,7 @@ func create_accout(username: String, password: String, is_guest: bool) -> Accoun
 	if is_guest:
 		username = "guest%d" % account_id
 		password = generate_random_token()
-	var new_account := AccountResource.new(account_id, username, password)
+	var new_account := AccountResource.new()
+	new_account.init(account_id, username, password)
 	database.account_collection.collection[username] = new_account
 	return new_account

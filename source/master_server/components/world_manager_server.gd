@@ -28,6 +28,7 @@ func fetch_server_info(info: Dictionary) -> void:
 	var game_server_id := multiplayer_api.get_remote_sender_id()
 	connected_worlds[game_server_id] = info
 	gateway_manager.update_worlds_info.rpc(connected_worlds)
+	print(connected_worlds)
 
 
 @rpc("authority")
@@ -56,7 +57,9 @@ func player_character_creation_result(gateway_id: int, peer_id: int, username: S
 		)
 		await get_tree().create_timer(0.5).timeout
 		gateway_manager.fetch_authentication_token.rpc_id(
-			gateway_id, peer_id, token, "127.0.0.1", 8087
+			gateway_id, peer_id, token,
+			connected_worlds[world_id]["adress"],
+			connected_worlds[world_id]["port"]
 		)
 	else:
 		gateway_manager.player_character_creation_result.rpc_id(

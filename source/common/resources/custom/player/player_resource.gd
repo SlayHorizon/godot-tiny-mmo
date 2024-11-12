@@ -16,7 +16,7 @@ extends Resource
 var current_peer_id: int
 
 
-func _init(
+func init(
 	_player_id: int,
 	_account_name: String,
 	_display_name: String = display_name,
