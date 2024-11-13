@@ -82,7 +82,7 @@ func create_player_character_request(peer_id: int, username: String, character_d
 	var gateway_id := multiplayer_api.get_remote_sender_id()
 	if database.account_collection.collection.has(username):
 		var account := database.account_collection.collection[username] as AccountResource
-		if account.peer_id == peer_id:
+		if account.peer_id == peer_id and world_manager.connected_worlds.has(world_id):
 			world_manager.create_player_character_request.rpc_id(
 				world_id, gateway_id, peer_id, account.username, character_data
 			)

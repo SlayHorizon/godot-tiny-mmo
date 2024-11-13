@@ -108,5 +108,3 @@ func _on_create_character_button_pressed() -> void:
 		},
 		login_menu.selected_world_id
 	)
-	print("SELECT = ", login_menu.selected_world_id)
-	

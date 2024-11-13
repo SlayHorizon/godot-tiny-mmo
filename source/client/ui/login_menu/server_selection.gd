@@ -3,9 +3,8 @@ extends Control
 
 const WORLD_BUTTON = preload("res://source/client/ui/login_menu/world_button/world_button.tscn")
 
-var selected_server := "Witwitnds"
-
 @onready var world_buttons: HBoxContainer = $CenterContainer/VBoxContainer/HBoxContainer
+@onready var confirm_button: Button = $CenterContainer/VBoxContainer/ConfirmButton
 
 
 func update_worlds_info(worlds_info: Dictionary) -> void:
@@ -20,5 +19,6 @@ func update_worlds_info(worlds_info: Dictionary) -> void:
 
 
 func on_world_button_pressed(world_id: int) -> void:
-	print("WORLD ID = ", world_id)
+	print("World ID pressed: %d" % world_id)
 	get_parent().selected_world_id = world_id
+	confirm_button.disabled = false
