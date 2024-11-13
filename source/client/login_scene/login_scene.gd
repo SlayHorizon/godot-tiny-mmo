@@ -5,7 +5,7 @@ extends Node
 @export var world_server: WorldClient
 
 @onready var login_menu: LoginMenu = $CanvasLayer/LoginMenu
-@onready var gateway: Node = $GatewayClient
+@onready var gateway: GatewayClient = $GatewayClient
 
 
 func _ready() -> void:

@@ -3,6 +3,8 @@ extends Control
 
 const WORLD_BUTTON = preload("res://source/client/ui/login_menu/world_button/world_button.tscn")
 
+@export var next_menu: Control
+
 @onready var world_buttons: HBoxContainer = $CenterContainer/VBoxContainer/HBoxContainer
 @onready var confirm_button: Button = $CenterContainer/VBoxContainer/ConfirmButton
 
@@ -22,3 +24,8 @@ func on_world_button_pressed(world_id: int) -> void:
 	print("World ID pressed: %d" % world_id)
 	get_parent().selected_world_id = world_id
 	confirm_button.disabled = false
+
+
+func _on_confirm_button_pressed() -> void:
+	hide()
+	next_menu.show()

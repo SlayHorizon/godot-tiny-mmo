@@ -1,9 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://b75u8dbglxgyb"]
+[gd_scene load_steps=13 format=3 uid="uid://b75u8dbglxgyb"]
 
 [ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/main.gd" id="2_t4fkb"]
 [ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/ui/login_menu/world_button/world_button.tscn" id="3_r7xrg"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="3_xkqbx"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/character_selection.gd" id="4_6ox2d"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="4_iraby"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/character_creation.gd" id="6_i5ors"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/server_selection.gd" id="7_045sv"]
@@ -29,7 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
-[node name="Main" type="Control" parent="."]
+[node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -37,6 +39,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("2_t4fkb")
+login_menu = NodePath("../Login")
+create_account_menu = NodePath("../CreateAccount")
 
 [node name="CenterContainer" type="CenterContainer" parent="Main"]
 layout_mode = 1
@@ -72,7 +77,7 @@ text = "Create account"
 layout_mode = 2
 text = "Connect as guest"
 
-[node name="Label" type="Label" parent="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+[node name="ResultLabel" type="Label" parent="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
 horizontal_alignment = 1
 
@@ -98,7 +103,150 @@ text = "Waiting for connection..."
 horizontal_alignment = 1
 visible_characters_behavior = 1
 
-[node name="ServerSelection" type="Control" parent="."]
+[node name="Login" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_dy5r0")
+login_menu = NodePath("..")
+
+[node name="CenterContainer" type="CenterContainer" parent="Login"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainContainer" type="PanelContainer" parent="Login/CenterContainer"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Login/CenterContainer/MainContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Account name"
+
+[node name="LineEdit" type="LineEdit" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Password"
+
+[node name="LineEdit" type="LineEdit" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="ResultLabel" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="LoginButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Login"
+
+[node name="BackButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[node name="CreateAccount" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("7_l37t0")
+login_menu = NodePath("..")
+
+[node name="CenterContainer" type="CenterContainer" parent="CreateAccount"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainContainer" type="PanelContainer" parent="CreateAccount/CenterContainer"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CreateAccount/CenterContainer/MainContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Account name"
+
+[node name="LineEdit" type="LineEdit" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Password"
+
+[node name="LineEdit" type="LineEdit" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer3"]
+layout_mode = 2
+text = "Password repeat"
+
+[node name="LineEdit" type="LineEdit" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer3"]
+layout_mode = 2
+
+[node name="ResultLabel" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="CreateAccountButton" type="Button" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Create Account
+"
+
+[node name="BackButton" type="Button" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[node name="ServerSelection" type="Control" parent="." node_paths=PackedStringArray("next_menu")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -107,6 +255,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("7_045sv")
+next_menu = NodePath("../CharacterSelection")
 
 [node name="CenterContainer" type="CenterContainer" parent="ServerSelection"]
 layout_mode = 1
@@ -168,7 +317,7 @@ size_flags_horizontal = 4
 disabled = true
 text = "Confirm"
 
-[node name="CharacterSelection" type="Control" parent="."]
+[node name="CharacterSelection" type="Control" parent="." node_paths=PackedStringArray("next_menu")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -176,6 +325,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("4_6ox2d")
+next_menu = NodePath("../CharacterCreation")
 
 [node name="CenterContainer" type="CenterContainer" parent="CharacterSelection"]
 layout_mode = 1
@@ -191,7 +342,7 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="CharacterSelection/CenterContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="CharacterSelection/CenterContainer/HBoxContainer/VBoxContainer"]
+[node name="CharacterSlotButton" type="Button" parent="CharacterSelection/CenterContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Empty character slot"
 
@@ -381,149 +532,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Create"
 
-[node name="CreateAccount" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("7_l37t0")
-login_menu = NodePath("..")
-
-[node name="CenterContainer" type="CenterContainer" parent="CreateAccount"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MainContainer" type="PanelContainer" parent="CreateAccount/CenterContainer"]
-custom_minimum_size = Vector2(300, 200)
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="CreateAccount/CenterContainer/MainContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="HBoxContainer" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-text = "Account name"
-
-[node name="LineEdit" type="LineEdit" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
-layout_mode = 2
-text = "Password"
-
-[node name="LineEdit" type="LineEdit" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
-layout_mode = 2
-
-[node name="VBoxContainer3" type="VBoxContainer" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer3"]
-layout_mode = 2
-text = "Password repeat"
-
-[node name="LineEdit" type="LineEdit" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer3"]
-layout_mode = 2
-
-[node name="ResultLabel" type="Label" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-horizontal_alignment = 1
-
-[node name="CreateAccountButton" type="Button" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "Create Account
-"
-
-[node name="BackButton" type="Button" parent="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "Back"
-
-[node name="Login" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("8_dy5r0")
-login_menu = NodePath("..")
-
-[node name="CenterContainer" type="CenterContainer" parent="Login"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MainContainer" type="PanelContainer" parent="Login/CenterContainer"]
-custom_minimum_size = Vector2(300, 200)
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="Login/CenterContainer/MainContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-
-[node name="HBoxContainer" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-text = "Account name"
-
-[node name="LineEdit" type="LineEdit" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
-layout_mode = 2
-text = "Password"
-
-[node name="LineEdit" type="LineEdit" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2"]
-layout_mode = 2
-
-[node name="ResultLabel" type="Label" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-horizontal_alignment = 1
-
-[node name="LoginButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "Login"
-
-[node name="BackButton" type="Button" parent="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer"]
-layout_mode = 2
-text = "Back"
-
 [node name="AccountInfo" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 2
@@ -542,15 +550,15 @@ text = "Account name: %s"
 layout_mode = 2
 text = "Account ID: %s"
 
-[connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
-[connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="." method="_on_create_account_button_pressed"]
-[connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/ConnectAsGuestButton" to="." method="_on_connect_as_guest_button_pressed"]
-[connection signal="pressed" from="ServerSelection/CenterContainer/VBoxContainer/ConfirmButton" to="." method="_on_confirm_server_button_pressed"]
-[connection signal="pressed" from="CharacterSelection/CenterContainer/HBoxContainer/VBoxContainer/Button" to="." method="_on_character_slot_button_pressed"]
+[connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton" to="Main" method="_on_login_button_pressed"]
+[connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="Main" method="_on_create_account_button_pressed"]
+[connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/ConnectAsGuestButton" to="Main" method="_on_connect_as_guest_button_pressed"]
+[connection signal="pressed" from="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton" to="Login" method="_on_login_button_pressed"]
+[connection signal="pressed" from="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="Login" method="_on_back_button_pressed"]
+[connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="CreateAccount" method="_on_create_account_button_pressed"]
+[connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="CreateAccount" method="_on_back_button_pressed"]
+[connection signal="pressed" from="ServerSelection/CenterContainer/VBoxContainer/ConfirmButton" to="ServerSelection" method="_on_confirm_button_pressed"]
+[connection signal="pressed" from="CharacterSelection/CenterContainer/HBoxContainer/VBoxContainer/CharacterSlotButton" to="CharacterSelection" method="_on_character_slot_button_pressed"]
 [connection signal="text_changed" from="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/LineEdit" to="CharacterCreation" method="_on_line_edit_text_changed"]
 [connection signal="pressed" from="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/Button" to="CharacterCreation" method="_on_rng_button_pressed"]
 [connection signal="pressed" from="CharacterCreation/CenterContainer/VBoxContainer/CreateCharacterButton" to="CharacterCreation" method="_on_create_character_button_pressed"]
-[connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="CreateAccount" method="_on_create_account_button_pressed"]
-[connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="CreateAccount" method="_on_back_button_pressed"]
-[connection signal="pressed" from="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton" to="Login" method="_on_login_button_pressed"]
-[connection signal="pressed" from="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="Login" method="_on_back_button_pressed"]
