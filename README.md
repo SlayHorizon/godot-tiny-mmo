@@ -22,8 +22,8 @@ The current and planned features are listed below:
 - [x] **Playable on web browser and desktop**
 - [x] **Network architecture** (see diagram below)
 - [X] **Authentication system** through gateway server with Login UI
-- [ ] **Account Creation** for permanent player accounts
-- [ ] **QAD Database** to save persistent data
+- [x] **Account Creation** for permanent player accounts
+- [x] **QAD Database** to save persistent data
 - [x] **Guest Login** option for quick access
 - [ ] **Game version check** to ensure client compatibility
 - [x] **Character Creation**
@@ -61,6 +61,7 @@ To get started with the project, follow these steps:
 7. Run the project!
 
 Setup example:  
+(More details in the wiki [How to use "Customize Run Instances..."](https://github.com/SlayHorizon/godot-tiny-mmo/wiki/How-to-use-%22Customize-Run-Instances...%22#customize-run-instances))
 ![image](https://github.com/user-attachments/assets/abd2fd11-bb29-4d90-92c4-a8aefcdd7d52)  
 
 ## 🤝 Contributing
