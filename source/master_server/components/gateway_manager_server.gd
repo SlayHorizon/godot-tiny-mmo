@@ -96,6 +96,45 @@ func player_character_creation_result(_peer_id: int, _result_code: int) -> void:
 
 
 @rpc("any_peer")
+func request_player_characters(peer_id: int, username: String, world_id: int) -> void:
+	var gateway_id := multiplayer_api.get_remote_sender_id()
+	if (
+		world_manager.connected_worlds.has(world_id)
+		and database.account_collection.collection.has(username)
+	):
+		var account := database.account_collection.collection[username] as AccountResource
+		if account.peer_id == peer_id:
+			world_manager.request_player_characters.rpc_id(
+				world_id,
+				gateway_id,
+				peer_id,
+				username,
+			)
+
+
+@rpc("authority")
+func receive_player_characters(player_characters: Dictionary) -> void:
+	pass
+
+
+@rpc("any_peer")
+func request_login(peer_id: int, username: String, world_id: int, character_id: int) -> void:
+	var gateway_id := multiplayer_api.get_remote_sender_id()
+	if (
+		world_manager.connected_worlds.has(world_id)
+		and database.account_collection.collection.has(username)
+		and database.account_collection.collection[username].peer_id == peer_id
+	):
+		world_manager.request_login.rpc_id(
+			world_id,
+			gateway_id,
+			peer_id,
+			username,
+			character_id
+		)
+
+
+@rpc("any_peer")
 func peer_disconnected_without_joining_world(account_name: String) -> void:
 	if database.account_collection.collection.has(account_name):
 		database.account_collection.collection[account_name].peer_id = 0

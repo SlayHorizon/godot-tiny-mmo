@@ -20,6 +20,7 @@ func _on_create_account_button_pressed() -> void:
 
 func _on_connect_as_guest_button_pressed() -> void:
 	connect_as_guest_button.disabled = true
+	%WaitingConnectionRect.visible = true
 	GatewayClient.gateway.account_creation_result_received.connect(
 		func(result_code: int):
 			var message := "Creation successful."

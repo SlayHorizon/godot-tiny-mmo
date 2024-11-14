@@ -118,6 +118,53 @@ func player_character_creation_result(_result_code: int) -> void:
 	pass
 
 
+@rpc("any_peer")
+func request_player_characters(world_id: int) -> void:
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not connected_peers.has(peer_id):
+		receive_player_characters.rpc_id(
+			peer_id,
+			{"error": ""}
+		)
+	elif not connected_peers[peer_id].has("account"):
+		receive_player_characters.rpc_id(
+			peer_id,
+			{"error": "User is not authenticated"}
+		)
+	elif (
+		gateway_manager.worlds_info.has(world_id)
+		and gateway_manager.worlds_info[world_id]["population"]
+		< gateway_manager.worlds_info[world_id]["info"]["max_players"]
+	):
+		gateway_manager.request_player_characters.rpc_id(
+			1,
+			peer_id,
+			connected_peers[peer_id]["account"]["name"],
+			world_id,
+		)
+
+
+@rpc("authority")
+func receive_player_characters(player_characters: Dictionary) -> void:
+	pass
+
+
+@rpc("any_peer")
+func request_login(world_id: int, character_id: int) -> void:
+	var peer_id := multiplayer.get_remote_sender_id()
+	if (
+		connected_peers.has(peer_id)
+		and connected_peers[peer_id].has("account")
+	):
+		gateway_manager.request_login.rpc_id(
+			1,
+			peer_id,
+			connected_peers[peer_id]["account"]["name"],
+			world_id,
+			character_id,
+		)
+
+
 @rpc("authority")
 func successful_login(_account_data: Dictionary, _worlds_info: Dictionary) -> void:
 	pass

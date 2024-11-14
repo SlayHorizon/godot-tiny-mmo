@@ -64,3 +64,36 @@ func create_player_character_request(gateway_id: int, peer_id: int, username: St
 @rpc("any_peer")
 func player_character_creation_result(_gateway_id: int, _peer_id: int, _username: String, _result_code: int) -> void:
 	pass
+
+
+@rpc("authority")
+func request_player_characters(gateway_id: int, peer_id: int, username: String) -> void:
+	receive_player_characters.rpc_id(
+		1,
+		database.player_data.get_account_characters(username),
+		gateway_id,
+		peer_id
+	)
+
+
+@rpc("any_peer")
+func receive_player_characters(_gateway_id: int, _peer_id: int, _player_characters: Dictionary) -> void:
+	pass
+
+
+@rpc("authority")
+func request_login(gateway_id: int, peer_id: int, username: String, character_id: int) -> void:
+	if database.player_data.players.has(character_id):
+		if database.player_data.players[character_id].account_name == username:
+			result_login.rpc_id(
+				1,
+				OK,
+				gateway_id,
+				peer_id,
+				username,
+				character_id,
+			)
+
+@rpc("any_peer")
+func result_login(_result_code: int, _gateway_id: int, _peer_id: int,  _username: String, character_id: int) -> void:
+	pass

@@ -1,16 +1,17 @@
-[gd_scene load_steps=13 format=3 uid="uid://b75u8dbglxgyb"]
+[gd_scene load_steps=14 format=3 uid="uid://b75u8dbglxgyb"]
 
 [ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/components/main_menu.gd" id="2_t4fkb"]
-[ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/ui/login_menu/world_button/world_button.tscn" id="3_r7xrg"]
+[ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/ui/login_menu/components/world_selection/world_button/world_button.tscn" id="3_r7xrg"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="3_xkqbx"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/character_selection.gd" id="4_6ox2d"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/character_selection/character_selection.gd" id="4_6ox2d"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="4_iraby"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/components/character_creation.gd" id="6_i5ors"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/server_selection.gd" id="7_045sv"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/world_selection/world_selection.gd" id="7_045sv"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/components/account_info.gd" id="7_jdy25"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/components/create_account.gd" id="7_l37t0"]
+[ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/ui/login_menu/components/character_selection/character_slot_button.tscn" id="8_a5t64"]
 [ext_resource type="Script" path="res://source/client/ui/login_menu/components/login.gd" id="8_dy5r0"]
 
 [node name="LoginMenu" type="Control"]
@@ -32,6 +33,7 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -245,8 +247,7 @@ text = "Create Account
 layout_mode = 2
 text = "Back"
 
-[node name="ServerSelection" type="Control" parent="." node_paths=PackedStringArray("next_menu")]
-visible = false
+[node name="WorldSelection" type="Control" parent="." node_paths=PackedStringArray("character_selection_menu")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -254,9 +255,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("7_045sv")
-next_menu = NodePath("../CharacterSelection")
+character_selection_menu = NodePath("../CharacterSelection")
 
-[node name="CenterContainer" type="CenterContainer" parent="ServerSelection"]
+[node name="CenterContainer" type="CenterContainer" parent="WorldSelection"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -264,39 +265,39 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ServerSelection/CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="WorldSelection/CenterContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Label" type="Label" parent="ServerSelection/CenterContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="WorldSelection/CenterContainer/VBoxContainer"]
 layout_mode = 2
 text = "Choose a server:"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ServerSelection/CenterContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="WorldSelection/CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="ServerButton1" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer" instance=ExtResource("3_r7xrg")]
+[node name="ServerButton1" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer" instance=ExtResource("3_r7xrg")]
 layout_mode = 2
 
-[node name="ServerButton2" type="Button" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="ServerButton2" type="Button" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(150, 250)
 layout_mode = 2
 focus_mode = 0
 disabled = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2"]
 layout_mode = 2
 offset_right = 150.0
 offset_bottom = 250.0
 
-[node name="ServerName" type="Label" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2/VBoxContainer"]
+[node name="ServerName" type="Label" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2/VBoxContainer"]
 layout_mode = 2
 text = "Witwitnds"
 horizontal_alignment = 1
 
-[node name="ServerRules" type="Label" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2/VBoxContainer"]
+[node name="ServerRules" type="Label" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 text = "Rules:
@@ -304,12 +305,12 @@ Hardcore
 EXP +15%"
 horizontal_alignment = 1
 
-[node name="ServerLocation" type="Label" parent="ServerSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2/VBoxContainer"]
+[node name="ServerLocation" type="Label" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer/ServerButton2/VBoxContainer"]
 layout_mode = 2
 text = "International"
 horizontal_alignment = 1
 
-[node name="ConfirmButton" type="Button" parent="ServerSelection/CenterContainer/VBoxContainer"]
+[node name="ConfirmButton" type="Button" parent="WorldSelection/CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -338,12 +339,31 @@ grow_vertical = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="CharacterSelection/CenterContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CharacterSelection/CenterContainer/HBoxContainer"]
+[node name="CharacterSlotButton" parent="CharacterSelection/CenterContainer/HBoxContainer" instance=ExtResource("8_a5t64")]
 layout_mode = 2
 
-[node name="CharacterSlotButton" type="Button" parent="CharacterSelection/CenterContainer/HBoxContainer/VBoxContainer"]
+[node name="WaitingRect" type="ColorRect" parent="CharacterSelection/CenterContainer"]
+visible = false
+custom_minimum_size = Vector2(300, 100)
 layout_mode = 2
-text = "Empty character slot"
+color = Color(0.228511, 0.228511, 0.228511, 0.843137)
+
+[node name="Label" type="Label" parent="CharacterSelection/CenterContainer/WaitingRect"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -57.0
+offset_right = 150.0
+offset_bottom = -34.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Waiting for your characters info..."
+horizontal_alignment = 1
+visible_characters_behavior = 1
 
 [node name="CharacterCreation" type="Control" parent="."]
 visible = false
@@ -555,8 +575,7 @@ text = "Account ID: %s"
 [connection signal="pressed" from="Login/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="Login" method="_on_back_button_pressed"]
 [connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="CreateAccount" method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="CreateAccount/CenterContainer/MainContainer/MarginContainer/HBoxContainer/BackButton" to="CreateAccount" method="_on_back_button_pressed"]
-[connection signal="pressed" from="ServerSelection/CenterContainer/VBoxContainer/ConfirmButton" to="ServerSelection" method="_on_confirm_button_pressed"]
-[connection signal="pressed" from="CharacterSelection/CenterContainer/HBoxContainer/VBoxContainer/CharacterSlotButton" to="CharacterSelection" method="_on_character_slot_button_pressed"]
+[connection signal="pressed" from="WorldSelection/CenterContainer/VBoxContainer/ConfirmButton" to="WorldSelection" method="_on_confirm_button_pressed"]
 [connection signal="text_changed" from="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/LineEdit" to="CharacterCreation" method="_on_line_edit_text_changed"]
 [connection signal="pressed" from="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/Button" to="CharacterCreation" method="_on_rng_button_pressed"]
 [connection signal="pressed" from="CharacterCreation/CenterContainer/VBoxContainer/CreateCharacterButton" to="CharacterCreation" method="_on_create_character_button_pressed"]

@@ -30,7 +30,9 @@ func _on_server_disconnected() -> void:
 
 @rpc("authority")
 func update_worlds_info(_worlds_info: Dictionary) -> void:
+	
 	worlds_info = _worlds_info
+	print("WORLD INFOS = ", worlds_info)
 
 
 @rpc("authority")
@@ -76,6 +78,20 @@ func player_character_creation_result(peer_id: int, result_code: int) -> void:
 		peer_id, result_code
 	)
 
+
+@rpc("any_peer")
+func request_player_characters(_peer_id: int, _username: String, _world_id: int) -> void:
+	pass
+
+
+@rpc("authority")
+func receive_player_characters(peer_id: int, player_characters: Dictionary) -> void:
+	gateway.receive_player_characters.rpc_id(peer_id, player_characters)
+
+
+@rpc("any_peer")
+func request_login(_peer_id: int, _username: String, _world_id: int, _character_id: int) -> void:
+	pass
 
 @rpc("any_peer")
 func peer_disconnected_without_joining_world(_account_name: String) -> void:

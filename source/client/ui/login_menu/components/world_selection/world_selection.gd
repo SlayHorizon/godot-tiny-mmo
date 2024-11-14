@@ -1,9 +1,9 @@
 extends Control
 
 
-const WORLD_BUTTON = preload("res://source/client/ui/login_menu/world_button/world_button.tscn")
+const WORLD_BUTTON = preload("res://source/client/ui/login_menu/components/world_selection/world_button/world_button.tscn")
 
-@export var next_menu: Control
+@export var character_selection_menu: Control
 
 @onready var world_buttons: HBoxContainer = $CenterContainer/VBoxContainer/HBoxContainer
 @onready var confirm_button: Button = $CenterContainer/VBoxContainer/ConfirmButton
@@ -27,5 +27,20 @@ func on_world_button_pressed(world_id: int) -> void:
 
 
 func _on_confirm_button_pressed() -> void:
-	hide()
-	next_menu.show()
+	confirm_button.disabled = true
+	GatewayClient.gateway.request_player_characters.rpc_id(
+		1,
+		GatewayClient.world_id
+	)
+	GatewayClient.gateway.player_characters_received.connect(
+		func(player_characters: Dictionary):
+			if player_characters.has("error"):
+				var label = $CenterContainer/VBoxContainer/Label
+				label.text = player_characters["error"]
+			else:
+				character_selection_menu.set_player_characters(player_characters)
+				hide()
+				character_selection_menu.show()
+			,
+		CONNECT_ONE_SHOT
+	)

@@ -65,3 +65,34 @@ func player_character_creation_result(gateway_id: int, peer_id: int, username: S
 		gateway_manager.player_character_creation_result.rpc_id(
 			gateway_id, peer_id, result_code
 		)
+
+
+@rpc("any_peer")
+func request_player_characters(_gateway_id: int, _peer_id: int, _username: String) -> void:
+	pass
+
+
+@rpc("any_peer")
+func request_login(_gateway_id: int, _peer_id: int, _username: String, _character_id: int) -> void:
+	pass
+
+
+@rpc("any_peer")
+func result_login(result_code: int, gateway_id: int, peer_id: int, username: String, character_id: int) -> void:
+	var world_id := multiplayer_api.get_remote_sender_id()
+	if result_code == OK:
+		var token := authentication_manager.generate_random_token()
+		fetch_token.rpc_id(world_id, token, username, character_id)
+		await get_tree().create_timer(0.5).timeout
+		gateway_manager.fetch_authentication_token.rpc_id(
+			gateway_id, peer_id, token,
+			connected_worlds[world_id]["adress"],
+			connected_worlds[world_id]["port"]
+		)
+
+
+@rpc("any_peer")
+func receive_player_characters(player_characters: Dictionary, gateway_id: int, peer_id: int) -> void:
+	gateway_manager.receive_player_characters.rpc_id(
+		gateway_id, peer_id, player_characters
+	)
