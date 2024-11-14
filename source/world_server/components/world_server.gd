@@ -30,7 +30,8 @@ func _on_peer_connected(peer_id: int) -> void:
 func _on_peer_disconnected(peer_id: int) -> void:
 	print("Peer: %d is disconnected." % peer_id)
 	world_manager.player_disconnected.rpc_id(
-		1, connected_players[peer_id].account_name
+		1,
+		connected_players[peer_id].account_name
 	)
 	connected_players.erase(peer_id)
 

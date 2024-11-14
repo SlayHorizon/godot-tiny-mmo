@@ -12,7 +12,6 @@ var world_info: Dictionary
 
 
 func _ready() -> void:
-	await world_main.ready
 	load_client_configuration("world-manager-client", "res://test_config/world_server_config.cfg")
 	start_client()
 
@@ -56,7 +55,10 @@ func player_disconnected(_username: String) -> void:
 @rpc("authority")
 func create_player_character_request(gateway_id: int, peer_id: int, username: String, character_data: Dictionary) -> void:
 	player_character_creation_result.rpc_id(
-		1, gateway_id, peer_id, username,
+		1,
+		gateway_id,
+		peer_id,
+		username,
 		database.player_data.create_player_character(username, character_data)
 	)
 
@@ -82,18 +84,32 @@ func receive_player_characters(_gateway_id: int, _peer_id: int, _player_characte
 
 
 @rpc("authority")
-func request_login(gateway_id: int, peer_id: int, username: String, character_id: int) -> void:
-	if database.player_data.players.has(character_id):
-		if database.player_data.players[character_id].account_name == username:
-			result_login.rpc_id(
-				1,
-				OK,
-				gateway_id,
-				peer_id,
-				username,
-				character_id,
-			)
+func request_login(
+	gateway_id: int,
+	peer_id: int,
+	username: String,
+	character_id: int
+) -> void:
+	if (
+		database.player_data.players.has(character_id)
+		and database.player_data.players[character_id].account_name == username
+	):
+		result_login.rpc_id(
+			1,
+			OK,
+			gateway_id,
+			peer_id,
+			username,
+			character_id,
+		)
+
 
 @rpc("any_peer")
-func result_login(_result_code: int, _gateway_id: int, _peer_id: int,  _username: String, character_id: int) -> void:
+func result_login(
+	_result_code: int,
+	_gateway_id: int,
+	_peer_id: int,
+	_username: String,
+	_character_id: int
+) -> void:
 	pass

@@ -113,7 +113,7 @@ func request_player_characters(peer_id: int, username: String, world_id: int) ->
 
 
 @rpc("authority")
-func receive_player_characters(player_characters: Dictionary) -> void:
+func receive_player_characters(_player_characters: Dictionary) -> void:
 	pass
 
 

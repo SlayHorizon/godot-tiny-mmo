@@ -145,7 +145,7 @@ func request_player_characters(world_id: int) -> void:
 
 
 @rpc("authority")
-func receive_player_characters(player_characters: Dictionary) -> void:
+func receive_player_characters(_player_characters: Dictionary) -> void:
 	pass
 
 
