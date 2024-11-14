@@ -8,14 +8,14 @@ extends Control
 @onready var result_label: Label = $CenterContainer/MainContainer/MarginContainer/HBoxContainer/ResultLabel
 
 
-func _on_create_account_button_pressed() -> void:
-	hide()
-	create_account_menu.show()
-
-
 func _on_login_button_pressed() -> void:
 	hide()
 	login_menu.show()
+
+
+func _on_create_account_button_pressed() -> void:
+	hide()
+	create_account_menu.show()
 
 
 func _on_connect_as_guest_button_pressed() -> void:

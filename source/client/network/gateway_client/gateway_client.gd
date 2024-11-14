@@ -11,6 +11,7 @@ signal connection_changed(connected_to_server: bool)
 
 
 static var gateway: GatewayClient
+static var world_id: int
 
 var config_file: ConfigFile
 var peer_id: int

@@ -9,9 +9,11 @@ extends Node
 
 
 func _ready() -> void:
-	login_menu.gateway = gateway
 	
 	gateway.authentication_token_received.connect(_on_authentication_token_received)
+	
+	gateway.login_succeeded.connect(login_menu.on_login_succeeded)
+	gateway.connection_changed.connect(login_menu._on_gateway_connection_changed)
 
 
 func _on_authentication_token_received(token: String, adress: String, port: int) -> void:

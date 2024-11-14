@@ -1,7 +1,7 @@
 extends Control
 
 
-@export var login_menu: LoginMenu
+@export var previous_menu: Control
 
 @onready var account_name_edit: LineEdit = $CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer/LineEdit
 @onready var password_edit: LineEdit = $CenterContainer/MainContainer/MarginContainer/HBoxContainer/VBoxContainer2/LineEdit
@@ -26,13 +26,13 @@ func _on_create_account_button_pressed() -> void:
 		and password == password_repeat
 	):
 		result_label.text = "..."
-		login_menu.gateway.create_account_request.rpc_id(
+		GatewayClient.gateway.create_account_request.rpc_id(
 			1, account_name, password, false
 		)
-		login_menu.gateway.account_creation_result_received.connect(
+		GatewayClient.gateway.account_creation_result_received.connect(
 			func(result_code: int):
 				if result_code != OK:
-					result_label.text = login_menu.get_error_message(result_code)
+					result_label.text = GatewayClient.get_error_message(result_code)
 					delay_disable_state(false)
 				else:
 					result_label.text = "Account created.",
@@ -44,8 +44,8 @@ func _on_create_account_button_pressed() -> void:
 
 
 func _on_back_button_pressed() -> void:
-	login_menu.main.show()
 	hide()
+	previous_menu.show()
 
 
 func delay_disable_state(disable: bool) -> void:

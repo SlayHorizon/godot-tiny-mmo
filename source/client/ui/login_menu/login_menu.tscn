@@ -2,16 +2,16 @@
 
 [ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/main.gd" id="2_t4fkb"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/main_menu.gd" id="2_t4fkb"]
 [ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/ui/login_menu/world_button/world_button.tscn" id="3_r7xrg"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="3_xkqbx"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/character_selection.gd" id="4_6ox2d"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/character_selection.gd" id="4_6ox2d"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="4_iraby"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/character_creation.gd" id="6_i5ors"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/server_selection.gd" id="7_045sv"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/account_info.gd" id="7_jdy25"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/create_account.gd" id="7_l37t0"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/login.gd" id="8_dy5r0"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/character_creation.gd" id="6_i5ors"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/server_selection.gd" id="7_045sv"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/account_info.gd" id="7_jdy25"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/create_account.gd" id="7_l37t0"]
+[ext_resource type="Script" path="res://source/client/ui/login_menu/components/login.gd" id="8_dy5r0"]
 
 [node name="LoginMenu" type="Control"]
 layout_mode = 3
@@ -32,7 +32,6 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -103,7 +102,7 @@ text = "Waiting for connection..."
 horizontal_alignment = 1
 visible_characters_behavior = 1
 
-[node name="Login" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
+[node name="Login" type="Control" parent="." node_paths=PackedStringArray("previous_menu")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -112,7 +111,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("8_dy5r0")
-login_menu = NodePath("..")
+previous_menu = NodePath("../Main")
 
 [node name="CenterContainer" type="CenterContainer" parent="Login"]
 layout_mode = 1
@@ -169,7 +168,7 @@ text = "Login"
 layout_mode = 2
 text = "Back"
 
-[node name="CreateAccount" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
+[node name="CreateAccount" type="Control" parent="." node_paths=PackedStringArray("previous_menu")]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -178,7 +177,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("7_l37t0")
-login_menu = NodePath("..")
+previous_menu = NodePath("../Main")
 
 [node name="CenterContainer" type="CenterContainer" parent="CreateAccount"]
 layout_mode = 1
@@ -346,7 +345,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Empty character slot"
 
-[node name="CharacterCreation" type="Control" parent="." node_paths=PackedStringArray("login_menu")]
+[node name="CharacterCreation" type="Control" parent="."]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -355,7 +354,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("6_i5ors")
-login_menu = NodePath("..")
 
 [node name="CenterContainer" type="CenterContainer" parent="CharacterCreation"]
 layout_mode = 1

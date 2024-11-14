@@ -22,7 +22,7 @@ func update_worlds_info(worlds_info: Dictionary) -> void:
 
 func on_world_button_pressed(world_id: int) -> void:
 	print("World ID pressed: %d" % world_id)
-	get_parent().selected_world_id = world_id
+	GatewayClient.world_id = world_id
 	confirm_button.disabled = false
 
 
