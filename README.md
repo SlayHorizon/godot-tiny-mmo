@@ -27,7 +27,7 @@ The current and planned features are listed below:
 - [x] **Account Creation** for permanent player accounts
 - [x] **QAD Database** to save persistent data
 - [x] **Guest Login** option for quick access
-- [ ] **Game version check** to ensure client compatibility
+- [x] **Game version check** to ensure client compatibility
 - [x] **Character Creation**
 - [x] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
 - [ ] **Weapons** at least one usable weapon per class
