@@ -27,5 +27,3 @@ database = NodePath("../Database")
 
 [node name="Database" type="Node" parent="."]
 script = ExtResource("5_mync2")
-
-[node name="Node" type="Node" parent="."]
