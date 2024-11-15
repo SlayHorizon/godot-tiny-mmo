@@ -2,7 +2,7 @@ class_name WorldManagerClient
 extends BaseClient
 
 
-signal token_received(token: String, username: String, character_id: int)
+signal token_received(auth_token: String, username: String, character_id: int)
 
 @export var database: WorldDatabase
 @export var world_main: WorldMain
@@ -22,7 +22,7 @@ func _on_connection_succeeded() -> void:
 		1,
 		{
 			"port": world_server.port,
-			"adress": "127.0.0.1",
+			"address": "127.0.0.1",
 			"info": world_main.world_info,
 			"population": world_server.connected_players.size()
 		}
@@ -43,8 +43,8 @@ func fetch_server_info(_info: Dictionary) -> void:
 
 
 @rpc("authority")
-func fetch_token(token: String, username: String, character_id: int) -> void:
-	token_received.emit(token, username, character_id)
+func fetch_token(auth_token: String, username: String, character_id: int) -> void:
+	token_received.emit(auth_token, username, character_id)
 
 
 @rpc("any_peer")

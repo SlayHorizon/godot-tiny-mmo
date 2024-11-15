@@ -4,7 +4,7 @@ extends BaseClient
 
 signal player_characters_received(player_characters: Dictionary)
 signal login_succeeded(account_data: Dictionary, worlds_info: Dictionary)
-signal authentication_token_received(_token: String, _adress: String, _port: int)
+signal authentication_token_received(_auth_token: String, _address: String, _port: int)
 signal login_result_received(result: bool, message: String)
 signal account_creation_result_received(result: bool, message: String)
 signal player_character_creation_result_received(result: bool, message: String)
@@ -55,9 +55,9 @@ func _on_server_disconnected() -> void:
 
 
 @rpc("authority")
-func fetch_authentication_token(_token: String, _adress: String, _port: int) -> void:
+func fetch_auth_token(_auth_token: String, _address: String, _port: int) -> void:
 	close_connection()
-	authentication_token_received.emit(_token, _adress, _port)
+	authentication_token_received.emit(_auth_token, _address, _port)
 
 
 @rpc("any_peer")

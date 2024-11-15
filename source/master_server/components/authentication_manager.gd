@@ -9,7 +9,7 @@ func _ready() -> void:
 	pass
 
 
-# Consider using a real authentication token generator.
+# Consider using a real authentication auth_token generator.
 func generate_random_token() -> String:
 	var characters := "abcdefghijklmnopqrstuvwxyz#$-+0123456789"
 	var password := ""

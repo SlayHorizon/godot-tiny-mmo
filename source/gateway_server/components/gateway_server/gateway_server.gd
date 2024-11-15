@@ -35,7 +35,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 
 
 @rpc("authority")
-func fetch_authentication_token(_token: String, _adress: String, _port: int) -> void:
+func fetch_auth_token(_auth_token: String, _address: String, _port: int) -> void:
 	pass
 
 

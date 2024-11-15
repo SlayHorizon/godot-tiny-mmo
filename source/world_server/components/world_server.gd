@@ -14,9 +14,9 @@ var connected_players: Dictionary
 
 func _ready() -> void:
 	world_manager.token_received.connect(
-		func(token: String, _username: String, character_id: int):
+		func(auth_token: String, _username: String, character_id: int):
 			var player: PlayerResource = database.player_data.get_player_resource(character_id)
-			token_list[token] = player
+			token_list[auth_token] = player
 	)
 	authentication_callback = _authentication_callback
 	load_server_configuration("world-server", "res://test_config/world_server_config.cfg")
@@ -46,17 +46,17 @@ func _on_peer_authentication_failed(peer_id: int) -> void:
 
 
 func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
-	var token := bytes_to_var(data) as String
-	print("Peer: %d is trying to connect with data: \"%s\"." % [peer_id, token])
-	if is_valid_authentication_token(token):
+	var auth_token := bytes_to_var(data) as String
+	print("Peer: %d is trying to connect with data: \"%s\"." % [peer_id, auth_token])
+	if is_valid_authentication_token(auth_token):
 		multiplayer.complete_auth(peer_id)
-		connected_players[peer_id] = token_list[token]
-		token_list.erase(token)
+		connected_players[peer_id] = token_list[auth_token]
+		token_list.erase(auth_token)
 	else:
 		server.disconnect_peer(peer_id)
 
 
-func is_valid_authentication_token(token: String) -> bool:
-	if token_list.has(token):
+func is_valid_authentication_token(auth_token: String) -> bool:
+	if token_list.has(auth_token):
 		return true
 	return false

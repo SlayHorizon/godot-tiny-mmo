@@ -3,7 +3,7 @@ extends Node
 
 
 # Client Default Configuration / Set with load_client_configuration()
-var adress := "127.0.0.1"
+var address := "127.0.0.1"
 var port: int = 8043
 var certificate_path := "res://test_config/tls/certificate.crt"
 
@@ -50,7 +50,7 @@ func load_client_configuration(section_key: String, default_config_path: String 
 	if error != OK:
 		printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
 	else:
-		adress = config_file.get_value(section_key, "key_path", adress)
+		address = config_file.get_value(section_key, "address", address)
 		port = config_file.get_value(section_key, "port", port)
 		certificate_path = config_file.get_value(section_key, "certificate_path", certificate_path)
 	return true
@@ -63,7 +63,7 @@ func start_client() -> void:
 	client = WebSocketMultiplayerPeer.new()
 	
 	var tls_options := TLSOptionsUtils.create_client_tls_options(certificate_path)
-	var error := client.create_client("wss://" + adress + ":" + str(port), tls_options)
+	var error := client.create_client("wss://" + address + ":" + str(port), tls_options)
 	if error != OK:
 		printerr("Error while creating client: %s" % error_string(error))
 	

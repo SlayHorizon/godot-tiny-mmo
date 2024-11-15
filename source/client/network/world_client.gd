@@ -14,8 +14,8 @@ var is_connected_to_server: bool = false:
 var authentication_token: String
 
 
-func connect_to_server(_adress: String, _port: int) -> void:
-	adress = _adress
+func connect_to_server(_address: String, _port: int) -> void:
+	address = _address
 	port = _port
 	authentication_callback = authentication_call
 	start_client()

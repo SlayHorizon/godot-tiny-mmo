@@ -36,9 +36,9 @@ func update_worlds_info(_worlds_info: Dictionary) -> void:
 
 
 @rpc("authority")
-func fetch_authentication_token(target_peer: int, token: String, _adress: String, _port: int) -> void:
+func fetch_auth_token(target_peer: int, auth_token: String, _address: String, _port: int) -> void:
 	gateway.connected_peers[target_peer]["token_received"] = true
-	gateway.fetch_authentication_token.rpc_id(target_peer, token, _adress, _port)
+	gateway.fetch_auth_token.rpc_id(target_peer, auth_token, _address, _port)
 
 
 @rpc("any_peer")

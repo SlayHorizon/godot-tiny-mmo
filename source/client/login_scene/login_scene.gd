@@ -16,9 +16,9 @@ func _ready() -> void:
 	gateway.connection_changed.connect(login_menu._on_gateway_connection_changed)
 
 
-func _on_authentication_token_received(token: String, adress: String, port: int) -> void:
-	world_server.authentication_token = token
-	world_server.connect_to_server(adress, port)
+func _on_authentication_token_received(auth_token: String, address: String, port: int) -> void:
+	world_server.authentication_token = auth_token
+	world_server.connect_to_server(address, port)
 	await world_server.connection_changed
 	if not world_server.is_connected_to_server:
 		printerr("Failed to connect to server after login.")

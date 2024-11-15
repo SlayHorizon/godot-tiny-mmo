@@ -32,7 +32,7 @@ func fetch_server_info(info: Dictionary) -> void:
 
 
 @rpc("authority")
-func fetch_token(_token: String, _username: String, _character_id: int) -> void:
+func fetch_token(_auth_token: String, _username: String, _character_id: int) -> void:
 	pass
 
 
@@ -50,15 +50,15 @@ func create_player_character_request(_gateway_id: int, _peer_id: int, _username:
 func player_character_creation_result(gateway_id: int, peer_id: int, username: String, result_code: int) -> void:
 	var world_id := multiplayer_api.get_remote_sender_id()
 	if result_code:
-		var token := authentication_manager.generate_random_token()
-		fetch_token.rpc_id(world_id, token, username, result_code)
+		var auth_token := authentication_manager.generate_random_token()
+		fetch_token.rpc_id(world_id, auth_token, username, result_code)
 		gateway_manager.player_character_creation_result.rpc_id(
 			gateway_id, peer_id, result_code
 		)
 		await get_tree().create_timer(0.5).timeout
-		gateway_manager.fetch_authentication_token.rpc_id(
-			gateway_id, peer_id, token,
-			connected_worlds[world_id]["adress"],
+		gateway_manager.fetch_auth_token.rpc_id(
+			gateway_id, peer_id, auth_token,
+			connected_worlds[world_id]["address"],
 			connected_worlds[world_id]["port"]
 		)
 	else:
@@ -81,12 +81,12 @@ func request_login(_gateway_id: int, _peer_id: int, _username: String, _characte
 func result_login(result_code: int, gateway_id: int, peer_id: int, username: String, character_id: int) -> void:
 	var world_id := multiplayer_api.get_remote_sender_id()
 	if result_code == OK:
-		var token := authentication_manager.generate_random_token()
-		fetch_token.rpc_id(world_id, token, username, character_id)
+		var auth_token := authentication_manager.generate_random_token()
+		fetch_token.rpc_id(world_id, auth_token, username, character_id)
 		await get_tree().create_timer(0.5).timeout
-		gateway_manager.fetch_authentication_token.rpc_id(
-			gateway_id, peer_id, token,
-			connected_worlds[world_id]["adress"],
+		gateway_manager.fetch_auth_token.rpc_id(
+			gateway_id, peer_id, auth_token,
+			connected_worlds[world_id]["address"],
 			connected_worlds[world_id]["port"]
 		)
 

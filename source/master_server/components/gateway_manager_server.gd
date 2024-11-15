@@ -26,10 +26,10 @@ func update_worlds_info(_worlds_info: Dictionary) -> void:
 	pass
 
 
-# Send an authentication token to the gateway for a specific peer,
+# Send an authentication auth_token to the gateway for a specific peer,
 # used by the peer to connect to a game server.
 @rpc("authority")
-func fetch_authentication_token(_target_peer: int, _token: String, _adress: String, _port: int) -> void:
+func fetch_auth_token(_target_peer: int, _auth_token: String, _address: String, _port: int) -> void:
 	pass
 
 
