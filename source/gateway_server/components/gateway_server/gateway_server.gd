@@ -2,9 +2,13 @@ class_name GatewayServer
 extends BaseServer
 
 
-var connected_peers: Dictionary
-
 @export var gateway_manager: GatewayManagerClient
+
+var challenges: Dictionary = {}
+var secret_key := "super_secure_key"
+var allowed_versions: Array[String] = ["0.0.8"]
+
+var connected_peers: Dictionary = {}
 
 
 func _ready() -> void:
@@ -13,6 +17,7 @@ func _ready() -> void:
 			connected_peers[peer_id]["account"] = account_info
 			successful_login.rpc_id(peer_id, account_info, worlds_info)
 	)
+	authentication_callback = auth_call
 	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
 	start_server()
 
@@ -34,6 +39,45 @@ func _on_peer_disconnected(peer_id: int) -> void:
 		)
 	connected_peers.erase(peer_id)
 	print("Peer: %d is disconnected." % peer_id)
+
+
+func _on_peer_authenticating(peer_id: int) -> void:
+	print("Peer: %d is trying to authenticate." % peer_id)
+	var challenge := str(randf() * 10000.0)
+	challenges[peer_id] = challenge
+	multiplayer_api.send_auth(peer_id, challenge.to_ascii_buffer())
+
+
+func _on_peer_authentication_failed(peer_id: int) -> void:
+	print("Peer: %d failed to authenticate." % peer_id)
+
+
+func auth_call(peer_id: int, data: PackedByteArray) -> void:
+	var response: Dictionary = bytes_to_var(data) as Dictionary
+	if response == null:
+		server.disconnect_peer(peer_id)
+	var client_challenge: String = response.get("challenge", "")
+	var client_version: String = response.get("version", "")
+	var client_signature: int = response.get("signature", 0)
+	
+	if not challenges.has(peer_id) or client_challenge != challenges[peer_id]:
+		print("Invalid challenge for peer: %d" % peer_id)
+		server.disconnect_peer(peer_id)
+		return
+	
+	if client_version not in allowed_versions:
+		print("Unsupported version '%s' for peer: %d" % [client_version, peer_id])
+		server.disconnect_peer(peer_id)
+		challenges.erase(peer_id)
+		return
+	
+	if client_signature == hash(client_challenge + client_version + secret_key):
+		print("Authentication successful for peer: %d, version: %s" % [peer_id, client_version])
+		multiplayer.complete_auth(peer_id)
+	else:
+		print("Authentication failed for peer: %d" % peer_id)
+		server.disconnect_peer(peer_id)
+	challenges.erase(peer_id)
 
 
 @rpc("authority")

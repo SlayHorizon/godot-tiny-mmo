@@ -7,6 +7,16 @@ extends GatewayUIComponent
 @onready var connect_as_guest_button: Button = $CenterContainer/MainContainer/MarginContainer/HBoxContainer/ConnectAsGuestButton
 @onready var result_label: Label = $CenterContainer/MainContainer/MarginContainer/HBoxContainer/ResultLabel
 
+@onready var auth_label: Label = $CenterContainer/MainContainer/WaitingConnectionRect/Label
+
+func _ready() -> void:
+	await get_node("/root/ClientMain").ready
+	gateway.auth_failed.connect(_on_auth_failed)
+
+
+func _on_auth_failed() -> void:
+	auth_label.text = "Authentication failed.\nPlease ensure your game is updated to the latest version."
+
 
 func _on_login_button_pressed() -> void:
 	hide()

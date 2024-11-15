@@ -2,6 +2,7 @@ class_name GatewayClient
 extends BaseClient
 
 
+signal auth_failed
 signal player_characters_received(player_characters: Dictionary)
 signal login_succeeded(account_data: Dictionary, worlds_info: Dictionary)
 signal authentication_token_received(_auth_token: String, _address: String, _port: int)
@@ -15,6 +16,7 @@ var gateway: GatewayClient
 var world_id: int
 
 var config_file: ConfigFile
+var secret_key := "super_secure_key"
 var peer_id: int
 
 var is_connected_to_server: bool = false:
@@ -25,6 +27,7 @@ var is_connected_to_server: bool = false:
 
 func _ready() -> void:
 	GatewayUIComponent.gateway = self
+	authentication_callback = auth_call
 	load_client_configuration("gateway-client", "res://test_config/client_config.cfg")
 	start_client()
 
@@ -52,6 +55,30 @@ func _on_server_disconnected() -> void:
 	print("Server disconnected.")
 	close_connection()
 	get_tree().paused = true
+
+
+func _on_peer_authenticating(_peer_id: int) -> void:
+	print("Trying to authenticate to the server.")
+
+
+func _on_peer_authentication_failed(_peer_id: int) -> void:
+	print("Authentification to the server failed.")
+	auth_failed.emit()
+	close_connection()
+
+
+func auth_call(_peer_id: int, data: PackedByteArray) -> void:
+	var challenge: String = data.get_string_from_ascii()
+	print("Authentification call from gateway with challenge: \"%s\"." % challenge)
+	var version: String = ProjectSettings.get_setting("application/config/version")
+	var response := {
+		"challenge": challenge,
+		"version": version,
+		# Minimal security to avoid fake check version
+		"signature": hash(challenge + version + secret_key)
+	}
+	multiplayer.send_auth(1, var_to_bytes(response))
+	multiplayer.complete_auth(1)
 
 
 @rpc("authority")
