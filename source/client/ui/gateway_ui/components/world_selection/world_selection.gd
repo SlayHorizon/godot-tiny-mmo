@@ -1,7 +1,7 @@
-extends Control
+extends GatewayUIComponent
 
 
-const WORLD_BUTTON = preload("res://source/client/ui/login_menu/components/world_selection/world_button/world_button.tscn")
+const WORLD_BUTTON = preload("res://source/client/ui/gateway_ui/components/world_selection/world_button/world_button.tscn")
 
 @export var character_selection_menu: Control
 
@@ -22,17 +22,17 @@ func update_worlds_info(worlds_info: Dictionary) -> void:
 
 func on_world_button_pressed(world_id: int) -> void:
 	print("World ID pressed: %d" % world_id)
-	GatewayClient.world_id = world_id
+	gateway.world_id = world_id
 	confirm_button.disabled = false
 
 
 func _on_confirm_button_pressed() -> void:
 	confirm_button.disabled = true
-	GatewayClient.gateway.request_player_characters.rpc_id(
+	gateway.request_player_characters.rpc_id(
 		1,
-		GatewayClient.world_id
+		gateway.world_id
 	)
-	GatewayClient.gateway.player_characters_received.connect(
+	gateway.player_characters_received.connect(
 		func(player_characters: Dictionary):
 			if player_characters.has("error"):
 				var label = $CenterContainer/VBoxContainer/Label

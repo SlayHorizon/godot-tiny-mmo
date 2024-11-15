@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://source/master_server/components/gateway_manager_server.gd" id="2_hsh87"]
 [ext_resource type="Script" path="res://source/master_server/components/world_manager_server.gd" id="3_qbesc"]
 [ext_resource type="Script" path="res://source/master_server/components/authentication_manager.gd" id="4_1tf2k"]
-[ext_resource type="Script" path="res://source/master_server/components/database.gd" id="5_mync2"]
+[ext_resource type="Script" path="res://source/master_server/components/master_database.gd" id="5_mync2"]
 
 [node name="MasterMain" type="Node"]
 script = ExtResource("1_6d3fm")

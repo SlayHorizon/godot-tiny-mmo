@@ -2,10 +2,14 @@ extends Control
 
 
 func _ready() -> void:
-	ClientEvents.message_received.connect(self._on_message_received)
+	ClientEvents.message_received.connect(_on_message_received)
+
 
 func _input(_event: InputEvent) -> void:
-	if Input.is_action_just_pressed("chat") and not %MessageEdit.has_focus():
+	if (
+		Input.is_action_just_pressed("chat")
+		and not %MessageEdit.has_focus()
+	):
 		accept_event()
 		open_chat()
 

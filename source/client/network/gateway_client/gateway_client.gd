@@ -11,8 +11,8 @@ signal player_character_creation_result_received(result: bool, message: String)
 signal connection_changed(connected_to_server: bool)
 
 
-static var gateway: GatewayClient
-static var world_id: int
+var gateway: GatewayClient
+var world_id: int
 
 var config_file: ConfigFile
 var peer_id: int
@@ -24,7 +24,7 @@ var is_connected_to_server: bool = false:
 
 
 func _ready() -> void:
-	gateway = self
+	GatewayUIComponent.gateway = self
 	load_client_configuration("gateway-client", "res://test_config/client_config.cfg")
 	start_client()
 

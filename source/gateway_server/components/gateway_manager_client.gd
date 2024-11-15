@@ -30,9 +30,7 @@ func _on_server_disconnected() -> void:
 
 @rpc("authority")
 func update_worlds_info(_worlds_info: Dictionary) -> void:
-	
 	worlds_info = _worlds_info
-	print("WORLD INFOS = ", worlds_info)
 
 
 @rpc("authority")

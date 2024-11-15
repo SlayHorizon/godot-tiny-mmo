@@ -3,9 +3,7 @@ extends Node
 
 
 var account_collection: AccountResourceCollection
-var account_collection_path := "res://source/gateway_server/account_collection.tres"
-
-var connected_players: Dictionary
+var account_collection_path := "res://source/master_server/account_collection.tres"
 
 
 func _ready() -> void:

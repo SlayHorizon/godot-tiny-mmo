@@ -1,4 +1,4 @@
-class_name LoginMenu
+class_name GatewayUI
 extends Control
 
 

@@ -3,17 +3,15 @@ extends Node
 
 
 @export var world_server: WorldClient
-
-@onready var login_menu: LoginMenu = $CanvasLayer/LoginMenu
-@onready var gateway: GatewayClient = $GatewayClient
+@export var gateway_ui: GatewayUI
+@export var gateway: GatewayClient
 
 
 func _ready() -> void:
-	
 	gateway.authentication_token_received.connect(_on_authentication_token_received)
 	
-	gateway.login_succeeded.connect(login_menu.on_login_succeeded)
-	gateway.connection_changed.connect(login_menu._on_gateway_connection_changed)
+	gateway.login_succeeded.connect(gateway_ui.on_login_succeeded)
+	gateway.connection_changed.connect(gateway_ui._on_gateway_connection_changed)
 
 
 func _on_authentication_token_received(auth_token: String, address: String, port: int) -> void:

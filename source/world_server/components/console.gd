@@ -29,6 +29,8 @@ var cmd_begin: String = str("\n" + escape +
 
 
 func _ready() -> void:
+	if not OS.has_feature("console"):
+		return
 	for callable: Callable in define_commands:
 		for keyword: String in define_commands[callable]:
 			commands[keyword] = callable
@@ -113,4 +115,4 @@ func shutdown() -> void:
 	print("1")
 	await get_tree().create_timer(1.0).timeout
 	print("Server offline.")
-	get_tree().quit()
+	get_tree().quit.call_deferred()

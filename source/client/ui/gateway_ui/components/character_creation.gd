@@ -1,4 +1,4 @@
-extends Control
+extends GatewayUIComponent
 
 
 const KNIGHT = preload("res://source/common/resources/builtin/sprite_frames/knight.tres")
@@ -87,7 +87,7 @@ func _on_line_edit_text_changed(new_text: String) -> void:
 
 func _on_create_character_button_pressed() -> void:
 	create_character_button.disabled = true
-	GatewayClient.gateway.player_character_creation_result_received.connect(
+	gateway.player_character_creation_result_received.connect(
 		func(result_code: int):
 			var message := "Creation successful."
 			if result_code < 0:
@@ -98,11 +98,11 @@ func _on_create_character_button_pressed() -> void:
 				create_character_button.disabled = false,
 		ConnectFlags.CONNECT_ONE_SHOT
 	)
-	GatewayClient.gateway.create_player_character_request.rpc_id(
+	gateway.create_player_character_request.rpc_id(
 		1,
 		{
 			"name": username_edit.text,
 			"class": character_class
 		},
-		GatewayClient.gateway.world_id
+		gateway.world_id
 	)

@@ -1,27 +1,27 @@
 [gd_scene load_steps=14 format=3 uid="uid://b75u8dbglxgyb"]
 
-[ext_resource type="Script" path="res://source/client/ui/login_menu/login_menu.gd" id="1_b8eob"]
-[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_8u1v6"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/main_menu.gd" id="2_t4fkb"]
-[ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/ui/login_menu/components/world_selection/world_button/world_button.tscn" id="3_r7xrg"]
-[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="3_xkqbx"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/character_selection/character_selection.gd" id="4_6ox2d"]
-[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="4_iraby"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/character_creation.gd" id="6_i5ors"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/world_selection/world_selection.gd" id="7_045sv"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/account_info.gd" id="7_jdy25"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/create_account.gd" id="7_l37t0"]
-[ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/ui/login_menu/components/character_selection/character_slot_button.tscn" id="8_a5t64"]
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/login.gd" id="8_dy5r0"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/gateway_ui.gd" id="1_sp1hu"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/main_menu.gd" id="2_peqmd"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/login.gd" id="3_g4i0l"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/create_account.gd" id="4_6rtum"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/world_selection/world_selection.gd" id="5_2q8vv"]
+[ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/ui/gateway_ui/components/world_selection/world_button/world_button.tscn" id="6_moax4"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/character_selection/character_selection.gd" id="7_ex74y"]
+[ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/ui/gateway_ui/components/character_selection/character_slot_button.tscn" id="8_j42bt"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/character_creation.gd" id="9_u2lk0"]
+[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="10_dfo5r"]
+[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="11_h7nlh"]
+[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="12_x6v4n"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/account_info.gd" id="13_i2c6x"]
 
-[node name="LoginMenu" type="Control"]
+[node name="GatewayUI" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_b8eob")
+script = ExtResource("1_sp1hu")
 
 [node name="BackgroundRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -33,14 +33,13 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_t4fkb")
+script = ExtResource("2_peqmd")
 login_menu = NodePath("../Login")
 create_account_menu = NodePath("../CreateAccount")
 
@@ -112,7 +111,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("8_dy5r0")
+script = ExtResource("3_g4i0l")
 previous_menu = NodePath("../Main")
 
 [node name="CenterContainer" type="CenterContainer" parent="Login"]
@@ -178,7 +177,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("7_l37t0")
+script = ExtResource("4_6rtum")
 previous_menu = NodePath("../Main")
 
 [node name="CenterContainer" type="CenterContainer" parent="CreateAccount"]
@@ -254,7 +253,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("7_045sv")
+script = ExtResource("5_2q8vv")
 character_selection_menu = NodePath("../CharacterSelection")
 
 [node name="CenterContainer" type="CenterContainer" parent="WorldSelection"]
@@ -278,7 +277,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="ServerButton1" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer" instance=ExtResource("3_r7xrg")]
+[node name="ServerButton1" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer" instance=ExtResource("6_moax4")]
 layout_mode = 2
 
 [node name="ServerButton2" type="Button" parent="WorldSelection/CenterContainer/VBoxContainer/HBoxContainer"]
@@ -325,7 +324,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("4_6ox2d")
+script = ExtResource("7_ex74y")
 next_menu = NodePath("../CharacterCreation")
 
 [node name="CenterContainer" type="CenterContainer" parent="CharacterSelection"]
@@ -339,7 +338,7 @@ grow_vertical = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="CharacterSelection/CenterContainer"]
 layout_mode = 2
 
-[node name="CharacterSlotButton" parent="CharacterSelection/CenterContainer/HBoxContainer" instance=ExtResource("8_a5t64")]
+[node name="CharacterSlotButton" parent="CharacterSelection/CenterContainer/HBoxContainer" instance=ExtResource("8_j42bt")]
 layout_mode = 2
 
 [node name="WaitingRect" type="ColorRect" parent="CharacterSelection/CenterContainer"]
@@ -373,7 +372,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("6_i5ors")
+script = ExtResource("9_u2lk0")
 
 [node name="CenterContainer" type="CenterContainer" parent="CharacterCreation"]
 layout_mode = 1
@@ -416,7 +415,7 @@ layout_mode = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button/CenterContainer/Control"]
 position = Vector2(-32, -32)
-sprite_frames = ExtResource("2_8u1v6")
+sprite_frames = ExtResource("10_dfo5r")
 animation = &"idle"
 centered = false
 
@@ -448,7 +447,7 @@ layout_mode = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button2/CenterContainer/Control"]
 position = Vector2(-32, -32)
-sprite_frames = ExtResource("3_xkqbx")
+sprite_frames = ExtResource("11_h7nlh")
 animation = &"run"
 centered = false
 
@@ -480,7 +479,7 @@ layout_mode = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button3/CenterContainer/Control"]
 position = Vector2(-32, -32)
-sprite_frames = ExtResource("4_iraby")
+sprite_frames = ExtResource("12_x6v4n")
 animation = &"run"
 centered = false
 
@@ -509,7 +508,7 @@ layout_mode = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control"]
 scale = Vector2(4, 4)
-sprite_frames = ExtResource("3_xkqbx")
+sprite_frames = ExtResource("11_h7nlh")
 animation = &"run"
 frame_progress = 0.937406
 centered = false
@@ -558,7 +557,7 @@ anchor_bottom = 1.0
 offset_top = -50.0
 offset_right = 142.0
 grow_vertical = 0
-script = ExtResource("7_jdy25")
+script = ExtResource("13_i2c6x")
 
 [node name="Label" type="Label" parent="AccountInfo"]
 layout_mode = 2

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d0nrbmkjcp050"]
 
-[ext_resource type="Script" path="res://source/client/ui/login_menu/components/world_selection/world_button/world_button.gd" id="1_u55bs"]
+[ext_resource type="Script" path="res://source/client/ui/gateway_ui/components/world_selection/world_button/world_button.gd" id="1_u55bs"]
 
 [node name="WorldButton" type="Button"]
 custom_minimum_size = Vector2(150, 250)

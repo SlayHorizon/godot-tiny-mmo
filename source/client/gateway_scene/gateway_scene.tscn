@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://u544jciafxaw"]
 
-[ext_resource type="Script" path="res://source/client/login_scene/login_scene.gd" id="1_y6dui"]
-[ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/login_menu/login_menu.tscn" id="2_1i7tk"]
+[ext_resource type="Script" path="res://source/client/gateway_scene/gateway_scene.gd" id="1_y6dui"]
+[ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/gateway_ui/gateway_ui.tscn" id="2_1i7tk"]
 [ext_resource type="Texture2D" uid="uid://bdqnowxsb7oqx" path="res://assets/skyboxes/mountain_skybox_0.png" id="4_ckx75"]
 [ext_resource type="PackedScene" uid="uid://cgjr8n84aunix" path="res://source/client/network/gateway_client/gateway_client.tscn" id="4_pjy08"]
 
@@ -20,15 +20,17 @@ ambient_light_color = Color(0.52549, 0.784314, 0.862745, 1)
 ambient_light_sky_contribution = 0.6
 reflected_light_source = 2
 
-[node name="LoginScene" type="Node"]
+[node name="GatewayScene" type="Node" node_paths=PackedStringArray("gateway_ui", "gateway")]
 script = ExtResource("1_y6dui")
+gateway_ui = NodePath("CanvasLayer/GatewayUI")
+gateway = NodePath("GatewayClient")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="LoginMenu" parent="CanvasLayer" instance=ExtResource("2_1i7tk")]
+[node name="GatewayUI" parent="CanvasLayer" instance=ExtResource("2_1i7tk")]
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="BackgroundCamera" type="Camera3D" parent="."]
 transform = Transform3D(0.617036, -0.0603729, -0.784615, 0, 0.997053, -0.076719, 0.786935, 0.0473384, 0.615217, 0, 0, 0)
 environment = SubResource("Environment_pffib")
 current = true

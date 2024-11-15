@@ -1,7 +1,7 @@
-extends Control
+extends GatewayUIComponent
 
 
-const CHARACTER_SLOT_BUTTON = preload("res://source/client/ui/login_menu/components/character_selection/character_slot_button.tscn")
+const CHARACTER_SLOT_BUTTON = preload("res://source/client/ui/gateway_ui/components/character_selection/character_slot_button.tscn")
 
 
 @export var next_menu: Control
@@ -17,7 +17,6 @@ func _ready() -> void:
 
 
 func set_player_characters(player_characters: Dictionary) -> void:
-	print(player_characters)
 	var new_character_slot := CHARACTER_SLOT_BUTTON.instantiate()
 	new_character_slot.pressed.connect(_on_character_slot_button_pressed.bind(new_character_slot.text))
 	slots_container.add_child(new_character_slot)
@@ -42,8 +41,8 @@ func _on_character_slot_button_pressed(text: String, character_id: int = 0) -> v
 		hide()
 		next_menu.show()
 	else:
-		GatewayClient.gateway.request_login.rpc_id(
+		gateway.request_login.rpc_id(
 			1,
-			GatewayClient.world_id,
+			gateway.world_id,
 			character_id,
 		)

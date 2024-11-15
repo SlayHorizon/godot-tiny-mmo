@@ -1,4 +1,4 @@
-extends Control
+extends GatewayUIComponent
 
 
 @export var login_menu: Control
@@ -21,7 +21,7 @@ func _on_create_account_button_pressed() -> void:
 func _on_connect_as_guest_button_pressed() -> void:
 	connect_as_guest_button.disabled = true
 	%WaitingConnectionRect.visible = true
-	GatewayClient.gateway.account_creation_result_received.connect(
+	gateway.account_creation_result_received.connect(
 		func(result_code: int):
 			var message := "Creation successful."
 			if result_code != OK:
@@ -31,4 +31,4 @@ func _on_connect_as_guest_button_pressed() -> void:
 			%WaitingConnectionRect.visible = false,
 		ConnectFlags.CONNECT_ONE_SHOT
 	)
-	GatewayClient.gateway.create_account_request.rpc_id(1, "", "", true)
+	gateway.create_account_request.rpc_id(1, "", "", true)

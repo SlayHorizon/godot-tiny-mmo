@@ -24,11 +24,13 @@ func _on_peer_connected(peer_id: int) -> void:
 
 func _on_peer_disconnected(peer_id: int) -> void:
 	if (
-		connected_peers.has(peer_id) and connected_peers[peer_id].has("account")
+		connected_peers.has(peer_id)
+		and connected_peers[peer_id].has("account")
 		and not connected_peers[peer_id].has("token_received")
 	):
 		gateway_manager.peer_disconnected_without_joining_world.rpc_id(
-			1, connected_peers[peer_id]["account"]["name"]
+			1,
+			connected_peers[peer_id]["account"]["name"]
 		)
 	connected_peers.erase(peer_id)
 	print("Peer: %d is disconnected." % peer_id)
@@ -124,7 +126,7 @@ func request_player_characters(world_id: int) -> void:
 	if not connected_peers.has(peer_id):
 		receive_player_characters.rpc_id(
 			peer_id,
-			{"error": ""}
+			{"error": "User not connected"}
 		)
 	elif not connected_peers[peer_id].has("account"):
 		receive_player_characters.rpc_id(
