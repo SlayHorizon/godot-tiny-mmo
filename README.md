@@ -13,6 +13,8 @@ This keeps exports safe and optimized by excluding unnecessary components.
 For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).  
 
 ![project-demo-screenshot](https://github.com/user-attachments/assets/ca606976-fd9d-4a92-a679-1f65cb80513a)
+![image](https://github.com/user-attachments/assets/7e21a7e5-4c72-4871-b0cf-6d94f8931bf7)
+
 
 ## 🚀 Features
 
@@ -53,7 +55,7 @@ To get started with the project, follow these steps:
 5. Under **Feature Tags**, ensure you have:
    - Exactly **one** "gateway-server" tag.
    - Exactly **one** "master-server" tag.
-   - Exactly **one** "game-server" tag.
+   - Exactly **one** "world-server" tag.
    - At least **one or more** "client" tags
 6. (Optional) Under **Launch Arguments**:
    - For servers, add **--headless** to prevent empty windows.
@@ -62,7 +64,8 @@ To get started with the project, follow these steps:
 
 Setup example:  
 (More details in the wiki [How to use "Customize Run Instances..."](https://github.com/SlayHorizon/godot-tiny-mmo/wiki/How-to-use-%22Customize-Run-Instances...%22#customize-run-instances))
-![image](https://github.com/user-attachments/assets/abd2fd11-bb29-4d90-92c4-a8aefcdd7d52)  
+<img width="1580" alt="debug-screenshot" src="https://github.com/user-attachments/assets/cff4dd67-00f2-4dda-986f-7f0bec0a695e">
+  
 
 ## 🤝 Contributing
 
