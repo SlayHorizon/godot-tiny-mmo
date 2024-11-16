@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://u544jciafxaw"]
 
-[ext_resource type="Script" path="res://source/client/gateway_scene/gateway_scene.gd" id="1_y6dui"]
-[ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/ui/gateway_ui/gateway_ui.tscn" id="2_1i7tk"]
+[ext_resource type="Script" path="res://source/client/gateway/gateway_scene/gateway_scene.gd" id="1_y6dui"]
+[ext_resource type="PackedScene" uid="uid://b75u8dbglxgyb" path="res://source/client/gateway/gateway_ui/gateway_ui.tscn" id="2_1i7tk"]
 [ext_resource type="Texture2D" uid="uid://bdqnowxsb7oqx" path="res://assets/skyboxes/mountain_skybox_0.png" id="4_ckx75"]
-[ext_resource type="PackedScene" uid="uid://cgjr8n84aunix" path="res://source/client/network/gateway_client/gateway_client.tscn" id="4_pjy08"]
+[ext_resource type="PackedScene" uid="uid://cgjr8n84aunix" path="res://source/client/gateway/gateway_client/gateway_client.tscn" id="4_pjy08"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_h2dk4"]
 panorama = ExtResource("4_ckx75")

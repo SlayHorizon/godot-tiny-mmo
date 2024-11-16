@@ -1,7 +1,7 @@
 extends GatewayUIComponent
 
 
-const CHARACTER_SLOT_BUTTON = preload("res://source/client/ui/gateway_ui/components/character_selection/character_slot_button.tscn")
+const CHARACTER_SLOT_BUTTON = preload("res://source/client/gateway/gateway_ui/components/character_selection/character_slot_button.tscn")
 
 
 @export var next_menu: Control
@@ -30,13 +30,15 @@ func set_player_characters(player_characters: Dictionary) -> void:
 		new_character_slot.pressed.connect(
 			_on_character_slot_button_pressed.bind(
 				new_character_slot.text,
-				character_id
+				character_id,
 			)
 		)
 		slots_container.add_child(new_character_slot)
 
 
 func _on_character_slot_button_pressed(text: String, character_id: int = 0) -> void:
+	for button: Button in slots_container.get_children():
+		button.disabled = true
 	if text == "Empty character slot": 
 		hide()
 		next_menu.show()
