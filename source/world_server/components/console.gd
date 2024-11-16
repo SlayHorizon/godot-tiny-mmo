@@ -65,6 +65,8 @@ func _on_stdin_readed() -> void:
 
 
 func _exit_tree() -> void:
+	if not stdin_thread:
+		return
 	if stdin_thread.is_started():
 		if stdin_thread.is_alive():
 			stdin_thread.wait_to_finish()
