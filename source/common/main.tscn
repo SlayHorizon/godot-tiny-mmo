@@ -5,7 +5,7 @@
 [node name="Main" type="Node"]
 script = ExtResource("1_gnr3o")
 
-[node name="Label" type="Label" parent="."]
+[node name="ErrorLabel" type="Label" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -17,7 +17,7 @@ offset_right = 20.0
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-text = "You probably see this label
-because you haven't read the README.md
-or something went wrong."
+text = "You see this label because no valid feature tag was found.
+Please check either README.md or common/main.gd for more information."
 horizontal_alignment = 1
+vertical_alignment = 1
