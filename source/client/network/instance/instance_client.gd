@@ -13,7 +13,7 @@ var local_player: LocalPlayer
 
 
 func _ready() -> void:
-	ClientEvents.message_entered.connect(self.player_submit_message)
+	ClientEvents.message_submitted.connect(self.player_submit_message)
 	ClientEvents.item_icon_pressed.connect(self.player_trying_to_change_weapon)
 
 
@@ -82,8 +82,8 @@ func despawn_player(player_id: int) -> void:
 
 #region chat
 @rpc("any_peer", "call_remote", "reliable", 1)
-func player_submit_message(new_message: String) -> void:
-	player_submit_message.rpc_id(1, new_message)
+func player_submit_message(message: String) -> void:
+	player_submit_message.rpc_id(1, message)
 
 
 @rpc("authority", "call_remote", "reliable", 1)

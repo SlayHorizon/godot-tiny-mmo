@@ -33,7 +33,7 @@ func _on_message_submitted(new_message: String) -> void:
 	if not new_message.is_empty():
 		new_message = new_message.strip_edges(true, true)
 		new_message = new_message.substr(0, 120)
-		ClientEvents.message_entered.emit(new_message)
+		ClientEvents.message_submitted.emit(new_message)
 	%FadeOutTimer.start()
 
 
