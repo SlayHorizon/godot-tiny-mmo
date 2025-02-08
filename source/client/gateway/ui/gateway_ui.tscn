@@ -1,18 +1,18 @@
 [gd_scene load_steps=14 format=3 uid="uid://b75u8dbglxgyb"]
 
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/gateway_ui.gd" id="1_sp1hu"]
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/components/main_menu.gd" id="2_peqmd"]
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/components/login.gd" id="3_g4i0l"]
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/components/create_account.gd" id="4_6rtum"]
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/components/world_selection/world_selection.gd" id="5_2q8vv"]
-[ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/gateway/gateway_ui/components/world_selection/world_button/world_button.tscn" id="6_moax4"]
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/components/character_selection/character_selection.gd" id="7_ex74y"]
-[ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/gateway/gateway_ui/components/character_selection/character_slot_button.tscn" id="8_j42bt"]
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/components/character_creation.gd" id="9_u2lk0"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/gateway_ui.gd" id="1_sp1hu"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/main_menu.gd" id="2_peqmd"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/login.gd" id="3_g4i0l"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/create_account.gd" id="4_6rtum"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/world_selection/world_selection.gd" id="5_2q8vv"]
+[ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/gateway/ui/components/world_selection/world_button/world_button.tscn" id="6_moax4"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/character_selection/character_selection.gd" id="7_ex74y"]
+[ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/gateway/ui/components/character_selection/character_slot_button.tscn" id="8_j42bt"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/character_creation.gd" id="9_u2lk0"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="10_dfo5r"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="11_h7nlh"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="12_x6v4n"]
-[ext_resource type="Script" path="res://source/client/gateway/gateway_ui/components/account_info.gd" id="13_i2c6x"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/account_info.gd" id="13_i2c6x"]
 
 [node name="GatewayUI" type="Control"]
 layout_mode = 3
@@ -344,8 +344,7 @@ text = "Waiting for your characters info..."
 horizontal_alignment = 1
 visible_characters_behavior = 1
 
-[node name="CharacterCreation" type="Control" parent="."]
-visible = false
+[node name="CharacterCreation" type="Control" parent="." node_paths=PackedStringArray("class_description")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -353,6 +352,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("9_u2lk0")
+class_description = NodePath("CenterContainer/VBoxContainer/HBoxContainer/PanelContainer/VBoxContainer3/Label")
 
 [node name="CenterContainer" type="CenterContainer" parent="CharacterCreation"]
 layout_mode = 1
@@ -510,17 +510,22 @@ placeholder_text = "Character name"
 layout_mode = 2
 text = "RNG"
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+[node name="VBoxContainer3" type="VBoxContainer" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+[node name="RichTextLabel" type="RichTextLabel" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/PanelContainer/VBoxContainer3"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/PanelContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 text = "Wizard
 A master of elemental forces, commanding powerful spells to devastate enemies or support allies. Their mastery of magic grants them high damage potential but leaves them vulnerable up close."
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="CreateCharacterButton" type="Button" parent="CharacterCreation/CenterContainer/VBoxContainer"]

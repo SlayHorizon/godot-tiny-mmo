@@ -1,7 +1,7 @@
 extends GatewayUIComponent
 
 
-const CHARACTER_SLOT_BUTTON = preload("res://source/client/gateway/gateway_ui/components/character_selection/character_slot_button.tscn")
+const CHARACTER_SLOT_BUTTON = preload("res://source/client/gateway/ui/components/character_selection/character_slot_button.tscn")
 
 
 @export var next_menu: Control

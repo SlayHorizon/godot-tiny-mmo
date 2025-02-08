@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://6bcg7fwcl6mi"]
 
-[ext_resource type="Script" path="res://source/common/entities/characters/character.gd.gd" id="1_uqmoo"]
+[ext_resource type="Script" path="res://source/common/entities/characters/character.gd" id="1_uqmoo"]
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
 [ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
 

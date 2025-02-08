@@ -5,13 +5,14 @@ const KNIGHT = preload("res://source/common/resources/builtin/sprite_frames/knig
 const ROGUE = preload("res://source/common/resources/builtin/sprite_frames/rogue.tres")
 const WIZARD = preload("res://source/common/resources/builtin/sprite_frames/wizard.tres")
 
+@export var class_description: Label
+
 var character_class := "knight":
 	set = _set_character_class
 
 @onready var class_selection_container: VBoxContainer = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer
 @onready var character_preview: AnimatedSprite2D = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control/AnimatedSprite2D
 @onready var username_edit: LineEdit = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/LineEdit
-@onready var class_description: Label = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer3/Label
 @onready var create_character_button: Button = $CenterContainer/VBoxContainer/CreateCharacterButton
 
 @onready var result_message_label: Label = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ResultMessageLabel

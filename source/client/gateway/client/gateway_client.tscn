@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cgjr8n84aunix"]
 
-[ext_resource type="Script" path="res://source/client/gateway/gateway_client/gateway_client.gd" id="1_rxeu6"]
+[ext_resource type="Script" path="res://source/client/gateway/client/gateway_client.gd" id="1_rxeu6"]
 
 [node name="GatewayClient" type="Node"]
 script = ExtResource("1_rxeu6")

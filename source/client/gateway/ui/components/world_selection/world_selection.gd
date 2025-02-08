@@ -1,7 +1,7 @@
 extends GatewayUIComponent
 
 
-const WORLD_BUTTON = preload("res://source/client/gateway/gateway_ui/components/world_selection/world_button/world_button.tscn")
+const WORLD_BUTTON = preload("res://source/client/gateway/ui/components/world_selection/world_button/world_button.tscn")
 
 @export var character_selection_menu: Control
 
