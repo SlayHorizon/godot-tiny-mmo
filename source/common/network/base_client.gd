@@ -48,7 +48,7 @@ func load_client_configuration(section_key: String, default_config_path: String 
 		config_path = parsed_arguments["config"]
 	var error := config_file.load(config_path)
 	if error != OK:
-		printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
+		printerr("Failed to load config at %s, error: %s" % [config_path, error_string(error)])
 	else:
 		address = config_file.get_value(section_key, "address", address)
 		port = config_file.get_value(section_key, "port", port)
