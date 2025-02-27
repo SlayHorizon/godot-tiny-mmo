@@ -1,14 +1,14 @@
 > [!WARNING]  
-> This project is in experimental state and gameplay features are missing (see [**#🚀 Features**](#-features)).  
+> This project is in **experimental state**, and some features are missing (See [**# Features**](#features)).  
 
 # Godot Tiny MMO
 
-A tiny web-based MMO / MMORPG demo developed with Godot Engine 4.x - 4.3,  
+A tiny web-based MMORPG demo developed with Godot Engine 4.x - 4.4,  
 created without relying on the built-in multiplayer nodes.  
 
-This project contains both client and server within the same codebase.  
-Using custom export presets, you can easily [**Export Client and Server builds separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project).  
-This keeps exports safe and optimized by excluding unnecessary components.    
+The client and server share the same codebase,  
+but custom export presets allow you to [**Export Client and Server builds separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project),  
+keeping builds safe and optimized by excluding unnecessary components.
 
 For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).  
 
@@ -16,15 +16,16 @@ For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/
 ![image](https://github.com/user-attachments/assets/7e21a7e5-4c72-4871-b0cf-6d94f8931bf7)
 
 
-## 🚀 Features
+## Features
 
-The current and planned features are listed below:
+Current and planned features:
 
 - [X] **Client-Server connection** through `WebSocketMultiplayerPeer`
 - [x] **Playable on web browser and desktop**
 - [x] **Network architecture** (see diagram below)
 - [X] **Authentication system** through gateway server with Login UI
 - [x] **Account Creation** for permanent player accounts
+- [x] **Server Selection UI** to let the player choose between different servers
 - [x] **QAD Database** to save persistent data
 - [x] **Guest Login** option for quick access
 - [x] **Game version check** to ensure client compatibility
@@ -38,47 +39,42 @@ The current and planned features are listed below:
 - [X] **Instance-based maps** with traveling between different map instances
 - [x] **Three different maps:** Overworld, Dungeon Entrance, Dungeon
 - [ ] **Private instances** for solo players or small groups
+- [ ] **Server-side anti-cheat** (basic validation for speed hacks, teleport hacks, etc.)
+- [ ] **Server-side NPCs** (AI logic processed on the server)
 
 Current network architecture diagram for this demo (subject to change):  
 ![architecture-diagram-26-10-2024](https://github.com/user-attachments/assets/78b1cce2-b070-4544-8ecd-59784743c7a0)
 
-
-You can track development and report issues by checking the [**open issues**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) page.
-
 ## 🛠️ Getting Started
 
-To get started with the project, follow these steps:
-1. Clone this repository.
-2. Open the project in **Godot 4.3+**.
-3. In the Debug tab, select **"Customizable Run Instance..."**.
-4. Enable **Multiple Instances** and set the count to **4 or more**.
-5. Under **Feature Tags**, ensure you have:
+To run the project:, follow these steps:
+
+1. Open the project in **Godot 4.3+**.
+2. Go to Debug tab, select **"Customizable Run Instance..."**.
+3. Enable **Multiple Instances** and set the count to **4 or more**.
+4. Under **Feature Tags**, ensure you have:
    - Exactly **one** "gateway-server" tag.
    - Exactly **one** "master-server" tag.
    - Exactly **one** "world-server" tag.
    - At least **one or more** "client" tags
-6. (Optional) Under **Launch Arguments**:
+5. (Optional) Under **Launch Arguments**:
    - For servers, add **--headless** to prevent empty windows.
    - For any, add **--config=config_file_path.cfg** to use non-default config path. 
-7. Run the project!
+6. Run the project (Press F5)
 
 Setup example:  
 (More details in the wiki [How to use "Customize Run Instances..."](https://github.com/SlayHorizon/godot-tiny-mmo/wiki/How-to-use-%22Customize-Run-Instances...%22#customize-run-instances))
 <img width="1580" alt="debug-screenshot" src="https://github.com/user-attachments/assets/cff4dd67-00f2-4dda-986f-7f0bec0a695e">
   
 
-## 🤝 Contributing
+## Contributing
 
-If you have ideas or improvements in mind, fork this repository and submit a pull request. You can also open an issue with the tag `enhancement`.
-
-### To contribute:
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a **Pull Request**
+If you have ideas or improvements, feel free to fork this repository and submit a pull request.  
+You can also open an [**Issue**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) with the tag `enhancement` to talk about it, same for bug reports but with the tag `bug`.
 
 ## Credits
 - Maps designed by [@d-Cadrius](https://github.com/d-Cadrius).
 - Screenshots provided by [@WithinAmnesia](https://github.com/WithinAmnesia).  
 - Also thanks to [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for this open source project!
+
+> _For inquiries, contact me on Discord: `slayhorizon`_
