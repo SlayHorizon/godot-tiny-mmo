@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("2_0padl")
-character_name = "knight"
+character_name = "Knight"
 character_sprite = ExtResource("2_d8cik")
 base_health = 40
 base_mana = 10
@@ -21,5 +21,5 @@ magic_power_per_level = 1.5
 attack_speed_per_level = 0.015
 passive_abilities = Array[ExtResource("1_fu0re")]([])
 active_abilities = Array[ExtResource("1_fu0re")]([])
-description = ""
+description = "A resilient warrior clad in heavy armor, excelling in melee combat and defense."
 evolution = Array[ExtResource("2_0padl")]([])

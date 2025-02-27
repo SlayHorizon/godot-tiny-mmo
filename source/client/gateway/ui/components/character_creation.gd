@@ -1,14 +1,10 @@
 extends GatewayUIComponent
 
 
-const KNIGHT = preload("res://source/common/resources/builtin/sprite_frames/knight.tres")
-const ROGUE = preload("res://source/common/resources/builtin/sprite_frames/rogue.tres")
-const WIZARD = preload("res://source/common/resources/builtin/sprite_frames/wizard.tres")
 
 @export var class_description: Label
 
-var character_class := "knight":
-	set = _set_character_class
+var selected_character_class: CharacterResource = preload("res://source/common/resources/custom/character/character_collection/knight.tres")
 
 @onready var class_selection_container: VBoxContainer = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer
 @onready var character_preview: AnimatedSprite2D = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control/AnimatedSprite2D
@@ -20,16 +16,12 @@ var character_class := "knight":
 
 func _ready() -> void:
 	create_character_button.disabled = true
-	character_preview.sprite_frames = KNIGHT
+	
+	character_preview.sprite_frames = selected_character_class.character_sprite
+	update_character_class_description()
 	character_preview.play(&"idle")
+	
 	connect_class_buttons()
-
-
-func _set_character_class(v: String) -> void:
-	character_class = v
-	class_description.text = v
-	character_preview.sprite_frames = get(character_class.to_upper())
-	character_preview.play(&"idle")
 
 
 func generate_random_username() -> String:
@@ -42,12 +34,9 @@ func generate_random_username() -> String:
 
 func connect_class_buttons() -> void:
 	for child in class_selection_container.get_children():
-		if child is Button:
+		if child is CharacterClassButton:
 			child.pivot_offset = child.size / 2
-			child.pressed.connect(
-				func():
-					character_class = child.get_node("Label").text.to_lower()
-			)
+			child.pressed.connect(_on_character_class_button_pressed.bind(child.character_class))
 			child.mouse_entered.connect(
 				func():
 					var tween := create_tween()
@@ -68,6 +57,12 @@ func connect_class_buttons() -> void:
 					child.get_node("CenterContainer/Control/AnimatedSprite2D").play("idle")
 			)
 
+
+func _on_character_class_button_pressed(character_class: CharacterResource) -> void:
+	selected_character_class = character_class
+	update_character_class_description()
+	character_preview.sprite_frames = character_class.character_sprite
+	character_preview.play(&"idle") 
 
 func _on_rng_button_pressed() -> void:
 	username_edit.text = generate_random_username()
@@ -103,7 +98,14 @@ func _on_create_character_button_pressed() -> void:
 		1,
 		{
 			"name": username_edit.text,
-			"class": character_class
+			"class": selected_character_class.character_name.to_lower()
 		},
 		gateway.world_id
 	)
+
+
+func update_character_class_description() -> void:
+	class_description.text = "%s\n%s" % [
+		selected_character_class.character_name,
+		selected_character_class.description
+	]

@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://chsahf4074pcl"]
+
+[ext_resource type="Script" path="res://source/client/gateway/ui/character_creation/character_class_button.gd" id="1_tbvsq"]
+[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_lwoxg"]
+
+[node name="Button" type="Button"]
+custom_minimum_size = Vector2(128, 128)
+script = ExtResource("1_tbvsq")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CenterContainer/Control"]
+position = Vector2(-32, -32)
+sprite_frames = ExtResource("2_lwoxg")
+animation = &"idle"
+centered = false
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "Knight"

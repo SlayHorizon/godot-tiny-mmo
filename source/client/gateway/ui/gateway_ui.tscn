@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b75u8dbglxgyb"]
+[gd_scene load_steps=16 format=3 uid="uid://b75u8dbglxgyb"]
 
 [ext_resource type="Script" path="res://source/client/gateway/ui/gateway_ui.gd" id="1_sp1hu"]
 [ext_resource type="Script" path="res://source/client/gateway/ui/components/main_menu.gd" id="2_peqmd"]
@@ -9,10 +9,12 @@
 [ext_resource type="Script" path="res://source/client/gateway/ui/components/character_selection/character_selection.gd" id="7_ex74y"]
 [ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/gateway/ui/components/character_selection/character_slot_button.tscn" id="8_j42bt"]
 [ext_resource type="Script" path="res://source/client/gateway/ui/components/character_creation.gd" id="9_u2lk0"]
-[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="10_dfo5r"]
+[ext_resource type="PackedScene" uid="uid://chsahf4074pcl" path="res://source/client/gateway/ui/character_creation/character_class_button.tscn" id="10_kgh0o"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="11_h7nlh"]
-[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="12_x6v4n"]
+[ext_resource type="Resource" uid="uid://k07a0kqjgaem" path="res://source/common/resources/custom/character/character_collection/knight.tres" id="11_s3rpi"]
+[ext_resource type="Resource" uid="uid://c51jc44s7nw01" path="res://source/common/resources/custom/character/character_collection/rogue.tres" id="12_5dck6"]
 [ext_resource type="Script" path="res://source/client/gateway/ui/components/account_info.gd" id="13_i2c6x"]
+[ext_resource type="Resource" uid="uid://7ha2uyyv6r5e" path="res://source/common/resources/custom/character/character_collection/wizard.tres" id="13_rinhs"]
 
 [node name="GatewayUI" type="Control"]
 layout_mode = 3
@@ -345,6 +347,7 @@ horizontal_alignment = 1
 visible_characters_behavior = 1
 
 [node name="CharacterCreation" type="Control" parent="." node_paths=PackedStringArray("class_description")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -378,101 +381,17 @@ layout_mode = 2
 text = "Choose a starting class"
 horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(128, 128)
+[node name="Button" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource("10_kgh0o")]
 layout_mode = 2
+character_class = ExtResource("11_s3rpi")
 
-[node name="CenterContainer" type="CenterContainer" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Control" type="Control" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button/CenterContainer"]
+[node name="Button2" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource("10_kgh0o")]
 layout_mode = 2
+character_class = ExtResource("12_5dck6")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button/CenterContainer/Control"]
-position = Vector2(-32, -32)
-sprite_frames = ExtResource("10_dfo5r")
-animation = &"idle"
-centered = false
-
-[node name="Label" type="Label" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 23.0
-grow_horizontal = 2
-text = "Knight"
-
-[node name="Button2" type="Button" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(128, 128)
+[node name="Button3" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource("10_kgh0o")]
 layout_mode = 2
-
-[node name="CenterContainer" type="CenterContainer" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button2"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Control" type="Control" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button2/CenterContainer"]
-layout_mode = 2
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button2/CenterContainer/Control"]
-position = Vector2(-32, -32)
-sprite_frames = ExtResource("11_h7nlh")
-animation = &"run"
-centered = false
-
-[node name="Label" type="Label" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button2"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 23.0
-grow_horizontal = 2
-text = "Rogue"
-
-[node name="Button3" type="Button" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(128, 128)
-layout_mode = 2
-
-[node name="CenterContainer" type="CenterContainer" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button3"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Control" type="Control" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button3/CenterContainer"]
-layout_mode = 2
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button3/CenterContainer/Control"]
-position = Vector2(-32, -32)
-sprite_frames = ExtResource("12_x6v4n")
-animation = &"run"
-centered = false
-
-[node name="Label" type="Label" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button3"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 23.0
-grow_horizontal = 2
-text = "Wizard"
+character_class = ExtResource("13_rinhs")
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="CharacterCreation/CenterContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -523,7 +442,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 text = "Wizard
-A master of elemental forces, commanding powerful spells to devastate enemies or support allies. Their mastery of magic grants them high damage potential but leaves them vulnerable up close."
+A master of elemental forces, commanding powerful spells to devastate enemies or support allies."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
