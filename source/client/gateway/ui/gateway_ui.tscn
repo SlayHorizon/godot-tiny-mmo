@@ -8,8 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://d0nrbmkjcp050" path="res://source/client/gateway/ui/components/world_selection/world_button/world_button.tscn" id="6_moax4"]
 [ext_resource type="Script" path="res://source/client/gateway/ui/components/character_selection/character_selection.gd" id="7_ex74y"]
 [ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/gateway/ui/components/character_selection/character_slot_button.tscn" id="8_j42bt"]
-[ext_resource type="Script" path="res://source/client/gateway/ui/components/character_creation.gd" id="9_u2lk0"]
-[ext_resource type="PackedScene" uid="uid://chsahf4074pcl" path="res://source/client/gateway/ui/character_creation/character_class_button.tscn" id="10_kgh0o"]
+[ext_resource type="Script" path="res://source/client/gateway/ui/components/character_creation/character_creation.gd" id="9_u2lk0"]
+[ext_resource type="PackedScene" uid="uid://chsahf4074pcl" path="res://source/client/gateway/ui/components/character_creation/button/character_class_button.tscn" id="10_kgh0o"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="11_h7nlh"]
 [ext_resource type="Resource" uid="uid://k07a0kqjgaem" path="res://source/common/resources/custom/character/character_collection/knight.tres" id="11_s3rpi"]
 [ext_resource type="Resource" uid="uid://c51jc44s7nw01" path="res://source/common/resources/custom/character/character_collection/rogue.tres" id="12_5dck6"]
@@ -35,6 +35,7 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -346,8 +347,7 @@ text = "Waiting for your characters info..."
 horizontal_alignment = 1
 visible_characters_behavior = 1
 
-[node name="CharacterCreation" type="Control" parent="." node_paths=PackedStringArray("class_description")]
-visible = false
+[node name="CharacterCreation" type="Control" parent="." node_paths=PackedStringArray("class_description", "default_selection")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -356,6 +356,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("9_u2lk0")
 class_description = NodePath("CenterContainer/VBoxContainer/HBoxContainer/PanelContainer/VBoxContainer3/Label")
+default_selection = NodePath("CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer/Button")
 
 [node name="CenterContainer" type="CenterContainer" parent="CharacterCreation"]
 layout_mode = 1

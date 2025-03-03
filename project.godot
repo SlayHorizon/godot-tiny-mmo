@@ -38,6 +38,7 @@ folder_colors={
 "res://assets/": "green",
 "res://source/": "red",
 "res://source/client/": "blue",
+"res://source/client/gateway/": "teal",
 "res://source/common/": "yellow",
 "res://source/gateway_server/": "orange",
 "res://source/master_server/": "orange",
