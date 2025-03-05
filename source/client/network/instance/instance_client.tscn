@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cvojyavdo1qyo"]
 
-[ext_resource type="Script" path="res://source/client/network/instance/instance_client.gd" id="2_x6wys"]
+[ext_resource type="Script" uid="uid://ce400ua741out" path="res://source/client/network/instance/instance_client.gd" id="2_x6wys"]
 
 [node name="InstanceClient" type="Node2D"]
 script = ExtResource("2_x6wys")

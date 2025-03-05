@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b2ckixon7ryh6"]
 
-[ext_resource type="Script" path="res://source/common/maps/map_components/interaction_areas/warper/warper.gd" id="1_w00al"]
+[ext_resource type="Script" uid="uid://cloyd4stl0hfe" path="res://source/common/maps/map_components/interaction_areas/warper/warper.gd" id="1_w00al"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5fu4t"]
 

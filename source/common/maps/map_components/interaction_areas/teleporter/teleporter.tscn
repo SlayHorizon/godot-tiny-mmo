@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dbg8y8if4vv5p"]
 
-[ext_resource type="Script" path="res://source/common/maps/map_components/interaction_areas/teleporter/teleporter.gd" id="1_ctuaa"]
+[ext_resource type="Script" uid="uid://dd13qn2chpxp2" path="res://source/common/maps/map_components/interaction_areas/teleporter/teleporter.gd" id="1_ctuaa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_atxum"]
 size = Vector2(16, 16)

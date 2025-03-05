@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponData" load_steps=4 format=3 uid="uid://bmxx08wmoehxn"]
 
-[ext_resource type="Script" path="res://source/common/items/weapons/dcadrius/weapon_data.gd" id="1_fpt0w"]
+[ext_resource type="Script" uid="uid://bnq3ka3xd6gme" path="res://source/common/items/weapons/dcadrius/weapon_data.gd" id="1_fpt0w"]
 [ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_bp8d6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k2b6y"]

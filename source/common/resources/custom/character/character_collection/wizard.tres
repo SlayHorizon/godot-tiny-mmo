@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="CharacterResource" load_steps=4 format=3 uid="uid://7ha2uyyv6r5e"]
 
-[ext_resource type="Script" path="res://source/common/resources/custom/ability/ability.gd" id="1_avffo"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/resources/custom/ability/ability.gd" id="1_avffo"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/resources/builtin/sprite_frames/wizard.tres" id="2_vs5xq"]
-[ext_resource type="Script" path="res://source/common/resources/custom/character/character_resource.gd" id="3_wlykr"]
+[ext_resource type="Script" uid="uid://b2tgdabbgoor" path="res://source/common/resources/custom/character/character_resource.gd" id="3_wlykr"]
 
 [resource]
 script = ExtResource("3_wlykr")

@@ -1,6 +1,9 @@
-[gd_resource type="Resource" script_class="ItemResource" load_steps=2 format=3 uid="uid://cvdgsfrctrnha"]
+[gd_resource type="Resource" script_class="ItemResource" load_steps=3 format=3 uid="uid://cvdgsfrctrnha"]
 
-[ext_resource type="Script" path="res://source/common/resources/custom/item/item_resource.gd" id="1_kiny7"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/resources/custom/ability/ability.gd" id="1_4u1lo"]
+[ext_resource type="Script" uid="uid://bkat7yo0vssli" path="res://source/common/resources/custom/item/item_resource.gd" id="1_kiny7"]
 
 [resource]
 script = ExtResource("1_kiny7")
+item_name = &"item_test"
+abilities = Array[ExtResource("1_4u1lo")]([])

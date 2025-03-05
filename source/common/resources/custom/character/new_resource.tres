@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CharacterResource" load_steps=3 format=3 uid="uid://dq7fa3sxbdbo7"]
 
-[ext_resource type="Script" path="res://source/common/resources/custom/ability/ability.gd" id="1_wjqfw"]
-[ext_resource type="Script" path="res://source/common/resources/custom/character/character_resource.gd" id="2_p5ogk"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/resources/custom/ability/ability.gd" id="1_wjqfw"]
+[ext_resource type="Script" uid="uid://b2tgdabbgoor" path="res://source/common/resources/custom/character/character_resource.gd" id="2_p5ogk"]
 
 [resource]
 script = ExtResource("2_p5ogk")

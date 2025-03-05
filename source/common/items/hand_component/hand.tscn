@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c4mlxpbwyc1tw"]
 
 [ext_resource type="Texture2D" uid="uid://clc768ctxxvjg" path="res://assets/sprites/items/weapons/hands/human_hands.png" id="1_on2c6"]
-[ext_resource type="Script" path="res://source/common/items/hand_component/hands.gd" id="2_6u7qf"]
+[ext_resource type="Script" uid="uid://kca0ew36ilei" path="res://source/common/items/hand_component/hands.gd" id="2_6u7qf"]
 
 [node name="Hand" type="Sprite2D"]
 texture = ExtResource("1_on2c6")

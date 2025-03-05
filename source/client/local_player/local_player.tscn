@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://bcojrmcocbq2k"]
 
 [ext_resource type="PackedScene" uid="uid://b3wa3c527k5lx" path="res://source/common/entities/characters/player/player.tscn" id="1_5bye1"]
-[ext_resource type="Script" path="res://source/client/local_player/local_player.gd" id="2_qfdgo"]
-[ext_resource type="Script" path="res://source/client/local_player/mouse_component.gd" id="3_7fqr5"]
+[ext_resource type="Script" uid="uid://biqs370wdwi6m" path="res://source/client/local_player/local_player.gd" id="2_qfdgo"]
+[ext_resource type="Script" uid="uid://bt74wxkb47dp0" path="res://source/client/local_player/mouse_component.gd" id="3_7fqr5"]
 
 [sub_resource type="Animation" id="Animation_i2csu"]
 length = 0.001
@@ -57,9 +57,9 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ix34b"]
 _data = {
-"RESET": SubResource("Animation_i2csu"),
-"idle": SubResource("Animation_0yrqc"),
-"walk": SubResource("Animation_gkwtj")
+&"RESET": SubResource("Animation_i2csu"),
+&"idle": SubResource("Animation_0yrqc"),
+&"walk": SubResource("Animation_gkwtj")
 }
 
 [node name="LocalPlayer" instance=ExtResource("1_5bye1")]

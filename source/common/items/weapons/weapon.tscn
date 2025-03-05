@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://64u3mmswdrma"]
 
-[ext_resource type="Script" path="res://source/common/items/weapons/weapon.gd" id="1_aiw52"]
+[ext_resource type="Script" uid="uid://cb37imj7qsy82" path="res://source/common/items/weapons/weapon.gd" id="1_aiw52"]
 [ext_resource type="Texture2D" uid="uid://bl4x3jlsvt3jq" path="res://assets/sprites/items/weapons/bone/bone.png" id="2_33udu"]
 [ext_resource type="PackedScene" uid="uid://c4mlxpbwyc1tw" path="res://source/common/items/hand_component/hand.tscn" id="3_ydnw2"]
 
@@ -42,9 +42,9 @@ loop_mode = 1
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ndsof"]
 _data = {
-"RESET": SubResource("Animation_bfela"),
-"idle": SubResource("Animation_dbohu"),
-"walk": SubResource("Animation_pw5em")
+&"RESET": SubResource("Animation_bfela"),
+&"idle": SubResource("Animation_dbohu"),
+&"walk": SubResource("Animation_pw5em")
 }
 
 [node name="Weapon" type="Node2D"]

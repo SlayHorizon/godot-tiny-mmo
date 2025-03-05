@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=4 uid="uid://sscb58nigni8"]
 
-[ext_resource type="Script" path="res://source/common/maps/map_script/map.gd" id="1_x70sj"]
+[ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/maps/map_script/map.gd" id="1_x70sj"]
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="2_c4reb"]
 [ext_resource type="PackedScene" uid="uid://digkg4swbl27x" path="res://source/client/map_objects/collectibles/coin.tscn" id="3_ef1ij"]
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/client/map_objects/doors/activable_door/activable_door.tscn" id="4_0lkki"]

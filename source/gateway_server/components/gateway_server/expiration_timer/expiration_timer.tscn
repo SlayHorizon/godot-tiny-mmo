@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bm2o2xrfamamm"]
 
-[ext_resource type="Script" path="res://source/gateway_server/components/gateway_server/expiration_timer/expiration_timer.gd" id="1_7mq6x"]
+[ext_resource type="Script" uid="uid://13rqk2uda7bd" path="res://source/gateway_server/components/gateway_server/expiration_timer/expiration_timer.gd" id="1_7mq6x"]
 
 [node name="ExpirationTimer" type="Timer"]
 wait_time = 60.0

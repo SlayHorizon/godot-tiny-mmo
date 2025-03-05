@@ -47,7 +47,7 @@ func start_read_stdin_thread() -> bool:
 
 func read_stdin() -> String:
 	printraw(cmd_begin)
-	var buffer: String = OS.read_string_from_stdin()
+	var buffer: String = OS.read_string_from_stdin(80)
 	stdin_readed.emit.call_deferred()
 	return buffer
 

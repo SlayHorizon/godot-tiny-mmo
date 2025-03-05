@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://bvnp50b85cxif"]
 
-[ext_resource type="Script" path="res://source/gateway_server/gateway_main.gd" id="1_v0yps"]
-[ext_resource type="Script" path="res://source/gateway_server/components/gateway_server/gateway_server.gd" id="2_fncpu"]
+[ext_resource type="Script" uid="uid://3snlehf663qv" path="res://source/gateway_server/gateway_main.gd" id="1_v0yps"]
+[ext_resource type="Script" uid="uid://bhxr7vkcyrnwy" path="res://source/gateway_server/components/gateway_server/gateway_server.gd" id="2_fncpu"]
 [ext_resource type="PackedScene" uid="uid://bm2o2xrfamamm" path="res://source/gateway_server/components/gateway_server/expiration_timer/expiration_timer.tscn" id="3_hwig3"]
-[ext_resource type="Script" path="res://source/gateway_server/components/gateway_manager_client.gd" id="3_m66nj"]
+[ext_resource type="Script" uid="uid://l075wdufq4jr" path="res://source/gateway_server/components/gateway_manager_client.gd" id="3_m66nj"]
 
 [node name="GatewayMain" type="Node"]
 script = ExtResource("1_v0yps")

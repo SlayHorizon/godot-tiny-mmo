@@ -7,7 +7,7 @@ resource_name = "idle"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ndsof"]
 _data = {
-"idle": SubResource("Animation_dbohu")
+&"idle": SubResource("Animation_dbohu")
 }
 
 [sub_resource type="Animation" id="Animation_phmkg"]
@@ -17,8 +17,8 @@ resource_name = "uf"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4ukvo"]
 _data = {
-"salade": SubResource("Animation_phmkg"),
-"uf": SubResource("Animation_2ibxn")
+&"salade": SubResource("Animation_phmkg"),
+&"uf": SubResource("Animation_2ibxn")
 }
 
 [node name="Weapon" instance=ExtResource("1_sog2w")]

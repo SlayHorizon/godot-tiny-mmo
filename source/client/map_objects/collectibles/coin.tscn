@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=3 uid="uid://digkg4swbl27x"]
 
-[ext_resource type="Script" path="res://source/client/map_objects/collectibles/coin.gd" id="1_73yf6"]
+[ext_resource type="Script" uid="uid://d132hhwqguove" path="res://source/client/map_objects/collectibles/coin.gd" id="1_73yf6"]
 [ext_resource type="Texture2D" uid="uid://d31e3fh8n3lee" path="res://assets/sprites/environment/environment_objects/gold_coin.png" id="2_mlfwo"]
 [ext_resource type="Texture2D" uid="uid://pd8lmo4laynm" path="res://assets/sprites/particles/gold_coin_pick_up.png" id="3_4flsn"]
 

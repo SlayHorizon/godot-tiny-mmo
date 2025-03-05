@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://chsahf4074pcl"]
 
-[ext_resource type="Script" path="res://source/client/gateway/ui/components/character_creation/button/character_class_button.gd" id="1_tbvsq"]
+[ext_resource type="Script" uid="uid://dfssudh11vyg2" path="res://source/client/gateway/ui/components/character_creation/button/character_class_button.gd" id="1_tbvsq"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_lwoxg"]
 
 [sub_resource type="Theme" id="Theme_qvtx1"]

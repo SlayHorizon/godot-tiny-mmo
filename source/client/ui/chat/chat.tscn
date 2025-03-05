@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cmv168mgurrlp"]
 
-[ext_resource type="Script" path="res://source/client/ui/chat/chat.gd" id="1_hxcw4"]
+[ext_resource type="Script" uid="uid://678x32kmrkb5" path="res://source/client/ui/chat/chat.gd" id="1_hxcw4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nl2eg"]
 bg_color = Color(0.180392, 0.180392, 0.180392, 0.839216)

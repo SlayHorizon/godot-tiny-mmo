@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://bojii5hxh2lgh"]
 
-[ext_resource type="Script" path="res://source/client/map_objects/ground_button/ground_button.gd" id="1_tgw3s"]
+[ext_resource type="Script" uid="uid://wh5map4o52qc" path="res://source/client/map_objects/ground_button/ground_button.gd" id="1_tgw3s"]
 [ext_resource type="Texture2D" uid="uid://b1lsob56myiuh" path="res://assets/sprites/environment/environment_objects/pressure_plate.png" id="2_exn2p"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xf86q"]

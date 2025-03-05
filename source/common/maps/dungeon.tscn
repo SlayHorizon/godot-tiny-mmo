@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://bvpi2a6j7k8s0"]
 
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="1_l2l0i"]
-[ext_resource type="Script" path="res://source/common/maps/map_script/map.gd" id="1_oefxe"]
+[ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/maps/map_script/map.gd" id="1_oefxe"]
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/maps/map_components/interaction_areas/teleporter/teleporter.tscn" id="3_3clf3"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="4_g1jod"]
 [ext_resource type="Resource" uid="uid://4utja3eou6l6" path="res://source/common/resources/custom/instance/instance_collection/dungeon_entrance.tres" id="5_ik5qj"]

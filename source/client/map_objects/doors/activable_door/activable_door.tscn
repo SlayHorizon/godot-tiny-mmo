@@ -1,6 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://hcfiu2vpqr3u"]
 
-[ext_resource type="Script" path="res://source/client/map_objects/doors/activable_door/activable_door.gd" id="1_ppv3d"]
+[ext_resource type="Script" uid="uid://cjqrkmohwgdql" path="res://source/client/map_objects/doors/activable_door/activable_door.gd" id="1_ppv3d"]
 [ext_resource type="Texture2D" uid="uid://da32oaudh5aew" path="res://assets/sprites/environment/environment_objects/spike_trap.png" id="2_pl2kf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oopog"]
