@@ -5,19 +5,28 @@ extends Node
 
 
 func _ready() -> void:
-	if OS.has_feature("client"):
-		start_as_client()
-	elif OS.has_feature("gateway-server"):
-		start_as_gateway_server()
-	elif OS.has_feature("master-server"):
-		start_as_master_server()
-	elif OS.has_feature("world-server"):
-		start_as_world_server()
-	else:
-		printerr(
-			"No valid feature tag was found."
-			+ "\nPlease check either README.md or common/main.gd."
-		)
+	var features: Dictionary[String, Callable] = {
+		"client": start_as_client,
+		"gateway-server": start_as_gateway_server,
+		"master-server": start_as_master_server,
+		"world-server": start_as_world_server,
+	}
+	
+	var command_line_arg: String = CmdlineUtils.get_parsed_args().get("mode", "")
+	
+	if features.has(command_line_arg):
+		features[command_line_arg].call()
+		return
+	
+	for feature: String in features:
+		if OS.has_feature(feature):
+			features[feature].call()
+			return
+	
+	printerr(
+		"No valid feature tag was found."
+		+ "\nPlease check either README.md or common/main.gd."
+	)
 
 
 func start_as_client() -> void:
