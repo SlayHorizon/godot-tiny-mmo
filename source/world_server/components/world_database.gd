@@ -3,7 +3,8 @@ extends Node
 
 
 #var data_folder_path: String = "user://data_server/"
-var player_data_file_path: String = "player_data.tres"
+var player_data_file_path: String = "res://source/world_server/data/player_data.tres"
+
 var player_data: WorldPlayerDataResource
 
 

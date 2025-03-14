@@ -7,21 +7,31 @@ var world_info: Dictionary
 
 func _ready() -> void:
 	Engine.set_physics_ticks_per_second(20) # 60 by default
+	
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_title("World Server")
+	
+	# Default config path; to use another one overide this,
+	# or wirte --config=config_file_path.cfg as launch argument.
 	load_world_info("res://test_config/world_server_config.cfg")
+	
+	#var dir_access := DirAccess.open(".")
+	#print(dir_access.get_current_dir())
+	#print(dir_access.file_exists(CmdlineUtils.get_parsed_args()["config"]))
 
 
 func load_world_info(config_path: String) -> void:
+	var config_file := ConfigFile.new()
 	var parsed_arguments := CmdlineUtils.get_parsed_args()
 	
-	var config_file := ConfigFile.new()
 	if parsed_arguments.has("config"):
 		config_path = parsed_arguments["config"]
+	
 	var error := config_file.load(config_path)
 	if error != OK:
 		printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
 		return
+	
 	world_info = {
 		"name": config_file.get_value("world-server", "name", "NoName"),
 		"max_players": config_file.get_value("world-server", "max_players", 200),

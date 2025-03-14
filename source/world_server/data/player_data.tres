@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="WorldPlayerDataResource" load_steps=2 format=3 uid="uid://csntfriwc0g4i"]
+
+[ext_resource type="Script" uid="uid://b0vab61d5a3tr" path="res://source/world_server/resources/world_player_data_resource.gd" id="2_56fdj"]
+
+[resource]
+script = ExtResource("2_56fdj")
+accounts = {}
+max_character_per_account = 3
+players = {}
+next_player_id = 0
