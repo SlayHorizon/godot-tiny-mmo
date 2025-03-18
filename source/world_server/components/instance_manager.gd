@@ -9,13 +9,17 @@ var instance_collection: Array[InstanceResource]
 
 
 func _ready() -> void:
-	await world_server.ready
+	if not world_server.is_configured:
+		await world_server.configuration_finished
+	
 	set_instance_collection()
+	
 	var default_instance: InstanceResource
 	for instance: InstanceResource in instance_collection:
 		print("instance_collection[*] = ", instance.instance_name)
 		if instance.instance_name == "Overworld":
 			default_instance = instance
+	
 	world_server.multiplayer_api.peer_connected.connect(
 		func(peer_id: int):
 			charge_new_instance.rpc_id(

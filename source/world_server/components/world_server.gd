@@ -3,24 +3,35 @@ extends BaseServer
 ## Server autoload. Keep it clean and minimal.
 ## Should only care about connection and authentication stuff.
 
+signal configuration_finished
+
+@export var main: WorldMain
 @export var database: WorldDatabase
 @export var world_manager: WorldManagerClient
 
 # {token_code: {"username": "salade", "class": "knight"}}
 var token_list: Dictionary
 
+var is_configured: bool = false
 var connected_players: Dictionary
 
 
 func _ready() -> void:
+	if not main.is_ready:
+		await main.configuration_finished
+	
 	world_manager.token_received.connect(
 		func(auth_token: String, _username: String, character_id: int):
 			var player: PlayerResource = database.player_data.get_player_resource(character_id)
 			token_list[auth_token] = player
 	)
+	
 	authentication_callback = _authentication_callback
 	load_server_configuration("world-server", "res://test_config/world_server_config.cfg")
 	start_server()
+	
+	configuration_finished.emit()
+	is_configured = true
 
 
 func _on_peer_connected(peer_id: int) -> void:

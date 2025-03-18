@@ -2,6 +2,12 @@ class_name WorldMain
 extends Node
 
 
+signal configuration_finished
+
+var is_ready: bool = false
+
+var world_config_file: ConfigFile
+
 var world_info: Dictionary
 
 
@@ -13,14 +19,15 @@ func _ready() -> void:
 	
 	# Default config path; to use another one overide this,
 	# or wirte --config=config_file_path.cfg as launch argument.
-	load_world_info("res://test_config/world_server_config.cfg")
-	
-	#var dir_access := DirAccess.open(".")
-	#print(dir_access.get_current_dir())
-	#print(dir_access.file_exists(CmdlineUtils.get_parsed_args()["config"]))
+	var error := load_world_config("res://test_config/world_server_config.cfg")
+	if error:
+		printerr("World server loading configuration failed.")
+	else:
+		configuration_finished.emit()
+		is_ready = true
 
 
-func load_world_info(config_path: String) -> void:
+func load_world_config(config_path: String) -> bool:
 	var config_file := ConfigFile.new()
 	var parsed_arguments := CmdlineUtils.get_parsed_args()
 	
@@ -30,7 +37,7 @@ func load_world_info(config_path: String) -> void:
 	var error := config_file.load(config_path)
 	if error != OK:
 		printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
-		return
+		return true
 	
 	world_info = {
 		"name": config_file.get_value("world-server", "name", "NoName"),
@@ -40,3 +47,6 @@ func load_world_info(config_path: String) -> void:
 		"max_character": config_file.get_value("world-server", "max_character", 5),
 		"pvp": config_file.get_value("world-server", "pvp", true)
 	}
+	
+	world_config_file = config_file
+	return false

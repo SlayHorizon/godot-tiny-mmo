@@ -1,4 +1,4 @@
-class_name WorldPlayerDataResource
+class_name WorldPlayerData
 extends Resource
 # I can't recommend using Resource as a whole database, but for the demonstration,
 # I found it interesting to use Godot exclusively to have a minimal setup.
@@ -24,7 +24,6 @@ func get_player_resource(player_id: int) -> PlayerResource:
 
 
 func create_player_character(username: String, character_data: Dictionary) -> int:
-	print("CREATE PLAYER CHARACTER")
 	if (
 		accounts.has(username)
 		and accounts[username].size() > max_character_per_account
@@ -46,8 +45,8 @@ func create_player_character(username: String, character_data: Dictionary) -> in
 	return player_id
 
 
-func get_account_characters(account_name: String) -> Dictionary[int, Dictionary]:
-	var data: Dictionary[int, Dictionary]
+func get_account_characters(account_name: String) -> Dictionary:
+	var data: Dictionary#[int, Dictionary]
 	
 	if accounts.has(account_name):
 		for player_id: int in accounts[account_name]:

@@ -10,14 +10,15 @@
 [node name="WorldMain" type="Node"]
 script = ExtResource("1_nvmf0")
 
-[node name="WorldManagerClient" type="Node" parent="." node_paths=PackedStringArray("database", "world_main", "world_server")]
+[node name="WorldManagerClient" type="Node" parent="." node_paths=PackedStringArray("database", "main", "world_server")]
 script = ExtResource("2_bxid2")
 database = NodePath("../Database")
-world_main = NodePath("..")
+main = NodePath("..")
 world_server = NodePath("../WorldServer")
 
-[node name="WorldServer" type="Node" parent="." node_paths=PackedStringArray("database", "world_manager")]
+[node name="WorldServer" type="Node" parent="." node_paths=PackedStringArray("main", "database", "world_manager")]
 script = ExtResource("3_u7bqt")
+main = NodePath("..")
 database = NodePath("../Database")
 world_manager = NodePath("../WorldManagerClient")
 
@@ -31,8 +32,9 @@ stretch = true
 script = ExtResource("4_6abmg")
 world_server = NodePath("..")
 
-[node name="Database" type="Node" parent="."]
+[node name="Database" type="Node" parent="." node_paths=PackedStringArray("main")]
 script = ExtResource("5_at7ov")
+main = NodePath("..")
 
 [node name="Console" type="Node" parent="." node_paths=PackedStringArray("database", "world_server")]
 script = ExtResource("6_klp0y")

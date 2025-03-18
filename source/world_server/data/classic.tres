@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=5 format=3 uid="uid://dis4pen8mdr25"]
+
+[ext_resource type="Script" uid="uid://ch4h6y276l4i5" path="res://source/common/resources/custom/player/player_resource.gd" id="1_83xu3"]
+[ext_resource type="Script" uid="uid://b0vab61d5a3tr" path="res://source/world_server/data/world_player_data.gd" id="2_83xu3"]
+
+[sub_resource type="Resource" id="Resource_evweq"]
+script = ExtResource("1_83xu3")
+player_id = 1
+account_name = "guest1"
+display_name = "ohup7fvh"
+character_class = "knight"
+golds = 0
+inventory = {}
+level = 0
+
+[sub_resource type="Resource" id="Resource_83xu3"]
+script = ExtResource("1_83xu3")
+player_id = 2
+account_name = "guest2"
+display_name = "bbw3knqd"
+character_class = "knight"
+golds = 0
+inventory = {}
+level = 0
+
+[resource]
+script = ExtResource("2_83xu3")
+accounts = Dictionary[String, PackedInt32Array]({
+"guest1": PackedInt32Array(1),
+"guest2": PackedInt32Array(2)
+})
+max_character_per_account = 3
+players = Dictionary[int, ExtResource("1_83xu3")]({
+1: SubResource("Resource_evweq"),
+2: SubResource("Resource_83xu3")
+})
+next_player_id = 2
