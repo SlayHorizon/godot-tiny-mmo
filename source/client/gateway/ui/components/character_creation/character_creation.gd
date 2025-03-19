@@ -94,8 +94,8 @@ func _on_rng_button_pressed() -> void:
 
 func _on_line_edit_text_changed(new_text: String) -> void:
 	if (
-		new_text.length() > 4
-		and new_text.length() < 13
+		new_text.length() > 2
+		and new_text.length() < 14
 		#Banword check? (should be on server anyway)
 		and not new_text.contains("guest")
 	):
