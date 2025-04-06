@@ -35,7 +35,6 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -318,12 +317,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CharacterSelection/CenterContainer"]
-layout_mode = 2
-
-[node name="CharacterSlotButton" parent="CharacterSelection/CenterContainer/HBoxContainer" instance=ExtResource("8_j42bt")]
-layout_mode = 2
-
 [node name="WaitingRect" type="ColorRect" parent="CharacterSelection/CenterContainer"]
 visible = false
 custom_minimum_size = Vector2(300, 100)
@@ -347,7 +340,40 @@ text = "Waiting for your characters info..."
 horizontal_alignment = 1
 visible_characters_behavior = 1
 
+[node name="HBoxContainer" type="HBoxContainer" parent="CharacterSelection/CenterContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="CharacterSlotButton" parent="CharacterSelection/CenterContainer/HBoxContainer" instance=ExtResource("8_j42bt")]
+layout_mode = 2
+size_flags_vertical = 4
+text = "Create new character"
+
+[node name="CharacterSlotButton2" parent="CharacterSelection/CenterContainer/HBoxContainer" instance=ExtResource("8_j42bt")]
+custom_minimum_size = Vector2(175, 250)
+layout_mode = 2
+size_flags_vertical = 4
+text = "smxn
+class knight
+Level 0"
+
+[node name="CreateNewCharacter" type="Button" parent="CharacterSelection"]
+custom_minimum_size = Vector2(220, 45)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -110.0
+offset_top = 10.0
+offset_right = 110.0
+offset_bottom = 55.0
+grow_horizontal = 2
+text = "Create New Character"
+
 [node name="CharacterCreation" type="Control" parent="." node_paths=PackedStringArray("class_description", "default_selection")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

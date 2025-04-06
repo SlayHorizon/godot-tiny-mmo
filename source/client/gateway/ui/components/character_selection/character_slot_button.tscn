@@ -1,5 +1,5 @@
 [gd_scene format=3 uid="uid://iu4w7gbcuqrp"]
 
 [node name="CharacterSlotButton" type="Button"]
-custom_minimum_size = Vector2(150, 250)
-text = "Empty character slot"
+custom_minimum_size = Vector2(190, 250)
+text = "Create New Character"
