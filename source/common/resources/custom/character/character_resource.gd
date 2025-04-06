@@ -15,7 +15,7 @@ extends Resource
 @export var base_move_speed: float = 300
 
 # Stats progression per level
-# (Linear progression isn't particularly good, may change to some kind of formula)
+# (For linear progression, can be changed to some kind of formula)
 @export var health_per_level: float = 10
 @export var mana_per_level: float = 3
 @export var attack_damage_per_level: float = 2

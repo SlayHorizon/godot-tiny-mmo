@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5vt5u3avwm45"]
+
+[ext_resource type="Script" uid="uid://b04dyc05soetr" path="res://source/common/entities/structures/flag.gd" id="1_wjjv4"]
+[ext_resource type="Script" uid="uid://cx5xqfdtr138v" path="res://source/common/entities/structures/health.gd" id="2_wjjv4"]
+
+[node name="Flag" type="CharacterBody2D" node_paths=PackedStringArray("health_component")]
+script = ExtResource("1_wjjv4")
+health_component = NodePath("HealthComponent")
+metadata/_custom_type_script = "uid://qjaeni0dgiew"
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_wjjv4")

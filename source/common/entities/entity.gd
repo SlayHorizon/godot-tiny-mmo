@@ -3,15 +3,8 @@ extends CharacterBody2D
 ## Base class for all entities to synchronize among the network,
 ## can be a player, a NPC or an object like a projectile or a breakable jar.
 
-## ENUM to list the different kind of entity.
-enum Group {
-	PLAYER,
-	NPC,
-	OBJECT,
-}
+var team: Team
 
-## Used to determin the kind of entity.
-var group: Group = Group.NPC
 ## Used when initializating the entity.
 ## Useful to avoid overloading sync_state.
 var spawn_state: Dictionary = {}:
