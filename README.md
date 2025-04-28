@@ -1,24 +1,25 @@
-
-> [!WARNING]  
-> This project is in **experimental state**, and features are missing (See [**#Features**](#features)).
-
+> [!NOTE]
+> The repository's documentation website: [**slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/)
 # Godot Tiny MMO
 
 A tiny web-based MMORPG demo developed with Godot Engine 4.4,  
 created without relying on the built-in multiplayer nodes.
 
 The client and server share the same codebase, but thanks to its unique organization,  
-custom export presets allow you to [**Export Client and Server builds separately**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki/Exporting-the-project),  
+custom export presets allow you to [**Export Client and Server builds separately**](https://slayhorizon.github.io/godot-tiny-mmo/#/pages/export),  
 keeping builds secure and optimized by excluding unnecessary components.
 
 This project contains different types of servers to try to mimic typical MMO architecture:  
 gateway, world, and master server (See [Network Architecture diagram in  **#Features**](#features)).
 
-For additional details, check out the [**Wiki**](https://github.com/SlayHorizon/godot-tiny-mmo-demo/wiki).
+For documentation and more details, check out the [**https://slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/).
 
 ![project-demo-screenshot](https://github.com/user-attachments/assets/ca606976-fd9d-4a92-a679-1f65cb80513a)
 ![image](https://github.com/user-attachments/assets/7e21a7e5-4c72-4871-b0cf-6d94f8931bf7)
 
+
+> [!WARNING]  
+> This project is in **experimental state**, and features are missing (See [**#Features**](#features)).
 
 ## Features
 
@@ -68,19 +69,19 @@ To run the project, follow these steps:
 6. Run the project (Press F5).
 
 Setup example 
-(More details in the wiki [How to use "Customize Run Instances..."](https://github.com/SlayHorizon/godot-tiny-mmo/wiki/How-to-use-%22Customize-Run-Instances...%22#customize-run-instances)):
+(More details in the wiki [How to use "Customize Run Instances..."](https://slayhorizon.github.io/godot-tiny-mmo/#/pages/customize_run_instances):
 <img width="1580" alt="debug-screenshot" src="https://github.com/user-attachments/assets/cff4dd67-00f2-4dda-986f-7f0bec0a695e">
   
 
 ## Contributing
 
-If you have ideas or improvements, feel free to fork this repository and submit a pull request.  
-You can also open an [**Issue**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) to talk about it, same for bug reports.
+Feel free to fork the repository and submit a pull request if you have ideas or improvements!  
+You can also open an [**Issue**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) to discuss bugs or feature requests.
 
 
 ## Credits
-- Maps designed by [@d-Cadrius](https://github.com/d-Cadrius).
-- Screenshots provided by [@WithinAmnesia](https://github.com/WithinAmnesia).
+- **Maps** designed by [@d-Cadrius](https://github.com/d-Cadrius).
+- **Screenshots** provided by [@WithinAmnesia](https://github.com/WithinAmnesia).
 - Also thanks to [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for this open source project!
 
 
