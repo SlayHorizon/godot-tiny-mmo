@@ -10,10 +10,10 @@ signal configuration_finished
 @export var world_manager: WorldManagerClient
 
 # {token_code: {"username": "salade", "class": "knight"}}
-var token_list: Dictionary
+var token_list: Dictionary[String, PlayerResource]
 
 var is_configured: bool = false
-var connected_players: Dictionary
+var connected_players: Dictionary[int, PlayerResource]
 
 
 func _ready() -> void:

@@ -1,0 +1,29 @@
+extends Area2D
+
+
+var source: Entity
+var attack: Projectile
+var speed: float = 200.0
+var direction: Vector2 = Vector2.RIGHT
+
+
+func _ready() -> void:
+	if OS.has_feature("client"):
+		var vosn := VisibleOnScreenNotifier2D.new()
+		vosn.screen_exited.connect(queue_free)
+		add_child(vosn)
+	var timer := Timer.new()
+	timer.wait_time = 3.0
+	timer.one_shot = true
+	timer.timeout.connect(queue_free)
+	add_child(timer)
+
+
+func _physics_process(delta: float) -> void:
+	position += speed * direction * delta
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if body == source:
+		return
+	queue_free()

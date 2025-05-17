@@ -5,7 +5,7 @@ extends Character
 var character_class: String:
 	set = _set_character_class
 var character_resource: CharacterResource
-# Unused
+
 var player_resource: PlayerResource
 
 var display_name: String = "Unknown":

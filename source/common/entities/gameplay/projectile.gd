@@ -1,4 +1,5 @@
 class_name Projectile
+extends Area2D
 
 
 var source: Entity
