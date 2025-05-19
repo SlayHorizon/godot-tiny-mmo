@@ -10,4 +10,5 @@ func use_ability(owner: Node2D, direction: Vector2) -> void:
 	arrow.top_level = true
 	arrow.direction = direction
 	arrow.global_position = owner.global_position
+	arrow.attack = Attack.new(owner as Entity, 5.0)
 	owner.add_child(arrow)

@@ -17,3 +17,13 @@ text = "1234567890123"
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("3_cxg7o")
+
+[node name="HealthComponent" parent="." index="5" node_paths=PackedStringArray("progress_bar")]
+progress_bar = NodePath("../ProgressBar")
+
+[node name="ProgressBar" type="ProgressBar" parent="." index="6"]
+offset_left = -30.0
+offset_top = -60.0
+offset_right = 31.0
+offset_bottom = -33.0
+show_percentage = false

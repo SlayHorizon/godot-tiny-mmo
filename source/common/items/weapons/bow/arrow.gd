@@ -1,8 +1,9 @@
+class_name Projectile
 extends Area2D
 
 
 var source: Entity
-var attack: Projectile
+var attack: Attack
 var speed: float = 200.0
 var direction: Vector2 = Vector2.RIGHT
 
@@ -12,6 +13,10 @@ func _ready() -> void:
 		var vosn := VisibleOnScreenNotifier2D.new()
 		vosn.screen_exited.connect(queue_free)
 		add_child(vosn)
+		#rotation_degrees = direction.angle()
+		#rotate(direction.angle())
+		print(direction)
+		rotate(direction.angle())
 	var timer := Timer.new()
 	timer.wait_time = 3.0
 	timer.one_shot = true
@@ -24,6 +29,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body == source:
-		return
-	queue_free()
+	#if body == source:
+		#return
+	#if body is Entity:
+		#if not body.health_component:
+			#return
+	#queue_free()
+	pass

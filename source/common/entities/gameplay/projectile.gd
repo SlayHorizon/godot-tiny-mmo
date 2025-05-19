@@ -1,4 +1,4 @@
-class_name Projectile
+class_name Projectile2
 extends Area2D
 
 

@@ -41,7 +41,6 @@ func check_inputs() -> void:
 			last_input_direction = input_direction
 	action_input = Input.is_action_pressed("action")
 	if action_input:
-		# TO CHQNGE
 		if equiped_weapon_right.try_perform_action(0, position.direction_to(mouse.position)):
 			player_action.emit(0, position.direction_to(mouse.position))
 	interact_input = Input.is_action_just_pressed("interact")
