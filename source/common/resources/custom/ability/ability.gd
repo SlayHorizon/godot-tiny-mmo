@@ -10,7 +10,7 @@ var last_action_time: float = -INF
 
 
 # Called when the ability is used
-func use_ability(owner: Node2D, direction: Vector2) -> void:
+func use_ability(_entity: Entity, _direction: Vector2) -> void:
 	pass
 
 

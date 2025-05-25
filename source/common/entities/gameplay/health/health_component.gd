@@ -1,7 +1,7 @@
 extends Node
 class_name HealthComponent
 
-
+# To-do: Display damage in game like with label text -20 
 @export var hurtbox: Area2D
 @export var progress_bar: ProgressBar
 
@@ -32,4 +32,3 @@ func apply_attack(attack: Attack) -> void:
 func _on_hurt_box_area_entered(area: Area2D) -> void:
 	if area is Projectile and area.attack and area.attack.source != owner:
 		apply_attack(area.attack)
-		print(health)

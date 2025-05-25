@@ -18,6 +18,10 @@ var weapon_name_left: String:
 var equiped_weapon_right: Weapon
 var equiped_weapon_left: Weapon
 
+var character_class: String:
+	set = _set_character_class
+var character_resource: CharacterResource
+
 var sprite_frames: String = "knight":
 	set = _set_sprite_frames
 
@@ -102,6 +106,13 @@ func _set_flip(new_flip: bool) -> void:
 func _set_pivot(new_pivot: float) -> void:
 	pivot = new_pivot
 	hand_pivot.rotation = new_pivot
+
+
+func _set_character_class(new_class: String):
+	character_resource = ResourceLoader.load(
+		"res://source/common/resources/custom/character/character_collection/" + new_class + ".tres")
+	animated_sprite.sprite_frames = character_resource.character_sprite
+	character_class = new_class
 
 
 func _set_sync_state(new_state: Dictionary) -> void:

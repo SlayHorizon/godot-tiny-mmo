@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=14 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/entities/characters/character.gd" id="1_uqmoo"]
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
@@ -52,6 +52,12 @@ size = Vector2(14, 6)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eyotc"]
 size = Vector2(16, 32)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgfpq"]
+bg_color = Color(0.6, 0.6, 0.6, 0.521569)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eyotc"]
+bg_color = Color(0.694118, 0.101961, 0.14902, 0.705882)
+
 [node name="Character" type="CharacterBody2D"]
 y_sort_enabled = true
 texture_filter = 1
@@ -59,7 +65,6 @@ collision_mask = 6
 script = ExtResource("1_uqmoo")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -2)
 sprite_frames = SubResource("SpriteFrames_5u7au")
 animation = &"idle"
 speed_scale = 1.5
@@ -91,6 +96,18 @@ position = Vector2(0, -16)
 shape = SubResource("RectangleShape2D_eyotc")
 debug_color = Color(0.846048, 0.237298, 0.730831, 0.42)
 
-[node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("hurtbox")]
+[node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "progress_bar")]
 script = ExtResource("4_cgfpq")
 hurtbox = NodePath("../HurtBox")
+progress_bar = NodePath("../ProgressBar")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -16.0
+offset_top = -38.0
+offset_right = 16.0
+offset_bottom = -34.0
+theme_override_styles/background = SubResource("StyleBoxFlat_cgfpq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_eyotc")
+step = 0.5
+value = 84.5
+show_percentage = false
