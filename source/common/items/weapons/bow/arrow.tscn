@@ -7,7 +7,6 @@
 size = Vector2(16, 6)
 
 [node name="Arrow" type="Area2D"]
-rotation = 1.494
 script = ExtResource("1_ko7y3")
 
 [node name="WeaponSprite" type="Sprite2D" parent="."]

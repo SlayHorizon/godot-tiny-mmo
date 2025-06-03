@@ -110,4 +110,5 @@ theme_override_styles/background = SubResource("StyleBoxFlat_cgfpq")
 theme_override_styles/fill = SubResource("StyleBoxFlat_eyotc")
 step = 0.5
 value = 84.5
+allow_greater = true
 show_percentage = false

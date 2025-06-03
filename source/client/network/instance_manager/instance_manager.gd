@@ -6,7 +6,7 @@ var current_instance: InstanceClient
 
 @rpc("authority", "call_remote", "reliable", 0)
 func charge_new_instance(map_path: String, instance_id: String) -> void:
-	var new_instance := InstanceClient.new()
+	var new_instance: InstanceClient = InstanceClient.new()
 	new_instance.name = instance_id
 	add_child(new_instance, true)
 	print("Loading new map: %s." % map_path)

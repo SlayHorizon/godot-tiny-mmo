@@ -124,13 +124,21 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 
 
 func instantiate_player(peer_id: int) -> Player:
+	var player_resource: PlayerResource = world_server.connected_players[peer_id]
+	var character_resource: CharacterResource = ResourceLoader.load(
+		"res://source/common/resources/custom/character/character_collection/" +
+		player_resource.character_class + ".tres"
+	)
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
-	new_player.player_resource = world_server.connected_players[peer_id]
+	new_player.player_resource = player_resource
 	new_player.spawn_state = {
-		"character_class": world_server.connected_players[peer_id].character_class,
-		"display_name": world_server.connected_players[peer_id].display_name,
+		"character_class": player_resource.character_class,
+		"display_name": player_resource.display_name,
+		"health_component:health": character_resource.base_health + character_resource.health_per_level * player_resource.level,
+		"health_component:max_health": character_resource.base_health + character_resource.health_per_level * player_resource.level,
 	}
+	print(new_player.spawn_state)
 	return new_player
 
 ## Spawn the new player on all other client in the current instance

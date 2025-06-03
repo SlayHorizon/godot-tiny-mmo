@@ -1,7 +1,7 @@
 extends AbilityResource
 
 
-var damage: float = 2.0
+var damage: float = 10.0
 
 
 func _init() -> void:
@@ -9,6 +9,8 @@ func _init() -> void:
 
 
 func use_ability(entity: Entity, direction: Vector2) -> void:
+	mark_used()
+
 	var arrow: Projectile = preload("res://source/common/items/weapons/bow/arrow.tscn").instantiate()
 	arrow.top_level = true
 	arrow.direction = direction

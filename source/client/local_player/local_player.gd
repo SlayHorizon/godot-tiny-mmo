@@ -19,6 +19,7 @@ var state: String = "idle"
 
 
 func _ready() -> void:
+	ClientEvents.local_player_ready.emit(self)
 	super()
 
 
@@ -40,9 +41,8 @@ func check_inputs() -> void:
 		Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN:
 			last_input_direction = input_direction
 	action_input = Input.is_action_pressed("action")
-	if action_input:
-		if equiped_weapon_right.try_perform_action(0, position.direction_to(mouse.position)):
-			player_action.emit(0, position.direction_to(mouse.position))
+	if action_input and equiped_weapon_right.can_use_weapon(0):
+		player_action.emit(0, position.direction_to(mouse.position))
 	interact_input = Input.is_action_just_pressed("interact")
 
 
@@ -81,11 +81,6 @@ func _set_character_class(new_class: String):
 		new_class + ".tres"
 	)
 	animated_sprite.sprite_frames = character_resource.character_sprite
-	ClientEvents.health_changed.emit(
-		character_resource.base_health + 
-		character_resource.health_per_level * 0,# Should be player_resource.level
-		true
-	)
 	character_class = new_class
 
 

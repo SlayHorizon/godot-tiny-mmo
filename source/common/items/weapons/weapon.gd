@@ -31,10 +31,20 @@ func try_perform_action(action_index: int, direction: Vector2) -> bool:
 	if not ability.can_use():
 		return false
 
-	# Call ability logic
 	ability.use_ability(owner, direction)
 
-	# Mark cooldown
 	ability.mark_used()
 
 	return true
+
+
+func can_use_weapon(action_index: int) -> bool:
+	if action_index >= abilities.size():
+		return false
+	return abilities[action_index].can_use()
+
+
+func perform_action(action_index: int, direction: Vector2) -> void:
+	if action_index >= abilities.size():
+		return
+	abilities[action_index].use_ability(character, direction)

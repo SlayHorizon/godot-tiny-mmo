@@ -41,6 +41,8 @@ var pivot: float = 0.0:
 @onready var right_hand_spot: Node2D = $HandOffset/HandPivot/RightHandSpot
 @onready var left_hand_spot: Node2D = $HandOffset/HandPivot/LeftHandSpot
 
+@onready var health_component: HealthComponent = $HealthComponent
+
 
 func _ready() -> void:
 	if right_hand_spot.get_child_count():
@@ -126,4 +128,4 @@ func _set_spawn_state(new_state: Dictionary) -> void:
 	if not is_node_ready():
 		await ready
 	for property: String in new_state:
-		set(property, new_state[property])
+		set_indexed(property, new_state[property])
