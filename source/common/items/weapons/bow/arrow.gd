@@ -14,8 +14,9 @@ func _ready() -> void:
 		var vosn := VisibleOnScreenNotifier2D.new()
 		vosn.screen_exited.connect(queue_free)
 		add_child(vosn)
-		rotate(direction.angle() - PI / 2)
-	var timer := Timer.new()
+	rotate(direction.angle())
+	# One timer by bullet is bad practice.
+	var timer: Timer = Timer.new()
 	timer.wait_time = 3.0
 	timer.one_shot = true
 	timer.timeout.connect(queue_free)

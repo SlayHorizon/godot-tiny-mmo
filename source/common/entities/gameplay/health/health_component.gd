@@ -40,3 +40,4 @@ func apply_attack(attack: Attack) -> void:
 func _on_hurt_box_area_entered(area: Area2D) -> void:
 	if area is Projectile and area.attack and area.attack.source != owner:
 		apply_attack(area.attack)
+		area.queue_free()
