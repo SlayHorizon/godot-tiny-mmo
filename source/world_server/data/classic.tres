@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=5 format=3 uid="uid://c8p4gvfy3l8nk"]
+[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=5 format=3]
 
-[ext_resource type="Script" uid="uid://ch4h6y276l4i5" path="res://source/common/resources/custom/player/player_resource.gd" id="1_83xu3"]
-[ext_resource type="Script" uid="uid://b0vab61d5a3tr" path="res://source/world_server/data/world_player_data.gd" id="2_83xu3"]
+[ext_resource type="Script" path="res://source/common/resources/custom/player/player_resource.gd" id="1_83xu3"]
+[ext_resource type="Script" path="res://source/world_server/data/world_player_data.gd" id="2_83xu3"]
 
 [sub_resource type="Resource" id="Resource_evweq"]
 script = ExtResource("1_83xu3")

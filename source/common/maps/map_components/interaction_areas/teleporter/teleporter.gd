@@ -14,7 +14,9 @@ class_name Teleporter
 		if value == null:
 			if target:
 				if not one_way:
-					target.target = null
+					value = target
+					target = null
+					value.target = null
 				target = null
 		else:
 			if value == self:
