@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=16 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/entities/characters/character.gd" id="1_uqmoo"]
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
 [ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
 [ext_resource type="Script" uid="uid://dh7lhiis78ck7" path="res://source/common/entities/gameplay/health/health_component.gd" id="4_cgfpq"]
+[ext_resource type="Script" uid="uid://cba6imn8q16xq" path="res://source/common/entities/sync_states.gd" id="5_eyotc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nkgjx"]
 atlas = ExtResource("2_l11e3")
@@ -57,6 +58,11 @@ bg_color = Color(0.6, 0.6, 0.6, 0.521569)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eyotc"]
 bg_color = Color(0.694118, 0.101961, 0.14902, 0.705882)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_cgfpq"]
+properties/0/path = NodePath("HealthComponent:health")
+properties/0/spawn = true
+properties/0/replication_mode = 1
 
 [node name="Character" type="CharacterBody2D"]
 y_sort_enabled = true
@@ -112,3 +118,9 @@ step = 0.5
 value = 84.5
 allow_greater = true
 show_percentage = false
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_cgfpq")
+
+[node name="SyncStates" type="Node" parent="."]
+script = ExtResource("5_eyotc")
