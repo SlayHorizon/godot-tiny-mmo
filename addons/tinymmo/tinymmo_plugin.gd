@@ -2,11 +2,13 @@
 extends EditorPlugin
 
 
-func _enter_tree() -> void:
-	# Initialization of the plugin goes here.
-	pass
+var plugin: EditorInspectorPlugin
 
 
-func _exit_tree() -> void:
-	# Clean-up of the plugin goes here.
-	pass
+func _enter_tree():
+	plugin = preload("res://addons/tinymmo/inspector_plugin.gd").new()
+	add_inspector_plugin(plugin)
+
+
+func _exit_tree():
+	remove_inspector_plugin(plugin)

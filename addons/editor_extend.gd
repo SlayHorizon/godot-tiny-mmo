@@ -24,7 +24,8 @@ const HIDDEN_PROPERTIES: Array[String] = [
 	"use_parent_material", "rotation_degrees", "skew",
 	"transform", "global_rotation_degrees", "global_skew",
 	"global_transform", "resource_local_to_scene", "resource_name",
-	"resource_path", "resource_scene_unique_id",]
+	"resource_path", "resource_scene_unique_id",
+]
 
 const WINDOW_SCENE: PackedScene = preload("editor_extend.tscn")
 const NO_TARGET_ERROR_MESSAGE: String = "No target node assigned. Please assign a target node."
