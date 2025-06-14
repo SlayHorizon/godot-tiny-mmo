@@ -2,12 +2,17 @@
 extends Tree
 
 
+signal property_item_deleted(path: NodePath)
+signal property_item_edited(path: NodePath, value: Variant)
+
 const EDITOR_FONT_CATEGORY: String = "EditorFonts"
 const EDITOR_ICON_CATEGORY: String = "EditorIcons"
 
 
 func _ready() -> void:
 	button_clicked.connect(_on_button_clicked)
+	item_edited.connect(_on_item_edited)
+	
 	clear()
 	columns = 3
 	
@@ -34,7 +39,6 @@ func add_dict(dict: Dictionary[NodePath, Variant]) -> void:
 
 
 func add_property(path: NodePath) -> void:
-	var property_item: TreeItem = create_item()
 	var node: Node = EditorInterface.get_edited_scene_root().get_node_or_null(
 		TinyNodePath.get_path_to_node(path)
 	)
@@ -60,10 +64,19 @@ func create_property_item(path: NodePath, value: Variant) -> void:
 	property_item.add_button(2, _get_theme_icon_safely("Remove", EDITOR_ICON_CATEGORY), -1, false, "Sqalade")
 
 
-func _on_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int):
-	print(item)
-	print(id)
+func _on_button_clicked(item: TreeItem, _column: int, _id: int, _mouse_button_index: int) -> void:
+	property_item_deleted.emit(item.get_text(0) as NodePath)
+	item.free()
 
+
+func _on_item_edited() -> void:
+	print(get_edited())
+	print(get_edited().get_text(2))
+	var edited_item: TreeItem = get_edited()
+	var path: NodePath = NodePath(edited_item.get_text(0))
+	var value: Variant = edited_item.get_text(2).to_int()
+	property_item_edited.emit(path, value)
+	
 
 # Helper method to safely get theme icon
 func _get_theme_icon_safely(icon_name: String, theme_type: String) -> Texture2D:
