@@ -3,8 +3,7 @@ class_name Weapon
 extends Node2D
 
 
-@export var has_custom_idle: bool = false
-@export var has_custom_walk: bool = false
+@export var abilities: Array[AbilityResource]
 
 var character: Character
 
@@ -16,21 +15,36 @@ var character: Character
 func _ready() -> void:
 	if hand and character:
 		hand.type = character.hand_type
-	if animation_player.has_animation("custom/idle"):
-		has_custom_idle = true
-	if animation_player.has_animation("custom/walk"):
-		has_custom_walk = true
 
 
 func play_animation(anim_name: String) -> void:
-	# Bad design
-	if anim_name == "idle":
-		if has_custom_idle:
-			animation_player.play("custom/idle")
-		else:
-			animation_player.play("idle")
-	if anim_name == "walk":
-		if has_custom_idle:
-			animation_player.play("custom/walk")
-		else:
-			animation_player.play("walk")
+	if animation_player.has_animation(anim_name):
+		animation_player.play(anim_name)
+
+
+func try_perform_action(action_index: int, direction: Vector2) -> bool:
+	if action_index >= abilities.size():
+		return false
+
+	var ability: AbilityResource = abilities[action_index]
+
+	if not ability.can_use():
+		return false
+
+	ability.use_ability(owner, direction)
+
+	ability.mark_used()
+
+	return true
+
+
+func can_use_weapon(action_index: int) -> bool:
+	if action_index >= abilities.size():
+		return false
+	return abilities[action_index].can_use()
+
+
+func perform_action(action_index: int, direction: Vector2) -> void:
+	if action_index >= abilities.size():
+		return
+	abilities[action_index].use_ability(character, direction)

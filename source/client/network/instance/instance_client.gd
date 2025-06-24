@@ -45,6 +45,20 @@ func update_entity(entity_id: int, to_update: Dictionary) -> void:
 		entity.set_indexed(thing, to_update[thing])
 
 
+@rpc("authority", "call_remote", "reliable", 1)
+func update_node(node_path: NodePath, to_update: Dictionary[NodePath, Variant]) -> void:
+	var root: Node = get_node_or_null(node_path)
+	if not root:
+		return
+	var target: Node
+	for path: NodePath in to_update:
+		target = root.get_node_or_null(TinyNodePath.get_path_to_node(path))
+		if not target:
+			target = root
+			#continue
+		target.set_indexed(TinyNodePath.get_path_to_property(path), to_update[path])
+
+
 @rpc("any_peer", "call_remote", "reliable", 0)
 func player_trying_to_change_weapon(weapon_path: String, side: bool = true) -> void:
 	player_trying_to_change_weapon.rpc_id(1, weapon_path, side)
@@ -54,15 +68,20 @@ func player_trying_to_change_weapon(weapon_path: String, side: bool = true) -> v
 func ready_to_enter_instance() -> void:
 	ready_to_enter_instance.rpc_id(1)
 
+
 #region spwawn/despawn
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	var new_player: Player
 	if player_id == multiplayer.get_unique_id() and not local_player:
-		new_player = LOCAL_PLAYER.instantiate()
-		(new_player as LocalPlayer).sync_state_defined.connect(
-			func(sync_state: Dictionary):
+		new_player = LOCAL_PLAYER.instantiate() as LocalPlayer
+		new_player.sync_state_defined.connect(
+			func(sync_state: Dictionary) -> void:
 				fetch_player_state.rpc_id(1, sync_state)
+		)
+		new_player.player_action.connect(
+			func(action_index: int, action_direction: Vector2) -> void:
+				player_action.rpc_id(1, action_index, action_direction)
 		)
 	else:
 		new_player = DUMMY_PLAYER.instantiate()
@@ -73,6 +92,7 @@ func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	
 	add_child(new_player)
 
+
 @rpc("authority", "call_remote", "reliable", 0)
 func despawn_player(player_id: int) -> void:
 	if entity_collection.has(player_id):
@@ -80,10 +100,14 @@ func despawn_player(player_id: int) -> void:
 		entity_collection.erase(player_id)
 #endregion
 
+
 #region chat
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_submit_message(message: String) -> void:
-	player_submit_message.rpc_id(1, message)
+	if message.begins_with("/"):
+		player_submit_command.rpc_id(1, message)
+	else:
+		player_submit_message.rpc_id(1, message)
 
 
 @rpc("authority", "call_remote", "reliable", 1)
@@ -94,4 +118,18 @@ func fetch_message(message: String, sender_id: int) -> void:
 	elif entity_collection.has(sender_id):
 		sender_name = (entity_collection[sender_id] as Player).display_name
 	ClientEvents.message_received.emit(message, sender_name)
+
+
+@rpc("any_peer", "call_remote", "reliable", 1)
+func player_submit_command(_new_command: String) -> void:
+	pass
 #endregion
+
+
+# WIP
+@rpc("any_peer", "call_remote", "reliable", 1)
+func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
+	var player: Player = entity_collection.get(peer_id) as Player
+	if not player:
+		return
+	player.equiped_weapon_right.try_perform_action(action_index, action_direction)

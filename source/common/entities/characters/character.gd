@@ -18,6 +18,10 @@ var weapon_name_left: String:
 var equiped_weapon_right: Weapon
 var equiped_weapon_left: Weapon
 
+var character_class: String:
+	set = _set_character_class
+var character_resource: CharacterResource
+
 var sprite_frames: String = "knight":
 	set = _set_sprite_frames
 
@@ -36,6 +40,8 @@ var pivot: float = 0.0:
 
 @onready var right_hand_spot: Node2D = $HandOffset/HandPivot/RightHandSpot
 @onready var left_hand_spot: Node2D = $HandOffset/HandPivot/LeftHandSpot
+
+@onready var health_component: HealthComponent = $HealthComponent
 
 
 func _ready() -> void:
@@ -104,6 +110,13 @@ func _set_pivot(new_pivot: float) -> void:
 	hand_pivot.rotation = new_pivot
 
 
+func _set_character_class(new_class: String):
+	character_resource = ResourceLoader.load(
+		"res://source/common/resources/custom/character/character_collection/" + new_class + ".tres")
+	animated_sprite.sprite_frames = character_resource.character_sprite
+	character_class = new_class
+
+
 func _set_sync_state(new_state: Dictionary) -> void:
 	sync_state = new_state
 	for property: String in new_state:
@@ -115,4 +128,4 @@ func _set_spawn_state(new_state: Dictionary) -> void:
 	if not is_node_ready():
 		await ready
 	for property: String in new_state:
-		set(property, new_state[property])
+		set_indexed(property, new_state[property])

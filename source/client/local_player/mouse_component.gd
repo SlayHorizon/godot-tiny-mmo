@@ -2,8 +2,8 @@ class_name MouseComponent
 extends Node2D
 
 
-var mouse_ingame := true
-var window_focus := true
+var mouse_ingame: bool = true
+var window_focus: bool = true
 
 
 func _notification(what: int) -> void:

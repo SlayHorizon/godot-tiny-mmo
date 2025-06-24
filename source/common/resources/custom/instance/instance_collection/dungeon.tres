@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_yll11")
 instance_name = &"Dungeon"
-map_path = "res://source/common/maps/dungeon.tscn"
+map_path = "uid://bvpi2a6j7k8s0"
 load_at_startup = false

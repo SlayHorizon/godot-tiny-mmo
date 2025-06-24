@@ -35,6 +35,7 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -228,7 +229,6 @@ layout_mode = 2
 text = "Back"
 
 [node name="WorldSelection" type="Control" parent="." node_paths=PackedStringArray("character_selection_menu")]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

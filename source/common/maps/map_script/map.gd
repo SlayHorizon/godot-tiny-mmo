@@ -7,10 +7,10 @@ var warpers: Dictionary#[int, Warper]
 
 
 func _ready() -> void:
-	for children in get_children():
-		if children is Warper:
-			var warper_id: int = (children as Warper).warper_id
-			warpers[warper_id] = children
+	for child: Node in get_children():
+		if child is Warper:
+			var warper_id: int = child.warper_id
+			warpers[warper_id] = child
 
 
 func get_spawn_position(warper_id: int = 0) -> Vector2:

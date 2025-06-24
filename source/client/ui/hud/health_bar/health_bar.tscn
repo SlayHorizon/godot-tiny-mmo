@@ -51,6 +51,7 @@ theme_override_styles/background = SubResource("StyleBoxFlat_veeea")
 theme_override_styles/fill = SubResource("StyleBoxFlat_24t0k")
 step = 0.5
 value = 100.0
+allow_greater = true
 show_percentage = false
 
 [node name="Label" type="Label" parent="ProgressBar"]

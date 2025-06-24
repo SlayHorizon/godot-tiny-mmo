@@ -3,6 +3,7 @@ extends Player
 
 
 signal sync_state_defined(sync_state: Dictionary)
+signal player_action(action_index: int, action_direction: Vector2)
 
 var speed: float = 75.0
 var hand_pivot_speed: float = 17.5
@@ -18,6 +19,7 @@ var state: String = "idle"
 
 
 func _ready() -> void:
+	ClientEvents.local_player_ready.emit(self)
 	super()
 
 
@@ -39,6 +41,8 @@ func check_inputs() -> void:
 		Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN:
 			last_input_direction = input_direction
 	action_input = Input.is_action_pressed("action")
+	if action_input and equiped_weapon_right.can_use_weapon(0):
+		player_action.emit(0, position.direction_to(mouse.position))
 	interact_input = Input.is_action_just_pressed("interact")
 
 
@@ -50,8 +54,8 @@ func update_animation(delta: float) -> void:
 func update_hand_pivot(delta: float) -> void:
 	if action_input:
 		var hands_rot_pos = hand_pivot.global_position
-		var flips := -1 if flipped else 1
-		var look_at_mouse := atan2(
+		var flips: int = -1 if flipped else 1
+		var look_at_mouse: float = atan2(
 			(mouse.position.y - hands_rot_pos.y), 
 			(mouse.position.x - hands_rot_pos.x) * flips
 			)
@@ -77,11 +81,6 @@ func _set_character_class(new_class: String):
 		new_class + ".tres"
 	)
 	animated_sprite.sprite_frames = character_resource.character_sprite
-	ClientEvents.health_changed.emit(
-		character_resource.base_health + 
-		character_resource.health_per_level * 0,# Should be player_resource.level
-		true
-	)
 	character_class = new_class
 
 

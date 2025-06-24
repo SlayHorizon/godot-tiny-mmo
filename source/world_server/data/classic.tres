@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=5 format=3 uid="uid://dis4pen8mdr25"]
+[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=5 format=3 uid="uid://cf0fajapkhxuh"]
 
 [ext_resource type="Script" uid="uid://ch4h6y276l4i5" path="res://source/common/resources/custom/player/player_resource.gd" id="1_83xu3"]
 [ext_resource type="Script" uid="uid://b0vab61d5a3tr" path="res://source/world_server/data/world_player_data.gd" id="2_83xu3"]
@@ -35,3 +35,4 @@ players = Dictionary[int, ExtResource("1_83xu3")]({
 2: SubResource("Resource_83xu3")
 })
 next_player_id = 2
+admin_ids = PackedInt32Array(1, 2)

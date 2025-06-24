@@ -2,10 +2,6 @@ class_name WorldMain
 extends Node
 
 
-signal configuration_finished
-
-var is_ready: bool = false
-
 var world_config_file: ConfigFile
 
 var world_info: Dictionary
@@ -19,22 +15,23 @@ func _ready() -> void:
 	
 	# Default config path; to use another one overide this,
 	# or wirte --config=config_file_path.cfg as launch argument.
-	var error := load_world_config("res://test_config/world_server_config.cfg")
+	var error: bool = load_world_config("res://test_config/world_server_config.cfg")
 	if error:
 		printerr("World server loading configuration failed.")
 	else:
-		configuration_finished.emit()
-		is_ready = true
+		$Database.start_database(world_info)
+		$WorldManagerClient.start_client_to_master_server(world_info)
+		$WorldServer.start_world_server()
 
 
 func load_world_config(config_path: String) -> bool:
 	var config_file := ConfigFile.new()
-	var parsed_arguments := CmdlineUtils.get_parsed_args()
+	var parsed_arguments: Dictionary = CmdlineUtils.get_parsed_args()
 	
 	if parsed_arguments.has("config"):
 		config_path = parsed_arguments["config"]
 	
-	var error := config_file.load(config_path)
+	var error: Error = config_file.load(config_path)
 	if error != OK:
 		printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
 		return true

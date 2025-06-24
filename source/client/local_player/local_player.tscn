@@ -66,6 +66,7 @@ _data = {
 script = ExtResource("2_qfdgo")
 
 [node name="AnimatedSprite2D" parent="." index="0"]
+position = Vector2(0, -2)
 frame_progress = 0.54689
 
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
@@ -77,5 +78,5 @@ script = ExtResource("3_7fqr5")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="HandOffset/HandPivot" index="2"]
 libraries = {
-"": SubResource("AnimationLibrary_ix34b")
+&"": SubResource("AnimationLibrary_ix34b")
 }

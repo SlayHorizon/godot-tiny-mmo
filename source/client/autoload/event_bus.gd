@@ -10,5 +10,15 @@ signal message_submitted(message: String)
 signal message_received(message: String, sender_name: String)
 
 # HUD
-signal health_changed(new_value: float, is_max: bool)
 signal item_icon_pressed(item_name: String)
+signal local_player_ready(local_player: LocalPlayer)
+
+
+var events: Dictionary[StringName, Signal]
+
+
+func add_signal(object: Object, signal_name: StringName):
+	events.set(signal_name, Signal(object, signal_name))
+
+
+#func listen_to_signal()

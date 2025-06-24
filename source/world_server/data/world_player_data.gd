@@ -8,13 +8,15 @@ extends Resource
 ## we can retrieve its different character IDs thanks to this.[br][br]
 ## Here is how it should look like:
 ## [codeblock]
-## print(accounts) # {"horizon": [6, 14], "oignon": [2]}
+## print(accounts) # {"horizon": [6, 14], "another_guy": [2]}
 ## [/codeblock]
 @export var accounts: Dictionary[String, PackedInt32Array]
 @export var max_character_per_account: int = 3
 
 @export var players: Dictionary[int, PlayerResource]
 @export var next_player_id: int = 0
+
+@export var admin_ids: PackedInt32Array
 
 
 func get_player_resource(player_id: int) -> PlayerResource:

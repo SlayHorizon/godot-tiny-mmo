@@ -2,25 +2,23 @@ class_name WorldDatabase
 extends Node
 
 
-@export var main: WorldMain
-
 var database_path: String
 
 var player_data: WorldPlayerData
 
 
-func _ready() -> void:
-	if not main.is_ready:
-		await main.configuration_finished
-	
+func start_database(world_info: Dictionary) -> void:
+	configure_database(world_info)
+	load_world_database()
+
+
+func configure_database(world_info: Dictionary) -> void:
 	if OS.has_feature("editor"):
 		database_path = "res://source/world_server/data/"
 	else:
 		database_path = "."
-	database_path += str(main.world_info["name"] + ".tres").to_lower()
+	database_path += str(world_info["name"] + ".tres").to_lower()
 	
-	load_world_database()
-
 
 func load_world_database() -> void:
 	if ResourceLoader.exists(database_path, "WorldPlayerData"):
@@ -30,7 +28,7 @@ func load_world_database() -> void:
 
 
 func save_world_database() -> void:
-	var error := ResourceSaver.save(player_data, database_path)
+	var error: Error = ResourceSaver.save(player_data, database_path)
 	if error:
 		printerr("Error while saving player_data %s." % error_string(error))
 
