@@ -5,6 +5,13 @@
 
 [node name="Node" type="Node"]
 script = ExtResource("1_8hu6a")
+spawn_state = Dictionary[NodePath, Variant]({
+NodePath("HealthComponent:health"): 33,
+NodePath("HealthComponent:max_health"): 33,
+NodePath("Salade"): 2,
+NodePath(".:integer"): 1,
+NodePath(".:position2d"): Vector2(2, 1)
+})
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("2_o4e2x")

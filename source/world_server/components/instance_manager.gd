@@ -2,32 +2,16 @@ class_name InstanceManagerServer
 extends SubViewportContainer
 
 
+const INSTANCE_COLLECTION_PATH: String = "res://source/common/resources/custom/instance/instance_collection/"
+
 var online_instances: Dictionary
 var instance_collection: Array[InstanceResource]
 
 @export var world_server: WorldServer
 
 
-func _ready() -> void:
-	if not world_server.is_configured:
-		await world_server.configuration_finished
-	
+func start_instance_manager() -> void:
 	set_instance_collection()
-	
-	var default_instance: InstanceResource
-	for instance: InstanceResource in instance_collection:
-		print("instance_collection[*] = ", instance.instance_name)
-		if instance.instance_name == "Overworld":
-			default_instance = instance
-	
-	world_server.multiplayer_api.peer_connected.connect(
-		func(peer_id: int):
-			charge_new_instance.rpc_id(
-				peer_id,
-				default_instance.map_path,
-				default_instance.charged_instances[0].name
-			)
-	)
 
 
 @rpc("authority", "call_remote", "reliable", 0)
@@ -59,7 +43,7 @@ func charge_instance(instance_resource: InstanceResource) -> void:
 	new_instance.instance_resource = instance_resource
 	new_instance.world_server = world_server
 	add_child(new_instance, true)
-	new_instance.player_entered_warper.connect(self._on_player_entered_warper)
+	new_instance.player_entered_warper.connect(_on_player_entered_warper)
 	new_instance.load_map(instance_resource.map_path)
 	instance_resource.charged_instances.append(new_instance)
 	if not new_instance.is_node_ready():
@@ -67,8 +51,22 @@ func charge_instance(instance_resource: InstanceResource) -> void:
 
 
 func set_instance_collection() -> void:
-	for file_path in FileUtils.get_all_file_at("res://source/common/resources/custom/instance/instance_collection/"):
-		instance_collection.append(ResourceLoader.load(file_path))
+	var default_instance: InstanceResource
+	
+	for file_path in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH):
+		instance_collection.append(ResourceLoader.load(file_path, "InstanceResource"))
+	
 	for instance_resource: InstanceResource in instance_collection:
 		if instance_resource.load_at_startup:
 			charge_instance(instance_resource)
+		if instance_resource.instance_name == "Overworld":
+			default_instance = instance_resource
+	
+	world_server.multiplayer_api.peer_connected.connect(
+		func(peer_id: int):
+			charge_new_instance.rpc_id(
+				peer_id,
+				default_instance.map_path,
+				default_instance.charged_instances[0].name
+			)
+	)

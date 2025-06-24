@@ -11,6 +11,8 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 	add_child(new_instance, true)
 	print("Loading new map: %s." % map_path)
 	var map: Node2D = load(map_path).instantiate()
+	if not map:
+		return
 	map.ready.connect(new_instance.ready_to_enter_instance)
 	new_instance.add_child(map)
 	if current_instance:

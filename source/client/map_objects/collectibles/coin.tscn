@@ -136,9 +136,7 @@ script = ExtResource("1_73yf6")
 texture_filter = 1
 rotation = -0.000431468
 sprite_frames = SubResource("SpriteFrames_v5ur3")
-animation = &"collected"
-frame = 7
-frame_progress = 1.0
+animation = &"blue_coin"
 speed_scale = 2.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

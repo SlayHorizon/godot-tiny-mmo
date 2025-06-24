@@ -30,12 +30,23 @@ func _ready() -> void:
 	tree.property_item_edited.connect(
 		func(path: NodePath) -> void:
 			var dialog := AcceptDialog.new()
-			dialog.add_child(create_property_editor(path))
+			var editor: EditorProperty = create_property_editor(path)
+			dialog.add_child(editor)
 			dialog.transient = true
 			dialog.exclusive = true
 			add_child(dialog)
 			dialog.popup_centered()
-			dialog.confirmed.connect(func():pass)
+			dialog.confirmed.connect(
+				func():
+					edited_dict[cached_path] = cached_value;
+					print(cached_value);
+					var tree_item: TreeItem = tree.get_selected()
+					tree_item.set_text(2, str(cached_value))
+					editor.update_property()
+			)
+			editor.update_property()
+			print("ls: ", editor.get_edited_property())
+			print("ls: ", editor.get_edited_object())
 	)
 
 
@@ -81,24 +92,42 @@ func open(_source: Node, _property_editor: EditorProperty) -> void:
 	tree.add_dict(edited_dict)
 	#popuplate_tree(_source)
 
-
+var cached_value: Variant
+var cached_path: NodePath
 func create_property_editor(path: NodePath) -> EditorProperty:
 	var new_property_editor: EditorProperty
 	
 	var node: Node = source.get_node_or_null(TinyNodePath.get_path_to_node(path))
 	if not node:
 		return
+	print(node.get_script().get_script_property_list())
+	print("\n\n")
 	var property: Variant = node.get_indexed(TinyNodePath.get_path_to_property(path))
 	print("property: ", property)
 	var property_type: Variant.Type = typeof(property)
 	var property_hint: PropertyHint = GetPropertyHint.get_property_hint(property_type)
+	#new_property_editor = EditorInspector.instantiate_property_editor(
+		#node, property_type,
+		#TinyNodePath.get_path_to_property(path), property_hint,
+		#"Suprise", PROPERTY_USAGE_DEFAULT,
+	#)
+	cached_value = edited_dict[path]
+	cached_path = path
+	print(self)
 	new_property_editor = EditorInspector.instantiate_property_editor(
-		node, property_type,
-		TinyNodePath.get_path_to_property(path), property_hint,
-		"Suprise", PROPERTY_USAGE_DEFAULT,
+		self, property_type,
+		"cached_value", property_hint,
+		"Suprise", PROPERTY_USAGE_NONE,
 	)
 	new_property_editor.label = path.slice(path.get_name_count() + path.get_subname_count() - 1)
-	new_property_editor.set_object_and_property(node, path.get_subname(0))
-	print(new_property_editor.get_edited_property())
-	new_property_editor.update_property()
+	
+
+	print("value = ",  edited_dict[path])
+	new_property_editor.property_changed.connect(
+		func(property: StringName, value: Variant, field: StringName, changing: bool):
+			print("property_changed")
+			cached_value = value
+			printt(property, value, field, changing)
+	)
+	new_property_editor.set_object_and_property(self, "cached_value")
 	return new_property_editor

@@ -2,8 +2,8 @@
 extends Tree
 
 
-signal property_item_deleted(path: NodePath)
 signal property_item_edited(path: NodePath)
+signal property_item_deleted(path: NodePath)
 
 const EDITOR_FONT_CATEGORY: String = "EditorFonts"
 const EDITOR_ICON_CATEGORY: String = "EditorIcons"
@@ -28,6 +28,8 @@ func _ready() -> void:
 	set_column_title(0, "Property")
 	set_column_title(1, "Type")
 	set_column_title(2, "Value")
+	
+	create_item(null)
 
 
 func add_dict(dict: Dictionary[NodePath, Variant]) -> void:
@@ -53,7 +55,7 @@ func create_property_item(path: NodePath, value: Variant) -> void:
 	
 	property_item.set_text(1, property_type)
 	
-	property_item.set_text(2, str(value))
+	property_item.set_text(2, str(value).left(10))
 	
 	property_item.add_button(2, _get_theme_icon_safely("Edit", EDITOR_ICON_CATEGORY))
 	property_item.add_button(2, _get_theme_icon_safely("Remove", EDITOR_ICON_CATEGORY))
@@ -63,6 +65,7 @@ func create_property_item(path: NodePath, value: Variant) -> void:
 
 func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
 	if id == 0:
+		set_selected(item, 0)
 		property_item_edited.emit(tree_items.get(item).path)
 	elif id == 1:
 		property_item_deleted.emit(tree_items.get(item).path)

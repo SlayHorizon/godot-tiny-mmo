@@ -6,6 +6,9 @@ signal player_entered_warper(player: Player, current_instance: ServerInstance, w
 
 const PLAYER: PackedScene = preload("res://source/common/entities/characters/player/player.tscn")
 
+static var chat_commands: Dictionary[String, ChatCommand]
+var local_chat_commands: Dictionary[String, ChatCommand]
+
 var world_server: WorldServer
 
 var entity_collection: Dictionary = {}#[int, Entity]
@@ -56,8 +59,34 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 	if interaction_area is Teleporter:
 		if not player.just_teleported:
 			player.just_teleported = true
-			update_entity(player, {"position": interaction_area.target.global_position})
+			update_node(
+				player.get_path(),
+				{"position": interaction_area.target.global_position}
+			)
 
+
+
+@rpc("authority", "call_remote", "reliable", 1)
+func update_node(node_path: NodePath, to_update: Dictionary[NodePath, Variant]) -> void:
+	var root: Node = get_node_or_null(node_path)
+	if not root:
+		return
+	var target: Node
+	var target_path: NodePath
+	for path: NodePath in to_update:
+		target_path = TinyNodePath.get_path_to_node(path)
+		print("TARGET = ", target_path)
+		if target_path:
+			target = root.get_node_or_null(target_path)
+		else:
+			target = root
+		if not target:
+			continue
+		target.set_indexed(TinyNodePath.get_path_to_property(path), to_update[path])
+		root.spawn_state[path] = to_update[path]
+	
+	for peer_id: int in connected_peers:
+		update_node.rpc_id(peer_id, node_path, to_update)
 
 @rpc("authority", "call_remote", "reliable", 1)
 func update_entity(entity: Entity, to_update: Dictionary) -> void:
@@ -94,8 +123,10 @@ func player_trying_to_change_weapon(weapon_path: String, _side: bool = true) -> 
 	if not player:
 		return
 	if player.player_resource.inventory.has(weapon_path):
-		update_entity(player, {"weapon_name_right": weapon_path})
-		player.spawn_state["weapon_name_right"] = weapon_path
+		update_node(
+			player.get_path(), 
+			{"weapon_name_right": weapon_path}
+		)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -179,6 +210,26 @@ func player_submit_message(new_message: String) -> void:
 @rpc("authority", "call_remote", "reliable", 1)
 func fetch_message(_message: String, _sender_id: int) -> void:
 	pass
+
+var commands: Dictionary[String, ChatCommand]
+@rpc("any_peer", "call_remote", "reliable", 1)
+func player_submit_command(command: String) -> void:
+	var peer_id: int = multiplayer.get_remote_sender_id()
+	if not command.begins_with("/"):
+		return
+	var args: PackedStringArray = command.split(" ")
+	var command_name: String = args[0]
+	if commands.is_empty():
+		commands["/heal"] = load("res://source/world_server/components/chat_command/heal_command.gd").new()
+		commands["/size"] = load("res://source/world_server/components/chat_command/scale_command.gd").new()
+		commands["/getid"] = load("res://source/world_server/components/chat_command/getid_command.gd").new()
+	if commands.has(command_name):
+		if commands[command_name].execute(args, peer_id, self):
+			fetch_message.rpc_id(peer_id, "Successful command %s." % command_name, 1)
+		else:
+			fetch_message.rpc_id(peer_id, "Command failed %s." % command_name, 1)
+	else:
+		fetch_message.rpc_id(peer_id, "Invalid command %s." % command_name, 1)
 #endregion
 
 

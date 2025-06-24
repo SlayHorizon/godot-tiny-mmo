@@ -5,16 +5,13 @@ extends BaseClient
 signal token_received(auth_token: String, username: String, character_id: int)
 
 @export var database: WorldDatabase
-@export var main: WorldMain
 @export var world_server: WorldServer
 
 var world_info: Dictionary
 
 
-func _ready() -> void:
-	if not main.is_ready:
-		await main.configuration_finished
-	
+func start_client_to_master_server(_world_info: Dictionary) -> void:
+	world_info = _world_info
 	load_client_configuration("world-manager-client", "res://test_config/world_server_config.cfg")
 	start_client()
 
@@ -26,7 +23,7 @@ func _on_connection_succeeded() -> void:
 		{
 			"port": world_server.port,
 			"address": "127.0.0.1",
-			"info": main.world_info,
+			"info": world_info,
 			"population": world_server.connected_players.size()
 		}
 	)
