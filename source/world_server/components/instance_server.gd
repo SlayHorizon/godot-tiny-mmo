@@ -75,7 +75,6 @@ func update_node(node_path: NodePath, to_update: Dictionary[NodePath, Variant]) 
 	var target_path: NodePath
 	for path: NodePath in to_update:
 		target_path = TinyNodePath.get_path_to_node(path)
-		print("TARGET = ", target_path)
 		if target_path:
 			target = root.get_node_or_null(target_path)
 		else:
@@ -211,7 +210,7 @@ func player_submit_message(new_message: String) -> void:
 func fetch_message(_message: String, _sender_id: int) -> void:
 	pass
 
-var commands: Dictionary[String, ChatCommand]
+
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_submit_command(command: String) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
@@ -219,12 +218,8 @@ func player_submit_command(command: String) -> void:
 		return
 	var args: PackedStringArray = command.split(" ")
 	var command_name: String = args[0]
-	if commands.is_empty():
-		commands["/heal"] = load("res://source/world_server/components/chat_command/heal_command.gd").new()
-		commands["/size"] = load("res://source/world_server/components/chat_command/scale_command.gd").new()
-		commands["/getid"] = load("res://source/world_server/components/chat_command/getid_command.gd").new()
-	if commands.has(command_name):
-		if commands[command_name].execute(args, peer_id, self):
+	if chat_commands.has(command_name):
+		if chat_commands[command_name].execute(args, peer_id, self):
 			fetch_message.rpc_id(peer_id, "Successful command %s." % command_name, 1)
 		else:
 			fetch_message.rpc_id(peer_id, "Command failed %s." % command_name, 1)
@@ -251,4 +246,3 @@ func propagate_rpc(callable: Callable) -> void:
 	for peer_id: int in connected_peers:
 		callable.rpc_id(peer_id)
 		#callable.bindv(arguments).rpc_id(peer_id)
-		

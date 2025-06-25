@@ -9,7 +9,7 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 			"character":
 				server_instance.fetch_message.rpc_id(
 					peer_id,
-					server_instance.world_server.connected_players[peer_id].player_id,
+					str(server_instance.world_server.connected_players[peer_id].player_id),
 					1
 				)
 			"instance":

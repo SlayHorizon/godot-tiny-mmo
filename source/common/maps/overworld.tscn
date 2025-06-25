@@ -86,7 +86,7 @@ offset_left = 389.0
 offset_top = 122.0
 offset_right = 544.0
 offset_bottom = 145.0
-text = "/getid"
+text = "/getid network"
 
 [node name="Label4" type="Label" parent="."]
 offset_left = 345.0
@@ -94,3 +94,35 @@ offset_top = 95.0
 offset_right = 500.0
 offset_bottom = 118.0
 text = "/scale self <size>"
+
+[connection signal="body_entered" from="Props/Coin" to="Props/Coin" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36540" to="Props/@Area2D@36540" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36541" to="Props/@Area2D@36541" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36542" to="Props/@Area2D@36542" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36543" to="Props/@Area2D@36543" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36546" to="Props/@Area2D@36546" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36547" to="Props/@Area2D@36547" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36548" to="Props/@Area2D@36548" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36549" to="Props/@Area2D@36549" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36550" to="Props/@Area2D@36550" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36551" to="Props/@Area2D@36551" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36552" to="Props/@Area2D@36552" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36553" to="Props/@Area2D@36553" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36554" to="Props/@Area2D@36554" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36555" to="Props/@Area2D@36555" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36556" to="Props/@Area2D@36556" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36557" to="Props/@Area2D@36557" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36558" to="Props/@Area2D@36558" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36559" to="Props/@Area2D@36559" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36560" to="Props/@Area2D@36560" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36561" to="Props/@Area2D@36561" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36562" to="Props/@Area2D@36562" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36563" to="Props/@Area2D@36563" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36564" to="Props/@Area2D@36564" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36565" to="Props/@Area2D@36565" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36566" to="Props/@Area2D@36566" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36567" to="Props/@Area2D@36567" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36568" to="Props/@Area2D@36568" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36569" to="Props/@Area2D@36569" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@36570" to="Props/@Area2D@36570" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/GroundButton" to="Props/GroundButton" method="_on_body_entered"]
