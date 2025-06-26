@@ -2,20 +2,24 @@ class_name ServerInstance
 extends SubViewport
 
 
+signal map_ready
 signal player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper)
 
 const PLAYER: PackedScene = preload("res://source/common/entities/characters/player/player.tscn")
 
+static var world_server: WorldServer
+
 static var chat_commands: Dictionary[String, ChatCommand]
 var local_chat_commands: Dictionary[String, ChatCommand]
 
-var world_server: WorldServer
 
 var entity_collection: Dictionary = {}#[int, Entity]
 ## Current connected peers to the instance.
 var connected_peers: PackedInt64Array = []
 ## Peers coming from another instance.
 var awaiting_peers: Dictionary = {}#[int, Player]
+
+var last_accessed_time: float
 
 var instance_map: Map
 var instance_resource: InstanceResource
@@ -42,6 +46,7 @@ func load_map(map_path: String) -> void:
 	if instance_map:
 		instance_map.queue_free()
 	instance_map = load(map_path).instantiate()
+	instance_map.ready.connect(map_ready.emit, CONNECT_ONE_SHOT)
 	add_child(instance_map)
 	#add_child(CameraProbe.new())
 	
@@ -54,14 +59,13 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 	if player.just_teleported:
 		return
 	if interaction_area is Warper:
-		interaction_area = interaction_area as Warper
-		player_entered_warper.emit.call_deferred(player, self, interaction_area as Warper)
+		player_entered_warper.emit.call_deferred(player, self, interaction_area)
 	if interaction_area is Teleporter:
 		if not player.just_teleported:
 			player.just_teleported = true
 			update_node(
 				player.get_path(),
-				{"position": interaction_area.target.global_position}
+				{^"position": interaction_area.target.global_position}
 			)
 
 
