@@ -86,7 +86,7 @@ offset_left = 389.0
 offset_top = 122.0
 offset_right = 544.0
 offset_bottom = 145.0
-text = "/getid"
+text = "/getid network"
 
 [node name="Label4" type="Label" parent="."]
 offset_left = 345.0

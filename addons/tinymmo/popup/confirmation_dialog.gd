@@ -45,16 +45,11 @@ func _ready() -> void:
 					editor.update_property()
 			)
 			editor.update_property()
-			print("ls: ", editor.get_edited_property())
-			print("ls: ", editor.get_edited_object())
 	)
 
 
 func _on_add_button_pressed() -> void:
-	#set_unparent_when_invisible(true)
-	#exclusive = false
 	EditorInterface.popup_node_selector(_on_node_selected)
-	#hide()
 
 
 func _on_node_selected(node_path: NodePath) -> void:
@@ -86,7 +81,7 @@ func open(_source: Node, _property_editor: EditorProperty) -> void:
 		source.get(property_editor.get_edited_property())
 	)
 	print(edited_dict)
-	edited_dict[^"Salade"] = 2
+	#edited_dict[^"Salade"] = 2
 	print(edited_dict)
 	property_editor.change_property(edited_dict)
 	tree.add_dict(edited_dict)

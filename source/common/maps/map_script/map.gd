@@ -3,7 +3,7 @@ class_name Map
 extends Node2D
 
 
-var warpers: Dictionary#[int, Warper]
+var warpers: Dictionary[int, Warper]
 
 
 func _ready() -> void:
@@ -15,5 +15,5 @@ func _ready() -> void:
 
 func get_spawn_position(warper_id: int = 0) -> Vector2:
 	if warpers.has(warper_id):
-		return (warpers[warper_id] as Warper).global_position
+		return warpers[warper_id].global_position
 	return Vector2.ZERO
