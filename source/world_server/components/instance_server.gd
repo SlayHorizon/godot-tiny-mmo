@@ -64,8 +64,8 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		if not player.just_teleported:
 			player.just_teleported = true
 			update_node(
-				player.get_path(),
-				{^"position": interaction_area.target.global_position}
+				get_path_to(player),
+				{^":position": interaction_area.target.global_position}
 			)
 
 
@@ -149,7 +149,7 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 		awaiting_peers.erase(peer_id)
 	else:
 		player = instantiate_player(peer_id)
-	player.spawn_state["position"] = instance_map.get_spawn_position(spawn_index)
+	player.spawn_state[":position"] = instance_map.get_spawn_position(spawn_index)
 	player.just_teleported = true
 	add_child(player, true)
 	entity_collection[peer_id] = player

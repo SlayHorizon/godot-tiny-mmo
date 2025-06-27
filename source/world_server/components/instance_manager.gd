@@ -4,8 +4,7 @@ extends SubViewportContainer
 
 const INSTANCE_COLLECTION_PATH: String = "res://source/common/resources/custom/instance/instance_collection/"
 
-var online_instances: Dictionary
-#var loading_instances: Dictionary[InstanceResource, Array[ServerInstance]]
+var loading_instances: Dictionary[InstanceResource, ServerInstance]
 var instance_collection: Array[InstanceResource]
 
 @export var world_server: WorldServer
@@ -18,7 +17,7 @@ func start_instance_manager() -> void:
 		"/size" = load("res://source/world_server/components/chat_command/scale_command.gd").new(),
 		"/getid" = load("res://source/world_server/components/chat_command/getid_command.gd").new()
 	}
-	set_instance_collection()
+	set_instance_collection.call_deferred()
 	
 	# Timer which will call unload_unused_instances
 	var timer: Timer = Timer.new()
@@ -54,24 +53,15 @@ func _on_player_entered_warper(player: Player, current_instance: ServerInstance,
 		return
 
 
-var loading_instances: Dictionary[InstanceResource, ServerInstance]
 func queue_charge_instance(instance_resource: InstanceResource, callback: Callable) -> void:
 	if loading_instances.has(instance_resource):
-		loading_instances[instance_resource].map_ready.connect(
+		loading_instances[instance_resource].ready.connect(
 			callback.bind(loading_instances[instance_resource])
 		)
 		return
-	var new_instance: ServerInstance = ServerInstance.new()
-	loading_instances[instance_resource] = new_instance
-	
-	new_instance.name = str(new_instance.get_instance_id())
-	new_instance.instance_resource = instance_resource
-	new_instance.map_ready.connect(func():loading_instances.erase(instance_resource))
-	new_instance.map_ready.connect(callback.bind(new_instance), CONNECT_ONE_SHOT)
+	var new_instance: ServerInstance = prepare_instance(instance_resource)
+	new_instance.ready.connect(callback.bind(new_instance), CONNECT_ONE_SHOT)
 	add_child(new_instance, true)
-	new_instance.player_entered_warper.connect(_on_player_entered_warper)
-	new_instance.load_map(instance_resource.map_path)
-	instance_resource.charged_instances.append(new_instance)
 
 
 func player_switch_instance(
@@ -99,16 +89,24 @@ func player_switch_instance(
 func charge_instance(instance_resource: InstanceResource) -> void:
 	if loading_instances.has(instance_resource):
 		return
-	var new_instance: ServerInstance = ServerInstance.new()
-	loading_instances[instance_resource] = new_instance
-	
-	new_instance = ServerInstance.new()
-	new_instance.name = str(new_instance.get_instance_id())
-	new_instance.instance_resource = instance_resource
-	add_child(new_instance, true)
-	new_instance.player_entered_warper.connect(_on_player_entered_warper)
-	new_instance.load_map(instance_resource.map_path)
-	instance_resource.charged_instances.append(new_instance)
+	var new_instance: ServerInstance = prepare_instance(instance_resource)
+	add_child.call_deferred(new_instance, true)
+
+
+func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
+	var instance: ServerInstance = ServerInstance.new()
+	loading_instances[instance_resource] = instance
+	instance.name = str(instance.get_instance_id())
+	instance.instance_resource = instance_resource
+	instance.player_entered_warper.connect(_on_player_entered_warper)
+	instance.ready.connect(
+		func():
+			loading_instances.erase(instance_resource)
+			instance_resource.charged_instances.append(instance),
+		CONNECT_ONE_SHOT
+	)
+	instance.load_map(instance_resource.map_path)
+	return instance
 
 
 func set_instance_collection() -> void:
