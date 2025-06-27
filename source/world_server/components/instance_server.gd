@@ -2,7 +2,6 @@ class_name ServerInstance
 extends SubViewport
 
 
-signal map_ready
 signal player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper)
 
 const PLAYER: PackedScene = preload("res://source/common/entities/characters/player/player.tscn")
@@ -46,7 +45,6 @@ func load_map(map_path: String) -> void:
 	if instance_map:
 		instance_map.queue_free()
 	instance_map = load(map_path).instantiate()
-	instance_map.ready.connect(map_ready.emit, CONNECT_ONE_SHOT)
 	add_child(instance_map)
 	#add_child(CameraProbe.new())
 	
