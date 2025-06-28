@@ -18,6 +18,8 @@ extends Resource
 
 @export var admin_ids: PackedInt32Array
 
+@export var guilds: Dictionary[String, Guild]
+
 
 func get_player_resource(player_id: int) -> PlayerResource:
 	if players.has(player_id):
@@ -60,3 +62,15 @@ func get_account_characters(account_name: String) -> Dictionary:
 					"level": player_character.level
 				}
 	return data
+
+
+func create_guild(guild_name: String, player_id: int) -> bool:
+	var player: PlayerResource = players.get(player_id)
+	if not player or guilds.has(guild_name):
+		return false
+	var new_guild: Guild = Guild.new()
+	new_guild.leader_id = player_id
+	new_guild.guild_name = guild_name
+	new_guild.add_member(player_id, "Leader")
+	guilds[guild_name] = new_guild
+	return true

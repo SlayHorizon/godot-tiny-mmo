@@ -6,6 +6,7 @@ extends Area2D
 
 @onready var button_anim: AnimatedSprite2D = $AnimatedSprite2D
 
+
 func _ready() -> void:
 	button_anim.play(&"up")
 

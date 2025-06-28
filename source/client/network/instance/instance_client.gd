@@ -2,8 +2,8 @@ class_name InstanceClient
 extends Node2D
 
 
-const LOCAL_PLAYER = preload("res://source/client/local_player/local_player.tscn")
-const DUMMY_PLAYER = preload("res://source/common/entities/characters/player/player.tscn")
+const LOCAL_PLAYER: PackedScene = preload("res://source/client/local_player/local_player.tscn")
+const DUMMY_PLAYER: PackedScene = preload("res://source/common/entities/characters/player/player.tscn")
 
 var entity_collection: Dictionary = {}
 
