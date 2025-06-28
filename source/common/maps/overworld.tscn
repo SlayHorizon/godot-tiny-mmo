@@ -93,4 +93,36 @@ offset_left = 345.0
 offset_top = 95.0
 offset_right = 500.0
 offset_bottom = 118.0
-text = "/scale self <size>"
+text = "/size self <size>"
+
+[connection signal="body_entered" from="Props/Coin" to="Props/Coin" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26205" to="Props/@Area2D@26205" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26206" to="Props/@Area2D@26206" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26207" to="Props/@Area2D@26207" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26208" to="Props/@Area2D@26208" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26211" to="Props/@Area2D@26211" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26212" to="Props/@Area2D@26212" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26213" to="Props/@Area2D@26213" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26214" to="Props/@Area2D@26214" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26215" to="Props/@Area2D@26215" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26216" to="Props/@Area2D@26216" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26217" to="Props/@Area2D@26217" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26218" to="Props/@Area2D@26218" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26219" to="Props/@Area2D@26219" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26220" to="Props/@Area2D@26220" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26221" to="Props/@Area2D@26221" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26222" to="Props/@Area2D@26222" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26223" to="Props/@Area2D@26223" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26224" to="Props/@Area2D@26224" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26225" to="Props/@Area2D@26225" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26226" to="Props/@Area2D@26226" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26227" to="Props/@Area2D@26227" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26228" to="Props/@Area2D@26228" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26229" to="Props/@Area2D@26229" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26230" to="Props/@Area2D@26230" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26231" to="Props/@Area2D@26231" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26232" to="Props/@Area2D@26232" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26233" to="Props/@Area2D@26233" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26234" to="Props/@Area2D@26234" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/@Area2D@26235" to="Props/@Area2D@26235" method="_on_body_entered"]
+[connection signal="body_entered" from="Props/GroundButton" to="Props/GroundButton" method="_on_body_entered"]

@@ -14,7 +14,7 @@ func start_instance_manager() -> void:
 	ServerInstance.world_server = world_server
 	ServerInstance.chat_commands = {
 		"/heal" = load("res://source/world_server/components/chat_command/heal_command.gd").new(),
-		"/size" = load("res://source/world_server/components/chat_command/scale_command.gd").new(),
+		"/size" = load("res://source/world_server/components/chat_command/size_command.gd").new(),
 		"/getid" = load("res://source/world_server/components/chat_command/getid_command.gd").new()
 	}
 	set_instance_collection.call_deferred()

@@ -3,8 +3,8 @@ extends RefCounted
 
 
 @warning_ignore("unused_parameter")
-func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> bool:
-	return false
+func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
+	return "Unknown command."
 
 
 @warning_ignore("unused_parameter")

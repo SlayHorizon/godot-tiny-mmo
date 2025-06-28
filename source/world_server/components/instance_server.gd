@@ -220,13 +220,21 @@ func player_submit_command(command: String) -> void:
 		return
 	var args: PackedStringArray = command.split(" ")
 	var command_name: String = args[0]
-	if chat_commands.has(command_name):
-		if chat_commands[command_name].execute(args, peer_id, self):
-			fetch_message.rpc_id(peer_id, "Successful command %s." % command_name, 1)
-		else:
-			fetch_message.rpc_id(peer_id, "Command failed %s." % command_name, 1)
+	var chat_command: ChatCommand = find_chat_command(command_name)
+	if chat_command:
+		fetch_message.rpc_id(
+			peer_id,
+			chat_commands[command_name].execute(args, peer_id, self),
+			1
+		)
 	else:
-		fetch_message.rpc_id(peer_id, "Invalid command %s." % command_name, 1)
+		fetch_message.rpc_id(peer_id, "Command not found.", 1)
+
+
+func find_chat_command(command_name: String) -> ChatCommand:
+	if local_chat_commands.has(command_name):
+		return local_chat_commands.get(command_name)
+	return chat_commands.get(command_name)
 #endregion
 
 
