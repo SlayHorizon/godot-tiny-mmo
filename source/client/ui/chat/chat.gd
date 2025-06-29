@@ -1,17 +1,9 @@
 extends Control
 
 
-signal message_submitted(message: String)
-
-
 func _ready() -> void:
-	InstanceManagerClient.instance_manager.instance_changed.connect(
-		func(instance: InstanceClient):
-			instance.message_received.connect(_on_message_received)
-	)
-	ClientEvents.message_received.connect(_on_message_received)
-func connect_signals(instance: InstanceClient) -> void:
-	instance.message_received.connect(_on_message_received)
+	Events.message_received.connect(_on_message_received)
+
 
 func _input(_event: InputEvent) -> void:
 	if (
@@ -41,8 +33,7 @@ func _on_message_submitted(new_message: String) -> void:
 	if not new_message.is_empty():
 		new_message = new_message.strip_edges(true, true)
 		new_message = new_message.substr(0, 120)
-		message_submitted.emit(new_message)
-		#ClientEvents.message_submitted.emit(new_message)
+		Events.message_submitted.emit(new_message)
 	%FadeOutTimer.start()
 
 

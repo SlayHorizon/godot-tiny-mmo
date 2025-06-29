@@ -18,7 +18,7 @@ config/icon="res://assets/project_icon/icon_svg.svg"
 
 [autoload]
 
-ClientEvents="*res://source/client/autoload/event_bus.gd"
+Events="*res://source/client/autoload/events.gd"
 
 [debug]
 

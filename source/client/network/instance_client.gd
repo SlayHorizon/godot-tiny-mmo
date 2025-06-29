@@ -2,8 +2,6 @@ class_name InstanceClient
 extends Node2D
 
 
-signal message_received(message: String)
-
 const LOCAL_PLAYER: PackedScene = preload("res://source/client/local_player/local_player.tscn")
 const DUMMY_PLAYER: PackedScene = preload("res://source/common/entities/characters/player/player.tscn")
 
@@ -15,8 +13,8 @@ var local_player: LocalPlayer
 
 
 func _ready() -> void:
-	ClientEvents.message_submitted.connect(self.player_submit_message)
-	ClientEvents.item_icon_pressed.connect(self.player_trying_to_change_weapon)
+	Events.message_submitted.connect(player_submit_message)
+	Events.item_icon_pressed.connect(player_trying_to_change_weapon)
 
 
 @rpc("authority", "call_remote", "reliable", 0)
@@ -119,7 +117,7 @@ func fetch_message(message: String, sender_id: int) -> void:
 		sender_name = "Server"
 	elif entity_collection.has(sender_id):
 		sender_name = (entity_collection[sender_id] as Player).display_name
-	ClientEvents.message_received.emit(message, sender_name)
+	Events.message_received.emit(message, sender_name)
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)

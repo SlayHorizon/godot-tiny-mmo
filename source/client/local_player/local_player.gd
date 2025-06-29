@@ -19,7 +19,7 @@ var state: String = "idle"
 
 
 func _ready() -> void:
-	ClientEvents.local_player_ready.emit(self)
+	Events.local_player_ready.emit(self)
 	super()
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://sscb58nigni8"]
+[gd_scene load_steps=9 format=4 uid="uid://sscb58nigni8"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/maps/map_script/map.gd" id="1_x70sj"]
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="2_c4reb"]
@@ -6,20 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/client/map_objects/doors/activable_door/activable_door.tscn" id="4_0lkki"]
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/client/map_objects/ground_button/ground_button.tscn" id="5_mlcfb"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_dfiuk"]
-[ext_resource type="Script" uid="uid://k3pfsymqftdb" path="res://source/common/maps/props.gd" id="6_vhwke"]
 [ext_resource type="Resource" uid="uid://4utja3eou6l6" path="res://source/common/resources/custom/instance/instance_collection/dungeon_entrance.tres" id="7_xnjdx"]
 [ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/entities/characters/character.tscn" id="9_vhwke"]
-
-[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_i8exw"]
-resource_name = "coins"
-scenes/1/scene = ExtResource("3_ef1ij")
-scenes/2/scene = ExtResource("4_0lkki")
-scenes/3/scene = ExtResource("5_mlcfb")
-
-[sub_resource type="TileSet" id="TileSet_ethdr"]
-physics_layer_0/collision_layer = 4
-physics_layer_0/collision_mask = 3
-sources/2 = SubResource("TileSetScenesCollectionSource_i8exw")
 
 [node name="Overworld" type="Node2D"]
 script = ExtResource("1_x70sj")
@@ -50,10 +38,6 @@ tile_set = ExtResource("2_c4reb")
 [node name="Props2" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AAATAAcAAAAMAAUAAAARAP//AQAAAAAAAAASAAAAAQAAAAAAAAARAAAAAQABAAAAAAAVAP//AQADAAAAAAAUAAIAAQACAAEAAAASAAcAAAAMAAUAAAAUAAcAAAAMAAUAAAA=")
 tile_set = ExtResource("2_c4reb")
-
-[node name="Props_" type="TileMapLayer" parent="."]
-tile_set = SubResource("TileSet_ethdr")
-script = ExtResource("6_vhwke")
 
 [node name="Coins" type="Node2D" parent="."]
 

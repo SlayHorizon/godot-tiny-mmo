@@ -6,7 +6,7 @@ extends Control
 
 
 func _ready() -> void:
-	ClientEvents.local_player_ready.connect(
+	Events.local_player_ready.connect(
 		func(local_player: LocalPlayer) -> void:
 			var health_component: HealthComponent = local_player.get_node("HealthComponent")
 			health_component.health_changed.connect(_on_health_changed)

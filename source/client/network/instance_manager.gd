@@ -4,14 +4,12 @@ extends Node
 
 signal instance_changed(instance: InstanceClient)
 
-static var instance_manager: InstanceManagerClient
-
 var current_ui: UI
 var current_instance: InstanceClient
 
 
 func _ready() -> void:
-	instance_manager = self
+	pass
 
 
 @rpc("authority", "call_remote", "reliable", 0)
@@ -45,8 +43,8 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 	# Charge different type of UI/HUD and clear old one,
 	# for mini game / special instances that would require unique HUD ? 
 	
-	if current_ui:
-		queue_free()
+	#if current_ui:
+		#current_ui.queue_free()
 	if not current_ui:
 		current_ui = preload("res://source/client/ui/ui.tscn").instantiate()
 		add_child(current_ui)
