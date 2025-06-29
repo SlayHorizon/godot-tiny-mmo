@@ -14,7 +14,7 @@ var local_chat_commands: Dictionary[String, ChatCommand]
 
 var entity_collection: Dictionary = {}#[int, Entity]
 ## Current connected peers to the instance.
-var connected_peers: PackedInt64Array = []
+var connected_peers: PackedInt64Array = PackedInt64Array()
 ## Peers coming from another instance.
 var awaiting_peers: Dictionary = {}#[int, Player]
 

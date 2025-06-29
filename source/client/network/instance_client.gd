@@ -2,6 +2,8 @@ class_name InstanceClient
 extends Node2D
 
 
+signal message_received(message: String)
+
 const LOCAL_PLAYER: PackedScene = preload("res://source/client/local_player/local_player.tscn")
 const DUMMY_PLAYER: PackedScene = preload("res://source/common/entities/characters/player/player.tscn")
 
@@ -66,7 +68,7 @@ func player_trying_to_change_weapon(weapon_path: String, side: bool = true) -> v
 
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:
-	ready_to_enter_instance.rpc_id(1)
+	pass
 
 
 #region spwawn/despawn

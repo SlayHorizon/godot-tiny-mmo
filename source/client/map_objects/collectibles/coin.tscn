@@ -131,6 +131,7 @@ size = Vector2(9, 9)
 [node name="Coin" type="Area2D"]
 collision_layer = 4
 script = ExtResource("1_73yf6")
+metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

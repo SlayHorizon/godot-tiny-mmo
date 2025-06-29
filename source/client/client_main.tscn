@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bfybdk1kgy125" path="res://source/client/client_main.gd" id="1_hoyng"]
 [ext_resource type="Script" uid="uid://siq7b6qqrjyq" path="res://source/client/network/world_client.gd" id="2_ey548"]
-[ext_resource type="PackedScene" uid="uid://xij1mlsb0syf" path="res://source/client/network/instance_manager/instance_manger.tscn" id="3_qp3mu"]
+[ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="3_s85jl"]
 [ext_resource type="PackedScene" uid="uid://u544jciafxaw" path="res://source/client/gateway/gateway_scene.tscn" id="4_rh1pg"]
 
 [node name="ClientMain" type="Node"]
@@ -11,7 +11,8 @@ script = ExtResource("1_hoyng")
 [node name="WorldClient" type="Node" parent="."]
 script = ExtResource("2_ey548")
 
-[node name="InstanceManager" parent="WorldClient" instance=ExtResource("3_qp3mu")]
+[node name="InstanceManager" type="Node" parent="WorldClient"]
+script = ExtResource("3_s85jl")
 
 [node name="LoginScene" parent="." node_paths=PackedStringArray("world_server") instance=ExtResource("4_rh1pg")]
 world_server = NodePath("../WorldClient")

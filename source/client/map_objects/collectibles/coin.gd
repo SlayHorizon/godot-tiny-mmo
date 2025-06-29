@@ -12,7 +12,7 @@ func _ready() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
-		self.body_entered.disconnect(self._on_body_entered)
-		coin_anim.animation_finished.connect(self.queue_free)
+		body_entered.disconnect(_on_body_entered)
+		coin_anim.animation_finished.connect(queue_free)
 		coin_anim.play(&"collected")
 	

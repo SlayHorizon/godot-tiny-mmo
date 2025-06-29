@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://sscb58nigni8"]
+[gd_scene load_steps=12 format=4 uid="uid://sscb58nigni8"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/maps/map_script/map.gd" id="1_x70sj"]
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="2_c4reb"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/client/map_objects/doors/activable_door/activable_door.tscn" id="4_0lkki"]
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/client/map_objects/ground_button/ground_button.tscn" id="5_mlcfb"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_dfiuk"]
+[ext_resource type="Script" uid="uid://k3pfsymqftdb" path="res://source/common/maps/props.gd" id="6_vhwke"]
 [ext_resource type="Resource" uid="uid://4utja3eou6l6" path="res://source/common/resources/custom/instance/instance_collection/dungeon_entrance.tres" id="7_xnjdx"]
 [ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/entities/characters/character.tscn" id="9_vhwke"]
 
@@ -50,9 +51,116 @@ tile_set = ExtResource("2_c4reb")
 tile_map_data = PackedByteArray("AAATAAcAAAAMAAUAAAARAP//AQAAAAAAAAASAAAAAQAAAAAAAAARAAAAAQABAAAAAAAVAP//AQADAAAAAAAUAAIAAQACAAEAAAASAAcAAAAMAAUAAAAUAAcAAAAMAAUAAAA=")
 tile_set = ExtResource("2_c4reb")
 
-[node name="Props" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAARAAgAAgAAAAAAAQAVAAgAAgAAAAAAAQAUAAgAAgAAAAAAAQATAAgAAgAAAAAAAQASAAgAAgAAAAAAAQATAAcAAgAAAAAAAgASAAcAAgAAAAAAAgAUAAcAAgAAAAAAAgAWAAgAAgAAAAAAAQAXAAgAAgAAAAAAAQAXAAkAAgAAAAAAAQAXAAoAAgAAAAAAAQAXAAsAAgAAAAAAAQAXAAwAAgAAAAAAAQAXAA0AAgAAAAAAAQAXAA4AAgAAAAAAAQAXAA8AAgAAAAAAAQAWAA8AAgAAAAAAAQAVAA8AAgAAAAAAAQAUAA8AAgAAAAAAAQATAA8AAgAAAAAAAQASAA8AAgAAAAAAAQARAA8AAgAAAAAAAQAQAA8AAgAAAAAAAQAPAA8AAgAAAAAAAQAPAA4AAgAAAAAAAQAPAA0AAgAAAAAAAQAPAAwAAgAAAAAAAQAPAAsAAgAAAAAAAQAPAAoAAgAAAAAAAQAPAAkAAgAAAAAAAQAPAAgAAgAAAAAAAQAQAAgAAgAAAAAAAQAVAAoAAgAAAAAAAwA=")
+[node name="Props_" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_ethdr")
+script = ExtResource("6_vhwke")
+
+[node name="Coins" type="Node2D" parent="."]
+
+[node name="Coin" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(280, 136)
+
+[node name="Coin2" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(344, 136)
+
+[node name="Coin3" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(328, 136)
+
+[node name="Coin4" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(312, 136)
+
+[node name="Coin5" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(296, 136)
+
+[node name="Coin6" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(360, 136)
+
+[node name="Coin7" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 136)
+
+[node name="Coin8" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 152)
+
+[node name="Coin9" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 168)
+
+[node name="Coin10" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 184)
+
+[node name="Coin11" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 200)
+
+[node name="Coin12" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 216)
+
+[node name="Coin13" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 232)
+
+[node name="Coin14" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 248)
+
+[node name="Coin15" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(360, 248)
+
+[node name="Coin16" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(344, 248)
+
+[node name="Coin17" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(328, 248)
+
+[node name="Coin18" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(312, 248)
+
+[node name="Coin19" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(296, 248)
+
+[node name="Coin20" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(280, 248)
+
+[node name="Coin21" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(264, 248)
+
+[node name="Coin22" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 248)
+
+[node name="Coin23" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 232)
+
+[node name="Coin24" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 216)
+
+[node name="Coin25" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 200)
+
+[node name="Coin26" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 184)
+
+[node name="Coin27" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 168)
+
+[node name="Coin28" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 152)
+
+[node name="Coin29" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 136)
+
+[node name="Coin30" parent="Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(264, 136)
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="ActivableDoor" parent="Props" instance=ExtResource("4_0lkki")]
+position = Vector2(296, 120)
+
+[node name="ActivableDoor2" parent="Props" instance=ExtResource("4_0lkki")]
+position = Vector2(312, 120)
+
+[node name="ActivableDoor3" parent="Props" instance=ExtResource("4_0lkki")]
+position = Vector2(328, 120)
+
+[node name="GroundButton" parent="Props" node_paths=PackedStringArray("activable_door") instance=ExtResource("5_mlcfb")]
+position = Vector2(344, 168)
+activable_door = [NodePath("../ActivableDoor"), NodePath("../ActivableDoor2"), NodePath("../ActivableDoor3")]
 
 [node name="Warper" parent="." instance=ExtResource("6_dfiuk")]
 position = Vector2(312, -19)

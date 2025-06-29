@@ -21,5 +21,5 @@ func _on_authentication_token_received(auth_token: String, address: String, port
 	if not world_server.is_connected_to_server:
 		printerr("Failed to connect to server after login.")
 		return
-	add_sibling(preload("res://source/client/ui/ui.tscn").instantiate())
+	#add_sibling(preload("res://source/client/ui/ui.tscn").instantiate())
 	queue_free.call_deferred()

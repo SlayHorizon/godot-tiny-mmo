@@ -1,4 +1,9 @@
+class_name HUD
 extends CanvasLayer
+
+
+func _ready() -> void:
+	pass
 
 
 func _on_item_slot_button_1_pressed(extra_arg_0: String) -> void:
