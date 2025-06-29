@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://la1wru6pvnyy"]
+[gd_scene load_steps=2 format=3 uid="uid://la1wru6pvnyy"]
+
+[ext_resource type="Script" uid="uid://d1cseo7blcif2" path="res://source/client/ui/guild/guild_menu.gd" id="1_njed6"]
 
 [node name="GuildMenu" type="Control"]
 layout_mode = 3
@@ -7,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_njed6")
 
 [node name="NoGuildMenu" type="PanelContainer" parent="."]
 visible = false
@@ -120,3 +123,23 @@ horizontal_alignment = 1
 [node name="Button" type="Button" parent="GuildDisplay/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Leave Guild"
+
+[node name="CloseButton" type="Button" parent="."]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = 134.5
+offset_right = 40.0
+offset_bottom = 165.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "CLOSE"
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="pressed" from="NoGuildMenu/MarginContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

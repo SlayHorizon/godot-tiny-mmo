@@ -89,6 +89,7 @@ func update_node(node_path: NodePath, to_update: Dictionary[NodePath, Variant]) 
 	for peer_id: int in connected_peers:
 		update_node.rpc_id(peer_id, node_path, to_update)
 
+
 @rpc("authority", "call_remote", "reliable", 1)
 func update_entity(entity: Entity, to_update: Dictionary) -> void:
 	for thing: String in to_update:
@@ -126,7 +127,7 @@ func player_trying_to_change_weapon(weapon_path: String, _side: bool = true) -> 
 	if player.player_resource.inventory.has(weapon_path):
 		update_node(
 			player.get_path(), 
-			{"weapon_name_right": weapon_path}
+			{^":weapon_name_right": weapon_path}
 		)
 
 
@@ -250,6 +251,31 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))
 	#for connected_peer_id: int in connected_peers:
 		#player_action.rpc_id(connected_peer_id, action_index, action_direction)
+
+
+@rpc("any_peer", "call_remote", "reliable", 1)
+func request_data(data_type: String) -> void:
+	var peer_id: int = multiplayer.get_remote_sender_id()
+	var player: Player = entity_collection.get(peer_id) as Player
+	if not player:
+		return
+	match data_type:
+		"guild":
+			var guild: Guild = player.player_resource.guild
+			var result: String
+			if guild:
+				result = guild.guild_name
+			else:
+				result = ""
+			fetch_data.rpc_id(
+				peer_id,
+				{"guild": result},
+				"guild"
+			)
+
+@rpc("authority", "call_remote", "reliable", 1)
+func fetch_data(_data: Dictionary, _data_type: String) -> void:
+	pass
 
 
 func propagate_rpc(callable: Callable) -> void:

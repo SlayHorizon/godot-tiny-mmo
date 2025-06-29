@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/chat/chat.tscn" id="2_xs74v"]
 
 [node name="HUD" type="CanvasLayer"]
-layer = 2
 script = ExtResource("1_rchld")
 
 [node name="HealthBar" parent="." instance=ExtResource("2_klco5")]
@@ -50,5 +49,14 @@ layout_mode = 2
 text = "2
 "
 
+[node name="GuildButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+offset_left = 10.0
+offset_top = 264.4
+offset_right = 70.0
+offset_bottom = 324.4
+text = "GUILD"
+
 [connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton1" to="." method="_on_item_slot_button_1_pressed" binds= ["sword/sword"]]
 [connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton2" to="." method="_on_item_slot_button_2_pressed" binds= ["hammer/hammer"]]
+[connection signal="pressed" from="GuildButton" to="." method="_on_guild_button_pressed"]

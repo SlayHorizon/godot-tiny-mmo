@@ -13,6 +13,8 @@ extends Resource
 
 @export var level: int = 0
 
+@export var guild: Guild
+
 var current_peer_id: int
 
 

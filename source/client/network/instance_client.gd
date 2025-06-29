@@ -15,6 +15,7 @@ var local_player: LocalPlayer
 func _ready() -> void:
 	Events.message_submitted.connect(player_submit_message)
 	Events.item_icon_pressed.connect(player_trying_to_change_weapon)
+	Events.data_requested.connect(request_data)
 
 
 @rpc("authority", "call_remote", "reliable", 0)
@@ -133,3 +134,13 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	if not player:
 		return
 	player.equiped_weapon_right.try_perform_action(action_index, action_direction)
+
+
+@rpc("any_peer", "call_remote", "reliable", 1)
+func request_data(data_type: String) -> void:
+	request_data.rpc_id(1, data_type)
+
+
+@rpc("authority", "call_remote", "reliable", 1)
+func fetch_data(data: Dictionary, data_type: String) -> void:
+	Events.data_received.emit(data, data_type)
