@@ -3,10 +3,11 @@ extends Node
 
 
 var account_collection: AccountResourceCollection
-var account_collection_path := "res://source/master_server/account_collection.tres"
+var account_collection_path: String = "res://source/master_server/account_collection.tres"
 
 
 func _ready() -> void:
+	tree_exiting.connect(save_account_collection)
 	load_account_collection()
 
 
@@ -30,3 +31,7 @@ func validate_credentials(username: String, password: String) -> AccountResource
 		if account.password == password:
 			return account
 	return null
+
+
+func save_account_collection() -> void:
+	ResourceSaver.save(account_collection, account_collection_path)
