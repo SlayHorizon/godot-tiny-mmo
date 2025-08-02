@@ -13,12 +13,13 @@ func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_title("World Server")
 	
-	# Default config path; to use another one overide this,
-	# or wirte --config=config_file_path.cfg as launch argument.
+	# Default config path. to use another one, override this;
+	# or write --config=config_file_path.cfg as a launch argument.
 	var error: bool = load_world_config("res://test_config/world_server_config.cfg")
 	if error:
 		printerr("World server loading configuration failed.")
 	else:
+		print(str($Database))
 		$Database.start_database(world_info)
 		$WorldManagerClient.start_client_to_master_server(world_info)
 		$WorldServer.start_world_server()
@@ -39,6 +40,7 @@ func load_world_config(config_path: String) -> bool:
 	world_info = {
 		"name": config_file.get_value("world-server", "name", "NoName"),
 		"max_players": config_file.get_value("world-server", "max_players", 200),
+		"motd": config_file.get_value("world-server", "motd", "Welcome!"),
 		"hardcore": config_file.get_value("world-server", "hardcore", false),
 		"bonus_xp": config_file.get_value("world-server", "bonus_xp", 0.0),
 		"max_character": config_file.get_value("world-server", "max_character", 5),

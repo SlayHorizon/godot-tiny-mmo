@@ -1,10 +1,10 @@
 class_name WorldPlayerData
 extends Resource
-# I can't recommend using Resource as a whole database, but for the demonstration,
+# I can't recommend using Resources as a whole database, but for the demonstration,
 # I found it interesting to use Godot exclusively to have a minimal setup.
 
-## Suppose to store the different character IDs of registered accounts.[br][br]
-## So if player with name ID "horizon" login to this world,
+## Used to store the different character IDs of registered accounts.[br][br]
+## So if player with name ID "horizon" logs in to this world,
 ## we can retrieve its different character IDs thanks to this.[br][br]
 ## Here is how it should look like:
 ## [codeblock]
