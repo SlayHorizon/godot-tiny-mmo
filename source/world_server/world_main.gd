@@ -19,7 +19,6 @@ func _ready() -> void:
 	if error:
 		printerr("World server loading configuration failed.")
 	else:
-		print(str($Database))
 		$Database.start_database(world_info)
 		$WorldManagerClient.start_client_to_master_server(world_info)
 		$WorldServer.start_world_server()
@@ -40,7 +39,6 @@ func load_world_config(config_path: String) -> bool:
 	world_info = {
 		"name": config_file.get_value("world-server", "name", "NoName"),
 		"max_players": config_file.get_value("world-server", "max_players", 200),
-		"motd": config_file.get_value("world-server", "motd", "Welcome!"),
 		"hardcore": config_file.get_value("world-server", "hardcore", false),
 		"bonus_xp": config_file.get_value("world-server", "bonus_xp", 0.0),
 		"max_character": config_file.get_value("world-server", "max_character", 5),
