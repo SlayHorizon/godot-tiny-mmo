@@ -4,17 +4,11 @@ extends Resource
 
 @export var collection: Dictionary = {}
 
-@export var next_account_id: int = 0:
-	get = _get_next_account_id
-@export var next_player_id: int = 0:
-	get = _get_next_player_id
+@export var next_account_id: int = 0
+#@export var next_player_id: int = 0
 
 
-func _get_next_account_id() -> int:
+func get_new_account_id() -> int:
+	var new_account_id: int = next_account_id
 	next_account_id += 1
-	return next_account_id
-
-
-func _get_next_player_id() -> int:
-	next_player_id += 1
-	return next_player_id
+	return new_account_id

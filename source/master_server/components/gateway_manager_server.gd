@@ -59,10 +59,10 @@ func login_result(_peer_id: int, _result: Dictionary) -> void:
 
 @rpc("any_peer")
 func create_account_request(peer_id: int, username: String, password: String, is_guest: bool) -> void:
-	var gateway_id := multiplayer_api.get_remote_sender_id()
+	var gateway_id: int = multiplayer_api.get_remote_sender_id()
 	var result_code: int = 0
-	var return_data := {}
-	var result := authentication_manager.create_accout(username, password, is_guest)
+	var return_data: Dictionary = {}
+	var result: AccountResource = authentication_manager.create_accout(username, password, is_guest)
 	if result == null:
 		result_code = 30
 	else:
