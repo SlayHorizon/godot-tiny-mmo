@@ -13,8 +13,8 @@ func _ready() -> void:
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_title("World Server")
 	
-	# Default config path; to use another one overide this,
-	# or wirte --config=config_file_path.cfg as launch argument.
+	# Default config path. to use another one, override this;
+	# or write --config=config_file_path.cfg as a launch argument.
 	var error: bool = load_world_config("res://test_config/world_server_config.cfg")
 	if error:
 		printerr("World server loading configuration failed.")

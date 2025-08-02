@@ -70,7 +70,7 @@ func ready_to_enter_instance() -> void:
 	pass
 
 
-#region spwawn/despawn
+#region spawn/despawn
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	var new_player: Player
