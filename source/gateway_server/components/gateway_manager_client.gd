@@ -17,7 +17,7 @@ func _ready() -> void:
 
 
 func _on_connection_succeeded() -> void:
-	print("Succesfuly connected to the Gateway Manager as %d!" % multiplayer.get_unique_id())
+	print("Successfully connected to the Gateway Manager as %d!" % multiplayer.get_unique_id())
 
 
 func _on_connection_failed() -> void:

@@ -247,7 +247,7 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	var player: Player = entity_collection.get(peer_id) as Player
 	if not player:
 		return
-	if player.equiped_weapon_right.try_perform_action(action_index, action_direction):
+	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
 		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))
 	#for connected_peer_id: int in connected_peers:
 		#player_action.rpc_id(connected_peer_id, action_index, action_direction)

@@ -39,7 +39,7 @@ func close_connection() -> void:
 
 
 func _on_connection_succeeded() -> void:
-	print("Succesfuly connected to the gateway server as %d!" % multiplayer.get_unique_id())
+	print("Successfully connected to the gateway server as %d!" % multiplayer.get_unique_id())
 	peer_id = multiplayer.get_unique_id()
 	is_connected_to_server = true
 	if OS.has_feature("debug"):

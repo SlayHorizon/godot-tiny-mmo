@@ -71,7 +71,7 @@ func start_client() -> void:
 
 
 func _on_connection_succeeded() -> void:
-	print("Succesfuly connected as %d!" % multiplayer.get_unique_id())
+	print("Successfully connected as %d!" % multiplayer.get_unique_id())
 
 
 func _on_connection_failed() -> void:

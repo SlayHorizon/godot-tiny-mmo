@@ -15,8 +15,8 @@ var weapon_name_right: String:
 	set = _set_right_weapon
 var weapon_name_left: String:
 	set = _set_left_weapon
-var equiped_weapon_right: Weapon
-var equiped_weapon_left: Weapon
+var equipped_weapon_right: Weapon
+var equipped_weapon_left: Weapon
 
 var character_class: String:
 	set = _set_character_class
@@ -46,28 +46,28 @@ var pivot: float = 0.0:
 
 func _ready() -> void:
 	if right_hand_spot.get_child_count():
-		equiped_weapon_right = right_hand_spot.get_child(0)
-		equiped_weapon_right.hand.type = hand_type
-		equiped_weapon_right.hand.side = Hand.Sides.RIGHT
+		equipped_weapon_right = right_hand_spot.get_child(0)
+		equipped_weapon_right.hand.type = hand_type
+		equipped_weapon_right.hand.side = Hand.Sides.RIGHT
 	if left_hand_spot.get_child_count():
-		equiped_weapon_left = left_hand_spot.get_child(0)
-		equiped_weapon_right.hand.type = hand_type
-		equiped_weapon_right.hand.side = Hand.Sides.LEFT
+		equipped_weapon_left = left_hand_spot.get_child(0)
+		equipped_weapon_right.hand.type = hand_type
+		equipped_weapon_right.hand.side = Hand.Sides.LEFT
 
 
 func change_weapon(weapon_path: String, _side: bool = true) -> void:
-	if equiped_weapon_right:
-		equiped_weapon_right.queue_free()
+	if equipped_weapon_right:
+		equipped_weapon_right.queue_free()
 	var new_weapon: Weapon = load("res://source/common/items/weapons/" + 
 		weapon_path + ".tscn").instantiate()
 	new_weapon.character = self
 	right_hand_spot.add_child(new_weapon)
-	equiped_weapon_right = new_weapon
+	equipped_weapon_right = new_weapon
 
 
 func update_weapon_animation(state: String) -> void:
-	equiped_weapon_right.play_animation(state)
-	equiped_weapon_left.play_animation(state)
+	equipped_weapon_right.play_animation(state)
+	equipped_weapon_left.play_animation(state)
 
 
 func _set_left_weapon(weapon_name: String) -> void:

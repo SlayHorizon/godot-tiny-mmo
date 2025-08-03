@@ -17,7 +17,7 @@ func start_client_to_master_server(_world_info: Dictionary) -> void:
 
 
 func _on_connection_succeeded() -> void:
-	print("Succesfuly connected to the Gateway as %d!" % multiplayer.get_unique_id())
+	print("Successfully connected to the Gateway as %d!" % multiplayer.get_unique_id())
 	fetch_server_info.rpc_id(
 		1,
 		{
