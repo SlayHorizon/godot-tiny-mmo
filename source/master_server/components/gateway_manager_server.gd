@@ -62,13 +62,14 @@ func create_account_request(peer_id: int, username: String, password: String, is
 	var gateway_id: int = multiplayer_api.get_remote_sender_id()
 	var result_code: int = 0
 	var return_data: Dictionary = {}
-	var result: AccountResource = authentication_manager.create_accout(username, password, is_guest)
+	var result: AccountResource = authentication_manager.create_account(username, password, is_guest)
 	if result == null:
 		result_code = 30
 	else:
 		return_data = {"name": result.username, "id": result.id}
 		result.peer_id = peer_id
 	account_creation_result.rpc_id(gateway_id, peer_id, result_code, return_data)
+
 
 
 @rpc("authority")

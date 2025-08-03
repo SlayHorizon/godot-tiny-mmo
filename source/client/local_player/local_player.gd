@@ -41,7 +41,7 @@ func check_inputs() -> void:
 		Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN:
 			last_input_direction = input_direction
 	action_input = Input.is_action_pressed("action")
-	if action_input and equiped_weapon_right.can_use_weapon(0):
+	if action_input and equipped_weapon_right.can_use_weapon(0):
 		player_action.emit(0, position.direction_to(mouse.position))
 	interact_input = Input.is_action_just_pressed("interact")
 

@@ -133,7 +133,7 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	var player: Player = entity_collection.get(peer_id) as Player
 	if not player:
 		return
-	player.equiped_weapon_right.try_perform_action(action_index, action_direction)
+	player.equipped_weapon_right.try_perform_action(action_index, action_direction)
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)
