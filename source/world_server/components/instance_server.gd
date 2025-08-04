@@ -204,9 +204,12 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_submit_message(new_message: String) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
+	# Not sure if this new version is better.
+	# NEW
 	propagate_rpc(fetch_message.bindv([new_message, peer_id]))
-	for id: int in connected_peers:
-		fetch_message.rpc_id(id, new_message, peer_id)
+	# OLD
+	#for id: int in connected_peers:
+		#fetch_message.rpc_id(id, new_message, peer_id)
 
 
 @rpc("authority", "call_remote", "reliable", 1)
@@ -281,4 +284,3 @@ func fetch_data(_data: Dictionary, _data_type: String) -> void:
 func propagate_rpc(callable: Callable) -> void:
 	for peer_id: int in connected_peers:
 		callable.rpc_id(peer_id)
-		#callable.bindv(arguments).rpc_id(peer_id)
