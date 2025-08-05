@@ -148,6 +148,7 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 		awaiting_peers.erase(peer_id)
 	else:
 		player = instantiate_player(peer_id)
+		fetch_message.rpc_id(peer_id, get_motd(), 1)
 	player.spawn_state[":position"] = instance_map.get_spawn_position(spawn_index)
 	player.just_teleported = true
 	add_child(player, true)
@@ -155,6 +156,8 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	connected_peers.append(peer_id)
 	propagate_spawn(peer_id, player.spawn_state)
 
+func get_motd() -> String:
+	return world_server.world_manager.world_info.get("motd", "Default Welcome")
 
 func instantiate_player(peer_id: int) -> Player:
 	var player_resource: PlayerResource = world_server.connected_players[peer_id]
@@ -279,7 +282,6 @@ func request_data(data_type: String) -> void:
 @rpc("authority", "call_remote", "reliable", 1)
 func fetch_data(_data: Dictionary, _data_type: String) -> void:
 	pass
-
 
 func propagate_rpc(callable: Callable) -> void:
 	for peer_id: int in connected_peers:
