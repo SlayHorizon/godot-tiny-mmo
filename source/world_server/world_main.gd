@@ -40,6 +40,7 @@ func load_world_config(config_path: String) -> bool:
 		"name": config_file.get_value("world-server", "name", "NoName"),
 		"max_players": config_file.get_value("world-server", "max_players", 200),
 		"hardcore": config_file.get_value("world-server", "hardcore", false),
+		"motd": config_file.get_value("world-server", "motd", "Welcome!"),
 		"bonus_xp": config_file.get_value("world-server", "bonus_xp", 0.0),
 		"max_character": config_file.get_value("world-server", "max_character", 5),
 		"pvp": config_file.get_value("world-server", "pvp", true)
