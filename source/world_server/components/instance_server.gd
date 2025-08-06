@@ -199,6 +199,10 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 		if delete:
 			player.queue_free()
 		else:
+			# Quick fix for issue #57.
+			player.spawn_state["health_component:health"] = player.get_indexed("health_component:health")
+			player.spawn_state["health_component:max_health"] = player.get_indexed("health_component:max_health")
+			#
 			remove_child(player)
 			
 		entity_collection.erase(peer_id)
