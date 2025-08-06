@@ -12,12 +12,9 @@ var instance_collection: Array[InstanceResource]
 
 func start_instance_manager() -> void:
 	ServerInstance.world_server = world_server
-	ServerInstance.chat_commands = {
-		"/heal" = load("res://source/world_server/components/chat_command/heal_command.gd").new(),
-		"/size" = load("res://source/world_server/components/chat_command/size_command.gd").new(),
-		"/getid" = load("res://source/world_server/components/chat_command/getid_command.gd").new(),
-		"/help" = load("res://source/world_server/components/chat_command/help_command.gd").new()
-	}
+	
+	configure_global_roles_and_commands()
+	
 	set_instance_collection.call_deferred()
 	
 	# Timer which will call unload_unused_instances
@@ -27,6 +24,33 @@ func start_instance_manager() -> void:
 	timer.autostart = true
 	timer.timeout.connect(unload_unused_instances)
 	add_sibling(timer)
+
+
+func configure_global_roles_and_commands() -> void:
+	ServerInstance.global_chat_commands = {
+		"/heal" = load("res://source/world_server/components/chat_command/heal_command.gd").new(),
+		"/size" = load("res://source/world_server/components/chat_command/size_command.gd").new(),
+		"/getid" = load("res://source/world_server/components/chat_command/getid_command.gd").new(),
+		"/help" = load("res://source/world_server/components/chat_command/help_command.gd").new()
+	}
+	if OS.has_feature("debug") or OS.has_feature("editor"):
+		ServerInstance.global_chat_commands["/selfadmin"] = load("res://source/world_server/components/chat_command/selfadmin_command.gd").new()
+		
+	ServerInstance.global_role_definitions = {
+		"senior_admin": {
+			"commands": ["/heal", "/size"],
+			"priority": 5,
+		},
+		"moderator": {
+			"commands": ["/heal", "/size"],
+			"priority": 1,
+			},
+		"default": {
+			"commands": ["/help", "/getid"]
+		}
+	}
+	if OS.has_feature("debug") or OS.has_feature("editor"):
+		ServerInstance.global_role_definitions["default"]["commands"].append("/selfadmin")
 
 
 @rpc("authority", "call_remote", "reliable", 0)

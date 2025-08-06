@@ -17,7 +17,7 @@ extends Resource
 @export var next_player_id: int = 0
 
 @export var admin_ids: PackedInt32Array
-
+@export var user_roles: Dictionary[int, Array]
 @export var guilds: Dictionary[String, Guild]
 
 

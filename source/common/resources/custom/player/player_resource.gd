@@ -14,7 +14,10 @@ extends Resource
 @export var level: int = 0
 
 @export var guild: Guild
+##
+@export var server_roles: Dictionary
 
+## Current Network ID
 var current_peer_id: int
 
 
