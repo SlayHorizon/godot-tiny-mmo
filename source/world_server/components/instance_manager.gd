@@ -33,9 +33,7 @@ func configure_global_roles_and_commands() -> void:
 		"/getid" = load("res://source/world_server/components/chat_command/getid_command.gd").new(),
 		"/help" = load("res://source/world_server/components/chat_command/help_command.gd").new()
 	}
-	if OS.has_feature("debug") or OS.has_feature("editor"):
-		ServerInstance.global_chat_commands["/selfadmin"] = load("res://source/world_server/components/chat_command/selfadmin_command.gd").new()
-		
+	
 	ServerInstance.global_role_definitions = {
 		"senior_admin": {
 			"commands": ["/heal", "/size"],
@@ -49,7 +47,9 @@ func configure_global_roles_and_commands() -> void:
 			"commands": ["/help", "/getid"]
 		}
 	}
+	
 	if OS.has_feature("debug") or OS.has_feature("editor"):
+		ServerInstance.global_chat_commands["/selfadmin"] = load("res://source/world_server/components/chat_command/selfadmin_command.gd").new()
 		ServerInstance.global_role_definitions["default"]["commands"].append("/selfadmin")
 
 

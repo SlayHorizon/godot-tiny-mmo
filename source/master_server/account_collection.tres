@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=5 format=3 uid="uid://c323pyjbxhgk6"]
+[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=81 format=3]
 
-[ext_resource type="Script" uid="uid://620djf1m6nxf" path="res://source/master_server/resources/account.gd" id="1_ic1hn"]
-[ext_resource type="Script" uid="uid://cxrc2yfn6yejc" path="res://source/master_server/resources/account_collection.gd" id="2_5b8n1"]
+[ext_resource type="Script" path="res://source/master_server/resources/account.gd" id="1_ic1hn"]
+[ext_resource type="Script" path="res://source/master_server/resources/account_collection.gd" id="2_5b8n1"]
 
 [sub_resource type="Resource" id="Resource_ic1hn"]
 script = ExtResource("1_ic1hn")
@@ -15,10 +15,542 @@ id = 0
 username = "guest0"
 password = "09pd7#576f9h"
 
+[sub_resource type="Resource" id="Resource_1fpme"]
+script = ExtResource("1_ic1hn")
+id = 10
+username = "guest10"
+password = "fp8vp2oqisn1"
+
+[sub_resource type="Resource" id="Resource_wywvy"]
+script = ExtResource("1_ic1hn")
+id = 11
+username = "guest11"
+password = "mp03lpqkgs+i"
+
+[sub_resource type="Resource" id="Resource_wx7rk"]
+script = ExtResource("1_ic1hn")
+id = 12
+username = "guest12"
+password = "xt6m-fbktuno"
+
+[sub_resource type="Resource" id="Resource_aiuro"]
+script = ExtResource("1_ic1hn")
+id = 13
+username = "guest13"
+password = "bh-j--#31#cn"
+
+[sub_resource type="Resource" id="Resource_gtnf5"]
+script = ExtResource("1_ic1hn")
+id = 14
+username = "guest14"
+password = "o3cs8g78imfu"
+
+[sub_resource type="Resource" id="Resource_54fsi"]
+script = ExtResource("1_ic1hn")
+id = 15
+username = "guest15"
+password = "$iys8+y5l+09"
+
+[sub_resource type="Resource" id="Resource_6yst2"]
+script = ExtResource("1_ic1hn")
+id = 16
+username = "guest16"
+password = "ij2rejcxg17h"
+
+[sub_resource type="Resource" id="Resource_s3cvf"]
+script = ExtResource("1_ic1hn")
+id = 17
+username = "guest17"
+password = "s9f9ev6zuiy3"
+
+[sub_resource type="Resource" id="Resource_t04b7"]
+script = ExtResource("1_ic1hn")
+id = 18
+username = "guest18"
+password = "l8rua9qi-591"
+
+[sub_resource type="Resource" id="Resource_nvtfw"]
+script = ExtResource("1_ic1hn")
+id = 19
+username = "guest19"
+password = "r#zbff3ko196"
+
+[sub_resource type="Resource" id="Resource_5b8n1"]
+script = ExtResource("1_ic1hn")
+id = 2
+username = "guest2"
+password = "c$t31knevn18"
+
+[sub_resource type="Resource" id="Resource_u8p13"]
+script = ExtResource("1_ic1hn")
+id = 20
+username = "guest20"
+password = "59tu4v0fdckn"
+
+[sub_resource type="Resource" id="Resource_0664c"]
+script = ExtResource("1_ic1hn")
+id = 21
+username = "guest21"
+password = "sw6vmc23k1gf"
+
+[sub_resource type="Resource" id="Resource_hfupb"]
+script = ExtResource("1_ic1hn")
+id = 22
+username = "guest22"
+password = "g9tt#$jojsvr"
+
+[sub_resource type="Resource" id="Resource_dhdm6"]
+script = ExtResource("1_ic1hn")
+id = 23
+username = "guest23"
+password = "2ea2f3gc31ok"
+
+[sub_resource type="Resource" id="Resource_qex8p"]
+script = ExtResource("1_ic1hn")
+id = 24
+username = "guest24"
+password = "zy7fw7w+-8i4"
+
+[sub_resource type="Resource" id="Resource_nnbv3"]
+script = ExtResource("1_ic1hn")
+id = 25
+username = "guest25"
+password = "v7lpineyfi12"
+
+[sub_resource type="Resource" id="Resource_njbta"]
+script = ExtResource("1_ic1hn")
+id = 26
+username = "guest26"
+password = "mo2w3fdfhex4"
+
+[sub_resource type="Resource" id="Resource_2uipf"]
+script = ExtResource("1_ic1hn")
+id = 27
+username = "guest27"
+password = "7jwfo3ba5ky3"
+
+[sub_resource type="Resource" id="Resource_ckiyy"]
+script = ExtResource("1_ic1hn")
+id = 28
+username = "guest28"
+password = "fhui00y5dshh"
+
+[sub_resource type="Resource" id="Resource_td4y6"]
+script = ExtResource("1_ic1hn")
+id = 29
+username = "guest29"
+password = "b-+j1qck$r80"
+
+[sub_resource type="Resource" id="Resource_13772"]
+script = ExtResource("1_ic1hn")
+id = 3
+username = "guest3"
+password = "3nlngws9h2+n"
+
+[sub_resource type="Resource" id="Resource_roqoe"]
+script = ExtResource("1_ic1hn")
+id = 30
+username = "guest30"
+password = "xdzy8v6x6nn2"
+
+[sub_resource type="Resource" id="Resource_vl3ir"]
+script = ExtResource("1_ic1hn")
+id = 31
+username = "guest31"
+password = "v0q7lysoq#4y"
+
+[sub_resource type="Resource" id="Resource_fcymy"]
+script = ExtResource("1_ic1hn")
+id = 32
+username = "guest32"
+password = "cqq$k14zyb2t"
+
+[sub_resource type="Resource" id="Resource_xcf6t"]
+script = ExtResource("1_ic1hn")
+id = 33
+username = "guest33"
+password = "zrc58pro9g1r"
+
+[sub_resource type="Resource" id="Resource_r38ls"]
+script = ExtResource("1_ic1hn")
+id = 34
+username = "guest34"
+password = "61ucib0$zdru"
+
+[sub_resource type="Resource" id="Resource_15nru"]
+script = ExtResource("1_ic1hn")
+id = 35
+username = "guest35"
+password = "m7s0b6zh-yvg"
+
+[sub_resource type="Resource" id="Resource_pk7vt"]
+script = ExtResource("1_ic1hn")
+id = 36
+username = "guest36"
+password = "9s6qgb49-n#a"
+
+[sub_resource type="Resource" id="Resource_e8yrj"]
+script = ExtResource("1_ic1hn")
+id = 37
+username = "guest37"
+password = "4bzhd#qxhn$n"
+
+[sub_resource type="Resource" id="Resource_nhjqy"]
+script = ExtResource("1_ic1hn")
+id = 38
+username = "guest38"
+password = "eijmc9dak23i"
+
+[sub_resource type="Resource" id="Resource_h2ngf"]
+script = ExtResource("1_ic1hn")
+id = 39
+username = "guest39"
+password = "kf7rpie49hqu"
+
+[sub_resource type="Resource" id="Resource_54edm"]
+script = ExtResource("1_ic1hn")
+id = 4
+username = "guest4"
+password = "iln++soq$8$6"
+
+[sub_resource type="Resource" id="Resource_qj7ap"]
+script = ExtResource("1_ic1hn")
+id = 40
+username = "guest40"
+password = "8b3xhscpuw-w"
+
+[sub_resource type="Resource" id="Resource_cr0k1"]
+script = ExtResource("1_ic1hn")
+id = 41
+username = "guest41"
+password = "mnt31ga+-5tu"
+
+[sub_resource type="Resource" id="Resource_vv51n"]
+script = ExtResource("1_ic1hn")
+id = 42
+username = "guest42"
+password = "n04r79h5v-ew"
+
+[sub_resource type="Resource" id="Resource_qyh8i"]
+script = ExtResource("1_ic1hn")
+id = 43
+username = "guest43"
+password = "#6-r1w7u08x3"
+
+[sub_resource type="Resource" id="Resource_26dsm"]
+script = ExtResource("1_ic1hn")
+id = 44
+username = "guest44"
+password = "q1hh0clu2+2o"
+
+[sub_resource type="Resource" id="Resource_m0nig"]
+script = ExtResource("1_ic1hn")
+id = 45
+username = "guest45"
+password = "emwdhs-ckqzy"
+
+[sub_resource type="Resource" id="Resource_rmuia"]
+script = ExtResource("1_ic1hn")
+id = 46
+username = "guest46"
+password = "7bzu9no71h5q"
+
+[sub_resource type="Resource" id="Resource_hvlfa"]
+script = ExtResource("1_ic1hn")
+id = 47
+username = "guest47"
+password = "o73mdam7sih3"
+
+[sub_resource type="Resource" id="Resource_tp2kp"]
+script = ExtResource("1_ic1hn")
+id = 48
+username = "guest48"
+password = "83jpq-0h8ocp"
+
+[sub_resource type="Resource" id="Resource_ifcuj"]
+script = ExtResource("1_ic1hn")
+id = 49
+username = "guest49"
+password = "v221#8afkk+8"
+
+[sub_resource type="Resource" id="Resource_6r3n1"]
+script = ExtResource("1_ic1hn")
+id = 5
+username = "guest5"
+password = "h2g61sy$#$66"
+
+[sub_resource type="Resource" id="Resource_d2sxj"]
+script = ExtResource("1_ic1hn")
+id = 50
+username = "guest50"
+password = "k+q2ao9smrsh"
+
+[sub_resource type="Resource" id="Resource_ia2tr"]
+script = ExtResource("1_ic1hn")
+id = 51
+username = "guest51"
+password = "+lq0tzrxqrmq"
+
+[sub_resource type="Resource" id="Resource_wvsk7"]
+script = ExtResource("1_ic1hn")
+id = 52
+username = "guest52"
+password = "z2+q++1yqrfd"
+
+[sub_resource type="Resource" id="Resource_hsqp1"]
+script = ExtResource("1_ic1hn")
+id = 53
+username = "guest53"
+password = "$1g$00irh#ar"
+
+[sub_resource type="Resource" id="Resource_jk5p8"]
+script = ExtResource("1_ic1hn")
+id = 54
+username = "guest54"
+password = "e#obl+vdr$q2"
+
+[sub_resource type="Resource" id="Resource_hkl6d"]
+script = ExtResource("1_ic1hn")
+id = 55
+username = "guest55"
+password = "s-3k8ievp3a8"
+
+[sub_resource type="Resource" id="Resource_cbsfd"]
+script = ExtResource("1_ic1hn")
+id = 56
+username = "guest56"
+password = "1xb767dweh86"
+
+[sub_resource type="Resource" id="Resource_ljgh0"]
+script = ExtResource("1_ic1hn")
+id = 57
+username = "guest57"
+password = "5o9bw8v4g4cl"
+
+[sub_resource type="Resource" id="Resource_1evb5"]
+script = ExtResource("1_ic1hn")
+id = 58
+username = "guest58"
+password = "w2vdizwii+mi"
+
+[sub_resource type="Resource" id="Resource_0ivtp"]
+script = ExtResource("1_ic1hn")
+id = 59
+username = "guest59"
+password = "9a58f603xefh"
+
+[sub_resource type="Resource" id="Resource_r6g76"]
+script = ExtResource("1_ic1hn")
+id = 6
+username = "guest6"
+password = "-4mf28qi-pa7"
+
+[sub_resource type="Resource" id="Resource_4m8l3"]
+script = ExtResource("1_ic1hn")
+id = 60
+username = "guest60"
+password = "xl5kitty-x+b"
+
+[sub_resource type="Resource" id="Resource_xcp6p"]
+script = ExtResource("1_ic1hn")
+id = 61
+username = "guest61"
+password = "wr7i1o3mjbc7"
+
+[sub_resource type="Resource" id="Resource_25mge"]
+script = ExtResource("1_ic1hn")
+id = 62
+username = "guest62"
+password = "ybkf97y3gix-"
+
+[sub_resource type="Resource" id="Resource_p0cyr"]
+script = ExtResource("1_ic1hn")
+id = 63
+username = "guest63"
+password = "w3x6#kadysbq"
+
+[sub_resource type="Resource" id="Resource_si5m2"]
+script = ExtResource("1_ic1hn")
+id = 64
+username = "guest64"
+password = "hv2xeuw853q2"
+
+[sub_resource type="Resource" id="Resource_3l3e0"]
+script = ExtResource("1_ic1hn")
+id = 65
+username = "guest65"
+password = "sajep89fsszi"
+
+[sub_resource type="Resource" id="Resource_8r7a2"]
+script = ExtResource("1_ic1hn")
+id = 66
+username = "guest66"
+password = "$2m6g#wmjhri"
+
+[sub_resource type="Resource" id="Resource_yyntv"]
+script = ExtResource("1_ic1hn")
+id = 67
+username = "guest67"
+password = "pzc8+l8n78un"
+
+[sub_resource type="Resource" id="Resource_mw1fj"]
+script = ExtResource("1_ic1hn")
+id = 68
+username = "guest68"
+password = "a55pyam56stp"
+
+[sub_resource type="Resource" id="Resource_ns3yd"]
+script = ExtResource("1_ic1hn")
+id = 69
+username = "guest69"
+password = "bizf-yb-6usb"
+
+[sub_resource type="Resource" id="Resource_3b2cq"]
+script = ExtResource("1_ic1hn")
+id = 7
+username = "guest7"
+password = "#rmh82h8qfkf"
+
+[sub_resource type="Resource" id="Resource_k6vy5"]
+script = ExtResource("1_ic1hn")
+id = 70
+username = "guest70"
+password = "z--9mqkol$l2"
+
+[sub_resource type="Resource" id="Resource_cxkc6"]
+script = ExtResource("1_ic1hn")
+id = 71
+username = "guest71"
+password = "#9+5$e0xdcqi"
+
+[sub_resource type="Resource" id="Resource_q4rfp"]
+script = ExtResource("1_ic1hn")
+id = 72
+username = "guest72"
+password = "#u8r7$6mhuez"
+
+[sub_resource type="Resource" id="Resource_mikm0"]
+script = ExtResource("1_ic1hn")
+id = 73
+username = "guest73"
+password = "ge+z9u$fezfg"
+
+[sub_resource type="Resource" id="Resource_ycy0c"]
+script = ExtResource("1_ic1hn")
+id = 74
+username = "guest74"
+password = "jcfw9ah9dgpf"
+
+[sub_resource type="Resource" id="Resource_3ne45"]
+script = ExtResource("1_ic1hn")
+id = 75
+username = "guest75"
+password = "9lf17du4vuyb"
+
+[sub_resource type="Resource" id="Resource_vg1ht"]
+script = ExtResource("1_ic1hn")
+id = 76
+username = "guest76"
+password = "o#$gtp912k#9"
+
+[sub_resource type="Resource" id="Resource_ecebf"]
+script = ExtResource("1_ic1hn")
+id = 8
+username = "guest8"
+password = "$o5-77y#rewd"
+
+[sub_resource type="Resource" id="Resource_bhaag"]
+script = ExtResource("1_ic1hn")
+id = 9
+username = "guest9"
+password = "rty02trohvnv"
+
+[sub_resource type="Resource" id="Resource_4wab2"]
+script = ExtResource("1_ic1hn")
+id = 77
+username = "guest77"
+password = "fucd9qms#7y#"
+
 [resource]
 script = ExtResource("2_5b8n1")
 collection = {
 "admin": SubResource("Resource_ic1hn"),
-"guest0": SubResource("Resource_qxvvw")
+"guest0": SubResource("Resource_qxvvw"),
+"guest10": SubResource("Resource_1fpme"),
+"guest11": SubResource("Resource_wywvy"),
+"guest12": SubResource("Resource_wx7rk"),
+"guest13": SubResource("Resource_aiuro"),
+"guest14": SubResource("Resource_gtnf5"),
+"guest15": SubResource("Resource_54fsi"),
+"guest16": SubResource("Resource_6yst2"),
+"guest17": SubResource("Resource_s3cvf"),
+"guest18": SubResource("Resource_t04b7"),
+"guest19": SubResource("Resource_nvtfw"),
+"guest2": SubResource("Resource_5b8n1"),
+"guest20": SubResource("Resource_u8p13"),
+"guest21": SubResource("Resource_0664c"),
+"guest22": SubResource("Resource_hfupb"),
+"guest23": SubResource("Resource_dhdm6"),
+"guest24": SubResource("Resource_qex8p"),
+"guest25": SubResource("Resource_nnbv3"),
+"guest26": SubResource("Resource_njbta"),
+"guest27": SubResource("Resource_2uipf"),
+"guest28": SubResource("Resource_ckiyy"),
+"guest29": SubResource("Resource_td4y6"),
+"guest3": SubResource("Resource_13772"),
+"guest30": SubResource("Resource_roqoe"),
+"guest31": SubResource("Resource_vl3ir"),
+"guest32": SubResource("Resource_fcymy"),
+"guest33": SubResource("Resource_xcf6t"),
+"guest34": SubResource("Resource_r38ls"),
+"guest35": SubResource("Resource_15nru"),
+"guest36": SubResource("Resource_pk7vt"),
+"guest37": SubResource("Resource_e8yrj"),
+"guest38": SubResource("Resource_nhjqy"),
+"guest39": SubResource("Resource_h2ngf"),
+"guest4": SubResource("Resource_54edm"),
+"guest40": SubResource("Resource_qj7ap"),
+"guest41": SubResource("Resource_cr0k1"),
+"guest42": SubResource("Resource_vv51n"),
+"guest43": SubResource("Resource_qyh8i"),
+"guest44": SubResource("Resource_26dsm"),
+"guest45": SubResource("Resource_m0nig"),
+"guest46": SubResource("Resource_rmuia"),
+"guest47": SubResource("Resource_hvlfa"),
+"guest48": SubResource("Resource_tp2kp"),
+"guest49": SubResource("Resource_ifcuj"),
+"guest5": SubResource("Resource_6r3n1"),
+"guest50": SubResource("Resource_d2sxj"),
+"guest51": SubResource("Resource_ia2tr"),
+"guest52": SubResource("Resource_wvsk7"),
+"guest53": SubResource("Resource_hsqp1"),
+"guest54": SubResource("Resource_jk5p8"),
+"guest55": SubResource("Resource_hkl6d"),
+"guest56": SubResource("Resource_cbsfd"),
+"guest57": SubResource("Resource_ljgh0"),
+"guest58": SubResource("Resource_1evb5"),
+"guest59": SubResource("Resource_0ivtp"),
+"guest6": SubResource("Resource_r6g76"),
+"guest60": SubResource("Resource_4m8l3"),
+"guest61": SubResource("Resource_xcp6p"),
+"guest62": SubResource("Resource_25mge"),
+"guest63": SubResource("Resource_p0cyr"),
+"guest64": SubResource("Resource_si5m2"),
+"guest65": SubResource("Resource_3l3e0"),
+"guest66": SubResource("Resource_8r7a2"),
+"guest67": SubResource("Resource_yyntv"),
+"guest68": SubResource("Resource_mw1fj"),
+"guest69": SubResource("Resource_ns3yd"),
+"guest7": SubResource("Resource_3b2cq"),
+"guest70": SubResource("Resource_k6vy5"),
+"guest71": SubResource("Resource_cxkc6"),
+"guest72": SubResource("Resource_q4rfp"),
+"guest73": SubResource("Resource_mikm0"),
+"guest74": SubResource("Resource_ycy0c"),
+"guest75": SubResource("Resource_3ne45"),
+"guest76": SubResource("Resource_vg1ht"),
+"guest77": SubResource("Resource_4wab2"),
+"guest8": SubResource("Resource_ecebf"),
+"guest9": SubResource("Resource_bhaag")
 }
-next_account_id = 2
+next_account_id = 78

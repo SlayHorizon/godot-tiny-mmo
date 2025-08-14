@@ -27,6 +27,7 @@ var last_accessed_time: float
 var instance_map: Map
 var instance_resource: InstanceResource
 
+var synchronizer_manager: StateSynchronizerManagerServer
 
 func _ready() -> void:
 	world_server.multiplayer_api.peer_disconnected.connect(
@@ -34,9 +35,15 @@ func _ready() -> void:
 			if connected_peers.has(peer_id):
 				despawn_player(peer_id)
 	)
+	
+	synchronizer_manager = StateSynchronizerManagerServer.new()
+	synchronizer_manager.name = "StateSynchronizerManager"
+	add_child(synchronizer_manager, true)
+	
 
 
 func _physics_process(_delta: float) -> void:
+	return
 	var state: Dictionary = {"EC" = {}}
 	for entity_id: int in entity_collection:
 		state["EC"][entity_id] = (entity_collection[entity_id] as Entity).sync_state
@@ -52,9 +59,17 @@ func load_map(map_path: String) -> void:
 	add_child(instance_map)
 	#add_child(CameraProbe.new())
 	
-	for child in instance_map.get_children():
-		if child is InteractionArea:
-			child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
+	ready.connect(func():
+		for child in instance_map.get_children():
+			if child is InteractionArea:
+				child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
+			if child is ReplicatedPropsContainer:
+				const EID_BASE_CONTAINERS := 1_000_000
+				synchronizer_manager.add_container(
+					1_000_000,
+					child
+				)
+		)
 
 
 func _on_player_entered_interaction_area(player: Player, interaction_area: InteractionArea) -> void:
@@ -157,6 +172,14 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	player.just_teleported = true
 	add_child(player, true)
 	entity_collection[peer_id] = player
+	
+	#NEW
+	synchronizer_manager.add_entity(
+		peer_id,
+		player.get_node_or_null("StateSynchronizer")
+	)
+	synchronizer_manager.register_peer(peer_id)
+	
 	connected_peers.append(peer_id)
 	propagate_spawn(peer_id, player.spawn_state)
 

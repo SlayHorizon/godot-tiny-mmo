@@ -1,8 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://digkg4swbl27x"]
+[gd_scene load_steps=22 format=3 uid="uid://digkg4swbl27x"]
 
 [ext_resource type="Script" uid="uid://d132hhwqguove" path="res://source/client/map_objects/collectibles/coin.gd" id="1_73yf6"]
 [ext_resource type="Texture2D" uid="uid://d31e3fh8n3lee" path="res://assets/sprites/environment/environment_objects/gold_coin.png" id="2_mlfwo"]
 [ext_resource type="Texture2D" uid="uid://pd8lmo4laynm" path="res://assets/sprites/particles/gold_coin_pick_up.png" id="3_4flsn"]
+[ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/state_synchronizer.gd" id="4_7newa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jpnqk"]
 atlas = ExtResource("2_mlfwo")
@@ -130,6 +131,7 @@ size = Vector2(9, 9)
 
 [node name="Coin" type="Area2D"]
 collision_layer = 4
+monitorable = false
 script = ExtResource("1_73yf6")
 metadata/_edit_group_ = true
 
@@ -143,4 +145,7 @@ speed_scale = 2.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_6bec3")
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[node name="StateSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root_node")]
+script = ExtResource("4_7newa")
+root_node = NodePath("..")
+metadata/_custom_type_script = "uid://d1a30n4ktgm71"

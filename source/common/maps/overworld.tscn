@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://sscb58nigni8"]
+[gd_scene load_steps=11 format=4 uid="uid://sscb58nigni8"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/maps/map_script/map.gd" id="1_x70sj"]
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/resources/builtin/tilesets/dungeon_tileset.tres" id="2_c4reb"]
@@ -7,7 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/client/map_objects/ground_button/ground_button.tscn" id="5_mlcfb"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/maps/map_components/interaction_areas/warper/warper.tscn" id="6_dfiuk"]
 [ext_resource type="Resource" uid="uid://4utja3eou6l6" path="res://source/common/resources/custom/instance/instance_collection/dungeon_entrance.tres" id="7_xnjdx"]
+[ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/replicated_props.gd" id="9_ut81c"]
 [ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/entities/characters/character.tscn" id="9_vhwke"]
+[ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/state_synchronizer.gd" id="10_ut81c"]
 
 [node name="Overworld" type="Node2D"]
 script = ExtResource("1_x70sj")
@@ -38,98 +40,6 @@ tile_set = ExtResource("2_c4reb")
 [node name="Props2" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AAATAAcAAAAMAAUAAAARAP//AQAAAAAAAAASAAAAAQAAAAAAAAARAAAAAQABAAAAAAAVAP//AQADAAAAAAAUAAIAAQACAAEAAAASAAcAAAAMAAUAAAAUAAcAAAAMAAUAAAA=")
 tile_set = ExtResource("2_c4reb")
-
-[node name="Coins" type="Node2D" parent="."]
-
-[node name="Coin" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(280, 136)
-
-[node name="Coin2" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(344, 136)
-
-[node name="Coin3" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(328, 136)
-
-[node name="Coin4" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(312, 136)
-
-[node name="Coin5" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(296, 136)
-
-[node name="Coin6" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(360, 136)
-
-[node name="Coin7" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 136)
-
-[node name="Coin8" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 152)
-
-[node name="Coin9" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 168)
-
-[node name="Coin10" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 184)
-
-[node name="Coin11" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 200)
-
-[node name="Coin12" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 216)
-
-[node name="Coin13" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 232)
-
-[node name="Coin14" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(376, 248)
-
-[node name="Coin15" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(360, 248)
-
-[node name="Coin16" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(344, 248)
-
-[node name="Coin17" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(328, 248)
-
-[node name="Coin18" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(312, 248)
-
-[node name="Coin19" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(296, 248)
-
-[node name="Coin20" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(280, 248)
-
-[node name="Coin21" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(264, 248)
-
-[node name="Coin22" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 248)
-
-[node name="Coin23" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 232)
-
-[node name="Coin24" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 216)
-
-[node name="Coin25" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 200)
-
-[node name="Coin26" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 184)
-
-[node name="Coin27" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 168)
-
-[node name="Coin28" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 152)
-
-[node name="Coin29" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(248, 136)
-
-[node name="Coin30" parent="Coins" instance=ExtResource("3_ef1ij")]
-position = Vector2(264, 136)
 
 [node name="Props" type="Node2D" parent="."]
 
@@ -186,3 +96,137 @@ offset_top = 95.0
 offset_right = 500.0
 offset_bottom = 118.0
 text = "/size self <size>"
+
+[node name="ReplicatedProps" type="Node2D" parent="." node_paths=PackedStringArray("synchronizer")]
+script = ExtResource("9_ut81c")
+synchronizer = NodePath("StateSynchronizer")
+id_to_relpath = Dictionary[int, NodePath]({
+0: NodePath("Coins"),
+1: NodePath("Coins/Coin"),
+2: NodePath("Coins/Coin2"),
+3: NodePath("Coins/Coin3"),
+4: NodePath("Coins/Coin4"),
+5: NodePath("Coins/Coin5"),
+6: NodePath("Coins/Coin6"),
+7: NodePath("Coins/Coin7"),
+8: NodePath("Coins/Coin8"),
+9: NodePath("Coins/Coin9"),
+10: NodePath("Coins/Coin10"),
+11: NodePath("Coins/Coin11"),
+12: NodePath("Coins/Coin12"),
+13: NodePath("Coins/Coin13"),
+14: NodePath("Coins/Coin14"),
+15: NodePath("Coins/Coin15"),
+16: NodePath("Coins/Coin16"),
+17: NodePath("Coins/Coin17"),
+18: NodePath("Coins/Coin18"),
+19: NodePath("Coins/Coin19"),
+20: NodePath("Coins/Coin20"),
+21: NodePath("Coins/Coin21"),
+22: NodePath("Coins/Coin22"),
+23: NodePath("Coins/Coin23"),
+24: NodePath("Coins/Coin24"),
+25: NodePath("Coins/Coin25"),
+26: NodePath("Coins/Coin26"),
+27: NodePath("Coins/Coin27"),
+28: NodePath("Coins/Coin28"),
+29: NodePath("Coins/Coin29"),
+30: NodePath("Coins/Coin30")
+})
+
+[node name="Coins" type="Node2D" parent="ReplicatedProps"]
+
+[node name="Coin" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(280, 136)
+
+[node name="Coin2" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(344, 136)
+
+[node name="Coin3" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(328, 136)
+
+[node name="Coin4" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(312, 136)
+
+[node name="Coin5" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(296, 136)
+
+[node name="Coin6" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(360, 136)
+
+[node name="Coin7" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 136)
+
+[node name="Coin8" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 152)
+
+[node name="Coin9" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 168)
+
+[node name="Coin10" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 184)
+
+[node name="Coin11" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 200)
+
+[node name="Coin12" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 216)
+
+[node name="Coin13" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 232)
+
+[node name="Coin14" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(376, 248)
+
+[node name="Coin15" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(360, 248)
+
+[node name="Coin16" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(344, 248)
+
+[node name="Coin17" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(328, 248)
+
+[node name="Coin18" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(312, 248)
+
+[node name="Coin19" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(296, 248)
+
+[node name="Coin20" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(280, 248)
+
+[node name="Coin21" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(264, 248)
+
+[node name="Coin22" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 248)
+
+[node name="Coin23" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 232)
+
+[node name="Coin24" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 216)
+
+[node name="Coin25" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 200)
+
+[node name="Coin26" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 184)
+
+[node name="Coin27" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 168)
+
+[node name="Coin28" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 152)
+
+[node name="Coin29" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(248, 136)
+
+[node name="Coin30" parent="ReplicatedProps/Coins" instance=ExtResource("3_ef1ij")]
+position = Vector2(264, 136)
+
+[node name="StateSynchronizer" type="Node" parent="ReplicatedProps" node_paths=PackedStringArray("root_node")]
+script = ExtResource("10_ut81c")
+root_node = NodePath("..")
+metadata/_custom_type_script = "uid://d1a30n4ktgm71"

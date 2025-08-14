@@ -66,6 +66,7 @@ func update_hand_pivot(delta: float) -> void:
 
 
 func define_sync_state() -> void:
+	# OLD
 	sync_state = {
 		"T": Time.get_unix_time_from_system(),
 		"position": get_global_position(),
@@ -73,6 +74,15 @@ func define_sync_state() -> void:
 		"anim": anim,
 		"pivot": snappedf(hand_pivot.rotation, 0.05)
 	}
+	# NEW
+	$StateSynchronizer.mark_dirty_many_by_path({
+		^":position": global_position,
+		^":flipped":  flipped,
+		^":anim":     anim,
+		^":pivot":    snappedf(hand_pivot.rotation, 0.05)
+	})
+	# For fast test
+	sync_state_defined.emit({})
 
 
 func _set_character_class(new_class: String):

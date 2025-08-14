@@ -1,9 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=15 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/entities/characters/character.gd" id="1_uqmoo"]
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
 [ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
 [ext_resource type="Script" uid="uid://dh7lhiis78ck7" path="res://source/common/entities/gameplay/health/health_component.gd" id="4_cgfpq"]
+[ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/state_synchronizer.gd" id="5_eyotc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nkgjx"]
 atlas = ExtResource("2_l11e3")
@@ -112,3 +113,8 @@ step = 0.5
 value = 84.5
 allow_greater = true
 show_percentage = false
+
+[node name="StateSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root_node")]
+script = ExtResource("5_eyotc")
+root_node = NodePath("..")
+metadata/_custom_type_script = "uid://d1a30n4ktgm71"

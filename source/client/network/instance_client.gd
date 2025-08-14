@@ -10,12 +10,44 @@ var entity_collection: Dictionary = {}
 var last_state: Dictionary = {"T" = 0.0}
 
 var local_player: LocalPlayer
+var synchronizer_manager: StateSynchronizerManagerClient
+var instance_map: Map
 
 
 func _ready() -> void:
 	Events.message_submitted.connect(player_submit_message)
 	Events.item_icon_pressed.connect(player_trying_to_change_weapon)
 	Events.data_requested.connect(request_data)
+	
+	synchronizer_manager = StateSynchronizerManagerClient.new()
+	synchronizer_manager.name = "StateSynchronizerManager"
+
+	if has_node("Overworld/ReplicatedProps"):
+		synchronizer_manager.add_container(
+			1_000_000,
+			get_node("Overworld/ReplicatedProps")
+		)
+	add_child(synchronizer_manager, true)
+
+#@onready var sync_mgr: StateSynchronizerManagerClient = $"../StateSynchronizerManagerClient"
+#@onready var syn: StateSynchronizer = $StateSynchronizer
+#@onready var _send_timer := Timer.new()
+#var my_eid: int
+#
+#func _ready() -> void:
+	#_send_timer.wait_time = 0.05 # 20 Hz
+	#_send_timer.one_shot = false
+	#_send_timer.autostart = true
+	#_send_timer.timeout.connect(_flush_my_delta)
+	#add_child(_send_timer)
+#
+#func _flush_my_delta() -> void:
+	#var pairs: Array = syn.collect_dirty_pairs()
+	#if pairs.size() == 0:
+		#return
+	#sync_mgr.send_my_delta(my_eid, pairs)
+
+
 
 
 @rpc("authority", "call_remote", "reliable", 0)
@@ -78,7 +110,11 @@ func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 		new_player = LOCAL_PLAYER.instantiate() as LocalPlayer
 		new_player.sync_state_defined.connect(
 			func(sync_state: Dictionary) -> void:
-				fetch_player_state.rpc_id(1, sync_state)
+				synchronizer_manager.send_my_delta(
+					player_id,
+					synchronizer_manager.entities[player_id].collect_dirty_pairs()
+				)
+				#fetch_player_state.rpc_id(1, sync_state)
 		)
 		new_player.player_action.connect(
 			func(action_index: int, action_direction: Vector2) -> void:
@@ -92,10 +128,15 @@ func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	entity_collection[player_id] = new_player
 	
 	add_child(new_player)
-
+	synchronizer_manager.add_entity(
+		player_id, 
+		new_player.get_node_or_null("StateSynchronizer")
+	)
 
 @rpc("authority", "call_remote", "reliable", 0)
 func despawn_player(player_id: int) -> void:
+	synchronizer_manager.remove_entity(player_id)
+	# OLD
 	if entity_collection.has(player_id):
 		(entity_collection[player_id] as Entity).queue_free()
 		entity_collection.erase(player_id)

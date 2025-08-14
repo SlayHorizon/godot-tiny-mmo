@@ -13,7 +13,8 @@ func _on_data_received(data: Dictionary, data_type: String) -> void:
 	if data.is_empty() or data_type != "guild":
 		return
 	data = guild_data
-	prepare_menu()
+	if visible:
+		prepare_menu()
 
 
 func _on_close_button_pressed() -> void:

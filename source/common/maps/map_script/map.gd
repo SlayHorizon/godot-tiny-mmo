@@ -17,3 +17,7 @@ func get_spawn_position(warper_id: int = 0) -> Vector2:
 	if warpers.has(warper_id):
 		return warpers[warper_id].global_position
 	return Vector2.ZERO
+
+
+func get_default_state_synchronizers() -> Array[StateSynchronizer]:
+	return find_children("*", "StateSynchronizer", true) as Array[StateSynchronizer]
