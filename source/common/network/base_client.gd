@@ -3,9 +3,9 @@ extends Node
 
 
 # Client Default Configuration / Set with load_client_configuration()
-var address := "127.0.0.1"
+var address: String = "127.0.0.1"
 var port: int = 8043
-var certificate_path := "res://test_config/tls/certificate.crt"
+var certificate_path: String = "res://test_config/tls/certificate.crt"
 
 # Client Components
 var client: WebSocketMultiplayerPeer
