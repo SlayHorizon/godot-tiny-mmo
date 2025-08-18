@@ -5,20 +5,6 @@ extends Node
 
 
 func _ready() -> void:
-	# Dirty startup code, delete later:
-	PathRegistry.reset()
-	PathRegistry.register_field(":position", PathRegistry.WIRE_VEC2_F32)
-	PathRegistry.register_field(":flipped",  PathRegistry.WIRE_BOOL)
-	PathRegistry.register_field(":anim",     PathRegistry.WIRE_VARIANT)
-	PathRegistry.register_field(":pivot",    PathRegistry.WIRE_F32)
-
-	PathRegistry.register_field(":active", PathRegistry.WIRE_BOOL)
-	PathRegistry.register_field(":visible", PathRegistry.WIRE_BOOL)
-	PathRegistry.register_field("Sprite2D:visible", PathRegistry.WIRE_BOOL)
-	PathRegistry.register_field("CollisionShape2D:disabled", PathRegistry.WIRE_BOOL)
-
-	# end
-	
 	var features: Dictionary[String, Callable] = {
 		"client": start_as_client,
 		"gateway-server": start_as_gateway_server,

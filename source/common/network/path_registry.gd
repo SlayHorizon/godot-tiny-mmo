@@ -21,6 +21,21 @@ static var _next_id: int = 1
 static var _version: int = 1
 
 
+static func _static_init() -> void:
+	register_field(":position",	WIRE_VEC2_F32)
+	register_field(":flipped",	WIRE_BOOL)
+	register_field(":anim",		WIRE_VARIANT)
+	register_field(":pivot",	WIRE_F32)
+
+	register_field(":display_name",		WIRE_VARIANT)
+	register_field(":character_class",	WIRE_VARIANT)
+	
+	register_field("AbilitySystemComponent/AttributesMirror:health", WIRE_F32)
+	register_field("AbilitySystemComponent/AttributesMirror:health_max", WIRE_F32)
+	register_field("AbilitySystemComponent/AttributesMirror:mana", WIRE_F32)
+	register_field("AbilitySystemComponent/AttributesMirror:mana_max", WIRE_F32)
+
+
 static func reset() -> void:
 	_id_to_path.clear()
 	_path_to_id.clear()

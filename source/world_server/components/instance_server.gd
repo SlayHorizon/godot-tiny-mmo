@@ -168,18 +168,30 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	else:
 		player = instantiate_player(peer_id)
 		fetch_message.rpc_id(peer_id, get_motd(), 1)
-	player.spawn_state[":position"] = instance_map.get_spawn_position(spawn_index)
-	player.just_teleported = true
+	#player.spawn_state[":position"] = instance_map.get_spawn_position(spawn_index)
+	#player.just_teleported = true
+	
+	# Add to scene to ensure _ready of children (ASC/Mirror/Synchronizer) ran.
 	add_child(player, true)
 	entity_collection[peer_id] = player
 	
 	#NEW
-	synchronizer_manager.add_entity(
-		peer_id,
-		player.get_node_or_null("StateSynchronizer")
-	)
-	synchronizer_manager.register_peer(peer_id)
+	var syn: StateSynchronizer = player.get_node("StateSynchronizer")
+	syn.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
+	syn.set_by_path(^":character_class", player.player_resource.character_class)
+	syn.set_by_path(^":display_name", player.player_resource.display_name)
 	
+	# Register in sync manager AFTER we seeded states.
+	synchronizer_manager.add_entity(peer_id, syn)
+	synchronizer_manager.register_peer(peer_id)
+
+	var asc: AbilitySystemComponent = player.get_node_or_null(^"AbilitySystemComponent")
+	var max_hp: float = player.character_resource.base_health + player.character_resource.health_per_level * player.player_resource.level
+	asc.ensure_attr(&"health", max_hp, max_hp)
+	asc.ensure_attr(&"mana", 50.0, 50.0)
+
+	print_debug("baseline server pairs:", syn.capture_baseline())
+
 	connected_peers.append(peer_id)
 	propagate_spawn(peer_id, player.spawn_state)
 
@@ -192,16 +204,16 @@ func instantiate_player(peer_id: int) -> Player:
 		"res://source/common/resources/custom/character/character_collection/" +
 		player_resource.character_class + ".tres"
 	)
+	
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
 	new_player.player_resource = player_resource
-	new_player.spawn_state = {
-		"character_class": player_resource.character_class,
-		"display_name": player_resource.display_name,
-		"health_component:health": character_resource.base_health + character_resource.health_per_level * player_resource.level,
-		"health_component:max_health": character_resource.base_health + character_resource.health_per_level * player_resource.level,
-	}
-	print(new_player.spawn_state)
+	
+	var asc: AbilitySystemComponent = new_player.get_node_or_null(^"AbilitySystemComponent")
+	var max_hp: float = character_resource.base_health + character_resource.health_per_level * player_resource.level
+	asc.ensure_attr(&"health", max_hp, max_hp)
+	asc.ensure_attr(&"mana", 50.0, 50.0)
+	
 	return new_player
 
 ## Spawn the new player on all other client in the current instance

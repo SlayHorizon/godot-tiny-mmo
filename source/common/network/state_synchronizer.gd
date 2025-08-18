@@ -111,6 +111,8 @@ func _mark_dirty_internal(pid: int, path_str: String, value: Variant, only_if_ch
 
 
 func _apply_pairs(pairs: Array) -> void:
+	if not multiplayer.is_server():
+		print(pairs)
 	var count: int = pairs.size()
 	for i in range(count):
 		var p: Array = pairs[i]

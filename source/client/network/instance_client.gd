@@ -120,9 +120,12 @@ func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 			func(action_index: int, action_direction: Vector2) -> void:
 				player_action.rpc_id(1, action_index, action_direction)
 		)
+		new_player.get_node("AbilitySystemComponent")
 	else:
 		new_player = DUMMY_PLAYER.instantiate()
 	new_player.name = str(player_id)
+	
+	
 	new_player.spawn_state = spawn_state
 	
 	entity_collection[player_id] = new_player
