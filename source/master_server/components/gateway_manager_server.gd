@@ -8,7 +8,7 @@ extends BaseServer
 
 
 func _ready() -> void:
-	load_server_configuration("gateway-manager-server", "res://test_config/master_server_config.cfg")
+	load_server_configuration("gateway-manager-server", "res://data/config/master_server_config.cfg")
 	start_server()
 
 

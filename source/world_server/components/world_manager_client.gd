@@ -12,7 +12,7 @@ var world_info: Dictionary
 
 func start_client_to_master_server(_world_info: Dictionary) -> void:
 	world_info = _world_info
-	load_client_configuration("world-manager-client", "res://test_config/world_server_config.cfg")
+	load_client_configuration("world-manager-client", "res://data/config/world_server_config.cfg")
 	start_client()
 
 

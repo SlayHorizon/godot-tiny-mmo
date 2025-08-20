@@ -2,7 +2,7 @@ class_name CmdlineUtils
 
 
 static func get_parsed_args() -> Dictionary:
-	var arguments := {}
+	var arguments: Dictionary = {}
 	for argument: String in OS.get_cmdline_args():
 		if argument.contains("="):
 			var key_value := argument.split("=")

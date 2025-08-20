@@ -11,7 +11,7 @@ var next_world_id: int = 0
 var connected_worlds: Dictionary
 
 func _ready() -> void:
-	load_server_configuration("world-manager-server", "res://test_config/master_server_config.cfg")
+	load_server_configuration("world-manager-server", "res://data/config/master_server_config.cfg")
 	start_server()
 
 

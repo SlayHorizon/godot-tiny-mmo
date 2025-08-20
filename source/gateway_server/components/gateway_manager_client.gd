@@ -12,7 +12,7 @@ var worlds_info: Dictionary
 
 func _ready() -> void:
 	await get_tree().create_timer(1.5).timeout
-	load_client_configuration("gateway-manager-client", "res://test_config/gateway_config.cfg")
+	load_client_configuration("gateway-manager-client", "res://data/config/gateway_config.cfg")
 	start_client()
 
 

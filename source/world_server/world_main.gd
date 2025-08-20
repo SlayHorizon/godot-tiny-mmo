@@ -8,6 +8,13 @@ var world_info: Dictionary
 
 
 func _ready() -> void:
+	# Server tick rate
+	# For comparaison:
+	# Eve Online - 1 tick par second.
+	# Fortnite (Battle royale 100 players) - 30 ticks per second.
+	# Albion Online - 2 ticks per second (to verify).
+	# Valorant (5v5 FPS game) - 128 ticks per second.
+	# I believe it depends of your game and architecture, it's a large topic.
 	Engine.set_physics_ticks_per_second(10) # 60 by default
 	
 	if DisplayServer.get_name() != "headless":
@@ -15,7 +22,7 @@ func _ready() -> void:
 	
 	# Default config path. to use another one, override this;
 	# or write --config=config_file_path.cfg as a launch argument.
-	var error: bool = load_world_config("res://test_config/world_server_config.cfg")
+	var error: bool = load_world_config("res://data/config/world_server_config.cfg")
 	if error:
 		printerr("World server loading configuration failed.")
 	else:
@@ -33,7 +40,7 @@ func load_world_config(config_path: String) -> bool:
 	
 	var error: Error = config_file.load(config_path)
 	if error != OK:
-		printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
+		printerr("Failed to load config at \"%s\".\nError: %s" % [config_path, error_string(error)])
 		return true
 	
 	world_info = {

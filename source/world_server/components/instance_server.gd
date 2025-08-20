@@ -208,6 +208,7 @@ func instantiate_player(peer_id: int) -> Player:
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
 	new_player.player_resource = player_resource
+	new_player.character_resource = character_resource
 	
 	var asc: AbilitySystemComponent = new_player.get_node_or_null(^"AbilitySystemComponent")
 	var max_hp: float = character_resource.base_health + character_resource.health_per_level * player_resource.level

@@ -119,6 +119,9 @@ show_percentage = false
 [node name="StateSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root_node")]
 script = ExtResource("5_eyotc")
 root_node = NodePath("..")
+enable_tolerant_compare = null
+eps_f32 = null
+eps_vec2_len2 = null
 metadata/_custom_type_script = "uid://d1a30n4ktgm71"
 
 [node name="AbilitySystemComponent" type="Node" parent="." node_paths=PackedStringArray("synchronizer", "mirror")]

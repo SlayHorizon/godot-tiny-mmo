@@ -64,8 +64,19 @@ func update_hand_pivot(delta: float) -> void:
 		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, delta * hand_pivot_speed)
 		anim = Animations.RUN if input_direction else Animations.IDLE
 
-
+@onready var syn: StateSynchronizer = $StateSynchronizer
+var fid_position: int = PathRegistry.id_of(":position")
+var fid_flipped: int = PathRegistry.id_of(":flipped")
+var fid_anim: int = PathRegistry.id_of(":anim")
+var fid_pivot: int = PathRegistry.id_of(":pivot")
 func define_sync_state() -> void:
+	var pairs: Array[Array] = [
+		[fid_position, global_position],
+		[fid_flipped, flipped],
+		[fid_anim, anim],
+		[fid_pivot, snappedf(hand_pivot.rotation, 0.05)],
+	]
+	syn.mark_many_by_id(pairs, true)
 	# OLD
 	#sync_state = {
 		#"T": Time.get_unix_time_from_system(),
@@ -75,12 +86,12 @@ func define_sync_state() -> void:
 		#"pivot": snappedf(hand_pivot.rotation, 0.05)
 	#}
 	# NEW
-	$StateSynchronizer.mark_dirty_many_by_path({
-		^":position": global_position,
-		^":flipped":  flipped,
-		^":anim":     anim,
-		^":pivot":    snappedf(hand_pivot.rotation, 0.05)
-	})
+	#$StateSynchronizer.mark_dirty_many_by_path({
+		#^":position": global_position,
+		#^":flipped":  flipped,
+		#^":anim":     anim,
+		#^":pivot":    snappedf(hand_pivot.rotation, 0.05)
+	#})
 	# For fast test
 	sync_state_defined.emit({})
 

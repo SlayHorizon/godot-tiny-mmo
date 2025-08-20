@@ -18,7 +18,7 @@ func _ready() -> void:
 			successful_login.rpc_id(peer_id, account_info, worlds_info)
 	)
 	authentication_callback = auth_call
-	load_server_configuration("gateway-server", "res://test_config/gateway_config.cfg")
+	load_server_configuration("gateway-server", "res://data/config/gateway_config.cfg")
 	start_server()
 
 

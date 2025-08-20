@@ -3,19 +3,24 @@ extends EditorPlugin
 
 
 var plugin: EditorInspectorPlugin
+var export_plugin: EditorExportPlugin
 
 
 func _enter_tree():
-	foo()
-	pass
+	export_plugin = preload("res://addons/tinymmo/export_plugin/export_plugin.gd").new()
+	add_export_plugin(export_plugin)
+	#foo()
 	#plugin = preload("res://addons/tinymmo/inspector_plugin.gd").new()
 	#add_inspector_plugin(plugin)
 
 
 func _exit_tree():
+	remove_export_plugin(export_plugin)
 	if plugin:
 		remove_inspector_plugin(plugin)
 
+
+# OLD CODE
 func foo():
 	var accept_dialog := AcceptDialog.new()
 	accept_dialog.exclusive = true
@@ -58,7 +63,7 @@ func _on_accept_dialog_confirmed(dialog: AcceptDialog) -> void:
 			"override_args": false,
 			"override_features": false
 		}, {
-			"arguments": "--config=test_config/world_server_config_hardcore.cfg --headless",
+			"arguments": "--config=data/config/world_server_config_hardcore.cfg --headless",
 			"features": "world-server",
 			"override_args": false,
 			"override_features": false
