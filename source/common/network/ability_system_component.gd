@@ -11,8 +11,8 @@ extends Node
 var _val: Dictionary[StringName, float] = {}   # current
 var _max: Dictionary[StringName, float] = {}   # max
 
-signal attribute_changed(attr: StringName, value: float, max_value: float, source: StringName)
 
+signal attribute_changed(attr: StringName, value: float, max_value: float, source: StringName)
 
 
 static func _val_path(attr: StringName) -> String:
@@ -24,9 +24,6 @@ static func _max_path(attr: StringName) -> String:
 
 func _ready() -> void:
 	pass
-
-
-
 
 
 # -------------------- Public API (serveur) ------------------------------------

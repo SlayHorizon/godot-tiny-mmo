@@ -8,6 +8,7 @@ extends Node
 @export var send_rate_hz_entities: int = 20
 @export var send_rate_hz_props: int = 10
 @export var enable_process_tick: bool = true
+@export var owner_predict_suppress_ms: int = 120
 
 var _accum_ent := 0.0
 var _accum_props := 0.0
@@ -17,6 +18,8 @@ class PeerState:
 	# Future: AOI state, throttling, last_send_ms, etc.
 
 var entities: Dictionary[int, StateSynchronizer] = {}   # eid -> StateSynchronizer
+# owner -> fid -> { "t": ms, "v": value }
+var _owner_recent: Dictionary[int, Dictionary] = {}
 var peers: Dictionary[int, PeerState] = {}              # peer_id -> PeerState
 var containers: Dictionary[int, ReplicatedPropsContainer] = {}  # cid -> container
 
@@ -41,6 +44,17 @@ func _process(delta: float) -> void:
 	if _accum_props >= pint:
 		_accum_props = fmod(_accum_props, pint)
 		_send_container_deltas_one_shot()
+
+
+func _track_client_pairs(eid: int, pairs: Array) -> void:
+	var now := Time.get_ticks_msec()
+	var m: Dictionary = _owner_recent.get(eid, {})
+	for p in pairs:
+		if p.size() < 2:
+			continue
+		var fid: int = p[0]
+		m[fid] = { "t": now, "v": p[1] }
+	_owner_recent[eid] = m
 
 
 # --- Entities (hot) -----------------------------------------------------------
@@ -68,18 +82,38 @@ func _send_entity_deltas_one_shot() -> void:
 		block_bytes_by_eid[eid2] = WireCodec.encode_entity_block(eid2, changed_pairs[eid2])
 
 	# 3) assemble per peer (skip self)
+	var now_ms: float = Time.get_ticks_msec()
 	for peer_id: int in peers:
 		var aoi_eids: Array = _aoi_entities_for(peer_id)
 		var blocks_for_peer: Array = []
+		
 		for e_any in aoi_eids:
-			var e: int = int(e_any)
-			if e == peer_id:
+			var eid: int = int(e_any)
+			
+			var pairs: Array = changed_pairs.get(eid, [])
+			if pairs.is_empty():
 				continue
-			var bb: PackedByteArray = block_bytes_by_eid.get(e, PackedByteArray())
-			if bb.size() > 0:
-				blocks_for_peer.append(bb)
+			
+			if eid == peer_id:
+				var filtered: Array = []
+				for pair: Array in pairs:
+					if pair.size() < 2:
+						continue
+					var fid: int = pair[0]
+					var value: Variant = pair[1]
+					if not _should_suppress_for_owner(peer_id, fid, value, now_ms):
+						filtered.append(pair)
+				if filtered.size() == 0:
+					continue
+				blocks_for_peer.append(WireCodec.encode_entity_block(eid, filtered))
+			else:
+				var bb: PackedByteArray = block_bytes_by_eid.get(eid, PackedByteArray())
+				if bb.size() > 0:
+					blocks_for_peer.append(bb)
+				
 		if blocks_for_peer.size() > 0:
 			on_state_delta.rpc_id(peer_id, WireCodec.assemble_delta_from_blocks(blocks_for_peer))
+	_prune_owner_recent(1000)
 
 
 # --- Props (cold) -------------------------------------------------------------
@@ -249,6 +283,8 @@ func on_client_delta(bytes: PackedByteArray) -> void:
 	if syn != null and pairs.size() > 0:
 		syn.apply_delta(pairs)
 		syn.mark_many_by_id(pairs, false)
+		_track_client_pairs(eid, pairs)
+
 
 
 @rpc("authority", "reliable")
@@ -259,3 +295,49 @@ func on_props_bootstrap(_bytes: PackedByteArray) -> void:
 @rpc("authority", "reliable")
 func on_props_delta(_bytes: PackedByteArray) -> void:
 	pass
+
+
+var _client_owned_fids: Dictionary[int, bool] = {
+	PathRegistry.id_of(":position"): true,
+	PathRegistry.id_of(":anim"): true,
+	PathRegistry.id_of(":flipped"): true,
+	PathRegistry.id_of(":pivot"): true,
+}
+
+func _is_client_owned(fid: int) -> bool:
+	return _client_owned_fids.get(fid, false)
+
+func _should_suppress_for_owner(eid: int, fid: int, value: Variant, now_ms: int) -> bool:
+	# On ne supprime que pour les champs client-owned.
+	if not _is_client_owned(fid):
+		return false
+
+	var m: Dictionary = _owner_recent.get(eid, {})
+	var rec: Dictionary = m.get(fid, {})
+	if rec.is_empty():
+		return false
+
+	if now_ms - int(rec.get("t", 0)) > owner_predict_suppress_ms:
+		return false
+
+	# Égalité "tolérante" pour éviter les micro-diffs float.
+	var wt := PathRegistry.type_of(fid)
+	match wt:
+		PathRegistry.WIRE_VEC2_F32:
+			return (Vector2(rec["v"]) - Vector2(value)).length_squared() < 0.0001
+		PathRegistry.WIRE_F32:
+			return abs(float(rec["v"]) - float(value)) < 0.001
+		_:
+			return rec["v"] == value
+
+
+func _prune_owner_recent(max_age_ms: int) -> void:
+	var now := Time.get_ticks_msec()
+	for eid: int in _owner_recent.keys():
+		var m: Dictionary = _owner_recent[eid]
+		for fid_any in m.keys():
+			var rec: Dictionary = m[fid_any]
+			if now - int(rec.get("t", 0)) > max_age_ms:
+				m.erase(fid_any)
+		if m.is_empty():
+			_owner_recent.erase(eid)

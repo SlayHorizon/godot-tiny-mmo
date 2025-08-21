@@ -66,7 +66,7 @@ func update_hand_pivot(delta: float) -> void:
 		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, delta * hand_pivot_speed)
 		anim = Animations.RUN if input_direction else Animations.IDLE
 
-@onready var syn: StateSynchronizer = $StateSynchronizer
+
 var fid_position: int = PathRegistry.id_of(":position")
 var fid_flipped: int = PathRegistry.id_of(":flipped")
 var fid_anim: int = PathRegistry.id_of(":anim")

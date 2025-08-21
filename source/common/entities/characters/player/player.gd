@@ -17,6 +17,7 @@ var just_teleported: bool = false:
 			await get_tree().create_timer(0.5).timeout
 			just_teleported = false
 
+@onready var syn: StateSynchronizer = $StateSynchronizer
 @onready var display_name_label: Label = $DisplayNameLabel
 
 

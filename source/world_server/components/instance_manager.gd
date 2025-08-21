@@ -31,12 +31,13 @@ func configure_global_roles_and_commands() -> void:
 		"/heal" = load("res://source/world_server/components/chat_command/heal_command.gd").new(),
 		"/size" = load("res://source/world_server/components/chat_command/size_command.gd").new(),
 		"/getid" = load("res://source/world_server/components/chat_command/getid_command.gd").new(),
-		"/help" = load("res://source/world_server/components/chat_command/help_command.gd").new()
+		"/help" = load("res://source/world_server/components/chat_command/help_command.gd").new(),
+		"/set" = load("res://source/world_server/components/chat_command/set_command.gd").new()
 	}
 	
 	ServerInstance.global_role_definitions = {
 		"senior_admin": {
-			"commands": ["/heal", "/size"],
+			"commands": ["/heal", "/size", "/set"],
 			"priority": 5,
 		},
 		"moderator": {

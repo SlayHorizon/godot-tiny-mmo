@@ -26,6 +26,8 @@ static func _static_init() -> void:
 	register_field(":flipped", WIRE_BOOL)
 	register_field(":anim", WIRE_VARIANT)
 	register_field(":pivot", WIRE_F32)
+	
+	register_field(":scale", WIRE_VEC2_F32)
 
 	register_field(":display_name", WIRE_VARIANT)
 	register_field(":character_class", WIRE_VARIANT)
@@ -66,6 +68,7 @@ static func register_field(path: String, wire_type: int = WIRE_VARIANT) -> int:
 
 static func ensure_id(path: String) -> int:
 	var existing: int = _path_to_id.get(path, 0)
+	print_debug(path, existing)
 	if existing != 0:
 		return existing
 	return register_field(path, _id_to_type.get(existing, WIRE_VARIANT))

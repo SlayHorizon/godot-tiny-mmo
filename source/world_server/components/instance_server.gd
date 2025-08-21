@@ -16,7 +16,8 @@ var local_role_definitions: Dictionary[String, Dictionary]
 var local_role_assignments: Dictionary[int, PackedStringArray]
 
 
-var entity_collection: Dictionary = {}#[int, Entity]
+#var entity_collection: Dictionary = {}#[int, Entity]
+var players_by_peer_id: Dictionary[int, Player]
 ## Current connected peers to the instance.
 var connected_peers: PackedInt64Array = PackedInt64Array()
 ## Peers coming from another instance.
@@ -40,16 +41,6 @@ func _ready() -> void:
 	synchronizer_manager.name = "StateSynchronizerManager"
 	
 	add_child(synchronizer_manager, true)
-
-
-func _physics_process(_delta: float) -> void:
-	return
-	var state: Dictionary = {"EC" = {}}
-	for entity_id: int in entity_collection:
-		state["EC"][entity_id] = (entity_collection[entity_id] as Entity).sync_state
-	state["T"] = Time.get_unix_time_from_system()
-	for peer_id: int in connected_peers:
-		fetch_instance_state.rpc_id(peer_id, state)
 
 
 func load_map(map_path: String) -> void:
@@ -76,74 +67,19 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 	if interaction_area is Teleporter:
 		if not player.just_teleported:
 			player.just_teleported = true
-			update_node(
-				get_path_to(player),
-				{^":position": interaction_area.target.global_position}
-			)
-
-
-
-@rpc("authority", "call_remote", "reliable", 1)
-func update_node(node_path: NodePath, to_update: Dictionary[NodePath, Variant]) -> void:
-	var root: Node = get_node_or_null(node_path)
-	if not root:
-		return
-	var target: Node
-	var target_path: NodePath
-	for path: NodePath in to_update:
-		target_path = TinyNodePath.get_path_to_node(path)
-		if target_path:
-			target = root.get_node_or_null(target_path)
-		else:
-			target = root
-		if not target:
-			continue
-		target.set_indexed(TinyNodePath.get_path_to_property(path), to_update[path])
-		root.spawn_state[path] = to_update[path]
-	
-	for peer_id: int in connected_peers:
-		update_node.rpc_id(peer_id, node_path, to_update)
-
-
-@rpc("authority", "call_remote", "reliable", 1)
-func update_entity(entity: Entity, to_update: Dictionary) -> void:
-	for thing: String in to_update:
-		entity.set_indexed(thing, to_update[thing])
-	for peer_id: int in connected_peers:
-		update_entity.rpc_id(peer_id, entity.name.to_int(), to_update)
-
-
-@rpc("authority", "call_remote", "reliable", 0)
-func fetch_instance_state(_new_state: Dictionary):
-	pass
-
-
-@rpc("any_peer", "call_remote", "reliable", 0)
-func fetch_player_state(sync_state: Dictionary) -> void:
-	var peer_id: int = multiplayer.get_remote_sender_id()
-	if entity_collection.has(peer_id):
-		var entity: Entity = entity_collection[peer_id] as Entity
-		if entity.sync_state["T"] < sync_state["T"]:
-			# Security issue: add a white list
-			#if sync_state.keys().all(func(x): return ["position", "sprite_frames", "animation", "flipped", "T"].any(func(y): return x == y)):
-			for key: String in sync_state:
-				entity.sync_state[key] = sync_state[key]
-			entity.sync_state = entity.sync_state
+			player.syn.set_by_path(^":position", interaction_area.target.global_position)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
 func player_trying_to_change_weapon(weapon_path: String, _side: bool = true) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	# Check if player has the weapon
-	#var entity: Entity = entity_collection[peer_id] as Entity
-	var player: Player = entity_collection[peer_id] as Player
+	
+	var player: Player = players_by_peer_id.get(peer_id, null)
 	if not player:
 		return
 	if player.player_resource.inventory.has(weapon_path):
-		update_node(
-			player.get_path(), 
-			{^":weapon_name_right": weapon_path}
-		)
+		player.syn.set_by_path(^":weapon_name_right", weapon_path)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -154,7 +90,7 @@ func ready_to_enter_instance() -> void:
 
 #region spawn/despawn
 @rpc("authority", "call_remote", "reliable", 0)
-func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
+func spawn_player(peer_id: int) -> void:
 	var player: Player
 	var spawn_index: int = 0
 	if awaiting_peers.has(peer_id):
@@ -164,13 +100,12 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	else:
 		player = instantiate_player(peer_id)
 		fetch_message.rpc_id(peer_id, get_motd(), 1)
-	# OLD
-	#player.spawn_state[":position"] = instance_map.get_spawn_position(spawn_index)
+	
 	player.just_teleported = true
 	
 	# Add to scene to ensure _ready of children (ASC/Mirror/Synchronizer) ran.
 	add_child(player, true)
-	entity_collection[peer_id] = player
+	players_by_peer_id[peer_id] = player
 	
 	#NEW
 	var syn: StateSynchronizer = player.get_node("StateSynchronizer")
@@ -190,7 +125,7 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	print_debug("baseline server pairs:", syn.capture_baseline())
 
 	connected_peers.append(peer_id)
-	propagate_spawn(peer_id, player.spawn_state)
+	_propagate_spawn(peer_id)
 
 func get_motd() -> String:
 	return world_server.world_manager.world_info.get("motd", "Default Welcome")
@@ -216,12 +151,11 @@ func instantiate_player(peer_id: int) -> Player:
 
 ## Spawn the new player on all other client in the current instance
 ## and spawn all other players on the new client.
-func propagate_spawn(player_id: int, spawn_state: Dictionary) -> void:
-	#propagate_rpc(spawn_player)
+func _propagate_spawn(new_player_id: int) -> void:
 	for peer_id: int in connected_peers:
-		spawn_player.rpc_id(peer_id, player_id, spawn_state)
-		if player_id != peer_id:
-			spawn_player.rpc_id(player_id, peer_id, entity_collection[peer_id].spawn_state)
+		spawn_player.rpc_id(peer_id, new_player_id)
+		if new_player_id != peer_id:
+			spawn_player.rpc_id(new_player_id, peer_id)
 
 
 @rpc("authority", "call_remote", "reliable", 0)
@@ -231,18 +165,14 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 	synchronizer_manager.remove_entity(peer_id)
 	synchronizer_manager.unregister_peer(peer_id)
 	
-	if entity_collection.has(peer_id):
-		var player: Entity = entity_collection[peer_id] as Entity
+	var player: Player = players_by_peer_id[peer_id]
+	if player:
 		if delete:
 			player.queue_free()
 		else:
-			# Quick fix for issue #57.
-			player.spawn_state["health_component:health"] = player.get_indexed("health_component:health")
-			player.spawn_state["health_component:max_health"] = player.get_indexed("health_component:max_health")
-			#
 			remove_child(player)
-			
-		entity_collection.erase(peer_id)
+		players_by_peer_id.erase(peer_id)
+	
 	for id: int in connected_peers:
 		despawn_player.rpc_id(id, peer_id)
 #endregion
@@ -331,9 +261,10 @@ func has_command_permission(command_name: String, peer_id: int) -> bool:
 func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
 	#var peer_id: int = multiplayer.get_remote_sender_id()
 	peer_id = multiplayer.get_remote_sender_id()
-	var player: Player = entity_collection.get(peer_id) as Player
+	var player: Player = players_by_peer_id.get(peer_id, null)
 	if not player:
 		return
+	
 	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
 		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))
 	#for connected_peer_id: int in connected_peers:
@@ -343,7 +274,7 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 @rpc("any_peer", "call_remote", "reliable", 1)
 func request_data(data_type: String) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
-	var player: Player = entity_collection.get(peer_id) as Player
+	var player: Player = players_by_peer_id.get(peer_id)
 	if not player:
 		return
 	match data_type:
@@ -369,3 +300,42 @@ func fetch_data(_data: Dictionary, _data_type: String) -> void:
 func propagate_rpc(callable: Callable) -> void:
 	for peer_id: int in connected_peers:
 		callable.rpc_id(peer_id)
+
+
+# -- Helpers joueurs / synchro ------------------------------------------------
+
+func get_player(peer_id: int) -> Player:
+	var p: Player = players_by_peer_id.get(peer_id, null)
+	return p
+
+
+func get_player_syn(peer_id: int) -> StateSynchronizer:
+	var p: Player = get_player(peer_id)
+	return null if p == null else p.get_node_or_null(^"StateSynchronizer")
+
+
+## Fixe une propriété arbitraire relative à la racine du Player via le Synchronizer.
+## Exemple: ^":scale", ^"Sprite2D:modulate", ^"AbilitySystemComponent/AttributesMirror:health"
+func set_player_path_value(peer_id: int, rel_path: NodePath, value: Variant) -> bool:
+	var syn: StateSynchronizer = get_player_syn(peer_id)
+	if syn == null:
+		return false
+	syn.set_by_path(rel_path, value)  # applique local + marque dirty
+	return true
+
+
+## API “propre” pour les attributs (serveur = source de vérité).
+## Utilise l’ASC si présent ; sinon fallback en poussant le miroir.
+func set_player_attr_current(peer_id: int, attr: StringName, value: float) -> bool:
+	var p: Player = get_player(peer_id)
+	if p == null:
+		return false
+
+	var asc: AbilitySystemComponent = p.get_node_or_null(^"AbilitySystemComponent")
+	if asc != null and asc.has_method("set_attr_current"):
+		asc.set_attr_current(attr, value)
+		return true
+
+	# Fallback (si pas encore d'API ASC dédiée) : pousser le miroir côté client.
+	var np := NodePath("AbilitySystemComponent/AttributesMirror:" + String(attr))
+	return set_player_path_value(peer_id, np, value)
