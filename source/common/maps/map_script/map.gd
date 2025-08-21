@@ -3,6 +3,8 @@ class_name Map
 extends Node2D
 
 
+@export var replicated_props_container: ReplicatedPropsContainer
+
 var warpers: Dictionary[int, Warper]
 
 

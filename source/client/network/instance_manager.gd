@@ -21,6 +21,7 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 	var map: Map = load(map_path).instantiate() as Map
 	if not map:
 		return
+	new_instance.instance_map = map
 	
 	map.ready.connect(
 		new_instance.ready_to_enter_instance.rpc_id.bind(1),
@@ -33,7 +34,8 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 	
 	if current_instance:
 		if current_instance.local_player:
-			current_instance.local_player.reparent(new_instance, false)
+			current_instance.remove_child(current_instance.local_player)
+			#current_instance.local_player.reparent(new_instance, false)
 		current_instance.queue_free()
 	current_instance = new_instance
 	

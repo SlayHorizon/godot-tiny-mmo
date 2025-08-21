@@ -15,6 +15,8 @@ var interact_input: bool = false
 
 var state: String = "idle"
 
+var synchronizer_manager: StateSynchronizerManagerClient
+
 @onready var mouse: Node2D = $MouseComponent
 
 
@@ -77,6 +79,9 @@ func define_sync_state() -> void:
 		[fid_pivot, snappedf(hand_pivot.rotation, 0.05)],
 	]
 	syn.mark_many_by_id(pairs, true)
+	synchronizer_manager.send_my_delta(
+		multiplayer.get_unique_id(), syn.collect_dirty_pairs()
+	)
 	# OLD
 	#sync_state = {
 		#"T": Time.get_unix_time_from_system(),
@@ -92,8 +97,6 @@ func define_sync_state() -> void:
 		#^":anim":     anim,
 		#^":pivot":    snappedf(hand_pivot.rotation, 0.05)
 	#})
-	# For fast test
-	sync_state_defined.emit({})
 
 
 func _set_character_class(new_class: String):

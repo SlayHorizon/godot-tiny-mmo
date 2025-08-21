@@ -356,3 +356,11 @@ static func decode_container_block_named(data: PackedByteArray) -> Dictionary:
 		ops_named.append([cid, method, args])
 
 	return { "eid": eid, "spawns": spawns, "pairs": pairs, "despawns": despawns, "ops_named": ops_named }
+
+
+static func peek_container_block_named(data: PackedByteArray) -> Dictionary:
+	# Cheap peek: only read the first 4 bytes (eid) without decoding the whole block.
+	var spb := StreamPeerBuffer.new()
+	spb.data_array = data
+	var eid: int = _get_u32(spb)
+	return { "eid": eid }

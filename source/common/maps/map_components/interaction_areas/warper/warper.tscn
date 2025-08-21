@@ -5,6 +5,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5fu4t"]
 
 [node name="Warper" type="Area2D"]
+monitorable = false
 script = ExtResource("1_w00al")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

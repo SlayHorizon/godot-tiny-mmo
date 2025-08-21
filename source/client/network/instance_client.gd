@@ -9,7 +9,7 @@ var entity_collection: Dictionary = {}
 
 var last_state: Dictionary = {"T" = 0.0}
 
-var local_player: LocalPlayer
+static var local_player: LocalPlayer
 var synchronizer_manager: StateSynchronizerManagerClient
 var instance_map: Map
 
@@ -22,11 +22,9 @@ func _ready() -> void:
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
 
-	if has_node("Overworld/ReplicatedProps"):
-		synchronizer_manager.add_container(
-			1_000_000,
-			get_node("Overworld/ReplicatedProps")
-		)
+	if instance_map.replicated_props_container:
+		synchronizer_manager.add_container(1_000_000, instance_map.replicated_props_container)
+
 	add_child(synchronizer_manager, true)
 
 #@onready var sync_mgr: StateSynchronizerManagerClient = $"../StateSynchronizerManagerClient"
@@ -106,35 +104,47 @@ func ready_to_enter_instance() -> void:
 @rpc("authority", "call_remote", "reliable", 0)
 func spawn_player(player_id: int, spawn_state: Dictionary) -> void:
 	var new_player: Player
-	if player_id == multiplayer.get_unique_id() and not local_player:
-		new_player = LOCAL_PLAYER.instantiate() as LocalPlayer
-		new_player.sync_state_defined.connect(
-			func(sync_state: Dictionary) -> void:
-				synchronizer_manager.send_my_delta(
-					player_id,
-					synchronizer_manager.entities[player_id].collect_dirty_pairs()
-				)
+	if player_id == multiplayer.get_unique_id():
+		if local_player and is_instance_valid(local_player):
+			new_player = local_player
+		else:
+			new_player = LOCAL_PLAYER.instantiate() as LocalPlayer
+			local_player = new_player
+			# OLD
+			# NEW
+			#new_player.sync_state_defined.connect(
+				#func(sync_state: Dictionary) -> void:
+					#synchronizer_manager.send_my_delta(
+						#player_id,
+						#synchronizer_manager.entities[player_id].collect_dirty_pairs()
+					#)
 				#fetch_player_state.rpc_id(1, sync_state)
-		)
-		new_player.player_action.connect(
-			func(action_index: int, action_direction: Vector2) -> void:
-				player_action.rpc_id(1, action_index, action_direction)
-		)
-		new_player.get_node("AbilitySystemComponent")
+			#)
+			new_player.player_action.connect(
+				func(action_index: int, action_direction: Vector2) -> void:
+					player_action.rpc_id(1, action_index, action_direction)
+			)
+			#new_player.get_node("AbilitySystemComponent") What is was trying here ? Should delete this line ?
+		# Always update sync manager.
+		local_player.synchronizer_manager = synchronizer_manager
 	else:
 		new_player = DUMMY_PLAYER.instantiate()
+	
 	new_player.name = str(player_id)
-	
-	
 	new_player.spawn_state = spawn_state
 	
 	entity_collection[player_id] = new_player
 	
-	add_child(new_player)
-	synchronizer_manager.add_entity(
-		player_id, 
-		new_player.get_node_or_null("StateSynchronizer")
-	)
+	if not new_player.is_inside_tree():
+		add_child(new_player)
+	var sync: StateSynchronizer = new_player.get_node("StateSynchronizer")
+	synchronizer_manager.add_entity(player_id, sync) 
+	
+
+
+func add_local_player() -> void:
+	pass
+
 
 @rpc("authority", "call_remote", "reliable", 0)
 func despawn_player(player_id: int) -> void:

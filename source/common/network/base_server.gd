@@ -60,7 +60,7 @@ func start_server() -> void:
 		init_multiplayer_api()
 	
 	server = WebSocketMultiplayerPeer.new()
-	print_debug(certificate_path)
+	
 	var tls_options := TLSOptionsUtils.create_server_tls_options(key_path, certificate_path)
 	var error := server.create_server(port, "*", tls_options)
 	if error != OK:

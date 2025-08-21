@@ -38,8 +38,8 @@ func _ready() -> void:
 	
 	synchronizer_manager = StateSynchronizerManagerServer.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
-	add_child(synchronizer_manager, true)
 	
+	add_child(synchronizer_manager, true)
 
 
 func _physics_process(_delta: float) -> void:
@@ -60,15 +60,11 @@ func load_map(map_path: String) -> void:
 	#add_child(CameraProbe.new())
 	
 	ready.connect(func():
+		if instance_map.replicated_props_container:
+			synchronizer_manager.add_container(1_000_000, instance_map.replicated_props_container)
 		for child in instance_map.get_children():
 			if child is InteractionArea:
 				child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
-			if child is ReplicatedPropsContainer:
-				const EID_BASE_CONTAINERS := 1_000_000
-				synchronizer_manager.add_container(
-					1_000_000,
-					child
-				)
 		)
 
 
@@ -168,8 +164,9 @@ func spawn_player(peer_id: int, spawn_state: Dictionary = {}) -> void:
 	else:
 		player = instantiate_player(peer_id)
 		fetch_message.rpc_id(peer_id, get_motd(), 1)
+	# OLD
 	#player.spawn_state[":position"] = instance_map.get_spawn_position(spawn_index)
-	#player.just_teleported = true
+	player.just_teleported = true
 	
 	# Add to scene to ensure _ready of children (ASC/Mirror/Synchronizer) ran.
 	add_child(player, true)
@@ -230,6 +227,10 @@ func propagate_spawn(player_id: int, spawn_state: Dictionary) -> void:
 @rpc("authority", "call_remote", "reliable", 0)
 func despawn_player(peer_id: int, delete: bool = false) -> void:
 	connected_peers.remove_at(connected_peers.find(peer_id))
+	
+	synchronizer_manager.remove_entity(peer_id)
+	synchronizer_manager.unregister_peer(peer_id)
+	
 	if entity_collection.has(peer_id):
 		var player: Entity = entity_collection[peer_id] as Entity
 		if delete:
