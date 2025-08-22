@@ -19,7 +19,7 @@ func use_ability(entity: Entity, direction: Vector2) -> void:
 	
 	arrow.source = entity
 	arrow.effect = EffectSpec.damage(
-		entity.name.to_int(), damage, ["Damage.Physical", "Projectile", "BasicAttack"], {"pen_tier":1}
+		damage, ["Damage.Physical", "Projectile", "BasicAttack"], {"pen_tier":1}
 	)
 	
 	entity.add_child(arrow)

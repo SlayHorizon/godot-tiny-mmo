@@ -1,22 +1,22 @@
 # EffectSpec.gd
 class_name EffectSpec
-extends RefCounted
+extends Resource
 
-var source_eid: int
-# ex: ["Damage.Physical", "Projectile", "BasicAttack"]
-var tags: PackedStringArray = []
-# ou {"heal": x}, tu peux en mettre plusieurs
-var magnitudes := {&"damage": 0.0}
-# ex: {"pierce_count":2, "falloff":0.8, "pen_tier":1}
-var meta := {}
-# ex: ["Armor"]
+@export var tags: PackedStringArray = []
+var magnitudes: Dictionary = {} # key:StringName -> float
 var ignore_layers: PackedStringArray = []
+var meta: Dictionary = {}
 
-# Helper to make damage "attack"
-static func damage(src: int, amount: float, tags:=[], meta:={}) -> EffectSpec:
-	var s := EffectSpec.new()
-	s.source_eid = src
+static func damage(amount: float, tags: PackedStringArray = [], meta: Dictionary = {}) -> EffectSpec:
+	var s: EffectSpec = EffectSpec.new()
 	s.tags = tags
-	s.magnitudes[&"damage"] = amount
+	s.magnitudes[StringName("damage")] = amount
+	s.meta = meta
+	return s
+
+static func heal(amount: float, tags: PackedStringArray = [], meta: Dictionary = {}) -> EffectSpec:
+	var s: EffectSpec = EffectSpec.new()
+	s.tags = tags
+	s.magnitudes[StringName("heal")] = amount
 	s.meta = meta
 	return s

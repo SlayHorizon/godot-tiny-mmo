@@ -37,6 +37,12 @@ func _on_body_entered(body: Node2D) -> void:
 	if body == source or not body.has_node(^"AbilitySystemComponent"):
 		return
 	var asc: AbilitySystemComponent = body.get_node(^"AbilitySystemComponent")
+	var burn := BurnDotEffect.new()
+	burn.name_id = &"RedBuffBurn"
+	burn.duration = 3.0
+	burn.period = 0.5
+	asc.add_effect(burn, null)
+
 	asc.apply_spec_server(
 		effect,
 		source.get_node(^"AbilitySystemComponent")
