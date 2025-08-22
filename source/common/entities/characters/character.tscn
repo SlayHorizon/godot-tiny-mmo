@@ -1,12 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=16 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/entities/characters/character.gd" id="1_uqmoo"]
 [ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_l11e3"]
 [ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
-[ext_resource type="Script" uid="uid://dh7lhiis78ck7" path="res://source/common/entities/gameplay/health/health_component.gd" id="4_cgfpq"]
 [ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/state_synchronizer.gd" id="5_eyotc"]
-[ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/network/ability_system_component.gd" id="6_fg3fs"]
-[ext_resource type="Script" uid="uid://natfmyvgikpe" path="res://source/common/network/attributes_mirror.gd" id="7_k71qx"]
+[ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/combat/ability_system_component.gd" id="6_fg3fs"]
+[ext_resource type="Script" uid="uid://natfmyvgikpe" path="res://source/common/combat/attributes_mirror.gd" id="7_k71qx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nkgjx"]
 atlas = ExtResource("2_l11e3")
@@ -98,11 +97,6 @@ position = Vector2(-15, 0)
 position = Vector2(0, -16)
 shape = SubResource("RectangleShape2D_eyotc")
 debug_color = Color(0.846048, 0.237298, 0.730831, 0.42)
-
-[node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("hurtbox", "progress_bar")]
-script = ExtResource("4_cgfpq")
-hurtbox = NodePath("../HurtBox")
-progress_bar = NodePath("../ProgressBar")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 offset_left = -16.0

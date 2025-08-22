@@ -22,7 +22,8 @@ var just_teleported: bool = false:
 
 
 func _init() -> void:
-	sync_state = {"T" = 0.0}
+	pass
+	#sync_state = {"T" = 0.0}
 
 
 func _set_display_name(new_name: String) -> void:
@@ -30,7 +31,7 @@ func _set_display_name(new_name: String) -> void:
 	display_name = new_name
 
 
-func _set_sync_state(new_state: Dictionary) -> void:
-	sync_state = new_state
-	for property: String in new_state:
-		set(property, new_state[property])
+#func _set_sync_state(new_state: Dictionary) -> void:
+	#sync_state = new_state
+	#for property: String in new_state:
+		#set(property, new_state[property])

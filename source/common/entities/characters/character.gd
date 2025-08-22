@@ -41,10 +41,19 @@ var pivot: float = 0.0:
 @onready var right_hand_spot: Node2D = $HandOffset/HandPivot/RightHandSpot
 @onready var left_hand_spot: Node2D = $HandOffset/HandPivot/LeftHandSpot
 
-@onready var health_component: HealthComponent = $HealthComponent
-
 
 func _ready() -> void:
+	# NEW
+	$AbilitySystemComponent/AttributesMirror.attribute_local_changed.connect(
+		func(attr: StringName, value: float, max_value: float):
+			print(attr, " value = ", value, "max_value = ", max_value)
+			if attr != &"health":
+				return
+			$ProgressBar.value = value
+			$ProgressBar.max_value = max_value
+	)
+	
+	# OLD
 	if right_hand_spot.get_child_count():
 		equipped_weapon_right = right_hand_spot.get_child(0)
 		equipped_weapon_right.hand.type = hand_type
@@ -121,17 +130,3 @@ func _set_character_class(new_class: String):
 		"res://source/common/resources/custom/character/character_collection/" + new_class + ".tres")
 	animated_sprite.sprite_frames = character_resource.character_sprite
 	character_class = new_class
-
-
-func _set_sync_state(new_state: Dictionary) -> void:
-	sync_state = new_state
-	for property: String in new_state:
-		set(property, new_state[property])
-
-
-func _set_spawn_state(new_state: Dictionary) -> void:
-	spawn_state = new_state
-	if not is_node_ready():
-		await ready
-	for property: String in new_state:
-		set_indexed(property, new_state[property])

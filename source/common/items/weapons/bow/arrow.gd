@@ -1,16 +1,22 @@
 class_name Projectile
 extends Area2D
 
-
-var source: Entity
-var attack: Attack
 var speed: float = 200.0
 var direction: Vector2 = Vector2.RIGHT
 
+var piercing: bool = false
+var pierce_left: int = 0
+# OLD
+var source: Node
+var attack: Attack
+# NEW
+var effect: EffectSpec
 
 func _ready() -> void:
 	# Quick and dirty for tests - Need proper system
-	if OS.has_feature("client"):
+	if multiplayer.is_server():
+		body_entered.connect(_on_body_entered)
+	else:
 		var vosn := VisibleOnScreenNotifier2D.new()
 		vosn.screen_exited.connect(queue_free)
 		add_child(vosn)
@@ -27,10 +33,14 @@ func _physics_process(delta: float) -> void:
 	position += speed * direction * delta
 
 
-#func _on_body_entered(body: Node2D) -> void:
-	#if body == source:
-		#return
-	#if body is Entity:
-		#if not body.health_component:
-			#return
-	#queue_free()
+func _on_body_entered(body: Node2D) -> void:
+	if body == source or not body.has_node(^"AbilitySystemComponent"):
+		return
+	var asc: AbilitySystemComponent = body.get_node(^"AbilitySystemComponent")
+	asc.apply_spec_server(
+		effect,
+		source.get_node(^"AbilitySystemComponent")
+	)
+	if not piercing or pierce_left <= 0:
+		queue_free()
+	pierce_left -= 1

@@ -1,3 +1,4 @@
+# ArrowShootAbility.gd
 extends AbilityResource
 
 
@@ -15,5 +16,10 @@ func use_ability(entity: Entity, direction: Vector2) -> void:
 	arrow.top_level = true
 	arrow.direction = direction
 	arrow.global_position = entity.global_position
-	arrow.attack = Attack.new(entity, damage)
+	
+	arrow.source = entity
+	arrow.effect = EffectSpec.damage(
+		entity.name.to_int(), damage, ["Damage.Physical", "Projectile", "BasicAttack"], {"pen_tier":1}
+	)
+	
 	entity.add_child(arrow)

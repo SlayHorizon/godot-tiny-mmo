@@ -82,21 +82,6 @@ func define_sync_state() -> void:
 	synchronizer_manager.send_my_delta(
 		multiplayer.get_unique_id(), syn.collect_dirty_pairs()
 	)
-	# OLD
-	#sync_state = {
-		#"T": Time.get_unix_time_from_system(),
-		#"position": get_global_position(),
-		#"flipped": flipped,
-		#"anim": anim,
-		#"pivot": snappedf(hand_pivot.rotation, 0.05)
-	#}
-	# NEW
-	#$StateSynchronizer.mark_dirty_many_by_path({
-		#^":position": global_position,
-		#^":flipped":  flipped,
-		#^":anim":     anim,
-		#^":pivot":    snappedf(hand_pivot.rotation, 0.05)
-	#})
 
 
 func _set_character_class(new_class: String):
@@ -106,15 +91,3 @@ func _set_character_class(new_class: String):
 	)
 	animated_sprite.sprite_frames = character_resource.character_sprite
 	character_class = new_class
-
-
-func _set_sync_state(new_state: Dictionary) -> void:
-	var update_state: Dictionary
-
-	for key: String in new_state:
-		if not sync_state.has(key) or sync_state[key] != new_state[key]:
-			update_state[key] = new_state[key]
-
-	sync_state = new_state
-	if update_state.size() > 1:
-		sync_state_defined.emit(update_state)
