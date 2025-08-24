@@ -61,8 +61,10 @@ func start_server() -> void:
 	
 	server = WebSocketMultiplayerPeer.new()
 	
-	var tls_options := TLSOptionsUtils.create_server_tls_options(key_path, certificate_path)
-	var error := server.create_server(port, "*", tls_options)
+	#var tls_options := TLSOptionsUtils.create_server_tls_options(key_path, certificate_path)
+	# If letting Caddy  takes care of TLS
+	var tls_options: TLSOptions = null
+	var error: Error = server.create_server(port, "*", tls_options)
 	if error != OK:
 		printerr("Error while creating server: %s" % error_string(error))
 	

@@ -121,14 +121,16 @@ func spawn_player(peer_id: int) -> void:
 	var max_hp: float = player.character_resource.base_health + player.character_resource.health_per_level * player.player_resource.level
 	asc.ensure_attr(&"health", max_hp, max_hp)
 	asc.ensure_attr(&"mana", 50.0, 50.0)
+	asc.ensure_attr(&"armor", 0.0, 0.0)
+	
+	asc.set_base_max_server(&"health", max_hp) 
+	asc.set_base_server(&"armor", 0.0)
 
 	print_debug("baseline server pairs:", syn.capture_baseline())
 
 	connected_peers.append(peer_id)
 	_propagate_spawn(peer_id)
 
-func get_motd() -> String:
-	return world_server.world_manager.world_info.get("motd", "Default Welcome")
 
 func instantiate_player(peer_id: int) -> Player:
 	var player_resource: PlayerResource = world_server.connected_players[peer_id]
@@ -148,6 +150,11 @@ func instantiate_player(peer_id: int) -> Player:
 	asc.ensure_attr(&"mana", 50.0, 50.0)
 	
 	return new_player
+
+
+func get_motd() -> String:
+	return world_server.world_manager.world_info.get("motd", "Default Welcome")
+
 
 ## Spawn the new player on all other client in the current instance
 ## and spawn all other players on the new client.
@@ -264,7 +271,11 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	var player: Player = players_by_peer_id.get(peer_id, null)
 	if not player:
 		return
-	
+	#player.get_node(^"AbilitySystemComponent")
+	const THORNMAIL = preload("res://source/common/combat/equipable_item/resources/thornmail.tres")
+	print_debug(player.equipment_component._slots)
+	if not player.equipment_component._slots.has(&"chest"):
+		player.equipment_component.equip(&"chest", THORNMAIL)
 	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
 		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))
 	#for connected_peer_id: int in connected_peers:

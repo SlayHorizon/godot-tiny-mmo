@@ -157,21 +157,64 @@ func unsubscribe_all(owner_id: int) -> void:
 	_by_owner.erase(owner_id)
 
 
+#func _emit_event(event: StringName, ev: GameplayEvent) -> void:
+	#var per_event: Dictionary = _subs.get(event, {})
+#
+	## bucket = listeners wildcard + listeners par tag présent dans le spec
+	#var bucket: Array = []
+	#var base: Array = per_event.get(&"", [])
+	#if base.size() > 0:
+		#bucket.append_array(base)
+#
+	#for t in ev.spec.tags:
+		#var arr: Array = per_event.get(StringName(t), [])
+		#if arr.size() > 0:
+			#bucket.append_array(arr)
+#
+	## boucle sans typer la variable d’itération pour éviter l’erreur de membre
+	#for i in range(bucket.size()):
+		#if ev.canceled:
+			#break
+		#var l: Listener = bucket[i]
+		#l.cb.call(ev, self)
 func _emit_event(event: StringName, ev: GameplayEvent) -> void:
 	var per_event: Dictionary = _subs.get(event, {})
 
-	# bucket = listeners wildcard + listeners par tag présent dans le spec
+	# Wildcard (tag vide) => écoute tout
 	var bucket: Array = []
 	var base: Array = per_event.get(&"", [])
 	if base.size() > 0:
 		bucket.append_array(base)
 
-	for t in ev.spec.tags:
-		var arr: Array = per_event.get(StringName(t), [])
-		if arr.size() > 0:
-			bucket.append_array(arr)
+	# Écoute par tag + préfixes hiérarchiques: "Damage", "Damage.Magic", etc.
+	var seen: Dictionary = {}
+	for t_any in ev.spec.tags:
+		var tn: String = String(t_any)
 
-	# boucle sans typer la variable d’itération pour éviter l’erreur de membre
+		# exact
+		var arr: Array = per_event.get(StringName(tn), [])
+		if arr.size() > 0:
+			for l in arr:
+				if not seen.has(l):
+					bucket.append(l)
+					seen[l] = true
+
+		# préfixes "Damage" pour "Damage.Magic.Spell"
+		var start: int = 0
+		while true:
+			var dot: int = tn.find(".", start)
+			if dot == -1:
+				break
+			var prefix: String = tn.substr(0, dot)
+			arr = per_event.get(StringName(prefix), [])
+			if arr.size() > 0:
+				for l in arr:
+					if not seen.has(l):
+						bucket.append(l)
+						seen[l] = true
+			start = dot + 1
+
+	# Appels (déjà triés à l'insertion)
 	for i in range(bucket.size()):
 		if ev.canceled:
 			break
@@ -332,3 +375,70 @@ func _apply_heal_pools(ev: GameplayEvent) -> void:
 
 func _armor_formula(armor: float) -> float:
 	return armor / (abs(armor) + 100.0)
+
+
+
+
+# --- Modifiers ---------------------------------------------------------------
+
+var _mods: Array = []                         # Array[StatModifier]
+var _base_plain: Dictionary = {}              # attr -> base (canal VALUE)
+var _base_max: Dictionary = {}                # attr -> base max (canal MAX)
+
+func set_base_server(attr: StringName, base: float) -> void:
+	assert(multiplayer.is_server())
+	_base_plain[attr] = base
+	_recalc_attr(attr, StatModifier.Channel.VALUE)
+
+func set_base_max_server(attr: StringName, base_max: float) -> void:
+	assert(multiplayer.is_server())
+	_base_max[attr] = base_max
+	_recalc_attr(attr, StatModifier.Channel.MAX)
+
+func get_base(attr: StringName) -> float:
+	if _base_plain.has(attr):
+		return float(_base_plain[attr])
+	return get_value(attr)
+
+func get_base_max(attr: StringName) -> float:
+	if _base_max.has(attr):
+		return float(_base_max[attr])
+	return get_max(attr)
+
+func add_modifier(mod: StatModifier) -> void:
+	_mods.append(mod)
+	_recalc_attr(mod.attr, mod.channel)
+
+func remove_modifier_by_id(runtime_id: int) -> bool:
+	for m in _mods:
+		var mm: StatModifier = m
+		if mm.runtime_id == runtime_id:
+			_mods.erase(mm)
+			# on ne sait pas quel canal sans regarder le mod retiré,
+			# donc on recalcule les deux canaux pour être sûr.
+			_recalc_attr(mm.attr, StatModifier.Channel.VALUE)
+			_recalc_attr(mm.attr, StatModifier.Channel.MAX)
+			return true
+	return false
+
+func _recalc_attr(attr: StringName, channel: int) -> void:
+	var add_sum: float = 0.0
+	var mul_prod: float = 1.0
+
+	for m in _mods:
+		var mm: StatModifier = m
+		if mm.attr != attr or mm.channel != channel:
+			continue
+		if mm.op == StatModifier.Op.ADD:
+			add_sum += mm.magnitude
+		else:
+			mul_prod *= (1.0 + mm.magnitude)
+
+	if channel == StatModifier.Channel.MAX:
+		var base_max: float = get_base_max(attr)
+		var final_max: float = (base_max + add_sum) * mul_prod
+		set_max_server(attr, final_max, true)
+	else:
+		var base_v: float = get_base(attr)
+		var final_v: float = (base_v + add_sum) * mul_prod
+		set_value_server(attr, final_v)

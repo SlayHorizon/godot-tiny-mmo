@@ -41,6 +41,10 @@ var pivot: float = 0.0:
 @onready var right_hand_spot: Node2D = $HandOffset/HandPivot/RightHandSpot
 @onready var left_hand_spot: Node2D = $HandOffset/HandPivot/LeftHandSpot
 
+@onready var state_synchronizer: StateSynchronizer = $StateSynchronizer
+@onready var ability_system_component: AbilitySystemComponent = $AbilitySystemComponent
+@onready var equipment_component: EquipmentComponent = $EquipmentComponent
+
 
 func _ready() -> void:
 	# NEW
@@ -62,12 +66,6 @@ func _ready() -> void:
 		equipped_weapon_left = left_hand_spot.get_child(0)
 		equipped_weapon_right.hand.type = hand_type
 		equipped_weapon_right.hand.side = Hand.Sides.LEFT
-	$AbilitySystemComponent/AttributesMirror.attribute_local_changed.connect(
-		func(attr: StringName, value: float, max_value: float):
-			print_debug(attr, value, max_value, multiplayer.is_server())
-			$ProgressBar.value = value
-			$ProgressBar.max_value = max_value
-	)
 
 
 func change_weapon(weapon_path: String, _side: bool = true) -> void:
