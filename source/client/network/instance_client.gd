@@ -86,7 +86,7 @@ func spawn_player(player_id: int) -> void:
 	if not new_player.is_inside_tree():
 		add_child(new_player)
 	
-	var sync: StateSynchronizer = new_player.get_node(^"StateSynchronizer")
+	var sync: StateSynchronizer = new_player.state_synchronizer
 	synchronizer_manager.add_entity(player_id, sync) 
 	
 

@@ -247,6 +247,12 @@ func _process(delta: float) -> void:
 	for e2 in to_remove:
 		e2.on_removed(self)
 		_active_effects.erase(e2)
+	
+	
+	_res_clock += delta
+	for r in _res_runtime:
+		var gr: GameplayResource = r
+		gr.tick_server(self, delta)
 
 func add_effect(eff: GameplayEffect, source: AbilitySystemComponent = null) -> void:
 	# Stacking/refresh
@@ -442,3 +448,49 @@ func _recalc_attr(attr: StringName, channel: int) -> void:
 		var base_v: float = get_base(attr)
 		var final_v: float = (base_v + add_sum) * mul_prod
 		set_value_server(attr, final_v)
+
+
+
+# In AbilitySystemComponent.gd (new fields)
+@export var resources: Array = []   # Array[GameplayResource] as subresources on the ASC node or injected at spawn
+var _res_runtime: Array = []        # instantiated resource modules
+var _res_clock: float = 0.0
+
+func install_resources(list: Array, base_stats: Dictionary) -> void:
+	# list contains GameplayResource instances (Resources). Duplicate to get per-ASC instances if needed.
+	for r in list:
+		var gr: GameplayResource = r.duplicate()
+		_res_runtime.append(gr)
+		gr.setup(self, base_stats)
+
+func uninstall_all_resources() -> void:
+	for r in _res_runtime:
+		var gr: GameplayResource = r
+		gr.teardown(self)
+	_res_runtime.clear()
+
+
+# Try pay costs: { "mana": 40.0, "hp": 20.0, "fury": 30.0 } etc.
+func try_pay_costs(costs: Dictionary, ctx: Dictionary) -> bool:
+	# 1) validate all
+	for k in costs.keys():
+		var tag: StringName = k
+		var amt: float = float(costs[tag])
+		var ok: bool = false
+		for r in _res_runtime:
+			var gr: GameplayResource = r
+			if gr.can_pay(self, tag, amt, ctx):
+				ok = true
+				break
+		if not ok:
+			return false
+	# 2) pay
+	for k2 in costs.keys():
+		var tag2: StringName = k2
+		var amt2: float = float(costs[tag2])
+		for r2 in _res_runtime:
+			var gr2: GameplayResource = r2
+			if gr2.can_pay(self, tag2, amt2, ctx):
+				gr2.pay(self, tag2, amt2, ctx)
+				break
+	return true

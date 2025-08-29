@@ -33,16 +33,9 @@ static func _static_init() -> void:
 	register_field(":character_class", WIRE_VARIANT)
 	
 	
-	register_field("AbilitySystemComponent/AttributesMirror:health",       WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:health_max",   WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:mana",         WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:mana_max",     WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:shield",       WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:shield_max",   WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:armor",        WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:armor_max",    WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:magic_resist", WIRE_F32)
-	register_field("AbilitySystemComponent/AttributesMirror:magic_resist_max", WIRE_F32)
+	# Stat fields are registered at run-time.
+	#register_field("AbilitySystemComponent/AttributesMirror:health",       WIRE_F32)
+	#...
 
 
 

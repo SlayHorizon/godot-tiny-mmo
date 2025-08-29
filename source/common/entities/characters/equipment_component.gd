@@ -7,6 +7,7 @@ var _slots: Dictionary[StringName, EquipableItem] = {}
 func _ready() -> void:
 	pass
 
+
 func equip(slot: StringName, item: EquipableItem) -> bool:
 	if _slots.has(slot):
 		_unequip_internal(slot)

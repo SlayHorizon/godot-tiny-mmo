@@ -72,9 +72,11 @@ func remove_container(cid: int) -> void:
 func on_bootstrap(payload: PackedByteArray) -> void:
 	var msg: Dictionary = WireCodec.decode_bootstrap(payload)
 
-	var updates: Array = msg.get("map_updates", [])
-	if updates.size() > 0:
-		PathRegistry.apply_map_updates(updates)
+	# Updated already applied inside codec
+	#var updates: Array = msg.get("map_updates", [])
+	
+	#if updates.size() > 0:
+		#PathRegistry.apply_map_updates(updates)
 
 	var objects: Array = msg.get("objects", [])
 	for obj_any in objects:

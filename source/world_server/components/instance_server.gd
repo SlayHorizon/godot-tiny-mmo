@@ -93,6 +93,7 @@ func ready_to_enter_instance() -> void:
 func spawn_player(peer_id: int) -> void:
 	var player: Player
 	var spawn_index: int = 0
+	
 	if awaiting_peers.has(peer_id):
 		player = awaiting_peers[peer_id]["player"]
 		spawn_index = awaiting_peers[peer_id]["target_id"]
@@ -102,31 +103,38 @@ func spawn_player(peer_id: int) -> void:
 		fetch_message.rpc_id(peer_id, get_motd(), 1)
 	
 	player.just_teleported = true
-	
-	# Add to scene to ensure _ready of children (ASC/Mirror/Synchronizer) ran.
 	add_child(player, true)
 	players_by_peer_id[peer_id] = player
 	
 	#NEW
-	var syn: StateSynchronizer = player.get_node("StateSynchronizer")
-	syn.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
-	syn.set_by_path(^":character_class", player.player_resource.character_class)
-	syn.set_by_path(^":display_name", player.player_resource.display_name)
+	var syn: StateSynchronizer = player.syn
+	player.state_synchronizer.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
+	#var syn: StateSynchronizer = player.state_synchronizer
+	#syn.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
+	#syn.set_by_path(^":character_class", player.player_resource.character_class)
+	#syn.set_by_path(^":display_name", player.player_resource.display_name)
+	
+
+	#var asc: AbilitySystemComponent = player.ability_system_component
+	#var base_stats: Dictionary = player.character_resource.build_base_stats(player.player_resource.level)
+	#
+	#for stat_name: StringName in base_stats:
+		#var value: float = base_stats[stat_name]
+		#if stat_name.ends_with("_max"):
+			#var base_attr: StringName = stat_name.trim_suffix(&"_max")
+			#asc.ensure_attr(base_attr, value, value)
+			#asc.set_max_server(base_attr, value, true)
+			#asc.set_value_server(base_attr, value)
+		#else:
+			#asc.ensure_attr(stat_name, value, value)
+			#asc.set_value_server(stat_name, value)
+	#asc.install_resources(player.character_resource.power_resources, base_stats)
+
+	print_debug("baseline server pairs:", syn.capture_baseline())
 	
 	# Register in sync manager AFTER we seeded states.
 	synchronizer_manager.add_entity(peer_id, syn)
 	synchronizer_manager.register_peer(peer_id)
-
-	var asc: AbilitySystemComponent = player.get_node_or_null(^"AbilitySystemComponent")
-	var max_hp: float = player.character_resource.base_health + player.character_resource.health_per_level * player.player_resource.level
-	asc.ensure_attr(&"health", max_hp, max_hp)
-	asc.ensure_attr(&"mana", 50.0, 50.0)
-	asc.ensure_attr(&"armor", 0.0, 0.0)
-	
-	asc.set_base_max_server(&"health", max_hp) 
-	asc.set_base_server(&"armor", 0.0)
-
-	print_debug("baseline server pairs:", syn.capture_baseline())
 
 	connected_peers.append(peer_id)
 	_propagate_spawn(peer_id)
@@ -144,10 +152,31 @@ func instantiate_player(peer_id: int) -> Player:
 	new_player.player_resource = player_resource
 	new_player.character_resource = character_resource
 	
-	var asc: AbilitySystemComponent = new_player.get_node_or_null(^"AbilitySystemComponent")
-	var max_hp: float = character_resource.base_health + character_resource.health_per_level * player_resource.level
-	asc.ensure_attr(&"health", max_hp, max_hp)
-	asc.ensure_attr(&"mana", 50.0, 50.0)
+	#var asc: AbilitySystemComponent = new_player.get_node_or_null(^"AbilitySystemComponent")
+	#var max_hp: float = character_resource.base_health + character_resource.health_per_level * player_resource.level
+	#asc.ensure_attr(&"health", max_hp, max_hp)
+	#asc.ensure_attr(&"mana", 50.0, 50.0)
+	new_player.ready.connect(func():
+		var syn: StateSynchronizer = new_player.state_synchronizer
+		syn.set_by_path(^":character_class", new_player.player_resource.character_class)
+		syn.set_by_path(^":display_name", new_player.player_resource.display_name)
+		
+
+		var asc: AbilitySystemComponent = new_player.ability_system_component
+		var base_stats: Dictionary = new_player.character_resource.build_base_stats(new_player.player_resource.level)
+		
+		for stat_name: StringName in base_stats:
+			var value: float = base_stats[stat_name]
+			if stat_name.ends_with("_max"):
+				var base_attr: StringName = stat_name.trim_suffix(&"_max")
+				asc.ensure_attr(base_attr, value, value)
+				asc.set_max_server(base_attr, value, true)
+				asc.set_value_server(base_attr, value)
+			else:
+				asc.ensure_attr(stat_name, value, value)
+				asc.set_value_server(stat_name, value)
+		asc.install_resources(new_player.character_resource.power_resources, base_stats)
+	, CONNECT_ONE_SHOT)
 	
 	return new_player
 

@@ -209,7 +209,11 @@ static func decode_bootstrap(data: PackedByteArray) -> Dictionary:
 		var path: String = spb.get_utf8_string()
 		var wt: int = _get_u8(spb)
 		updates.append([pid, path, wt])
-
+	
+	# IMPORTANT PLS APPLY UPDATES BEFORE DECODING
+	if updates.size():
+		PathRegistry.apply_map_updates(updates)
+	
 	# Objects
 	var obj_count: int = _get_u16(spb)
 	var objects: Array = []

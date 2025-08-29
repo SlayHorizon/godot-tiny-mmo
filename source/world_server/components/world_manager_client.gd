@@ -14,8 +14,7 @@ func start_client_to_master_server(_world_info: Dictionary) -> void:
 	world_info = _world_info
 	load_client_configuration("world-manager-client", "res://data/config/world_server_config.cfg")
 	start_client()
-	token_received.connect(foo)
-func foo(i: int) -> void:pass;
+
 
 func _on_connection_succeeded() -> void:
 	print("Successfully connected to the Gateway as %d!" % multiplayer.get_unique_id())
