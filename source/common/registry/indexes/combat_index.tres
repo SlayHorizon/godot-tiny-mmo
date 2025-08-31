@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://62vbxcnpav7"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_7vy7w"]
+
+[resource]
+script = ExtResource("1_7vy7w")
+content_name = &"combat"
+version = 1756675944
+next_id = 6
+entries = Array[Dictionary]([{
+&"hash": "95c6ff92a5a2f0c8814b8857ab72ea33e90584e904f6060c5cd21f4aa295241c",
+&"id": 1,
+&"path": "res://source/common/combat/damage_model/DamageModelResource.tres",
+&"slug": &"DamageModelResource"
+}, {
+&"hash": "5e797fcbc5b6eaaf707204d7351be981b13153037fee2c7e7540437bbd5d061a",
+&"id": 2,
+&"path": "res://source/common/combat/equipable_item/resources/astral_ring.tres",
+&"slug": &"astral_ring"
+}, {
+&"hash": "7c4d2b69aa3e2730c42b0029f6d06da7bd2af17f68c183bf50cd6a590166e815",
+&"id": 3,
+&"path": "res://source/common/combat/equipable_item/resources/fire_ring.tres",
+&"slug": &"fire_ring"
+}, {
+&"hash": "ac2a262b7c64ca03d5d31df52f282f63844a2d19ec10f6908f865adff3d49ccb",
+&"id": 4,
+&"path": "res://source/common/combat/equipable_item/resources/thornmail.tres",
+&"slug": &"thornmail"
+}, {
+&"hash": "a5b970485145fcdb8737be544b01544150e8176be9372ce9ad3fdb55d373e8ea",
+&"id": 5,
+&"path": "res://source/common/combat/equipable_item/resources/wind_ring.tres",
+&"slug": &"wind_ring"
+}])

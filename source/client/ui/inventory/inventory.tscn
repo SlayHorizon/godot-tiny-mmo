@@ -19,6 +19,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_g6fyq")
 
+[node name="BackgroundRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.184314, 0.184314, 0.184314, 0.662745)
+metadata/_edit_lock_ = true
+
 [node name="EquipmentView" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -502,16 +512,6 @@ offset_top = 9.0
 offset_right = 521.0
 offset_bottom = 32.0
 text = "Inventory"
-
-[node name="BackgroundRect" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.185383, 0.185383, 0.185383, 0.221)
-metadata/_edit_lock_ = true
 
 [node name="InventoryTabs" type="VBoxContainer" parent="."]
 layout_mode = 1

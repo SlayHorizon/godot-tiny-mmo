@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=287 format=3]
+[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=293 format=3]
 
 [ext_resource type="Script" path="res://source/master_server/resources/account.gd" id="1_ic1hn"]
 [ext_resource type="Script" path="res://source/master_server/resources/account_collection.gd" id="2_5b8n1"]
@@ -1227,6 +1227,42 @@ id = 281
 username = "guest281"
 password = "i0z-qn$oo28x"
 
+[sub_resource type="Resource" id="Resource_wb1g6"]
+script = ExtResource("1_ic1hn")
+id = 282
+username = "guest282"
+password = "j2nlmkoq+496"
+
+[sub_resource type="Resource" id="Resource_qs3o7"]
+script = ExtResource("1_ic1hn")
+id = 283
+username = "guest283"
+password = "kw$d+rx3#bzu"
+
+[sub_resource type="Resource" id="Resource_go6od"]
+script = ExtResource("1_ic1hn")
+id = 284
+username = "guest284"
+password = "p$$t108xwlqz"
+
+[sub_resource type="Resource" id="Resource_mn20f"]
+script = ExtResource("1_ic1hn")
+id = 285
+username = "guest285"
+password = "$ilm2-008jnu"
+
+[sub_resource type="Resource" id="Resource_oqh4d"]
+script = ExtResource("1_ic1hn")
+id = 286
+username = "guest286"
+password = "f#0pm+pk7#j#"
+
+[sub_resource type="Resource" id="Resource_mrobl"]
+script = ExtResource("1_ic1hn")
+id = 287
+username = "guest287"
+password = "pscl6j7nm3m6"
+
 [sub_resource type="Resource" id="Resource_td4y6"]
 script = ExtResource("1_ic1hn")
 id = 29
@@ -1695,17 +1731,17 @@ id = 99
 username = "guest99"
 password = "tqejfc860179"
 
-[sub_resource type="Resource" id="Resource_wb1g6"]
+[sub_resource type="Resource" id="Resource_lyb44"]
 script = ExtResource("1_ic1hn")
-id = 282
-username = "guest282"
-password = "j2nlmkoq+496"
+id = 288
+username = "guest288"
+password = "1+r85ooymjud"
 
-[sub_resource type="Resource" id="Resource_qs3o7"]
+[sub_resource type="Resource" id="Resource_7lkqr"]
 script = ExtResource("1_ic1hn")
-id = 283
-username = "guest283"
-password = "kw$d+rx3#bzu"
+id = 289
+username = "guest289"
+password = "z5fhsikmglm7"
 
 [resource]
 script = ExtResource("2_5b8n1")
@@ -1916,6 +1952,12 @@ collection = {
 "guest281": SubResource("Resource_q6nhx"),
 "guest282": SubResource("Resource_wb1g6"),
 "guest283": SubResource("Resource_qs3o7"),
+"guest284": SubResource("Resource_go6od"),
+"guest285": SubResource("Resource_mn20f"),
+"guest286": SubResource("Resource_oqh4d"),
+"guest287": SubResource("Resource_mrobl"),
+"guest288": SubResource("Resource_lyb44"),
+"guest289": SubResource("Resource_7lkqr"),
 "guest29": SubResource("Resource_td4y6"),
 "guest3": SubResource("Resource_13772"),
 "guest30": SubResource("Resource_roqoe"),
@@ -1995,4 +2037,4 @@ collection = {
 "guest98": SubResource("Resource_qrf34"),
 "guest99": SubResource("Resource_f2eh0")
 }
-next_account_id = 284
+next_account_id = 290

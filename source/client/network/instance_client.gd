@@ -139,6 +139,7 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	var player: Player = players_by_peer_id.get(peer_id) as Player
 	if not player:
 		return
+	print(player.equipped_weapon_right)
 	player.equipped_weapon_right.try_perform_action(action_index, action_direction)
 
 
