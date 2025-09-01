@@ -9,6 +9,7 @@ extends BaseServer
 
 func _ready() -> void:
 	load_server_configuration("gateway-manager-server", "res://data/config/master_server_config.cfg")
+	await get_tree().create_timer(3.0).timeout
 	start_server()
 
 

@@ -28,11 +28,11 @@ func start_instance_manager() -> void:
 
 func configure_global_roles_and_commands() -> void:
 	ServerInstance.global_chat_commands = {
-		"/heal" = load("res://source/world_server/components/chat_command/heal_command.gd").new(),
-		"/size" = load("res://source/world_server/components/chat_command/size_command.gd").new(),
-		"/getid" = load("res://source/world_server/components/chat_command/getid_command.gd").new(),
-		"/help" = load("res://source/world_server/components/chat_command/help_command.gd").new(),
-		"/set" = load("res://source/world_server/components/chat_command/set_command.gd").new()
+		"/heal" = load("res://source/server/world/components/chat_command/heal_command.gd").new(),
+		"/size" = load("res://source/server/world/components/chat_command/size_command.gd").new(),
+		"/getid" = load("res://source/server/world/components/chat_command/getid_command.gd").new(),
+		"/help" = load("res://source/server/world/components/chat_command/help_command.gd").new(),
+		"/set" = load("res://source/server/world/components/chat_command/set_command.gd").new()
 	}
 	
 	ServerInstance.global_role_definitions = {
@@ -50,7 +50,7 @@ func configure_global_roles_and_commands() -> void:
 	}
 	
 	if OS.has_feature("debug") or OS.has_feature("editor"):
-		ServerInstance.global_chat_commands["/selfadmin"] = load("res://source/world_server/components/chat_command/selfadmin_command.gd").new()
+		ServerInstance.global_chat_commands["/selfadmin"] = load("res://source/server/world/components/chat_command/selfadmin_command.gd").new()
 		ServerInstance.global_role_definitions["default"]["commands"].append("/selfadmin")
 
 

@@ -11,7 +11,6 @@ var worlds_info: Dictionary
 
 
 func _ready() -> void:
-	await get_tree().create_timer(1.5).timeout
 	load_client_configuration("gateway-manager-client", "res://data/config/gateway_config.cfg")
 	start_client()
 
@@ -22,10 +21,14 @@ func _on_connection_succeeded() -> void:
 
 func _on_connection_failed() -> void:
 	print("Failed to connect to the Gateway Manager as Gateway.")
+	# Try to reconnect.
+	get_tree().create_timer(15.0).timeout.connect(start_client)
 
 
 func _on_server_disconnected() -> void:
 	print("Gateway Manager disconnected.")
+	# Try to reconnect.
+	get_tree().create_timer(15.0).timeout.connect(start_client)
 
 
 @rpc("authority")

@@ -34,12 +34,12 @@ func start_as_client() -> void:
 
 
 func start_as_gateway_server() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/gateway_server/gateway_main.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/server/gateway/gateway_main.tscn")
 
 
 func start_as_master_server() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/master_server/master_main.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/server/master/master_main.tscn")
 
 
 func start_as_world_server() -> void:
-	get_tree().change_scene_to_file.call_deferred("res://source/world_server/world_main.tscn")
+	get_tree().change_scene_to_file.call_deferred("res://source/server/world/world_main.tscn")

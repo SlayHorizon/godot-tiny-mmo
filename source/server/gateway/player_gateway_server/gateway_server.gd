@@ -43,6 +43,12 @@ func _on_peer_disconnected(peer_id: int) -> void:
 
 func _on_peer_authenticating(peer_id: int) -> void:
 	print("Peer: %d is trying to authenticate." % peer_id)
+	if gateway_manager.multiplayer_api.multiplayer_peer.get_connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
+		multiplayer_api.send_auth(peer_id, "Not available.".to_ascii_buffer())
+		multiplayer_api.disconnect_peer(peer_id)
+		return
+	
+	# Send a random challenge the peer needs to resolve.
 	var challenge := str(randf() * 10000.0)
 	challenges[peer_id] = challenge
 	multiplayer_api.send_auth(peer_id, challenge.to_ascii_buffer())
@@ -87,7 +93,7 @@ func fetch_auth_token(_auth_token: String, _address: String, _port: int) -> void
 
 @rpc("any_peer")
 func login_request(username: String, password: String) -> void:
-	var peer_id := multiplayer.get_remote_sender_id()
+	var peer_id: int = multiplayer.get_remote_sender_id()
 	gateway_manager.login_request.rpc_id(1, peer_id, username, password)
 
 
@@ -98,7 +104,7 @@ func login_result(_result_code: bool) -> void:
 
 @rpc("any_peer")
 func create_account_request(username: String, password: String, is_guest: bool) -> void:
-	var peer_id := multiplayer.get_remote_sender_id()
+	var peer_id: int = multiplayer.get_remote_sender_id()
 	if is_guest:
 		gateway_manager.create_account_request.rpc_id(1, peer_id, username, password, is_guest)
 		return

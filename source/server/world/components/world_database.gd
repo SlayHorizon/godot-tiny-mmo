@@ -14,7 +14,7 @@ func start_database(world_info: Dictionary) -> void:
 
 func configure_database(world_info: Dictionary) -> void:
 	if OS.has_feature("editor"):
-		database_path = "res://source/world_server/data/"
+		database_path = "res://source/worlddata/"
 	else:
 		database_path = "."
 	database_path += str(world_info["name"] + ".tres").to_lower()

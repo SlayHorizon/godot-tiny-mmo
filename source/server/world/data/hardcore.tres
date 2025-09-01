@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="WorldPlayerData" load_steps=7 format=3 uid="uid://bh6wuei2wqi0s"]
 
-[ext_resource type="Script" uid="uid://bnw6yvttm5kp7" path="res://source/world_server/guild.gd" id="1_dfl15"]
+[ext_resource type="Script" uid="uid://bnw6yvttm5kp7" path="res://source/server/world/guild.gd" id="1_dfl15"]
 [ext_resource type="Script" uid="uid://ch4h6y276l4i5" path="res://source/common/resources/custom/player/player_resource.gd" id="1_jrdwe"]
-[ext_resource type="Script" uid="uid://b0vab61d5a3tr" path="res://source/world_server/data/world_player_data.gd" id="2_jrdwe"]
+[ext_resource type="Script" uid="uid://b0vab61d5a3tr" path="res://source/server/world/data/world_player_data.gd" id="2_jrdwe"]
 
 [sub_resource type="Resource" id="Resource_rxbww"]
 script = ExtResource("1_jrdwe")

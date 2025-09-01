@@ -5,6 +5,21 @@ static var _content_by_name: Dictionary[StringName, ContentRegistry]
 static var _versions: Dictionary[StringName, int]
 
 
+static func _static_init() -> void:
+	if not OS.has_feature("world-server") or not OS.has_feature("client"):
+		return
+	const INDEXES_DIR: String = "res://source/common/registry/indexes/"
+	for index_path: String in ResourceLoader.list_directory(INDEXES_DIR):
+		var content_index: ContentIndex = ResourceLoader.load(INDEXES_DIR + index_path)
+		register_registry(
+			index_path.trim_suffix("_index.tres"),
+			content_index
+		)
+		print(content_index.entries)
+	print("_content_by_name = ", _content_by_name)
+		
+
+
 static func register_registry(content_name: StringName, content_index: ContentIndex) -> void:
 	#var content_registry: ContentRegistry = ContentRegistry.new(content_index)
 	_content_by_name[content_name] = ContentRegistry.new(content_index)

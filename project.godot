@@ -46,9 +46,7 @@ folder_colors={
 "res://source/client/": "blue",
 "res://source/client/gateway/": "teal",
 "res://source/common/": "yellow",
-"res://source/gateway_server/": "orange",
-"res://source/master_server/": "orange",
-"res://source/world_server/": "orange"
+"res://source/server/": "gray"
 }
 
 [input]

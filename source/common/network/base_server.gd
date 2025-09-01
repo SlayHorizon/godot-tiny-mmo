@@ -9,7 +9,7 @@ var key_path: String = "res://data/config/tls/key.key"
 
 # Server Components
 var server: WebSocketMultiplayerPeer
-var multiplayer_api: MultiplayerAPI
+var multiplayer_api: SceneMultiplayer
 var authentication_callback := Callable()
 
 
@@ -20,6 +20,7 @@ func _process(_delta: float) -> void:
 
 func init_multiplayer_api(use_default: bool = false) -> void:
 	multiplayer_api = (
+		# SceneMultiplayer.new()
 		MultiplayerAPI.create_default_interface()
 		if not use_default else multiplayer
 	)

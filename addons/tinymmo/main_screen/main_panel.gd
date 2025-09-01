@@ -19,6 +19,8 @@ var current_content_index: ContentIndex
 func _ready() -> void:
 	output_view.syntax_highlighter = GDScriptSyntaxHighlighter.new()
 	output_view.draw_tabs = true
+	output_view.text = "## Hello it's horizon, just to say you can edit / select there like in editor.\n## It supports GDScript Highlighter."
+
 
 func _on_preview_button_pressed() -> void:
 	file_dialog = EditorFileDialog.new()
@@ -39,6 +41,9 @@ func _on_file_dialog_file_selected(path: String) -> void:
 		output_view.clear()
 		current_content_index = resource
 		
+		output_view.text += "## Content Name: %s\n" % current_content_index.content_name
+		output_view.text += "## Entries size: %d\n" % current_content_index.entries.size()
+		
 		var dictionary_as_string: String
 		for entry: Dictionary in current_content_index.entries:
 			if not entry.has_all([&"slug", &"id", &"path"]):
@@ -52,14 +57,17 @@ func _on_file_dialog_file_selected(path: String) -> void:
 				dictionary_as_string += "\n"
 			dictionary_as_string += "}"
 			output_view.text += dictionary_as_string + "\n"
+			
 			dictionary_as_string = ""
+		
 		label.text = "Current selected content index: %s" % path
 		print_plugin("ContentIndex preview generated.")
 	else:
 		label.text = "Invalid resource, select a ContentIndex generated one."
 		print_plugin( "Invalid resource, select a ContentIndex generated one.")
 	last_dir = path.get_base_dir()
-	file_dialog.queue_free()
+	if file_dialog:
+		file_dialog.queue_free()
 
 
 func _on_file_dialog_canceled() -> void:
@@ -73,7 +81,6 @@ func print_plugin(to_print: String) -> void:
 	)
 
 func format_str(str: Variant) -> String:
-	print(str(str))
 	if str is StringName:
 		return "&\"%s\"" % str
 	elif str is String:
@@ -133,7 +140,6 @@ func _on_file_dialog_dir_selected(dir: String) -> void:
 	if error:
 		printerr(error_string(error))
 	else:
-		print("TRYING")
 		var accept_dialog: AcceptDialog = AcceptDialog.new()
 		accept_dialog.canceled.connect(accept_dialog.queue_free)
 		accept_dialog.confirmed.connect(func():
@@ -145,7 +151,6 @@ func _on_file_dialog_dir_selected(dir: String) -> void:
 
 
 func get_resource_file_paths(path: String) -> PackedStringArray:
-	print(path)
 	var dir := DirAccess.open(path)
 	if not dir:
 		printerr(error_string(DirAccess.get_open_error()))
@@ -179,3 +184,4 @@ func get_slug_id(content_index: ContentIndex, slug: StringName) -> int:
 
 func _on_clear_button_pressed() -> void:
 	output_view.clear()
+	output_view.text = "## Hello it's horizon, just to say you can edit / select there like in editor.\n## It supports GDScript Highlighter."

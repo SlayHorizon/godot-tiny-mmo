@@ -3,7 +3,7 @@ extends Node
 
 
 var account_collection: AccountResourceCollection
-var account_collection_path: String = "res://source/master_server/account_collection.tres"
+var account_collection_path: String = "res://source/server/master/account_collection.tres"
 
 
 func _ready() -> void:

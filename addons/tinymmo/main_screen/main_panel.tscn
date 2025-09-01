@@ -49,6 +49,8 @@ text = "Clear Preview"
 custom_minimum_size = Vector2(100, 300)
 layout_mode = 2
 size_flags_vertical = 3
+text = "## Hello it's horizon, just to say you can edit / select there like in editor.
+## It supports GDScript Highlighter."
 syntax_highlighter = SubResource("GDScriptSyntaxHighlighter_qau0y")
 draw_tabs = true
 

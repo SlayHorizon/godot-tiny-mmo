@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://qyv6oevt5tl"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_7ofjx"]
+
+[resource]
+script = ExtResource("1_7ofjx")
+content_name = &"weapons"
+version = 1756677943
+next_id = 10
+entries = Array[Dictionary]([{
+&"hash": "1797c653f4b04628f1a8ca1d8d74ff61ba601aa608154294d358a79fa537fa35",
+&"id": 1,
+&"path": "res://source/common/items/weapons/bow/arrow.tscn",
+&"slug": &"arrow"
+}, {
+&"hash": "db34a4824bdcdc18502e52fd620ad8e1372af5a5ae3c9e7b47e4ad6ae8f05749",
+&"id": 2,
+&"path": "res://source/common/items/weapons/bow/wooden_bow.tscn",
+&"slug": &"wooden_bow"
+}, {
+&"hash": "831ea239fb359622e174743ecec867a8b3301d9139a69bdb91d63c0eb5df6107",
+&"id": 3,
+&"path": "res://source/common/items/weapons/dcadrius/test_bow.tres",
+&"slug": &"test_bow"
+}, {
+&"hash": "8a2cf7bc7bc23f76ad86399c4f146b7f58615449349d38e0c0df4e5831aeb2ad",
+&"id": 4,
+&"path": "res://source/common/items/weapons/dcadrius/test_sword.tres",
+&"slug": &"test_sword"
+}, {
+&"hash": "a7d56e4662cc78058799647900d6c858b1f57c3157f256cb7e781db7c88df03a",
+&"id": 5,
+&"path": "res://source/common/items/weapons/dcadrius/test_sword2.tres",
+&"slug": &"test_sword2"
+}, {
+&"hash": "f94fa9040848a0a9ecc642f1021f5645d71486087926aae273ae53aa3670a096",
+&"id": 6,
+&"path": "res://source/common/items/weapons/empty_hand/empty_hand.tscn",
+&"slug": &"empty_hand"
+}, {
+&"hash": "dc2fb7dca4725e9f5515a10cf571f731f44aade059f5c7317b905ad170e52703",
+&"id": 7,
+&"path": "res://source/common/items/weapons/hammer/hammer.tscn",
+&"slug": &"hammer"
+}, {
+&"hash": "14b292c12af3770303a41ef119b60eb9ee5db4cf91a3b19eee7d40983402dde1",
+&"id": 8,
+&"path": "res://source/common/items/weapons/sword/sword.tscn",
+&"slug": &"sword"
+}, {
+&"hash": "5a8ba1f847d03c654a37365a14f646f5d77ac6f30ed6d1770c3fd3595e97cf2f",
+&"id": 9,
+&"path": "res://source/common/items/weapons/weapon.tscn",
+&"slug": &"weapon"
+}])
