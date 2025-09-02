@@ -12,7 +12,7 @@ var latest_items: Dictionary
 
 
 func _ready() -> void:
-	pass # Replace with function body.
+	pass
 
 
 func fill_inventory(inventory: Dictionary) -> void:

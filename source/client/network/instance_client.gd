@@ -16,7 +16,10 @@ var instance_map: Map
 
 
 func _ready() -> void:
-	Events.message_submitted.connect(player_submit_message)
+	Events.message_submitted.connect(
+		func(message: String, _channel: int):
+			player_submit_message(message)
+	)
 	Events.item_icon_pressed.connect(player_trying_to_change_weapon)
 	Events.data_requested.connect(request_data)
 	
@@ -120,8 +123,8 @@ func fetch_message(message: String, sender_id: int) -> void:
 	else:
 		var player: Player = players_by_peer_id.get(sender_id, null)
 		if player:
-			player.display_name
-	Events.message_received.emit(message, sender_name)
+			sender_name = player.display_name
+	Events.message_received.emit(message, sender_name, 0)
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)

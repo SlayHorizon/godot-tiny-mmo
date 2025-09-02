@@ -1,8 +1,7 @@
-# StatGrowthResource.gd
 class_name StatGrowthResource
 extends Resource
 
-enum Mode { LINEAR, PCT_MULT, CURVE }
+enum Mode {LINEAR, PCT_MULT, CURVE}
 
 @export var mode: int = Mode.LINEAR
 

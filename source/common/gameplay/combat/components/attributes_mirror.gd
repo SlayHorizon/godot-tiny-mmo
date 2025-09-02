@@ -1,21 +1,20 @@
-# AttributesMirror.gd
 class_name AttributesMirror
 extends Node
-## Expose des propriétés dynamiques: "<attr>" et "<attr>_max".
-## Permet à StateSynchronizer d'adresser les attributs via NodePath.
+## Allow StateSynchronizer to modify attributes from NodePath.
+## It's really tricky, we may change that later.
+
+
+signal attribute_local_changed(attr: StringName, value: float, max_value: float)
 
 var _vals: Dictionary[StringName, float] = {}
 var _maxs: Dictionary[StringName, float] = {}
 var _keys: PackedStringArray = []
 
 
-signal attribute_local_changed(attr: StringName, value: float, max_value: float)
-
-
 func register_attr(attr: StringName) -> void:
-	if _keys.has(String(attr)):
+	if _keys.has(attr):
 		return
-	_keys.append(String(attr))
+	_keys.append(attr)
 	notify_property_list_changed()
 
 
@@ -24,38 +23,47 @@ func set_pair(attr: StringName, value: float, max_value: float) -> void:
 	_maxs[attr] = max_value
 	attribute_local_changed.emit(attr, value, max_value)
 
+
 func get_value(attr: StringName) -> float:
 	return _vals.get(attr, 0.0)
+
 
 func get_max(attr: StringName) -> float:
 	return _maxs.get(attr, 0.0)
 
-# --- Dynamic properties for Godot inspector / set_indexed --------------------
 
 func _get_property_list() -> Array:
-	var props: Array = []
-	for k in _keys:
-		props.append({ "name": k, "type": TYPE_FLOAT, "usage": PROPERTY_USAGE_DEFAULT })
-		props.append({ "name": k + "_max", "type": TYPE_FLOAT, "usage": PROPERTY_USAGE_DEFAULT })
-	return props
+	var properties: Array[Dictionary] = []
+	for key: String in _keys:
+		properties.append({
+			"name": key,
+			"type": TYPE_FLOAT,
+			"usage": PROPERTY_USAGE_DEFAULT
+		})
+		properties.append({
+			"name": key + "_max",
+			"type": TYPE_FLOAT,
+			"usage": PROPERTY_USAGE_DEFAULT
+		})
+	return properties
 
 
-func _get(p: StringName) -> Variant:
-	var s := String(p)
-	if s.ends_with("_max"):
-		var base := StringName(s.erase(s.length() - 4, 4))
-		return _maxs.get(base, 0.0)
-	return _vals.get(StringName(s), 0.0)
+func _get(property: StringName) -> Variant:
+	if property.ends_with("_max"):
+		return _maxs.get(property.trim_suffix("_max"), 0.0)
+	return _vals.get(property, 0.0)
 
 
-func _set(p: StringName, v: Variant) -> bool:
-	var s := String(p)
-	if s.ends_with("_max"):
-		var base := StringName(s.erase(s.length() - 4, 4))
-		_maxs[base] = float(v)
-		attribute_local_changed.emit(base, _vals.get(base, 0.0), _maxs[base])
+func _set(property: StringName, value: Variant) -> bool:
+	if property.ends_with("_max"):
+		property = property.trim_suffix("_max")
+		_maxs[property] = float(value)
+		attribute_local_changed.emit(property, _vals.get(property, 0.0), _maxs[property])
 	else:
-		var name := StringName(s)
-		_vals[name] = float(v)
-		attribute_local_changed.emit(name, _vals[name], _maxs.get(name, 0.0))
+		_vals[property] = float(value)
+		attribute_local_changed.emit(
+			property,
+			_vals[property],
+			_maxs.get(property, 0.0)
+		)
 	return true

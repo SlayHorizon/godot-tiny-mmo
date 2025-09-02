@@ -1,8 +1,9 @@
 class_name StatModifier
 extends Resource
 
-enum Op { ADD, MUL }
-enum Channel { VALUE, MAX }
+
+enum Op {ADD,MUL}
+enum Channel {VALUE, MAX}
 
 @export var attr: StringName
 @export var channel: Channel = Channel.MAX

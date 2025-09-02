@@ -3,8 +3,8 @@ extends Node
 ## Should be removed on non-client exports.
 
 # Chat
-signal message_submitted(message: String)
-signal message_received(message: String, sender_name: String)
+signal message_submitted(message: String, channel: int)
+signal message_received(message: String, sender_name: String, channel: int)
 
 # HUD
 signal item_icon_pressed(item_name: String)

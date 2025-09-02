@@ -1,4 +1,3 @@
-# WireCodec.gd
 class_name WireCodec
 extends Node
 ## Binary codec for deltas and bootstrap based on PathRegistry's wire types.

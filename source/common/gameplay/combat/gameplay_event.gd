@@ -1,6 +1,6 @@
-# GameplayEvent.gd
 class_name GameplayEvent
 extends RefCounted
+
 
 var spec: EffectSpec
 var source: AbilitySystemComponent = null
