@@ -52,20 +52,6 @@ position = Vector2(312, 120)
 [node name="ActivableDoor3" parent="Props" instance=ExtResource("4_0lkki")]
 position = Vector2(328, 120)
 
-[node name="Warper" parent="." instance=ExtResource("6_dfiuk")]
-position = Vector2(312, -19)
-scale = Vector2(2.37041, 0.841242)
-target_instance = ExtResource("7_xnjdx")
-warper_id = 1
-
-[node name="Warper2" parent="." instance=ExtResource("6_dfiuk")]
-position = Vector2(315, 208)
-scale = Vector2(2.37041, 0.841242)
-target_id = 1
-
-[node name="Dummy" parent="." instance=ExtResource("9_vhwke")]
-position = Vector2(281, 35)
-
 [node name="ReplicatedProps" type="Node2D" parent="."]
 script = ExtResource("9_ut81c")
 id_to_relpath = Dictionary[int, NodePath]({
@@ -2274,3 +2260,17 @@ NodePath("Coin"): 1,
 NodePath("GroundButton"): 0
 }),"_dyn_nodes":Dictionary[int, Node]({}),"_next_dyn_id":32768,"_dyn_spawns_queued":[],"_dyn_despawns_queued":[],"_ops_named_queued":[],"_state_by_cpid":Dictionary[int, Variant]({}),"_dirty_pairs":Dictionary[int, Variant]({}),"_baseline_ops_by_child":Dictionary[int, Array]({}),"_cpid_cache":Dictionary[int, null]({}))
 
+
+[node name="Warper" parent="." instance=ExtResource("6_dfiuk")]
+position = Vector2(312, -19)
+scale = Vector2(2.37041, 0.841242)
+target_instance = ExtResource("7_xnjdx")
+warper_id = 1
+
+[node name="Warper2" parent="." instance=ExtResource("6_dfiuk")]
+position = Vector2(315, 208)
+scale = Vector2(2.37041, 0.841242)
+target_id = 1
+
+[node name="Dummy" parent="." instance=ExtResource("9_vhwke")]
+position = Vector2(288, 56)

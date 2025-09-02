@@ -67,7 +67,6 @@ script = ExtResource("2_qfdgo")
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 position = Vector2(0, -2)
-frame_progress = 0.54689
 
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
 zoom = Vector2(3, 3)

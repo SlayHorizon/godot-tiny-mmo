@@ -23,15 +23,8 @@ var just_teleported: bool = false:
 
 func _init() -> void:
 	pass
-	#sync_state = {"T" = 0.0}
 
 
 func _set_display_name(new_name: String) -> void:
 	display_name_label.text = new_name
 	display_name = new_name
-
-
-#func _set_sync_state(new_state: Dictionary) -> void:
-	#sync_state = new_state
-	#for property: String in new_state:
-		#set(property, new_state[property])

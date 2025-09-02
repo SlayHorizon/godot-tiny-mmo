@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CharacterResource" load_steps=7 format=3 uid="uid://k07a0kqjgaem"]
 
-[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/resources/custom/ability/ability.gd" id="1_fu0re"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="1_fu0re"]
 [ext_resource type="Script" uid="uid://b2tgdabbgoor" path="res://source/common/gameplay/characters/classes/character_resource.gd" id="2_0padl"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_d8cik"]
 [ext_resource type="Script" uid="uid://b61c4gs0ie8a6" path="res://source/common/gameplay/combat/attributes/stat_growth/stat_growth.gd" id="4_rr71l"]

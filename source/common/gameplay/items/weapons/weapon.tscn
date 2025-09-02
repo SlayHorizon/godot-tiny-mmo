@@ -61,5 +61,5 @@ region_rect = Rect2(0, 0, 16, 48)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_ndsof")
+&"": SubResource("AnimationLibrary_ndsof")
 }

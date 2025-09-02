@@ -114,7 +114,7 @@ text = "CLOSE"
 layer = 2
 
 [connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton1" to="." method="_on_item_slot_button_1_pressed" binds= ["sword/sword"]]
-[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton2" to="." method="_on_item_slot_button_2_pressed" binds= ["hammer/hammer"]]
+[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton2" to="." method="_on_item_slot_button_2_pressed" binds= ["bow/wooden_bow"]]
 [connection signal="pressed" from="MenuButton2" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="MenuOverlay/VBoxContainer/GuildButton" to="." method="_on_guild_button_pressed"]

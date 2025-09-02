@@ -78,8 +78,8 @@ func player_trying_to_change_weapon(weapon_path: String, _side: bool = true) -> 
 	var player: Player = players_by_peer_id.get(peer_id, null)
 	if not player:
 		return
-	if player.player_resource.inventory.has(weapon_path):
-		player.syn.set_by_path(^":weapon_name_right", weapon_path)
+	#if player.player_resource.inventory.has(weapon_path):
+	player.syn.set_by_path(^":weapon_name_right", weapon_path)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -218,12 +218,7 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_submit_message(new_message: String) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
-	# Not sure if this new version is better.
-	# NEW
 	propagate_rpc(fetch_message.bindv([new_message, peer_id]))
-	# OLD
-	#for id: int in connected_peers:
-		#fetch_message.rpc_id(id, new_message, peer_id)
 
 
 @rpc("authority", "call_remote", "reliable", 1)
@@ -295,20 +290,17 @@ func has_command_permission(command_name: String, peer_id: int) -> bool:
 # WIP
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
-	#var peer_id: int = multiplayer.get_remote_sender_id()
 	peer_id = multiplayer.get_remote_sender_id()
 	var player: Player = players_by_peer_id.get(peer_id, null)
 	if not player:
 		return
-	#player.get_node(^"AbilitySystemComponent")
+	
 	const THORNMAIL = preload("res://source/common/gameplay/items/equipable_item/resources/thornmail.tres")
-	print_debug(player.equipment_component._slots)
 	if not player.equipment_component._slots.has(&"chest"):
 		player.equipment_component.equip(&"chest", THORNMAIL)
 	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
 		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))
-	#for connected_peer_id: int in connected_peers:
-		#player_action.rpc_id(connected_peer_id, action_index, action_direction)
+
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)

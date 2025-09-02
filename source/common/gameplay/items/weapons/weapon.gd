@@ -25,16 +25,16 @@ func play_animation(anim_name: String) -> void:
 func try_perform_action(action_index: int, direction: Vector2) -> bool:
 	if action_index >= abilities.size():
 		return false
-
+	
 	var ability: AbilityResource = abilities[action_index]
-
+	
 	if not ability.can_use():
 		return false
-
-	ability.use_ability(owner, direction)
-
+	
+	ability.use_ability(character, direction)
+	
 	ability.mark_used()
-
+	
 	return true
 
 

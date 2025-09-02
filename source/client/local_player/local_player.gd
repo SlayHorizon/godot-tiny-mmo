@@ -2,9 +2,6 @@ class_name LocalPlayer
 extends Player
 
 
-signal sync_state_defined(sync_state: Dictionary)
-signal player_action(action_index: int, action_direction: Vector2)
-
 var speed: float = 75.0
 var hand_pivot_speed: float = 17.5
 
@@ -15,6 +12,7 @@ var interact_input: bool = false
 
 var state: String = "idle"
 
+var instance_client: InstanceClient
 var synchronizer_manager: StateSynchronizerManagerClient
 
 @onready var mouse: Node2D = $MouseComponent
@@ -48,7 +46,7 @@ func check_inputs() -> void:
 			last_input_direction = input_direction
 	action_input = Input.is_action_pressed("action")
 	if action_input and equipped_weapon_right.can_use_weapon(0):
-		player_action.emit(0, position.direction_to(mouse.position))
+		instance_client.player_action.rpc_id(1, 0, position.direction_to(mouse.position))
 	interact_input = Input.is_action_just_pressed("interact")
 
 

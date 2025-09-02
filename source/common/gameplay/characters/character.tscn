@@ -1,49 +1,13 @@
-[gd_scene load_steps=17 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=13 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/gameplay/characters/character.gd" id="1_uqmoo"]
+[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_pypn5"]
 [ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/gameplay/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
 [ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/sync/state_synchronizer.gd" id="5_eyotc"]
 [ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/gameplay/combat/components/ability_system_component.gd" id="6_fg3fs"]
 [ext_resource type="Resource" uid="uid://djprqmldadljv" path="res://source/common/gameplay/combat/damage_model/DamageModelResource.tres" id="6_k71qx"]
 [ext_resource type="Script" uid="uid://natfmyvgikpe" path="res://source/common/gameplay/combat/components/attributes_mirror.gd" id="7_k71qx"]
-[ext_resource type="Script" uid="uid://bu62r4mj8ohfc" path="res://source/common/gameplay/characters/equipment_component.gd" id="8_wql3f"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_k71qx"]
-size = Vector2(64, 64)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_wql3f"]
-size = Vector2(64, 64)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sxbvr"]
-size = Vector2(64, 64)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_o1q3g"]
-size = Vector2(64, 64)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_5u7au"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("PlaceholderTexture2D_k71qx")
-}, {
-"duration": 1.0,
-"texture": SubResource("PlaceholderTexture2D_wql3f")
-}, {
-"duration": 1.0,
-"texture": SubResource("PlaceholderTexture2D_sxbvr")
-}, {
-"duration": 1.0,
-"texture": SubResource("PlaceholderTexture2D_o1q3g")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [],
-"loop": true,
-"name": &"run",
-"speed": 5.0
-}]
+[ext_resource type="Script" uid="uid://bu62r4mj8ohfc" path="res://source/common/gameplay/combat/components/equipment_component.gd" id="8_wql3f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
 size = Vector2(14, 6)
@@ -64,7 +28,7 @@ collision_mask = 6
 script = ExtResource("1_uqmoo")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_5u7au")
+sprite_frames = ExtResource("2_pypn5")
 animation = &"idle"
 speed_scale = 1.5
 offset = Vector2(0, -30)

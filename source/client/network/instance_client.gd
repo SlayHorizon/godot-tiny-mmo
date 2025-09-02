@@ -69,12 +69,9 @@ func spawn_player(player_id: int) -> void:
 		else:
 			new_player = LOCAL_PLAYER.instantiate() as LocalPlayer
 			local_player = new_player
-			new_player.player_action.connect(
-				func(action_index: int, action_direction: Vector2) -> void:
-					player_action.rpc_id(1, action_index, action_direction)
-			)
-			#new_player.get_node("AbilitySystemComponent") What is was trying here ? Should delete this line ?
-		# Always update sync manager.
+
+		# Always update instance and sync manager references.
+		local_player.instance_client = self
 		local_player.synchronizer_manager = synchronizer_manager
 	else:
 		new_player = DUMMY_PLAYER.instantiate()
@@ -139,8 +136,7 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	var player: Player = players_by_peer_id.get(peer_id) as Player
 	if not player:
 		return
-	print(player.equipped_weapon_right)
-	player.equipped_weapon_right.try_perform_action(action_index, action_direction)
+	player.equipped_weapon_right.perform_action(action_index, action_direction)
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)

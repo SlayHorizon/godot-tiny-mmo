@@ -62,10 +62,12 @@ func _ready() -> void:
 		equipped_weapon_right = right_hand_spot.get_child(0)
 		equipped_weapon_right.hand.type = hand_type
 		equipped_weapon_right.hand.side = Hand.Sides.RIGHT
+		equipped_weapon_right.character = self
 	if left_hand_spot.get_child_count():
 		equipped_weapon_left = left_hand_spot.get_child(0)
 		equipped_weapon_right.hand.type = hand_type
 		equipped_weapon_right.hand.side = Hand.Sides.LEFT
+		equipped_weapon_left.character = self
 
 
 func change_weapon(weapon_path: String, _side: bool = true) -> void:

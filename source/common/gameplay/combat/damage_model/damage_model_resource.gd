@@ -6,6 +6,7 @@ extends Resource
 @export var armor_k: float = 100.0
 @export var overheal_to_shield: bool = true
 
+
 func apply_damage(target: AbilitySystemComponent, amount: float, spec: EffectSpec, source: AbilitySystemComponent) -> void:
 	var remain: float = amount
 
@@ -30,6 +31,7 @@ func apply_damage(target: AbilitySystemComponent, amount: float, spec: EffectSpe
 	if remain > 0.0 and layers_order.has("Health"):
 		var hp: float = target.get_value(&"health")
 		target.set_value_server(&"health", hp - remain)
+
 
 func apply_heal(target: AbilitySystemComponent, amount: float, spec: EffectSpec, source: AbilitySystemComponent) -> void:
 	var hp: float = target.get_value(&"health")
