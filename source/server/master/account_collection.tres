@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://source/server/master/account_models/account.gd" id="1_wgikn"]
 [ext_resource type="Script" path="res://source/server/master/account_models/account_collection.gd" id="2_e6eac"]
@@ -14,6 +14,30 @@ script = ExtResource("1_wgikn")
 id = 1
 username = "guest1"
 password = "gtu7gth-vn-2"
+
+[sub_resource type="Resource" id="Resource_sv77w"]
+script = ExtResource("1_wgikn")
+id = 10
+username = "guest10"
+password = "g#-srriycur0"
+
+[sub_resource type="Resource" id="Resource_qe1k7"]
+script = ExtResource("1_wgikn")
+id = 11
+username = "guest11"
+password = "w5v6r$k7t0jj"
+
+[sub_resource type="Resource" id="Resource_coowf"]
+script = ExtResource("1_wgikn")
+id = 12
+username = "guest12"
+password = "xx9utgv76fce"
+
+[sub_resource type="Resource" id="Resource_pexyu"]
+script = ExtResource("1_wgikn")
+id = 13
+username = "guest13"
+password = "g7$+1ba2vz$d"
 
 [sub_resource type="Resource" id="Resource_e6eac"]
 script = ExtResource("1_wgikn")
@@ -51,16 +75,48 @@ id = 7
 username = "guest7"
 password = "0e3k#fajk2#e"
 
+[sub_resource type="Resource" id="Resource_w6h2b"]
+script = ExtResource("1_wgikn")
+id = 8
+username = "guest8"
+password = "$v#9$29pnpin"
+
+[sub_resource type="Resource" id="Resource_7ql8d"]
+script = ExtResource("1_wgikn")
+id = 9
+username = "guest9"
+password = "g74x9jodlfze"
+
+[sub_resource type="Resource" id="Resource_xxt2i"]
+script = ExtResource("1_wgikn")
+id = 14
+username = "guest14"
+password = "wmc$$tyk7ks7"
+
+[sub_resource type="Resource" id="Resource_dw4nj"]
+script = ExtResource("1_wgikn")
+id = 15
+username = "guest15"
+password = "4s6cqqdq67fm"
+
 [resource]
 script = ExtResource("2_e6eac")
 collection = {
 "guest0": SubResource("Resource_lbkgn"),
 "guest1": SubResource("Resource_wgikn"),
+"guest10": SubResource("Resource_sv77w"),
+"guest11": SubResource("Resource_qe1k7"),
+"guest12": SubResource("Resource_coowf"),
+"guest13": SubResource("Resource_pexyu"),
+"guest14": SubResource("Resource_xxt2i"),
+"guest15": SubResource("Resource_dw4nj"),
 "guest2": SubResource("Resource_e6eac"),
 "guest3": SubResource("Resource_5pt73"),
 "guest4": SubResource("Resource_obwkj"),
 "guest5": SubResource("Resource_rw0ll"),
 "guest6": SubResource("Resource_kbbby"),
-"guest7": SubResource("Resource_47dsw")
+"guest7": SubResource("Resource_47dsw"),
+"guest8": SubResource("Resource_w6h2b"),
+"guest9": SubResource("Resource_7ql8d")
 }
-next_account_id = 8
+next_account_id = 16

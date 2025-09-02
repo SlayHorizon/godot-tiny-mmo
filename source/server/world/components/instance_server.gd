@@ -4,7 +4,7 @@ extends SubViewport
 
 signal player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper)
 
-const PLAYER: PackedScene = preload("res://source/common/entities/characters/player/player.tscn")
+const PLAYER: PackedScene = preload("res://source/common/gameplay/characters/player/player.tscn")
 
 static var world_server: WorldServer
 
@@ -143,7 +143,7 @@ func spawn_player(peer_id: int) -> void:
 func instantiate_player(peer_id: int) -> Player:
 	var player_resource: PlayerResource = world_server.connected_players[peer_id]
 	var character_resource: CharacterResource = ResourceLoader.load(
-		"res://source/common/resources/custom/character/character_collection/" +
+		"res://source/common/gameplay/characters/classes/character_collection/" +
 		player_resource.character_class + ".tres"
 	)
 	
@@ -301,7 +301,7 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	if not player:
 		return
 	#player.get_node(^"AbilitySystemComponent")
-	const THORNMAIL = preload("res://source/common/combat/equipable_item/resources/thornmail.tres")
+	const THORNMAIL = preload("res://source/common/gameplay/items/equipable_item/resources/thornmail.tres")
 	print_debug(player.equipment_component._slots)
 	if not player.equipment_component._slots.has(&"chest"):
 		player.equipment_component.equip(&"chest", THORNMAIL)

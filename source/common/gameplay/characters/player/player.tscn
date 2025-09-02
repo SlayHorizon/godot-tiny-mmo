@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://b3wa3c527k5lx"]
+
+[ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/gameplay/characters/character.tscn" id="1_0ps03"]
+[ext_resource type="Script" uid="uid://bexas1o2f74ve" path="res://source/common/gameplay/characters/player/player.gd" id="2_meo3t"]
+[ext_resource type="Script" uid="uid://cibbkjmyj3j2x" path="res://source/common/gameplay/characters/player/display_name_label.gd" id="3_cxg7o"]
+
+[node name="Player" instance=ExtResource("1_0ps03")]
+script = ExtResource("2_meo3t")
+
+[node name="DisplayNameLabel" type="Label" parent="." index="2"]
+offset_left = -23.7
+offset_right = 213.3
+offset_bottom = 45.0
+scale = Vector2(0.2, 0.2)
+theme_override_font_sizes/font_size = 32
+text = "1234567890123"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("3_cxg7o")

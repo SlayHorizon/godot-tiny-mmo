@@ -90,7 +90,7 @@ func define_sync_state() -> void:
 
 func _set_character_class(new_class: String):
 	character_resource = ResourceLoader.load(
-		"res://source/common/resources/custom/character/character_collection/" +
+		"res://source/common/gameplay/characters/classes/character_collection/" +
 		new_class + ".tres"
 	)
 	animated_sprite.sprite_frames = character_resource.character_sprite

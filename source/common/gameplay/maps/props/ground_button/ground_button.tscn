@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://bojii5hxh2lgh"]
+
+[ext_resource type="Script" uid="uid://wh5map4o52qc" path="res://source/common/gameplay/maps/props/ground_button/ground_button.gd" id="1_tgw3s"]
+[ext_resource type="Texture2D" uid="uid://b1lsob56myiuh" path="res://assets/sprites/environment/environment_objects/pressure_plate.png" id="2_exn2p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xf86q"]
+atlas = ExtResource("2_exn2p")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_882yo"]
+atlas = ExtResource("2_exn2p")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aa61n"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xf86q")
+}],
+"loop": false,
+"name": &"pressed",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_882yo")
+}],
+"loop": false,
+"name": &"up",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uru4r"]
+size = Vector2(16, 16)
+
+[node name="GroundButton" type="Area2D"]
+script = ExtResource("1_tgw3s")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_aa61n")
+animation = &"pressed"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_uru4r")

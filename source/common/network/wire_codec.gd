@@ -287,8 +287,6 @@ static func decode_container_block(data: PackedByteArray) -> Dictionary:
 	return { "eid": eid, "spawns": spawns, "pairs": pairs, "despawns": despawns }
 
 
-# WireCodec.gd (ajouter)
-
 static func encode_container_block_named(eid: int, spawns: Array, pairs: Array, despawns: Array, ops_named: Array) -> PackedByteArray:
 	var spb := StreamPeerBuffer.new()
 	_put_u32(spb, eid)

@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="EquipableItem" load_steps=7 format=3 uid="uid://cfpxqf2jxtjru"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier/stat_modifier.gd" id="1_bqat2"]
+[ext_resource type="Script" uid="uid://dh0cgupjccloe" path="res://source/common/gameplay/combat/gameplay_effect/resources/thormail.gd" id="2_gg2ut"]
+[ext_resource type="Script" uid="uid://dyhhh50eja76c" path="res://source/common/gameplay/items/equipable_item/equipable_item.gd" id="3_uwcvd"]
+
+[sub_resource type="Resource" id="Resource_26akq"]
+script = ExtResource("1_bqat2")
+attr = &"health"
+channel = 1
+op = 0
+magnitude = 40.0
+source_tags = []
+runtime_id = null
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="Resource" id="Resource_yngkw"]
+script = ExtResource("1_bqat2")
+attr = &"armor"
+channel = 0
+op = 0
+magnitude = 12.0
+source_tags = []
+runtime_id = null
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="Resource" id="Resource_hmhbm"]
+script = ExtResource("2_gg2ut")
+reflect_ratio = 0.25
+name_id = &""
+is_debuff = true
+dispel_mask = 0
+tags = []
+duration = 0.0
+period = 0.0
+first_tick_delay = 0.0
+stacks_max = 1
+metadata/_custom_type_script = "uid://dh0cgupjccloe"
+
+[resource]
+script = ExtResource("3_uwcvd")
+display_name = "Thornmail"
+mods = Array[ExtResource("1_bqat2")]([SubResource("Resource_26akq"), SubResource("Resource_yngkw")])
+persistent_effect = SubResource("Resource_hmhbm")
+metadata/_custom_type_script = "uid://dyhhh50eja76c"

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5vt5u3avwm45"]
-
-[ext_resource type="Script" uid="uid://b04dyc05soetr" path="res://source/common/entities/structures/flag.gd" id="1_wjjv4"]
-
-[node name="Flag" type="Area2D"]
-script = ExtResource("1_wjjv4")

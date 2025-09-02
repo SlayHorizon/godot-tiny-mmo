@@ -5,7 +5,7 @@ extends GatewayUIComponent
 @export var default_selection: CharacterClassButton
 
 var selected_button: CharacterClassButton = null
-var selected_character_class: CharacterResource = preload("res://source/common/resources/custom/character/character_collection/knight.tres")
+var selected_character_class: CharacterResource = preload("res://source/common/gameplay/characters/classes/character_collection/knight.tres")
 
 @onready var class_selection_container: VBoxContainer = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer
 @onready var character_preview: AnimatedSprite2D = $CenterContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control/AnimatedSprite2D

@@ -2,7 +2,7 @@ class_name InstanceManagerServer
 extends SubViewportContainer
 
 
-const INSTANCE_COLLECTION_PATH: String = "res://source/common/resources/custom/instance/instance_collection/"
+const INSTANCE_COLLECTION_PATH: String = "res://source/common/gameplay/maps/instance/instance_collection/"
 
 var loading_instances: Dictionary[InstanceResource, ServerInstance]
 var instance_collection: Array[InstanceResource]
