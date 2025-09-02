@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="CharacterResource" load_steps=6 format=3 uid="uid://k07a0kqjgaem"]
+[gd_resource type="Resource" script_class="CharacterResource" load_steps=7 format=3 uid="uid://k07a0kqjgaem"]
 
 [ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/resources/custom/ability/ability.gd" id="1_fu0re"]
 [ext_resource type="Script" uid="uid://b2tgdabbgoor" path="res://source/common/resources/custom/character/character_resource.gd" id="2_0padl"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/resources/builtin/sprite_frames/knight.tres" id="2_d8cik"]
 [ext_resource type="Script" uid="uid://b61c4gs0ie8a6" path="res://source/common/combat/stat_growth/stat_growth.gd" id="4_rr71l"]
+[ext_resource type="Script" uid="uid://c2t24masktugg" path="res://source/common/combat/gameplay_resource/gameplay_resource.gd" id="5_whofs"]
 
 [sub_resource type="Resource" id="Resource_whofs"]
 script = ExtResource("4_rr71l")
@@ -14,12 +15,12 @@ metadata/_custom_type_script = "uid://b61c4gs0ie8a6"
 
 [resource]
 script = ExtResource("2_0padl")
-power_resources = null
+power_resources = Array[ExtResource("5_whofs")]([])
 class_name_id = &"knight"
 character_name = "Knight"
 character_sprite = ExtResource("2_d8cik")
 base_hp = 640.0
-base_mana = 10
+base_mana = 0.0
 base_energy = 0.0
 base_ad = 60.0
 base_ap = 0.0

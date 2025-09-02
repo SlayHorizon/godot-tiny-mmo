@@ -1,7 +1,7 @@
 class_name CharacterResource
 extends Resource
 
-# CharacterResource.gd (add this field)
+
 @export var power_resources: Array[GameplayResource] = []
 
 @export var class_name_id: StringName = &"knight"
@@ -61,7 +61,7 @@ func build_base_stats(level: int) -> Dictionary:
 	d[StatsCatalog.MR] = mr_growth.value_at_level(base_mr, level) if mr_growth != null else base_mr
 	d[StatsCatalog.ATTACK_SPEED] = as_growth.value_at_level(base_as, level) if as_growth != null else base_as
 
-	# mostly static in LoL, but you can swap to growth if needed
+	# Mostly static, but can swap to growth if needed.
 	d[StatsCatalog.MOVE_SPEED] = base_move_speed
 	d[StatsCatalog.ATTACK_RANGE] = base_attack_range
 	d[StatsCatalog.CRIT_CHANCE] = base_crit_chance

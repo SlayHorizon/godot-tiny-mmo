@@ -22,7 +22,7 @@ func _ready() -> void:
 	
 	# Default config path. to use another one, override this;
 	# or write --config=config_file_path.cfg as a launch argument.
-	var error: bool = load_world_config("res://data/config/world_server_config.cfg")
+	var error: bool = load_world_config("res://data/config/world_config.cfg")
 	if error:
 		printerr("World server loading configuration failed.")
 	else:

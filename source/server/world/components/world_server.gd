@@ -19,7 +19,7 @@ func start_world_server() -> void:
 	)
 	
 	authentication_callback = _authentication_callback
-	load_server_configuration("world-server", "res://data/config/world_server_config.cfg")
+	load_server_configuration("world-server", "res://data/config/world_config.cfg")
 	start_server()
 	
 	$InstanceManager.start_instance_manager()
