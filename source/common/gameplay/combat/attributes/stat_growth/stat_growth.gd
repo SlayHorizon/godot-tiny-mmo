@@ -14,6 +14,7 @@ enum Mode {LINEAR, PCT_MULT, CURVE}
 # Optional designer curve (0..1 sampled over levels 1..18)
 @export var curve: Curve
 
+
 func value_at_level(base: float, level: int) -> float:
 	var lv: float = float(max(1, level))
 	match mode:

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemSlot" load_steps=2 format=3 uid="uid://dnbj6tmyghec4"]
+
+[ext_resource type="Script" uid="uid://e40odrowquc8" path="res://source/common/gameplay/items/item_slot/item_slot.gd" id="1_xg0yy"]
+
+[resource]
+script = ExtResource("1_xg0yy")
+key = &"relic"
+display_name = "Relic"
+unlock_level = 30
+metadata/_custom_type_script = "uid://e40odrowquc8"
