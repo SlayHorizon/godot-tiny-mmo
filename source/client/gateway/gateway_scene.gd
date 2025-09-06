@@ -15,7 +15,7 @@ func _ready() -> void:
 
 
 func _on_authentication_token_received(auth_token: String, address: String, port: int) -> void:
-	print_debug("token = ", auth_token, ", address = ", address, ", port = ", port)
+	#print_debug("token = ", auth_token, ", address = ", address, ", port = ", port)
 	#address = "wss://ws.ekoniaonline.comserver/world/1"
 	world_server.authentication_token = auth_token
 	world_server.connect_to_server(address, port)

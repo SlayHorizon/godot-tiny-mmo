@@ -1,4 +1,3 @@
-# ThornmailEffect.gd
 class_name ThornmailEffect
 extends GameplayEffect
 
@@ -8,7 +7,7 @@ func on_added(asc: AbilitySystemComponent) -> void:
 	_sub(asc, &"OnSpecPostApply", &"Damage", 50, &"_on_post")
 
 func _on_post(ev: GameplayEvent, self_asc: AbilitySystemComponent) -> void:
-	print_debug(ev, self_asc)
+	#print_debug(ev, self_asc)
 	if ev.canceled or ev.amount <= 0.0:
 		return
 	if ev.spec.tags.has("Reflect"):

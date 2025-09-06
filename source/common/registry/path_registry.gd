@@ -1,10 +1,9 @@
-# PathRegistry.gd
 class_name PathRegistry
 extends Node
 ## Global registry mapping property paths <-> field IDs with a wire type (schema-driven).
 ## Stores paths as String (best for wire/serialization) and caches NodePath for hot application.
 
-# Wire types used by the codec (extend as needed). Consider moving to WireTypes.gd later.
+# Wire types used by the codec (extend as needed). Consider moving to WireTypes.gd later maybe?
 const WIRE_VARIANT: int = 0
 const WIRE_BOOL: int = 1
 const WIRE_I32: int = 2
@@ -69,7 +68,7 @@ static func register_field(path: String, wire_type: int = WIRE_VARIANT) -> int:
 
 static func ensure_id(path: String) -> int:
 	var existing: int = _path_to_id.get(path, 0)
-	print_debug(path, existing)
+	#print_debug(path, existing)
 	if existing != 0:
 		return existing
 	return register_field(path, _id_to_type.get(existing, WIRE_VARIANT))

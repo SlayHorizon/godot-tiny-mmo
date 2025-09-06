@@ -50,7 +50,7 @@ func _ready() -> void:
 	# NEW
 	$AbilitySystemComponent/AttributesMirror.attribute_local_changed.connect(
 		func(attr: StringName, value: float, max_value: float):
-			print(attr, " value = ", value, " max_value = ", max_value)
+			#print(attr, " value = ", value, " max_value = ", max_value)
 			if attr != &"health":
 				return
 			$ProgressBar.value = value

@@ -9,7 +9,7 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 	var path: NodePath = args[2]
 	var value: Variant = str_to_var(args[3])
 	
-	print_debug(value)
+	#print_debug(value)
 	if path.is_empty() or not value:
 		return "Invalid command format: /set <target> <path> <value>"
 	

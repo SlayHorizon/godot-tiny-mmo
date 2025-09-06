@@ -116,6 +116,7 @@ size_flags_vertical = 3
 layout_mode = 2
 
 [node name="PMButton" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 322.0
 offset_top = 10.0

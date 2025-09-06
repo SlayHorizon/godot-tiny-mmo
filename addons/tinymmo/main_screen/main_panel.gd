@@ -28,6 +28,8 @@ func _on_preview_button_pressed() -> void:
 	file_dialog.add_filter("*.tres", "A ContentIndex resource.")
 	if last_dir:
 		file_dialog.current_dir = last_dir
+	else:
+		file_dialog.current_dir = INDEX_DIR
 	file_dialog.file_selected.connect(_on_file_dialog_file_selected)
 	file_dialog.canceled.connect(_on_file_dialog_canceled)
 	add_child(file_dialog)
@@ -184,4 +186,4 @@ func get_slug_id(content_index: ContentIndex, slug: StringName) -> int:
 
 func _on_clear_button_pressed() -> void:
 	output_view.clear()
-	output_view.text = "## Hello it's horizon, just to say you can edit / select there like in editor.\n## It supports GDScript Highlighter."
+	output_view.text = "## Just to say you can edit / select there like in editor.\n## It supports GDScript Highlighter."

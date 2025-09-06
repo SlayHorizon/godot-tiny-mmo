@@ -7,7 +7,7 @@ extends Node
 ##  - Client: apply spawns, pairs, and rp_* ops.
 ##  - Minimal structures, hot-path cache per CPID, readable code.
 
-# --- CPID helpers (16 bits child / 16 bits field) ----------------------------
+# --- CPID helpers (16 bits child / 16 bits field) 6-
 
 const CPID_CHILD_BITS := 16
 const CPID_FIELD_BITS := 16
