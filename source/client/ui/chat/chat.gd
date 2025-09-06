@@ -1,6 +1,10 @@
 extends Control
 
 
+var channel_messages: Dictionary[int, PackedStringArray]
+var current_channel: int = 0
+
+
 func _ready() -> void:
 	Events.message_received.connect(_on_message_received)
 
@@ -33,11 +37,11 @@ func _on_message_submitted(new_message: String) -> void:
 	if not new_message.is_empty():
 		new_message = new_message.strip_edges(true, true)
 		new_message = new_message.substr(0, 120)
-		Events.message_submitted.emit(new_message)
+		Events.message_submitted.emit(new_message, current_channel)
 	%FadeOutTimer.start()
 
 
-func _on_message_received(message: String, sender_name: String):
+func _on_message_received(message: String, sender_name: String, channel: int):
 	var color_name: String = "#33caff"
 	if sender_name == "Server":
 		color_name = "#b6200f"
@@ -46,6 +50,12 @@ func _on_message_received(message: String, sender_name: String):
 	%MessageDisplay.newline()
 	%MessageDisplay.show()
 	%FadeOutTimer.start()
+	
+	# NEW
+	if channel_messages.has(channel):
+		channel_messages[channel].append(message_to_display)
+	else:
+		channel_messages[channel] = PackedStringArray()
 
 
 func _on_fade_out_timer_timeout() -> void:
@@ -54,3 +64,8 @@ func _on_fade_out_timer_timeout() -> void:
 	await tween.finished
 	hide_chat()
 	modulate.a = 1.0
+
+
+func _on_peek_feed_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		$PeekFeed.hide()

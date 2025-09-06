@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CharacterResource" load_steps=4 format=3 uid="uid://c51jc44s7nw01"]
+
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="1_4bueh"]
+[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="2_giwuu"]
+[ext_resource type="Script" uid="uid://b2tgdabbgoor" path="res://source/common/gameplay/characters/classes/character_resource.gd" id="2_xvbqh"]
+
+[resource]
+script = ExtResource("2_xvbqh")
+character_name = "Rogue"
+character_sprite = ExtResource("2_giwuu")
+base_health = 30
+base_mana = 10
+base_attack_damage = 5
+base_magic_power = 4
+base_attack_speed = 0.7
+base_move_speed = 300.0
+health_per_level = 10.0
+mana_per_level = 3.0
+attack_damage_per_level = 2.0
+magic_power_per_level = 1.5
+attack_speed_per_level = 0.015
+passive_abilities = Array[ExtResource("1_4bueh")]([])
+active_abilities = Array[ExtResource("1_4bueh")]([])
+description = "A swift and elusive fighter, striking from the shadows with precision and agility."
+evolution = Array[ExtResource("2_xvbqh")]([])

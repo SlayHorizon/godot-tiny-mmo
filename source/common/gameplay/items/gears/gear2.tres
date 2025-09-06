@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="GearItem" load_steps=7 format=3 uid="uid://c7y0m821gjf6s"]
+
+[ext_resource type="Script" uid="uid://chp0417yx5dgc" path="res://source/common/gameplay/combat/gameplay_effect/gameplay_effect.gd" id="1_nu4ns"]
+[ext_resource type="Script" uid="uid://b61c4gs0ie8a6" path="res://source/common/gameplay/combat/attributes/stat_growth/stat_growth.gd" id="2_23e0y"]
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier/stat_modifier.gd" id="3_kr77g"]
+[ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="4_sk0q1"]
+
+[sub_resource type="Resource" id="Resource_nu4ns"]
+script = ExtResource("2_23e0y")
+mode = 0
+per_level = 0.0
+pct_per_level = 0.0
+metadata/_custom_type_script = "uid://b61c4gs0ie8a6"
+
+[sub_resource type="Resource" id="Resource_23e0y"]
+script = ExtResource("3_kr77g")
+attr = &"health"
+channel = 1
+op = 0
+magnitude = 0.0
+source_tags = []
+runtime_id = null
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[resource]
+script = ExtResource("4_sk0q1")
+required_level = 0
+base_modifiers = Array[ExtResource("3_kr77g")]([SubResource("Resource_23e0y")])
+base_growth = Array[ExtResource("2_23e0y")]([SubResource("Resource_nu4ns")])
+base_effects = Array[ExtResource("1_nu4ns")]([])
+item_name = &"ItemDefault"
+description = ""
+can_trade = false
+can_sell = false
+minimum_price = 0
+stack_limit = 0
+tags = []
+metadata/_custom_type_script = "uid://dnmtdktay2df6"

@@ -1,0 +1,92 @@
+[gd_scene load_steps=13 format=3 uid="uid://6bcg7fwcl6mi"]
+
+[ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/gameplay/characters/character.gd" id="1_uqmoo"]
+[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_pypn5"]
+[ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/gameplay/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
+[ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/sync/state_synchronizer.gd" id="5_eyotc"]
+[ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/gameplay/combat/components/ability_system_component.gd" id="6_fg3fs"]
+[ext_resource type="Resource" uid="uid://djprqmldadljv" path="res://source/common/gameplay/combat/damage_model/DamageModelResource.tres" id="6_k71qx"]
+[ext_resource type="Script" uid="uid://natfmyvgikpe" path="res://source/common/gameplay/combat/components/attributes_mirror.gd" id="7_k71qx"]
+[ext_resource type="Script" uid="uid://bu62r4mj8ohfc" path="res://source/common/gameplay/combat/components/equipment_component.gd" id="8_wql3f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
+size = Vector2(14, 6)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eyotc"]
+size = Vector2(16, 32)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgfpq"]
+bg_color = Color(0.6, 0.6, 0.6, 0.521569)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eyotc"]
+bg_color = Color(0.694118, 0.101961, 0.14902, 0.705882)
+
+[node name="Character" type="CharacterBody2D"]
+y_sort_enabled = true
+texture_filter = 1
+collision_mask = 6
+script = ExtResource("1_uqmoo")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_pypn5")
+animation = &"idle"
+speed_scale = 1.5
+offset = Vector2(0, -30)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_3w1m3")
+
+[node name="HandOffset" type="Node2D" parent="."]
+position = Vector2(0, -10)
+
+[node name="HandPivot" type="Node2D" parent="HandOffset"]
+
+[node name="RightHandSpot" type="Node2D" parent="HandOffset/HandPivot"]
+position = Vector2(15, 0)
+
+[node name="EmptyHand" parent="HandOffset/HandPivot/RightHandSpot" instance=ExtResource("3_eddh2")]
+
+[node name="LeftHandSpot" type="Node2D" parent="HandOffset/HandPivot"]
+position = Vector2(-15, 0)
+
+[node name="EmptyHand" parent="HandOffset/HandPivot/LeftHandSpot" instance=ExtResource("3_eddh2")]
+
+[node name="HurtBox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(0, -16)
+shape = SubResource("RectangleShape2D_eyotc")
+debug_color = Color(0.846048, 0.237298, 0.730831, 0.42)
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -16.0
+offset_top = -38.0
+offset_right = 16.0
+offset_bottom = -34.0
+theme_override_styles/background = SubResource("StyleBoxFlat_cgfpq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_eyotc")
+step = 0.5
+value = 84.5
+allow_greater = true
+show_percentage = false
+
+[node name="StateSynchronizer" type="Node" parent="." node_paths=PackedStringArray("root_node")]
+script = ExtResource("5_eyotc")
+root_node = NodePath("..")
+metadata/_custom_type_script = "uid://d1a30n4ktgm71"
+
+[node name="AbilitySystemComponent" type="Node" parent="." node_paths=PackedStringArray("synchronizer", "mirror")]
+script = ExtResource("6_fg3fs")
+synchronizer = NodePath("../StateSynchronizer")
+mirror = NodePath("AttributesMirror")
+damage_model = ExtResource("6_k71qx")
+metadata/_custom_type_script = "uid://gl2cwrrfvlkh"
+
+[node name="AttributesMirror" type="Node" parent="AbilitySystemComponent"]
+script = ExtResource("7_k71qx")
+metadata/_custom_type_script = "uid://natfmyvgikpe"
+
+[node name="EquipmentComponent" type="Node" parent="." node_paths=PackedStringArray("_asc")]
+script = ExtResource("8_wql3f")
+_asc = NodePath("../AbilitySystemComponent")

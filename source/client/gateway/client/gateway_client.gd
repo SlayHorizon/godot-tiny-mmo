@@ -28,7 +28,7 @@ var is_connected_to_server: bool = false:
 func _ready() -> void:
 	GatewayUIComponent.gateway = self
 	authentication_callback = auth_call
-	load_client_configuration("gateway-client", "res://test_config/client_config.cfg")
+	load_client_configuration("gateway-client", "res://data/config/client_config.cfg")
 	start_client()
 
 
@@ -47,28 +47,32 @@ func _on_connection_succeeded() -> void:
 
 
 func _on_connection_failed() -> void:
-	print("Failed to connect to the server.")
+	print("Failed to connect to the gateway server.")
 	close_connection()
 
 
 func _on_server_disconnected() -> void:
-	print("Server disconnected.")
+	print("Gateway server disconnected.")
 	close_connection()
 	get_tree().paused = true
 
 
 func _on_peer_authenticating(_peer_id: int) -> void:
-	print("Trying to authenticate to the server.")
+	print("Trying to authenticate to the gateway server.")
 
 
 func _on_peer_authentication_failed(_peer_id: int) -> void:
-	print("Authentification to the server failed.")
+	print("Authentification to the gateway server failed.")
 	auth_failed.emit()
 	close_connection()
 
 
 func auth_call(_peer_id: int, data: PackedByteArray) -> void:
 	var challenge: String = data.get_string_from_ascii()
+	if challenge == "Not available.":
+		printerr("Gateway server not available from client.")
+		return
+		
 	print("Authentification call from gateway with challenge: \"%s\"." % challenge)
 	var version: String = ProjectSettings.get_setting("application/config/version")
 	var response := {

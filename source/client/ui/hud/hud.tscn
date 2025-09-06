@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dqt8fnt1l33eu"]
+[gd_scene load_steps=5 format=3 uid="uid://dqt8fnt1l33eu"]
 
 [ext_resource type="Script" uid="uid://dshitaaapbs6x" path="res://source/client/ui/hud/hud.gd" id="1_rchld"]
 [ext_resource type="PackedScene" uid="uid://rncsatpcsbm" path="res://source/client/ui/hud/health_bar/health_bar.tscn" id="2_klco5"]
 [ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/chat/chat.tscn" id="2_xs74v"]
+[ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_rchld")
@@ -49,14 +50,72 @@ layout_mode = 2
 text = "2
 "
 
-[node name="GuildButton" type="Button" parent="."]
-custom_minimum_size = Vector2(60, 60)
-offset_left = 10.0
-offset_top = 264.4
-offset_right = 70.0
-offset_bottom = 324.4
+[node name="MenuButton2" type="Button" parent="."]
+offset_left = 312.0
+offset_top = 480.0
+offset_right = 363.0
+offset_bottom = 519.0
+text = "..."
+
+[node name="MenuButton" type="Button" parent="."]
+offset_left = 885.0
+offset_top = 17.0
+offset_right = 936.0
+offset_bottom = 56.0
+text = "Menu"
+
+[node name="MenuOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -145.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("4_cx7qp")
+
+[node name="ColorRect" type="ColorRect" parent="MenuOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.173, 0.173, 0.173, 0.65)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="GuildButton" type="Button" parent="MenuOverlay/VBoxContainer"]
+layout_mode = 2
 text = "GUILD"
 
+[node name="InventoryButton" type="Button" parent="MenuOverlay/VBoxContainer"]
+layout_mode = 2
+text = "INVENTORY"
+
+[node name="SettingsButton" type="Button" parent="MenuOverlay/VBoxContainer"]
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="CloseButton" type="Button" parent="MenuOverlay/VBoxContainer"]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="SubMenu" type="CanvasLayer" parent="."]
+layer = 2
+
 [connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton1" to="." method="_on_item_slot_button_1_pressed" binds= ["sword/sword"]]
-[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton2" to="." method="_on_item_slot_button_2_pressed" binds= ["hammer/hammer"]]
-[connection signal="pressed" from="GuildButton" to="." method="_on_guild_button_pressed"]
+[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton2" to="." method="_on_item_slot_button_2_pressed" binds= ["bow/wooden_bow"]]
+[connection signal="pressed" from="MenuButton2" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
+[connection signal="pressed" from="MenuOverlay/VBoxContainer/GuildButton" to="." method="_on_guild_button_pressed"]
+[connection signal="pressed" from="MenuOverlay/VBoxContainer/InventoryButton" to="." method="_on_inventory_button_pressed"]

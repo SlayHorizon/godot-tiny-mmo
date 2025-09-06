@@ -2,9 +2,6 @@ class_name LocalPlayer
 extends Player
 
 
-signal sync_state_defined(sync_state: Dictionary)
-signal player_action(action_index: int, action_direction: Vector2)
-
 var speed: float = 75.0
 var hand_pivot_speed: float = 17.5
 
@@ -15,12 +12,19 @@ var interact_input: bool = false
 
 var state: String = "idle"
 
+var instance_client: InstanceClient
+var synchronizer_manager: StateSynchronizerManagerClient
+
 @onready var mouse: Node2D = $MouseComponent
 
 
 func _ready() -> void:
 	Events.local_player_ready.emit(self)
 	super()
+	fid_position = PathRegistry.id_of(":position")
+	fid_flipped = PathRegistry.id_of(":flipped")
+	fid_anim = PathRegistry.id_of(":anim")
+	fid_pivot = PathRegistry.id_of(":pivot")
 
 
 func _physics_process(delta: float) -> void:
@@ -42,7 +46,7 @@ func check_inputs() -> void:
 			last_input_direction = input_direction
 	action_input = Input.is_action_pressed("action")
 	if action_input and equipped_weapon_right.can_use_weapon(0):
-		player_action.emit(0, position.direction_to(mouse.position))
+		instance_client.player_action.rpc_id(1, 0, position.direction_to(mouse.position))
 	interact_input = Input.is_action_just_pressed("interact")
 
 
@@ -65,32 +69,27 @@ func update_hand_pivot(delta: float) -> void:
 		anim = Animations.RUN if input_direction else Animations.IDLE
 
 
+var fid_position: int = PathRegistry.id_of(":position")
+var fid_flipped: int = PathRegistry.id_of(":flipped")
+var fid_anim: int = PathRegistry.id_of(":anim")
+var fid_pivot: int = PathRegistry.id_of(":pivot")
 func define_sync_state() -> void:
-	sync_state = {
-		"T": Time.get_unix_time_from_system(),
-		"position": get_global_position(),
-		"flipped": flipped,
-		"anim": anim,
-		"pivot": snappedf(hand_pivot.rotation, 0.05)
-	}
+	var pairs: Array[Array] = [
+		[fid_position, global_position],
+		[fid_flipped, flipped],
+		[fid_anim, anim],
+		[fid_pivot, snappedf(hand_pivot.rotation, 0.05)],
+	]
+	syn.mark_many_by_id(pairs, true)
+	synchronizer_manager.send_my_delta(
+		multiplayer.get_unique_id(), syn.collect_dirty_pairs()
+	)
 
 
 func _set_character_class(new_class: String):
 	character_resource = ResourceLoader.load(
-		"res://source/common/resources/custom/character/character_collection/" +
+		"res://source/common/gameplay/characters/classes/character_collection/" +
 		new_class + ".tres"
 	)
 	animated_sprite.sprite_frames = character_resource.character_sprite
 	character_class = new_class
-
-
-func _set_sync_state(new_state: Dictionary) -> void:
-	var update_state: Dictionary
-
-	for key: String in new_state:
-		if not sync_state.has(key) or sync_state[key] != new_state[key]:
-			update_state[key] = new_state[key]
-
-	sync_state = new_state
-	if update_state.size() > 1:
-		sync_state_defined.emit(update_state)

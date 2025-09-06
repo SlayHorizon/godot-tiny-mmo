@@ -2,8 +2,8 @@ class_name TLSOptionsUtils
 
 
 static func create_server_tls_options(key_path: String, certificate_path: String) -> TLSOptions:
-	var key := CryptoKey.new()
-	var error := key.load(key_path)
+	var key: CryptoKey = CryptoKey.new()
+	var error: Error = key.load(key_path)
 	if error != OK:
 		printerr("Failed loading key with error: %s" % error_string(error))
 		return null
@@ -19,7 +19,7 @@ static func create_server_tls_options(key_path: String, certificate_path: String
 
 static func create_client_tls_options(certificate_path: String) -> TLSOptions:
 	var certificate := X509Certificate.new()
-	var error := certificate.load(certificate_path)
+	var error: Error = certificate.load(certificate_path)
 	if error != OK:
 		printerr("Failed to load certificate with error: %s" % error_string(error))
 	

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DamageModelResource" load_steps=2 format=3 uid="uid://djprqmldadljv"]
+
+[ext_resource type="Script" uid="uid://cecio1i3cyhkw" path="res://source/common/gameplay/combat/damage_model/damage_model_resource.gd" id="1_i54cy"]
+
+[resource]
+script = ExtResource("1_i54cy")
+layers_order = ["Armor", "Shield", "Health"]
+armor_k = 100.0
+overheal_to_shield = true
+metadata/_custom_type_script = "uid://cecio1i3cyhkw"

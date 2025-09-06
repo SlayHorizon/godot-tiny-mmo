@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemSlot" load_steps=2 format=3 uid="uid://cdrd3x2ugfrev"]
+
+[ext_resource type="Script" uid="uid://e40odrowquc8" path="res://source/common/gameplay/items/item_slot/item_slot.gd" id="1_8gb5j"]
+
+[resource]
+script = ExtResource("1_8gb5j")
+key = &"ring"
+display_name = "Ring"
+unlock_level = 5
+metadata/_custom_type_script = "uid://e40odrowquc8"

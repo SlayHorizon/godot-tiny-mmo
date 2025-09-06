@@ -32,18 +32,21 @@ window/size/window_width_override=960
 window/size/window_height_override=540
 window/stretch/mode="canvas_items"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/tinymmo/plugin.cfg")
+
 [file_customization]
 
 folder_colors={
+"res://addons/": "orange",
 "res://assets/": "green",
+"res://data/": "purple",
 "res://source/": "red",
 "res://source/client/": "blue",
 "res://source/client/gateway/": "teal",
 "res://source/common/": "yellow",
-"res://source/gateway_server/": "orange",
-"res://source/master_server/": "orange",
-"res://source/world_server/": "orange",
-"res://test_config/": "purple"
+"res://source/server/": "gray"
 }
 
 [input]

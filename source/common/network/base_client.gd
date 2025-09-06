@@ -3,9 +3,9 @@ extends Node
 
 
 # Client Default Configuration / Set with load_client_configuration()
-var address := "127.0.0.1"
+var address: String = "127.0.0.1"
 var port: int = 8043
-var certificate_path := "res://test_config/tls/certificate.crt"
+var certificate_path: String = "res://data/config/tls/certificate.crt"
 
 # Client Components
 var client: WebSocketMultiplayerPeer
@@ -63,7 +63,19 @@ func start_client() -> void:
 	client = WebSocketMultiplayerPeer.new()
 	
 	var tls_options := TLSOptionsUtils.create_client_tls_options(certificate_path)
-	var error := client.create_client("wss://" + address + ":" + str(port), tls_options)
+	#var tls_options: TLSOptions
+	#var url: String
+	#if OS.has_feature("client"):
+		#tls_options = TLSOptions.client()
+		#if address == "wss://ws.ekoniaonline.com/world/1":
+			#url = "wss://ws.ekoniaonline.com/world/1"
+		#else:
+			#url = "wss://ws.ekoniaonline.com"
+	#else:
+		#url = "ws://" + address + ":" + str(port)
+		#tls_options = null
+	var error: Error = client.create_client("ws://" + address + ":" + str(port), tls_options)
+	#var error: Error = client.create_client(url, tls_options)
 	if error != OK:
 		printerr("Error while creating client: %s" % error_string(error))
 	

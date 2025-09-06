@@ -10,11 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://iu4w7gbcuqrp" path="res://source/client/gateway/ui/components/character_selection/character_slot_button.tscn" id="8_j42bt"]
 [ext_resource type="Script" uid="uid://igav35nvj5yp" path="res://source/client/gateway/ui/components/character_creation/character_creation.gd" id="9_u2lk0"]
 [ext_resource type="PackedScene" uid="uid://chsahf4074pcl" path="res://source/client/gateway/ui/components/character_creation/button/character_class_button.tscn" id="10_kgh0o"]
-[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/resources/builtin/sprite_frames/rogue.tres" id="11_h7nlh"]
-[ext_resource type="Resource" uid="uid://k07a0kqjgaem" path="res://source/common/resources/custom/character/character_collection/knight.tres" id="11_s3rpi"]
-[ext_resource type="Resource" uid="uid://c51jc44s7nw01" path="res://source/common/resources/custom/character/character_collection/rogue.tres" id="12_5dck6"]
+[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="11_h7nlh"]
+[ext_resource type="Resource" uid="uid://k07a0kqjgaem" path="res://source/common/gameplay/characters/classes/character_collection/knight.tres" id="11_s3rpi"]
+[ext_resource type="Resource" uid="uid://c51jc44s7nw01" path="res://source/common/gameplay/characters/classes/character_collection/rogue.tres" id="12_5dck6"]
 [ext_resource type="Script" uid="uid://dxa4rdqj1ukwb" path="res://source/client/gateway/ui/components/account_info.gd" id="13_i2c6x"]
-[ext_resource type="Resource" uid="uid://7ha2uyyv6r5e" path="res://source/common/resources/custom/character/character_collection/wizard.tres" id="13_rinhs"]
+[ext_resource type="Resource" uid="uid://7ha2uyyv6r5e" path="res://source/common/gameplay/characters/classes/character_collection/wizard.tres" id="13_rinhs"]
 
 [node name="GatewayUI" type="Control"]
 layout_mode = 3
@@ -35,7 +35,6 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -229,6 +228,7 @@ layout_mode = 2
 text = "Back"
 
 [node name="WorldSelection" type="Control" parent="." node_paths=PackedStringArray("character_selection_menu")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -501,7 +501,6 @@ text = "Account ID: %s"
 
 [node name="ConnectionStatusRect" type="ColorRect" parent="."]
 unique_name_in_owner = true
-visible = false
 custom_minimum_size = Vector2(480, 240)
 layout_mode = 1
 anchors_preset = 8

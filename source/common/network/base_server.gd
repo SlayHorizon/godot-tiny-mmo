@@ -4,12 +4,12 @@ extends Node
 
 # Server Default Configuration / Set with load_server_configuration()
 var port: int = 80443
-var certificate_path := "res://test_config/tls/certificate.crt"
-var key_path := "res://test_config/tls/key.key"
+var certificate_path: String = "res://data/config/tls/certificate.crt"
+var key_path: String = "res://data/config/tls/key.key"
 
 # Server Components
 var server: WebSocketMultiplayerPeer
-var multiplayer_api: MultiplayerAPI
+var multiplayer_api: SceneMultiplayer
 var authentication_callback := Callable()
 
 
@@ -20,6 +20,7 @@ func _process(_delta: float) -> void:
 
 func init_multiplayer_api(use_default: bool = false) -> void:
 	multiplayer_api = (
+		# SceneMultiplayer.new()
 		MultiplayerAPI.create_default_interface()
 		if not use_default else multiplayer
 	)
@@ -41,11 +42,11 @@ func init_multiplayer_api(use_default: bool = false) -> void:
 func load_server_configuration(section_key: String, default_config_path: String = "") -> bool:
 	var parsed_arguments := CmdlineUtils.get_parsed_args()
 	
-	var config_path := default_config_path
+	var config_path: String = default_config_path
 	var config_file := ConfigFile.new()
 	if parsed_arguments.has("config"):
 		config_path = parsed_arguments["config"]
-	var error := config_file.load(config_path)
+	var error: Error = config_file.load(config_path)
 	if error != OK:
 		printerr("Failed to load config at %s, error: %s" % [parsed_arguments["config"], error_string(error)])
 	else:
@@ -61,8 +62,10 @@ func start_server() -> void:
 	
 	server = WebSocketMultiplayerPeer.new()
 	
-	var tls_options := TLSOptionsUtils.create_server_tls_options(key_path, certificate_path)
-	var error := server.create_server(port, "*", tls_options)
+	#var tls_options := TLSOptionsUtils.create_server_tls_options(key_path, certificate_path)
+	# If letting Caddy  takes care of TLS
+	var tls_options: TLSOptions = null
+	var error: Error = server.create_server(port, "*", tls_options)
 	if error != OK:
 		printerr("Error while creating server: %s" % error_string(error))
 	

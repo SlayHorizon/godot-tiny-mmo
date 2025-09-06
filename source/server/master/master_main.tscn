@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://bskg2xljsxctn"]
+
+[ext_resource type="Script" uid="uid://bvryexdli570a" path="res://source/server/master/master_main.gd" id="1_6d3fm"]
+[ext_resource type="Script" uid="uid://dx6y8xcifn6f8" path="res://source/server/master/components/master_gateway_server/master_gateway_server.gd" id="2_hsh87"]
+[ext_resource type="Script" uid="uid://bcbl4b333f5l5" path="res://source/server/master/components/master_world_server/master_world_server.gd" id="3_qbesc"]
+[ext_resource type="Script" uid="uid://d2cmewfb6gey3" path="res://source/server/master/components/authentication_manager.gd" id="4_1tf2k"]
+[ext_resource type="Script" uid="uid://if1byogst5v3" path="res://source/server/master/components/database.gd" id="5_mync2"]
+
+[node name="MasterMain" type="Node"]
+script = ExtResource("1_6d3fm")
+
+[node name="GatewayManagerServer" type="Node" parent="." node_paths=PackedStringArray("world_manager", "authentication_manager", "database")]
+script = ExtResource("2_hsh87")
+world_manager = NodePath("../WorldManagerServer")
+authentication_manager = NodePath("../AuthenticationManager")
+database = NodePath("../Database")
+
+[node name="WorldManagerServer" type="Node" parent="." node_paths=PackedStringArray("authentication_manager", "gateway_manager", "database")]
+script = ExtResource("3_qbesc")
+authentication_manager = NodePath("../AuthenticationManager")
+gateway_manager = NodePath("../GatewayManagerServer")
+database = NodePath("../Database")
+
+[node name="AuthenticationManager" type="Node" parent="." node_paths=PackedStringArray("database")]
+script = ExtResource("4_1tf2k")
+database = NodePath("../Database")
+
+[node name="Database" type="Node" parent="."]
+script = ExtResource("5_mync2")

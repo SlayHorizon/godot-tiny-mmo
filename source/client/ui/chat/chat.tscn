@@ -11,29 +11,119 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_hxcw4")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="PeekFeed" type="VBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 310.0
 offset_bottom = 245.0
 
-[node name="MessageDisplay" type="RichTextLabel" parent="VBoxContainer"]
+[node name="MessageDisplay" type="RichTextLabel" parent="PeekFeed"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 200)
+custom_minimum_size = Vector2(300, 160)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_nl2eg")
 bbcode_enabled = true
 
-[node name="MessageEdit" type="LineEdit" parent="VBoxContainer"]
+[node name="MessageEdit" type="LineEdit" parent="PeekFeed"]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Enter your message here"
 
-[node name="FadeOutTimer" type="Timer" parent="."]
+[node name="FadeOutTimer" type="Timer" parent="PeekFeed"]
 unique_name_in_owner = true
 wait_time = 2.0
 one_shot = true
 
-[connection signal="text_submitted" from="VBoxContainer/MessageEdit" to="." method="_on_message_submitted"]
-[connection signal="timeout" from="FadeOutTimer" to="." method="_on_fade_out_timer_timeout"]
+[node name="FullFeed" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_right = 439.0
+offset_bottom = 539.0
+
+[node name="ColorRect" type="ColorRect" parent="FullFeed"]
+layout_mode = 2
+offset_right = 446.0
+offset_bottom = 540.0
+grow_vertical = 2
+color = Color(0.145098, 0.113725, 0.117647, 0.45098)
+
+[node name="Control" type="MarginContainer" parent="FullFeed"]
+layout_mode = 0
+offset_right = 439.0
+offset_bottom = 539.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="FullFeed/Control"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "System"
+
+[node name="Button2" type="Button" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "Region"
+
+[node name="Button6" type="Button" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "Team"
+
+[node name="Button5" type="Button" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "Guild"
+
+[node name="HSeparator" type="HSeparator" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Friends"
+
+[node name="Button3" type="Button" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = " New message"
+
+[node name="Button4" type="Button" parent="FullFeed/Control/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = " New message"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="FullFeed/Control/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "System"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="FullFeed/Control/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LineEdit" type="LineEdit" parent="FullFeed/Control/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="PMButton" type="Button" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 322.0
+offset_top = 10.0
+offset_right = 377.0
+offset_bottom = 59.0
+text = "!!!"
+
+[connection signal="gui_input" from="PeekFeed" to="." method="_on_peek_feed_gui_input"]
+[connection signal="text_submitted" from="PeekFeed/MessageEdit" to="." method="_on_message_submitted"]
+[connection signal="timeout" from="PeekFeed/FadeOutTimer" to="." method="_on_fade_out_timer_timeout"]

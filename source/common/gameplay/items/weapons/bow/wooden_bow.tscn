@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://e6kqwoh5tlxp"]
+
+[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_01c3m"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="2_l3y58"]
+[ext_resource type="Resource" uid="uid://e5j5kve7ed7f" path="res://source/common/gameplay/combat/ability/arrow_shoot/arrow_shoot.tres" id="3_75guj"]
+
+[node name="WoodenBow" instance=ExtResource("1_01c3m")]
+abilities = Array[ExtResource("2_l3y58")]([ExtResource("3_75guj")])
+
+[node name="WeaponSprite" parent="." index="0"]
+position = Vector2(2, 13)
+flip_h = false
+region_rect = Rect2(48, 48, 16, 32)

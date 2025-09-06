@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://deslq4wqsgjbk"]
+
+[ext_resource type="Script" uid="uid://bml22pkupxow5" path="res://source/server/world/world_main.gd" id="1_nvmf0"]
+[ext_resource type="Script" uid="uid://cf4xahse7mg4d" path="res://source/server/world/components/world_manager_client.gd" id="2_bxid2"]
+[ext_resource type="Script" uid="uid://dt8py6evrtkvk" path="res://source/server/world/components/world_server.gd" id="3_u7bqt"]
+[ext_resource type="Script" uid="uid://d1fja2um2iixv" path="res://source/server/world/components/instance_manager.gd" id="4_6abmg"]
+[ext_resource type="Script" uid="uid://d2driy4n25j0s" path="res://source/server/world/components/world_database.gd" id="5_at7ov"]
+[ext_resource type="Script" uid="uid://32l8t618k7dp" path="res://source/server/world/components/console.gd" id="6_klp0y"]
+
+[node name="WorldMain" type="Node"]
+script = ExtResource("1_nvmf0")
+
+[node name="WorldManagerClient" type="Node" parent="." node_paths=PackedStringArray("database", "world_server")]
+script = ExtResource("2_bxid2")
+database = NodePath("../Database")
+world_server = NodePath("../WorldServer")
+
+[node name="WorldServer" type="Node" parent="." node_paths=PackedStringArray("database", "world_manager")]
+script = ExtResource("3_u7bqt")
+database = NodePath("../Database")
+world_manager = NodePath("../WorldManagerClient")
+
+[node name="InstanceManager" type="SubViewportContainer" parent="WorldServer" node_paths=PackedStringArray("world_server")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+script = ExtResource("4_6abmg")
+world_server = NodePath("..")
+
+[node name="Database" type="Node" parent="."]
+script = ExtResource("5_at7ov")
+
+[node name="Console" type="Node" parent="." node_paths=PackedStringArray("database", "world_server")]
+script = ExtResource("6_klp0y")
+database = NodePath("../Database")
+world_server = NodePath("../WorldServer")

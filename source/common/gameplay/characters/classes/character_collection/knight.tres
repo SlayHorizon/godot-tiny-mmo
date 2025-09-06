@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="CharacterResource" load_steps=7 format=3 uid="uid://k07a0kqjgaem"]
+
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="1_fu0re"]
+[ext_resource type="Script" uid="uid://b2tgdabbgoor" path="res://source/common/gameplay/characters/classes/character_resource.gd" id="2_0padl"]
+[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_d8cik"]
+[ext_resource type="Script" uid="uid://b61c4gs0ie8a6" path="res://source/common/gameplay/combat/attributes/stat_growth/stat_growth.gd" id="4_rr71l"]
+[ext_resource type="Script" uid="uid://c2t24masktugg" path="res://source/common/gameplay/combat/gameplay_resource/gameplay_resource.gd" id="5_whofs"]
+
+[sub_resource type="Resource" id="Resource_whofs"]
+script = ExtResource("4_rr71l")
+mode = 0
+per_level = 120.0
+pct_per_level = 5.0
+metadata/_custom_type_script = "uid://b61c4gs0ie8a6"
+
+[resource]
+script = ExtResource("2_0padl")
+power_resources = Array[ExtResource("5_whofs")]([])
+class_name_id = &"knight"
+character_name = "Knight"
+character_sprite = ExtResource("2_d8cik")
+base_hp = 640.0
+base_mana = 0.0
+base_energy = 0.0
+base_ad = 60.0
+base_ap = 0.0
+base_armor = 32.0
+base_mr = 30.0
+base_as = 0.66
+base_move_speed = 300.0
+base_attack_range = 175.0
+base_crit_chance = 0.0
+base_crit_damage = 1.75
+base_ability_haste = 0.0
+hp_growth = SubResource("Resource_whofs")
+passive_abilities = Array[ExtResource("1_fu0re")]([])
+active_abilities = Array[ExtResource("1_fu0re")]([])
+description = "A resilient warrior clad in heavy armor, excelling in melee combat and defense."
+evolution = Array[ExtResource("2_0padl")]([])

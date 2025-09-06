@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://bcojrmcocbq2k"]
 
-[ext_resource type="PackedScene" uid="uid://b3wa3c527k5lx" path="res://source/common/entities/characters/player/player.tscn" id="1_5bye1"]
+[ext_resource type="PackedScene" uid="uid://b3wa3c527k5lx" path="res://source/common/gameplay/characters/player/player.tscn" id="1_5bye1"]
 [ext_resource type="Script" uid="uid://biqs370wdwi6m" path="res://source/client/local_player/local_player.gd" id="2_qfdgo"]
 [ext_resource type="Script" uid="uid://bt74wxkb47dp0" path="res://source/client/local_player/mouse_component.gd" id="3_7fqr5"]
 
@@ -67,7 +67,6 @@ script = ExtResource("2_qfdgo")
 
 [node name="AnimatedSprite2D" parent="." index="0"]
 position = Vector2(0, -2)
-frame_progress = 0.54689
 
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
 zoom = Vector2(3, 3)

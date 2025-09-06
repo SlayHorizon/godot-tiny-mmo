@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="CharacterResource" load_steps=4 format=3 uid="uid://7ha2uyyv6r5e"]
+
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="1_avffo"]
+[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="2_vs5xq"]
+[ext_resource type="Script" uid="uid://b2tgdabbgoor" path="res://source/common/gameplay/characters/classes/character_resource.gd" id="3_wlykr"]
+
+[resource]
+script = ExtResource("3_wlykr")
+character_name = "Wizard"
+character_sprite = ExtResource("2_vs5xq")
+base_health = 25
+base_mana = 10
+base_attack_damage = 5
+base_magic_power = 4
+base_attack_speed = 0.7
+base_move_speed = 300.0
+health_per_level = 10.0
+mana_per_level = 3.0
+attack_damage_per_level = 2.0
+magic_power_per_level = 1.5
+attack_speed_per_level = 0.015
+passive_abilities = Array[ExtResource("1_avffo")]([])
+active_abilities = Array[ExtResource("1_avffo")]([])
+description = "A master of elemental forces, commanding powerful spells to devastate enemies or support allies."
+evolution = Array[ExtResource("3_wlykr")]([])

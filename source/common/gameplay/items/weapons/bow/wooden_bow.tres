@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponItem" load_steps=7 format=3 uid="uid://b64q6sv46brpr"]
+
+[ext_resource type="Script" uid="uid://chp0417yx5dgc" path="res://source/common/gameplay/combat/gameplay_effect/gameplay_effect.gd" id="1_c6poj"]
+[ext_resource type="Script" uid="uid://b61c4gs0ie8a6" path="res://source/common/gameplay/combat/attributes/stat_growth/stat_growth.gd" id="2_1savl"]
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier/stat_modifier.gd" id="3_jc6y8"]
+[ext_resource type="PackedScene" uid="uid://e6kqwoh5tlxp" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn" id="4_jc6y8"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_lu61j"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="6_lu61j"]
+
+[resource]
+script = ExtResource("4_lu61j")
+scene = ExtResource("4_jc6y8")
+mount_point = &"weapon_main"
+slot = ExtResource("6_lu61j")
+required_level = 0
+base_modifiers = Array[ExtResource("3_jc6y8")]([])
+base_growth = Array[ExtResource("2_1savl")]([])
+base_effects = Array[ExtResource("1_c6poj")]([])
+item_name = &"Bow"
+description = ""
+can_trade = true
+can_sell = true
+minimum_price = 10
+stack_limit = 1
+tags = []
+metadata/_custom_type_script = "uid://5hk0gl5ng64h"

@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://dmsluvh1exbyv"]
+
+[ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_4ckjo"]
+[ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/gameplay/maps/tilesets/dungeon_tileset.tres" id="2_r6dc5"]
+[ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="2_sqr4w"]
+[ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="4_cva54"]
+
+[node name="MapTemplate" type="Node2D" node_paths=PackedStringArray("replicated_props_container")]
+script = ExtResource("1_4ckjo")
+replicated_props_container = NodePath("ReplicatedPropsContainer")
+
+[node name="Ground" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_r6dc5")
+
+[node name="Wall" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_r6dc5")
+
+[node name="Props" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_r6dc5")
+
+[node name="Roof" type="TileMapLayer" parent="."]
+tile_set = ExtResource("2_r6dc5")
+
+[node name="Warper" parent="." instance=ExtResource("2_sqr4w")]
+
+[node name="ReplicatedPropsContainer" type="Node" parent="."]
+script = ExtResource("4_cva54")
+metadata/_custom_type_script = "uid://wq8klpndipnu"
