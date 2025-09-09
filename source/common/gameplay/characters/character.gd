@@ -1,3 +1,4 @@
+@tool
 @icon("res://assets/node_icons/blue/icon_character.png")
 class_name Character
 extends Entity
@@ -44,9 +45,13 @@ var pivot: float = 0.0:
 @onready var state_synchronizer: StateSynchronizer = $StateSynchronizer
 @onready var ability_system_component: AbilitySystemComponent = $AbilitySystemComponent
 @onready var equipment_component: EquipmentComponent = $EquipmentComponent
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var animation_tree: AnimationTree = $AnimationTree
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
 	# NEW
 	$AbilitySystemComponent/AttributesMirror.attribute_local_changed.connect(
 		func(attr: StringName, value: float, max_value: float):
@@ -81,8 +86,10 @@ func change_weapon(weapon_path: String, _side: bool = true) -> void:
 
 
 func update_weapon_animation(state: String) -> void:
-	equipped_weapon_right.play_animation(state)
-	equipped_weapon_left.play_animation(state)
+	pass
+	#$AnimationTree.set("parameters/OnFoot/Blend2/blend_amount", 1.0)
+	#equipped_weapon_right.play_animation(state)
+	#equipped_weapon_left.play_animation(state)
 
 
 func _set_left_weapon(weapon_name: String) -> void:
@@ -100,17 +107,18 @@ func _set_sprite_frames(new_sprite_frames: String) -> void:
 		"res://source/common/gameplay/characters/sprite_frames/" + new_sprite_frames + ".tres"
 	)
 
-
+#@onready var state_machine: AnimationNodeStateMachine = $AnimationTree.get("parameters/playback")
+#state_machine.travel("some_state")
+@onready var state_machine: AnimationNodeStateMachinePlayback = $AnimationTree.get("parameters/OnFoot/LocomotionSM/playback")
 func _set_anim(new_anim: Animations) -> void:
 	match new_anim:
 		Animations.IDLE:
-			animated_sprite.play("idle")
-			update_weapon_animation("idle")
+			state_machine.travel(&"locomotion_idle")
 		Animations.RUN:
-			animated_sprite.play("run")
-			update_weapon_animation("run")
+			state_machine.travel(&"locomotion_run")
 		Animations.DEATH:
-			animated_sprite.play("death")
+			state_machine[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
+			#animated_sprite.play("death")
 	anim = new_anim
 
 

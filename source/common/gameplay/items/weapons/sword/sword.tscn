@@ -1,8 +1,11 @@
 [gd_scene load_steps=4 format=3 uid="uid://cq4pqfg3tnqxh"]
 
 [ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_6bj2e"]
-[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="2_xqg3f"]
-[ext_resource type="Resource" uid="uid://e5j5kve7ed7f" path="res://source/common/gameplay/combat/ability/arrow_shoot/arrow_shoot.tres" id="3_gih3n"]
+[ext_resource type="Script" uid="uid://ct0u1fvddy3aa" path="res://source/common/gameplay/items/weapons/sword/sword.gd" id="2_gih3n"]
+[ext_resource type="AnimationLibrary" uid="uid://rbv6cl1ldcc7" path="res://source/common/gameplay/items/weapons/sword/sword_animations.tres" id="3_xqg3f"]
 
 [node name="Sword" instance=ExtResource("1_6bj2e")]
-abilities = Array[ExtResource("2_xqg3f")]([ExtResource("3_gih3n")])
+script = ExtResource("2_gih3n")
+animation_libraries = Dictionary[StringName, AnimationLibrary]({
+&"weapon": ExtResource("3_xqg3f")
+})

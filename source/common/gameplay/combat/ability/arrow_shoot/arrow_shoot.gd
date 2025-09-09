@@ -1,4 +1,3 @@
-# ArrowShootAbility.gd
 extends AbilityResource
 
 

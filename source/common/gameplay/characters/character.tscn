@@ -1,13 +1,177 @@
-[gd_scene load_steps=13 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=36 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/gameplay/characters/character.gd" id="1_uqmoo"]
+[ext_resource type="AnimationLibrary" uid="uid://n1w3r0jaxp0q" path="res://source/common/gameplay/characters/animations/locomotion.tres" id="2_k3wew"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_pypn5"]
+[ext_resource type="AnimationLibrary" uid="uid://rbv6cl1ldcc7" path="res://source/common/gameplay/items/weapons/sword/sword_animations.tres" id="3_8hp20"]
 [ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/gameplay/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
 [ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/sync/state_synchronizer.gd" id="5_eyotc"]
 [ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/gameplay/combat/components/ability_system_component.gd" id="6_fg3fs"]
 [ext_resource type="Resource" uid="uid://djprqmldadljv" path="res://source/common/gameplay/combat/damage_model/DamageModelResource.tres" id="6_k71qx"]
 [ext_resource type="Script" uid="uid://natfmyvgikpe" path="res://source/common/gameplay/combat/components/attributes_mirror.gd" id="7_k71qx"]
 [ext_resource type="Script" uid="uid://bu62r4mj8ohfc" path="res://source/common/gameplay/combat/components/equipment_component.gd" id="8_wql3f"]
+
+[sub_resource type="Animation" id="Animation_pypn5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HandOffset/HandPivot/RightHandSpot:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("HandOffset/HandPivot/RightHandSpot:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(15, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("HandOffset:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("HandOffset/HandPivot/LeftHandSpot:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-15, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("HandOffset/HandPivot/LeftHandSpot:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wq2ob"]
+_data = {
+&"RESET": SubResource("Animation_pypn5")
+}
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_k3wew"]
+filter_enabled = true
+filters = ["HandOffset/HandPivot/LeftHandSpot:position", "HandOffset/HandPivot/LeftHandSpot:rotation"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_8hp20"]
+filter_enabled = true
+filters = ["HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7g734"]
+animation = &"locomotion/death"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_ln0ku"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tjv5j"]
+animation = &"weapon/sword.swing"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nctyx"]
+animation = &"weapon/sword.left.idle"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_d15ip"]
+filters = ["HandOffset/HandPivot/LeftHandSpot:position", "HandOffset/HandPivot/LeftHandSpot:rotation"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pypn5"]
+animation = &"locomotion/idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wq2ob"]
+animation = &"locomotion/run"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_pypn5"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wq2ob"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_k3wew"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_ln0ku"]
+states/End/position = Vector2(654, 24)
+states/Start/position = Vector2(270, -29)
+states/locomotion_idle/node = SubResource("AnimationNodeAnimation_pypn5")
+states/locomotion_idle/position = Vector2(458, -29)
+states/locomotion_run/node = SubResource("AnimationNodeAnimation_wq2ob")
+states/locomotion_run/position = Vector2(458, 116)
+transitions = ["locomotion_idle", "locomotion_run", SubResource("AnimationNodeStateMachineTransition_pypn5"), "locomotion_run", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_wq2ob"), "Start", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_k3wew")]
+graph_offset = Vector2(35, -185)
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k3wew"]
+animation = &"weapon/sword.swing"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dpqhx"]
+animation = &"weapon/sword.idle"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_2wxx6"]
+filter_enabled = true
+filters = ["HandOffset/HandPivot/RightHandSpot/EmptyHand:position", "HandOffset/HandPivot/RightHandSpot/Sword:position", "HandOffset/HandPivot/RightHandSpot/Sword:rotation", "HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation"]
+break_loop_at_end = true
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_65mbs"]
+graph_offset = Vector2(1058.01, 794.98)
+nodes/Blend2/node = SubResource("AnimationNodeBlend2_8hp20")
+nodes/Blend2/position = Vector2(1580, 680)
+"nodes/Blend2 2/node" = SubResource("AnimationNodeBlend2_k3wew")
+"nodes/Blend2 2/position" = Vector2(1820, 640)
+nodes/InteruptAnimation/node = SubResource("AnimationNodeAnimation_7g734")
+nodes/InteruptAnimation/position = Vector2(1040, -240)
+nodes/InteruptShot/node = SubResource("AnimationNodeOneShot_ln0ku")
+nodes/InteruptShot/position = Vector2(2040, 600)
+nodes/LeftAction/node = SubResource("AnimationNodeAnimation_tjv5j")
+nodes/LeftAction/position = Vector2(1040, 20)
+nodes/LeftIdle/node = SubResource("AnimationNodeAnimation_nctyx")
+nodes/LeftIdle/position = Vector2(1040, 280)
+nodes/LeftOneShot/node = SubResource("AnimationNodeOneShot_d15ip")
+nodes/LeftOneShot/position = Vector2(1360, -40)
+nodes/LocomotionSM/node = SubResource("AnimationNodeStateMachine_ln0ku")
+nodes/LocomotionSM/position = Vector2(1040, 540)
+nodes/RightAction/node = SubResource("AnimationNodeAnimation_k3wew")
+nodes/RightAction/position = Vector2(1040, 800)
+nodes/RightIdle/node = SubResource("AnimationNodeAnimation_dpqhx")
+nodes/RightIdle/position = Vector2(1040, 1060)
+nodes/RightOneShot/node = SubResource("AnimationNodeOneShot_2wxx6")
+nodes/RightOneShot/position = Vector2(1360, 740)
+nodes/output/position = Vector2(2280, 620)
+node_connections = [&"Blend2", 0, &"LocomotionSM", &"Blend2", 1, &"RightOneShot", &"Blend2 2", 0, &"Blend2", &"Blend2 2", 1, &"LeftOneShot", &"InteruptShot", 0, &"Blend2 2", &"InteruptShot", 1, &"InteruptAnimation", &"LeftOneShot", 0, &"LeftIdle", &"LeftOneShot", 1, &"LeftAction", &"RightOneShot", 0, &"RightIdle", &"RightOneShot", 1, &"RightAction", &"output", 0, &"InteruptShot"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8hp20"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_vih0n"]
+states/End/position = Vector2(844, 84)
+states/OnFoot/node = SubResource("AnimationNodeBlendTree_65mbs")
+states/OnFoot/position = Vector2(534, 47)
+states/Start/position = Vector2(253, 84)
+transitions = ["Start", "OnFoot", SubResource("AnimationNodeStateMachineTransition_8hp20")]
+graph_offset = Vector2(0, -179)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
 size = Vector2(14, 6)
@@ -27,9 +191,32 @@ texture_filter = 1
 collision_mask = 6
 script = ExtResource("1_uqmoo")
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_wq2ob"),
+&"locomotion": ExtResource("2_k3wew"),
+&"weapon": ExtResource("3_8hp20")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_vih0n")
+anim_player = NodePath("../AnimationPlayer")
+parameters/OnFoot/Blend2/blend_amount = 1.0
+"parameters/OnFoot/Blend2 2/blend_amount" = 1.0
+parameters/OnFoot/InteruptShot/active = false
+parameters/OnFoot/InteruptShot/internal_active = false
+parameters/OnFoot/InteruptShot/request = 0
+parameters/OnFoot/LeftOneShot/active = false
+parameters/OnFoot/LeftOneShot/internal_active = false
+parameters/OnFoot/LeftOneShot/request = 0
+parameters/OnFoot/RightOneShot/active = false
+parameters/OnFoot/RightOneShot/internal_active = false
+parameters/OnFoot/RightOneShot/request = 0
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_pypn5")
 animation = &"idle"
+frame_progress = 0.125846
 speed_scale = 1.5
 offset = Vector2(0, -30)
 
@@ -46,11 +233,18 @@ position = Vector2(0, -10)
 position = Vector2(15, 0)
 
 [node name="EmptyHand" parent="HandOffset/HandPivot/RightHandSpot" instance=ExtResource("3_eddh2")]
+position = Vector2(0, 0)
 
 [node name="LeftHandSpot" type="Node2D" parent="HandOffset/HandPivot"]
 position = Vector2(-15, 0)
+scale = Vector2(-1, 1)
 
 [node name="EmptyHand" parent="HandOffset/HandPivot/LeftHandSpot" instance=ExtResource("3_eddh2")]
+position = Vector2(0, 0)
+
+[node name="RightRig" type="Node2D" parent="HandOffset/HandPivot"]
+
+[node name="LeftRig" type="Node2D" parent="HandOffset/HandPivot"]
 
 [node name="HurtBox" type="Area2D" parent="."]
 

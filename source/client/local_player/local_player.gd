@@ -56,17 +56,17 @@ func update_animation(delta: float) -> void:
 
 
 func update_hand_pivot(delta: float) -> void:
-	if action_input:
-		var hands_rot_pos = hand_pivot.global_position
-		var flips: int = -1 if flipped else 1
-		var look_at_mouse: float = atan2(
-			(mouse.position.y - hands_rot_pos.y), 
-			(mouse.position.x - hands_rot_pos.x) * flips
-			)
-		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_at_mouse, delta * hand_pivot_speed)
-	else:
-		hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, delta * hand_pivot_speed)
-		anim = Animations.RUN if input_direction else Animations.IDLE
+	#if action_input:
+	var hands_rot_pos = hand_pivot.global_position
+	var flips: int = -1 if flipped else 1
+	var look_at_mouse: float = atan2(
+		(mouse.position.y - hands_rot_pos.y), 
+		(mouse.position.x - hands_rot_pos.x) * flips
+		)
+	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_at_mouse, delta * hand_pivot_speed)
+	#else:
+		#hand_pivot.rotation = lerp_angle(hand_pivot.rotation, 0, delta * hand_pivot_speed)
+	anim = Animations.RUN if input_direction else Animations.IDLE
 
 
 var fid_position: int = PathRegistry.id_of(":position")

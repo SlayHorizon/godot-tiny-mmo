@@ -1,72 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://bcojrmcocbq2k"]
+[gd_scene load_steps=4 format=3 uid="uid://bcojrmcocbq2k"]
 
 [ext_resource type="PackedScene" uid="uid://b3wa3c527k5lx" path="res://source/common/gameplay/characters/player/player.tscn" id="1_5bye1"]
 [ext_resource type="Script" uid="uid://biqs370wdwi6m" path="res://source/client/local_player/local_player.gd" id="2_qfdgo"]
 [ext_resource type="Script" uid="uid://bt74wxkb47dp0" path="res://source/client/local_player/mouse_component.gd" id="3_7fqr5"]
 
-[sub_resource type="Animation" id="Animation_i2csu"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_0yrqc"]
-resource_name = "idle"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2(0, 0), Vector2(0, -2), Vector2(0, 0), Vector2(0, -2)]
-}
-
-[sub_resource type="Animation" id="Animation_gkwtj"]
-resource_name = "walk"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [Vector2(0, 0), Vector2(2, 0), Vector2(0, 0), Vector2(-2, 0)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_ix34b"]
-_data = {
-&"RESET": SubResource("Animation_i2csu"),
-&"idle": SubResource("Animation_0yrqc"),
-&"walk": SubResource("Animation_gkwtj")
-}
-
 [node name="LocalPlayer" instance=ExtResource("1_5bye1")]
 script = ExtResource("2_qfdgo")
-
-[node name="AnimatedSprite2D" parent="." index="0"]
-position = Vector2(0, -2)
 
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
 zoom = Vector2(3, 3)
@@ -75,7 +14,5 @@ zoom = Vector2(3, 3)
 top_level = true
 script = ExtResource("3_7fqr5")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="HandOffset/HandPivot" index="2"]
-libraries = {
-&"": SubResource("AnimationLibrary_ix34b")
-}
+[node name="AnimatedSprite2D" parent="." index="5"]
+frame_progress = 0.0

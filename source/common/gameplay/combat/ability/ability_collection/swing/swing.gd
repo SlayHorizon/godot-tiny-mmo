@@ -1,10 +1,13 @@
 extends AbilityResource
 
 
-var damage_factor: float = 1.0
-#var cooldown: float = 0.4
+var damage: float = 10.0
 
 
-func use_item() -> void:
-	# Ability logic
-	pass
+func _init() -> void:
+	cooldown = 1.5
+
+
+func use_ability(entity: Entity, direction: Vector2) -> void:
+	entity
+	mark_used()
