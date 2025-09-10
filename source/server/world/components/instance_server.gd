@@ -71,13 +71,13 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func try_to_equip_item(item_id: int, slot_id: int) -> void:
+func try_to_equip_item(item_id: int, _slot_id: int) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	# Check if player has the weapon
 	
 	var player: Player = players_by_peer_id.get(peer_id, null)
 	if player and player.inventory.has(item_id):
-		var item: GearItem = ContentRegistryHub.load_by_id(&"items", item_id)
+		var item: GearItem = ContentRegistryHub.load_by_id(&"gears", item_id)
 		if item.can_equip(player):
 			player.equipment_component.equip(item.slot.key, item)
 		#var slot: ItemSlot = ContentRegistryHub.load_by_id(&"item_slots", slot_id)

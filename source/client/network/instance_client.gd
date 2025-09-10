@@ -51,7 +51,7 @@ func _ready() -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func try_to_equip_item(item_id: int, slot_id: int) -> void:
+func try_to_equip_item(_item_id: int, _slot_id: int) -> void:
 	pass
 
 
@@ -162,7 +162,7 @@ func cancel_request_data(request_id: int) -> bool:
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)
-func data_request(request_id: int, data_type: String) -> void:
+func data_request(_request_id: int, _data_type: String) -> void:
 	pass
 
 

@@ -1,4 +1,3 @@
-# EffectSpec.gd
 class_name EffectSpec
 extends Resource
 
@@ -10,17 +9,17 @@ var ignore_layers: PackedStringArray = []
 var meta: Dictionary = {}
 
 
-static func damage(amount: float, tags: PackedStringArray = [], meta: Dictionary = {}) -> EffectSpec:
+static func damage(amount: float, _tags: PackedStringArray = [], _meta: Dictionary = {}) -> EffectSpec:
 	var s: EffectSpec = EffectSpec.new()
-	s.tags = tags
+	s.tags = _tags
 	s.magnitudes[StringName("damage")] = amount
-	s.meta = meta
+	s.meta = _meta
 	return s
 
 
-static func heal(amount: float, tags: PackedStringArray = [], meta: Dictionary = {}) -> EffectSpec:
+static func heal(amount: float, _tags: PackedStringArray = [], _meta: Dictionary = {}) -> EffectSpec:
 	var s: EffectSpec = EffectSpec.new()
-	s.tags = tags
+	s.tags = _tags
 	s.magnitudes[StringName("heal")] = amount
-	s.meta = meta
+	s.meta = _meta
 	return s
