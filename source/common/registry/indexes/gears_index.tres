@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://dojalm1lau514"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_lqda7"]
+
+[resource]
+script = ExtResource("1_lqda7")
+content_name = &"gears"
+version = 1757514210
+next_id = 3
+entries = Array[Dictionary]([{
+&"hash": "21aabefc280e8a5e0eb61c29243b69185cd923d688a887e9481fe67259657b63",
+&"id": 1,
+&"path": "res://source/common/gameplay/items/gears/gear2.tres",
+&"slug": &"gear2"
+}, {
+&"hash": "ac6e473b285c7c1af0525e5ec699f0c0641a1b002f0bf78ea9b2d714dbffc4f6",
+&"id": 2,
+&"path": "res://source/common/gameplay/items/gears/thornmail.tres",
+&"slug": &"thornmail"
+}])

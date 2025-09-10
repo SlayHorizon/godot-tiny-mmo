@@ -1,20 +1,17 @@
 extends Control
 
 
+var current_guild: Dictionary
+var _cached_guild_data: Dictionary[StringName, Dictionary]
 var guild_data: Dictionary
 
 
 func _ready() -> void:
-	Events.data_received.connect(_on_data_received)
-	Events.data_requested.emit("guild")
+	InstanceClient.current.request_data(&"guild/self", func(d: Dictionary): current_guild = d)
 
 
-func _on_data_received(data: Dictionary, data_type: String) -> void:
-	if data.is_empty() or data_type != "guild":
-		return
-	data = guild_data
-	if visible:
-		prepare_menu()
+func search_guild(guild_name: String) -> void:
+	pass
 
 
 func _on_close_button_pressed() -> void:
@@ -22,15 +19,17 @@ func _on_close_button_pressed() -> void:
 
 
 func _on_visibility_changed() -> void:
-	if visible and guild_data:
+	if visible:
 		prepare_menu()
 
 
 func prepare_menu() -> void:
-	var guild_name: String = guild_data.get("guild", "")
-	if guild_name:
-		$GuildDisplay/MarginContainer/VBoxContainer/Label.text = guild_name
-		$GuildDisplay.show()
+	print_debug(current_guild)
+	if current_guild and not current_guild.is_empty():
+		var guild_name: String = current_guild.get("guild", "")
+		if guild_name:
+			$GuildDisplay/MarginContainer/VBoxContainer/Label.text = guild_name
+			$GuildDisplay.show()
 	else:
 		$NoGuildMenu.show()
 

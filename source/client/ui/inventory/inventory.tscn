@@ -1,11 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://dia55s0a7lhnv"]
+[gd_scene load_steps=12 format=3 uid="uid://dia55s0a7lhnv"]
 
 [ext_resource type="Script" uid="uid://3kue0fgf78ik" path="res://source/client/ui/inventory/inventory.gd" id="1_g6fyq"]
+[ext_resource type="Script" uid="uid://cx6ltmvpbwdng" path="res://source/client/ui/inventory/gear_slot.gd" id="2_0wccm"]
 [ext_resource type="Texture2D" uid="uid://tg02o3a14emh" path="res://source/client/ui/inventory/test_sprites/Icon162.png" id="2_q1iwn"]
 [ext_resource type="Texture2D" uid="uid://bd0ohyvo6looc" path="res://source/client/ui/inventory/test_sprites/Icon202.png" id="3_3w0rw"]
 [ext_resource type="Texture2D" uid="uid://bb7ec36sc1thr" path="res://source/client/ui/inventory/test_sprites/Icon182.png" id="4_0wccm"]
 [ext_resource type="Texture2D" uid="uid://cf0y64q72i32l" path="res://source/client/ui/inventory/test_sprites/Icon2.png" id="5_lqdnc"]
 [ext_resource type="Texture2D" uid="uid://c5i67th8u1h7l" path="res://source/client/ui/inventory/test_sprites/Icon222.png" id="6_7d8wy"]
+[ext_resource type="Resource" uid="uid://dnbj6tmyghec4" path="res://source/common/gameplay/items/item_slot/slots/helmet.tres" id="6_lqdnc"]
 [ext_resource type="Texture2D" uid="uid://c3n053obioby0" path="res://source/client/ui/inventory/test_sprites/Icon142.png" id="7_4toxt"]
 [ext_resource type="Texture2D" uid="uid://cslc64xbpxpsd" path="res://source/client/ui/inventory/test_sprites/Icon321.png" id="8_3w0rw"]
 [ext_resource type="Texture2D" uid="uid://w14y1o4gi3l2" path="res://source/client/ui/inventory/test_sprites/Icon325.png" id="9_0wccm"]
@@ -203,54 +205,73 @@ custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 text = "lvl. 10"
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button4" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 icon = ExtResource("2_q1iwn")
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button3" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 text = "lvl. 20"
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button2" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 icon = ExtResource("3_3w0rw")
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button5" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 icon = ExtResource("4_0wccm")
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+gear_slot = ExtResource("6_lqdnc")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button7" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 text = "lvl. 5"
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button8" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 icon = ExtResource("5_lqdnc")
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button6" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 icon = ExtResource("6_7d8wy")
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button9" type="Button" parent="EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 icon = ExtResource("7_4toxt")
 icon_alignment = 1
+script = ExtResource("2_0wccm")
+metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="ItemInfo" type="PanelContainer" parent="EquipmentView/HBoxContainer/VBoxContainer2"]
 layout_mode = 2

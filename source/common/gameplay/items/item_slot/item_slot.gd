@@ -9,8 +9,7 @@ extends Resource
 ## Can be translated, means to be used in UI.
 @export var display_name: String
 
-## 1 to be unlocked by default and 0 if needs a specific condition.
-@export_range(0, 99, 1.0, "suffix:lvl") var unlock_level: int = 1
+@export var unlock_rule: SlotUnlockRule
 
 ## Option icon for UI
 @export var icon: Texture2D
@@ -19,22 +18,5 @@ extends Resource
 var unlocked: bool = false
 
 
-# TO DO / TO CONSIDER LATER:
-#@export var unlock_rule: SlotUnlockRule
-#func is_unlocked_for(player: Player) -> bool:
-	#return unlock_rule and unlock_level.is_unlocked(player)
-#class_name SlotUnlockRule
-#extends Resource
-#enum Kind {ALWAYS, PLAYER_LEVEL, QUEST_COMPLETED, MANUAL_FLAG}
-#@export var kind: Kind = Kind.ALWAYS
-#@export var level: int = 0
-#@export var quest_id: int = 0
-#@export var flag_key: StringName = &""
-#
-#func is_unlocked(player: Player) -> bool:
-	#match kind:
-		#Kind.ALWAYS: return true
-		#Kind.PLAYER_LEVEL: return player.player_resource.level >= level
-		#Kind.QUEST_COMPLETED: return player.has_completed_quest(quest_id)
-		#Kind.MANUAL_FLAG: return player.progress_flags.has(flag_key)
-		#_: return false
+func is_unlocked_for(player: PlayerResource) -> bool:
+	return unlock_rule and unlock_rule.is_unlocked(player)

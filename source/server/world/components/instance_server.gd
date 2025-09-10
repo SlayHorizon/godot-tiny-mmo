@@ -71,15 +71,18 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func player_trying_to_change_weapon(weapon_path: String, _side: bool = true) -> void:
+func try_to_equip_item(item_id: int, slot_id: int) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	# Check if player has the weapon
 	
 	var player: Player = players_by_peer_id.get(peer_id, null)
-	if not player:
-		return
+	if player and player.inventory.has(item_id):
+		var item: GearItem = ContentRegistryHub.load_by_id(&"items", item_id)
+		if item.can_equip(player):
+			player.equipment_component.equip(item.slot.key, item)
+		#var slot: ItemSlot = ContentRegistryHub.load_by_id(&"item_slots", slot_id)
 	#if player.player_resource.inventory.has(weapon_path):
-	player.syn.set_by_path(^":weapon_name_right", weapon_path)
+	#player.syn.set_by_path(^":weapon_name_right", weapon_path)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -272,16 +275,19 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	if not player:
 		return
 	
-	const THORNMAIL = preload("res://source/common/gameplay/items/equipable_item/resources/thornmail.tres")
-	if not player.equipment_component._slots.has(&"chest"):
-		player.equipment_component.equip(&"chest", THORNMAIL)
+	# Fast item test
+	const THORNMAIL = preload("res://source/common/gameplay/items/gears/thornmail.tres")
+	player.equipment_component.equip(THORNMAIL.slot.key, THORNMAIL)
+	
+	
 	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
 		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))
 
 
 
+# Quick and dirty for fast proto test
 @rpc("any_peer", "call_remote", "reliable", 1)
-func request_data(data_type: String) -> void:
+func data_request(request_id: int, data_type: String) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	var player: Player = players_by_peer_id.get(peer_id)
 	if not player:
@@ -294,15 +300,21 @@ func request_data(data_type: String) -> void:
 				result = guild.guild_name
 			else:
 				result = ""
-			fetch_data.rpc_id(
+			data_response.rpc_id(
 				peer_id,
+				request_id,
 				{"guild": result},
-				"guild"
+			)
+		"inventory":
+			data_response.rpc_id(
+				peer_id,
+				request_id,
+				player.player_resource.inventory,
 			)
 
 
 @rpc("authority", "call_remote", "reliable", 1)
-func fetch_data(_data: Dictionary, _data_type: String) -> void:
+func data_response(_request_id: int, _data: Dictionary) -> void:
 	pass
 
 

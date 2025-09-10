@@ -1,18 +1,22 @@
 class_name EquipmentComponent
 extends Node
 
+
 @export var _asc: AbilitySystemComponent
-var _slots: Dictionary[StringName, EquipableItem] = {}
+@export var character: Character
+
+var _slots: Dictionary[StringName, GearItem] = {}
+
 
 func _ready() -> void:
 	pass
 
 
-func equip(slot: StringName, item: EquipableItem) -> bool:
+func equip(slot: StringName, item: GearItem) -> bool:
 	if _slots.has(slot):
 		_unequip_internal(slot)
 	_slots[slot] = item
-	item.on_equip(_asc)
+	item.on_equip(character)
 	return true
 
 func unequip(slot: StringName) -> void:
@@ -21,6 +25,6 @@ func unequip(slot: StringName) -> void:
 	_unequip_internal(slot)
 
 func _unequip_internal(slot: StringName) -> void:
-	var item: EquipableItem = _slots[slot]
-	item.on_unequip(_asc)
+	var item: GearItem = _slots[slot]
+	item.on_unequip(character)
 	_slots.erase(slot)

@@ -47,6 +47,7 @@ var pivot: float = 0.0:
 @onready var equipment_component: EquipmentComponent = $EquipmentComponent
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var animation_tree: AnimationTree = $AnimationTree
+@onready var state_machine: AnimationNodeStateMachinePlayback = $AnimationTree.get("parameters/OnFoot/LocomotionSM/playback")
 
 
 func _ready() -> void:
@@ -70,8 +71,8 @@ func _ready() -> void:
 		equipped_weapon_right.character = self
 	if left_hand_spot.get_child_count():
 		equipped_weapon_left = left_hand_spot.get_child(0)
-		equipped_weapon_right.hand.type = hand_type
-		equipped_weapon_right.hand.side = Hand.Sides.LEFT
+		equipped_weapon_left.hand.type = hand_type
+		equipped_weapon_left.hand.side = Hand.Sides.LEFT
 		equipped_weapon_left.character = self
 
 
@@ -107,9 +108,7 @@ func _set_sprite_frames(new_sprite_frames: String) -> void:
 		"res://source/common/gameplay/characters/sprite_frames/" + new_sprite_frames + ".tres"
 	)
 
-#@onready var state_machine: AnimationNodeStateMachine = $AnimationTree.get("parameters/playback")
-#state_machine.travel("some_state")
-@onready var state_machine: AnimationNodeStateMachinePlayback = $AnimationTree.get("parameters/OnFoot/LocomotionSM/playback")
+
 func _set_anim(new_anim: Animations) -> void:
 	match new_anim:
 		Animations.IDLE:
@@ -118,7 +117,6 @@ func _set_anim(new_anim: Animations) -> void:
 			state_machine.travel(&"locomotion_run")
 		Animations.DEATH:
 			state_machine[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
-			#animated_sprite.play("death")
 	anim = new_anim
 
 
@@ -138,3 +136,16 @@ func _set_character_class(new_class: String):
 		"res://source/common/gameplay/characters/classes/character_collection/" + new_class + ".tres")
 	animated_sprite.sprite_frames = character_resource.character_sprite
 	character_class = new_class
+
+
+#var primary_weapon: Weapon
+#var secondary_weapon: Weapon
+#func equip_weapon(weapon_id: int) -> void:
+	##var weapon: Weapon = ContentRegistryHub.load_by_id(&"weapons", weapon_id)
+	##if not weapon:
+		##return
+	#pass
+	#
+#func handle_action(index: int, direction: Vector2) -> void:
+	#
+	#pass

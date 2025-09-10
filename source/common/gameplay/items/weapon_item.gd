@@ -4,7 +4,6 @@ extends GearItem
 
 @export var scene: PackedScene
 @export var mount_point: StringName = &"weapon_main"
-#@export var granted_ability_ids: PackedInt32Array = []
 
 
 func on_equip(character: Character) -> void:

@@ -37,6 +37,12 @@ func create_player_character(username: String, character_data: Dictionary) -> in
 	next_player_id += 1
 	var player_id: int = next_player_id
 	var player_character := PlayerResource.new()
+	
+	# Temporary for fast test
+	player_character.inventory = {
+		1: {"stack": 1}, 2: {"stack": 1}, 3: {"stack": 1}, 4: {"stack": 1}
+	}
+	
 	player_character.init(
 		player_id, username,
 		character_data["name"], character_data["class"]

@@ -15,11 +15,8 @@ extends Item
 
 func can_equip(player: Player) -> bool:
 	if player.player_resource:
-		#return player.player_resource.level >= required_level
-		var level: int = player.player_resource.level
-		var require: int = max(slot.unlock_level, required_level)
-		return level >= require
-	return true
+		return slot.is_unlocked_for(player.player_resource) and player.player_resource.level >= required_level
+	return false
 
 
 func on_equip(character: Character) -> void:

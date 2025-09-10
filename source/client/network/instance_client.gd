@@ -1,27 +1,27 @@
 class_name InstanceClient
-extends Node2D
+extends Node
 
 
 const LOCAL_PLAYER: PackedScene = preload("res://source/client/local_player/local_player.tscn")
 const DUMMY_PLAYER: PackedScene = preload("res://source/common/gameplay/characters/player/player.tscn")
 
+static var current: InstanceClient
+static var local_player: LocalPlayer
 
 var players_by_peer_id: Dictionary[int, Player]
 
-var last_state: Dictionary = {"T" = 0.0}
-
-static var local_player: LocalPlayer
 var synchronizer_manager: StateSynchronizerManagerClient
 var instance_map: Map
 
 
 func _ready() -> void:
+	current = self
 	Events.message_submitted.connect(
 		func(message: String, _channel: int):
 			player_submit_message(message)
 	)
-	Events.item_icon_pressed.connect(player_trying_to_change_weapon)
-	Events.data_requested.connect(request_data)
+	
+	#Events.item_icon_pressed.connect(player_trying_to_change_weapon)
 	
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
@@ -51,8 +51,8 @@ func _ready() -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func player_trying_to_change_weapon(weapon_path: String, side: bool = true) -> void:
-	player_trying_to_change_weapon.rpc_id(1, weapon_path, side)
+func try_to_equip_item(item_id: int, slot_id: int) -> void:
+	pass
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -142,11 +142,33 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	player.equipped_weapon_right.perform_action(action_index, action_direction)
 
 
+#### WIPP ##
+var _next_data_request_id: int
+var _pending_data_request: Dictionary[int, Callable]
+
+
+func request_data(data_type: StringName, handler: Callable) -> int:
+	var request_id: int = _next_data_request_id
+	_next_data_request_id += 1
+	_pending_data_request[request_id] = handler
+	data_request.rpc_id(1, request_id, data_type)
+	# Return request_id in case you may want to keep track of it for cancelation for example.
+	return request_id
+
+
+func cancel_request_data(request_id: int) -> bool:
+	# Dictionary.erase eturns true if the given key existed in the dictionary, otherwise false.
+	return _pending_data_request.erase(request_id)
+
+
 @rpc("any_peer", "call_remote", "reliable", 1)
-func request_data(data_type: String) -> void:
-	request_data.rpc_id(1, data_type)
+func data_request(request_id: int, data_type: String) -> void:
+	pass
 
 
 @rpc("authority", "call_remote", "reliable", 1)
-func fetch_data(data: Dictionary, data_type: String) -> void:
-	Events.data_received.emit(data, data_type)
+func data_response(request_id: int, data: Dictionary) -> void:
+	var callable: Callable = _pending_data_request.get(request_id, Callable())
+	_pending_data_request.erase(request_id)
+	if callable.is_valid():
+		callable.call(data)

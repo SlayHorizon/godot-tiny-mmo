@@ -10,9 +10,6 @@ signal message_received(message: String, sender_name: String, channel: int)
 signal item_icon_pressed(item_name: String)
 signal local_player_ready(local_player: LocalPlayer)
 
-# Guild (WIP)
-signal data_requested(data_type: String)
-signal data_received(data: Dictionary, data_type: String)
 
 #var events: Dictionary[StringName, Signal]
 

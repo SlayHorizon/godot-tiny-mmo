@@ -6,7 +6,7 @@ static var _versions: Dictionary[StringName, int]
 
 
 static func _static_init() -> void:
-	if not OS.has_feature("world-server") or not OS.has_feature("client"):
+	if OS.has_feature("master-server") or OS.has_feature("gateway-server"):
 		return
 	const INDEXES_DIR: String = "res://source/common/registry/indexes/"
 	for index_path: String in ResourceLoader.list_directory(INDEXES_DIR):
@@ -15,7 +15,7 @@ static func _static_init() -> void:
 			index_path.trim_suffix("_index.tres"),
 			content_index
 		)
-		print(content_index.entries)
+		print_debug(content_index.entries)
 	print("_content_by_name = ", _content_by_name)
 		
 

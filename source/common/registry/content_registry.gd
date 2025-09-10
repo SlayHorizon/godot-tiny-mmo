@@ -24,7 +24,7 @@ func id_from_slug(slug: StringName) -> int:
 
 
 func path_from_id(id: int) -> StringName:
-	return _id_to_path.get(id, 0)
+	return _id_to_path.get(id, &"")
 
 
 func path_from_slug(slug: StringName) -> StringName:
