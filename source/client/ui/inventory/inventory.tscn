@@ -593,4 +593,5 @@ offset_right = 96.0
 offset_bottom = 71.0
 text = "History"
 
+[connection signal="pressed" from="EquipmentView/HBoxContainer/VBoxContainer2/ItemInfo/VBoxContainer/HBoxContainer/Button" to="." method="_on_equip_button_pressed"]
 [connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

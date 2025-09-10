@@ -76,7 +76,7 @@ func try_to_equip_item(item_id: int, _slot_id: int) -> void:
 	# Check if player has the weapon
 	
 	var player: Player = players_by_peer_id.get(peer_id, null)
-	if player and player.inventory.has(item_id):
+	if player and player.player_resource.inventory.has(item_id):
 		var item: GearItem = ContentRegistryHub.load_by_id(&"gears", item_id)
 		if item.can_equip(player):
 			player.equipment_component.equip(item.slot.key, item)

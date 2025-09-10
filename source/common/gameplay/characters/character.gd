@@ -50,8 +50,6 @@ var pivot: float = 0.0:
 
 
 func _ready() -> void:
-	if Engine.is_editor_hint():
-		return
 	# NEW
 	$AbilitySystemComponent/AttributesMirror.attribute_local_changed.connect(
 		func(attr: StringName, value: float, max_value: float):

@@ -125,8 +125,20 @@ func _on_file_dialog_dir_selected(dir: String) -> void:
 	
 	var entries: Array[Dictionary]
 	for resource_path: String in resource_paths:
+		var resource: Resource = ResourceLoader.load(resource_path)
+		if not resource:
+			continue
+		
+		print_debug(resource)
+		print_debug(resource_path)
+		
 		var slug: StringName = resource_path.get_file().get_basename()
 		var id: int = get_slug_id(content_index, slug)
+		
+		resource.set_meta(&"slug", slug)
+		resource.set_meta(&"id", id)
+		ResourceSaver.save(resource, resource_path)
+		
 		entries.append({
 			&"id": id,
 			&"slug": slug,

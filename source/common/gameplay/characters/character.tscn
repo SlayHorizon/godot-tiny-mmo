@@ -281,6 +281,7 @@ metadata/_custom_type_script = "uid://gl2cwrrfvlkh"
 script = ExtResource("7_k71qx")
 metadata/_custom_type_script = "uid://natfmyvgikpe"
 
-[node name="EquipmentComponent" type="Node" parent="." node_paths=PackedStringArray("_asc")]
+[node name="EquipmentComponent" type="Node" parent="." node_paths=PackedStringArray("_asc", "character")]
 script = ExtResource("8_wql3f")
 _asc = NodePath("../AbilitySystemComponent")
+character = NodePath("..")

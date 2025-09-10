@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="GearItem" load_steps=10 format=3 uid="uid://cusgrq4sr1y0e"]
+[gd_resource type="Resource" script_class="GearItem" load_steps=11 format=3 uid="uid://cusgrq4sr1y0e"]
 
 [ext_resource type="Script" uid="uid://chp0417yx5dgc" path="res://source/common/gameplay/combat/gameplay_effect/gameplay_effect.gd" id="1_svlqd"]
 [ext_resource type="Script" uid="uid://dh0cgupjccloe" path="res://source/common/gameplay/combat/gameplay_effect/resources/thormail.gd" id="2_vt15v"]
 [ext_resource type="Script" uid="uid://b61c4gs0ie8a6" path="res://source/common/gameplay/combat/attributes/stat_growth/stat_growth.gd" id="2_xo4b1"]
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier/stat_modifier.gd" id="3_vt15v"]
 [ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="4_sxpdy"]
+[ext_resource type="Texture2D" uid="uid://bb7ec36sc1thr" path="res://source/client/ui/inventory/test_sprites/Icon182.png" id="5_sxpdy"]
 [ext_resource type="Resource" uid="uid://wi13k03tseev" path="res://source/common/gameplay/items/item_slot/slots/torso.tres" id="6_sxpdy"]
 
 [sub_resource type="Resource" id="Resource_bepl7"]
@@ -48,10 +49,18 @@ base_modifiers = Array[ExtResource("3_vt15v")]([SubResource("Resource_lj8y6"), S
 base_growth = Array[ExtResource("2_xo4b1")]([])
 base_effects = Array[ExtResource("1_svlqd")]([SubResource("Resource_bepl7")])
 item_name = &"ItemDefault"
-description = ""
+item_icon = ExtResource("5_sxpdy")
+description = "Thornmail - Level 1
+
+30 Health
+5 Armor
+
+Unique – Thorns: When struck by a basic attack on-hit, deal 2 (+ 5% bonus armor) magic damage to the attacker."
 can_trade = false
 can_sell = false
 minimum_price = 0
 stack_limit = 0
 tags = []
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"thornmail"
+metadata/id = 2

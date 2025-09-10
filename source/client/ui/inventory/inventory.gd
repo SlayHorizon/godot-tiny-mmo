@@ -10,9 +10,11 @@ var materials_inventory: Dictionary
 
 var latest_items: Dictionary
 var gear_slots_cache: Dictionary[Button, Item]
+var selected_item: Item
 
 @onready var inventory_grid: GridContainer = $EquipmentView/HBoxContainer/VBoxContainer/InventoryGrid
 @onready var equipment_slots: GridContainer = $EquipmentView/HBoxContainer/VBoxContainer2/EquipmentSlots
+@onready var rich_text_label: RichTextLabel = $EquipmentView/HBoxContainer/VBoxContainer2/ItemInfo/VBoxContainer/RichTextLabel
 
 
 func _ready() -> void:
@@ -35,10 +37,11 @@ func fill_inventory(inventory: Dictionary) -> void:
 		print(item)
 	for equipment_slot: GearSlotButton in equipment_slots.get_children():
 		if equipment_slot.gear_slot:
-			pass
+			if equipment_slot.gear_slot == null:
+				equipment_slot.text = "Empty"
 		else:
 			equipment_slot.icon = null
-			equipment_slot.text = "Empty"
+			equipment_slot.text = "Lock"
 
 
 func add_item() -> void:
@@ -50,4 +53,12 @@ func _on_close_button_pressed() -> void:
 
 
 func _on_item_slot_button_pressed(button: Button, item: Item) -> void:
-	pass
+	selected_item = item
+	rich_text_label.text = item.description
+
+
+func _on_equip_button_pressed() -> void:
+	if selected_item is GearItem or selected_item is WeaponItem:
+		var item_id: int = selected_item.get_meta(&"id", -1)
+		if item_id != -1:
+			InstanceClient.current.try_to_equip_item.rpc_id(1, item_id, 0)
