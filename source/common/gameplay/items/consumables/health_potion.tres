@@ -1,15 +1,28 @@
-[gd_resource type="Resource" script_class="ConsumableItem" load_steps=3 format=3 uid="uid://onx5sxsctc6a"]
+[gd_resource type="Resource" script_class="ConsumableItem" load_steps=5 format=3 uid="uid://onx5sxsctc6a"]
 
 [ext_resource type="Script" uid="uid://chp0417yx5dgc" path="res://source/common/gameplay/combat/gameplay_effect/gameplay_effect.gd" id="1_ux3ni"]
+[ext_resource type="Script" uid="uid://4v8isgqu1aho" path="res://source/common/gameplay/combat/gameplay_effect/resources/potion_heal.gd" id="2_35wr3"]
 [ext_resource type="Script" uid="uid://bprsise4rcsak" path="res://source/common/gameplay/items/consumable_item.gd" id="2_oie41"]
+
+[sub_resource type="Resource" id="Resource_bst0a"]
+script = ExtResource("2_35wr3")
+name_id = &""
+is_debuff = false
+dispel_mask = 0
+tags = []
+duration = 0.0
+period = 0.0
+first_tick_delay = 0.0
+stacks_max = 1
+metadata/_custom_type_script = "uid://4v8isgqu1aho"
 
 [resource]
 script = ExtResource("2_oie41")
-effects = Array[ExtResource("1_ux3ni")]([])
+effects = Array[ExtResource("1_ux3ni")]([SubResource("Resource_bst0a")])
 shared_cooldown_ms = 1500
 cooldown_category = &"potion"
 default_charges = 1
-item_name = &"ItemDefault"
+item_name = &"Health Potion"
 description = ""
 can_trade = false
 can_sell = false

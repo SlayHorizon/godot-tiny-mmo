@@ -2,7 +2,7 @@ class_name ConsumableItem
 extends Item
 
 
-@export var effects: Array[GameplayEffect] = []
+@export var effects: Array[GameplayEffect]
 @export var shared_cooldown_ms: int = 1500
 @export var cooldown_category: StringName = &"potion"
 ## initial charges per single copy if 1 can use the potion one time, if 2 can use the potion 2 times for example.
@@ -20,7 +20,8 @@ func can_use(player: Player) -> bool:
 
 
 func on_use(character: Character) -> void:
-	pass
+	for effect: GameplayEffect in effects:
+		effect.on_added(character.ability_system_component)
 #func on_use(asc: Node, stack: ItemStack) -> bool:
 	#if not can_use(asc, stack):
 		#return false

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=10 format=3 uid="uid://datfjlp6cinkb"]
+[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=7 format=3 uid="uid://datfjlp6cinkb"]
 
 [ext_resource type="Script" uid="uid://ch4h6y276l4i5" path="res://source/common/gameplay/characters/player/player_resource.gd" id="1_83xu3"]
 [ext_resource type="Script" uid="uid://bnw6yvttm5kp7" path="res://source/server/world/data/guild.gd" id="1_cio0q"]
@@ -25,53 +25,12 @@ leader_id = 0
 members = Dictionary[int, String]({})
 metadata/_custom_type_script = "uid://bnw6yvttm5kp7"
 
-[sub_resource type="Resource" id="Resource_evweq"]
-script = ExtResource("1_83xu3")
-player_id = 1
-account_name = "guest1"
-display_name = "ohup7fvh"
-character_class = "knight"
-golds = 0
-inventory = {}
-level = 0
-server_roles = {}
-
-[sub_resource type="Resource" id="Resource_83xu3"]
-script = ExtResource("1_83xu3")
-player_id = 2
-account_name = "guest2"
-display_name = "bbw3knqd"
-character_class = "knight"
-golds = 0
-inventory = {}
-level = 0
-server_roles = {}
-
-[sub_resource type="Resource" id="Resource_cio0q"]
-script = ExtResource("1_83xu3")
-player_id = 3
-account_name = "guest0"
-display_name = "mfxptn5l"
-character_class = "knight"
-golds = 0
-inventory = {}
-level = 0
-server_roles = {}
-
 [resource]
 script = ExtResource("2_83xu3")
-accounts = Dictionary[String, PackedInt32Array]({
-"guest0": PackedInt32Array(3),
-"guest1": PackedInt32Array(1),
-"guest2": PackedInt32Array(2)
-})
+accounts = Dictionary[String, PackedInt32Array]({})
 max_character_per_account = 3
-players = Dictionary[int, ExtResource("1_83xu3")]({
-1: SubResource("Resource_evweq"),
-2: SubResource("Resource_83xu3"),
-3: SubResource("Resource_cio0q")
-})
-next_player_id = 3
+players = Dictionary[int, ExtResource("1_83xu3")]({})
+next_player_id = 0
 admin_ids = PackedInt32Array(1, 2)
 user_roles = Dictionary[int, Array]({})
 guilds = Dictionary[String, ExtResource("1_cio0q")]({

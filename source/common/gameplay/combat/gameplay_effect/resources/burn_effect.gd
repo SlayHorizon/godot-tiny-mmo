@@ -1,4 +1,3 @@
-# BurnDotEffect.gd
 class_name BurnDotEffect
 extends GameplayEffect
 

@@ -54,9 +54,12 @@ func try_to_equip_item(item_id: int, peer_id: int) -> void:
 	if not player:
 		return
 	
-	var item: GearItem = ContentRegistryHub.load_by_id(&"items", item_id) as GearItem
+	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
 	if item:
-		player.equipment_component.equip(item.slot.key, item)
+		if item is WeaponItem:
+			player.equipment_component.equip(item.slot.key, item)
+		elif item is ConsumableItem:
+			item.on_use(player)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)

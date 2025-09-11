@@ -1,8 +1,80 @@
-[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=2 format=3 uid="uid://bpnsdsip6n3a2"]
+[gd_resource type="Resource" script_class="AccountResourceCollection" load_steps=13 format=3 uid="uid://clcr4e6t0ugj6"]
 
+[ext_resource type="Script" uid="uid://620djf1m6nxf" path="res://source/server/master/account_models/account.gd" id="1_wgikn"]
 [ext_resource type="Script" uid="uid://cxrc2yfn6yejc" path="res://source/server/master/account_models/account_collection.gd" id="2_e6eac"]
+
+[sub_resource type="Resource" id="Resource_e6eac"]
+script = ExtResource("1_wgikn")
+id = 0
+username = "guest0"
+password = "8nwiccic5a0r"
+
+[sub_resource type="Resource" id="Resource_wgikn"]
+script = ExtResource("1_wgikn")
+id = 1
+username = "guest1"
+password = "tvwtv8bxf5jc"
+
+[sub_resource type="Resource" id="Resource_lbkgn"]
+script = ExtResource("1_wgikn")
+id = 2
+username = "guest2"
+password = "totv-1sg2wqp"
+
+[sub_resource type="Resource" id="Resource_5pt73"]
+script = ExtResource("1_wgikn")
+id = 3
+username = "guest3"
+password = "77nzkq21$439"
+
+[sub_resource type="Resource" id="Resource_obwkj"]
+script = ExtResource("1_wgikn")
+id = 4
+username = "guest4"
+password = "3p88gdj27233"
+
+[sub_resource type="Resource" id="Resource_rw0ll"]
+script = ExtResource("1_wgikn")
+id = 5
+username = "guest5"
+password = "7o3+q83ssjey"
+
+[sub_resource type="Resource" id="Resource_kbbby"]
+script = ExtResource("1_wgikn")
+id = 6
+username = "guest6"
+password = "9c-zhnn2h920"
+
+[sub_resource type="Resource" id="Resource_47dsw"]
+script = ExtResource("1_wgikn")
+id = 7
+username = "guest7"
+password = "$#q$kx8ry5cz"
+
+[sub_resource type="Resource" id="Resource_w6h2b"]
+script = ExtResource("1_wgikn")
+id = 8
+username = "guest8"
+password = "87fdjhpypf8-"
+
+[sub_resource type="Resource" id="Resource_7ql8d"]
+script = ExtResource("1_wgikn")
+id = 9
+username = "guest9"
+password = "oegn7m-za3t5"
 
 [resource]
 script = ExtResource("2_e6eac")
-collection = {}
-next_account_id = 0
+collection = {
+"guest0": SubResource("Resource_e6eac"),
+"guest1": SubResource("Resource_wgikn"),
+"guest2": SubResource("Resource_lbkgn"),
+"guest3": SubResource("Resource_5pt73"),
+"guest4": SubResource("Resource_obwkj"),
+"guest5": SubResource("Resource_rw0ll"),
+"guest6": SubResource("Resource_kbbby"),
+"guest7": SubResource("Resource_47dsw"),
+"guest8": SubResource("Resource_w6h2b"),
+"guest9": SubResource("Resource_7ql8d")
+}
+next_account_id = 10
