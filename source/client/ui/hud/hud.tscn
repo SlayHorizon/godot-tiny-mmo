@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://dqt8fnt1l33eu"]
+[gd_scene load_steps=6 format=3 uid="uid://dqt8fnt1l33eu"]
 
 [ext_resource type="Script" uid="uid://dshitaaapbs6x" path="res://source/client/ui/hud/hud.gd" id="1_rchld"]
 [ext_resource type="PackedScene" uid="uid://rncsatpcsbm" path="res://source/client/ui/hud/health_bar/health_bar.tscn" id="2_klco5"]
 [ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/chat/chat.tscn" id="2_xs74v"]
+[ext_resource type="Script" uid="uid://pkprr0ll1y44" path="res://source/client/ui/hud/item_slots.gd" id="4_8qpw0"]
 [ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
 
 [node name="HUD" type="CanvasLayer"]
@@ -23,6 +24,7 @@ offset_top = -2.0
 offset_bottom = 2.0
 grow_horizontal = 0
 grow_vertical = 2
+script = ExtResource("4_8qpw0")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ItemSlots"]
 layout_mode = 1
@@ -113,8 +115,6 @@ text = "CLOSE"
 [node name="SubMenu" type="CanvasLayer" parent="."]
 layer = 2
 
-[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton1" to="." method="_on_item_slot_button_1_pressed" binds= ["sword/sword"]]
-[connection signal="pressed" from="ItemSlots/VBoxContainer/ItemSlotButton2" to="." method="_on_item_slot_button_2_pressed" binds= ["bow/wooden_bow"]]
 [connection signal="pressed" from="MenuButton2" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="MenuOverlay/VBoxContainer/GuildButton" to="." method="_on_guild_button_pressed"]

@@ -21,8 +21,6 @@ func _ready() -> void:
 			player_submit_message(message)
 	)
 	
-	#Events.item_icon_pressed.connect(player_trying_to_change_weapon)
-	
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
 

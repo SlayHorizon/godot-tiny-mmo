@@ -7,7 +7,6 @@ signal message_submitted(message: String, channel: int)
 signal message_received(message: String, sender_name: String, channel: int)
 
 # HUD
-signal item_icon_pressed(item_name: String)
 signal local_player_ready(local_player: LocalPlayer)
 
 
