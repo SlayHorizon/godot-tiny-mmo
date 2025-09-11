@@ -293,7 +293,7 @@ func data_request(request_id: int, data_type: String) -> void:
 	if not player:
 		return
 	match data_type:
-		"guild":
+		"guild/self":
 			var guild: Guild = player.player_resource.guild
 			var result: String
 			if guild:
@@ -311,6 +311,29 @@ func data_request(request_id: int, data_type: String) -> void:
 				request_id,
 				player.player_resource.inventory,
 			)
+	if data_type.begins_with("guild"):
+		if data_type.begins_with("guild/search/"):
+			const MAX_RESULT: int = 10
+			var i: int = 0
+			var result: Dictionary
+			var guild_names: PackedStringArray = world_server.database.player_data.guilds.keys()
+			var to_search: String = data_type.trim_prefix("guild/search/").to_lower()
+			for guild_name: String in guild_names:
+				if guild_name.to_lower().contains(to_search):
+					result[guild_name] = 0
+				if i >= MAX_RESULT:
+					break
+				i += 1
+			data_response.rpc_id(peer_id, request_id, result)
+		elif data_type.begins_with("guild/get/"):
+			var to_get: String = data_type.trim_prefix("guild/get/")
+			var guild: Guild = world_server.database.player_data.guilds.get(to_get)
+			var guild_info: Dictionary
+			if guild:
+				guild_info = {"name": guild.guild_name, "size": guild.members.size()}
+			data_response.rpc_id(peer_id, request_id, guild_info)
+			
+			
 
 
 @rpc("authority", "call_remote", "reliable", 1)

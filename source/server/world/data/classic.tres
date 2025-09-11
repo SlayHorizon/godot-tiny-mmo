@@ -1,8 +1,29 @@
-[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=7 format=3 uid="uid://datfjlp6cinkb"]
+[gd_resource type="Resource" script_class="WorldPlayerData" load_steps=10 format=3 uid="uid://datfjlp6cinkb"]
 
 [ext_resource type="Script" uid="uid://ch4h6y276l4i5" path="res://source/common/gameplay/characters/player/player_resource.gd" id="1_83xu3"]
 [ext_resource type="Script" uid="uid://bnw6yvttm5kp7" path="res://source/server/world/data/guild.gd" id="1_cio0q"]
 [ext_resource type="Script" uid="uid://b0vab61d5a3tr" path="res://source/server/world/data/world_player_data.gd" id="2_83xu3"]
+
+[sub_resource type="Resource" id="Resource_ugqtu"]
+script = ExtResource("1_cio0q")
+guild_name = "a"
+leader_id = 0
+members = Dictionary[int, String]({})
+metadata/_custom_type_script = "uid://bnw6yvttm5kp7"
+
+[sub_resource type="Resource" id="Resource_7bb4l"]
+script = ExtResource("1_cio0q")
+guild_name = "salade"
+leader_id = 0
+members = Dictionary[int, String]({})
+metadata/_custom_type_script = "uid://bnw6yvttm5kp7"
+
+[sub_resource type="Resource" id="Resource_oscd5"]
+script = ExtResource("1_cio0q")
+guild_name = "sale"
+leader_id = 0
+members = Dictionary[int, String]({})
+metadata/_custom_type_script = "uid://bnw6yvttm5kp7"
 
 [sub_resource type="Resource" id="Resource_evweq"]
 script = ExtResource("1_83xu3")
@@ -53,4 +74,8 @@ players = Dictionary[int, ExtResource("1_83xu3")]({
 next_player_id = 3
 admin_ids = PackedInt32Array(1, 2)
 user_roles = Dictionary[int, Array]({})
-guilds = Dictionary[String, ExtResource("1_cio0q")]({})
+guilds = Dictionary[String, ExtResource("1_cio0q")]({
+"a": SubResource("Resource_ugqtu"),
+"salade": SubResource("Resource_7bb4l"),
+"sale": SubResource("Resource_oscd5")
+})

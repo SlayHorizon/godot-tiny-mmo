@@ -14,11 +14,11 @@ func start_database(world_info: Dictionary) -> void:
 
 func configure_database(world_info: Dictionary) -> void:
 	if OS.has_feature("editor"):
-		database_path = "res://source/worlddata/"
+		database_path = "res://source/server/world/data/"
 	else:
 		database_path = "."
 	database_path += str(world_info["name"] + ".tres").to_lower()
-	
+
 
 func load_world_database() -> void:
 	if ResourceLoader.exists(database_path, "WorldPlayerData"):

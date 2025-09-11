@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://la1wru6pvnyy"]
+[gd_scene load_steps=6 format=3 uid="uid://la1wru6pvnyy"]
 
 [ext_resource type="Script" uid="uid://d1cseo7blcif2" path="res://source/client/ui/guild/guild_menu.gd" id="1_njed6"]
+[ext_resource type="Script" uid="uid://o3kj4urvrykf" path="res://source/client/ui/guild/no_guild_menu.gd" id="2_etk61"]
+[ext_resource type="Script" uid="uid://c0wbbw6du00cs" path="res://source/client/ui/guild/search_guild_menu.gd" id="2_wnmab"]
+[ext_resource type="Script" uid="uid://dlo5k2qp1v3dm" path="res://source/client/ui/guild/guild_display.gd" id="3_ysvbj"]
+[ext_resource type="Script" uid="uid://dnd53fxkhfu66" path="res://source/client/ui/guild/guild_panel.gd" id="4_mefu8"]
 
 [node name="GuildMenu" type="Control"]
 layout_mode = 3
@@ -11,8 +15,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_njed6")
 
-[node name="NoGuildMenu" type="PanelContainer" parent="."]
-visible = false
+[node name="NoGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("search_panel", "create_panel")]
 custom_minimum_size = Vector2(320, 200)
 layout_mode = 1
 anchors_preset = 8
@@ -26,6 +29,10 @@ offset_right = 160.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("2_etk61")
+search_panel = NodePath("../SearchGuildMenu")
+create_panel = NodePath("../CreateGuildMenu")
+metadata/_custom_type_script = "uid://dnd53fxkhfu66"
 metadata/_edit_group_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="NoGuildMenu"]
@@ -44,9 +51,70 @@ text = "You don't have a guild yet.
 You can either join one or create your."
 horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="NoGuildMenu/MarginContainer/VBoxContainer"]
+[node name="SearchGuildButton" type="Button" parent="NoGuildMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Search huild"
+
+[node name="CreateGuildButton" type="Button" parent="NoGuildMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Create a guild"
+
+[node name="SearchGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("display_panel")]
+visible = false
+custom_minimum_size = Vector2(320, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -236.0
+offset_right = 160.0
+offset_bottom = 105.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_wnmab")
+display_panel = NodePath("../GuildDisplay")
+metadata/_custom_type_script = "uid://dnd53fxkhfu66"
+metadata/_edit_group_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="SearchGuildMenu"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_right = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SearchGuildMenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Label" type="Label" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Search a guild"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Enter the guild name here"
+
+[node name="SearchGuildButton" type="Button" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Search huild"
+
+[node name="Label2" type="Label" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Result"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SearchGuildMenu/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="CreateGuildMenu" type="PanelContainer" parent="."]
 visible = false
@@ -63,6 +131,8 @@ offset_right = 160.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("4_mefu8")
+metadata/_custom_type_script = "uid://dnd53fxkhfu66"
 metadata/_edit_group_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="CreateGuildMenu"]
@@ -103,6 +173,8 @@ offset_right = 160.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_ysvbj")
+metadata/_custom_type_script = "uid://dnd53fxkhfu66"
 metadata/_edit_group_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="GuildDisplay"]
@@ -141,5 +213,8 @@ grow_vertical = 2
 text = "CLOSE"
 
 [connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
-[connection signal="pressed" from="NoGuildMenu/MarginContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="NoGuildMenu/MarginContainer/VBoxContainer/SearchGuildButton" to="NoGuildMenu" method="_on_search_guild_button_pressed"]
+[connection signal="pressed" from="NoGuildMenu/MarginContainer/VBoxContainer/CreateGuildButton" to="NoGuildMenu" method="_on_create_guild_button_pressed"]
+[connection signal="text_submitted" from="SearchGuildMenu/MarginContainer/VBoxContainer/LineEdit" to="SearchGuildMenu" method="_on_line_edit_text_submitted"]
+[connection signal="pressed" from="SearchGuildMenu/MarginContainer/VBoxContainer/SearchGuildButton" to="SearchGuildMenu" method="_on_search_guild_button_pressed"]
 [connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]
