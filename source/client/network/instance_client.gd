@@ -49,8 +49,14 @@ func _ready() -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func try_to_equip_item(_item_id: int, _slot_id: int) -> void:
-	pass
+func try_to_equip_item(item_id: int, peer_id: int) -> void:
+	var player: Player = players_by_peer_id.get(peer_id, null)
+	if not player:
+		return
+	
+	var item: GearItem = ContentRegistryHub.load_by_id(&"items", item_id) as GearItem
+	if item:
+		player.equipment_component.equip(item.slot.key, item)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -87,7 +93,6 @@ func spawn_player(player_id: int) -> void:
 	
 	var sync: StateSynchronizer = new_player.state_synchronizer
 	synchronizer_manager.add_entity(player_id, sync) 
-	
 
 
 func add_local_player() -> void:

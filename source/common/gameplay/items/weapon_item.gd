@@ -13,4 +13,4 @@ func on_equip(character: Character) -> void:
 
 func on_unequip(character: Character) -> void:
 	super.on_unequip(character)
-	character.unequip_weapon(mount_point, scene)
+	character.unequip_weapon(mount_point)

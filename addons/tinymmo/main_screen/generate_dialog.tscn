@@ -15,6 +15,7 @@ data = {
 image = SubResource("Image_0am2k")
 
 [node name="ConfirmationDialog" type="ConfirmationDialog"]
+title = "Generate Content Index"
 position = Vector2i(0, 36)
 size = Vector2i(500, 177)
 visible = true

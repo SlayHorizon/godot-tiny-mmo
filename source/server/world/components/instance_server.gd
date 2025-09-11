@@ -77,9 +77,10 @@ func try_to_equip_item(item_id: int, _slot_id: int) -> void:
 	
 	var player: Player = players_by_peer_id.get(peer_id, null)
 	if player and player.player_resource.inventory.has(item_id):
-		var item: GearItem = ContentRegistryHub.load_by_id(&"gears", item_id)
-		if item.can_equip(player):
+		var item: GearItem = ContentRegistryHub.load_by_id(&"items", item_id) as GearItem
+		if item and item.can_equip(player):
 			player.equipment_component.equip(item.slot.key, item)
+			propagate_rpc(try_to_equip_item.bind(item_id, peer_id))
 		#var slot: ItemSlot = ContentRegistryHub.load_by_id(&"item_slots", slot_id)
 	#if player.player_resource.inventory.has(weapon_path):
 	#player.syn.set_by_path(^":weapon_name_right", weapon_path)
@@ -274,11 +275,6 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 	var player: Player = players_by_peer_id.get(peer_id, null)
 	if not player:
 		return
-	
-	# Fast item test
-	const THORNMAIL = preload("res://source/common/gameplay/items/gears/thornmail.tres")
-	player.equipment_component.equip(THORNMAIL.slot.key, THORNMAIL)
-	
 	
 	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
 		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))

@@ -146,3 +146,18 @@ func _set_character_class(new_class: String):
 #func handle_action(index: int, direction: Vector2) -> void:
 	#
 	#pass
+
+func equip_weapon(mount_point: StringName, scene: PackedScene) -> void:
+	if mount_point == &"weapon_main":
+		var weapon: Weapon = scene.instantiate()
+		weapon.character = self
+		if equipped_weapon_right:
+			equipped_weapon_right.queue_free()
+		right_hand_spot.add_child(weapon)
+		equipped_weapon_right = weapon
+
+
+func unequip_weapon(mount_point: StringName) -> void:
+	if mount_point == &"weapon_main":
+		if equipped_weapon_right:
+			equipped_weapon_right.queue_free()

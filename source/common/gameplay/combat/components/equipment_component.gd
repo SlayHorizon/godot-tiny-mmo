@@ -13,8 +13,6 @@ func _ready() -> void:
 
 
 func equip(slot: StringName, item: GearItem) -> bool:
-	print(_slots)
-	print_debug(slot, item)
 	if _slots.has(slot):
 		_unequip_internal(slot)
 	_slots[slot] = item

@@ -24,7 +24,7 @@ func _ready() -> void:
 func fill_inventory(inventory: Dictionary) -> void:
 	var slot_index: int = 0
 	for item_id: int in inventory:
-		var item: Item = ContentRegistryHub.load_by_id(&"gears", item_id)
+		var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
 		inventory.merge(inventory, true)
 		if item:
 			var button: Button = inventory_grid.get_child(slot_index) as Button
