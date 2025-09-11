@@ -7,3 +7,5 @@ script = ExtResource("1_5ydet")
 instance_name = &"Overworld"
 map_path = "uid://sscb58nigni8"
 load_at_startup = true
+metadata/slug = &"overworld"
+metadata/id = 6

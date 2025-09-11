@@ -7,3 +7,5 @@ script = ExtResource("1_i3fqa")
 name = "arrow_shoot"
 cooldown = 1.0
 metadata/_custom_type_script = "uid://b41gujk35w421"
+metadata/slug = &"arrow_shoot"
+metadata/id = 1

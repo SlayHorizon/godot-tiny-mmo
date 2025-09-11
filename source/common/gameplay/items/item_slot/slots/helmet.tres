@@ -17,3 +17,5 @@ key = &"relic"
 display_name = "Relic"
 unlock_rule = SubResource("Resource_0hho8")
 metadata/_custom_type_script = "uid://e40odrowquc8"
+metadata/slug = &"helmet"
+metadata/id = 4

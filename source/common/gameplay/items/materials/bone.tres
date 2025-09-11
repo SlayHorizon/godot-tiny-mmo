@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="MaterialItem" load_steps=2 format=3 uid="uid://bme5xgselkbng"]
+
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="1_38lmc"]
+
+[resource]
+script = ExtResource("1_38lmc")
+item_name = &"ItemDefault"
+description = ""
+can_trade = false
+can_sell = false
+minimum_price = 0
+stack_limit = 0
+tags = []
+metadata/_custom_type_script = "uid://nsr1timk430j"
+metadata/slug = &"bone"
+metadata/id = 4

@@ -7,3 +7,5 @@ script = ExtResource("1_n2sgl")
 instance_name = &"DungeonEntrance"
 map_path = "uid://5ke1s1ydu7ty"
 load_at_startup = false
+metadata/slug = &"dungeon_entrance"
+metadata/id = 5

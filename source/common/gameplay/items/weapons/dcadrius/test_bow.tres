@@ -13,3 +13,5 @@ weapon_sprite = SubResource("AtlasTexture_k2b6y")
 flip_sprite = false
 origin_point = Vector2(-4, 0)
 class_type = 0
+metadata/slug = &"test_bow"
+metadata/id = 10

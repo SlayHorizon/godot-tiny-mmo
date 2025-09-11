@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://dbh5capirnmfs"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_gemjq"]
+
+[resource]
+script = ExtResource("1_gemjq")
+content_name = &"items"
+version = 1757607667
+next_id = 6
+entries = Array[Dictionary]([{
+&"hash": "5e2c9ea62f0834942e7633d440ac9054423ada15a996d1c1aabf760508c1c423",
+&"id": 1,
+&"path": "res://source/common/gameplay/items/consumables/health_potion.tres",
+&"slug": &"health_potion"
+}, {
+&"hash": "69da5a07ed289ce9a1f1652287184585ff9601ad5adc568ea9c73b7f068a0080",
+&"id": 2,
+&"path": "res://source/common/gameplay/items/gears/copper_ring.tres",
+&"slug": &"copper_ring"
+}, {
+&"hash": "e2491d1169ce250e82206adc56329d9d76a73a5e8d85e93197d2457469a37ff7",
+&"id": 3,
+&"path": "res://source/common/gameplay/items/gears/thornmail.tres",
+&"slug": &"thornmail"
+}, {
+&"hash": "ac58a6697cfe1cd9581f0f6f8a23567547bca66bc0e7e458be35930929b31776",
+&"id": 4,
+&"path": "res://source/common/gameplay/items/materials/bone.tres",
+&"slug": &"bone"
+}, {
+&"hash": "927572aeb890044f1f85fc268cb8c06f876112b6ab925b49b209857e53cd1f2a",
+&"id": 5,
+&"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres",
+&"slug": &"wooden_bow.item"
+}])

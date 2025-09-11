@@ -17,3 +17,5 @@ key = &"relic"
 display_name = "Relic"
 unlock_rule = SubResource("Resource_u8pqf")
 metadata/_custom_type_script = "uid://e40odrowquc8"
+metadata/slug = &"relic"
+metadata/id = 5

@@ -82,6 +82,7 @@ func print_plugin(to_print: String) -> void:
 		to_print
 	)
 
+
 func format_str(str: Variant) -> String:
 	if str is StringName:
 		return "&\"%s\"" % str
@@ -91,31 +92,43 @@ func format_str(str: Variant) -> String:
 
 
 func _on_generate_button_pressed() -> void:
-	file_dialog = EditorFileDialog.new()
-	file_dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_DIR
-	#file_dialog.add_filter("*.tres", "A ContentIndex resource.")
-	if last_dir_selected:
-		file_dialog.current_dir = last_dir_selected
-	file_dialog.dir_selected.connect(_on_file_dialog_dir_selected)
-	file_dialog.canceled.connect(_on_file_dialog_canceled)
-	add_child(file_dialog)
-	file_dialog.popup_file_dialog()
-
-
-
-func _on_file_dialog_dir_selected(dir: String) -> void:
-	var content_name: StringName = dir.trim_prefix("res://")
-	content_name = content_name.get_slice("/", content_name.get_slice_count("/") - 1)
-	print_plugin("Selected dir: %s" % dir)
-	print_plugin("Start generation of content name: %s" % content_name)
-	if content_name.is_empty() or not dir.is_absolute_path():
-		return
-	file_dialog.queue_free()
-	last_dir_selected = dir
-	var resource_paths: PackedStringArray = get_resource_file_paths(dir)
+	const GENERATE_DIALOG = preload("res://addons/tinymmo/main_screen/generate_dialog.tscn")
 	
+	var generate_dialog: ConfirmationDialog = GENERATE_DIALOG.instantiate()
+	generate_dialog.canceled.connect(generate_dialog.queue_free)
+	generate_dialog.confirmed.connect(_on_generate_dialog_confirmed.bind(generate_dialog))
+	
+	EditorInterface.popup_dialog_centered(generate_dialog)
+
+
+func _on_generate_dialog_confirmed(generate_dialog: ConfirmationDialog) -> void:
+	var path: String = generate_dialog.path_edit.text
+	var filters: PackedStringArray
+	var content_name: String = generate_dialog.content_name_edit.text
+	if generate_dialog.filters_edit.text.is_empty():
+		filters = ["*.tres", "*.tscn"]
+	else:
+		filters = generate_dialog.filters_edit.text.split(", ")
+	print_debug(filters)
+	
+	generate_dialog.queue_free()
+	
+	if path.is_empty() or content_name.is_empty():
+		print_plugin("Failed to generate, invalid parameters")
+		return
+	
+	generate_content_index(content_name, path, filters)
+
+
+func generate_content_index(
+	content_name: String,
+	path: String,
+	filters: PackedStringArray
+) -> void:
 	var content_index: ContentIndex
 	var content_index_path: String = INDEX_DIR + content_name + "_index.tres"
+	var resource_paths: PackedStringArray = get_resource_file_paths(path, filters)
+	
 	if ResourceLoader.exists(content_index_path):
 		content_index = ResourceLoader.load(content_index_path)
 	else:
@@ -128,9 +141,6 @@ func _on_file_dialog_dir_selected(dir: String) -> void:
 		var resource: Resource = ResourceLoader.load(resource_path)
 		if not resource:
 			continue
-		
-		print_debug(resource)
-		print_debug(resource_path)
 		
 		var slug: StringName = resource_path.get_file().get_basename()
 		var id: int = get_slug_id(content_index, slug)
@@ -164,7 +174,10 @@ func _on_file_dialog_dir_selected(dir: String) -> void:
 		EditorInterface.popup_dialog_centered(accept_dialog)
 
 
-func get_resource_file_paths(path: String) -> PackedStringArray:
+func get_resource_file_paths(
+	path: String,
+	filters: PackedStringArray
+) -> PackedStringArray:
 	var dir := DirAccess.open(path)
 	if not dir:
 		printerr(error_string(DirAccess.get_open_error()))
@@ -174,10 +187,14 @@ func get_resource_file_paths(path: String) -> PackedStringArray:
 	
 	while file_path:
 		if dir.current_is_dir():
-			file_paths.append_array(get_resource_file_paths(path + "/" + file_path))
+			file_paths.append_array(get_resource_file_paths(path + "/" + file_path, filters))
 		else:
-			if file_path.ends_with(".tres") or file_path.ends_with(".tscn"):
-				file_paths.append(path + "/" + file_path)
+			var full_path: String = path + "/" + file_path
+			for filter: String in filters:
+				#if file_path.match(filter):
+				if full_path.match(filter):
+					file_paths.append(full_path)
+					break
 		file_path = dir.get_next()
 	
 	dir.list_dir_end()

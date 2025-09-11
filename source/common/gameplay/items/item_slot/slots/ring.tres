@@ -17,3 +17,5 @@ key = &"ring"
 display_name = "Ring"
 unlock_rule = SubResource("Resource_kheba")
 metadata/_custom_type_script = "uid://e40odrowquc8"
+metadata/slug = &"ring"
+metadata/id = 6

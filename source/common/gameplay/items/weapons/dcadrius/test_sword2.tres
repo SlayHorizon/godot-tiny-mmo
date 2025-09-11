@@ -13,3 +13,5 @@ weapon_sprite = SubResource("AtlasTexture_aqxmx")
 flip_sprite = true
 origin_point = Vector2(0, -15)
 class_type = 0
+metadata/slug = &"test_sword2"
+metadata/id = 12

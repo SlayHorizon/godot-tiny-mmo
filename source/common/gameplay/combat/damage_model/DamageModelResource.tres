@@ -8,3 +8,5 @@ layers_order = ["Armor", "Shield", "Health"]
 armor_k = 100.0
 overheal_to_shield = true
 metadata/_custom_type_script = "uid://cecio1i3cyhkw"
+metadata/slug = &"DamageModelResource"
+metadata/id = 2

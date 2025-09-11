@@ -1785,3 +1785,5 @@ terrain_set_2/terrain_0/color = Color(0.0862745, 0.462745, 0.25098, 1)
 sources/0 = SubResource("TileSetAtlasSource_gri28")
 sources/1 = SubResource("TileSetAtlasSource_saoip")
 sources/2 = SubResource("TileSetAtlasSource_ce1kn")
+metadata/slug = &"dungeon_tileset"
+metadata/id = 14

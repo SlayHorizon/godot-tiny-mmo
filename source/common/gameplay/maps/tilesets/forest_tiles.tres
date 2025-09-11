@@ -1317,3 +1317,5 @@ terrain_set_0/terrain_2/color = Color(0.46875, 0.5, 0.25, 1)
 sources/0 = SubResource("TileSetAtlasSource_a7k4c")
 sources/1 = SubResource("TileSetAtlasSource_baln7")
 sources/2 = SubResource("TileSetAtlasSource_wp1op")
+metadata/slug = &"forest_tiles"
+metadata/id = 15

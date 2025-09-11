@@ -142,3 +142,5 @@ _data = {
 &"sword.special.spin": SubResource("Animation_wt45p"),
 &"sword.swing": SubResource("Animation_SWING")
 }
+metadata/slug = &"sword_animations"
+metadata/id = 13
