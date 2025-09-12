@@ -11,6 +11,13 @@ script = ExtResource("1_rchld")
 
 [node name="HealthBar" parent="." instance=ExtResource("2_klco5")]
 
+[node name="MenuButton" type="Button" parent="."]
+offset_left = 885.0
+offset_top = 17.0
+offset_right = 938.0
+offset_bottom = 56.0
+text = "Menu"
+
 [node name="Chat" parent="." instance=ExtResource("2_xs74v")]
 
 [node name="ItemSlots" type="Control" parent="."]
@@ -51,20 +58,6 @@ custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "2
 "
-
-[node name="MenuButton2" type="Button" parent="."]
-offset_left = 312.0
-offset_top = 480.0
-offset_right = 363.0
-offset_bottom = 519.0
-text = "..."
-
-[node name="MenuButton" type="Button" parent="."]
-offset_left = 885.0
-offset_top = 17.0
-offset_right = 936.0
-offset_bottom = 56.0
-text = "Menu"
 
 [node name="MenuOverlay" type="Control" parent="."]
 visible = false
@@ -115,7 +108,6 @@ text = "CLOSE"
 [node name="SubMenu" type="CanvasLayer" parent="."]
 layer = 2
 
-[connection signal="pressed" from="MenuButton2" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="MenuOverlay/VBoxContainer/GuildButton" to="." method="_on_guild_button_pressed"]
 [connection signal="pressed" from="MenuOverlay/VBoxContainer/InventoryButton" to="." method="_on_inventory_button_pressed"]
