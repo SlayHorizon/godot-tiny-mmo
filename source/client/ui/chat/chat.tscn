@@ -39,7 +39,7 @@ content_margin_right = 5.0
 content_margin_bottom = 5.0
 bg_color = Color(0.101961, 0.101961, 0.101961, 0.352941)
 
-[node name="Chat" type="Control" node_paths=PackedStringArray("closed_button", "full_feed_text")]
+[node name="Chat" type="Control"]
 z_index = 1
 layout_mode = 3
 anchors_preset = 15
@@ -49,8 +49,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_hxcw4")
-closed_button = NodePath("FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/CloseButton")
-full_feed_text = NodePath("FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/RichTextLabel")
 
 [node name="PeekFeed" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -61,7 +59,6 @@ offset_bottom = 205.0
 mouse_filter = 0
 
 [node name="MessageDisplay" type="RichTextLabel" parent="PeekFeed"]
-unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 125)
 layout_mode = 2
 mouse_filter = 1
@@ -69,16 +66,15 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_nl2eg")
 bbcode_enabled = true
 
 [node name="MessageEdit" type="LineEdit" parent="PeekFeed"]
-unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Enter your message here"
 
 [node name="FadeOutTimer" type="Timer" parent="PeekFeed"]
-unique_name_in_owner = true
 wait_time = 3.0
 one_shot = true
 
 [node name="FullFeed" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -240,8 +236,6 @@ size_flags_stretch_ratio = 0.3
 text = "Send"
 
 [connection signal="gui_input" from="PeekFeed" to="." method="_on_peek_feed_gui_input"]
-[connection signal="text_submitted" from="PeekFeed/MessageEdit" to="." method="_on_message_submitted"]
 [connection signal="timeout" from="PeekFeed/FadeOutTimer" to="." method="_on_fade_out_timer_timeout"]
 [connection signal="pressed" from="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="meta_clicked" from="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/RichTextLabel" to="." method="_on_rich_text_label_meta_clicked"]
-[connection signal="text_submitted" from="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2/LineEdit" to="." method="_on_line_edit_text_submitted"]
