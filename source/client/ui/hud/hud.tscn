@@ -106,7 +106,7 @@ layout_mode = 2
 text = "CLOSE"
 
 [node name="SubMenu" type="CanvasLayer" parent="."]
-layer = 2
+layer = 10
 
 [connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
 [connection signal="pressed" from="MenuOverlay/VBoxContainer/GuildButton" to="." method="_on_guild_button_pressed"]

@@ -57,12 +57,12 @@ layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 310.0
-offset_bottom = 245.0
+offset_bottom = 205.0
 mouse_filter = 0
 
 [node name="MessageDisplay" type="RichTextLabel" parent="PeekFeed"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 160)
+custom_minimum_size = Vector2(300, 125)
 layout_mode = 2
 mouse_filter = 1
 theme_override_styles/normal = SubResource("StyleBoxFlat_nl2eg")
@@ -243,3 +243,5 @@ text = "Send"
 [connection signal="text_submitted" from="PeekFeed/MessageEdit" to="." method="_on_message_submitted"]
 [connection signal="timeout" from="PeekFeed/FadeOutTimer" to="." method="_on_fade_out_timer_timeout"]
 [connection signal="pressed" from="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="meta_clicked" from="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/RichTextLabel" to="." method="_on_rich_text_label_meta_clicked"]
+[connection signal="text_submitted" from="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2/LineEdit" to="." method="_on_line_edit_text_submitted"]

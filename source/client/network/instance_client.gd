@@ -130,7 +130,8 @@ func fetch_message(message: String, sender_id: int) -> void:
 	else:
 		var player: Player = players_by_peer_id.get(sender_id, null)
 		if player:
-			sender_name = player.display_name
+			sender_name = "[url=%d]%s[/url]" % [sender_id, player.display_name]
+			
 	Events.message_received.emit(message, sender_name, 0)
 
 

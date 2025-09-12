@@ -331,8 +331,22 @@ func data_request(request_id: int, data_type: String) -> void:
 			if guild:
 				guild_info = {"name": guild.guild_name, "size": guild.members.size()}
 			data_response.rpc_id(peer_id, request_id, guild_info)
-			
-			
+	if data_type.begins_with(&"profile/get/"):
+		var to_get: int = data_type.trim_prefix("guild/search/").to_int()
+		var target_player: Player = players_by_peer_id.get(to_get, null)
+		print_debug(to_get, target_player)
+		if not target_player:
+			return
+		var player_resource: PlayerResource = target_player.player_resource
+		var profile: Dictionary = {
+			"name": player_resource.display_name,
+			"stats": {
+				"money": player_resource.golds,
+				"character_class": player_resource.character_class,
+				"level": player_resource.level
+			}
+		}
+		data_response.rpc_id(peer_id, request_id, profile)
 
 
 @rpc("authority", "call_remote", "reliable", 1)

@@ -3,7 +3,14 @@ extends CanvasLayer
 
 
 var last_opened_interface: Control
+
+var inventory: Control
 var guild_menu: Control 
+var player_profile: Control 
+
+@onready var menu_overlay: Control = $MenuOverlay
+@onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
+@onready var sub_menu: CanvasLayer = $SubMenu
 
 
 func _ready() -> void:
@@ -15,11 +22,6 @@ func _on_guild_button_pressed() -> void:
 		guild_menu = load("res://source/client/ui/guild/guild_menu.tscn").instantiate()
 		add_sibling(guild_menu)
 	guild_menu.show()
-
-
-@onready var menu_overlay: Control = $MenuOverlay
-@onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
-@onready var sub_menu: CanvasLayer = $SubMenu
 
 
 func _on_menu_button_pressed() -> void:
@@ -34,7 +36,7 @@ func _on_menu_button_pressed() -> void:
 func _on_overlay_menu_close_button_pressed() -> void:
 	menu_overlay.hide()
 
-var inventory: Control
+
 func _on_inventory_button_pressed() -> void:
 	menu_overlay.hide()
 	if not inventory:
@@ -44,8 +46,16 @@ func _on_inventory_button_pressed() -> void:
 	inventory.show()
 
 
-func _on_submenu_visiblity_changed(submenu: Control) -> void:
-	if submenu.visible:
+func open_player_profile(player_id: int) -> void:
+	if not player_profile:
+		player_profile = load("res://source/client/ui/player_profile.tscn").instantiate()
+		player_profile.visibility_changed.connect(_on_submenu_visiblity_changed.bind(player_profile))
+		sub_menu.add_child(player_profile)
+	player_profile.open_player_profile(player_id)
+
+
+func _on_submenu_visiblity_changed(menu: Control) -> void:
+	if menu.visible:
 		hide()
 	else:
 		show()

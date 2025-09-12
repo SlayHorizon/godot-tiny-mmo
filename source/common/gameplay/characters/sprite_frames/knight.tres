@@ -133,3 +133,5 @@ animations = [{
 "name": &"run",
 "speed": 5.0
 }]
+metadata/slug = &"knight"
+metadata/id = 1

@@ -17,16 +17,12 @@ func _ready() -> void:
 	Events.message_received.connect(_on_message_received)
 
 
-#func _unhandled_key_input(event: InputEvent) -> void:
 func _input(_event: InputEvent) -> void:
-	#if (
-		#Input.is_action_just_pressed("chat")
-		#and not %MessageEdit.has_focus()
-	#):
-	if _event.is_action_pressed(&"chat") and not %MessageEdit.has_focus():
-		get_viewport().set_input_as_handled()
-		accept_event()
-		open_chat()
+	if _event.is_action_pressed(&"chat"):
+		if not $FullFeed.visible and not %MessageEdit.has_focus():
+			get_viewport().set_input_as_handled()
+			accept_event()
+			open_chat()
 
 
 func open_chat() -> void:
@@ -51,13 +47,17 @@ func _on_message_received(message: String, sender_name: String, channel: int):
 	var color_name: String = "#33caff"
 	if sender_name == "Server":
 		color_name = "#b6200f"
+	
 	var message_to_display: String = "[color=%s]%s:[/color] %s" % [color_name, sender_name, message]
 	%MessageDisplay.append_text(message_to_display)
 	%MessageDisplay.newline()
 	%MessageDisplay.show()
 	%FadeOutTimer.start()
 	
-	# NEW
+	if $FullFeed.visible and current_channel == channel:
+		full_feed_text.append_text(message_to_display)
+		full_feed_text.newline()
+	
 	if channel_messages.has(channel):
 		channel_messages[channel].append(message_to_display)
 	else:
@@ -77,7 +77,6 @@ func _on_fade_out_timer_timeout() -> void:
 
 
 func _on_peek_feed_gui_input(event: InputEvent) -> void:
-	print(event)
 	if event is InputEventMouseMotion and peek_feed.modulate.a < 1.0:
 		reset_view()
 		%FadeOutTimer.start()
@@ -86,8 +85,10 @@ func _on_peek_feed_gui_input(event: InputEvent) -> void:
 		peek_feed.hide()
 		$FullFeed.show()
 		full_feed_text.clear()
+		full_feed_text.text = ""
 		for message: String in channel_messages[0]:
 			full_feed_text.append_text(message)
+			full_feed_text.newline()
 
 
 func _on_close_button_pressed() -> void:
@@ -100,3 +101,18 @@ func reset_view() -> void:
 	if fade_out_tween and fade_out_tween.is_running():
 		fade_out_tween.kill()
 	peek_feed.modulate.a = 1.0
+
+
+func _on_rich_text_label_meta_clicked(meta: Variant) -> void:
+	$"..".open_player_profile(str(meta).to_int())
+
+
+func _on_line_edit_text_submitted(new_text: String) -> void:
+	var line_edit: LineEdit = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2/LineEdit
+	
+	line_edit.clear()
+	line_edit.release_focus()
+	if not new_text.is_empty():
+		new_text = new_text.strip_edges(true, true)
+		new_text = new_text.substr(0, 120)
+		Events.message_submitted.emit(new_text, current_channel)
