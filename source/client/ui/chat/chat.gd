@@ -121,14 +121,29 @@ func _on_message_edit_text_submitted(new_text: String, line_edit: LineEdit) -> v
 	line_edit.clear()
 	line_edit.release_focus()
 	
-	if not new_text.is_empty():
-		new_text = new_text.strip_edges(true, true)
-		new_text = new_text.substr(0, 120)
+	if line_edit == peek_feed_message_edit:
+		fade_out_timer.start()
+	
+	if new_text.is_empty():
+		return
+	
+	new_text = new_text.strip_edges(true, true)
+	new_text = new_text.substr(0, 120)
+	
+	if new_text.begins_with("/"):
+		new_text = new_text.substr(1)
+		var split: PackedStringArray = new_text.split(" ", false, 5)
+		var cmd: String = split[0]
+		var params: PackedStringArray = split
+		
+		InstanceClient.current.request_data(
+			&"chat.command.exec",
+			print_debug,
+			{"cmd": cmd, "params": params}
+		)
+	else:
 		InstanceClient.current.request_data(
 			&"chat.message.send",
 			Callable(), # ACK later
 			{"text": new_text, "channel": current_channel}
 		)
-
-	if line_edit == peek_feed_message_edit:
-		fade_out_timer.start()

@@ -198,66 +198,6 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 #endregion
 
 
-#@rpc("any_peer", "call_remote", "reliable", 1)
-#func player_submit_command(command: String) -> void:
-	#var peer_id: int = multiplayer.get_remote_sender_id()
-	#if not command.begins_with("/"):
-		#return
-	#var args: PackedStringArray = command.split(" ")
-	#var command_name: String = args[0]
-	#var chat_command: ChatCommand = find_command(command_name)
-	#if chat_command and has_command_permission(command_name, peer_id):
-		#fetch_message.rpc_id(
-			#peer_id,
-			#chat_command.execute(args, peer_id, self),
-			#1
-		#)
-	#else:
-		#fetch_message.rpc_id(peer_id, "Command not found.", 1)
-
-
-func find_command(command_name: String) -> ChatCommand:
-	if local_chat_commands.has(command_name):
-		return local_chat_commands.get(command_name)
-	return global_chat_commands.get(command_name)
-
-
-# Can be refactored to be more efficient?
-func has_command_permission(command_name: String, peer_id: int) -> bool:
-	var player: PlayerResource = world_server.connected_players.get(peer_id)
-	if not player:
-		return false
-	
-	# Check if command is possible by default.
-	# Check in current instance.
-	var default_role_data: Dictionary = local_role_definitions.get("default", {})
-	if default_role_data and command_name in default_role_data.get("commands", []):
-		return true
-	
-	# Check server-wide.
-	default_role_data = global_role_definitions.get("default", {})
-	if default_role_data and command_name in default_role_data.get("commands", []):
-		return true
-	
-	# Check if player has roles in current instance.
-	for role: String in local_role_assignments.get(peer_id, []):
-		var role_data: Dictionary = local_role_definitions.get(role)
-		if role_data and command_name in role_data.get("commands", []):
-			return true
-		# Check if role is defined locally.
-		if local_role_definitions.has(role) and local_role_definitions[role].has("commands"):
-			# Check if roole has permission.
-			if local_role_definitions[role]["commands"].has(command_name):
-				return true
-	
-	# Same but for server-wide roles.
-	for role: String in player.server_roles:
-		var role_data: Dictionary = global_role_definitions.get(role)
-		if role_data and command_name in role_data.get("commands", []):
-			return true
-	return false
-
-
 # WIP
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
