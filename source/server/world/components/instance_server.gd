@@ -107,7 +107,7 @@ func spawn_player(peer_id: int) -> void:
 		awaiting_peers.erase(peer_id)
 	else:
 		player = instantiate_player(peer_id)
-		fetch_message.rpc_id(peer_id, get_motd(), 1)
+		data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
 	
 	player.just_teleported = true
 	add_child(player, true)
@@ -198,34 +198,22 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 #endregion
 
 
-#region chat
-@rpc("any_peer", "call_remote", "reliable", 1)
-func player_submit_message(new_message: String) -> void:
-	var peer_id: int = multiplayer.get_remote_sender_id()
-	propagate_rpc(fetch_message.bindv([new_message, peer_id]))
-
-
-@rpc("authority", "call_remote", "reliable", 1)
-func fetch_message(_message: String, _sender_id: int) -> void:
-	pass
-
-
-@rpc("any_peer", "call_remote", "reliable", 1)
-func player_submit_command(command: String) -> void:
-	var peer_id: int = multiplayer.get_remote_sender_id()
-	if not command.begins_with("/"):
-		return
-	var args: PackedStringArray = command.split(" ")
-	var command_name: String = args[0]
-	var chat_command: ChatCommand = find_command(command_name)
-	if chat_command and has_command_permission(command_name, peer_id):
-		fetch_message.rpc_id(
-			peer_id,
-			chat_command.execute(args, peer_id, self),
-			1
-		)
-	else:
-		fetch_message.rpc_id(peer_id, "Command not found.", 1)
+#@rpc("any_peer", "call_remote", "reliable", 1)
+#func player_submit_command(command: String) -> void:
+	#var peer_id: int = multiplayer.get_remote_sender_id()
+	#if not command.begins_with("/"):
+		#return
+	#var args: PackedStringArray = command.split(" ")
+	#var command_name: String = args[0]
+	#var chat_command: ChatCommand = find_command(command_name)
+	#if chat_command and has_command_permission(command_name, peer_id):
+		#fetch_message.rpc_id(
+			#peer_id,
+			#chat_command.execute(args, peer_id, self),
+			#1
+		#)
+	#else:
+		#fetch_message.rpc_id(peer_id, "Command not found.", 1)
 
 
 func find_command(command_name: String) -> ChatCommand:
@@ -268,7 +256,6 @@ func has_command_permission(command_name: String, peer_id: int) -> bool:
 		if role_data and command_name in role_data.get("commands", []):
 			return true
 	return false
-#endregion
 
 
 # WIP
@@ -285,72 +272,45 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 
 
 # Quick and dirty for fast proto test
+var request_handlers: Dictionary[StringName, DataRequestHandler]
+
 @rpc("any_peer", "call_remote", "reliable", 1)
-func data_request(request_id: int, data_type: String) -> void:
+func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
-	var player: Player = players_by_peer_id.get(peer_id)
-	if not player:
-		return
-	match data_type:
-		"guild/self":
-			var guild: Guild = player.player_resource.guild
-			var result: String
-			if guild:
-				result = guild.guild_name
-			else:
-				result = ""
-			data_response.rpc_id(
-				peer_id,
-				request_id,
-				{"guild": result},
-			)
-		"inventory":
-			data_response.rpc_id(
-				peer_id,
-				request_id,
-				player.player_resource.inventory,
-			)
-	if data_type.begins_with("guild"):
-		if data_type.begins_with("guild/search/"):
-			const MAX_RESULT: int = 10
-			var i: int = 0
-			var result: Dictionary
-			var guild_names: PackedStringArray = world_server.database.player_data.guilds.keys()
-			var to_search: String = data_type.trim_prefix("guild/search/").to_lower()
-			for guild_name: String in guild_names:
-				if guild_name.to_lower().contains(to_search):
-					result[guild_name] = 0
-				if i >= MAX_RESULT:
-					break
-				i += 1
-			data_response.rpc_id(peer_id, request_id, result)
-		elif data_type.begins_with("guild/get/"):
-			var to_get: String = data_type.trim_prefix("guild/get/")
-			var guild: Guild = world_server.database.player_data.guilds.get(to_get)
-			var guild_info: Dictionary
-			if guild:
-				guild_info = {"name": guild.guild_name, "size": guild.members.size()}
-			data_response.rpc_id(peer_id, request_id, guild_info)
-	if data_type.begins_with(&"profile/get/"):
-		var to_get: int = data_type.trim_prefix("guild/search/").to_int()
-		var target_player: Player = players_by_peer_id.get(to_get, null)
-		print_debug(to_get, target_player)
-		if not target_player:
+	
+	# Rate-limit
+	#if not _rate_ok(
+		#return
+	
+	if not request_handlers.has(type):
+		var script: GDScript = ContentRegistryHub.load_by_slug(
+			&"data_request_handlers",
+			type
+		) as GDScript
+		if not script:
 			return
-		var player_resource: PlayerResource = target_player.player_resource
-		var profile: Dictionary = {
-			"name": player_resource.display_name,
-			"stats": {
-				"money": player_resource.golds,
-				"character_class": player_resource.character_class,
-				"level": player_resource.level
-			}
-		}
-		data_response.rpc_id(peer_id, request_id, profile)
+		var request_handler: DataRequestHandler = script.new() as DataRequestHandler
+		if not request_handler:
+			return
+		request_handlers[type] = request_handler
+	
+	data_response.rpc_id(
+		peer_id,
+		request_id,
+		type,
+		request_handlers[type].data_request_handler(peer_id, self, args)
+	)
 
 
 @rpc("authority", "call_remote", "reliable", 1)
-func data_response(_request_id: int, _data: Dictionary) -> void:
+func data_response(request_id: int, type: StringName, data: Dictionary) -> void:
+	# Only implemented in the client
+	pass
+
+
+@rpc("authority", "call_remote", "reliable", 1)
+func data_push(type: StringName, data: Dictionary) -> void:
+	# Only implemented in the client
 	pass
 
 

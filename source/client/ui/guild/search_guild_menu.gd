@@ -12,7 +12,11 @@ var request_id: int
 func _on_line_edit_text_submitted(new_text: String) -> void:
 	if request_id:
 		InstanceClient.current.cancel_request_data(request_id)
-	request_id = InstanceClient.current.request_data(&"guild/search/" + new_text, _on_research_result_received)
+	request_id = InstanceClient.current.request_data(
+		&"guild.search",
+		_on_research_result_received,
+		{"q": new_text}
+	)
 	
 
 
@@ -28,7 +32,11 @@ func _on_research_result_received(result: Dictionary) -> void:
 
 
 func _on_guild_button_pressed(button: Button, guild_name: String) -> void:
-	InstanceClient.current.request_data(&"guild/get/" + guild_name, _on_guild_data_received)
+	InstanceClient.current.request_data(
+		&"guild.get",
+		_on_guild_data_received,
+		{"q": guild_name}
+	)
 
 
 func _on_guild_data_received(data: Dictionary) -> void:
@@ -43,6 +51,7 @@ func _on_search_guild_button_pressed() -> void:
 	if request_id:
 		InstanceClient.current.cancel_request_data(request_id)
 	request_id = InstanceClient.current.request_data(
-		&"guild/search/" + to_search,
-		_on_research_result_received
+		&"guild.search",
+		_on_research_result_received,
+		{"q": to_search}
 	)

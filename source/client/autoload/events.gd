@@ -2,9 +2,6 @@ extends Node
 ## Events Autoload (only for the client side)
 ## Should be removed on non-client exports.
 
-# Chat
-signal message_submitted(message: String, channel: int)
-signal message_received(message: String, sender_name: String, channel: int)
 
 # HUD
 signal local_player_ready(local_player: LocalPlayer)

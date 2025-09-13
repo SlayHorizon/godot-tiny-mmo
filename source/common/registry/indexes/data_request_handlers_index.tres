@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://bvph1u8fbpm81"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_r6qed"]
+
+[resource]
+script = ExtResource("1_r6qed")
+content_name = &"data_request_handlers"
+version = 1757782220
+next_id = 8
+entries = Array[Dictionary]([{
+&"hash": "60e0f35a2ed64c168eafbaf5e22184aaf795595074754e6998a069f55ab47fea",
+&"id": 1,
+&"path": "res://source/server/world/components/data_request_handlers/chat.message.send.gd",
+&"slug": &"chat.message.send"
+}, {
+&"hash": "9ef995c75a5b02f6e699465cc1eca1b20b6145d40bb1247472e111d5c6226688",
+&"id": 2,
+&"path": "res://source/server/world/components/data_request_handlers/data_request_handler.gd",
+&"slug": &"data_request_handler"
+}, {
+&"hash": "47cff35ab8155a0874ce04277371720fc1f9150da9984c3fc946a58034980933",
+&"id": 3,
+&"path": "res://source/server/world/components/data_request_handlers/guild.get.gd",
+&"slug": &"guild.get"
+}, {
+&"hash": "dc3c769e594095856d18f4e3d260639cddd75fbf5cfa000feebabc496f7728e7",
+&"id": 4,
+&"path": "res://source/server/world/components/data_request_handlers/guild.search.gd",
+&"slug": &"guild.search"
+}, {
+&"hash": "72832e371ebdd127f99e2cd19d37dbe55ceef058d0e6123281310dc617fb7900",
+&"id": 5,
+&"path": "res://source/server/world/components/data_request_handlers/guild.self.gd",
+&"slug": &"guild.self"
+}, {
+&"hash": "b6cfd8f4f58f12a1daa1d225326e4072edeb2575567c299f58150397e82ce95c",
+&"id": 6,
+&"path": "res://source/server/world/components/data_request_handlers/inventory.get.gd",
+&"slug": &"inventory.get"
+}, {
+&"hash": "bceee5528ab4796290e0e486e58e631a4fbf8a1fb6143a77aa21d9107e64a445",
+&"id": 7,
+&"path": "res://source/server/world/components/data_request_handlers/profile.get.gd",
+&"slug": &"profile.get"
+}])

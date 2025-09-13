@@ -17,8 +17,9 @@ func open_player_profile(player_id: int) -> void:
 		apply_profile(cache[player_id])
 	else:
 		InstanceClient.current.request_data(
-			&"profile/get/" + str(player_id),
-			apply_profile
+			&"profile.get",
+			apply_profile,
+			{"q": player_id}
 		)
 
 

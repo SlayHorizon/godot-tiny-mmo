@@ -18,7 +18,7 @@ var selected_item: Item
 
 
 func _ready() -> void:
-	InstanceClient.current.request_data(&"inventory", fill_inventory)
+	InstanceClient.current.request_data(&"inventory.get", fill_inventory)
 
 
 func fill_inventory(inventory: Dictionary) -> void:

@@ -16,10 +16,6 @@ var instance_map: Map
 
 func _ready() -> void:
 	current = self
-	Events.message_submitted.connect(
-		func(message: String, _channel: int):
-			player_submit_message(message)
-	)
 	
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
@@ -113,34 +109,6 @@ func despawn_player(player_id: int) -> void:
 #endregion
 
 
-#region chat
-@rpc("any_peer", "call_remote", "reliable", 1)
-func player_submit_message(message: String) -> void:
-	if message.begins_with("/"):
-		player_submit_command.rpc_id(1, message)
-	else:
-		player_submit_message.rpc_id(1, message)
-
-
-@rpc("authority", "call_remote", "reliable", 1)
-func fetch_message(message: String, sender_id: int) -> void:
-	var sender_name: String = "Unknown"
-	if sender_id == 1:
-		sender_name = "Server"
-	else:
-		var player: Player = players_by_peer_id.get(sender_id, null)
-		if player:
-			sender_name = "[url=%d]%s[/url]" % [sender_id, player.display_name]
-			
-	Events.message_received.emit(message, sender_name, 0)
-
-
-@rpc("any_peer", "call_remote", "reliable", 1)
-func player_submit_command(_new_command: String) -> void:
-	pass
-#endregion
-
-
 # WIP
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
@@ -152,31 +120,60 @@ func player_action(action_index: int, action_direction: Vector2, peer_id: int = 
 
 #### WIPP ##
 var _next_data_request_id: int
-var _pending_data_request: Dictionary[int, Callable]
+var _pending_data_requests: Dictionary[int, Callable]
+var _data_subscriptions: Dictionary[StringName, Array]
 
 
-func request_data(data_type: StringName, handler: Callable) -> int:
+func subscribe(type: StringName, handler: Callable) -> void:
+	if _data_subscriptions.has(type):
+		_data_subscriptions[type].append(handler)
+	else:
+		_data_subscriptions[type] = [handler]
+
+
+func unsubscribe(type: StringName, handler: Callable) -> void:
+	if not _data_subscriptions.has(type):
+		return
+	_data_subscriptions[type].erase(handler)
+
+
+func request_data(type: StringName, handler: Callable, args: Dictionary = {}) -> int:
 	var request_id: int = _next_data_request_id
 	_next_data_request_id += 1
-	_pending_data_request[request_id] = handler
-	data_request.rpc_id(1, request_id, data_type)
-	# Return request_id in case you may want to keep track of it for cancelation for example.
+	_pending_data_requests[request_id] = handler
+	data_request.rpc_id(1, request_id, type, args)
+	# Return request_id in case you may want to keep track of it for cancelation.
 	return request_id
 
 
 func cancel_request_data(request_id: int) -> bool:
 	# Dictionary.erase eturns true if the given key existed in the dictionary, otherwise false.
-	return _pending_data_request.erase(request_id)
+	return _pending_data_requests.erase(request_id)
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)
-func data_request(_request_id: int, _data_type: String) -> void:
+func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
+	# Only implemented in the server.
 	pass
 
 
 @rpc("authority", "call_remote", "reliable", 1)
-func data_response(request_id: int, data: Dictionary) -> void:
-	var callable: Callable = _pending_data_request.get(request_id, Callable())
-	_pending_data_request.erase(request_id)
+func data_response(request_id: int, type: StringName, data: Dictionary) -> void:
+	data_push(type, data)
+	var callable: Callable = _pending_data_requests.get(request_id, Callable())
+	_pending_data_requests.erase(request_id)
 	if callable.is_valid():
 		callable.call(data)
+
+
+@rpc("authority", "call_remote", "reliable", 1)
+func data_push(type: StringName, data: Dictionary) -> void:
+	for handler: Callable in _data_subscriptions.get(type, []):
+		if handler.is_valid():
+			handler.call(data)
+
+
+#@rpc("authority", "call_remote", "reliable", 1)
+#func data_post(type: StringName, data: Dictionary) -> void:
+	## Only implemented in the server.
+	#pass

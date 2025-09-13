@@ -18,13 +18,13 @@ var fade_out_tween: Tween
 
 
 func _ready() -> void:
+	InstanceClient.current.subscribe(&"chat.message", _on_chat_message)
+	
 	peek_feed_message_edit.text_submitted.connect(_on_message_edit_text_submitted.bind(peek_feed_message_edit))
 	full_feed_message_edit.text_submitted.connect(_on_message_edit_text_submitted.bind(full_feed_message_edit))
 	
 	peek_feed.show()
 	full_feed.hide()
-	
-	Events.message_received.connect(_on_message_received)
 
 
 func _input(event: InputEvent) -> void:
@@ -42,25 +42,36 @@ func open_chat() -> void:
 	fade_out_timer.stop()
 
 
-func _on_message_received(message: String, sender_name: String, channel: int):
+func _on_chat_message(message: Dictionary) -> void:
+	if not message:
+		return
+	var text: String = message.get("text", "")
+	var sender_name: String = message.get("name", "")
+	var channel: int = message.get("channel", 0)
+	var sender_id: int = message.get("id", 0)
 	var color_name: String = "#33caff"
-	if sender_name == "Server":
+	var name_to_display: String
+	if sender_id == 1:
 		color_name = "#b6200f"
-	
-	var message_to_display: String = "[color=%s]%s:[/color] %s" % [color_name, sender_name, message]
-	peek_feed_text_display.append_text(message_to_display)
-	peek_feed_text_display.newline()
-	peek_feed_text_display.show()
-	fade_out_timer.start()
-	
-	if full_feed.visible and current_channel == channel:
-		full_feed_text_display.append_text(message_to_display)
-		full_feed_text_display.newline()
-	
-	if channel_messages.has(channel):
-		channel_messages[channel].append(message_to_display)
+		name_to_display = sender_name
 	else:
-		channel_messages[channel] = PackedStringArray([message_to_display])
+		name_to_display = "[url=%d]%s[/url]" % [sender_id, sender_name]
+	var text_to_display: String = "[color=%s]%s:[/color] %s" % [color_name, name_to_display, text]
+	
+	peek_feed_text_display.append_text(text_to_display)
+	peek_feed_text_display.newline()
+	
+	if full_feed.visible:
+		if current_channel == channel:
+			full_feed_text_display.append_text(text_to_display)
+			full_feed_text_display.newline()
+	else:
+		peek_feed_text_display.show()
+		fade_out_timer.start()
+	if channel_messages.has(channel):
+		channel_messages[channel].append(text_to_display)
+	else:
+		channel_messages[channel] = PackedStringArray([text_to_display])
 
 
 func _on_fade_out_timer_timeout() -> void:
@@ -113,7 +124,11 @@ func _on_message_edit_text_submitted(new_text: String, line_edit: LineEdit) -> v
 	if not new_text.is_empty():
 		new_text = new_text.strip_edges(true, true)
 		new_text = new_text.substr(0, 120)
-		Events.message_submitted.emit(new_text, current_channel)
+		InstanceClient.current.request_data(
+			&"chat.message.send",
+			Callable(), # ACK later
+			{"text": new_text, "channel": current_channel}
+		)
 
 	if line_edit == peek_feed_message_edit:
 		fade_out_timer.start()
