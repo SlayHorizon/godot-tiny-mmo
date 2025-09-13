@@ -29,7 +29,6 @@ func data_request_handler(
 
 
 func find_command(command_name: String, instance: ServerInstance) -> ChatCommand:
-	print(command_name)
 	if instance.local_chat_commands.has(command_name):
 		return instance.local_chat_commands.get(command_name)
 	return instance.global_chat_commands.get(command_name)

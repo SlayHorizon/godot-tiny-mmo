@@ -13,9 +13,28 @@ var players_by_peer_id: Dictionary[int, Player]
 var synchronizer_manager: StateSynchronizerManagerClient
 var instance_map: Map
 
+var _next_data_request_id: int
+var _pending_data_requests: Dictionary[int, Callable]
+var _data_subscriptions: Dictionary[StringName, Array]
+
 
 func _ready() -> void:
 	current = self
+	
+	subscribe(&"item.equip", func(data: Dictionary) -> void:
+		if data.is_empty() or not data.has_all(["p", "i"]):
+			return
+		var player: Player = players_by_peer_id.get(data["p"], null)
+		if not player:
+			return
+		
+		var item: Item = ContentRegistryHub.load_by_id(&"items", data["i"])
+		if item:
+			if item is WeaponItem:
+				player.equipment_component.equip(item.slot.key, item)
+			elif item is ConsumableItem:
+				item.on_use(player)
+	)
 	
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
@@ -24,38 +43,6 @@ func _ready() -> void:
 		synchronizer_manager.add_container(1_000_000, instance_map.replicated_props_container)
 
 	add_child(synchronizer_manager, true)
-
-#@onready var sync_mgr: StateSynchronizerManagerClient = $"../StateSynchronizerManagerClient"
-#@onready var syn: StateSynchronizer = $StateSynchronizer
-#@onready var _send_timer := Timer.new()
-#var my_eid: int
-#
-#func _ready() -> void:
-	#_send_timer.wait_time = 0.05 # 20 Hz
-	#_send_timer.one_shot = false
-	#_send_timer.autostart = true
-	#_send_timer.timeout.connect(_flush_my_delta)
-	#add_child(_send_timer)
-#
-#func _flush_my_delta() -> void:
-	#var pairs: Array = syn.collect_dirty_pairs()
-	#if pairs.size() == 0:
-		#return
-	#sync_mgr.send_my_delta(my_eid, pairs)
-
-
-@rpc("any_peer", "call_remote", "reliable", 0)
-func try_to_equip_item(item_id: int, peer_id: int) -> void:
-	var player: Player = players_by_peer_id.get(peer_id, null)
-	if not player:
-		return
-	
-	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
-	if item:
-		if item is WeaponItem:
-			player.equipment_component.equip(item.slot.key, item)
-		elif item is ConsumableItem:
-			item.on_use(player)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -94,10 +81,6 @@ func spawn_player(player_id: int) -> void:
 	synchronizer_manager.add_entity(player_id, sync) 
 
 
-func add_local_player() -> void:
-	pass
-
-
 @rpc("authority", "call_remote", "reliable", 0)
 func despawn_player(player_id: int) -> void:
 	synchronizer_manager.remove_entity(player_id)
@@ -109,19 +92,12 @@ func despawn_player(player_id: int) -> void:
 #endregion
 
 
-# WIP
 @rpc("any_peer", "call_remote", "reliable", 1)
 func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
 	var player: Player = players_by_peer_id.get(peer_id) as Player
 	if not player:
 		return
 	player.equipped_weapon_right.perform_action(action_index, action_direction)
-
-
-#### WIPP ##
-var _next_data_request_id: int
-var _pending_data_requests: Dictionary[int, Callable]
-var _data_subscriptions: Dictionary[StringName, Array]
 
 
 func subscribe(type: StringName, handler: Callable) -> void:
@@ -159,11 +135,11 @@ func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
 
 @rpc("authority", "call_remote", "reliable", 1)
 func data_response(request_id: int, type: StringName, data: Dictionary) -> void:
-	data_push(type, data)
 	var callable: Callable = _pending_data_requests.get(request_id, Callable())
 	_pending_data_requests.erase(request_id)
 	if callable.is_valid():
 		callable.call(data)
+	data_push(type, data)
 
 
 @rpc("authority", "call_remote", "reliable", 1)
@@ -171,9 +147,3 @@ func data_push(type: StringName, data: Dictionary) -> void:
 	for handler: Callable in _data_subscriptions.get(type, []):
 		if handler.is_valid():
 			handler.call(data)
-
-
-#@rpc("authority", "call_remote", "reliable", 1)
-#func data_post(type: StringName, data: Dictionary) -> void:
-	## Only implemented in the server.
-	#pass

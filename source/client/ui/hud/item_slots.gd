@@ -22,7 +22,11 @@ func _on_item_shortcut_pressed(button: Button, index: int) -> void:
 	if not item:
 		return
 	
-	InstanceClient.current.try_to_equip_item.rpc_id(1, item.get_meta(&"id", -1), 0)
+	InstanceClient.current.request_data(
+		&"item.equip",
+		Callable(),
+		{"id": item.get_meta(&"id", -1)}
+	)
 
 
 func add_item_to_shorcut(item: Item, index: int) -> void:

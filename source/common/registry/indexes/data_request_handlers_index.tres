@@ -5,10 +5,10 @@
 [resource]
 script = ExtResource("1_r6qed")
 content_name = "data_request_handlers"
-version = 1757785110
-next_id = 9
+version = 1757796811
+next_id = 10
 entries = Array[Dictionary]([{
-&"hash": "1d71799cbe0cbf9391d9c1a22e356d8f930bab345c02adb02cf43d95d96bdd34",
+&"hash": "0148e8032caf5d4a0e82c2cd9ca23781a79f4d3fc86fcb58752b7b673ed73544",
 &"id": 8,
 &"path": "res://source/server/world/components/data_request_handlers/chat.command.exec.gd",
 &"slug": &"chat.command.exec"
@@ -42,6 +42,11 @@ entries = Array[Dictionary]([{
 &"id": 6,
 &"path": "res://source/server/world/components/data_request_handlers/inventory.get.gd",
 &"slug": &"inventory.get"
+}, {
+&"hash": "a15d4871512f1a7195238e3eeab113ab221ec979c44cde914f83fa6dc296f5a1",
+&"id": 9,
+&"path": "res://source/server/world/components/data_request_handlers/item.equip.gd",
+&"slug": &"item.equip"
 }, {
 &"hash": "bceee5528ab4796290e0e486e58e631a4fbf8a1fb6143a77aa21d9107e64a445",
 &"id": 7,

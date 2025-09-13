@@ -61,4 +61,8 @@ func _on_equip_button_pressed() -> void:
 	if selected_item is GearItem or selected_item is WeaponItem:
 		var item_id: int = selected_item.get_meta(&"id", -1)
 		if item_id != -1:
-			InstanceClient.current.try_to_equip_item.rpc_id(1, item_id, 0)
+			InstanceClient.current.request_data(
+				&"item.equip",
+				Callable(),
+				{"id": item_id}
+			)

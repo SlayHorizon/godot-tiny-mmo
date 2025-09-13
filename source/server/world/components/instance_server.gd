@@ -16,7 +16,6 @@ var local_role_definitions: Dictionary[String, Dictionary]
 var local_role_assignments: Dictionary[int, PackedStringArray]
 
 
-#var entity_collection: Dictionary = {}#[int, Entity]
 var players_by_peer_id: Dictionary[int, Player]
 ## Current connected peers to the instance.
 var connected_peers: PackedInt64Array = PackedInt64Array()
@@ -29,6 +28,7 @@ var instance_map: Map
 var instance_resource: InstanceResource
 
 var synchronizer_manager: StateSynchronizerManagerServer
+
 
 func _ready() -> void:
 	world_server.multiplayer_api.peer_disconnected.connect(
@@ -68,25 +68,6 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		if not player.just_teleported:
 			player.just_teleported = true
 			player.syn.set_by_path(^":position", interaction_area.target.global_position)
-
-
-@rpc("any_peer", "call_remote", "reliable", 0)
-func try_to_equip_item(item_id: int, _slot_id: int) -> void:
-	var peer_id: int = multiplayer.get_remote_sender_id()
-	# Check if player has the weapon
-	
-	var player: Player = players_by_peer_id.get(peer_id, null)
-	if player and player.player_resource.inventory.has(item_id):
-		var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
-		if item:
-			if item is GearItem and item.can_equip(player):
-				player.equipment_component.equip(item.slot.key, item)
-				propagate_rpc(try_to_equip_item.bind(item_id, peer_id))
-			elif item is ConsumableItem:
-				item.on_use(player)
-		#var slot: ItemSlot = ContentRegistryHub.load_by_id(&"item_slots", slot_id)
-	#if player.player_resource.inventory.has(weapon_path):
-	#player.syn.set_by_path(^":weapon_name_right", weapon_path)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
