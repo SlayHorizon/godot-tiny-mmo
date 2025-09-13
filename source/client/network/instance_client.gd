@@ -36,6 +36,16 @@ func _ready() -> void:
 				item.on_use(player)
 	)
 	
+	subscribe(&"action.perform", func(data: Dictionary) -> void:
+		if data.is_empty() or not data.has_all(["p", "d", "i"]):
+			return
+		var player: Player = players_by_peer_id.get(data["p"])
+		if not player:
+			return
+			
+		player.equipped_weapon_right.perform_action(data["i"], data["d"])
+	)
+	
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
 
@@ -64,7 +74,6 @@ func spawn_player(player_id: int) -> void:
 			local_player = new_player
 
 		# Always update instance and sync manager references.
-		local_player.instance_client = self
 		local_player.synchronizer_manager = synchronizer_manager
 	else:
 		new_player = DUMMY_PLAYER.instantiate()
@@ -90,14 +99,6 @@ func despawn_player(player_id: int) -> void:
 		player.queue_free()
 	players_by_peer_id.erase(player_id)
 #endregion
-
-
-@rpc("any_peer", "call_remote", "reliable", 1)
-func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
-	var player: Player = players_by_peer_id.get(peer_id) as Player
-	if not player:
-		return
-	player.equipped_weapon_right.perform_action(action_index, action_direction)
 
 
 func subscribe(type: StringName, handler: Callable) -> void:

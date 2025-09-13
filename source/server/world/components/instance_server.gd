@@ -15,7 +15,6 @@ var local_chat_commands: Dictionary[String, ChatCommand]
 var local_role_definitions: Dictionary[String, Dictionary]
 var local_role_assignments: Dictionary[int, PackedStringArray]
 
-
 var players_by_peer_id: Dictionary[int, Player]
 ## Current connected peers to the instance.
 var connected_peers: PackedInt64Array = PackedInt64Array()
@@ -28,6 +27,8 @@ var instance_map: Map
 var instance_resource: InstanceResource
 
 var synchronizer_manager: StateSynchronizerManagerServer
+
+var request_handlers: Dictionary[StringName, DataRequestHandler]
 
 
 func _ready() -> void:
@@ -179,26 +180,9 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 #endregion
 
 
-# WIP
-@rpc("any_peer", "call_remote", "reliable", 1)
-func player_action(action_index: int, action_direction: Vector2, peer_id: int = 0) -> void:
-	peer_id = multiplayer.get_remote_sender_id()
-	var player: Player = players_by_peer_id.get(peer_id, null)
-	if not player:
-		return
-	
-	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
-		propagate_rpc(player_action.bindv([action_index, action_direction, peer_id]))
-
-
-
-# Quick and dirty for fast proto test
-var request_handlers: Dictionary[StringName, DataRequestHandler]
-
 @rpc("any_peer", "call_remote", "reliable", 1)
 func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
-	
 	# Rate-limit
 	#if not _rate_ok(
 		#return
@@ -240,8 +224,6 @@ func propagate_rpc(callable: Callable) -> void:
 		callable.rpc_id(peer_id)
 
 
-# -- Helpers joueurs / synchro ------------------------------------------------
-
 func get_player(peer_id: int) -> Player:
 	var p: Player = players_by_peer_id.get(peer_id, null)
 	return p
@@ -262,6 +244,7 @@ func set_player_path_value(peer_id: int, rel_path: NodePath, value: Variant) -> 
 	return true
 
 
+# To translate in english
 ## API “propre” pour les attributs (serveur = source de vérité).
 ## Utilise l’ASC si présent ; sinon fallback en poussant le miroir.
 func set_player_attr_current(peer_id: int, attr: StringName, value: float) -> bool:

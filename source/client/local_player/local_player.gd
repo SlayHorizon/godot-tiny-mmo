@@ -12,7 +12,6 @@ var interact_input: bool = false
 
 var state: String = "idle"
 
-var instance_client: InstanceClient
 var synchronizer_manager: StateSynchronizerManagerClient
 
 @onready var mouse: Node2D = $MouseComponent
@@ -46,7 +45,8 @@ func check_inputs() -> void:
 			last_input_direction = input_direction
 	action_input = Input.is_action_pressed("action")
 	if action_input and equipped_weapon_right.can_use_weapon(0):
-		instance_client.player_action.rpc_id(1, 0, position.direction_to(mouse.position))
+		InstanceClient.current.request_data(&"action.perform", Callable(),
+		{"d": position.direction_to(mouse.position), "i": 0})
 	interact_input = Input.is_action_just_pressed("interact")
 
 
