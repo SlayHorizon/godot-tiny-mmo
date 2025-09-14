@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://beypr510eoqml"]
 
-[ext_resource type="Script" uid="uid://2dnwg3gkbaeg" path="res://source/client/ui/player_profile.gd" id="1_o6fna"]
+[ext_resource type="Script" uid="uid://2dnwg3gkbaeg" path="res://source/client/ui/player_profile/player_profile.gd" id="1_o6fna"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_x41y2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x41y2"]

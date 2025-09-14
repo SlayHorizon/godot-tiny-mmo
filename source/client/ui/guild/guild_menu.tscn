@@ -16,7 +16,6 @@ grow_vertical = 2
 script = ExtResource("1_njed6")
 
 [node name="NoGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("search_panel", "create_panel")]
-visible = false
 custom_minimum_size = Vector2(320, 200)
 layout_mode = 1
 anchors_preset = 8
