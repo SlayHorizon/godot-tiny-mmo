@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://o3kj4urvrykf" path="res://source/client/ui/guild/no_guild_menu.gd" id="2_etk61"]
 [ext_resource type="Script" uid="uid://c0wbbw6du00cs" path="res://source/client/ui/guild/search_guild_menu.gd" id="2_wnmab"]
 [ext_resource type="Script" uid="uid://dlo5k2qp1v3dm" path="res://source/client/ui/guild/guild_display.gd" id="3_ysvbj"]
-[ext_resource type="Script" uid="uid://dnd53fxkhfu66" path="res://source/client/ui/guild/guild_panel.gd" id="4_mefu8"]
+[ext_resource type="Script" uid="uid://b6ywedmocoh7m" path="res://source/client/ui/guild/create_guild_menu.gd" id="4_etk61"]
 
 [node name="GuildMenu" type="Control"]
 layout_mode = 3
@@ -16,6 +16,7 @@ grow_vertical = 2
 script = ExtResource("1_njed6")
 
 [node name="NoGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("search_panel", "create_panel")]
+visible = false
 custom_minimum_size = Vector2(320, 200)
 layout_mode = 1
 anchors_preset = 8
@@ -116,7 +117,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CreateGuildMenu" type="PanelContainer" parent="."]
+[node name="CreateGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("display_panel")]
 visible = false
 custom_minimum_size = Vector2(320, 200)
 layout_mode = 1
@@ -131,7 +132,8 @@ offset_right = 160.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("4_mefu8")
+script = ExtResource("4_etk61")
+display_panel = NodePath("../GuildDisplay")
 metadata/_custom_type_script = "uid://dnd53fxkhfu66"
 metadata/_edit_group_ = true
 
@@ -159,7 +161,6 @@ layout_mode = 2
 text = "Confirm"
 
 [node name="GuildDisplay" type="PanelContainer" parent="."]
-visible = false
 custom_minimum_size = Vector2(320, 200)
 layout_mode = 1
 anchors_preset = 8
@@ -217,4 +218,6 @@ text = "CLOSE"
 [connection signal="pressed" from="NoGuildMenu/MarginContainer/VBoxContainer/CreateGuildButton" to="NoGuildMenu" method="_on_create_guild_button_pressed"]
 [connection signal="text_submitted" from="SearchGuildMenu/MarginContainer/VBoxContainer/LineEdit" to="SearchGuildMenu" method="_on_line_edit_text_submitted"]
 [connection signal="pressed" from="SearchGuildMenu/MarginContainer/VBoxContainer/SearchGuildButton" to="SearchGuildMenu" method="_on_search_guild_button_pressed"]
+[connection signal="text_submitted" from="CreateGuildMenu/MarginContainer/VBoxContainer/LineEdit" to="CreateGuildMenu" method="_on_line_edit_text_submitted"]
+[connection signal="pressed" from="CreateGuildMenu/MarginContainer/VBoxContainer/Button" to="CreateGuildMenu" method="_on_button_pressed"]
 [connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]
