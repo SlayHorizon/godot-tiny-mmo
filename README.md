@@ -1,3 +1,7 @@
+> [!CAUTION]
+> README.md and documentations are out of date, refer to this branch [archive/v1](https://github.com/SlayHorizon/godot-tiny-mmo/tree/archive/v1).  
+> Current main is still experimental since the massive rework from this [PR](https://github.com/SlayHorizon/godot-tiny-mmo/pull/59).
+
 > [!NOTE]
 > The repository's documentation website: [**slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/)
 
@@ -57,8 +61,8 @@ A tiny, **experimental** MMORPG demo developed with **Godot Engine 4.4**.
 
 - [x] **Character Creation**
 - [x] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
-- [ ] **Weapons** at least one usable weapon per class
-- [ ] **Basic combat system**
+- [x] **Weapons** at least one usable weapon per class
+- [x] **Basic combat system**
 
 - [X] **Entity synchronization** for players within the same instance
 - [ ] **Entity interpolation** to handle rubber banding
