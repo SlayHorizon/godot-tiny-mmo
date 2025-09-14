@@ -160,7 +160,8 @@ placeholder_text = "Guild name"
 layout_mode = 2
 text = "Confirm"
 
-[node name="GuildDisplay" type="PanelContainer" parent="."]
+[node name="GuildDisplay" type="PanelContainer" parent="." node_paths=PackedStringArray("no_guild_panel")]
+visible = false
 custom_minimum_size = Vector2(320, 200)
 layout_mode = 1
 anchors_preset = 8
@@ -175,6 +176,7 @@ offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_ysvbj")
+no_guild_panel = NodePath("../NoGuildMenu")
 metadata/_custom_type_script = "uid://dnd53fxkhfu66"
 metadata/_edit_group_ = true
 
@@ -220,4 +222,5 @@ text = "CLOSE"
 [connection signal="pressed" from="SearchGuildMenu/MarginContainer/VBoxContainer/SearchGuildButton" to="SearchGuildMenu" method="_on_search_guild_button_pressed"]
 [connection signal="text_submitted" from="CreateGuildMenu/MarginContainer/VBoxContainer/LineEdit" to="CreateGuildMenu" method="_on_line_edit_text_submitted"]
 [connection signal="pressed" from="CreateGuildMenu/MarginContainer/VBoxContainer/Button" to="CreateGuildMenu" method="_on_button_pressed"]
+[connection signal="pressed" from="GuildDisplay/MarginContainer/VBoxContainer/Button" to="GuildDisplay" method="_on_button_pressed"]
 [connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

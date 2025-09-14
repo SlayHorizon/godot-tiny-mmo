@@ -4,10 +4,15 @@
 
 [resource]
 script = ExtResource("1_r6qed")
-content_name = &""
-version = 1757799087
-next_id = 11
+content_name = "data_request_handlers"
+version = 1757837335
+next_id = 13
 entries = Array[Dictionary]([{
+&"hash": "2413f95341030f9da9729a95f81304193f071b90f2a277b738f1ae0ae1c64e74",
+&"id": 10,
+&"path": "res://source/server/world/components/data_request_handlers/action.perform.gd",
+&"slug": &"action.perform"
+}, {
 &"hash": "0148e8032caf5d4a0e82c2cd9ca23781a79f4d3fc86fcb58752b7b673ed73544",
 &"id": 8,
 &"path": "res://source/server/world/components/data_request_handlers/chat.command.exec.gd",
@@ -23,10 +28,20 @@ entries = Array[Dictionary]([{
 &"path": "res://source/server/world/components/data_request_handlers/data_request_handler.gd",
 &"slug": &"data_request_handler"
 }, {
+&"hash": "143027d27058866872d763aa867b8755944b2b09a5ac158cd12e3b1c703de589",
+&"id": 11,
+&"path": "res://source/server/world/components/data_request_handlers/guild.create.gd",
+&"slug": &"guild.create"
+}, {
 &"hash": "47cff35ab8155a0874ce04277371720fc1f9150da9984c3fc946a58034980933",
 &"id": 3,
 &"path": "res://source/server/world/components/data_request_handlers/guild.get.gd",
 &"slug": &"guild.get"
+}, {
+&"hash": "98a7a05672c74f652c24c0915923121f7a6950a31a6821ff8b7754e87819a442",
+&"id": 12,
+&"path": "res://source/server/world/components/data_request_handlers/guild.quit.gd",
+&"slug": &"guild.quit"
 }, {
 &"hash": "dc3c769e594095856d18f4e3d260639cddd75fbf5cfa000feebabc496f7728e7",
 &"id": 4,
@@ -48,13 +63,10 @@ entries = Array[Dictionary]([{
 &"path": "res://source/server/world/components/data_request_handlers/item.equip.gd",
 &"slug": &"item.equip"
 }, {
-&"hash": "69e2b49107a4d0d897dcfaed388885ddc7373838954ec30e0cd041fed9b79bbc",
-&"id": 10,
-&"path": "res://source/server/world/components/data_request_handlers/action.perform.gd",
-&"slug": &"action.perform"
-}, {
 &"hash": "bceee5528ab4796290e0e486e58e631a4fbf8a1fb6143a77aa21d9107e64a445",
 &"id": 7,
 &"path": "res://source/server/world/components/data_request_handlers/profile.get.gd",
 &"slug": &"profile.get"
 }])
+scan_path = ""
+filters = PackedStringArray()

@@ -33,3 +33,5 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres",
 &"slug": &"wooden_bow.item"
 }])
+scan_path = ""
+filters = PackedStringArray()

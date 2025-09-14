@@ -22,6 +22,11 @@ func data_request_handler(
 	if not guild:
 		return {}
 	
+	guild.add_member(player_resource.player_id, "Leader")
+	guild.leader_id = player_resource.player_id
+	
+	player_resource.guild = guild
+	
 	var guild_info: Dictionary = {
 		"name": guild.guild_name,
 		"size": guild.members.size(),

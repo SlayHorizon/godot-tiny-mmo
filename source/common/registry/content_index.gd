@@ -12,3 +12,6 @@ extends Resource
 ##}
 ## 
 @export var entries: Array[Dictionary]
+
+@export var scan_path: String
+@export var filters: PackedStringArray
