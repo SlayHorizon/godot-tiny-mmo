@@ -14,7 +14,7 @@ This demo mimics a typical MMO architecture with different types of servers:
 <details>
 	<summary>Click me to see architecture diagram</summary>
 
-![Network Architecture Diagram](/assets/arch_diagram.png ':size=70%')).
+![Network Architecture Diagram](/assets/arch_diagram.png ':size=70%').
 
 </details>
 

@@ -28,9 +28,12 @@
 			homepage: "home.md",
 			
 			loadSidebar: true,
-			loadSidebar: "sidebar.md",
 			maxLevel: 4,
 			subMaxLevel: 2,
+			
+			requestHeaders: {
+				'cache-control': 'max-age=600',
+			},
 			// plugins: [
 			// 		EditOnGithubPlugin.create(docBase, docEditBase, title)
 			// 	],
