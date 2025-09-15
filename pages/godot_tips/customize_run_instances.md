@@ -10,7 +10,7 @@ It can be helpful for various purposes, but for multiplayer projects, it’s esp
 In a small-scale project, we can simply use two feature tags to determine whether an instance should start as a client or a server.
 
 Here’s a simple example in the "Run Instances" window, which you can access at `Debug` → `Customize Run Instances...`:
-![image](https://github.com/user-attachments/assets/840d26e5-e697-46b7-9877-09180890ce61)
+![image](../../assets/run_instances.png)
 
 And how it could be used in code:
 ```gdscript
@@ -74,7 +74,7 @@ certificate_path="res://test_config/tls/certificate.crt"
 Here’s an example of how to use this feature,  
 one world-server using the default configuration,
 and the other one using a specific one:
-![image](https://github.com/user-attachments/assets/44470a18-3322-451f-aaff-011dd3803160)
+![image](../../assets/config_example.png)
 
 ### Links
 

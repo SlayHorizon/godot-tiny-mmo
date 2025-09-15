@@ -2,12 +2,13 @@
 
 <!--![logo](_media/icon.svg)-->
 
-# godot tiny mmo<small>Godot 4.4.1</small>
-> Open-source web-based MMORPG built in Godot.
+# Godot Tiny MMO<small>Godot 4.4+</small>
+> Open-source web-based MMORPG built in Godot.  
 
-- Unique project organization
-- Don't rely on the built-in multiplayer nodes
-- Mimic typical MMO architecture
+
+- Inspired by the architecture of major MMOs
+- Lightweight setup: only requires our friend Godot
+- Unique Godot multiplayer project organization
 
 [Github](https://github.com/SlayHorizon/godot-tiny-mmo)
 [Continue](#godot-tiny-mmo)
