@@ -59,3 +59,15 @@ func _on_submenu_visiblity_changed(menu: Control) -> void:
 		hide()
 	else:
 		show()
+
+const SETTINGS = preload("res://source/client/ui/settings/settings.tscn")
+var settings: Control
+func _on_settings_button_pressed() -> void:
+	if not settings:
+		settings = SETTINGS.instantiate()
+		settings.visibility_changed.connect(_on_submenu_visiblity_changed.bind(settings))
+		sub_menu.add_child(settings)
+	settings.show()
+
+
+#func add_menu(scene: PackedScene)

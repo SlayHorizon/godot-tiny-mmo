@@ -6,7 +6,9 @@ extends Node
 # HUD
 signal local_player_ready(local_player: LocalPlayer)
 
-
+# temporary
+var settings: Dictionary
+var local_player: LocalPlayer
 #var events: Dictionary[StringName, Signal]
 
 

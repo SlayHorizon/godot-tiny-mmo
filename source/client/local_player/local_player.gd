@@ -18,12 +18,16 @@ var synchronizer_manager: StateSynchronizerManagerClient
 
 
 func _ready() -> void:
+	Events.local_player = self
 	Events.local_player_ready.emit(self)
 	super()
 	fid_position = PathRegistry.id_of(":position")
 	fid_flipped = PathRegistry.id_of(":flipped")
 	fid_anim = PathRegistry.id_of(":anim")
 	fid_pivot = PathRegistry.id_of(":pivot")
+	
+	if Events.settings.has("zoom"):
+		$Camera2D.zoom = Vector2.ONE * Events.settings["zoom"]
 
 
 func _physics_process(delta: float) -> void:
