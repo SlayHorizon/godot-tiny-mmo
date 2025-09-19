@@ -1,9 +1,8 @@
-[gd_scene load_steps=26 format=3 uid="uid://bmbm8el3rcejb"]
+[gd_scene load_steps=25 format=3 uid="uid://bmbm8el3rcejb"]
 
 [ext_resource type="Script" uid="uid://bfybdk1kgy125" path="res://source/client/client_main.gd" id="1_hoyng"]
 [ext_resource type="Script" uid="uid://siq7b6qqrjyq" path="res://source/client/network/world_client.gd" id="2_ey548"]
 [ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="3_s85jl"]
-[ext_resource type="PackedScene" uid="uid://u544jciafxaw" path="res://source/client/gateway/gateway_scene.tscn" id="4_rh1pg"]
 [ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="5_cgybg"]
 [ext_resource type="FontFile" uid="uid://dkhbwo1ivbqjd" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" id="5_re4x3"]
 [ext_resource type="Texture2D" uid="uid://cfihbj71a4y35" path="res://source/client/gateway/desert.png" id="7_a2tkg"]
@@ -128,9 +127,6 @@ script = ExtResource("2_ey548")
 [node name="InstanceManager" type="Node" parent="WorldClient"]
 script = ExtResource("3_s85jl")
 
-[node name="LoginScene" parent="." node_paths=PackedStringArray("world_server") instance=ExtResource("4_rh1pg")]
-world_server = NodePath("../WorldClient")
-
 [node name="Gateway" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
@@ -142,6 +138,7 @@ theme = SubResource("Theme_re4x3")
 script = ExtResource("5_cgybg")
 
 [node name="Desert" type="Sprite2D" parent="Gateway"]
+visible = false
 position = Vector2(0, -300)
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("7_a2tkg")
@@ -377,7 +374,7 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "Enter your password again here"
 
-[node name="GuestButton" type="Button" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer"]
+[node name="CreateAccountButton" type="Button" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_fnfxe")
@@ -773,6 +770,7 @@ offset_right = 955.0
 offset_bottom = 532.0
 
 [node name="BackButton" type="Button" parent="Gateway"]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -798,8 +796,8 @@ offset_top = -54.0
 offset_right = 140.0
 offset_bottom = -9.0
 grow_vertical = 0
-text = "Label 2995393
-Label 737209712"
+text = "Not connected yet
+"
 horizontal_alignment = 3
 vertical_alignment = 3
 
@@ -812,7 +810,9 @@ accept_gzip = false
 timeout = 8.0
 
 [connection signal="pressed" from="Gateway/MainPanel/VBoxContainer/VBoxContainer/LoginButton" to="Gateway" method="_on_login_button_pressed"]
+[connection signal="pressed" from="Gateway/MainPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="Gateway" method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="Gateway/MainPanel/VBoxContainer/VBoxContainer/GuestButton" to="Gateway" method="_on_guest_button_pressed"]
 [connection signal="pressed" from="Gateway/LoginPanel/VBoxContainer/VBoxContainer/LoginButton" to="Gateway" method="_on_login_login_button_pressed"]
+[connection signal="pressed" from="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="Gateway" method="create_account"]
 [connection signal="pressed" from="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/CreateButton" to="Gateway" method="_on_create_character_button_pressed"]
 [connection signal="request_completed" from="Gateway/HTTPRequest" to="Gateway" method="_on_request_completed"]

@@ -36,10 +36,23 @@ func _ready() -> void:
 		&"/v1/world/characters",
 		handle_world_characters
 	)
-
+	router.register_route(
+		HTTPClient.Method.METHOD_POST,
+		&"/v1/account/create",
+		handle_account_creation
+	)
 
 func handle_login(payload: Dictionary) -> Dictionary:
-	print_debug(payload)
+	gateway_manager_client.login_request.rpc_id(
+		1,
+		payload["t-id"],
+		payload["u"],
+		payload["p"]
+	)
+	while true:
+		var d: Dictionary = await gateway_manager_client.response_received
+		if d.get("t-id", -1) == payload["t-id"]:
+			return d
 	return {"access_token":"abc","refresh_token":"r1","expires_in":900}
 
 
@@ -68,7 +81,6 @@ func handle_character_create(payload: Dictionary) -> Dictionary:
 
 
 func handle_world_characters(payload: Dictionary) -> Dictionary:
-	print_debug(payload)
 	gateway_manager_client.request_player_characters.rpc_id(
 		1,
 		payload["t-id"],
@@ -94,5 +106,20 @@ func handle_world_enter(payload: Dictionary) -> Dictionary:
 	while true:
 		var d: Dictionary = await gateway_manager_client.response_received
 		if d.get("t-id", -1) == id:
+			return d
+	return {"error": 1}
+
+
+func handle_account_creation(payload: Dictionary) -> Dictionary:
+	gateway_manager_client.create_account_request.rpc_id(
+		1,
+		payload["t-id"],
+		payload["u"],
+		payload["p"],
+		false
+	)
+	while true:
+		var d: Dictionary = await gateway_manager_client.response_received
+		if d.get("t-id", -1) == payload["t-id"]:
 			return d
 	return {"error": 1}

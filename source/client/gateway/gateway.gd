@@ -30,8 +30,7 @@ func do_request(
 ) -> Dictionary:
 	var headers: PackedStringArray
 	headers.append("Content-Type: application/json")
-
-	#http_request.request_completed.connect(_on_request_completed)
+	
 	var error: Error = http_request.request(
 		path,
 		headers,
@@ -82,18 +81,38 @@ func _on_login_login_button_pressed() -> void:
 		and password.length() > 5 and password.length() < 20
 	):
 		var world_selection: PanelContainer = $WorldSelection
-		handler = func(d: Dictionary) -> void:
-			if not d.has("error"):
-				login_panel.hide()
-				world_selection.show()
-			else:
-				login_button.disabled = false
-		handler = Callable()
-		do_request(
-			HTTPClient.Method.METHOD_POST,
-			"http://127.0.0.1:8088/v1/login",
-			{"u": account_name, "p": password, "t-id": token}
-		)
+	handler = func(d: Dictionary) -> void:
+		if d.has("error"):
+			return
+		main_panel.hide()
+		$LoginPanel.hide()
+		var container: HBoxContainer = $WorldSelection/VBoxContainer/HBoxContainer
+		for child: Node in container.get_children():
+			child.queue_free()
+		var world_info: Dictionary = d.get("w", {})
+		
+		_account_id = d["a"]["id"]
+		_account_name = d["a"]["name"]
+		$ConnectionInfo.text = "Accout-name: %s\nAccount-ID: %s" % [_account_name, _account_id]
+		for world_id: String in world_info:
+			var new_button: Button = Button.new()
+			new_button.custom_minimum_size = Vector2(150, 250)
+			new_button.clip_text = true
+			new_button.text = "%s\n\n%s\n\n%s" % [
+				world_info[world_id].get("name", "name"),
+				" \n".join(str(world_info[world_id]["info"]).split(", ")),
+				"t"
+			]
+			
+			new_button.pressed.connect(_on_world_selected.bind(world_id.to_int()))
+			container.add_child(new_button)
+		world_info_ = d["w"]
+		$WorldSelection.show()
+	do_request(
+		HTTPClient.Method.METHOD_POST,
+		"http://127.0.0.1:8088/v1/login",
+		{"u": account_name, "p": password, "t-id": token}
+	)
 
 
 func _on_guest_button_pressed() -> void:
@@ -108,7 +127,7 @@ func _on_guest_button_pressed() -> void:
 		
 		_account_id = d["a"]["id"]
 		_account_name = d["a"]["name"]
-		
+		$ConnectionInfo.text = "Accout-name: %s\nAccount-ID: %s" % [_account_name, _account_id]
 		for world_id: String in world_info:
 			var new_button: Button = Button.new()
 			new_button.custom_minimum_size = Vector2(150, 250)
@@ -132,7 +151,6 @@ func _on_guest_button_pressed() -> void:
 
 func _on_world_selected(world_id: int) -> void:
 	handler = func(d: Dictionary) -> void:
-		print_debug(d)
 		if d.has("error"):
 			return
 		var container: HBoxContainer = $CharacterSelection/VBoxContainer/HBoxContainer
@@ -150,7 +168,6 @@ func _on_world_selected(world_id: int) -> void:
 			add_child(new_button)
 		await get_tree().process_frame
 		var child_count: int = container.get_child_count()
-		print_debug(child_count)
 		while child_count < 3:
 			var new_button: Button = Button.new()
 			new_button.custom_minimum_size = Vector2(150, 250)
@@ -206,10 +223,61 @@ func _on_create_character_button_pressed() -> void:
 			"data": {
 				"name": username_edit.text,
 				"class": "knight",
+				#"class": selected_character_class.character_name.to_lower(),
 				
 			},
 			"a-u": _account_name,
-			#"class": selected_character_class.character_name.to_lower(),
 			"w-id": current_world_id
 		}
 	)
+
+
+func create_account() -> void:
+	var name_edit: LineEdit = $CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer/LineEdit
+	var password_edit: LineEdit = $CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2/LineEdit
+	var password_repeat_edit: LineEdit = $CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3/LineEdit
+
+	if name_edit.text.is_empty() or password_edit.text.is_empty():
+		return
+	if password_edit.text != password_repeat_edit.text:
+		return
+	if password_edit.text.length() > 22 or name_edit.text.length() > 22:
+		return
+	
+	handler = func(d: Dictionary) -> void:
+		if d.has("error"):
+			return
+		main_panel.hide()
+		$CreateAccountPanel.hide()
+		var container: HBoxContainer = $WorldSelection/VBoxContainer/HBoxContainer
+		for child: Node in container.get_children():
+			child.queue_free()
+		var world_info: Dictionary = d.get("w", {})
+		
+		_account_id = d["a"]["id"]
+		_account_name = d["a"]["name"]
+		$ConnectionInfo.text = "Accout-name: %s\nAccount-ID: %s" % [_account_name, _account_id]
+		for world_id: String in world_info:
+			var new_button: Button = Button.new()
+			new_button.custom_minimum_size = Vector2(150, 250)
+			new_button.clip_text = true
+			new_button.text = "%s\n\n%s\n\n%s" % [
+				world_info[world_id].get("name", "name"),
+				" \n".join(str(world_info[world_id]["info"]).split(", ")),
+				"t"
+			]
+			
+			new_button.pressed.connect(_on_world_selected.bind(world_id.to_int()))
+			container.add_child(new_button)
+		world_info_ = d["w"]
+		$WorldSelection.show()
+	do_request(
+		HTTPClient.Method.METHOD_POST,
+		"http://127.0.0.1:8088/v1/account/create",
+		{"u": name_edit.text, "p": password_edit.text, "t-id": token}
+	)
+
+func _on_create_account_button_pressed() -> void:
+	$MainPanel.hide()
+	$CreateAccountPanel.show()
+	
