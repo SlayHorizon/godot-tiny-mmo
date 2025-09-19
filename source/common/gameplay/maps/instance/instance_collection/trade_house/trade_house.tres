@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="InstanceResource" load_steps=2 format=3 uid="uid://bqx2riy2f440w"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_1h1k1"]
+
+[resource]
+script = ExtResource("1_1h1k1")
+instance_name = &"TradeHouse"
+map_path = "uid://be82v7hsu1yi2"
+load_at_startup = false
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"

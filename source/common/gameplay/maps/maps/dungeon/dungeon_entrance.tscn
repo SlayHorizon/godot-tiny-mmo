@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_ama8a"]
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/gameplay/maps/tilesets/dungeon_tileset.tres" id="2_mj8y0"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="3_ogod3"]
-[ext_resource type="Resource" uid="uid://ditnocjiqmbsu" path="res://source/common/gameplay/maps/instance/instance_collection/dungeon.tres" id="4_hsrlx"]
+[ext_resource type="Resource" uid="uid://ditnocjiqmbsu" path="res://source/common/gameplay/maps/instance/instance_collection/dungeon/dungeon.tres" id="4_hsrlx"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="5_q541t"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="6_54qd8"]
 

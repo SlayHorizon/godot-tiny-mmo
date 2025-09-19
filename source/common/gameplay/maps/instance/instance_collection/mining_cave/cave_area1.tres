@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="InstanceResource" load_steps=2 format=3 uid="uid://iuqxmo63ipnn"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_dvqs5"]
+
+[resource]
+script = ExtResource("1_dvqs5")
+instance_name = &"CaveArea1"
+map_path = "uid://wkvp6lqnmgx5"
+load_at_startup = false
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"
