@@ -66,6 +66,7 @@ func _on_chat_message(message: Dictionary) -> void:
 			full_feed_text_display.append_text(text_to_display)
 			full_feed_text_display.newline()
 	else:
+		reset_view()
 		peek_feed_text_display.show()
 		fade_out_timer.start()
 	if channel_messages.has(channel):

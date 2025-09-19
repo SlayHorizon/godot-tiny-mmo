@@ -13,9 +13,9 @@ var players_by_peer_id: Dictionary[int, Player]
 var synchronizer_manager: StateSynchronizerManagerClient
 var instance_map: Map
 
-var _next_data_request_id: int
-var _pending_data_requests: Dictionary[int, Callable]
-var _data_subscriptions: Dictionary[StringName, Array]
+static var _next_data_request_id: int
+static var _pending_data_requests: Dictionary[int, Callable]
+static var _data_subscriptions: Dictionary[StringName, Array]
 
 
 func _ready() -> void:
@@ -101,14 +101,14 @@ func despawn_player(player_id: int) -> void:
 #endregion
 
 
-func subscribe(type: StringName, handler: Callable) -> void:
+static func subscribe(type: StringName, handler: Callable) -> void:
 	if _data_subscriptions.has(type):
 		_data_subscriptions[type].append(handler)
 	else:
 		_data_subscriptions[type] = [handler]
 
 
-func unsubscribe(type: StringName, handler: Callable) -> void:
+static func unsubscribe(type: StringName, handler: Callable) -> void:
 	if not _data_subscriptions.has(type):
 		return
 	_data_subscriptions[type].erase(handler)

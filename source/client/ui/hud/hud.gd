@@ -35,7 +35,6 @@ func _on_submenu_visiblity_changed(menu: Control) -> void:
 
 
 func display_menu(menu_name: StringName) -> void:
-	print(menu_name)
 	if not menus.has(menu_name):
 		var path: String = "res://source/client/ui/" + menu_name + "/" + menu_name + "_menu.tscn"
 		if not ResourceLoader.exists(path):
