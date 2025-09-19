@@ -83,7 +83,7 @@ func spawn_player(player_id: int) -> void:
 	players_by_peer_id[player_id] = new_player
 	
 	if not new_player.is_inside_tree():
-		add_child(new_player)
+		instance_map.add_child(new_player)
 		#instance_map.add_child(new_player)
 	
 	var sync: StateSynchronizer = new_player.state_synchronizer

@@ -92,7 +92,9 @@ func spawn_player(peer_id: int) -> void:
 		data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
 	
 	player.just_teleported = true
-	add_child(player, true)
+	
+	instance_map.add_child(player, true)
+	
 	players_by_peer_id[peer_id] = player
 	
 	#NEW
