@@ -3,10 +3,10 @@
 [ext_resource type="FontFile" uid="uid://dkhbwo1ivbqjd" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" id="1_pa11d"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a2tkg"]
-content_margin_left = 16.0
-content_margin_top = 10.0
-content_margin_right = 16.0
-content_margin_bottom = 10.0
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
 bg_color = Color(0.0823529, 0.109804, 0.160784, 1)
 border_width_left = 1
 border_width_top = 1
@@ -22,6 +22,10 @@ shadow_size = 6
 shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rxr3"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
 bg_color = Color(0.026754, 0.064119, 0.101452, 1)
 border_width_left = 1
 border_width_top = 1
@@ -60,7 +64,6 @@ shadow_offset = Vector2(0, 4)
 default_font = ExtResource("1_pa11d")
 Button/colors/font_color = Color(0.936737, 0.959364, 0.98337, 1)
 Button/font_sizes/font_size = 16
-Button/styles/focus = null
 Button/styles/hover = SubResource("StyleBoxFlat_a2tkg")
 Button/styles/normal = SubResource("StyleBoxFlat_7rxr3")
 Panel/styles/panel = SubResource("StyleBoxFlat_l45qm")

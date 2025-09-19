@@ -1,6 +1,6 @@
-[gd_scene load_steps=22 format=3 uid="uid://5wv1gfwppcnf"]
+[gd_scene load_steps=18 format=3 uid="uid://5wv1gfwppcnf"]
 
-[ext_resource type="FontFile" uid="uid://dkhbwo1ivbqjd" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" id="1_sg1qr"]
+[ext_resource type="Theme" uid="uid://cf1ayo3dckj67" path="res://source/client/gateway/ui/theme_navy.tres" id="1_sg1qr"]
 [ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="2_74q4y"]
 [ext_resource type="Texture2D" uid="uid://cfihbj71a4y35" path="res://assets/sprites/gui/backgrounds/desert.png" id="3_1c3kr"]
 [ext_resource type="Texture2D" uid="uid://cn5blfyqokda6" path="res://assets/sprites/gui/backgrounds/fairy_forest.png" id="4_uvr2v"]
@@ -10,70 +10,6 @@
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="8_afkjb"]
 [ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/ui/popup_panel.gd" id="9_4rdug"]
 [ext_resource type="AudioStream" uid="uid://xxr4otrq1cg0" path="res://assets/audio/music/ekonia-main-theme.wav" id="10_q1aoo"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a2tkg"]
-content_margin_left = 16.0
-content_margin_top = 10.0
-content_margin_right = 16.0
-content_margin_bottom = 10.0
-bg_color = Color(0.0823529, 0.109804, 0.160784, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.415686, 0.482353, 0.647059, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 6
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rxr3"]
-bg_color = Color(0.026754, 0.064119, 0.101452, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.247059, 0.419608, 0.454902, 1)
-border_blend = true
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.22)
-shadow_size = 6
-shadow_offset = Vector2(0, 2)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l45qm"]
-content_margin_left = 12.0
-content_margin_top = 12.0
-content_margin_right = 16.0
-content_margin_bottom = 16.0
-bg_color = Color(0.063, 0.078, 0.114, 0.9)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.164706, 0.2, 0.282353, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-shadow_color = Color(0, 0, 0, 0.25)
-shadow_size = 12
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="Theme" id="Theme_re4x3"]
-default_font = ExtResource("1_sg1qr")
-Button/colors/font_color = Color(0.936737, 0.959364, 0.98337, 1)
-Button/font_sizes/font_size = 16
-Button/styles/focus = null
-Button/styles/hover = SubResource("StyleBoxFlat_a2tkg")
-Button/styles/normal = SubResource("StyleBoxFlat_7rxr3")
-Panel/styles/panel = SubResource("StyleBoxFlat_l45qm")
-PanelContainer/styles/panel = SubResource("StyleBoxFlat_l45qm")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q35d6"]
 
@@ -122,7 +58,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_re4x3")
+theme = ExtResource("1_sg1qr")
 script = ExtResource("2_74q4y")
 
 [node name="Desert" type="Sprite2D" parent="."]
@@ -419,12 +355,13 @@ alignment = 1
 custom_minimum_size = Vector2(150, 250)
 layout_mode = 2
 text = "Sladida
-
+kkkkkkkkkkkkkkkkkkkkkkkkkk
 Rules:
 Vladi
 gz
 
 Mondial"
+clip_text = true
 
 [node name="Button2" type="Button" parent="WorldSelection/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(150, 250)

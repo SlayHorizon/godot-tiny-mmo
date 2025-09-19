@@ -1,14 +1,14 @@
 extends Control
 
 
+@export var world_server: WorldClient
+
 var pending_requests
 var handler: Callable
 var world_info_: Dictionary
 var _account_id: int
 var _account_name: String
 var token: int = randi()
-
-@onready var world_server: WorldClient = $"../WorldClient"
 
 @onready var main_panel: PanelContainer = $MainPanel
 @onready var login_panel: PanelContainer = $LoginPanel
