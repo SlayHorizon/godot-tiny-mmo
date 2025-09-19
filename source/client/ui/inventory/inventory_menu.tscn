@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://dia55s0a7lhnv"]
 
-[ext_resource type="Script" uid="uid://3kue0fgf78ik" path="res://source/client/ui/inventory/inventory.gd" id="1_g6fyq"]
+[ext_resource type="Script" uid="uid://3kue0fgf78ik" path="res://source/client/ui/inventory/inventory_menu.gd" id="1_g6fyq"]
 [ext_resource type="Script" uid="uid://cx6ltmvpbwdng" path="res://source/client/ui/inventory/gear_slot.gd" id="2_0wccm"]
 [ext_resource type="Texture2D" uid="uid://tg02o3a14emh" path="res://source/client/ui/inventory/test_sprites/Icon162.png" id="2_q1iwn"]
 [ext_resource type="Texture2D" uid="uid://bd0ohyvo6looc" path="res://source/client/ui/inventory/test_sprites/Icon202.png" id="3_3w0rw"]

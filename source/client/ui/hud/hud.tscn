@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dshitaaapbs6x" path="res://source/client/ui/hud/hud.gd" id="1_rchld"]
 [ext_resource type="PackedScene" uid="uid://rncsatpcsbm" path="res://source/client/ui/hud/health_bar/health_bar.tscn" id="2_klco5"]
-[ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/chat/chat.tscn" id="2_xs74v"]
+[ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/chat/chat_menu.tscn" id="2_xs74v"]
 [ext_resource type="Script" uid="uid://pkprr0ll1y44" path="res://source/client/ui/hud/item_slots.gd" id="4_8qpw0"]
 [ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
 
@@ -108,7 +108,4 @@ text = "CLOSE"
 [node name="SubMenu" type="CanvasLayer" parent="."]
 layer = 10
 
-[connection signal="pressed" from="MenuButton" to="." method="_on_menu_button_pressed"]
-[connection signal="pressed" from="MenuOverlay/VBoxContainer/GuildButton" to="." method="_on_guild_button_pressed"]
-[connection signal="pressed" from="MenuOverlay/VBoxContainer/InventoryButton" to="." method="_on_inventory_button_pressed"]
-[connection signal="pressed" from="MenuOverlay/VBoxContainer/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="MenuButton" to="." method="_on_overlay_menu_button_pressed"]

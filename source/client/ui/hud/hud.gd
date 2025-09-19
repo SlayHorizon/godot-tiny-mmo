@@ -3,10 +3,7 @@ extends CanvasLayer
 
 
 var last_opened_interface: Control
-
-var inventory: Control
-var guild_menu: Control 
-var player_profile: Control 
+var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
 @onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
@@ -14,44 +11,20 @@ var player_profile: Control
 
 
 func _ready() -> void:
-	pass
-
-
-func _on_guild_button_pressed() -> void:
-	if not guild_menu:
-		guild_menu = load("res://source/client/ui/guild/guild_menu.tscn").instantiate()
-		add_sibling(guild_menu)
-	guild_menu.show()
-
-
-func _on_menu_button_pressed() -> void:
-	var tween: Tween = create_tween()
-	tween.tween_property(menu_overlay, ^"position:x", menu_overlay.position.x + menu_overlay.size.x, 0.0)
-	tween.tween_callback(menu_overlay.show)
-	tween.tween_property(menu_overlay, ^"position:x", 815.0, 0.3)
-	if not close_button.pressed.is_connected(_on_overlay_menu_close_button_pressed):
-		close_button.pressed.connect(_on_overlay_menu_close_button_pressed)
+	for button: Button in $MenuOverlay/VBoxContainer.get_children():
+		if button.text.containsn("CLOSE"):
+			button.pressed.connect(_on_overlay_menu_close_button_pressed)
+			continue
+		button.pressed.connect(display_menu.bind(button.text.to_lower()))
 
 
 func _on_overlay_menu_close_button_pressed() -> void:
 	menu_overlay.hide()
 
 
-func _on_inventory_button_pressed() -> void:
-	menu_overlay.hide()
-	if not inventory:
-		inventory = (load("res://source/client/ui/inventory/inventory.tscn") as PackedScene).instantiate()
-		inventory.visibility_changed.connect(_on_submenu_visiblity_changed.bind(inventory))
-		sub_menu.add_child(inventory)
-	inventory.show()
-
-
 func open_player_profile(player_id: int) -> void:
-	if not player_profile:
-		player_profile = load("res://source/client/ui/player_profile.tscn").instantiate()
-		player_profile.visibility_changed.connect(_on_submenu_visiblity_changed.bind(player_profile))
-		sub_menu.add_child(player_profile)
-	player_profile.open_player_profile(player_id)
+	display_menu(&"player_profile")
+	menus[&"player_profile"].open_player_profile(player_id)
 
 
 func _on_submenu_visiblity_changed(menu: Control) -> void:
@@ -60,14 +33,22 @@ func _on_submenu_visiblity_changed(menu: Control) -> void:
 	else:
 		show()
 
-const SETTINGS = preload("res://source/client/ui/settings/settings.tscn")
-var settings: Control
-func _on_settings_button_pressed() -> void:
-	if not settings:
-		settings = SETTINGS.instantiate()
-		settings.visibility_changed.connect(_on_submenu_visiblity_changed.bind(settings))
-		sub_menu.add_child(settings)
-	settings.show()
+
+func display_menu(menu_name: StringName) -> void:
+	print(menu_name)
+	if not menus.has(menu_name):
+		var path: String = "res://source/client/ui/" + menu_name + "/" + menu_name + "_menu.tscn"
+		if not ResourceLoader.exists(path):
+			return
+		var new_menu: Control = load(path).instantiate()
+		new_menu.visibility_changed.connect(_on_submenu_visiblity_changed.bind(new_menu))
+		sub_menu.add_child(new_menu)
+		menus[menu_name] = new_menu
+	menus[menu_name].show()
 
 
-#func add_menu(scene: PackedScene)
+func _on_overlay_menu_button_pressed() -> void:
+	var tween: Tween = create_tween()
+	tween.tween_property(menu_overlay, ^"position:x", menu_overlay.position.x + menu_overlay.size.x, 0.0)
+	tween.tween_callback(menu_overlay.show)
+	tween.tween_property(menu_overlay, ^"position:x", 815.0, 0.3)
