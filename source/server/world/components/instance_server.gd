@@ -174,7 +174,7 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 		if delete:
 			player.queue_free()
 		else:
-			remove_child(player)
+			instance_map.remove_child(player)
 		players_by_peer_id.erase(peer_id)
 	
 	for id: int in connected_peers:

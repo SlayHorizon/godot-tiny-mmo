@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfihbj71a4y35"
-path="res://.godot/imported/desert.png-0e90234cff957ca048bc04312a950cc8.ctex"
+path="res://.godot/imported/desert.png-20e6cbf507b755bf4701c832b5176741.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://source/client/gateway/desert.png"
-dest_files=["res://.godot/imported/desert.png-0e90234cff957ca048bc04312a950cc8.ctex"]
+source_file="res://assets/sprites/gui/backgrounds/desert.png"
+dest_files=["res://.godot/imported/desert.png-20e6cbf507b755bf4701c832b5176741.ctex"]
 
 [params]
 

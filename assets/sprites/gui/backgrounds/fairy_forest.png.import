@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cn5blfyqokda6"
-path="res://.godot/imported/fairy_forest.png-b97fb5fc9505a9b35883b1299e1a1a18.ctex"
+path="res://.godot/imported/fairy_forest.png-60ad9dbbb3ef01cf9b4738d55f87f0d3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://source/client/gateway/fairy_forest.png"
-dest_files=["res://.godot/imported/fairy_forest.png-b97fb5fc9505a9b35883b1299e1a1a18.ctex"]
+source_file="res://assets/sprites/gui/backgrounds/fairy_forest.png"
+dest_files=["res://.godot/imported/fairy_forest.png-60ad9dbbb3ef01cf9b4738d55f87f0d3.ctex"]
 
 [params]
 

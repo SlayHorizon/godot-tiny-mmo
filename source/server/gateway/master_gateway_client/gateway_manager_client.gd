@@ -54,6 +54,9 @@ func login_request(_peer_id: int, _username: String, _password: String) -> void:
 @rpc("authority")
 func login_result(peer_id: int, result: Dictionary) -> void:
 	if result.has("error"):
+		response_received.emit(
+			{"t-id": peer_id, "a": result, "w": worlds_info, "error": result}
+		)
 		gateway.login_result.rpc_id(peer_id, result["error"])
 	else:
 		#gateway.login_result.rpc_id(peer_id, 0)
