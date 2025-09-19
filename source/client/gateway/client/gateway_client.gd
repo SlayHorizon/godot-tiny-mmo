@@ -28,6 +28,7 @@ var is_connected_to_server: bool = false:
 func _ready() -> void:
 	GatewayUIComponent.gateway = self
 	authentication_callback = auth_call
+	return
 	load_client_configuration("gateway-client", "res://data/config/client_config.cfg")
 	start_client()
 

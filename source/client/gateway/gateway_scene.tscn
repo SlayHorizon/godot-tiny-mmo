@@ -30,6 +30,7 @@ gateway = NodePath("GatewayClient")
 layer = 2
 
 [node name="GatewayUI" parent="CanvasLayer" instance=ExtResource("2_1i7tk")]
+visible = false
 
 [node name="BackgroundCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.999999, 0, 0, 0)

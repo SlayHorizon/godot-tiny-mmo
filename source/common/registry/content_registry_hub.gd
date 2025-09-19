@@ -15,9 +15,8 @@ static func _static_init() -> void:
 			index_path.trim_suffix("_index.tres"),
 			content_index
 		)
-		print_debug(content_index.entries)
-	print("_content_by_name = ", _content_by_name)
-		
+		#print_debug(content_index.entries)
+	#print("_content_by_name = ", _content_by_name)
 
 
 static func register_registry(content_name: StringName, content_index: ContentIndex) -> void:

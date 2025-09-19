@@ -35,6 +35,7 @@ grow_vertical = 2
 color = Color(0.332881, 0.332881, 0.332881, 0.407843)
 
 [node name="Main" type="Control" parent="." node_paths=PackedStringArray("login_menu", "create_account_menu")]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -481,7 +482,6 @@ size_flags_horizontal = 4
 text = "Create"
 
 [node name="AccountInfo" type="VBoxContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -501,6 +501,7 @@ text = "Account ID: %s"
 
 [node name="ConnectionStatusRect" type="ColorRect" parent="."]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(480, 240)
 layout_mode = 1
 anchors_preset = 8
@@ -540,6 +541,59 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 6
 text = "OK"
+
+[node name="GameTitleLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -42.0
+offset_top = 20.0
+offset_right = 42.0
+offset_bottom = 43.0
+grow_horizontal = 2
+text = "Game Title"
+
+[node name="OptionsButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Options"
+
+[node name="SocialLinkButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -70.0
+offset_top = -65.0
+offset_bottom = -34.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Social link"
+
+[node name="WebsiteButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -86.0
+offset_top = -100.0
+offset_bottom = -69.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Website"
 
 [connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/LoginButton" to="Main" method="_on_login_button_pressed"]
 [connection signal="pressed" from="Main/CenterContainer/MainContainer/MarginContainer/HBoxContainer/CreateAccountButton" to="Main" method="_on_create_account_button_pressed"]

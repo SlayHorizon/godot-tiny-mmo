@@ -138,12 +138,12 @@ func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
 func set_instance_collection() -> void:
 	var default_instance: InstanceResource
 	
-	#for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH):
-		#print(file_path)
-	for file_path: String in ResourceLoader.list_directory(INSTANCE_COLLECTION_PATH):
-		print(INSTANCE_COLLECTION_PATH + file_path)
-		instance_collection.append(ResourceLoader.load(INSTANCE_COLLECTION_PATH + file_path))
-		#instance_collection.append(ResourceLoader.load(file_path, "InstanceResource"))
+	for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH):
+		print(file_path)
+	#for file_path: String in ResourceLoader.list_directory(INSTANCE_COLLECTION_PATH):
+		#print(INSTANCE_COLLECTION_PATH + file_path)
+		#instance_collection.append(ResourceLoader.load(INSTANCE_COLLECTION_PATH + file_path))
+		instance_collection.append(ResourceLoader.load(file_path, "InstanceResource"))
 	
 	for instance_resource: InstanceResource in instance_collection:
 		if instance_resource.load_at_startup:

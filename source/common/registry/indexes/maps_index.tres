@@ -23,3 +23,5 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/maps/maps/overworld.tscn",
 &"slug": &"overworld"
 }])
+scan_path = ""
+filters = PackedStringArray()

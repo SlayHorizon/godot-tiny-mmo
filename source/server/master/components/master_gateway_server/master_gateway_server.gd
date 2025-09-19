@@ -92,7 +92,7 @@ func create_player_character_request(peer_id: int, username: String, character_d
 
 
 @rpc("authority")
-func player_character_creation_result(_peer_id: int, _result_code: int) -> void:
+func player_character_creation_result(_peer_id: int, result: Dictionary) -> void:
 	pass
 
 

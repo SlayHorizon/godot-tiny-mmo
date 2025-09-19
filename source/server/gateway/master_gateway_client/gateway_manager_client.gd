@@ -4,6 +4,7 @@ extends BaseClient
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 signal login_succeeded(account_info: Dictionary, _worlds_info: Dictionary)
+signal response_received(response: Dictionary)
 
 @export var gateway: GatewayServer
 
@@ -38,8 +39,11 @@ func update_worlds_info(_worlds_info: Dictionary) -> void:
 
 @rpc("authority")
 func fetch_auth_token(target_peer: int, auth_token: String, _address: String, _port: int) -> void:
-	gateway.connected_peers[target_peer]["token_received"] = true
-	gateway.fetch_auth_token.rpc_id(target_peer, auth_token, _address, _port)
+	response_received.emit(
+		{"t-id": target_peer, "token": auth_token, "adress": _address, "port": _port}
+	)
+	#gateway.connected_peers[target_peer]["token_received"] = true
+	#gateway.fetch_auth_token.rpc_id(target_peer, auth_token, _address, _port)
 
 
 @rpc("any_peer")
@@ -52,8 +56,11 @@ func login_result(peer_id: int, result: Dictionary) -> void:
 	if result.has("error"):
 		gateway.login_result.rpc_id(peer_id, result["error"])
 	else:
-		gateway.login_result.rpc_id(peer_id, 0)
-		login_succeeded.emit(peer_id, result, worlds_info)
+		#gateway.login_result.rpc_id(peer_id, 0)
+		#login_succeeded.emit(peer_id, result, worlds_info)
+		response_received.emit(
+			{"t-id": peer_id, "a": result, "w": worlds_info}
+		)
 
 
 @rpc("any_peer")
@@ -64,8 +71,11 @@ func create_account_request(_peer_id: int, _username: String, _password: String,
 @rpc("authority")
 func account_creation_result(peer_id: int, result_code: int, result: Dictionary) -> void:
 	if result_code == OK:
-		login_succeeded.emit(peer_id, result, worlds_info)
-	gateway.account_creation_result.rpc_id(peer_id, result_code)
+		#login_succeeded.emit(peer_id, result, worlds_info)
+		response_received.emit(
+			{"t-id": peer_id, "a": result, "w": worlds_info}
+		)
+	#gateway.account_creation_result.rpc_id(peer_id, result_code)
 
 
 @rpc("any_peer")
@@ -74,10 +84,13 @@ func create_player_character_request(_peer_id: int , _username: String, _charact
 
 
 @rpc("authority")
-func player_character_creation_result(peer_id: int, result_code: int) -> void:
-	gateway.player_character_creation_result.rpc_id(
-		peer_id, result_code
+func player_character_creation_result(peer_id: int, result: Dictionary) -> void:
+	response_received.emit(
+		{"t-id": peer_id, "data": result}
 	)
+	#gateway.player_character_creation_result.rpc_id(
+		#peer_id, result_code
+	#)
 
 
 @rpc("any_peer")
@@ -87,13 +100,27 @@ func request_player_characters(_peer_id: int, _username: String, _world_id: int)
 
 @rpc("authority")
 func receive_player_characters(peer_id: int, player_characters: Dictionary) -> void:
-	gateway.receive_player_characters.rpc_id(peer_id, player_characters)
+	response_received.emit(
+		{"t-id": peer_id, "data": player_characters}
+	)
+	#gateway.receive_player_characters.rpc_id(peer_id, player_characters)
 
 
 @rpc("any_peer")
 func request_login(_peer_id: int, _username: String, _world_id: int, _character_id: int) -> void:
 	pass
 
+
 @rpc("any_peer")
 func peer_disconnected_without_joining_world(_account_name: String) -> void:
 	pass
+
+
+#@rpc("any_peer")
+#func request_world_info() -> void:
+	#pass
+#
+#
+#@rpc("authority")
+#func receive_world_info(world_info: Dictionary) -> void:
+	#response_received.emit(worlds_info)

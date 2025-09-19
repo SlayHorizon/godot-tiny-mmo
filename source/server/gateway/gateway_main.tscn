@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bvnp50b85cxif"]
+[gd_scene load_steps=6 format=3 uid="uid://bvnp50b85cxif"]
 
 [ext_resource type="Script" uid="uid://3snlehf663qv" path="res://source/server/gateway/gateway_main.gd" id="1_v0yps"]
 [ext_resource type="Script" uid="uid://bhxr7vkcyrnwy" path="res://source/server/gateway/player_gateway_server/gateway_server.gd" id="2_fncpu"]
 [ext_resource type="PackedScene" uid="uid://bm2o2xrfamamm" path="res://source/server/gateway/player_gateway_server/expiration_timer/expiration_timer.tscn" id="3_hwig3"]
 [ext_resource type="Script" uid="uid://l075wdufq4jr" path="res://source/server/gateway/master_gateway_client/gateway_manager_client.gd" id="3_m66nj"]
+[ext_resource type="Script" uid="uid://bjxnn8cv1untw" path="res://source/server/gateway/http_server.gd" id="5_mufm1"]
 
 [node name="GatewayMain" type="Node"]
 script = ExtResource("1_v0yps")
@@ -18,3 +19,6 @@ gateway_server = NodePath("..")
 [node name="GatewayManagerClient" type="Node" parent="." node_paths=PackedStringArray("gateway")]
 script = ExtResource("3_m66nj")
 gateway = NodePath("../GatewayServer")
+
+[node name="GatewayHTTPServer" type="Node" parent="."]
+script = ExtResource("5_mufm1")

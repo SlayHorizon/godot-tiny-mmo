@@ -12,6 +12,7 @@ var connected_peers: Dictionary = {}
 
 
 func _ready() -> void:
+	return
 	gateway_manager.login_succeeded.connect(
 		func(peer_id: int, account_info: Dictionary, worlds_info: Dictionary):
 			connected_peers[peer_id]["account"] = account_info

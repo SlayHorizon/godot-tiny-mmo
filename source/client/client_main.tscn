@@ -1,9 +1,123 @@
-[gd_scene load_steps=5 format=3 uid="uid://bmbm8el3rcejb"]
+[gd_scene load_steps=26 format=3 uid="uid://bmbm8el3rcejb"]
 
 [ext_resource type="Script" uid="uid://bfybdk1kgy125" path="res://source/client/client_main.gd" id="1_hoyng"]
 [ext_resource type="Script" uid="uid://siq7b6qqrjyq" path="res://source/client/network/world_client.gd" id="2_ey548"]
 [ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="3_s85jl"]
 [ext_resource type="PackedScene" uid="uid://u544jciafxaw" path="res://source/client/gateway/gateway_scene.tscn" id="4_rh1pg"]
+[ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="5_cgybg"]
+[ext_resource type="FontFile" uid="uid://dkhbwo1ivbqjd" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" id="5_re4x3"]
+[ext_resource type="Texture2D" uid="uid://cfihbj71a4y35" path="res://source/client/gateway/desert.png" id="7_a2tkg"]
+[ext_resource type="Texture2D" uid="uid://cn5blfyqokda6" path="res://source/client/gateway/fairy_forest.png" id="8_75ype"]
+[ext_resource type="StyleBox" uid="uid://bi8r7kxlh83no" path="res://source/client/gateway/ui/gradient_button.tres" id="11_54li7"]
+[ext_resource type="FontFile" uid="uid://cr1d4ugttxggp" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" id="11_fnfxe"]
+[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="12_1gybq"]
+[ext_resource type="FontFile" uid="uid://cehc3gujked8x" path="res://assets/fonts/Cinzel/static/Cinzel-Bold.ttf" id="13_q35d6"]
+[ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/ui/popup_panel.gd" id="13_rk5g7"]
+[ext_resource type="AudioStream" uid="uid://xxr4otrq1cg0" path="res://assets/audio/music/ekonia-main-theme.wav" id="14_l45qm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a2tkg"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.0823529, 0.109804, 0.160784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.415686, 0.482353, 0.647059, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 6
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7rxr3"]
+bg_color = Color(0.026754, 0.064119, 0.101452, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.247059, 0.419608, 0.454902, 1)
+border_blend = true
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 6
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l45qm"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.063, 0.078, 0.114, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.164706, 0.2, 0.282353, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 12
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="Theme" id="Theme_re4x3"]
+default_font = ExtResource("5_re4x3")
+Button/colors/font_color = Color(0.936737, 0.959364, 0.98337, 1)
+Button/font_sizes/font_size = 16
+Button/styles/focus = null
+Button/styles/hover = SubResource("StyleBoxFlat_a2tkg")
+Button/styles/normal = SubResource("StyleBoxFlat_7rxr3")
+Panel/styles/panel = SubResource("StyleBoxFlat_l45qm")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_l45qm")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q35d6"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_q35d6"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_1gybq"]
+offsets = PackedFloat32Array(0, 0.25, 1)
+colors = PackedColorArray(0, 0, 0, 0.1, 0.23, 0.23, 0.23, 0.4, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_rk5g7"]
+gradient = SubResource("Gradient_1gybq")
+fill_from = Vector2(0, 0.465812)
+fill_to = Vector2(1, 0.491453)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_fnfxe"]
+color = Color(0.2317, 0.427629, 0.468198, 0.84)
+thickness = 3
+
+[sub_resource type="LabelSettings" id="LabelSettings_rky0m"]
+font = ExtResource("11_fnfxe")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dfj0q"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0, 0, 0, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.692304, 0.737968, 0.839943, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 12
+shadow_offset = Vector2(0, 4)
 
 [node name="ClientMain" type="Node"]
 script = ExtResource("1_hoyng")
@@ -16,3 +130,689 @@ script = ExtResource("3_s85jl")
 
 [node name="LoginScene" parent="." node_paths=PackedStringArray("world_server") instance=ExtResource("4_rh1pg")]
 world_server = NodePath("../WorldClient")
+
+[node name="Gateway" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_re4x3")
+script = ExtResource("5_cgybg")
+
+[node name="Desert" type="Sprite2D" parent="Gateway"]
+position = Vector2(0, -300)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("7_a2tkg")
+centered = false
+
+[node name="FairyForest" type="Sprite2D" parent="Gateway"]
+position = Vector2(0, -300)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("8_75ype")
+centered = false
+
+[node name="BackgroundRect" type="ColorRect" parent="Gateway"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.129558, 0.129559, 0.129558, 0.35)
+
+[node name="MainPanel" type="PanelContainer" parent="Gateway"]
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -160.0
+offset_right = 280.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
+
+[node name="PanelRect" type="TextureRect" parent="Gateway/MainPanel"]
+visible = false
+material = SubResource("CanvasItemMaterial_q35d6")
+layout_mode = 2
+texture = SubResource("GradientTexture2D_rk5g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/MainPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Welcome"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/MainPanel/VBoxContainer"]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/MainPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="LoginButton" type="Button" parent="Gateway/MainPanel/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 56)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+text = "Login"
+
+[node name="CreateAccountButton" type="Button" parent="Gateway/MainPanel/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 56)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+text = "Create Account"
+
+[node name="GuestButton" type="Button" parent="Gateway/MainPanel/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 56)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "Play as Guest"
+
+[node name="LoginPanel" type="PanelContainer" parent="Gateway"]
+visible = false
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -166.5
+offset_right = 280.0
+offset_bottom = 166.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/LoginPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/LoginPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Login"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/LoginPanel/VBoxContainer"]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/LoginPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/LoginPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Gateway/LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Account name"
+label_settings = SubResource("LabelSettings_rky0m")
+
+[node name="LineEdit" type="LineEdit" parent="Gateway/LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
+placeholder_text = "Enter your account name here"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Gateway/LoginPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Gateway/LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Password"
+label_settings = SubResource("LabelSettings_rky0m")
+
+[node name="LineEdit" type="LineEdit" parent="Gateway/LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
+placeholder_text = "Enter your password here"
+
+[node name="LoginButton" type="Button" parent="Gateway/LoginPanel/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 56)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "Login"
+
+[node name="CreateAccountPanel" type="PanelContainer" parent="Gateway"]
+visible = false
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -211.5
+offset_right = 280.0
+offset_bottom = 211.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/CreateAccountPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/CreateAccountPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Create Account"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/CreateAccountPanel/VBoxContainer"]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/CreateAccountPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Account name"
+label_settings = SubResource("LabelSettings_rky0m")
+
+[node name="LineEdit" type="LineEdit" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
+placeholder_text = "Enter your account name here"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Password"
+label_settings = SubResource("LabelSettings_rky0m")
+
+[node name="LineEdit" type="LineEdit" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
+placeholder_text = "Enter your password here"
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3"]
+layout_mode = 2
+text = "Password Repeat"
+label_settings = SubResource("LabelSettings_rky0m")
+
+[node name="LineEdit" type="LineEdit" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
+placeholder_text = "Enter your password again here"
+
+[node name="GuestButton" type="Button" parent="Gateway/CreateAccountPanel/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 56)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "Create Account"
+
+[node name="WorldSelection" type="PanelContainer" parent="Gateway"]
+visible = false
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -160.0
+offset_right = 280.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
+
+[node name="PanelRect" type="TextureRect" parent="Gateway/WorldSelection"]
+visible = false
+material = SubResource("CanvasItemMaterial_q35d6")
+layout_mode = 2
+texture = SubResource("GradientTexture2D_rk5g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/WorldSelection"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/WorldSelection/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "World Selection"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/WorldSelection/VBoxContainer"]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Gateway/WorldSelection/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Button" type="Button" parent="Gateway/WorldSelection/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "Sladida
+
+Rules:
+Vladi
+gz
+
+Mondial"
+
+[node name="Button2" type="Button" parent="Gateway/WorldSelection/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "Sladida
+
+Rules:
+Vladi
+gz
+
+Mondial"
+
+[node name="Button3" type="Button" parent="Gateway/WorldSelection/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "Sladida
+
+Rules:
+Vladi
+gz
+
+Mondial"
+
+[node name="CharacterSelection" type="PanelContainer" parent="Gateway"]
+visible = false
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -160.0
+offset_right = 280.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
+
+[node name="PanelRect" type="TextureRect" parent="Gateway/CharacterSelection"]
+visible = false
+material = SubResource("CanvasItemMaterial_q35d6")
+layout_mode = 2
+texture = SubResource("GradientTexture2D_rk5g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/CharacterSelection"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/CharacterSelection/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Character Selection"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/CharacterSelection/VBoxContainer"]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Gateway/CharacterSelection/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Button" type="Button" parent="Gateway/CharacterSelection/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "Sladida
+
+Rules:
+Vladi
+gz
+
+Mondial"
+
+[node name="Button2" type="Button" parent="Gateway/CharacterSelection/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "Sladida
+
+Rules:
+Vladi
+gz
+
+Mondial"
+
+[node name="Button3" type="Button" parent="Gateway/CharacterSelection/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 250)
+layout_mode = 2
+text = "Sladida
+
+Rules:
+Vladi
+gz
+
+Mondial"
+
+[node name="CharacterCreation" type="PanelContainer" parent="Gateway"]
+visible = false
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -249.0
+offset_right = 350.0
+offset_bottom = 193.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
+
+[node name="PanelRect" type="TextureRect" parent="Gateway/CharacterCreation"]
+material = SubResource("CanvasItemMaterial_q35d6")
+layout_mode = 2
+texture = SubResource("GradientTexture2D_rk5g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/CharacterCreation"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/CharacterCreation/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Character Creation"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/CharacterCreation/VBoxContainer"]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/CharacterCreation/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Starting class"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="CreateButton" type="Button" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "Knight"
+
+[node name="CreateButton2" type="Button" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "Rogue"
+
+[node name="CreateButton3" type="Button" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "Mage"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Preview"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="CenterContainer" type="CenterContainer" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer"]
+custom_minimum_size = Vector2(260, 130)
+layout_mode = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control"]
+position = Vector2(0, -130)
+scale = Vector2(4, 4)
+sprite_frames = ExtResource("12_1gybq")
+animation = &"run"
+frame_progress = 0.937406
+centered = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="LineEdit" type="LineEdit" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Character name"
+
+[node name="Button" type="Button" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+text = "Random"
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Description"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Wizard
+A master of elemental forces, commanding powerful spells to devastate enemies or support allies."
+
+[node name="CreateButton" type="Button" parent="Gateway/CharacterCreation/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(210, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "Create"
+
+[node name="PopupPanel" type="PanelContainer" parent="Gateway"]
+visible = false
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -160.0
+offset_right = 280.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("13_rk5g7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/PopupPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="Gateway/PopupPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("13_q35d6")
+theme_override_font_sizes/font_size = 24
+text = "Welcome"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Gateway/PopupPanel/VBoxContainer"]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gateway/PopupPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+alignment = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Gateway/PopupPanel/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "
+"
+
+[node name="GuestButton" type="Button" parent="Gateway/PopupPanel/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("11_fnfxe")
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = ExtResource("11_54li7")
+text = "OK"
+
+[node name="SwapButton" type="Button" parent="Gateway"]
+layout_mode = 0
+offset_left = 915.0
+offset_top = 492.0
+offset_right = 955.0
+offset_bottom = 532.0
+
+[node name="BackButton" type="Button" parent="Gateway"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -104.0
+offset_top = -52.0
+offset_right = 104.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("11_fnfxe")
+text = "Back"
+
+[node name="ConnectionInfo" type="Label" parent="Gateway"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -54.0
+offset_right = 140.0
+offset_bottom = -9.0
+grow_vertical = 0
+text = "Label 2995393
+Label 737209712"
+horizontal_alignment = 3
+vertical_alignment = 3
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Gateway"]
+stream = ExtResource("14_l45qm")
+volume_db = -12.0
+
+[node name="HTTPRequest" type="HTTPRequest" parent="Gateway"]
+accept_gzip = false
+timeout = 8.0
+
+[connection signal="pressed" from="Gateway/MainPanel/VBoxContainer/VBoxContainer/LoginButton" to="Gateway" method="_on_login_button_pressed"]
+[connection signal="pressed" from="Gateway/MainPanel/VBoxContainer/VBoxContainer/GuestButton" to="Gateway" method="_on_guest_button_pressed"]
+[connection signal="pressed" from="Gateway/LoginPanel/VBoxContainer/VBoxContainer/LoginButton" to="Gateway" method="_on_login_login_button_pressed"]
+[connection signal="pressed" from="Gateway/CharacterCreation/VBoxContainer/VBoxContainer/CreateButton" to="Gateway" method="_on_create_character_button_pressed"]
+[connection signal="request_completed" from="Gateway/HTTPRequest" to="Gateway" method="_on_request_completed"]

@@ -8,7 +8,6 @@
 script = ExtResource("2_qfdgo")
 
 [node name="Camera2D" type="Camera2D" parent="." index="3"]
-zoom = Vector2(3, 3)
 
 [node name="MouseComponent" type="Node2D" parent="." index="4"]
 top_level = true

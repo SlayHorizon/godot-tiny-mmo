@@ -1,0 +1,31 @@
+[gd_resource type="StyleBox" script_class="StyleBoxGradientRound" load_steps=4 format=3 uid="uid://bi8r7kxlh83no"]
+
+[ext_resource type="Script" uid="uid://dl1qb5l1yivlu" path="res://source/client/gateway/ui/stylebox_gradient.gd" id="1_d7wpl"]
+
+[sub_resource type="Gradient" id="Gradient_fnfxe"]
+colors = PackedColorArray(0.027451, 0.0627451, 0.101961, 1, 0.109276, 0.182321, 0.260778, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_q35d6"]
+gradient = SubResource("Gradient_fnfxe")
+width = 32
+height = 32
+fill_from = Vector2(1, 1)
+
+[resource]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = -1.0
+content_margin_top = -1.0
+content_margin_right = -1.0
+content_margin_bottom = -1.0
+script = ExtResource("1_d7wpl")
+texture = SubResource("GradientTexture2D_q35d6")
+border_color = Color(0.247059, 0.419608, 0.454902, 1)
+border_width = 1.0
+corner_radius_top_left = 12.0
+corner_radius_top_right = 12.0
+corner_radius_bottom_right = 12.0
+corner_radius_bottom_left = 12.0
+segments_per_corner = 8
+pixel_snap = false
+metadata/_custom_type_script = "uid://dl1qb5l1yivlu"

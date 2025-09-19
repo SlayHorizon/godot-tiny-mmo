@@ -14,7 +14,7 @@ static func get_all_file_at(path: String) -> PackedStringArray:
 	while file_name:
 		if file_name.ends_with(".remap"):
 			file_name = file_name.trim_suffix(".remap")
-		var file_path = path + file_name
+		var file_path = path + "/" + file_name
 		if dir.current_is_dir():
 			result_files += get_all_file_at(file_path)
 		else:

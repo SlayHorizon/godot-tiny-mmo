@@ -53,14 +53,18 @@ func player_character_creation_result(gateway_id: int, peer_id: int, username: S
 		var auth_token := authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, auth_token, username, result_code)
 		gateway_manager.player_character_creation_result.rpc_id(
-			gateway_id, peer_id, result_code
+			gateway_id, peer_id, {
+				"auth-token": auth_token,
+				"address": connected_worlds[world_id]["address"],
+				"port": connected_worlds[world_id]["port"]
+			}
 		)
-		await get_tree().create_timer(0.5).timeout
-		gateway_manager.fetch_auth_token.rpc_id(
-			gateway_id, peer_id, auth_token,
-			connected_worlds[world_id]["address"],
-			connected_worlds[world_id]["port"]
-		)
+		#await get_tree().create_timer(0.5).timeout
+		#gateway_manager.fetch_auth_token.rpc_id(
+			#gateway_id, peer_id, auth_token,
+			#connected_worlds[world_id]["address"],
+			#connected_worlds[world_id]["port"]
+		#)
 	else:
 		gateway_manager.player_character_creation_result.rpc_id(
 			gateway_id, peer_id, result_code
