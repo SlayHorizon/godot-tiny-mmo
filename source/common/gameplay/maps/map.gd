@@ -4,6 +4,7 @@ extends Node2D
 
 
 @export var replicated_props_container: ReplicatedPropsContainer
+@export var map_background_color := Color(0,0,0)
 
 var warpers: Dictionary[int, Warper]
 
