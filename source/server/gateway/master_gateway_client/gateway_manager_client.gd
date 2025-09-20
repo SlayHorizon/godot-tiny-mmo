@@ -57,7 +57,7 @@ func login_result(peer_id: int, result: Dictionary) -> void:
 		response_received.emit(
 			{"t-id": peer_id, "a": result, "w": worlds_info, "error": result}
 		)
-		gateway.login_result.rpc_id(peer_id, result["error"])
+		#gateway.login_result.rpc_id(peer_id, result["error"])
 	else:
 		#gateway.login_result.rpc_id(peer_id, 0)
 		#login_succeeded.emit(peer_id, result, worlds_info)
