@@ -647,6 +647,7 @@ theme_override_styles/normal = ExtResource("7_waovh")
 text = "Create"
 
 [node name="PopupPanel" type="PanelContainer" parent="."]
+visible = false
 custom_minimum_size = Vector2(700, 480)
 layout_mode = 1
 anchors_preset = 8
@@ -755,4 +756,3 @@ timeout = 7.0
 [connection signal="pressed" from="LoginPanel/VBoxContainer/VBoxContainer/LoginButton" to="." method="_on_login_login_button_pressed"]
 [connection signal="pressed" from="CreateAccountPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="." method="create_account"]
 [connection signal="pressed" from="CharacterCreation/VBoxContainer/VBoxContainer/CreateButton" to="." method="_on_create_character_button_pressed"]
-[connection signal="request_completed" from="HTTPRequest" to="." method="_on_request_completed"]

@@ -1,26 +1,14 @@
 extends Control
 
 
-signal response_received(response: Dictionary)
-
 # Helper class
 const CredentialsUtils = preload("res://source/common/utils/credentials_utils.gd")
-	
-const API: String = "http://127.0.0.1:8088"
-# End points
-const EP_LOGIN: String = API + "/v1/login"
-const EP_GUEST: String = API + "/v1/guest"
-#...
-
-# Could be referenced in common/utils so can be used on server side
-const KEY_TOKEN_ID: String = "t-id"
-const KEY_ACCOUNT_ID: String = "a-id"
-#...
+const GatewayApi = preload("res://source/common/network/gateway_api.gd")
 
 @export var world_server: WorldClient
 
-var _account_id: int
-var _account_name: String
+var account_id: int
+var account_name: String
 var token: int = randi()
 
 var current_world_id: int
@@ -28,12 +16,15 @@ var selected_skin: String = "rogue"
 
 @onready var main_panel: PanelContainer = $MainPanel
 @onready var login_panel: PanelContainer = $LoginPanel
+@onready var popup_panel: PanelContainer = $PopupPanel
 
 @onready var http_request: HTTPRequest = $HTTPRequest
 
 
 func _ready() -> void:
 	$SwapButton.pressed.connect(func():
+		if not $AudioStreamPlayer.playing:
+			$AudioStreamPlayer.play()
 		$Desert.visible = not $Desert.visible
 		$FairyForest.visible = not $FairyForest.visible
 	)
@@ -45,36 +36,36 @@ func do_request(
 	payload: Dictionary,
 ) -> Dictionary:
 	if http_request.get_http_client_status() == HTTPClient.Status.STATUS_CONNECTED:
-		return {}
+		return {"error": ""}
 	
-	
-	var headers: PackedStringArray
-	headers.append("Content-Type: application/json")
+	var custom_headers: PackedStringArray
+	custom_headers.append("Content-Type: application/json")
 	
 	var error: Error = http_request.request(
 		path,
-		headers,
+		custom_headers,
 		HTTPClient.METHOD_POST,
 		JSON.stringify(payload)
 	)
-	
+
 	if error != OK:
 		push_error("An error occurred in the HTTP request.")
-		response_received.emit({ok=false, error="request_error", code=error})
 		return {ok=false, error="request_error", code=error}
-	return {}
-
-
-func _on_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
-	print_debug("result = ", result, " code = ", response_code, " header = ", headers)
+	
+	var args: Array = await http_request.request_completed
+	var result: int = args[0]
 	if result != OK:
 		print("ERROR?, TIMEOUT?")
-		response_received.emit({"error": 1})
-		return
+		return {"error": 1}
+	
+	var response_code: int = args[1]
+	var headers: PackedStringArray = args[2]
+	var body: PackedByteArray = args[3]
+	
 	var data = JSON.parse_string(body.get_string_from_ascii())
-	print_debug(data)
 	if data is Dictionary:
-		response_received.emit(data)
+		return data
+	return {"error": 1}
 
 
 func _on_login_button_pressed() -> void:
@@ -86,25 +77,24 @@ func _on_login_login_button_pressed() -> void:
 	var account_name_edit: LineEdit = $LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer/LineEdit
 	var password_edit: LineEdit = $LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2/LineEdit
 	
-	var account_name: String = account_name_edit.text
+	var username: String = account_name_edit.text
 	var password: String = password_edit.text
 	
 	var login_button: Button = $LoginPanel/VBoxContainer/VBoxContainer/LoginButton
 	login_button.disabled = true
 	if (
-		CredentialsUtils.validate_username(account_name).code != CredentialsUtils.UsernameError.OK
+		CredentialsUtils.validate_username(username).code != CredentialsUtils.UsernameError.OK
 		or CredentialsUtils.validate_password(password).code != CredentialsUtils.UsernameError.OK
 	):
 		login_button.disabled = false
 		return
-	
-	do_request(
-		HTTPClient.Method.METHOD_POST,
-		"http://127.0.0.1:8088/v1/login",
-		{"u": account_name, "p": password, "t-id": token}
-	)
 
-	var d: Dictionary = await response_received
+	var d: Dictionary = await do_request(
+		HTTPClient.Method.METHOD_POST,
+		GatewayApi.login(),
+		{"u": username, "p": password,
+		GatewayApi.KEY_TOKEN_ID: token}
+	)
 	if d.has("error"):
 		login_button.disabled = false
 		return
@@ -112,41 +102,41 @@ func _on_login_login_button_pressed() -> void:
 	$LoginPanel.hide()
 	populate_worlds(d.get("w", {}))
 	
-	_account_id = d["a"]["id"]
-	_account_name = d["a"]["name"]
-	$ConnectionInfo.text = "Accout-name: %s\nAccount-ID: %s" % [_account_name, _account_id]
+	fill_connection_info(d["a"]["name"], d["a"]["id"])
 	$WorldSelection.show()
 
 
 func _on_guest_button_pressed() -> void:
-	$MainPanel.hide()
-	$PopupPanel.display_waiting_popup()
+	main_panel.hide()
+	popup_panel.display_waiting_popup()
 
-	do_request(
+	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		"http://127.0.0.1:8088/v1/guest",
-		{"t-id": token}
+		GatewayApi.guest(),
+		{GatewayApi.KEY_TOKEN_ID: token}
 	)
-	var d: Dictionary = await response_received
 	if d.has("error"):
 		return
 	
-	_account_id = d["a"]["id"]
-	_account_name = d["a"]["name"]
-	$ConnectionInfo.text = "Accout-name: %s\nAccount-ID: %s" % [_account_name, _account_id]
-	$PopupPanel.hide()
+	fill_connection_info(d["a"]["name"], d["a"]["id"])
+	popup_panel.hide()
 	populate_worlds(d.get("w", {}))
 	$WorldSelection.show()
 
 
 func _on_world_selected(world_id: int) -> void:
-	do_request(
+	$WorldSelection.hide()
+	popup_panel.display_waiting_popup()
+	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		"http://127.0.0.1:8088/v1/world/characters",
-		{"w-id": world_id, "a-id": _account_id, "a-u": _account_name, "t-id": token}
+		GatewayApi.world_characters(),
+		{GatewayApi.KEY_WORLD_ID: world_id,
+		GatewayApi.KEY_ACCOUNT_ID: account_id,
+		GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
+		GatewayApi.KEY_TOKEN_ID: token}
 	)
-	var d: Dictionary = await response_received
 	if d.has("error"):
+		$WorldSelection.show()
 		return
 	var container: HBoxContainer = $CharacterSelection/VBoxContainer/HBoxContainer
 	for child: Node in container.get_children():
@@ -155,9 +145,9 @@ func _on_world_selected(world_id: int) -> void:
 		var new_button: Button = Button.new()
 		new_button.custom_minimum_size = Vector2(150, 250)
 		new_button.text = "%s\nClass: %s\nLevel: %d" % [
-			d[character_id]["name"],
-			d[character_id]["class"],
-			d[character_id]["level"],
+			d["data"][character_id]["name"],
+			d["data"][character_id]["class"],
+			d["data"][character_id]["level"],
 		]
 		new_button.pressed.connect(_on_character_selected.bind(world_id, character_id.to_int()))
 		container.add_child(new_button)
@@ -170,7 +160,7 @@ func _on_world_selected(world_id: int) -> void:
 		container.add_child(new_button)
 		new_button.pressed.connect(_on_character_selected.bind(world_id, -1))
 		child_count += 1
-	$WorldSelection.hide()
+	popup_panel.hide()
 	$CharacterSelection.show()
 
 
@@ -193,12 +183,12 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 		$CharacterCreation.show()
 		return
 	$CharacterSelection.hide()
-	do_request(
+
+	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
 		"http://127.0.0.1:8088/v1/world/enter",
 		{"w-id": world_id, "c-id": character_id}
 	)
-	var d: Dictionary = await response_received
 	if d.has("error"):
 		return
 	world_server.connect_to_server(d["adress"], d["port"], d["token"])
@@ -211,21 +201,20 @@ func _on_create_character_button_pressed() -> void:
 	var create_button: Button = $CharacterCreation/VBoxContainer/VBoxContainer/CreateButton
 	create_button.disabled = true
 	
-	do_request(
+	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		"http://127.0.0.1:8088/v1/world/character/create",
+		GatewayApi.world_create_char(),
 		{
-			"t-id": token,
+			GatewayApi.KEY_TOKEN_ID: token,
 			"data": {
 				"name": username_edit.text,
 				"class": selected_skin,
 				
 			},
-			"a-u": _account_name,
-			"w-id": current_world_id
+			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
+			GatewayApi.KEY_WORLD_ID: current_world_id
 		}
 	)
-	var d: Dictionary = await response_received
 	if d.has("error"):
 		return
 	world_server.connect_to_server(
@@ -242,42 +231,41 @@ func create_account() -> void:
 	var password_repeat_edit: LineEdit = $CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3/LineEdit
 
 	if password_edit.text != password_repeat_edit.text:
-		await $PopupPanel.confirm_message("Passwords don't match")
+		await popup_panel.confirm_message("Passwords don't match")
 		return
 	
 	var result: Dictionary
 	result = CredentialsUtils.validate_username(name_edit.text)
 	if result.code != CredentialsUtils.UsernameError.OK:
-		await $PopupPanel.confirm_message("Username:\n" + result.message)
+		await popup_panel.confirm_message("Username:\n" + result.message)
 		return
 	result = CredentialsUtils.validate_password(password_edit.text)
 	if result.code != CredentialsUtils.UsernameError.OK:
-		await $PopupPanel.confirm_message("Password:\n" + result.message)
+		await popup_panel.confirm_message("Password:\n" + result.message)
 		return
 	
-	$MainPanel.hide()
+	main_panel.hide()
 	$CreateAccountPanel.hide()
-	$PopupPanel.display_waiting_popup()
-	do_request(
+	popup_panel.display_waiting_popup()
+
+	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		"http://127.0.0.1:8088/v1/account/create",
-		{"u": name_edit.text, "p": password_edit.text, "t-id": token}
+		GatewayApi.account_create(),
+		{"u": name_edit.text, "p": password_edit.text,
+		GatewayApi.KEY_TOKEN_ID: token}
 	)
-	var d: Dictionary = await response_received
-	$PopupPanel.hide()
 	if d.has("error"):
+		popup_panel.hide()
 		$CreateAccountPanel.show()
 		return
-	_account_id = d["a"]["id"]
-	_account_name = d["a"]["name"]
-	$ConnectionInfo.text = "Accout-name: %s\nAccount-ID: %s" % [_account_name, _account_id]
+	fill_connection_info(d["a"]["name"], d["a"]["id"])
 	populate_worlds(d.get("w", {}))
-
+	popup_panel.hide()
 	$WorldSelection.show()
 
 
 func _on_create_account_button_pressed() -> void:
-	$MainPanel.hide()
+	main_panel.hide()
 	$CreateAccountPanel.show()
 
 
@@ -295,3 +283,11 @@ func populate_worlds(world_info: Dictionary) -> void:
 		]
 		new_button.pressed.connect(_on_world_selected.bind(world_id.to_int()))
 		container.add_child(new_button)
+
+
+func fill_connection_info(_account_name: String, _account_id: int) -> void:
+	account_name = _account_name
+	account_id = _account_id
+	$ConnectionInfo.text = "Accout-name: %s\nAccount-ID: %s" % [
+		account_name, account_id
+	]
