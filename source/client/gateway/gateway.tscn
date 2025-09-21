@@ -690,7 +690,6 @@ alignment = 2
 [node name="RichTextLabel" type="RichTextLabel" parent="PopupPanel/VBoxContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-bbcode_enabled = true
 text = "Waiting ..."
 horizontal_alignment = 1
 vertical_alignment = 1

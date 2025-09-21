@@ -14,9 +14,13 @@ var token: int = randi()
 var current_world_id: int
 var selected_skin: String = "rogue"
 
+var menu_stack: Array[Control]
+
 @onready var main_panel: PanelContainer = $MainPanel
 @onready var login_panel: PanelContainer = $LoginPanel
 @onready var popup_panel: PanelContainer = $PopupPanel
+
+@onready var back_button: Button = $BackButton
 
 @onready var http_request: HTTPRequest = $HTTPRequest
 
@@ -28,6 +32,16 @@ func _ready() -> void:
 		$Desert.visible = not $Desert.visible
 		$FairyForest.visible = not $FairyForest.visible
 	)
+	menu_stack.append(main_panel)
+	back_button.hide()
+	back_button.pressed.connect(func():
+		if menu_stack.size():
+			menu_stack.pop_back().hide()
+			if menu_stack.size():
+				menu_stack.back().show()
+			if menu_stack.size() < 2:
+				back_button.hide()
+		)
 
 
 func do_request(
@@ -68,9 +82,19 @@ func do_request(
 	return {"error": 1}
 
 
+func _show(next: Control, can_back: bool = true) -> void:
+	if not can_back:
+		menu_stack.clear()
+	if menu_stack.size():
+		menu_stack.back().hide()
+	next.show()
+	menu_stack.append(next)
+	back_button.visible = can_back
+
+
 func _on_login_button_pressed() -> void:
-	main_panel.hide()
-	login_panel.show()
+	_show(login_panel)
+
 
 
 func _on_login_login_button_pressed() -> void:
@@ -99,11 +123,11 @@ func _on_login_login_button_pressed() -> void:
 		login_button.disabled = false
 		return
 	main_panel.hide()
-	$LoginPanel.hide()
+	login_panel.hide()
 	populate_worlds(d.get("w", {}))
 	
 	fill_connection_info(d["a"]["name"], d["a"]["id"])
-	$WorldSelection.show()
+	_show($WorldSelection, false)
 
 
 func _on_guest_button_pressed() -> void:
@@ -121,7 +145,7 @@ func _on_guest_button_pressed() -> void:
 	fill_connection_info(d["a"]["name"], d["a"]["id"])
 	popup_panel.hide()
 	populate_worlds(d.get("w", {}))
-	$WorldSelection.show()
+	_show($WorldSelection, false)
 
 
 func _on_world_selected(world_id: int) -> void:
@@ -139,29 +163,23 @@ func _on_world_selected(world_id: int) -> void:
 		$WorldSelection.show()
 		return
 	var container: HBoxContainer = $CharacterSelection/VBoxContainer/HBoxContainer
-	for child: Node in container.get_children():
-		child.queue_free()
-	for character_id: String in d.get("data", {}):
-		var new_button: Button = Button.new()
-		new_button.custom_minimum_size = Vector2(150, 250)
-		new_button.text = "%s\nClass: %s\nLevel: %d" % [
-			d["data"][character_id]["name"],
-			d["data"][character_id]["class"],
-			d["data"][character_id]["level"],
-		]
-		new_button.pressed.connect(_on_character_selected.bind(world_id, character_id.to_int()))
-		container.add_child(new_button)
-	await get_tree().process_frame
-	var child_count: int = container.get_child_count()
-	while child_count < 3:
-		var new_button: Button = Button.new()
-		new_button.custom_minimum_size = Vector2(150, 250)
-		new_button.text = "Create New Character"
-		container.add_child(new_button)
-		new_button.pressed.connect(_on_character_selected.bind(world_id, -1))
-		child_count += 1
+	var i: int
+	var character_id: String
+	for button: Button in container.get_children():
+		if d["data"].size() > i:
+			character_id = d["data"].keys()[i]
+			button.text = "%s\nClass: %s\nLevel: %d" % [
+				d["data"][character_id]["name"],
+				d["data"][character_id]["class"],
+				d["data"][character_id]["level"],
+			]
+			button.pressed.connect(_on_character_selected.bind(world_id, character_id.to_int()))
+		else:
+			button.text = "Create New Character"
+			button.pressed.connect(_on_character_selected.bind(world_id, -1))
+		i += 1
 	popup_panel.hide()
-	$CharacterSelection.show()
+	_show($CharacterSelection)
 
 
 func _on_character_selected(world_id: int, character_id: int) -> void:
@@ -180,14 +198,16 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 				animated_sprite_2d.sprite_frames = sprite
 				animated_sprite_2d.play(&"run")
 			)
-		$CharacterCreation.show()
+		_show($CharacterCreation)
 		return
+	
 	$CharacterSelection.hide()
-
+	$BackButton.hide()
+	popup_panel.display_waiting_popup()
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		"http://127.0.0.1:8088/v1/world/enter",
-		{"w-id": world_id, "c-id": character_id}
+		GatewayApi.world_enter(),
+		{GatewayApi.KEY_WORLD_ID: world_id, GatewayApi.KEY_CHAR_ID: character_id}
 	)
 	if d.has("error"):
 		return
@@ -209,7 +229,6 @@ func _on_create_character_button_pressed() -> void:
 			"data": {
 				"name": username_edit.text,
 				"class": selected_skin,
-				
 			},
 			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
 			GatewayApi.KEY_WORLD_ID: current_world_id
@@ -271,18 +290,19 @@ func _on_create_account_button_pressed() -> void:
 
 func populate_worlds(world_info: Dictionary) -> void:
 	var container: HBoxContainer = $WorldSelection/VBoxContainer/HBoxContainer
-	for child: Node in container.get_children():
-			child.queue_free()
-	for world_id: String in world_info:
-		var new_button: Button = Button.new()
-		new_button.custom_minimum_size = Vector2(150, 250)
-		new_button.clip_text = true
-		new_button.text = "%s\n\n%s" % [
-			world_info[world_id].get("name", "name"),
-			" \n".join(str(world_info[world_id]["info"]).split(", "))
-		]
-		new_button.pressed.connect(_on_world_selected.bind(world_id.to_int()))
-		container.add_child(new_button)
+	var i: int
+	for button: Button in container.get_children():
+		if i < world_info.size():
+			var world_id: String = world_info.keys()[i]
+			button.text = "%s\n\n%s" % [
+				world_info[world_id].get("name", "name"),
+				" \n".join(str(world_info[world_id]["info"]).split(", "))
+			]
+			button.pressed.connect(_on_world_selected.bind(world_id.to_int()))
+		else:
+			button.hide()
+		i += 1
+
 
 
 func fill_connection_info(_account_name: String, _account_id: int) -> void:
