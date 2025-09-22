@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://5wv1gfwppcnf"]
+[gd_scene load_steps=17 format=3 uid="uid://5wv1gfwppcnf"]
 
 [ext_resource type="Theme" uid="uid://cf1ayo3dckj67" path="res://source/client/gateway/ui/theme_navy.tres" id="1_sg1qr"]
 [ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="2_74q4y"]
@@ -24,10 +24,6 @@ colors = PackedColorArray(0, 0, 0, 0.1, 0.23, 0.23, 0.23, 0.4, 1, 1, 1, 0)
 gradient = SubResource("Gradient_1gybq")
 fill_from = Vector2(0, 0.465812)
 fill_to = Vector2(1, 0.491453)
-
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_fnfxe"]
-color = Color(0.2317, 0.427629, 0.468198, 0.84)
-thickness = 3
 
 [sub_resource type="LabelSettings" id="LabelSettings_rky0m"]
 font = ExtResource("6_tnybn")
@@ -120,7 +116,6 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer"]
 layout_mode = 2
@@ -180,7 +175,6 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LoginPanel/VBoxContainer"]
 layout_mode = 2
@@ -252,7 +246,6 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CreateAccountPanel/VBoxContainer"]
 layout_mode = 2
@@ -344,7 +337,6 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="WorldSelection/VBoxContainer"]
 layout_mode = 2
@@ -423,7 +415,6 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CharacterSelection/VBoxContainer"]
 layout_mode = 2
@@ -494,7 +485,6 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CharacterCreation/VBoxContainer"]
 layout_mode = 2
@@ -520,7 +510,6 @@ horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="VBoxContainer" type="GridContainer" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -582,7 +571,6 @@ horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="CenterContainer" type="CenterContainer" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
@@ -614,7 +602,6 @@ horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
 layout_mode = 2
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
 layout_mode = 2
@@ -678,11 +665,9 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_fnfxe")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PopupPanel/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 alignment = 2
@@ -697,6 +682,7 @@ vertical_alignment = 1
 [node name="ConfirmButton" type="Button" parent="PopupPanel/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
+size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = ExtResource("7_waovh")
@@ -708,6 +694,7 @@ offset_left = 915.0
 offset_top = 492.0
 offset_right = 955.0
 offset_bottom = 532.0
+toggle_mode = true
 
 [node name="BackButton" type="Button" parent="."]
 visible = false

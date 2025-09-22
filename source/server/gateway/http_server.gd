@@ -95,17 +95,16 @@ func handle_world_characters(payload: Dictionary) -> Dictionary:
 
 
 func handle_world_enter(payload: Dictionary) -> Dictionary:
-	var id: int = next_id
-	next_id += 1
-	gateway_manager_client.create_player_character_request.rpc_id(
+	gateway_manager_client.request_login.rpc_id(
 		1,
-		payload["u"],
-		payload["data"],
-		payload["w-id"]
+		payload["t-id"],
+		payload["a-u"],
+		payload["w-id"],
+		payload["c-id"],
 	)
 	while true:
 		var d: Dictionary = await gateway_manager_client.response_received
-		if d.get("t-id", -1) == id:
+		if d.get("t-id", -1) == payload["t-id"]:
 			return d
 	return {"error": 1}
 
