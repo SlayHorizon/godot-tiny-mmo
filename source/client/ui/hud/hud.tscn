@@ -18,7 +18,51 @@ offset_right = 938.0
 offset_bottom = 56.0
 text = "Menu"
 
+[node name="LevelupButton" type="Button" parent="."]
+offset_left = 826.0
+offset_top = 17.0
+offset_right = 879.0
+offset_bottom = 56.0
+text = "!"
+
+[node name="Control" type="Control" parent="LevelupButton"]
+visible = false
+anchors_preset = 0
+offset_left = -227.0
+offset_top = -3.0
+offset_right = -33.0
+offset_bottom = 134.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelupButton/Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button" type="Button" parent="LevelupButton/Control/VBoxContainer"]
+layout_mode = 2
+text = "+VIT"
+
+[node name="Button2" type="Button" parent="LevelupButton/Control/VBoxContainer"]
+layout_mode = 2
+text = "+STR"
+
+[node name="Button3" type="Button" parent="LevelupButton/Control/VBoxContainer"]
+layout_mode = 2
+text = "+AGI"
+
+[node name="Label" type="Label" parent="LevelupButton/Control/VBoxContainer"]
+layout_mode = 2
+text = "Available points: 0"
+
+[node name="Label" type="Label" parent="LevelupButton/Control"]
+layout_mode = 0
+offset_left = -381.0
+offset_top = 94.0
+offset_right = -156.0
+offset_bottom = 275.0
+
 [node name="Chat" parent="." instance=ExtResource("2_xs74v")]
+visible = false
 
 [node name="ItemSlots" type="Control" parent="."]
 layout_mode = 3
@@ -109,3 +153,5 @@ text = "CLOSE"
 layer = 10
 
 [connection signal="pressed" from="MenuButton" to="." method="_on_overlay_menu_button_pressed"]
+[connection signal="pressed" from="LevelupButton" to="." method="_on_levelup_button_pressed"]
+[connection signal="pressed" from="LevelupButton/Control/VBoxContainer/Button" to="." method="_on_vit_button_pressed"]

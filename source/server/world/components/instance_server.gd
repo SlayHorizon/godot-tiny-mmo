@@ -130,10 +130,17 @@ func instantiate_player(peer_id: int) -> Player:
 		
 
 		var asc: AbilitySystemComponent = new_player.ability_system_component
-		var base_stats: Dictionary = new_player.character_resource.build_base_stats(new_player.player_resource.level)
 		
-		for stat_name: StringName in base_stats:
-			var value: float = base_stats[stat_name]
+		var player_stats: Dictionary[StringName, float] = player_resource.BASE_STATS
+		var stats_from_attributes: Dictionary[StringName, float] = player_resource.get_stats_from_attributes()
+		for stat_name: StringName in stats_from_attributes:
+			if player_stats.has(stat_name):
+				player_stats[stat_name] = stats_from_attributes[stat_name]
+			else:
+				player_stats[stat_name] += stats_from_attributes[stat_name]
+		for stat_name: StringName in player_stats:
+			var value: float = player_stats[stat_name]
+			print(stat_name, " : ", value)
 			if stat_name.ends_with("_max"):
 				var base_attr: StringName = stat_name.trim_suffix(&"_max")
 				asc.ensure_attr(base_attr, value, value)
@@ -142,7 +149,21 @@ func instantiate_player(peer_id: int) -> Player:
 			else:
 				asc.ensure_attr(stat_name, value, value)
 				asc.set_value_server(stat_name, value)
-		asc.install_resources(new_player.character_resource.power_resources, base_stats)
+		
+
+		#var base_stats: Dictionary = new_player.character_resource.build_base_stats(new_player.player_resource.level)
+		#
+		#for stat_name: StringName in base_stats:
+			#var value: float = base_stats[stat_name]
+			#if stat_name.ends_with("_max"):
+				#var base_attr: StringName = stat_name.trim_suffix(&"_max")
+				#asc.ensure_attr(base_attr, value, value)
+				#asc.set_max_server(base_attr, value, true)
+				#asc.set_value_server(base_attr, value)
+			#else:
+				#asc.ensure_attr(stat_name, value, value)
+				#asc.set_value_server(stat_name, value)
+		#asc.install_resources(new_player.character_resource.power_resources, base_stats)
 	,
 	CONNECT_ONE_SHOT)
 	

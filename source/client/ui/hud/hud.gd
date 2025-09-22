@@ -51,3 +51,38 @@ func _on_overlay_menu_button_pressed() -> void:
 	tween.tween_property(menu_overlay, ^"position:x", menu_overlay.position.x + menu_overlay.size.x, 0.0)
 	tween.tween_callback(menu_overlay.show)
 	tween.tween_property(menu_overlay, ^"position:x", 815.0, 0.3)
+
+
+# temporary
+var attributes: Dictionary
+var available_points: int:
+	set(value):
+		$LevelupButton/Control/VBoxContainer/Label.text = "Available points: %d" % value
+		available_points = value
+
+func _on_levelup_button_pressed() -> void:
+	print_debug(attributes)
+	if not attributes:
+		InstanceClient.current.request_data(
+			&"attribute.get",
+			_on_attribute_received,
+		)
+	else:
+		$LevelupButton/Control.visible = not $LevelupButton/Control.visible
+
+
+func _on_attribute_received(data: Dictionary) -> void:
+	attributes = data
+	available_points = data.get("points", 0)
+	$LevelupButton/Control/Label.text = "Debug:\n" + str(data)
+	$LevelupButton/Control.show()
+
+
+func _on_vit_button_pressed() -> void:
+	if available_points:
+		available_points -= 1
+		InstanceClient.current.request_data(
+			&"attribute.spend",
+			print_debug,
+			{"attr": "vitality"}
+		)
