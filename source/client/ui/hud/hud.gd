@@ -83,6 +83,16 @@ func _on_vit_button_pressed() -> void:
 		available_points -= 1
 		InstanceClient.current.request_data(
 			&"attribute.spend",
-			print_debug,
+			Callable(),
 			{"attr": "vitality"}
+		)
+
+
+func _on_button_str_pressed() -> void:
+	if available_points:
+		available_points -= 1
+		InstanceClient.current.request_data(
+			&"attribute.spend",
+			Callable(),
+			{"attr": "strenght"}
 		)

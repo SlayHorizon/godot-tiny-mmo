@@ -26,7 +26,6 @@ offset_bottom = 56.0
 text = "!"
 
 [node name="Control" type="Control" parent="LevelupButton"]
-visible = false
 anchors_preset = 0
 offset_left = -227.0
 offset_top = -3.0
@@ -60,6 +59,24 @@ offset_left = -381.0
 offset_top = 94.0
 offset_right = -156.0
 offset_bottom = 275.0
+
+[node name="TestLabel" type="Label" parent="LevelupButton/Control"]
+layout_mode = 0
+offset_left = -280.926
+offset_top = 8.63937
+offset_right = -240.926
+offset_bottom = 29.6394
+text = "Temporary menu
+In construction"
+
+[node name="TestLabel2" type="Label" parent="LevelupButton/Control"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 165.0
+offset_right = 153.0
+offset_bottom = 210.0
+text = "Characters stats:
+{Attack Damage: 20}"
 
 [node name="Chat" parent="." instance=ExtResource("2_xs74v")]
 visible = false
@@ -155,3 +172,4 @@ layer = 10
 [connection signal="pressed" from="MenuButton" to="." method="_on_overlay_menu_button_pressed"]
 [connection signal="pressed" from="LevelupButton" to="." method="_on_levelup_button_pressed"]
 [connection signal="pressed" from="LevelupButton/Control/VBoxContainer/Button" to="." method="_on_vit_button_pressed"]
+[connection signal="pressed" from="LevelupButton/Control/VBoxContainer/Button2" to="." method="_on_button_str_pressed"]
