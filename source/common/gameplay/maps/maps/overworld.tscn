@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=4 uid="uid://c4nf240jpebhj"]
+[gd_scene load_steps=16 format=4 uid="uid://sscb58nigni8"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_i04l1"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_ulyvq"]

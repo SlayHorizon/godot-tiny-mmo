@@ -51,3 +51,7 @@ func _on_overlay_menu_button_pressed() -> void:
 	tween.tween_property(menu_overlay, ^"position:x", menu_overlay.position.x + menu_overlay.size.x, 0.0)
 	tween.tween_callback(menu_overlay.show)
 	tween.tween_property(menu_overlay, ^"position:x", 815.0, 0.3)
+
+
+func _on_levelup_button_pressed() -> void:
+	pass

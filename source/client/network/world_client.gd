@@ -14,9 +14,14 @@ var is_connected_to_server: bool = false:
 var authentication_token: String
 
 
-func connect_to_server(_address: String, _port: int) -> void:
+func connect_to_server(
+	_address: String,
+	_port: int,
+	_authentication_token: String
+) -> void:
 	address = _address
 	port = _port
+	authentication_token = _authentication_token
 	authentication_callback = authentication_call
 	start_client()
 
