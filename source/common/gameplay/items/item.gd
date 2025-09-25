@@ -4,7 +4,7 @@ extends Resource
 
 # Definition
 @export var item_name: StringName = &"ItemDefault"
-@export var item_icon: CompressedTexture2D
+@export var item_icon: Texture2D = preload("res://source/client/ui/inventory/test_sprites/Icon271.png")
 @export_multiline var description: String
 
 # Trading / Economy

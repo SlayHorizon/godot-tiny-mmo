@@ -3,9 +3,7 @@ extends PanelContainer
 
 var stats: Dictionary
 
-# Is there a better way ?
-@onready var stats_column1: RichTextLabel = $VBoxContainer/HBoxContainer2/RichTextLabel
-@onready var stats_column2: RichTextLabel = $VBoxContainer/HBoxContainer2/RichTextLabel2
+@onready var stats_display: RichTextLabel = $VBoxContainer/RichTextLabel
 
 
 func _ready() -> void:
@@ -20,28 +18,63 @@ func fill_stats(data: Dictionary) -> void:
 	if not Events.cache_data.has("stats"):
 		Events.cache_data["stats"] = data
 	#if stats.is_empty():
-	stats_column1.text = ""
-	stats_column2.text = ""
+	stats_display.text = ""
 	
-	stats = data
+	stats = (Events.cache_data["stats"] as Dictionary).duplicate()
 	
-	stats_column1.push_table(2)
-	stats_column1.set_table_column_expand(0, true)
-	stats_column1.set_table_column_expand(1, true)
+	stats_display.push_table(2)
+	stats_display.set_table_column_expand(0, true)
+	stats_display.set_table_column_expand(1, true)
 	
-	for stat_name: StringName in data:
-		stats_column1.push_cell()
-		match stat_name:
-			StatsCatalog.HEALTH:
-				stats_column1.append_text("[color=#08b502]HP %d[/color]" % data[stat_name])
-			StatsCatalog.MANA:
-				#stats_column2.append_text("[color=#009dc4]Mana %d[/color]" % data[stat_name])
-				stats_column1.append_text("[color=#009dc4]Mana %d[/color]" % data[stat_name])
-			_:
-				stats_column1.append_text("%s %d" % [stat_name, data[stat_name]])
-		stats_column1.pop()
-	stats_column1.pop()
+	
+	add_stat_text("HP %d/%d", Color("#3de600"),
+		[stats.get(StatsCatalog.HEALTH, 0), stats.get(StatsCatalog.HEALTH, 0)]
+	)
+	
+	add_stat_text("Mana %d", Color("#009dc4"),
+		[stats.get(StatsCatalog.MANA, 0)]
+	)
+	
+	add_stat_text("Attack %d", Color("#fc7f03"),
+		[stats.get(StatsCatalog.AD, 0)]
+	)
+	
+	add_stat_text("Armor %d", Color("#fc7f03"),
+		[stats.get(StatsCatalog.ARMOR, 0)]
+	)
+	
+	add_stat_text("Magic %d", Color("#6f03fc"),
+		[stats.get(StatsCatalog.AP, 0)]
+	)
+	
+	add_stat_text("MagicRes %d", Color("#6f03fc"),
+		[stats.get(StatsCatalog.MR, 0)]
+	)
+
+	add_stat_text("Speed %d", Color("#dbd802"),
+		[stats.get(StatsCatalog.MOVE_SPEED, 0)]
+	)
+	
+	add_stat_text("Tenacity %d", Color("#619902"),
+		[stats.get(&"tenacity", 0)]
+	)
+	
+	stats_display.pop()
+
+
+func add_stat_text(text: String, color: Color, stats: Array) -> void:
+	stats_display.push_cell()
+	stats_display.push_color(color)
+	stats_display.append_text(text % stats)
+	stats_display.pop()
+	stats_display.pop()
 
 
 func update_stats(stats_to_update: Dictionary) -> void:
 	fill_stats(Events.cache_data[&"stats"])
+
+
+func _on_details_button_pressed() -> void:
+	# Bad practice but good for fast test
+	$"../EquipmentSlots".visible = not $"../EquipmentSlots".visible
+	$"../HBoxContainer".visible = not $"../HBoxContainer".visible

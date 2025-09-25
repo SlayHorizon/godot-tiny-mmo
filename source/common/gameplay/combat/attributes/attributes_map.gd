@@ -29,6 +29,14 @@ const PHYSICAL_DEFENSE: Dictionary[StringName, float] = {
 }
 
 
+const CONDITION: Dictionary[StringName, float] = {
+	&"tenacity": 3.0,#StatsCatalog.TENACITY
+	StatsCatalog.ARMOR: 1.0,
+	StatsCatalog.MR: 1.0,
+	StatsCatalog.HEALTH: 2.0,
+}
+
+
 const AGILITY: Dictionary[StringName, float] = {
 	StatsCatalog.MOVE_SPEED: 4,
 	StatsCatalog.ATTACK_SPEED: 0.1
