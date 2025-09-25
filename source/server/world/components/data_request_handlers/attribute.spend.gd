@@ -14,7 +14,7 @@ func data_request_handler(
 		return {}
 	if player.player_resource.available_attributes_points > 0:
 		var gained_stats: Dictionary = AttributesMap.attr_to_stats(
-			[args["attr"]]
+			{args["attr"]: 1}
 		)
 		var value: float
 		for stat_name: StringName in gained_stats:

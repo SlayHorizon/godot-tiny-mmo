@@ -132,12 +132,20 @@ func instantiate_player(peer_id: int) -> Player:
 		var asc: AbilitySystemComponent = new_player.ability_system_component
 		
 		var player_stats: Dictionary[StringName, float] = player_resource.BASE_STATS
-		var stats_from_attributes: Dictionary[StringName, float] = player_resource.get_stats_from_attributes()
+		const AttributesMap = preload("res://source/common/gameplay/combat/attributes/attributes_map.gd")
+		var stats_from_attributes: Dictionary[StringName, float]
+		stats_from_attributes.assign(AttributesMap.attr_to_stats(player_resource.attributes))
+		
+		# Add base player attributes to general base stats.
 		for stat_name: StringName in stats_from_attributes:
 			if player_stats.has(stat_name):
 				player_stats[stat_name] = stats_from_attributes[stat_name]
 			else:
 				player_stats[stat_name] += stats_from_attributes[stat_name]
+		
+		player_resource.stats = player_stats
+		data_push.rpc_id(peer_id, &"stats.get", player_stats)
+		
 		for stat_name: StringName in player_stats:
 			var value: float = player_stats[stat_name]
 			print(stat_name, " : ", value)
