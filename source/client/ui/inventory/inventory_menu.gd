@@ -77,6 +77,8 @@ func _on_item_slot_button_pressed(inventory_slot: InventorySlot) -> void:
 	
 	if inventory_slot.item is GearItem:
 		item_action_button.text = "Equip"
+	elif inventory_slot.item is ConsumableItem:
+		item_action_button.text = "Use"
 	else:
 		item_action_button.text = "Close"
 	
@@ -94,6 +96,7 @@ func _on_item_slot_button_pressed(inventory_slot: InventorySlot) -> void:
 func _on_item_info_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		item_info.gui_input.disconnect(_on_item_info_gui_input)
+		$ItemInfo/HotkeyPanel.hide()
 		item_info.hide()
 
 
@@ -139,7 +142,10 @@ func _on_hotkey_button_pressed() -> void:
 		for button: Button in $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_children():
 			if Events.cache_data.has("hotkeys"):
 				button.icon = Events.cache_data["hotkeys"][hotkey_index].item_icon
-			button.pressed.connect(_on_hotkey_index_pressed.bind(hotkey_index))
+			if hotkey_index < 2:
+				button.pressed.connect(_on_hotkey_index_pressed.bind(hotkey_index))
+			else:
+				button.text = "Lock"
 			hotkey_index += 1
 	
 	$ItemInfo/HotkeyPanel.show()

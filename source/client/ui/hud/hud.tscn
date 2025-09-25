@@ -27,7 +27,6 @@ offset_bottom = 56.0
 text = "!"
 
 [node name="Chat" parent="." instance=ExtResource("2_xs74v")]
-visible = false
 
 [node name="ItemSlots" type="Control" parent="."]
 layout_mode = 3
