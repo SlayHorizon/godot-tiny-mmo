@@ -34,6 +34,9 @@ func _on_item_shortcut_pressed(button: Button, index: int) -> void:
 
 
 func add_item_to_shorcut(item: Item, index: int) -> void:
+	if not index < item_shortcuts.size():
+		return
+	
 	item_shortcuts[index] = item
 	var button: Button = $VBoxContainer.get_child(index)
 	button.icon = item.item_icon
