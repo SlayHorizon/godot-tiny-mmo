@@ -1,18 +1,15 @@
-[gd_scene load_steps=24 format=3 uid="uid://dia55s0a7lhnv"]
+[gd_scene load_steps=19 format=3 uid="uid://dia55s0a7lhnv"]
 
 [ext_resource type="Script" uid="uid://3kue0fgf78ik" path="res://source/client/ui/inventory/inventory_menu.gd" id="1_g6fyq"]
 [ext_resource type="Script" uid="uid://cx6ltmvpbwdng" path="res://source/client/ui/inventory/gear_slot.gd" id="2_0wccm"]
 [ext_resource type="Texture2D" uid="uid://tg02o3a14emh" path="res://source/client/ui/inventory/test_sprites/Icon162.png" id="2_q1iwn"]
-[ext_resource type="Texture2D" uid="uid://u6biixvju1md" path="res://assets/node_icons/blue/icon_sword.png" id="2_svewr"]
 [ext_resource type="Texture2D" uid="uid://bd0ohyvo6looc" path="res://source/client/ui/inventory/test_sprites/Icon202.png" id="3_3w0rw"]
-[ext_resource type="Texture2D" uid="uid://gariijq324dr" path="res://assets/node_icons/blue/icon_money_bag.png" id="3_hc0xo"]
 [ext_resource type="Texture2D" uid="uid://bb7ec36sc1thr" path="res://source/client/ui/inventory/test_sprites/Icon182.png" id="4_0wccm"]
-[ext_resource type="Texture2D" uid="uid://b2h7ftl874p6y" path="res://assets/node_icons/blue/icon_pot.png" id="4_xkgtg"]
-[ext_resource type="Texture2D" uid="uid://dodbca31h0edd" path="res://assets/node_icons/blue/icon_trophy.png" id="5_bu56u"]
 [ext_resource type="Texture2D" uid="uid://cf0y64q72i32l" path="res://source/client/ui/inventory/test_sprites/Icon2.png" id="5_lqdnc"]
 [ext_resource type="Texture2D" uid="uid://c5i67th8u1h7l" path="res://source/client/ui/inventory/test_sprites/Icon222.png" id="6_7d8wy"]
 [ext_resource type="Texture2D" uid="uid://c3n053obioby0" path="res://source/client/ui/inventory/test_sprites/Icon142.png" id="7_4toxt"]
 [ext_resource type="Texture2D" uid="uid://cslc64xbpxpsd" path="res://source/client/ui/inventory/test_sprites/Icon321.png" id="8_3w0rw"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="8_as6qe"]
 [ext_resource type="Texture2D" uid="uid://w14y1o4gi3l2" path="res://source/client/ui/inventory/test_sprites/Icon325.png" id="9_0wccm"]
 [ext_resource type="Resource" uid="uid://wi13k03tseev" path="res://source/common/gameplay/items/item_slot/slots/torso.tres" id="10_xkgtg"]
 [ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/inventory/attributes_panel.gd" id="14_hc0xo"]
@@ -29,24 +26,6 @@ fill_to = Vector2(0, 0)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_b71y3"]
 texture = SubResource("GradientTexture2D_bu56u")
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_svewr"]
-content_margin_left = 24.0
-content_margin_top = 24.0
-content_margin_right = 24.0
-content_margin_bottom = 24.0
-bg_color = Color(0.0209265, 0.050178, 0.0852233, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hc0xo"]
-content_margin_left = 24.0
-content_margin_top = 24.0
-content_margin_right = 24.0
-content_margin_bottom = 24.0
-bg_color = Color(0.127329, 0.208065, 0.294801, 1)
-border_width_left = 1
-border_width_right = 1
-border_width_bottom = 1
-expand_margin_top = 8.0
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_xkgtg"]
 size = Vector2(80, 80)
@@ -91,27 +70,23 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MainContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="InventoryPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2"]
+[node name="InventoryPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/MainContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MainContainer/InventoryPanel"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxTexture_b71y3")
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 
-[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel/VBoxContainer/ScrollContainer"]
+[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer/ScrollContainer"]
 show_behind_parent = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -120,10 +95,10 @@ theme_override_constants/v_separation = 10
 columns = 4
 metadata/_edit_group_ = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel/VBoxContainer/HBoxContainer"]
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -131,7 +106,7 @@ text = "PREVIOUS"
 icon_alignment = 1
 expand_icon = true
 
-[node name="Button2" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel/VBoxContainer/HBoxContainer"]
+[node name="Button2" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -140,25 +115,13 @@ text = "EQUIPMENT"
 icon_alignment = 1
 expand_icon = true
 
-[node name="Button4" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel/VBoxContainer/HBoxContainer"]
+[node name="Button4" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "NEXT"
 icon_alignment = 1
 expand_icon = true
-
-[node name="TabBar" type="TabBar" parent="MarginContainer/VBoxContainer/MainContainer/VBoxContainer2"]
-visible = false
-layout_mode = 2
-theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_svewr")
-theme_override_styles/tab_selected = SubResource("StyleBoxFlat_hc0xo")
-current_tab = 0
-tab_count = 4
-tab_0/icon = ExtResource("2_svewr")
-tab_1/icon = ExtResource("3_hc0xo")
-tab_2/icon = ExtResource("4_xkgtg")
-tab_3/icon = ExtResource("5_bu56u")
 
 [node name="CharacterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/MainContainer"]
 layout_mode = 2
@@ -231,12 +194,13 @@ icon_alignment = 1
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
-[node name="Button8" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/EquipmentSlots"]
+[node name="HandSlot1" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("5_lqdnc")
 icon_alignment = 1
 script = ExtResource("2_0wccm")
+gear_slot = ExtResource("8_as6qe")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button6" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/EquipmentSlots"]
@@ -247,7 +211,7 @@ icon_alignment = 1
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
-[node name="Button9" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/EquipmentSlots"]
+[node name="HandSlot2" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/EquipmentSlots"]
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("7_4toxt")
@@ -688,11 +652,18 @@ color = Color(0.092, 0.092, 0.092, 0.541)
 metadata/_edit_lock_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="ItemInfo"]
-layout_mode = 0
-offset_left = 264.0
-offset_top = 55.0
-offset_right = 630.0
-offset_bottom = 439.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -183.0
+offset_top = -192.0
+offset_right = 183.0
+offset_bottom = 192.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 metadata/_edit_group_ = true
 
@@ -724,13 +695,76 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "Equip"
 
-[node name="ItemActionButton2" type="Button" parent="ItemInfo/PanelContainer/VBoxContainer/HBoxContainer"]
-visible = false
+[node name="HotkeyButton" type="Button" parent="ItemInfo/PanelContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(120, 52)
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Equip"
+text = "Hotkey"
+
+[node name="HotkeyPanel" type="PanelContainer" parent="ItemInfo"]
+visible = false
+custom_minimum_size = Vector2(366, 384)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -183.0
+offset_top = -192.0
+offset_right = 183.0
+offset_bottom = 192.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ItemInfo/HotkeyPanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="ItemInfo/HotkeyPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Chooose an hotkey:"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ItemInfo/HotkeyPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Button" type="Button" parent="ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+icon_alignment = 1
+expand_icon = true
+
+[node name="Button2" type="Button" parent="ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+icon_alignment = 1
+expand_icon = true
+
+[node name="Button3" type="Button" parent="ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+icon_alignment = 1
+expand_icon = true
+
+[node name="Button4" type="Button" parent="ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+icon_alignment = 1
+expand_icon = true
+
+[node name="CancelButton" type="Button" parent="ItemInfo/HotkeyPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_vertical = 10
+text = "Cancel"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/Stats/VBoxContainer/DetailsButton" to="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/Stats" method="_on_details_button_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/BottomContainer/CloseButton" to="." method="_on_close_button_pressed"]
 [connection signal="pressed" from="ItemInfo/PanelContainer/VBoxContainer/HBoxContainer/ItemActionButton" to="." method="_on_item_action_button_pressed"]
+[connection signal="pressed" from="ItemInfo/PanelContainer/VBoxContainer/HBoxContainer/HotkeyButton" to="." method="_on_hotkey_button_pressed"]
+[connection signal="pressed" from="ItemInfo/HotkeyPanel/VBoxContainer/CancelButton" to="." method="_on_hotkey_cancel_button_pressed"]
