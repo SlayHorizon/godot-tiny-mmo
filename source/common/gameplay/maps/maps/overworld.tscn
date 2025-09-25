@@ -4,7 +4,7 @@
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_ulyvq"]
 [ext_resource type="PackedScene" uid="uid://bihlmci6oa6b8" path="res://source/common/gameplay/maps/maps/guild_house/outside_building.tscn" id="5_7dcs4"]
 [ext_resource type="PackedScene" uid="uid://dfgyo6udh8k1s" path="res://source/common/gameplay/maps/maps/trade_house/outside_building.tscn" id="6_o3rdu"]
-[ext_resource type="PackedScene" uid="uid://bm5002tcxs41l" path="res://source/common/gameplay/maps/maps/misc_buildings/house.tscn" id="7_bs6wx"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/maps/maps/misc_buildings/house.tscn" id="7_bs6wx"]
 [ext_resource type="PackedScene" uid="uid://bejfk0u1aillb" path="res://source/common/gameplay/maps/maps/starter_shop/outside_building.tscn" id="7_o3rdu"]
 [ext_resource type="PackedScene" uid="uid://daytwqtwiixqx" path="res://source/common/gameplay/maps/maps/misc_buildings/mining_vending.tscn" id="8_tuoay"]
 [ext_resource type="PackedScene" uid="uid://ckx8tludq8q4m" path="res://source/common/gameplay/maps/maps/misc_buildings/house_1.tscn" id="9_htn1q"]
