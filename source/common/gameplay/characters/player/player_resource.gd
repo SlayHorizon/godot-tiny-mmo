@@ -2,16 +2,31 @@ class_name PlayerResource
 extends Resource
 
 
+const ATTRIBUTE_POINTS_PER_LEVEL: int = 3
+
+const BASE_STATS: Dictionary[StringName, float] = {
+	StatsCatalog.HEALTH_MAX: 100.0,
+	StatsCatalog.HEALTH: 100.0,
+	StatsCatalog.AD: 20.0,
+	StatsCatalog.ARMOR: 15.0,
+	StatsCatalog.MR: 15.0,
+	StatsCatalog.MOVE_SPEED: 75.0,
+	StatsCatalog.ATTACK_SPEED: 0.8
+}
+
 @export var player_id: int
 @export var account_name: String
 
 @export var display_name: String = "Player"
 @export var character_class: String = "knight"
 
-@export var golds: int = 0
-@export var inventory: Dictionary = {}
+@export var golds: int
+@export var inventory: Dictionary
 
-@export var level: int = 0
+@export var attributes: Dictionary[StringName, int]
+@export var available_attributes_points: int
+
+@export var level: int
 
 @export var guild: Guild
 ##
@@ -19,6 +34,8 @@ extends Resource
 
 ## Current Network ID
 var current_peer_id: int
+
+var stats: Dictionary
 
 
 func init(
@@ -31,3 +48,8 @@ func init(
 	account_name = _account_name
 	display_name = _display_name
 	character_class = _character_class
+
+
+func level_up() -> void:
+	available_attributes_points += ATTRIBUTE_POINTS_PER_LEVEL
+	level += 1

@@ -52,6 +52,10 @@ folder_colors={
 "res://source/server/": "gray"
 }
 
+[gui]
+
+theme/custom="uid://cf1ayo3dckj67"
+
 [input]
 
 up={
