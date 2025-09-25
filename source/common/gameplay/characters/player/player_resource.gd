@@ -23,7 +23,7 @@ const BASE_STATS: Dictionary[StringName, float] = {
 @export var golds: int
 @export var inventory: Dictionary
 
-@export var attributes: Dictionary
+@export var attributes: Dictionary[StringName, int]
 @export var available_attributes_points: int
 
 @export var level: int
@@ -34,6 +34,8 @@ const BASE_STATS: Dictionary[StringName, float] = {
 
 ## Current Network ID
 var current_peer_id: int
+
+var stats: Dictionary
 
 
 func init(
@@ -46,20 +48,6 @@ func init(
 	account_name = _account_name
 	display_name = _display_name
 	character_class = _character_class
-
-
-
-func get_stats_from_attributes() -> Dictionary[StringName, float]:
-	var stats: Dictionary[StringName, float]
-	# To Replace by constants
-	for attribute: StringName in attributes:
-		if attributes.has(&"vitality"):
-			stats[StatsCatalog.HEALTH_MAX] += 5
-		elif attributes.has(&"strength"):
-			stats[StatsCatalog.AD] += 2
-		elif attributes.has(&"agility"):
-			stats[StatsCatalog.MOVE_SPEED] += 3
-	return stats
 
 
 func level_up() -> void:

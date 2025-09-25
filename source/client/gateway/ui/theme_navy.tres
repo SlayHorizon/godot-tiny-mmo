@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cf1ayo3dckj67"]
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://cf1ayo3dckj67"]
 
 [ext_resource type="FontFile" uid="uid://dkhbwo1ivbqjd" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" id="1_pa11d"]
 
@@ -64,6 +64,42 @@ shadow_color = Color(0, 0, 0, 0.25)
 shadow_size = 12
 shadow_offset = Vector2(0, 4)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pa11d"]
+content_margin_left = 12.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.063, 0.078, 0.114, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.164706, 0.2, 0.282353, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 12
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aa0d7"]
+content_margin_left = 24.0
+content_margin_top = 22.0
+content_margin_right = 24.0
+content_margin_bottom = 22.0
+bg_color = Color(0.127329, 0.208065, 0.294801, 1)
+border_width_left = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hfwfw"]
+content_margin_left = 24.0
+content_margin_top = 22.0
+content_margin_right = 24.0
+content_margin_bottom = 22.0
+bg_color = Color(0.0209265, 0.050178, 0.0852233, 1)
+
 [resource]
 default_font = ExtResource("1_pa11d")
 Button/colors/font_color = Color(0.936737, 0.959364, 0.98337, 1)
@@ -73,3 +109,6 @@ Button/styles/normal = SubResource("StyleBoxFlat_7rxr3")
 HSeparator/styles/separator = SubResource("StyleBoxLine_fnfxe")
 Panel/styles/panel = SubResource("StyleBoxFlat_l45qm")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_l45qm")
+TabContainer/styles/panel = SubResource("StyleBoxFlat_pa11d")
+TabContainer/styles/tab_selected = SubResource("StyleBoxFlat_aa0d7")
+TabContainer/styles/tab_unselected = SubResource("StyleBoxFlat_hfwfw")
