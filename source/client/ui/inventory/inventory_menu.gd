@@ -12,7 +12,7 @@ var latest_items: Dictionary
 var gear_slots_cache: Dictionary[Button, Item]
 var selected_item: Item
 
-@onready var inventory_grid: GridContainer = $MarginContainer/VBoxContainer/MainContainer/VBoxContainer2/InventoryPanel/VBoxContainer/ScrollContainer/InventoryGrid
+@onready var inventory_grid: GridContainer = $MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer/ScrollContainer/InventoryGrid
 @onready var equipment_slots: GridContainer = $MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/EquipmentSlots
 
 @onready var item_info: ColorRect = $ItemInfo
@@ -84,6 +84,10 @@ func _on_item_slot_button_pressed(inventory_slot: InventorySlot) -> void:
 	
 	item_info.gui_input.connect(_on_item_info_gui_input)
 	
+	if selected_item is WeaponItem or selected_item is ConsumableItem:
+		$ItemInfo/PanelContainer/VBoxContainer/HBoxContainer/HotkeyButton.show()
+	else:
+		$ItemInfo/PanelContainer/VBoxContainer/HBoxContainer/HotkeyButton.hide()
 	item_info.show()
 
 
@@ -121,3 +125,33 @@ class InventorySlot:
 		quantity += data.get("add", 0)
 		item_data.merge(data, true)
 		button.text = str(quantity)
+
+var connect_hotkey_once: bool = false
+func _on_hotkey_button_pressed() -> void:
+	var hotkey_index: int
+	if not connect_hotkey_once:
+		connect_hotkey_once = true
+		
+		for hotkey_item: Item in Events.cache_data.get("hotkeys", []):
+			var button: Button = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_child(hotkey_index)
+			button.icon = hotkey_item.item_icon
+		
+		for button: Button in $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_children():
+			if Events.cache_data.has("hotkeys"):
+				button.icon = Events.cache_data["hotkeys"][hotkey_index].item_icon
+			button.pressed.connect(_on_hotkey_index_pressed.bind(hotkey_index))
+			hotkey_index += 1
+	
+	$ItemInfo/HotkeyPanel.show()
+
+
+func _on_hotkey_index_pressed(hotkey_index: int) -> void:
+	Events.item_shortcut_added.emit(selected_item, hotkey_index)
+	
+	var button: Button = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_child(hotkey_index)
+	button.icon = selected_item.item_icon
+	$ItemInfo/HotkeyPanel.hide()
+
+
+func _on_hotkey_cancel_button_pressed() -> void:
+	$ItemInfo/HotkeyPanel.hide()

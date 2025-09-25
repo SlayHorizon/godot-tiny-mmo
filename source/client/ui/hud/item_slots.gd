@@ -12,9 +12,13 @@ func _ready() -> void:
 	item_shortcuts.resize(i)
 	item_shortcuts.fill(null)
 	
-	# Temporary for fast debug
-	add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 1), 0)
-	add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 5), 1)
+	if Events.cache_data.has(&"hotkey"):
+		#add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 1), 0)
+		#add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 5), 1)
+		pass
+		
+	Events.item_shortcut_added.connect(add_item_to_shorcut)
+	
 
 
 func _on_item_shortcut_pressed(button: Button, index: int) -> void:

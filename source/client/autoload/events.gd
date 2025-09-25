@@ -5,6 +5,7 @@ extends Node
 
 # HUD
 signal local_player_ready(local_player: LocalPlayer)
+signal item_shortcut_added(item: Item, index: int)
 
 # temporary
 var cache_data: Dictionary
