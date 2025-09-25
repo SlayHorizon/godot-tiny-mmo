@@ -33,15 +33,10 @@ func _ready() -> void:
 
 
 func fill_inventory(inventory_data: Dictionary) -> void:
-	print_debug(inventory_data)
 	for item_id: int in inventory_data:
 		var item_data: Dictionary = inventory_data[item_id]
-		#if item_data.has("init"):
-			#add_item(item_id, item_data)
-			#continue
 		if not inventory.has(item_id):
 			add_item(item_id, item_data)
-			# Error case ?
 			continue
 		inventory[item_id].update_slot(item_data)
 
@@ -54,10 +49,13 @@ func add_item(item_id: int, item_data: Dictionary) -> void:
 	var inventory_slot: InventorySlot = InventorySlot.new()
 	
 	var new_button: Button = Button.new()
-	new_button.custom_minimum_size = Vector2(60, 60)
+	new_button.custom_minimum_size = Vector2(64, 64)
+	new_button.expand_icon = true
+	new_button.icon = item.item_icon
 	new_button.pressed.connect(
 		_on_item_slot_button_pressed.bind(inventory_slot)
 	)
+	
 	inventory_grid.add_child(new_button)
 	
 	inventory_slot.button = new_button
@@ -84,7 +82,15 @@ func _on_item_slot_button_pressed(inventory_slot: InventorySlot) -> void:
 	
 	selected_item = inventory_slot.item
 	
+	item_info.gui_input.connect(_on_item_info_gui_input)
+	
 	item_info.show()
+
+
+func _on_item_info_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		item_info.gui_input.disconnect(_on_item_info_gui_input)
+		item_info.hide()
 
 
 func _on_item_action_button_pressed() -> void:
@@ -96,18 +102,11 @@ func _on_item_action_button_pressed() -> void:
 				Callable(),
 				{"id": item_id}
 			)
+			for equipment_slot: GearSlotButton in equipment_slots.get_children():
+				if selected_item.slot == equipment_slot.gear_slot:
+					equipment_slot.icon = selected_item.item_icon
+	item_info.gui_input.disconnect(_on_item_info_gui_input)
 	item_info.hide()
-
-
-func _on_equip_button_pressed() -> void:
-	if selected_item is GearItem or selected_item is WeaponItem:
-		var item_id: int = selected_item.get_meta(&"id", -1)
-		if item_id != -1:
-			InstanceClient.current.request_data(
-				&"item.equip",
-				Callable(),
-				{"id": item_id}
-			)
 
 
 class InventorySlot:
