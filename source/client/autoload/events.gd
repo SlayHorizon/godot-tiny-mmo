@@ -5,8 +5,10 @@ extends Node
 
 # HUD
 signal local_player_ready(local_player: LocalPlayer)
+signal item_shortcut_added(item: Item, index: int)
 
 # temporary
+var cache_data: Dictionary
 var settings: Dictionary
 var local_player: LocalPlayer
 #var events: Dictionary[StringName, Signal]
@@ -15,7 +17,12 @@ var local_player: LocalPlayer
 func _ready() -> void:
 	if not OS.has_feature("client"):
 		queue_free()
+	InstanceClient.subscribe(&"stats.get", add_data.bind(&"stats"))
 
+
+func add_data(data: Dictionary, key: StringName) -> void:
+	print_debug(data, key)
+	cache_data[key] = data
 
 #func add_signal(object: Object, signal_name: StringName):
 	#events.set(signal_name, Signal(object, signal_name))

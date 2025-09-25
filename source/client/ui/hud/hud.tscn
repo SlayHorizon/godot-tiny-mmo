@@ -18,7 +18,16 @@ offset_right = 938.0
 offset_bottom = 56.0
 text = "Menu"
 
+[node name="LevelupButton" type="Button" parent="."]
+visible = false
+offset_left = 826.0
+offset_top = 17.0
+offset_right = 879.0
+offset_bottom = 56.0
+text = "!"
+
 [node name="Chat" parent="." instance=ExtResource("2_xs74v")]
+visible = false
 
 [node name="ItemSlots" type="Control" parent="."]
 layout_mode = 3
@@ -109,3 +118,4 @@ text = "CLOSE"
 layer = 10
 
 [connection signal="pressed" from="MenuButton" to="." method="_on_overlay_menu_button_pressed"]
+[connection signal="pressed" from="LevelupButton" to="." method="_on_levelup_button_pressed"]

@@ -43,6 +43,8 @@ func create_player_character(username: String, character_data: Dictionary) -> in
 		1: {"stack": 1}, 2: {"stack": 1}, 3: {"stack": 1}, 4: {"stack": 1}, 5: {"stack": 1}
 	}
 	
+	player_character.available_attributes_points = 10
+	
 	player_character.init(
 		player_id, username,
 		character_data["name"], character_data["class"]

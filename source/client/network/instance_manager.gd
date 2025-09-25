@@ -39,6 +39,9 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 		current_instance.queue_free()
 	current_instance = new_instance
 	
+	var map_bgcolor: Color = current_instance.instance_map.map_background_color
+	RenderingServer.set_default_clear_color(map_bgcolor)
+
 	new_instance.add_child(map, true)
 	add_child(new_instance, true)
 	

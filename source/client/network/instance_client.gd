@@ -101,6 +101,10 @@ func despawn_player(player_id: int) -> void:
 #endregion
 
 
+## Suscribe to a kind of data from anywhere in the project.
+## Used like this InstanceClient.suscribre(&"inventory.get", fill_inventory)
+## Then each update of the data type &"inventory.get" will call fill_inventory function. 
+## Super practicale if you want to listen to specific data from GUI.
 static func subscribe(type: StringName, handler: Callable) -> void:
 	if _data_subscriptions.has(type):
 		_data_subscriptions[type].append(handler)
@@ -114,6 +118,8 @@ static func unsubscribe(type: StringName, handler: Callable) -> void:
 	_data_subscriptions[type].erase(handler)
 
 
+## Request the server about a data_type with optional args,
+## the handler is called with the result similar to suscribre but only once.
 func request_data(type: StringName, handler: Callable, args: Dictionary = {}) -> int:
 	var request_id: int = _next_data_request_id
 	_next_data_request_id += 1
@@ -123,6 +129,7 @@ func request_data(type: StringName, handler: Callable, args: Dictionary = {}) ->
 	return request_id
 
 
+## Ignore incoming request id.
 func cancel_request_data(request_id: int) -> bool:
 	# Dictionary.erase eturns true if the given key existed in the dictionary, otherwise false.
 	return _pending_data_requests.erase(request_id)
@@ -148,3 +155,6 @@ func data_push(type: StringName, data: Dictionary) -> void:
 	for handler: Callable in _data_subscriptions.get(type, []):
 		if handler.is_valid():
 			handler.call(data)
+		# Can be optional: if not valid anymore, remove it.
+		else:
+			unsubscribe(type, handler)
