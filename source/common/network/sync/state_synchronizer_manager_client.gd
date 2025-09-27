@@ -125,6 +125,8 @@ func on_client_delta(_bytes: PackedByteArray) -> void:
 func on_props_bootstrap(bytes: PackedByteArray) -> void:
 	# We may receive multiple container blocks; apply order is inside each block.
 	var msg: Dictionary = WireCodec.decode_container_block_named(bytes)
+	print("receuved props bootstrap")
+	print_debug(msg)
 	var cid: int = int(msg.get("eid", -1))
 	var cont: ReplicatedPropsContainer = containers.get(cid, null)
 	if cont == null:

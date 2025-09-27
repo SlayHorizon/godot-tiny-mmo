@@ -1,11 +1,21 @@
 @tool
 class_name ReplicatedPropsContainer
 extends Node
+#Deterministic baked IDs → zero bootstrap for statics (no “200 jars” payload).
+#Simple lookups (child index/id maps), cheap wire format (CPID 16/16).
+#Clean split cold props (container) vs hot actors (StateSynchronizer).
+#The tradeoffs are acceptable:
+#Props must be direct children.
+#Reordering children in the editor changes IDs unless we re-bake.
+
 ## Compact container for “cold” scene props (static & dynamic), independent from StateSynchronizer.
 ## Provides:
 ##  - Server: mark props (cpid->value), queue spawns/despawns/ops, capture bootstrap.
 ##  - Client: apply spawns, pairs, and rp_* ops.
 ##  - Minimal structures, hot-path cache per CPID, readable code.
+
+## static ids in [0..STATIC_MAX], dynamic start above
+const STATIC_MAX: int = 32767
 
 # --- CPID helpers (16 bits child / 16 bits field) 6-
 
@@ -26,39 +36,27 @@ static func cpid_field(cpid: int) -> int:
 	return cpid & CPID_FIELD_MASK
 
 
-# --- Tolerant compare for floats/vec2 (reduce noise) -------------------------
-
+## Tolerant compare (reduce noise ?)
 @export var enable_tolerant_compare: bool = true
 @export var eps_f32: float = 0.001
-@export var eps_vec2_len2: float = 0.0001
-
-
-# --- Static mapping (baked once) ---------------------------------------------
+@export var eps_vec2_len2: float = 0.01
 
 @export_tool_button("Bake") var callback: Callable = _bake_static_map
 
-## child_id -> relative NodePath (from this container)
-@export var id_to_relpath: Dictionary[int, NodePath] = {}
+@export var id_to_node: Dictionary[int, Node]
+@export var node_to_id: Dictionary[Node, int]
 
-## reverse: relpath -> child_id (rebuilt at load/bake)
-@export var _relpath_to_id: Dictionary[NodePath, int] = {}
-
-## static ids in [0..STATIC_MAX], dynamic start above
-const STATIC_MAX: int = 32767
-
-
-# --- Dynamic registry (lean) --------------------------------------------------
-
-var _dyn_nodes: Dictionary[int, Node] = {}     # child_id -> Node
-var _next_dyn_id: int = STATIC_MAX + 1
-
+var next_dynamic_prop_id: int = STATIC_MAX + 1
+var dynamic_nodes: Dictionary[int, Node]
 
 # --- Outgoing queues (server tick) -------------------------------------------
 
-var _dyn_spawns_queued: Array = []             # [[child_id, scene_id], ...]
-var _dyn_despawns_queued: Array = []           # [child_id, ...]
-var _ops_named_queued: Array = []              # [[child_id, StringName, args:Array], ...]
-
+## [[child_id, scene_id], ...]
+var _dyn_spawns_queued: Array
+## [child_id, ...]
+var _dyn_despawns_queued: Array
+## [[child_id, StringName, args:Array], ...]
+var _ops_named_queued: Array
 
 # --- Props state & coalesced dirty (server) ----------------------------------
 
@@ -68,122 +66,99 @@ var _dirty_pairs: Dictionary[int, Variant] = {}     # cpid -> pending value
 # Optional: baseline “ops” per child (scene-owned state for newcomers).
 var _baseline_ops_by_child: Dictionary[int, Array] = {}  # child_id -> [[method:StringName, args:Array], ...]
 
+var _cpid_cache: Dictionary[int, PropertyCache]
 
-# --- Per-CPID target cache (client hot path) ---------------------------------
-
-class CpidCache:
-	var child_id: int
-	var node_rel: NodePath      # relative node path under the child root
-	var prop_path: NodePath     # property segment (":position", "Sprite2D:scale", ...)
-	var root: Node = null
-	var target: Node = null
-
-	func apply_or_try_resolve(container: ReplicatedPropsContainer, value: Variant) -> bool:
-		if root == null or not is_instance_valid(root):
-			root = container._resolve_child(child_id)
-			if root == null:
-				return false
-			target = null
-		if target == null or not is_instance_valid(target):
-			target = container._resolve_under(root, node_rel)
-			if target == null:
-				return false
-		target.set_indexed(prop_path, value)
-		return true
-
-var _cpid_cache: Dictionary[int, CpidCache] = {}
-
-
-# --- Lifecycle ----------------------------------------------------------------
 
 func _ready() -> void:
-	if Engine.is_editor_hint() and id_to_relpath.is_empty():
+	if Engine.is_editor_hint() and id_to_node.is_empty():
 		_bake_static_map()
-		return
-	_relpath_to_id.clear()
-	for id: int in id_to_relpath:
-		_relpath_to_id[id_to_relpath[id]] = id
-	_tag_descendants(self)
 
 
-# --- Bake (editor): all immediate children become “static props” -------------
-
+## Bake (editor): all immediate children become "static props"
 func _bake_static_map() -> void:
-	id_to_relpath.clear()
-	_relpath_to_id.clear()
+	id_to_node.clear()
+	node_to_id.clear()
 	var next_id: int = 0
-	for n: Node in get_children():
-		var rel: NodePath = get_path_to(n)
-		id_to_relpath[next_id] = rel
-		_relpath_to_id[rel] = next_id
+	for node: Node in get_children():
+		id_to_node[next_id] = node
+		node_to_id[node] = next_id
 		next_id += 1
-	_tag_descendants(self)
+		#node.set_meta(&"rp_container", node.get_path_to(self))
+		#node.set_meta(&"test", self)
 
 
-# --- Client-side apply --------------------------------------------------------
-
+## Client side:
+## spawns: [[child_id, scene_id], ...]
 func apply_spawns(spawns: Array) -> void:
-	# spawns: [[child_id, scene_id], ...]
-	for s: Array in spawns:
-		if s.size() < 2:
+	for to_spawn: Array in spawns:
+		if to_spawn.size() < 2:
 			continue
-		var child_id: int = s[0]
-		var scene_id: int = s[1]
+		var child_id: int = to_spawn[0]
+		var scene_id: int = to_spawn[1]
 
 		# Already present? (e.g., replay)
 		if _resolve_child(child_id) != null:
 			continue
 
-		var scene_path: String = SceneRegistry.path_of(scene_id)
-		var ps: PackedScene = load(scene_path)
-		if ps == null:
+		var packed_scene: PackedScene = ContentRegistryHub.load_by_id(&"scenes", scene_id)
+		if not packed_scene:
 			continue
 
-		var inst: Node = ps.instantiate()
-		# Store scene_id on the node to rebuild bootstrap later if needed.
-		inst.set_meta(&"scene_id", scene_id)
-		add_child(inst)
-		_dyn_nodes[child_id] = inst
-		_tag_descendants(inst)
+		var instance: Node = packed_scene.instantiate()
+		dynamic_nodes[child_id] = instance
+		instance.set_meta(&"rp_container", self)
+		add_child(instance)
 
 
+## pairs: [[cpid, value], ...]
 func apply_pairs(pairs: Array) -> void:
-	# pairs: [[cpid, value], ...]
-	for p: Array in pairs:
-		if p.size() < 2:
+	for pair: Array in pairs:
+		if pair.size() < 2:
 			continue
-		var cpid: int = p[0]
-		var value: Variant = p[1]
+		
+		# Potential confusion here:
+		# cpid is at the same time the node ID and the field/property ID
+		var cpid: int = pair[0]
+		var value: Variant = pair[1]
 
-		var cc: CpidCache = _cpid_cache.get(cpid, null)
+		var child_id: int = cpid_child(cpid)
+		var fid: int = cpid_field(cpid)
+		var child: Node = _resolve_child(child_id)
+		
+		var cc: PropertyCache = _cpid_cache.get(cpid, null)
 		if cc == null:
-			var child_id: int = cpid_child(cpid)
-			var fid: int = cpid_field(cpid)
-			var rel_np: NodePath = PathRegistry.nodepath_of(fid)
-			if rel_np.is_empty():
+			var property_path: NodePath = PathRegistry.nodepath_of(fid)
+			if property_path.is_empty():
 				continue
-			cc = CpidCache.new()
-			cc.child_id = child_id
-			cc.node_rel = TinyNodePath.get_path_to_node(rel_np)
-			cc.prop_path = TinyNodePath.get_path_to_property(rel_np)
+			cc = PropertyCache.new(
+				TinyNodePath.get_path_to_node(property_path),
+				TinyNodePath.get_path_to_property(property_path),
+				child
+			)
 			_cpid_cache[cpid] = cc
 
-		if not cc.apply_or_try_resolve(self, value):
+		if not cc.apply_or_try_resolve(child, value):
 			# simple: skip if child not ready yet (orders generally ensure readiness)
-			# (si tu veux, on peut bufferiser ici)
+			# lazy to implement it
+			## Try fast path with cache; else ensure cache (from registry) then retry; else buffer.
+			#if not _apply_with_cache(fid, value):
+				#if not _ensure_cache_from_registry(fid):
+					#_pending_pairs.append([fid, value])
+				#elif not _apply_with_cache(fid, value):
+					#_pending_pairs.append([fid, value])
 			pass
 
 
+## [[child_id, method, args], ...] ; only rp_* are executed (client-visual).
 func apply_ops_named(ops_named: Array) -> void:
-	# [[child_id, method, args], ...] ; only rp_* are executed (client-visual).
-	for o: Array in ops_named:
-		if o.size() < 2:
+	for ops: Array in ops_named:
+		if ops.size() < 2:
 			continue
-		var method_str: String = String(o[1])
+		var method_str: String = ops[1]
 		if not method_str.begins_with("rp_"):
 			continue
-		var child_id: int = o[0]
-		var args: Array = o[2] if o.size() > 2 else []
+		var child_id: int = ops[0]
+		var args: Array = ops[2] if ops.size() > 2 else []
 
 		var root: Node = _resolve_child(child_id)
 		if root == null:
@@ -194,16 +169,15 @@ func apply_ops_named(ops_named: Array) -> void:
 
 
 func apply_despawns(ids: Array) -> void:
-	for cid in ids:
-		var child_id: int = int(cid)
-		var n: Node = _dyn_nodes.get(child_id, null)
-		if n:
-			_dyn_nodes.erase(child_id)
-			n.queue_free()
+	for cid: int in ids:
+		var child_id: int = cid
+		var node: Node = dynamic_nodes.get(child_id, null)
+		if node:
+			dynamic_nodes.erase(child_id)
+			node.queue_free()
 
 
 # --- Server-side marking & collection ----------------------------------------
-
 func mark_child_prop(child_id: int, field_id: int, value: Variant, only_if_changed: bool = true) -> void:
 	var cpid: int = make_cpid(child_id, field_id)
 	if only_if_changed:
@@ -257,10 +231,10 @@ func collect_container_outgoing_and_clear() -> Dictionary:
 
 
 func alloc_dynamic_id() -> int:
-	var cid: int = _next_dyn_id
-	_next_dyn_id += 1
-	if _next_dyn_id > 0xFFFF:
-		_next_dyn_id = STATIC_MAX + 1
+	var cid: int = next_dynamic_prop_id
+	next_dynamic_prop_id += 1
+	if next_dynamic_prop_id > 0xFFFF:
+		next_dynamic_prop_id = STATIC_MAX + 1
 	return cid
 
 
@@ -300,8 +274,8 @@ func capture_bootstrap_block() -> Dictionary:
 	# - optional pairs baseline,
 	# - named ops baseline (scene-owned state like rp_pause).
 	var spawns: Array = []
-	for child_id: int in _dyn_nodes:
-		var n: Node = _dyn_nodes[child_id]
+	for child_id: int in dynamic_nodes:
+		var n: Node = dynamic_nodes[child_id]
 		if n == null or not is_instance_valid(n):
 			continue
 		var scene_id: int = int(n.get_meta(&"scene_id", -1))
@@ -318,33 +292,22 @@ func capture_bootstrap_block() -> Dictionary:
 
 
 # --- Resolve / utility --------------------------------------------------------
-
-func child_id_of_node(n: Node) -> int:
-	var rel: NodePath = get_path_to(n)
-	return _relpath_to_id.get(rel, -1)
+func child_id_of_node(node: Node) -> int:
+	return node_to_id.get(node, -1)
 
 
 func _resolve_child(child_id: int) -> Node:
 	if child_id <= STATIC_MAX:
-		var rel: NodePath = id_to_relpath.get(child_id, NodePath())
-		return null if rel.is_empty() else get_node_or_null(rel)
+		return id_to_node.get(child_id, null)
 	else:
-		return _dyn_nodes.get(child_id, null)
+		return dynamic_nodes.get(child_id, null)
 
 
 func _resolve_under(root: Node, rel: NodePath) -> Node:
 	return root if rel.is_empty() else root.get_node_or_null(rel)
 
 
-func _tag_descendants(root: Node) -> void:
-	const META := &"rp_container"
-	for c: Node in root.get_children():
-		c.set_meta(META, self)
-		_tag_descendants(c)
-
-
 # --- Compare helper -----------------------------------------------------------
-
 func _roughly_equal(fid: int, a: Variant, b: Variant) -> bool:
 	if not enable_tolerant_compare:
 		return a == b

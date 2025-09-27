@@ -5,6 +5,17 @@ extends Node
 ## - Props (cold): own ReplicatedPropsContainer per CID (container id), broadcast or AOI later.
 ## - Sends PathRegistry map updates on bootstrap AND whenever the schema version changes.
 
+enum AOIMode {
+	NONE,
+	GRID,
+}
+
+@export var aoi_mode: AOIMode = AOIMode.NONE
+@export var aoi_grid_size: Vector2i = Vector2i(512, 512)
+@export var visible_grid_size: int = 2
+#@export var spawn_grid_size: int = 3
+
+
 @export var send_rate_hz_entities: int = 20
 @export var send_rate_hz_props: int = 10
 @export var enable_process_tick: bool = true
@@ -132,7 +143,7 @@ func _send_container_deltas_one_shot() -> void:
 		var ops_named: Array = out.get("ops_named", [])
 		if spawns.is_empty() and pairs.is_empty() and despawns.is_empty() and ops_named.is_empty():
 			continue
-		# Keep named ops ordering on client: spawns → ops → pairs → despawns
+		# Keep named ops ordering on client: spawns → pairs → despawns → opsops_named
 		cont_blocks.append(WireCodec.encode_container_block_named(cid, spawns, pairs, despawns, ops_named))
 
 	if cont_blocks.is_empty():
@@ -233,6 +244,12 @@ func _send_map_updates_if_needed_to_all() -> void:
 
 func _aoi_entities_for(_peer_id: int) -> Array:
 	# TODO: Replace with room/grid-based AOI.
+	match aoi_mode:
+		AOIMode.NONE:
+			return entities.keys()
+		#AOIMode.GRID:
+			#pass
+		#_:
 	return entities.keys()
 
 
