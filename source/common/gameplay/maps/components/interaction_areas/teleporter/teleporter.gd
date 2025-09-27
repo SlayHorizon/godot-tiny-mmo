@@ -53,4 +53,4 @@ func _get_configuration_warnings() -> PackedStringArray:
 func _draw() -> void:
 	if Engine.is_editor_hint():
 		if target:
-			draw_line(Vector2.ZERO, target.position-position,Color.RED, 1, true)
+			draw_line(Vector2.ZERO, to_local(target.global_position), Color.RED, 1, true)
