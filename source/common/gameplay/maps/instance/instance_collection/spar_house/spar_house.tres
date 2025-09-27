@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="InstanceResource" load_steps=2 format=3 uid="uid://b832bjouifd56"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_hlkax"]
+
+[resource]
+script = ExtResource("1_hlkax")
+instance_name = &"SparHouse"
+map_path = "uid://c0lsanpe40uo0"
+load_at_startup = false
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"
