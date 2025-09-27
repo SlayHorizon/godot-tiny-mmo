@@ -8,13 +8,14 @@ extends Node2D
 
 var warpers: Dictionary[int, Warper]
 
-
 func _ready() -> void:
 	for child: Node in get_children():
 		if child is Warper:
 			var warper_id: int = child.warper_id
 			warpers[warper_id] = child
 
+	if OS.has_feature("client"):
+		RenderingServer.set_default_clear_color(map_background_color)
 
 func get_spawn_position(warper_id: int = 0) -> Vector2:
 	if warpers.has(warper_id):
