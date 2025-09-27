@@ -17,4 +17,3 @@ export_presets.cfg
 
 # Godot tmp files (https://github.com/godotengine/godot/issues/82270)
 *.tmp
-icon.svg.import
