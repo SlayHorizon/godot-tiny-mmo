@@ -155,17 +155,21 @@ func _ensure_cache_from_registry(fid: int) -> bool:
 
 ## Build/refresh cache from a NodePath. Pre-resolve to root when node path is empty.
 func _ensure_cache_from_np(fid: int, np: NodePath) -> void:
-	var pc: PropertyCache = _prop_cache.get(fid, null)
-	if pc == null:
-		pc = PropertyCache.new()
-		_prop_cache[fid] = pc
-	pc.node_path = TinyNodePath.get_path_to_node(np)
-	pc.prop_path = TinyNodePath.get_path_to_property(np)
-	# IMPORTANT: empty node_path means "root_node"
-	if pc.node_path.is_empty():
-		pc.node = root_node
-	else:
-		pc.node = null # will resolve on first apply
+	var property_cache: PropertyCache = _prop_cache.get(fid, null)
+	if not property_cache:
+		property_cache = PropertyCache.new(
+			TinyNodePath.get_path_to_node(np),
+			TinyNodePath.get_path_to_property(np),
+			root_node if np.is_empty() else null
+		)
+		_prop_cache[fid] = property_cache
+	#pc.node_path = TinyNodePath.get_path_to_node(np)
+	#pc.property_path = TinyNodePath.get_path_to_property(np)
+	## IMPORTANT: empty node_path means "root_node"
+	#if pc.node_path.is_empty():
+		#pc.node = root_node
+	#else:
+		#pc.node = null # will resolve on first apply
 
 
 ## Retry any pairs that were buffered due to missing cache or nodes not yet ready.
@@ -214,33 +218,3 @@ func get_state_debug_by_path() -> Dictionary[String, Variant]:
 		if path != "":
 			out[path] = _state_by_id[fid]
 	return out
-
-
-## Per-field cache: resolve split paths once; keep Node ref and re-resolve if freed.
-##
-## This inner class manages the caching of node paths and properties for efficient
-## state synchronization. It stores a reference to the Node and attempts to re-resolve
-## it if the cached reference becomes invalid.
-class PropertyCache:
-	## The NodePath to the target Node, relative to the root_node.
-	var node_path: NodePath
-	## The property segment of the NodePath (e.g., ":position", "Sprite2D:scale").
-	var prop_path: NodePath
-	## The cached Node instance. This may become invalid if the node is freed.
-	var node: Node = null
-
-	## Applies a value to the cached node's property. If the cached node reference is
-	## invalid, it attempts to re-resolve the node before applying the value.
-	func apply_or_try_resolve(root: Node, value: Variant) -> bool:
-		if node != null and is_instance_valid(node):
-			node.set_indexed(prop_path, value)
-			return true
-		# IMPORTANT: empty node_path means "root_node"
-		if node_path.is_empty():
-			node = root
-		else:
-			node = root.get_node_or_null(node_path)
-		if node != null:
-			node.set_indexed(prop_path, value)
-			return true
-		return false
