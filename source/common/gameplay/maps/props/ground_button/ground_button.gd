@@ -20,7 +20,7 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player and not pressed:
 		
-		var container: ReplicatedPropsContainer = PropsAccess.get_owner_container(self)
+		var container: ReplicatedPropsContainer = get_parent()
 		var prop_id: int = container.child_id_of_node(self)
 		container.set_baseline_ops(prop_id, [["rp_button_pressed", []]])
 		container.queue_op(prop_id, "rp_button_pressed", [])

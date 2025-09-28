@@ -14,6 +14,7 @@
 [ext_resource type="Resource" uid="uid://wi13k03tseev" path="res://source/common/gameplay/items/item_slot/slots/torso.tres" id="10_xkgtg"]
 [ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/inventory/attributes_panel.gd" id="14_hc0xo"]
 [ext_resource type="Script" uid="uid://dm4es1smo6nxw" path="res://source/client/ui/inventory/stats_panel.gd" id="14_xkgtg"]
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://source/client/ui/inventory/test_sprites/Icon271.png" id="15_svewr"]
 
 [sub_resource type="Gradient" id="Gradient_xkgtg"]
 offsets = PackedFloat32Array(0, 0.522634)
@@ -26,9 +27,6 @@ fill_to = Vector2(0, 0)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_b71y3"]
 texture = SubResource("GradientTexture2D_bu56u")
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_xkgtg"]
-size = Vector2(80, 80)
 
 [node name="Inventory" type="Control"]
 layout_mode = 3
@@ -150,6 +148,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 text = "lvl. 10"
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -158,6 +157,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("2_q1iwn")
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -166,6 +166,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 text = "lvl. 20"
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -174,6 +175,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("3_3w0rw")
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -182,6 +184,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("4_0wccm")
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 gear_slot = ExtResource("10_xkgtg")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
@@ -191,6 +194,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 text = "lvl. 5"
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -199,6 +203,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("5_lqdnc")
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 gear_slot = ExtResource("8_as6qe")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
@@ -208,6 +213,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("6_7d8wy")
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -216,6 +222,7 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 icon = ExtResource("7_4toxt")
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -224,34 +231,38 @@ layout_mode = 2
 alignment = 1
 
 [node name="Button" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/HBoxContainer"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 text = "???"
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button2" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/HBoxContainer"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 text = "???"
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button3" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/HBoxContainer"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 text = "???"
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
 [node name="Button4" type="Button" parent="MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/HBoxContainer"]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 text = "???"
 icon_alignment = 1
+expand_icon = true
 script = ExtResource("2_0wccm")
 metadata/_custom_type_script = "uid://cx6ltmvpbwdng"
 
@@ -671,9 +682,11 @@ metadata/_edit_group_ = true
 layout_mode = 2
 
 [node name="ItemPreviewIcon" type="TextureRect" parent="ItemInfo/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(62, 62)
 layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_xkgtg")
-stretch_mode = 3
+size_flags_horizontal = 4
+texture = ExtResource("15_svewr")
+stretch_mode = 4
 
 [node name="ItemDescription" type="RichTextLabel" parent="ItemInfo/PanelContainer/VBoxContainer"]
 layout_mode = 2

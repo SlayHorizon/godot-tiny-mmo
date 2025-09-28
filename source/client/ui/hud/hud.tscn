@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://dqt8fnt1l33eu"]
+[gd_scene load_steps=10 format=3 uid="uid://dqt8fnt1l33eu"]
 
 [ext_resource type="Script" uid="uid://dshitaaapbs6x" path="res://source/client/ui/hud/hud.gd" id="1_rchld"]
 [ext_resource type="PackedScene" uid="uid://rncsatpcsbm" path="res://source/client/ui/hud/health_bar/health_bar.tscn" id="2_klco5"]
@@ -6,10 +6,124 @@
 [ext_resource type="Script" uid="uid://pkprr0ll1y44" path="res://source/client/ui/hud/item_slots.gd" id="4_8qpw0"]
 [ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
+bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
+border_blend = true
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yow4d"]
+bg_color = Color(0.421725, 0.311275, 0.859316, 0.627451)
+border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
+border_blend = true
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_popxh"]
+bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
+border_blend = true
+corner_radius_top_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ia7hj"]
+bg_color = Color(0.0966887, 0.423688, 0.799925, 0.627451)
+border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
+border_blend = true
+corner_radius_top_right = 20
+corner_radius_bottom_left = 20
+
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_rchld")
 
 [node name="HealthBar" parent="." instance=ExtResource("2_klco5")]
+metadata/_edit_lock_ = true
+
+[node name="ExperienceBar" type="ProgressBar" parent="."]
+custom_minimum_size = Vector2(200, 5)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -146.0
+offset_top = -16.0
+offset_right = 154.0
+offset_bottom = -11.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_8qpw0")
+theme_override_styles/fill = SubResource("StyleBoxFlat_yow4d")
+step = 0.5
+value = 66.0
+allow_greater = true
+show_percentage = false
+metadata/_edit_group_ = true
+
+[node name="ResourceBar" type="ProgressBar" parent="."]
+custom_minimum_size = Vector2(200, 5)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -51.0
+offset_right = 100.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_popxh")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ia7hj")
+max_value = 40.0
+step = 0.5
+value = 40.0
+allow_greater = true
+show_percentage = false
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="ResourceBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -23.5
+offset_top = -10.5
+offset_right = 23.5
+offset_bottom = 10.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "40/40"
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = 582.0
+offset_top = 489.0
+offset_right = 632.0
+offset_bottom = 521.0
+show_percentage = false
+
+[node name="ProgressBar2" type="ProgressBar" parent="."]
+offset_left = 334.0
+offset_top = 488.0
+offset_right = 377.0
+offset_bottom = 520.0
+show_percentage = false
 
 [node name="MenuButton" type="Button" parent="."]
 offset_left = 885.0
@@ -17,6 +131,7 @@ offset_top = 17.0
 offset_right = 938.0
 offset_bottom = 56.0
 text = "Menu"
+metadata/_edit_lock_ = true
 
 [node name="LevelupButton" type="Button" parent="."]
 visible = false
@@ -25,9 +140,10 @@ offset_top = 17.0
 offset_right = 879.0
 offset_bottom = 56.0
 text = "!"
+metadata/_edit_lock_ = true
 
 [node name="Chat" parent="." instance=ExtResource("2_xs74v")]
-visible = false
+metadata/_edit_lock_ = true
 
 [node name="ItemSlots" type="Control" parent="."]
 layout_mode = 3
@@ -41,6 +157,7 @@ offset_bottom = 2.0
 grow_horizontal = 0
 grow_vertical = 2
 script = ExtResource("4_8qpw0")
+metadata/_edit_lock_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ItemSlots"]
 layout_mode = 1
@@ -79,6 +196,7 @@ offset_left = -145.0
 grow_horizontal = 0
 grow_vertical = 2
 script = ExtResource("4_cx7qp")
+metadata/_edit_lock_ = true
 
 [node name="ColorRect" type="ColorRect" parent="MenuOverlay"]
 layout_mode = 1
