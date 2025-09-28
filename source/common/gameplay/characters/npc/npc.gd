@@ -17,7 +17,6 @@ func _ready() -> void:
 		set_physics_process(false)
 		return
 	get_parent().ready.connect(func():
-		#container = PropsAccess.get_owner_container(self)
 		container = get_parent()
 		prop_id = container.child_id_of_node(self)
 		container.set_baseline_ops(prop_id, [["rp_equip", ["wooden_bow.item"]]])
