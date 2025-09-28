@@ -17,17 +17,15 @@ func _ready() -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if not body is Player or collected:
 		return
-	
 	# To be sure it's called once.
 	collected = true
 	
-	var container: ReplicatedPropsContainer = PropsAccess.get_owner_container(self)
-	if not container:
-		return
+	var container: ReplicatedPropsContainer = get_parent()
 	
 	var prop_id: int = container.child_id_of_node(self)
+
 	var is_dynamic: bool = prop_id > ReplicatedPropsContainer.STATIC_MAX
-	
+
 	if is_dynamic:
 		# Show for current viewers + remove for everyone (late joiners won't see it).
 		container.queue_op(prop_id, "rp_collect", [true])  # delete_after = true

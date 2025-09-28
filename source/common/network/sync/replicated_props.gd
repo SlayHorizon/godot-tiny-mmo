@@ -1,6 +1,6 @@
 @tool
 class_name ReplicatedPropsContainer
-extends Node
+extends Node2D
 #Deterministic baked IDs → zero bootstrap for statics (no “200 jars” payload).
 #Simple lookups (child index/id maps), cheap wire format (CPID 16/16).
 #Clean split cold props (container) vs hot actors (StateSynchronizer).
@@ -83,8 +83,6 @@ func _bake_static_map() -> void:
 		id_to_node[next_id] = node
 		node_to_id[node] = next_id
 		next_id += 1
-		#node.set_meta(&"rp_container", node.get_path_to(self))
-		#node.set_meta(&"test", self)
 
 
 ## Client side:

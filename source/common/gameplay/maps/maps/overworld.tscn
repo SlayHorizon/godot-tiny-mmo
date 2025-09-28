@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=4 uid="uid://c4nf240jpebhj"]
+[gd_scene load_steps=24 format=4 uid="uid://c4nf240jpebhj"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_i04l1"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_ulyvq"]
@@ -18,10 +18,16 @@
 [ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/guild_house/guild_house.tres" id="13_u3weo"]
 [ext_resource type="Resource" uid="uid://iuqxmo63ipnn" path="res://source/common/gameplay/maps/instance/instance_collection/mining_cave/cave_area1.tres" id="15_6ybks"]
 [ext_resource type="Resource" uid="uid://b832bjouifd56" path="res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_house.tres" id="18_6ybks"]
+[ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="19_ysxe5"]
+[ext_resource type="PackedScene" uid="uid://digkg4swbl27x" path="res://source/common/gameplay/maps/props/collectibles/coin.tscn" id="20_jp3f0"]
+[ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/common/gameplay/maps/props/ground_button/ground_button.tscn" id="21_plgjc"]
+[ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.tscn" id="22_na1pl"]
+[ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/npc.tscn" id="22_slgwh"]
 
-[node name="Overworld" type="Node2D"]
+[node name="Overworld" type="Node2D" node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
 script = ExtResource("1_i04l1")
+replicated_props_container = NodePath("ReplicatedPropsContainer")
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
 [node name="World_tiles" type="Node2D" parent="."]
@@ -117,3 +123,101 @@ warper_id = 6
 position = Vector2(248, 917)
 target_instance = ExtResource("18_6ybks")
 warper_id = 7
+
+[node name="ReplicatedPropsContainer" type="Node2D" parent="." node_paths=PackedStringArray("id_to_node", "node_to_id")]
+script = ExtResource("19_ysxe5")
+id_to_node = {
+0: NodePath("Coin"),
+1: NodePath("Coin2"),
+2: NodePath("Coin3"),
+3: NodePath("Coin4"),
+4: NodePath("Coin5"),
+5: NodePath("Coin6"),
+6: NodePath("Coin7"),
+7: NodePath("Coin8"),
+8: NodePath("Coin9"),
+9: NodePath("Coin10"),
+10: NodePath("GroundButton"),
+11: NodePath("NPC")
+}
+node_to_id = {
+NodePath("Coin"): 0,
+NodePath("Coin2"): 1,
+NodePath("Coin3"): 2,
+NodePath("Coin4"): 3,
+NodePath("Coin5"): 4,
+NodePath("Coin6"): 5,
+NodePath("Coin7"): 6,
+NodePath("Coin8"): 7,
+NodePath("Coin9"): 8,
+NodePath("Coin10"): 9,
+NodePath("GroundButton"): 10,
+NodePath("NPC"): 11
+}
+metadata/_custom_type_script = "uid://wq8klpndipnu"
+
+[node name="Coin" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(792, 920)
+
+[node name="Coin2" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(776, 928)
+
+[node name="Coin3" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(760, 952)
+
+[node name="Coin4" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(776, 992)
+
+[node name="Coin5" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(808, 1000)
+
+[node name="Coin6" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(840, 968)
+
+[node name="Coin7" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(816, 944)
+
+[node name="Coin8" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(564.112, 317.478)
+
+[node name="Coin9" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(584, 328)
+
+[node name="Coin10" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
+position = Vector2(536, 320)
+
+[node name="GroundButton" parent="ReplicatedPropsContainer" node_paths=PackedStringArray("activable_door") instance=ExtResource("21_plgjc")]
+position = Vector2(728, 928)
+activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/ActivableDoor2"), NodePath("../../Traps/ActivableDoor3"), NodePath("../../Traps/ActivableDoor8"), NodePath("../../Traps/ActivableDoor9"), NodePath("../../Traps/ActivableDoor4"), NodePath("../../Traps/ActivableDoor5"), NodePath("../../Traps/ActivableDoor7"), NodePath("../../Traps/ActivableDoor6")]
+
+[node name="NPC" parent="ReplicatedPropsContainer" instance=ExtResource("22_slgwh")]
+position = Vector2(344, 1256)
+
+[node name="Traps" type="Node2D" parent="."]
+
+[node name="ActivableDoor" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(728, 896)
+
+[node name="ActivableDoor2" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(712, 896)
+
+[node name="ActivableDoor3" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(696, 896)
+
+[node name="ActivableDoor8" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(696, 912)
+
+[node name="ActivableDoor9" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(696, 928)
+
+[node name="ActivableDoor4" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(744, 896)
+
+[node name="ActivableDoor5" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(760, 912)
+
+[node name="ActivableDoor7" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(760, 928)
+
+[node name="ActivableDoor6" parent="Traps" instance=ExtResource("22_na1pl")]
+position = Vector2(760, 896)
