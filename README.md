@@ -1,9 +1,6 @@
-> [!CAUTION]
-> README.md and documentations are out of date, refer to this branch [archive/v1](https://github.com/SlayHorizon/godot-tiny-mmo/tree/archive/v1).  
-> Current main is still experimental since the massive rework from this [PR](https://github.com/SlayHorizon/godot-tiny-mmo/pull/59).
-
 > [!NOTE]
-> The repository's documentation website: [**slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/)
+> The repository's documentation website: [**slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/)  
+> Latest research note: [**Byte-Level Networking Protocol for MMO Scalability**](https://slayhorizon.github.io/godot-tiny-mmo/#/pages/notes/next_level)
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.4+-blue?logo=godot-engine)](https://godotengine.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -11,23 +8,22 @@
 
 # Godot Tiny MMO
 
-A tiny, **experimental** MMORPG demo developed with **Godot Engine 4.4**.
+**Experimental open-source MMORPG framework** built with **Godot 4**.  
+Inspired by proven MMO systems, this project pushes the boundaries of what can be achieved with Godot in large-scale multiplayer.  
+It explores scalable multiplayer architecture, efficient byte-packed networking, while staying clear and simple in our learning journey.
 
-- **Browser + Desktop support**  
-- **Shared codebase**  
-  - Client and server live in the same repo  
-  - Clear folder organization  
-  - Faster iteration: develop & test in one place  
-- **Optimized exports** 
-  - Separate presets for client & server  
-  - Excludes unused components (e.g. no server logic in client)  
-- **"Custom" netcode**  
-  - No MultiplayerSynchronizer/Spawner  
-  - Supports movement interpolation, multiple maps loaded simultaneously, etc.  
-- **Mimic real MMO-style architecture**  
-  - **Gateway server**: authentication & routing  
-  - **Master server**: account management & bridge between gateways and world servers  
-  - **World servers**: host multiple map instances per server
+- **Cross-platform**: browser + desktop + mobile
+- **Unified codebase**: Client & multiple servers in one repo
+  - Faster iteration, develop in one place, test in one click
+  - Separate export presets for clean client/server builds 
+- **"Custom netcode"** but stay simple  
+  - No reliance on Godot’s `MultiplayerSynchronizer/Spawner` for better control
+  - Packed protocol format (efficient PackedByteArray instead of string-based messages) for hot synchronization
+  - Entity interpolation, multi-map instances, seamless transitions
+- **True MMOO architecture**
+  - **Gateway server**: authentication & routing
+  - **Master server**: orchestrator, account management & bridge between gateways and world servers
+  - **World server**: host multiple concurrent maps and instances; the place where gameplay actually happens
 
 ---
 
@@ -36,9 +32,9 @@ A tiny, **experimental** MMORPG demo developed with **Godot Engine 4.4**.
 <details>
 <summary>See screenshots:</summary>
    
-![project-demo-screenshot](https://github.com/user-attachments/assets/ca606976-fd9d-4a92-a679-1f65cb80513a)
-![image](https://github.com/user-attachments/assets/7e21a7e5-4c72-4871-b0cf-6d94f8931bf7)
 ![architecture-diagram](https://github.com/user-attachments/assets/78b1cce2-b070-4544-8ecd-59784743c7a0)
+<img width="1813" height="985" alt="image" src="https://github.com/user-attachments/assets/216a946e-26f5-4829-886e-5b58e323f9c8" />
+<img width="1718" height="573" alt="image" src="https://github.com/user-attachments/assets/cdd8da32-be03-4a9b-a93d-0d83858a086c" />
 
 </details>
 
@@ -71,7 +67,7 @@ A tiny, **experimental** MMORPG demo developed with **Godot Engine 4.4**.
    - [x] **Three different maps:** Overworld, Dungeon Entrance, Dungeon
    - [ ] **Private instances** for solo players or small groups
 - [ ] **Server-side anti-cheat** (basic validation for speed hacks, teleport hacks, etc.)
-- [ ] **Server-side NPCs** (AI logic processed on the server)
+- [x] **Server-side NPCs** (AI logic processed on the server)
 
 </details>
 
@@ -81,7 +77,7 @@ A tiny, **experimental** MMORPG demo developed with **Godot Engine 4.4**.
 
 To run the project, follow these steps:
 
-1. Open the project in **Godot 4.4**.
+1. Open the project in **Godot 4.4 or 4.5**.
 2. Go to Debug tab, select **"Customizable Run Instance..."**.
 3. Enable **Multiple Instances** and set the count to **4 or more**.
 4. Under **Feature Tags**, ensure you have:
@@ -103,17 +99,16 @@ Setup example
 ## Contributing
 
 Feel free to fork the repository and submit a pull request if you have ideas or improvements!  
-You can also open an [**Issue**](https://github.com/SlayHorizon/godot-tiny-mmo-template/issues) to discuss bugs or feature requests.
+You can also open an [**Issue**](https://github.com/SlayHorizon/godot-tiny-mmo/issues) to discuss bugs or feature requests.
 
 ---
 
 ## Credits
 
-Thanks to people who made this project possible:
-- **Maps** designed by [@d-Cadrius](https://github.com/d-Cadrius).
-- **Screenshots** provided by [@WithinAmnesia](https://github.com/WithinAmnesia).
-- Thanks to [@Jackiefrost](https://github.com/Jackietkfrost) for their valuable contributions to the source code.
-- Also thanks to [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for this open source project!
+Thanks to everyone who made this project possible:
+- **Maps** designed by [@higaslk](https://github.com/higaslk)
+- Valuable help and feedback: [@Jackiefrost](https://github.com/Jackietkfrost), [@d-Cadrius](https://github.com/d-Cadrius) and multiple anonymous contributors
+- Also [@Anokolisa](https://anokolisa.itch.io/dungeon-crawler-pixel-art-asset-pack) for allowing us to use its assets for this open source project!
 
 ## License
 Source code under the [MIT License](https://github.com/SlayHorizon/godot-tiny-mmo/blob/main/LICENSE).
