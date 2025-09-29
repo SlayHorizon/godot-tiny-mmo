@@ -88,17 +88,17 @@ theme_override_constants/separation = 10
 [node name="ItemSlotButton1" type="Button" parent="ItemSlots/VBoxContainer"]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
+theme_override_constants/icon_max_width = 64
 text = "1"
 icon_alignment = 1
-expand_icon = true
 
 [node name="ItemSlotButton2" type="Button" parent="ItemSlots/VBoxContainer"]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
+theme_override_constants/icon_max_width = 64
 text = "2
 "
 icon_alignment = 1
-expand_icon = true
 
 [node name="Resources" type="Control" parent="."]
 layout_mode = 1
@@ -199,6 +199,41 @@ offset_right = -83.0
 offset_bottom = 20.0
 show_percentage = false
 
+[node name="MenuButtons" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MenuButtons"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -118.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 62.0
+grow_horizontal = 0
+alignment = 2
+
+[node name="NotificationButton" type="Button" parent="MenuButtons/HBoxContainer"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "!"
+metadata/_edit_lock_ = true
+
+[node name="MenuButton" type="Button" parent="MenuButtons/HBoxContainer"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Menu"
+metadata/_edit_lock_ = true
+
 [node name="MenuOverlay" type="Control" parent="."]
 visible = false
 layout_mode = 1
@@ -245,41 +280,6 @@ text = "SETTINGS"
 [node name="CloseButton" type="Button" parent="MenuOverlay/VBoxContainer"]
 layout_mode = 2
 text = "CLOSE"
-
-[node name="MenuButtons" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-grow_horizontal = 0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MenuButtons"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -118.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = 62.0
-grow_horizontal = 0
-alignment = 2
-
-[node name="NotificationButton" type="Button" parent="MenuButtons/HBoxContainer"]
-custom_minimum_size = Vector2(52, 52)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "!"
-metadata/_edit_lock_ = true
-
-[node name="MenuButton" type="Button" parent="MenuButtons/HBoxContainer"]
-custom_minimum_size = Vector2(52, 52)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "Menu"
-metadata/_edit_lock_ = true
 
 [connection signal="pressed" from="MenuButtons/HBoxContainer/NotificationButton" to="." method="_on_notification_button_pressed"]
 [connection signal="pressed" from="MenuButtons/HBoxContainer/MenuButton" to="." method="_on_overlay_menu_button_pressed"]
