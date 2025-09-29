@@ -1,5 +1,5 @@
 class_name WorldServer
-extends BaseServer
+extends BaseMultiplayerEndpoint
 ## Server autoload. Keep it clean and minimal.
 ## Should only care about connection and authentication stuff.
 
@@ -17,12 +17,27 @@ func start_world_server() -> void:
 			var player: PlayerResource = database.player_data.get_player_resource(character_id)
 			token_list[auth_token] = player
 	)
-	
-	authentication_callback = _authentication_callback
-	load_server_configuration("world-server", "res://data/config/world_config.cfg")
-	start_server()
+
+	var configuration: Dictionary = ConfigFileUtils.load_section(
+		"world-server",
+		CmdlineUtils.get_parsed_args().get("config", "res://data/config/world_config.cfg")
+	)
+	if configuration.has("error"):
+		# Error case
+		pass
+	else:
+		create(Role.SERVER, configuration.bind_address, configuration.port)
 	
 	$InstanceManager.start_instance_manager()
+
+
+func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
+	api.peer_connected.connect(_on_peer_connected)
+	api.peer_disconnected.connect(_on_peer_disconnected)
+	
+	api.peer_authenticating.connect(_on_peer_authenticating)
+	api.peer_authentication_failed.connect(_on_peer_authentication_failed)
+	api.set_auth_callback(_authentication_callback)
 
 
 func _on_peer_connected(peer_id: int) -> void:
@@ -55,7 +70,7 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 		connected_players[peer_id] = token_list[auth_token]
 		token_list.erase(auth_token)
 	else:
-		server.disconnect_peer(peer_id)
+		peer.disconnect_peer(peer_id)
 
 
 func is_valid_authentication_token(auth_token: String) -> bool:

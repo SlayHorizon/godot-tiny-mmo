@@ -1,5 +1,5 @@
 class_name WorldManagerClient
-extends BaseClient
+extends BaseMultiplayerEndpoint
 
 
 signal token_received(auth_token: String, username: String, character_id: int)
@@ -11,9 +11,19 @@ var world_info: Dictionary
 
 
 func start_client_to_master_server(_world_info: Dictionary) -> void:
+	
 	world_info = _world_info
-	load_client_configuration("world-manager-client", "res://data/config/world_config.cfg")
-	start_client()
+	var configuration: Dictionary = ConfigFileUtils.load_section(
+		"world-manager-client",
+		CmdlineUtils.get_parsed_args().get("config", "res://data/config/world_config.cfg")
+	)
+	create(Role.CLIENT, configuration.address, configuration.port)
+
+
+func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
+	api.connected_to_server.connect(_on_connection_succeeded)
+	api.connection_failed.connect(_on_connection_failed)
+	api.server_disconnected.connect(_on_server_disconnected)
 
 
 func _on_connection_succeeded() -> void:
@@ -21,7 +31,7 @@ func _on_connection_succeeded() -> void:
 	fetch_server_info.rpc_id(
 		1,
 		{
-			"port": world_server.port,
+			"port": world_info.port,
 			"address": "127.0.0.1",
 			"info": world_info,
 			"population": world_server.connected_players.size()

@@ -232,7 +232,7 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 		$BackButton.show()
 		return
 	
-	world_server.connect_to_server(d["adress"], d["port"], d["token"])
+	world_server.connect_to_server(d["address"], d["port"], d["token"])
 	queue_free.call_deferred()
 
 

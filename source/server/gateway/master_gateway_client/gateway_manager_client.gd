@@ -1,19 +1,26 @@
 class_name GatewayManagerClient
-extends BaseClient
+extends BaseMultiplayerEndpoint
 
 
 signal account_creation_result_received(user_id: int, result_code: int, data: Dictionary)
 signal login_succeeded(account_info: Dictionary, _worlds_info: Dictionary)
 signal response_received(response: Dictionary)
 
-@export var gateway: GatewayServer
-
 var worlds_info: Dictionary
 
 
 func _ready() -> void:
-	load_client_configuration("gateway-manager-client", "res://data/config/gateway_config.cfg")
-	start_client()
+	var configuration: Dictionary = ConfigFileUtils.load_section(
+		"gateway-manager-client",
+		CmdlineUtils.get_parsed_args().get("config", "res://data/config/gateway_config.cfg")
+	)
+	create(Role.CLIENT, configuration.address, configuration.port)
+
+
+func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
+	api.connected_to_server.connect(_on_connection_succeeded)
+	api.connection_failed.connect(_on_connection_failed)
+	api.server_disconnected.connect(_on_server_disconnected)
 
 
 func _on_connection_succeeded() -> void:
@@ -23,13 +30,13 @@ func _on_connection_succeeded() -> void:
 func _on_connection_failed() -> void:
 	print("Failed to connect to the Gateway Manager as Gateway.")
 	# Try to reconnect.
-	get_tree().create_timer(15.0).timeout.connect(start_client)
+	get_tree().create_timer(15.0).timeout.connect(_ready)
 
 
 func _on_server_disconnected() -> void:
 	print("Gateway Manager disconnected.")
 	# Try to reconnect.
-	get_tree().create_timer(15.0).timeout.connect(start_client)
+	get_tree().create_timer(15.0).timeout.connect(_ready)
 
 
 @rpc("authority")
@@ -40,7 +47,7 @@ func update_worlds_info(_worlds_info: Dictionary) -> void:
 @rpc("authority")
 func fetch_auth_token(target_peer: int, auth_token: String, _address: String, _port: int) -> void:
 	response_received.emit(
-		{"t-id": target_peer, "token": auth_token, "adress": _address, "port": _port}
+		{"t-id": target_peer, "token": auth_token, "address": _address, "port": _port}
 	)
 	#gateway.connected_peers[target_peer]["token_received"] = true
 	#gateway.fetch_auth_token.rpc_id(target_peer, auth_token, _address, _port)
