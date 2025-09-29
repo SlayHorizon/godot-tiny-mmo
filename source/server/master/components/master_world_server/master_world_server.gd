@@ -1,5 +1,5 @@
 class_name WorldManagerServer
-extends BaseServer
+extends BaseMultiplayerEndpoint
 
 
 @export var authentication_manager: AuthenticationManager
@@ -10,9 +10,18 @@ extends BaseServer
 var next_world_id: int = 0
 var connected_worlds: Dictionary
 
+
 func _ready() -> void:
-	load_server_configuration("world-manager-server", "res://data/config/master_config.cfg")
-	start_server()
+	var configuration: Dictionary = ConfigFileUtils.load_section(
+		"world-manager-server",
+		CmdlineUtils.get_parsed_args().get("config", "res://data/config/master_config.cfg")
+	)
+	create(Role.SERVER, configuration.bind_address, configuration.port)
+
+
+func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
+	api.peer_connected.connect(_on_peer_connected)
+	api.peer_disconnected.connect(_on_peer_disconnected)
 
 
 func _on_peer_connected(peer_id: int) -> void:

@@ -1,5 +1,5 @@
 class_name GatewayManagerServer
-extends BaseServer
+extends BaseMultiplayerEndpoint
 
 
 @export var world_manager: WorldManagerServer
@@ -8,8 +8,16 @@ extends BaseServer
 
 
 func _ready() -> void:
-	load_server_configuration("gateway-manager-server", "res://data/config/master_config.cfg")
-	start_server()
+	var configuration: Dictionary = ConfigFileUtils.load_section(
+		"gateway-manager-server",
+		CmdlineUtils.get_parsed_args().get("config", "res://data/config/master_config.cfg")
+	)
+	create(Role.SERVER, configuration.bind_address, configuration.port)
+
+
+func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
+	api.peer_connected.connect(_on_peer_connected)
+	api.peer_disconnected.connect(_on_peer_disconnected)
 
 
 func _on_peer_connected(peer_id: int) -> void:

@@ -1,5 +1,5 @@
 class_name WorldClient
-extends BaseClient
+extends BaseMultiplayerEndpoint
 
 
 signal connection_changed(connected_to_server: bool)
@@ -14,21 +14,36 @@ var is_connected_to_server: bool = false:
 var authentication_token: String
 
 
+func _ready() -> void:
+	pass
+
+
+func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
+	api.connected_to_server.connect(_on_connection_succeeded)
+	api.connection_failed.connect(_on_connection_failed)
+	api.server_disconnected.connect(_on_server_disconnected)
+	
+	api.peer_authenticating.connect(_on_peer_authenticating)
+	api.peer_authentication_failed.connect(_on_peer_authentication_failed)
+	api.set_auth_callback(authentication_call)
+
+
 func connect_to_server(
 	_address: String,
 	_port: int,
 	_authentication_token: String
 ) -> void:
-	address = _address
-	port = _port
+	#address = _address
+	#port = _port
 	authentication_token = _authentication_token
-	authentication_callback = authentication_call
-	start_client()
+	#authentication_callback = authentication_call
+	#start_client()
+	create(Role.CLIENT, _address, _port)
 
 
 func close_connection() -> void:
 	multiplayer.set_multiplayer_peer(null)
-	client.close()
+	peer.close()
 	is_connected_to_server = false
 
 
