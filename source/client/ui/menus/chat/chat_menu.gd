@@ -18,7 +18,7 @@ var fade_out_tween: Tween
 
 
 func _ready() -> void:
-	InstanceClient.current.subscribe(&"chat.message", _on_chat_message)
+	InstanceClient.subscribe(&"chat.message", _on_chat_message)
 	
 	peek_feed_message_edit.text_submitted.connect(_on_message_edit_text_submitted.bind(peek_feed_message_edit))
 	full_feed_message_edit.text_submitted.connect(_on_message_edit_text_submitted.bind(full_feed_message_edit))

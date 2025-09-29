@@ -186,7 +186,7 @@ func _on_world_selected(world_id: int) -> void:
 		return
 	
 	var container: HBoxContainer = $CharacterSelection/VBoxContainer/HBoxContainer
-	var i: int
+	var i: int = 0
 	var character_id: String
 	for button: Button in container.get_children():
 		if button.pressed.is_connected(_on_character_selected):
@@ -316,7 +316,7 @@ func _on_create_account_button_pressed() -> void:
 func populate_worlds(world_info: Dictionary) -> void:
 	var container: HBoxContainer = $WorldSelection/VBoxContainer/HBoxContainer
 	
-	var i: int
+	var i: int = 0
 	for button: Button in container.get_children():
 		if button.pressed.is_connected(_on_world_selected):
 			button.pressed.disconnect(_on_world_selected)
