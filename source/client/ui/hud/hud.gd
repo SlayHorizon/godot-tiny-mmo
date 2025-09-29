@@ -9,7 +9,6 @@ var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
 @onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
-#@onready var sub_menu: CanvasLayer = $SubMenu
 
 
 func _ready() -> void:
@@ -55,5 +54,5 @@ func _on_overlay_menu_button_pressed() -> void:
 	tween.tween_property(menu_overlay, ^"position:x", 815.0, 0.3)
 
 
-func _on_levelup_button_pressed() -> void:
-	pass
+func _on_notification_button_pressed() -> void:
+	pass # Replace with function body.
