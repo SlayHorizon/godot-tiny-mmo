@@ -2,4 +2,4 @@ extends Node
 
 
 func _ready() -> void:
-	pass
+	get_tree().root.theme_changed

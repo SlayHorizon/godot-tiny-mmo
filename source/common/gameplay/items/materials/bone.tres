@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="MaterialItem" load_steps=3 format=3 uid="uid://bme5xgselkbng"]
 
 [ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="1_38lmc"]
-[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://source/client/ui/inventory/test_sprites/Icon271.png" id="1_t2ilm"]
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="1_t2ilm"]
 
 [resource]
 script = ExtResource("1_38lmc")

@@ -6,4 +6,13 @@
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_wpqoj")
 
-[node name="HUD" parent="." instance=ExtResource("2_equq2")]
+[node name="HUD" parent="." node_paths=PackedStringArray("sub_menu") instance=ExtResource("2_equq2")]
+sub_menu = NodePath("../Submenu")
+
+[node name="Submenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

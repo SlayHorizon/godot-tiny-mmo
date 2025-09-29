@@ -1,13 +1,15 @@
 class_name HUD
-extends CanvasLayer
+extends Control
 
+
+@export var sub_menu: Control
 
 var last_opened_interface: Control
 var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
 @onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
-@onready var sub_menu: CanvasLayer = $SubMenu
+#@onready var sub_menu: CanvasLayer = $SubMenu
 
 
 func _ready() -> void:
@@ -36,7 +38,7 @@ func _on_submenu_visiblity_changed(menu: Control) -> void:
 
 func display_menu(menu_name: StringName) -> void:
 	if not menus.has(menu_name):
-		var path: String = "res://source/client/ui/" + menu_name + "/" + menu_name + "_menu.tscn"
+		var path: String = "res://source/client/ui/menus/" + menu_name + "/" + menu_name + "_menu.tscn"
 		if not ResourceLoader.exists(path):
 			return
 		var new_menu: Control = load(path).instantiate()

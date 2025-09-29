@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dshitaaapbs6x" path="res://source/client/ui/hud/hud.gd" id="1_rchld"]
 [ext_resource type="PackedScene" uid="uid://rncsatpcsbm" path="res://source/client/ui/hud/health_bar/health_bar.tscn" id="2_klco5"]
-[ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/chat/chat_menu.tscn" id="2_xs74v"]
+[ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/menus/chat/chat_menu.tscn" id="2_xs74v"]
 [ext_resource type="Script" uid="uid://pkprr0ll1y44" path="res://source/client/ui/hud/item_slots.gd" id="4_8qpw0"]
 [ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
 
@@ -42,14 +42,22 @@ border_blend = true
 corner_radius_top_right = 20
 corner_radius_bottom_left = 20
 
-[node name="HUD" type="CanvasLayer"]
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_rchld")
 
 [node name="HealthBar" parent="." instance=ExtResource("2_klco5")]
+layout_mode = 1
 metadata/_edit_lock_ = true
 
 [node name="ExperienceBar" type="ProgressBar" parent="."]
 custom_minimum_size = Vector2(200, 5)
+layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -73,6 +81,7 @@ metadata/_edit_group_ = true
 
 [node name="ResourceBar" type="ProgressBar" parent="."]
 custom_minimum_size = Vector2(200, 5)
+layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -143,10 +152,11 @@ text = "!"
 metadata/_edit_lock_ = true
 
 [node name="Chat" parent="." instance=ExtResource("2_xs74v")]
+layout_mode = 1
 metadata/_edit_lock_ = true
 
 [node name="ItemSlots" type="Control" parent="."]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -187,7 +197,7 @@ text = "2
 
 [node name="MenuOverlay" type="Control" parent="."]
 visible = false
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
