@@ -1,11 +1,10 @@
-[gd_scene load_steps=16 format=3 uid="uid://5wv1gfwppcnf"]
+[gd_scene load_steps=15 format=3 uid="uid://5wv1gfwppcnf"]
 
 [ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="2_74q4y"]
 [ext_resource type="Texture2D" uid="uid://cfihbj71a4y35" path="res://assets/sprites/gui/backgrounds/desert.png" id="3_1c3kr"]
 [ext_resource type="Texture2D" uid="uid://cn5blfyqokda6" path="res://assets/sprites/gui/backgrounds/fairy_forest.png" id="4_uvr2v"]
 [ext_resource type="FontFile" uid="uid://cehc3gujked8x" path="res://assets/fonts/Cinzel/static/Cinzel-Bold.ttf" id="5_opc3y"]
 [ext_resource type="FontFile" uid="uid://cr1d4ugttxggp" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" id="6_tnybn"]
-[ext_resource type="StyleBox" uid="uid://bi8r7kxlh83no" path="res://source/client/ui/themes/styles/gradient_button.tres" id="7_waovh"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="8_afkjb"]
 [ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/popup_panel.gd" id="9_4rdug"]
 [ext_resource type="AudioStream" uid="uid://xxr4otrq1cg0" path="res://assets/audio/music/ekonia-main-theme.wav" id="10_q1aoo"]
@@ -123,6 +122,7 @@ theme_override_constants/separation = 16
 [node name="LoginButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "Login"
@@ -130,6 +130,7 @@ text = "Login"
 [node name="CreateAccountButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "Create Account"
@@ -137,9 +138,9 @@ text = "Create Account"
 [node name="GuestButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "Play as Guest"
 
 [node name="LoginPanel" type="PanelContainer" parent="."]
@@ -208,9 +209,9 @@ placeholder_text = "Enter your password here"
 [node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "Login"
 
 [node name="CreateAccountPanel" type="PanelContainer" parent="."]
@@ -292,9 +293,9 @@ placeholder_text = "Enter your password again here"
 [node name="CreateAccountButton" type="Button" parent="CreateAccountPanel/VBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "Create Account"
 
 [node name="WorldSelection" type="PanelContainer" parent="."]
@@ -519,9 +520,9 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "Knight"
 
 [node name="CreateButton2" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
@@ -529,9 +530,9 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "Rogue"
 
 [node name="CreateButton3" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
@@ -539,9 +540,9 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "Wizard"
 
 [node name="CreateButton4" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
@@ -549,9 +550,9 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "???"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer"]
@@ -626,9 +627,9 @@ text = "Random"
 custom_minimum_size = Vector2(210, 56)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "Create"
 
 [node name="PopupPanel" type="PanelContainer" parent="."]
@@ -681,9 +682,9 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(220, 56)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-theme_override_styles/normal = ExtResource("7_waovh")
 text = "OK"
 
 [node name="SwapButton" type="Button" parent="."]
