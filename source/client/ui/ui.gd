@@ -2,8 +2,10 @@ class_name UI
 extends CanvasLayer
 
 
-@onready var hud: CanvasLayer = $HUD
+@onready var hud: Control = $HUD
 
 
 func _ready() -> void:
-	pass
+	for child: Node in get_children():
+		if child is Control:
+			child.theme = BetterThemeDB.theme

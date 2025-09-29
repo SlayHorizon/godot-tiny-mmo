@@ -49,5 +49,5 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 		#current_ui.queue_free()
 	if not current_ui:
 		current_ui = preload("res://source/client/ui/ui.tscn").instantiate()
-		add_child(current_ui)
+		get_parent().add_sibling(current_ui)
 	

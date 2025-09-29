@@ -1,14 +1,13 @@
-[gd_scene load_steps=17 format=3 uid="uid://5wv1gfwppcnf"]
+[gd_scene load_steps=16 format=3 uid="uid://5wv1gfwppcnf"]
 
-[ext_resource type="Theme" uid="uid://cf1ayo3dckj67" path="res://source/client/gateway/ui/theme_navy.tres" id="1_sg1qr"]
 [ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="2_74q4y"]
 [ext_resource type="Texture2D" uid="uid://cfihbj71a4y35" path="res://assets/sprites/gui/backgrounds/desert.png" id="3_1c3kr"]
 [ext_resource type="Texture2D" uid="uid://cn5blfyqokda6" path="res://assets/sprites/gui/backgrounds/fairy_forest.png" id="4_uvr2v"]
 [ext_resource type="FontFile" uid="uid://cehc3gujked8x" path="res://assets/fonts/Cinzel/static/Cinzel-Bold.ttf" id="5_opc3y"]
 [ext_resource type="FontFile" uid="uid://cr1d4ugttxggp" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" id="6_tnybn"]
-[ext_resource type="StyleBox" uid="uid://bi8r7kxlh83no" path="res://source/client/gateway/ui/gradient_button.tres" id="7_waovh"]
+[ext_resource type="StyleBox" uid="uid://bi8r7kxlh83no" path="res://source/client/ui/themes/styles/gradient_button.tres" id="7_waovh"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="8_afkjb"]
-[ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/ui/popup_panel.gd" id="9_4rdug"]
+[ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/popup_panel.gd" id="9_4rdug"]
 [ext_resource type="AudioStream" uid="uid://xxr4otrq1cg0" path="res://assets/audio/music/ekonia-main-theme.wav" id="10_q1aoo"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q35d6"]
@@ -54,7 +53,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_sg1qr")
 script = ExtResource("2_74q4y")
 
 [node name="Desert" type="Sprite2D" parent="."]
