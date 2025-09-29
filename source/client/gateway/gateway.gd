@@ -27,27 +27,15 @@ var menu_stack: Array[Control]
 
 func _ready() -> void:
 	$SwapButton.toggled.connect(func(toggled_on: bool):
-		#if not $AudioStreamPlayer.playing:
-			#$AudioStreamPlayer.play()
+		if not $AudioStreamPlayer.playing:
+			$AudioStreamPlayer.play()
 		$Desert.visible = toggled_on == true
 		$FairyForest.visible = toggled_on == false
-		#var _theme: Theme = get_tree().root.theme
-		#print(_theme)
 		if toggled_on:
 			BetterThemeDB.theme = load("res://source/client/ui/themes/theme_desert.tres")
 		else:
 			BetterThemeDB.theme = preload("res://source/client/ui/themes/theme_navy.tres")
 		theme = BetterThemeDB.theme
-		#get_tree().root.theme = _theme
-		#var x: Theme = ThemeDB.get_default_theme()
-		#print(x)
-		#x.take_over_path("res://source/client/ui/themes/theme_desert.tres")
-		#x = _theme
-		
-		#theme = _theme
-		#get_window().theme = _theme
-		#propagate_notification(Control.NOTIFICATION_THEME_CHANGED)
-		#get_tree().root.propagate_notification(NOTIFICATION_THEME_CHANGED)
 	)
 	menu_stack.append(main_panel)
 	back_button.hide()
