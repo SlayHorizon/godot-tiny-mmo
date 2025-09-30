@@ -238,20 +238,7 @@ func _send_map_updates_if_needed_to_all() -> void:
 		on_bootstrap.rpc_id(peer_id, payload)
 
 
-# --- AOI hooks ----------------------------------------------------------------
-
-func _aoi_entities_for(_peer_id: int) -> Array:
-	# TODO: Replace with room/grid-based AOI.
-	match aoi_mode:
-		AOIMode.NONE:
-			return entities.keys()
-		#AOIMode.GRID:
-			#pass
-		#_:
-	return entities.keys()
-
-
-# --- Owner correction (server → owner only) ----------------------------------
+# --- Owner correction (server → owner only)
 
 func send_correction_to_owner(eid: int, pairs: Array) -> void:
 	var owner_peer_id: int = eid  # Replace by real ownership map later.
@@ -264,7 +251,7 @@ func send_correction_to_owner(eid: int, pairs: Array) -> void:
 	on_state_delta.rpc_id(owner_peer_id, bytes)
 
 
-# --- Client-side handlers mirrored for RPC presence ---------------------------
+# --- Client-side handlers mirrored for RPC presence
 
 @rpc("authority", "reliable")
 func on_bootstrap(_payload: PackedByteArray) -> void:
@@ -356,3 +343,55 @@ func _prune_owner_recent(max_age_ms: int) -> void:
 				m.erase(fid_any)
 		if m.is_empty():
 			_owner_recent.erase(eid)
+
+
+# AOI - in construction
+var _cell_to_eids: Dictionary[Vector2i, PackedInt32Array]
+var _eid_to_cell: Dictionary[int, Vector2i]
+
+
+func _eid_position(eid: int) -> Vector2:
+	var syn: StateSynchronizer = entities.get(eid, null)
+	if syn == null:
+		return Vector2.ZERO
+	# We rely on your PathRegistry id for ":position"
+	var fid: int = PathRegistry.id_of(":position")
+	var state: Variant= syn.last_applied  # internal, but fine inside manager
+	if state.has(fid):
+		return Vector2(state[fid])
+	return Vector2.ZERO
+
+func _pos_to_cell(p: Vector2) -> Vector2i:
+	var cs := Vector2(aoi_grid_size)
+	return Vector2i(floor(p.x / cs.x), floor(p.y / cs.y))
+
+func _rebuild_aoi_index() -> void:
+	_cell_to_eids.clear()
+	_eid_to_cell.clear()
+	for eid in entities.keys():
+		var c := _pos_to_cell(_eid_position(eid))
+		_eid_to_cell[eid] = c
+		var list: PackedInt32Array = _cell_to_eids.get(c, PackedInt32Array())
+		list.append(eid)
+		_cell_to_eids[c] = list
+
+func _aoi_entities_for(peer_id: int) -> Array:
+	match aoi_mode:
+		AOIMode.NONE:
+			return entities.keys()
+		AOIMode.GRID:
+			# Use the owner’s entity as the camera pivot or use a real camera ?
+			var pivot_eid: int = peer_id
+			# If the peer owns multiple eids
+			# or later we can store a "view_eid per peer" ?
+			var center: Vector2i = _eid_to_cell.get(pivot_eid, Vector2i.ZERO)
+			var out := []
+			for dx in range(-visible_grid_size, visible_grid_size + 1):
+				for dy in range(-visible_grid_size, visible_grid_size + 1):
+					var cell: Vector2i= Vector2i(center.x + dx, center.y + dy)
+					var list: PackedInt32Array = _cell_to_eids.get(cell, PackedInt32Array())
+					for i in list:
+						out.append(i)
+			return out
+		_:
+			return entities.keys()
