@@ -340,9 +340,9 @@ func _should_suppress_for_owner(eid: int, fid: int, value: Variant, now_ms: int)
 	# Égalité "tolérante" pour éviter les micro-diffs float.
 	var wt := PathRegistry.type_of(fid)
 	match wt:
-		PathRegistry.WIRE_VEC2_F32:
+		Wire.Type.VEC2_F32:
 			return (Vector2(rec["v"]) - Vector2(value)).length_squared() < 0.0001
-		PathRegistry.WIRE_F32:
+		Wire.Type.F32:
 			return abs(float(rec["v"]) - float(value)) < 0.001
 		_:
 			return rec["v"] == value
