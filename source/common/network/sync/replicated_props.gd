@@ -35,12 +35,6 @@ static func cpid_child(cpid: int) -> int:
 static func cpid_field(cpid: int) -> int:
 	return cpid & CPID_FIELD_MASK
 
-
-## Tolerant compare (reduce noise ?)
-@export var enable_tolerant_compare: bool = true
-@export var eps_f32: float = 0.001
-@export var eps_vec2_len2: float = 0.01
-
 @export_tool_button("Bake") var callback: Callable = _bake_static_map
 
 @export var id_to_node: Dictionary[int, Node]
@@ -180,7 +174,7 @@ func mark_child_prop(child_id: int, field_id: int, value: Variant, only_if_chang
 	var cpid: int = make_cpid(child_id, field_id)
 	if only_if_changed:
 		var prev: Variant = _state_by_cpid.get(cpid, null)
-		if prev != null and _roughly_equal(field_id, prev, value):
+		if prev != null and SyncUtils.roughly_equal(prev, value):
 			return
 	_state_by_cpid[cpid] = value
 	_dirty_pairs[cpid] = value
@@ -303,19 +297,3 @@ func _resolve_child(child_id: int) -> Node:
 
 func _resolve_under(root: Node, rel: NodePath) -> Node:
 	return root if rel.is_empty() else root.get_node_or_null(rel)
-
-
-# --- Compare helper -----------------------------------------------------------
-func _roughly_equal(fid: int, a: Variant, b: Variant) -> bool:
-	if not enable_tolerant_compare:
-		return a == b
-	var wtype: int = PathRegistry.type_of(fid)
-	match wtype:
-		Wire.Type.F32:
-			return abs(float(a) - float(b)) < eps_f32
-		Wire.Type.VEC2_F32:
-			return (Vector2(a) - Vector2(b)).length_squared() < eps_vec2_len2
-		Wire.Type.BOOL, Wire.Type.S32, Wire.Type.VARIANT:
-			return a == b
-		_:
-			return a == b

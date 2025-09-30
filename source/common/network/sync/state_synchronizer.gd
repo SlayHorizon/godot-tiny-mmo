@@ -6,9 +6,6 @@ extends Node
 ### Works on both server & client.
 
 @export var root_node: Node
-@export var enable_tolerant_compare: bool = true
-@export var eps_f32: float = 0.001
-@export var eps_vec2_len2: float = 0.0001
 
 # Internal state
 # Last applied values (fast lookups, no strings).
@@ -27,8 +24,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		if root_node == null:
 			root_node = get_parent()
-	if root_node == null:
-		root_node = self
+	assert(root_node != null, "State Synchronizer isn't mean to be used alone.")
 
 
 # Public API: apply (baseline / delta)
@@ -62,7 +58,7 @@ func collect_dirty_pairs() -> Array:
 	if _dirty.is_empty():
 		return []
 	var out: Array = []
-	for fid: int in _dirty: # iterate keys directly (no .keys() allocation)
+	for fid: int in _dirty:
 		out.append([fid, _dirty[fid]])
 	_dirty.clear()
 	return out
@@ -113,7 +109,7 @@ func mark_many_by_id(pairs: Array, only_if_changed: bool = true) -> void:
 func _mark_dirty_internal(fid: int, value: Variant, only_if_changed: bool) -> void:
 	if only_if_changed:
 		var prev: Variant = _state_by_id.get(fid, null)
-		if prev != null and _roughly_equal(fid, prev, value):
+		if prev != null and SyncUtils.roughly_equal(prev, value):
 			return
 	_state_by_id[fid] = value
 	_dirty[fid] = value
@@ -179,23 +175,6 @@ func _try_flush_pending() -> void:
 	var pending: Array = _pending_pairs
 	_pending_pairs = []
 	_apply_pairs(pending, false)
-
-
-## Tolerant equality for floats/vec2 to avoid noisy updates (bandwidth saver).
-func _roughly_equal(fid: int, a: Variant, b: Variant) -> bool:
-	if not enable_tolerant_compare:
-		return a == b
-	var wtype: int = PathRegistry.type_of(fid)
-	match wtype:
-		Wire.Type.F32:
-			return abs(float(a) - float(b)) < eps_f32
-		Wire.Type.VEC2_F32:
-			return (Vector2(a) - Vector2(b)).length_squared() < eps_vec2_len2
-		Wire.Type.BOOL, Wire.Type.S32, Wire.Type.VARIANT:
-			return a == b
-		_:
-			return a == b
-
 
 # Maintenance / Debug
 
