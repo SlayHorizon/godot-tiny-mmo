@@ -61,7 +61,7 @@ var _dirty_pairs: Dictionary[int, Variant] = {}     # cpid -> pending value
 var _baseline_ops_by_child: Dictionary[int, Array] = {}  # child_id -> [[method:StringName, args:Array], ...]
 
 var _cpid_cache: Dictionary[int, PropertyCache]
-
+var _pending_by_cpid: Dictionary[int, Variant]
 
 func _ready() -> void:
 	if Engine.is_editor_hint() and id_to_node.is_empty():
@@ -100,6 +100,23 @@ func apply_spawns(spawns: Array) -> void:
 		dynamic_nodes[child_id] = instance
 		instance.set_meta(&"rp_container", self)
 		add_child(instance)
+		
+	_flush_pending_pairs_for_spawned(spawns)
+
+
+func _flush_pending_pairs_for_spawned(spawns: Array) -> void:
+	for to_spawn in spawns:
+		if to_spawn.size() < 2: continue
+		var child_id: int = to_spawn[0]
+		var child: Node = _resolve_child(child_id)
+		if child == null: continue
+		# Try all CPIDs for this child
+		for cpid in _pending_by_cpid.keys():
+			if cpid_child(cpid) != child_id: continue
+			var fid := cpid_field(cpid)
+			var pc := PropertyCache.ensure_cache_for(fid, child, _cpid_cache, cpid)
+			if pc != null and pc.apply_or_try_resolve(child, _pending_by_cpid[cpid]):
+				_pending_by_cpid.erase(cpid)
 
 
 ## pairs: [[cpid, value], ...]
@@ -116,29 +133,19 @@ func apply_pairs(pairs: Array) -> void:
 		var child_id: int = cpid_child(cpid)
 		var fid: int = cpid_field(cpid)
 		var child: Node = _resolve_child(child_id)
+		if not child:
+			_pending_by_cpid[cpid] = value
+			continue
 		
-		var cc: PropertyCache = _cpid_cache.get(cpid, null)
-		if cc == null:
-			var property_path: NodePath = PathRegistry.nodepath_of(fid)
-			if property_path.is_empty():
-				continue
-			cc = PropertyCache.new(
-				TinyNodePath.get_path_to_node(property_path),
-				TinyNodePath.get_path_to_property(property_path),
-				child
-			)
-			_cpid_cache[cpid] = cc
+		var child_property_cache: PropertyCache = PropertyCache.ensure_cache_for(
+			fid,
+			child,
+			_cpid_cache,
+			cpid
+		)
 
-		if not cc.apply_or_try_resolve(child, value):
-			# simple: skip if child not ready yet (orders generally ensure readiness)
-			# lazy to implement it
-			## Try fast path with cache; else ensure cache (from registry) then retry; else buffer.
-			#if not _apply_with_cache(fid, value):
-				#if not _ensure_cache_from_registry(fid):
-					#_pending_pairs.append([fid, value])
-				#elif not _apply_with_cache(fid, value):
-					#_pending_pairs.append([fid, value])
-			pass
+		if child_property_cache == null or not child_property_cache.apply_or_try_resolve(child, value):
+			_pending_by_cpid[cpid] = value
 
 
 ## [[child_id, method, args], ...] ; only rp_* are executed (client-visual).
@@ -169,7 +176,7 @@ func apply_despawns(ids: Array) -> void:
 			node.queue_free()
 
 
-# --- Server-side marking & collection ----------------------------------------
+# --- Server-side marking & collection
 func mark_child_prop(child_id: int, field_id: int, value: Variant, only_if_changed: bool = true) -> void:
 	var cpid: int = make_cpid(child_id, field_id)
 	if only_if_changed:
@@ -230,7 +237,7 @@ func alloc_dynamic_id() -> int:
 	return cid
 
 
-# --- Baseline (server -> client) ---------------------------------------------
+# --- Baseline (server -> client)
 
 func set_baseline_ops(child_id: int, ops: Array) -> void:
 	# ops = [[method:String|StringName, args:Array], ...]
@@ -265,6 +272,7 @@ func capture_bootstrap_block() -> Dictionary:
 	# - current dynamics (spawns with scene_id from node.meta),
 	# - optional pairs baseline,
 	# - named ops baseline (scene-owned state like rp_pause).
+	# Client apply order must be: spawns → ops_named → pairs → despawns
 	var spawns: Array = []
 	for child_id: int in dynamic_nodes:
 		var n: Node = dynamic_nodes[child_id]
@@ -283,7 +291,7 @@ func capture_bootstrap_block() -> Dictionary:
 	return { "spawns": spawns, "pairs": pairs, "despawns": [], "ops_named": ops_named }
 
 
-# --- Resolve / utility --------------------------------------------------------
+# --- Resolve / utility
 func child_id_of_node(node: Node) -> int:
 	return node_to_id.get(node, -1)
 

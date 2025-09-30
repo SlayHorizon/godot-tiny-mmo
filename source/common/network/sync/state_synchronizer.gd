@@ -9,14 +9,17 @@ extends Node
 
 # Internal state
 # Last applied values (fast lookups, no strings).
-var _state_by_id: Dictionary[int, Variant] = {} # fid -> last applied value
+# fid -> last applied value
+var last_applied: Dictionary[int, Variant]
 # Outgoing dirty map (coalesced per fid).
-var _dirty: Dictionary[int, Variant] = {} # fid -> pending value
+# fid -> pending value
+var dirty_outgoing: Dictionary[int, Variant]
 # Buffer for pairs that arrive before cache/scene is ready.
-var _pending_pairs: Array = [] # [[fid, value], ...]
+# [[fid, value], ...]
+var _pending_pairs: Array
 
 # FieldID -> cache
-var _prop_cache: Dictionary[int, PropertyCache] = {}
+var _prop_cache: Dictionary[int, PropertyCache]
 
 
 func _ready() -> void:
@@ -24,6 +27,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		if root_node == null:
 			root_node = get_parent()
+		return
 	assert(root_node != null, "State Synchronizer isn't mean to be used alone.")
 
 
@@ -34,7 +38,7 @@ func _ready() -> void:
 ## Apply a full baseline (resets dirty) and immediately try to flush pending.
 func apply_baseline(pairs: Array) -> void:
 	_apply_pairs(pairs, true)
-	_dirty.clear()
+	dirty_outgoing.clear()
 	_try_flush_pending()
 
 
@@ -47,28 +51,29 @@ func apply_delta(pairs: Array) -> void:
 ## Convenience: apply locally and mark dirty in one go (gameplay-side).
 func set_by_path(path: NodePath, value: Variant) -> void:
 	var fid: int = PathRegistry.ensure_id(String(path))
-	_ensure_cache_from_np(fid, path) # one-time split+cache
-	_apply_with_cache(fid, value) # local apply (hot path)
-	_state_by_id[fid] = value
-	_dirty[fid] = value
+	var property_cache: PropertyCache = PropertyCache.ensure_cache_for(fid, root_node, _prop_cache)
+	if property_cache:
+		property_cache.apply_or_try_resolve(root_node, value)
+	last_applied[fid] = value
+	dirty_outgoing[fid] = value
 
 
 ## Drain and clear coalesced dirty pairs.
 func collect_dirty_pairs() -> Array:
-	if _dirty.is_empty():
+	if dirty_outgoing.is_empty():
 		return []
 	var out: Array = []
-	for fid: int in _dirty:
-		out.append([fid, _dirty[fid]])
-	_dirty.clear()
+	for fid: int in dirty_outgoing:
+		out.append([fid, dirty_outgoing[fid]])
+	dirty_outgoing.clear()
 	return out
 
 
 ## Snapshot current known state as baseline pairs.
 func capture_baseline() -> Array:
 	var out: Array = []
-	for fid: int in _state_by_id:
-		out.append([fid, _state_by_id[fid]])
+	for fid: int in last_applied:
+		out.append([fid, last_applied[fid]])
 	return out
 
 
@@ -108,11 +113,11 @@ func mark_many_by_id(pairs: Array, only_if_changed: bool = true) -> void:
 ## Set dirty (with optional tolerant comparison) and update local mirror.
 func _mark_dirty_internal(fid: int, value: Variant, only_if_changed: bool) -> void:
 	if only_if_changed:
-		var prev: Variant = _state_by_id.get(fid, null)
+		var prev: Variant = last_applied.get(fid, null)
 		if prev != null and SyncUtils.roughly_equal(prev, value):
 			return
-	_state_by_id[fid] = value
-	_dirty[fid] = value
+	last_applied[fid] = value
+	dirty_outgoing[fid] = value
 
 
 ## Apply a batch of pairs. Unknown fields/nodes get buffered and retried later.
@@ -122,50 +127,11 @@ func _apply_pairs(pairs: Array, _is_baseline: bool) -> void:
 			continue
 		var fid: int = pair[0]
 		var value: Variant = pair[1]
-		_state_by_id[fid] = value
+		last_applied[fid] = value
 
-		# Try fast path with cache; else ensure cache (from registry) then retry; else buffer.
-		if not _apply_with_cache(fid, value):
-			if not _ensure_cache_from_registry(fid):
-				_pending_pairs.append([fid, value])
-			elif not _apply_with_cache(fid, value):
-				_pending_pairs.append([fid, value])
-
-
-## Hot path: uses cached node/prop; re-resolves node if freed.
-func _apply_with_cache(fid: int, value: Variant) -> bool:
-	var pc: PropertyCache = _prop_cache.get(fid, null)
-	if pc == null:
-		return false
-	return pc.apply_or_try_resolve(root_node, value)
-
-
-## Build cache from registry (FieldID -> NodePath). Returns true if cache created.
-func _ensure_cache_from_registry(fid: int) -> bool:
-	var np: NodePath = PathRegistry.nodepath_of(fid)
-	if np.is_empty():
-		return false
-	_ensure_cache_from_np(fid, np)
-	return true
-
-
-## Build/refresh cache from a NodePath. Pre-resolve to root when node path is empty.
-func _ensure_cache_from_np(fid: int, np: NodePath) -> void:
-	var property_cache: PropertyCache = _prop_cache.get(fid, null)
-	if not property_cache:
-		property_cache = PropertyCache.new(
-			TinyNodePath.get_path_to_node(np),
-			TinyNodePath.get_path_to_property(np),
-			root_node if np.is_empty() else null
-		)
-		_prop_cache[fid] = property_cache
-	#pc.node_path = TinyNodePath.get_path_to_node(np)
-	#pc.property_path = TinyNodePath.get_path_to_property(np)
-	## IMPORTANT: empty node_path means "root_node"
-	#if pc.node_path.is_empty():
-		#pc.node = root_node
-	#else:
-		#pc.node = null # will resolve on first apply
+		var property_cache: PropertyCache = PropertyCache.ensure_cache_for(fid, root_node, _prop_cache) 
+		if property_cache == null or not property_cache.apply_or_try_resolve(root_node, value):
+			_pending_pairs.append([fid, value])
 
 
 ## Retry any pairs that were buffered due to missing cache or nodes not yet ready.
@@ -192,8 +158,8 @@ func invalidate_all_caches() -> void:
 ## Build a debug view: path -> value (computed lazily from registry).
 func get_state_debug_by_path() -> Dictionary[String, Variant]:
 	var out: Dictionary[String, Variant] = {}
-	for fid: int in _state_by_id:
+	for fid: int in last_applied:
 		var path: String = PathRegistry.path_of(fid)
 		if path != "":
-			out[path] = _state_by_id[fid]
+			out[path] = last_applied[fid]
 	return out

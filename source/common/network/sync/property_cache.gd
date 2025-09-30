@@ -38,3 +38,26 @@ func apply_or_try_resolve(root: Node, value: Variant) -> bool:
 		node.set_indexed(property_path, value)
 		return true
 	return false
+
+
+static func ensure_cache_for(
+	property_id: int,
+	root: Node,
+	cache: Dictionary,
+	cache_key: Variant = property_id
+	) -> PropertyCache:
+	var property_cache: PropertyCache = cache.get(cache_key, null)
+	if property_cache:
+		return property_cache
+
+	var np: NodePath = PathRegistry.nodepath_of(property_id)
+	if np.is_empty():
+		return null
+
+	property_cache = PropertyCache.new(
+		TinyNodePath.get_path_to_node(np),
+		TinyNodePath.get_path_to_property(np),
+		root if np.is_empty() else null
+	)
+	cache[cache_key] = property_cache
+	return property_cache

@@ -13,8 +13,6 @@ enum AOIMode {
 @export var aoi_mode: AOIMode = AOIMode.NONE
 @export var aoi_grid_size: Vector2i = Vector2i(512, 512)
 @export var visible_grid_size: int = 2
-#@export var spawn_grid_size: int = 3
-
 
 @export var send_rate_hz_entities: int = 20
 @export var send_rate_hz_props: int = 10
@@ -143,7 +141,7 @@ func _send_container_deltas_one_shot() -> void:
 		var ops_named: Array = out.get("ops_named", [])
 		if spawns.is_empty() and pairs.is_empty() and despawns.is_empty() and ops_named.is_empty():
 			continue
-		# Keep named ops ordering on client: spawns → pairs → despawns → opsops_named
+		# Client apply order: spawns → ops_named → pairs → despawns
 		cont_blocks.append(WireCodec.encode_container_block_named(cid, spawns, pairs, despawns, ops_named))
 
 	if cont_blocks.is_empty():
