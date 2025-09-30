@@ -4,11 +4,6 @@ extends Node
 ## Build bytes using StreamPeerBuffer, then send a single PackedByteArray over RPC.
 
 
-# put_double / f64 / 64 bits
-# put_float / f32 / 32 bits / float, single precision
-# put_half / f16 / 16 bits/ half, half precision
-
-
 static func _new_buff() -> StreamPeerBuffer:
 	var stream_peer_buffer: StreamPeerBuffer = StreamPeerBuffer.new()
 	stream_peer_buffer.big_endian = false
@@ -38,31 +33,98 @@ static func _get_vec2(spb: StreamPeerBuffer) -> Vector2:
 # Value (de)serialization by wire type
 static func _encode_value(spb: StreamPeerBuffer, wire_type: int, value: Variant) -> void:
 	match wire_type:
-		PathRegistry.WIRE_BOOL: #when typeof(value) == TYPE_BOOL:
+		Wire.Type.VARIANT:
+			spb.put_var(value)
+		Wire.Type.BOOL:
 			spb.put_u8(int(bool(value)))
-		PathRegistry.WIRE_I32:
-			spb.put_u32(value)
-		PathRegistry.WIRE_F32:
-			spb.put_float(value)
-		PathRegistry.WIRE_VEC2_F32:
+		Wire.Type.U8:
+			spb.put_u8(int(value))
+		Wire.Type.U16:
+			spb.put_u16(int(value))
+		Wire.Type.U32:
+			spb.put_u32(int(value))
+		Wire.Type.U64:
+			spb.put_u64(int(value))
+		Wire.Type.S8:
+			spb.put_8(int(value))
+		Wire.Type.S16:
+			spb.put_16(int(value))
+		Wire.Type.S32:
+			spb.put_32(int(value))
+		Wire.Type.S64:
+			spb.put_64(int(value))
+		Wire.Type.F16:
+			spb.put_half(float(value))
+		Wire.Type.F32:
+			spb.put_float(float(value))
+		Wire.Type.F64:
+			spb.put_double(float(value))
+		Wire.Type.STR_UTF8_U16:
+			var bytes := String(value).to_utf8_buffer()
+			spb.put_u16(bytes.size())
+			spb.put_data(bytes)
+		Wire.Type.STR_UTF8_U32:
+			spb.put_utf8_string(String(value))
+		Wire.Type.BYTES_U16:
+			var b := value as PackedByteArray
+			spb.put_u16(b.size())
+			spb.put_data(b)
+		Wire.Type.BYTES_U32:
+			var b2 := value as PackedByteArray
+			spb.put_u32(b2.size())
+			spb.put_data(b2)
+		Wire.Type.VEC2_F32:
 			_put_vec2(spb, value as Vector2)
 		_:
-			# Variant fallback (larger, but safe)
+			# Variant fallback
 			spb.put_var(value)
 
 
 static func _decode_value(spb: StreamPeerBuffer, wire_type: int) -> Variant:
 	match wire_type:
-		PathRegistry.WIRE_BOOL:
+		Wire.Type.VARIANT:
+			return spb.get_var()
+		Wire.Type.BOOL:
 			return spb.get_u8() != 0
-		PathRegistry.WIRE_I32:
+		Wire.Type.U8:
+			return spb.get_u8()
+		Wire.Type.U16:
+			return spb.get_u16()
+		Wire.Type.U32:
 			return spb.get_u32()
-		PathRegistry.WIRE_F32:
+		Wire.Type.U64:
+			return spb.get_u64()
+		Wire.Type.S8:
+			return spb.get_8()
+		Wire.Type.S16:
+			return spb.get_16()
+		Wire.Type.S32:
+			return spb.get_32()
+		Wire.Type.S64:
+			return spb.get_64()
+		Wire.Type.F16:
+			return spb.get_half()
+		Wire.Type.F32:
 			return spb.get_float()
-		PathRegistry.WIRE_VEC2_F32:
+		Wire.Type.F64:
+			return spb.get_double()
+		Wire.Type.STR_UTF8_U16:
+			var n: int = spb.get_u16()
+			return spb.get_data(n)[1].get_string_from_utf8()
+		Wire.Type.STR_UTF8_U32:
+			return spb.get_utf8_string()
+		Wire.Type.BYTES_U16:
+			var n: int = spb.get_u16()
+			return spb.get_data(n)[1]
+		Wire.Type.BYTES_U32:
+			var n: int = spb.get_u32()
+			return spb.get_data(n)[1]
+		Wire.Type.VEC2_F32:
 			return _get_vec2(spb)
 		_:
+			# Variant fallback
 			return spb.get_var()
+
 
 
 static func encode_entity_block(eid: int, pairs: Array) -> PackedByteArray:

@@ -47,8 +47,8 @@ func ensure_attr(attr: StringName, start_value: float, start_max: float) -> void
 	mirror.register_attr(attr)
 	mirror.set_pair(attr, _val[attr], _max[attr])
 
-	PathRegistry.register_field(_val_path(attr), PathRegistry.WIRE_F32)
-	PathRegistry.register_field(_max_path(attr), PathRegistry.WIRE_F32)
+	PathRegistry.register_field(_val_path(attr), Wire.Type.F32)
+	PathRegistry.register_field(_max_path(attr), Wire.Type.F32)
 
 	if synchronizer != null:
 		synchronizer.set_by_path(_val_path(attr), _val[attr])

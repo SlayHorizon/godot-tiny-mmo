@@ -187,11 +187,11 @@ func _roughly_equal(fid: int, a: Variant, b: Variant) -> bool:
 		return a == b
 	var wtype: int = PathRegistry.type_of(fid)
 	match wtype:
-		PathRegistry.WIRE_F32:
+		Wire.Type.F32:
 			return abs(float(a) - float(b)) < eps_f32
-		PathRegistry.WIRE_VEC2_F32:
+		Wire.Type.VEC2_F32:
 			return (Vector2(a) - Vector2(b)).length_squared() < eps_vec2_len2
-		PathRegistry.WIRE_BOOL, PathRegistry.WIRE_I32, PathRegistry.WIRE_VARIANT:
+		Wire.Type.BOOL, Wire.Type.S32, Wire.Type.VARIANT:
 			return a == b
 		_:
 			return a == b

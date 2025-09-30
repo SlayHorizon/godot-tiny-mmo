@@ -3,39 +3,31 @@ extends Node
 ## Global registry mapping property paths <-> field IDs with a wire type (schema-driven).
 ## Stores paths as String (best for wire/serialization) and caches NodePath for hot application.
 
-# Wire types used by the codec (extend as needed). Consider moving to WireTypes.gd later maybe?
-const WIRE_VARIANT: int = 0
-const WIRE_BOOL: int = 1
-const WIRE_I32: int = 2
-const WIRE_F32: int = 3
-const WIRE_VEC2_F32: int = 10
-# (Later: WIRE_I16_QPOS, WIRE_U8, ...)
 
-static var _id_to_path: Dictionary[int, String] = {}
-static var _path_to_id: Dictionary[String, int] = {}
-static var _id_to_type: Dictionary[int, int] = {}
-static var _id_to_nodepath: Dictionary[int, NodePath] = {} # cache for hot apply
+static var _id_to_path: Dictionary[int, String]
+static var _path_to_id: Dictionary[String, int]
+static var _id_to_type: Dictionary[int, int]
+static var _id_to_nodepath: Dictionary[int, NodePath]
 
 static var _next_id: int = 1
 static var _version: int = 1
 
 
 static func _static_init() -> void:
-	register_field(":position", WIRE_VEC2_F32)
-	register_field(":flipped", WIRE_BOOL)
-	register_field(":anim", WIRE_VARIANT)
-	register_field(":pivot", WIRE_F32)
+	# Hardcoded fields
+	register_field(":position", Wire.Type.VEC2_F32)
+	register_field(":flipped", Wire.Type.BOOL)
+	register_field(":anim", Wire.Type.VARIANT)
+	register_field(":pivot", Wire.Type.F32)
 	
-	register_field(":scale", WIRE_VEC2_F32)
-
-	register_field(":display_name", WIRE_VARIANT)
-	register_field(":character_class", WIRE_VARIANT)
+	register_field(":scale", Wire.Type.VEC2_F32)
+	
+	register_field(":display_name", Wire.Type.VARIANT)
+	register_field(":character_class", Wire.Type.VARIANT)
 	
 	
 	# Stat fields are registered at run-time.
 	#register_field("AbilitySystemComponent/AttributesMirror:health",       WIRE_F32)
-	#...
-
 
 
 static func reset() -> void:
@@ -48,7 +40,7 @@ static func reset() -> void:
 
 
 ## Register (or fetch) a field. If path exists, updates type if provided (>0).
-static func register_field(path: String, wire_type: int = WIRE_VARIANT) -> int:
+static func register_field(path: String, wire_type: Wire.Type = Wire.Type.VARIANT) -> int:
 	var id: int = _path_to_id.get(path, 0)
 	if id == 0:
 		id = _next_id
@@ -60,7 +52,7 @@ static func register_field(path: String, wire_type: int = WIRE_VARIANT) -> int:
 		_id_to_nodepath.erase(id)
 		_version += 1
 	else:
-		if wire_type != WIRE_VARIANT and _id_to_type.get(id, WIRE_VARIANT) != wire_type:
+		if wire_type != Wire.Type.VARIANT and _id_to_type.get(id, Wire.Type.VARIANT) != wire_type:
 			_id_to_type[id] = wire_type
 			_version += 1
 	return id
@@ -71,7 +63,7 @@ static func ensure_id(path: String) -> int:
 	#print_debug(path, existing)
 	if existing != 0:
 		return existing
-	return register_field(path, _id_to_type.get(existing, WIRE_VARIANT))
+	return register_field(path, _id_to_type.get(existing, Wire.Type.VARIANT))
 
 
 static func id_of(path: String) -> int:
@@ -96,7 +88,7 @@ static func nodepath_of(id: int) -> NodePath:
 
 
 static func type_of(id: int) -> int:
-	return _id_to_type.get(id, WIRE_VARIANT)
+	return _id_to_type.get(id, Wire.Type.VARIANT)
 
 
 static func version() -> int:
@@ -107,7 +99,7 @@ static func version() -> int:
 static func get_full_map_updates() -> Array:
 	var out: Array = []
 	for id in _id_to_path.keys():
-		out.append([int(id), _id_to_path[id], _id_to_type.get(id, WIRE_VARIANT)])
+		out.append([int(id), _id_to_path[id], _id_to_type.get(id, Wire.Type.VARIANT)])
 	return out
 
 
