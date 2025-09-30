@@ -147,7 +147,7 @@ func on_props_delta(bytes: PackedByteArray) -> void:
 		_pending_prop_blocks.append(bytes)
 		return
 
-	# Order matters: spawns → ops → pairs → despawns
+	# Apply order: spawns → ops_named → pairs → despawns
 	cont.apply_spawns(msg.get("spawns", []))
 	cont.apply_ops_named(msg.get("ops_named", []))
 	cont.apply_pairs(msg.get("pairs", []))

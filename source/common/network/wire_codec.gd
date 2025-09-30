@@ -267,6 +267,8 @@ static func decode_bootstrap(data: PackedByteArray) -> Dictionary:
 
 
 #region container
+## Encode order is not the client apply order.
+## Client applies props in: spawns → ops_named → pairs → despawns.
 static func encode_container_block_named(eid: int, spawns: Array, pairs: Array, despawns: Array, ops_named: Array) -> PackedByteArray:
 	var spb := _new_buff()
 	spb.put_u32(eid)
@@ -303,6 +305,8 @@ static func encode_container_block_named(eid: int, spawns: Array, pairs: Array, 
 	return spb.data_array
 
 
+## Encode order is not the client apply order.
+## Client applies props in: spawns → ops_named → pairs → despawns.
 static func decode_container_block_named(data: PackedByteArray) -> Dictionary:
 	var spb := _from_bytes(data)
 
