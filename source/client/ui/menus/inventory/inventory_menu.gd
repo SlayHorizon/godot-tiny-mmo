@@ -49,8 +49,29 @@ func add_item(item_id: int, item_data: Dictionary) -> void:
 	var inventory_slot: InventorySlot = InventorySlot.new()
 	
 	var new_button: Button = Button.new()
-	new_button.custom_minimum_size = Vector2(64, 64)
+	
+	new_button.custom_minimum_size = Vector2(62, 62)
+	
+	new_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	new_button.expand_icon = true
+	
+	# Calcul the should be size of the icon
+	# If we don't want to have blrurry pixel art
+	var sb: StyleBox = BetterThemeDB.theme.get_stylebox(&"normal", &"Button")
+	var content_margin: Vector2i = Vector2i(
+		sb.get_content_margin(SIDE_LEFT) + sb.get_content_margin(SIDE_RIGHT),
+		sb.get_content_margin(SIDE_TOP) +  sb.get_content_margin(SIDE_BOTTOM),
+	)
+	var available_size: Vector2i = Vector2i(new_button.custom_minimum_size) - content_margin
+	var item_icon_size: Vector2i = item.item_icon.get_size()
+
+	var final_size: Vector2i = (available_size - item_icon_size).snapped(item_icon_size)
+	
+	new_button.add_theme_constant_override(
+			&"icon_max_width",
+			final_size[final_size.min_axis_index()]
+			)
+	
 	new_button.icon = item.item_icon
 	new_button.pressed.connect(
 		_on_item_slot_button_pressed.bind(inventory_slot)

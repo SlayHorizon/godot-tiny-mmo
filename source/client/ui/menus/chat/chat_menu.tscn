@@ -2,8 +2,25 @@
 
 [ext_resource type="Script" uid="uid://678x32kmrkb5" path="res://source/client/ui/menus/chat/chat_menu.gd" id="1_hxcw4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nl2eg"]
-bg_color = Color(0.180392, 0.180392, 0.180392, 0.839216)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_14md2"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.0767404, 0.139002, 0.199102, 0.834)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.156235, 0.282157, 0.307826, 1)
+border_blend = true
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 6
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="Gradient" id="Gradient_s6uxj"]
 colors = PackedColorArray(0, 0, 0, 0.678431, 0.137255, 0.137255, 0.137255, 0.529412)
@@ -62,11 +79,13 @@ mouse_filter = 0
 custom_minimum_size = Vector2(300, 125)
 layout_mode = 2
 mouse_filter = 1
-theme_override_styles/normal = SubResource("StyleBoxFlat_nl2eg")
+theme_override_styles/normal = SubResource("StyleBoxFlat_14md2")
 bbcode_enabled = true
+scroll_following = true
 
 [node name="MessageEdit" type="LineEdit" parent="PeekFeed"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_14md2")
 placeholder_text = "Enter your message here"
 
 [node name="FadeOutTimer" type="Timer" parent="PeekFeed"]
