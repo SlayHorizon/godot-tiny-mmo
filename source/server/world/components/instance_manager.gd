@@ -27,7 +27,7 @@ func start_instance_manager() -> void:
 	add_sibling(timer)
 
 func setup_global_commands_and_roles() -> void:
-	var files: PackedStringArray = FileUtils.get_all_file_at(GLOBAL_COMMANDS_PATH)
+	var files: PackedStringArray = FileUtils.get_all_file_at(GLOBAL_COMMANDS_PATH, "*.gd")
 	if files.is_empty():
 		return
 	
@@ -133,7 +133,7 @@ func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
 func set_instance_collection() -> void:
 	var default_instance: InstanceResource
 	
-	for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH):
+	for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH, "*.tres"):
 		print(file_path)
 	#for file_path: String in ResourceLoader.list_directory(INSTANCE_COLLECTION_PATH):
 		#print(INSTANCE_COLLECTION_PATH + file_path)
