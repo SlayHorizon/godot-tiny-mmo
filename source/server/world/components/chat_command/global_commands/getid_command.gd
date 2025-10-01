@@ -1,6 +1,11 @@
 extends ChatCommand
 
 
+func _init():
+	command_name = 'getid'
+	command_priority = 0
+
+
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
 	if args.size() == 2:
 		match args[1]:

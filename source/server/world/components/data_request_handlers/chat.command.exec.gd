@@ -6,13 +6,13 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	var command_name: String = "/" + args.get("cmd", "")
+	var command_name: String = args.get("cmd", "")
 	if command_name.is_empty():
 		return {}
 	
 	var result: String
 	var chat_command: ChatCommand = find_command(command_name, instance)
-	if chat_command and has_command_permission(command_name, peer_id, instance):
+	if chat_command and has_command_permission(chat_command, peer_id, instance):
 		result = chat_command.execute(
 			args.get("params", []),
 			peer_id,
@@ -29,46 +29,35 @@ func data_request_handler(
 
 
 func find_command(command_name: String, instance: ServerInstance) -> ChatCommand:
-	if instance.local_chat_commands.has(command_name):
-		return instance.local_chat_commands.get(command_name)
-	return instance.global_chat_commands.get(command_name)
+	var command_list = instance.global_chat_commands
+	if command_name in command_list:
+		return command_list[command_name]
+
+	# Alias checking
+	for command: ChatCommand in command_list.values():
+		if command.command_alias.has(command_name):
+			return command
+
+	return null
 
 
-# Can be refactored to be more efficient?
 func has_command_permission(
-	command_name: String,
+	command: ChatCommand,
 	peer_id: int,
 	instance: ServerInstance
 ) -> bool:
 	var player: PlayerResource = instance.world_server.connected_players.get(peer_id)
 	if not player:
 		return false
-	
+
 	# Check if command is possible by default.
-	# Check in current instance.
-	var default_role_data: Dictionary = instance.local_role_definitions.get("default", {})
-	if default_role_data and command_name in default_role_data.get("commands", []):
+	if command.command_priority <= 0:
 		return true
 	
-	# Check server-wide.
-	default_role_data = instance.global_role_definitions.get("default", {})
-	if default_role_data and command_name in default_role_data.get("commands", []):
-		return true
-	
-	# Check if player has roles in current instance.
-	for role: String in instance.local_role_assignments.get(peer_id, []):
-		var role_data: Dictionary = instance.local_role_definitions.get(role)
-		if role_data and command_name in role_data.get("commands", []):
+	var player_roles: Dictionary = player.server_roles
+	for role in player_roles:
+		var role_data = instance.global_role_definitions[role]
+		if command.command_priority <= role_data.get('priority', 0):
 			return true
-		# Check if role is defined locally.
-		if instance.local_role_definitions.has(role) and instance.local_role_definitions[role].has("commands"):
-			# Check if roole has permission.
-			if instance.local_role_definitions[role]["commands"].has(command_name):
-				return true
-	
-	# Same but for server-wide roles.
-	for role: String in player.server_roles:
-		var role_data: Dictionary = instance.global_role_definitions.get(role)
-		if role_data and command_name in role_data.get("commands", []):
-			return true
+
 	return false

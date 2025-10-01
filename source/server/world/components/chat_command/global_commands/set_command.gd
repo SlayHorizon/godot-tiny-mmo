@@ -1,6 +1,11 @@
 extends ChatCommand
 
 
+func _init():
+	command_name = 'set'
+	command_priority = 100
+
+
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
 	if args.size() != 4:
 		return "Invalid command format: /set <target> <path> <value>"
