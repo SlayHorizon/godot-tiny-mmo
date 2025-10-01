@@ -31,8 +31,6 @@ func _on_connection_succeeded() -> void:
 
 func _on_connection_failed() -> void:
 	print("Failed to connect to the MasterServer as WorldServer.")
-	#Try to reconnect
-	get_tree().create_timer(5.0).timeout.connect(start_client)
 
 
 func _on_server_disconnected() -> void:
