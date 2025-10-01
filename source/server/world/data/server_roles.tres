@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ServerRoles" load_steps=2 format=3 uid="uid://dvqbph1xfjbuj"]
+
+[ext_resource type="Script" uid="uid://c8vk2auuxjodx" path="res://source/server/world/data/server_roles.gd" id="1_rm64p"]
+
+[resource]
+script = ExtResource("1_rm64p")
+roles = Dictionary[String, Dictionary]({
+"admin": {
+"commands": [],
+"priority": 2
+},
+"default": {
+"commands": [],
+"priority": 0
+},
+"moderator": {
+"commands": [],
+"priority": 1
+},
+"senior_admin": {
+"commands": [],
+"priority": 100
+}
+})
+metadata/_custom_type_script = "uid://c8vk2auuxjodx"
