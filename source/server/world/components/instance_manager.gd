@@ -3,6 +3,7 @@ extends SubViewportContainer
 
 
 const INSTANCE_COLLECTION_PATH: String = "res://source/common/gameplay/maps/instance/instance_collection/"
+const GLOBAL_COMMANDS_PATH: String = "res://source/server/world/components/chat_command/global_commands/"
 
 var loading_instances: Dictionary[InstanceResource, ServerInstance]
 var instance_collection: Array[InstanceResource]
@@ -13,8 +14,8 @@ var instance_collection: Array[InstanceResource]
 func start_instance_manager() -> void:
 	ServerInstance.world_server = world_server
 	
-	configure_global_roles_and_commands()
-	
+	setup_global_commands_and_roles()
+
 	set_instance_collection.call_deferred()
 	
 	# Timer which will call unload_unused_instances
@@ -25,33 +26,27 @@ func start_instance_manager() -> void:
 	timer.timeout.connect(unload_unused_instances)
 	add_sibling(timer)
 
+func setup_global_commands_and_roles() -> void:
+	var files: PackedStringArray = FileUtils.get_all_file_at(GLOBAL_COMMANDS_PATH)
+	if files.is_empty():
+		return
+	
+	var commands := ServerInstance.global_chat_commands
+	for file_path: String in files:
+		var command = load(file_path).new()
+		commands.set(command.command_name, command)
 
-func configure_global_roles_and_commands() -> void:
-	ServerInstance.global_chat_commands = {
-		"/heal" = load("res://source/server/world/components/chat_command/heal_command.gd").new(),
-		"/size" = load("res://source/server/world/components/chat_command/size_command.gd").new(),
-		"/getid" = load("res://source/server/world/components/chat_command/getid_command.gd").new(),
-		"/help" = load("res://source/server/world/components/chat_command/help_command.gd").new(),
-		"/set" = load("res://source/server/world/components/chat_command/set_command.gd").new()
-	}
-	
-	ServerInstance.global_role_definitions = {
-		"senior_admin": {
-			"commands": ["/heal", "/size", "/set"],
-			"priority": 5,
-		},
-		"moderator": {
-			"commands": ["/heal", "/size"],
-			"priority": 1,
-			},
-		"default": {
-			"commands": ["/help", "/getid"]
-		}
-	}
-	
-	if OS.has_feature("debug") or OS.has_feature("editor"):
-		ServerInstance.global_chat_commands["/selfadmin"] = load("res://source/server/world/components/chat_command/selfadmin_command.gd").new()
-		ServerInstance.global_role_definitions["default"]["commands"].append("/selfadmin")
+	var roles := ServerInstance.global_role_definitions
+	for role: String in roles:
+		var role_data: Dictionary = roles[role]
+		var role_commands: Array
+		
+		for command_name: String in commands:
+			var command = commands[command_name]
+			if command.command_priority <= role_data.get("priority", 0):
+				role_commands.append(command_name)
+
+		role_data['commands'] = role_commands
 
 
 @rpc("authority", "call_remote", "reliable", 0)

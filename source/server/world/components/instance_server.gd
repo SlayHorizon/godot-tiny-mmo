@@ -9,7 +9,7 @@ const PLAYER: PackedScene = preload("res://source/common/gameplay/characters/pla
 static var world_server: WorldServer
 
 static var global_chat_commands: Dictionary[String, ChatCommand]
-static var global_role_definitions: Dictionary[String, Dictionary]
+static var global_role_definitions: Dictionary[String, Dictionary] = preload("res://source/server/world/data/server_roles.tres").get_roles()
 
 var local_chat_commands: Dictionary[String, ChatCommand]
 var local_role_definitions: Dictionary[String, Dictionary]

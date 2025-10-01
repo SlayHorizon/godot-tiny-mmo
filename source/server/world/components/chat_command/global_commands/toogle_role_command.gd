@@ -1,6 +1,11 @@
 extends ChatCommand
 
 
+func _init():
+	command_name = 'toggle'
+	command_priority = 2
+
+
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
 	if not args.size() == 3:
 		return "Format <role> <active/desactivate>"
