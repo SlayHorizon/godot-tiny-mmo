@@ -27,6 +27,10 @@
 [node name="Overworld" type="Node2D" node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
 script = ExtResource("1_i04l1")
+aoi_mode = 1
+aoi_cell_size = Vector2i(220, 220)
+aoi_visible_radius_cells = 1
+aoi_test_point = Vector2(900, 0)
 replicated_props_container = NodePath("ReplicatedPropsContainer")
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
