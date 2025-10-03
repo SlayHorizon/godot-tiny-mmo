@@ -48,6 +48,7 @@ func _process(delta: float) -> void:
 
 	if _accum_ent >= eint:
 		_accum_ent = fmod(_accum_ent, eint)
+		_update_zones_one_shot()
 		_send_entity_deltas_one_shot()
 
 	if _accum_props >= pint:
@@ -395,3 +396,191 @@ func _aoi_entities_for(peer_id: int) -> Array:
 			return out
 		_:
 			return entities.keys()
+
+
+
+# --- Zoning (server)
+var _zone_cell_size: Vector2i = Vector2i(64, 64)
+var _zone_origin_ws: Vector2 = Vector2.ZERO  # world-space anchor for cell (0,0)
+var _zone_cols: int = 0
+var _zone_rows: int = 0
+var _zone_default_flags: int = 0
+var _zone_grid: PackedInt32Array = PackedInt32Array()
+
+var _eid_zone_cell_idx: Dictionary[int, int] = {}   # eid -> linear cell index
+var _eid_zone_flags: Dictionary[int, int] = {}      # eid -> packed flags (mode+modifiers)
+var _eid_zone_last_change_ms: Dictionary[int, int] = {}  # hysteresis
+var _zone_hysteresis_ms: int = 300
+
+func init_zones_from_map(map: Map) -> void:
+	var data: Dictionary = map.get_zone_authoring_data()
+
+	_zone_cell_size = data.get("zone_cell_size", Vector2i(64, 64))
+	_zone_origin_ws = Vector2(data.get("zone_origin", Vector2i.ZERO))
+
+	# Pack defaults into our int flags: bit 0 = PVP (1), 0 = SAFE; bits 1.. = modifiers
+	var is_pvp: bool = (int(data.get("default_mode", Map.ZoneMode.SAFE)) == Map.ZoneMode.PVP)
+	var mods: int = int(data.get("default_modifiers", 0))
+	_zone_default_flags = (1 if is_pvp else 0) | (mods << 1)
+
+	_build_zone_grid_from_authoring(data)  # fills _zone_grid/_zone_cols/_zone_rows
+
+
+func _build_zone_grid_from_authoring(data: Dictionary) -> void:
+	var patches: Array = data.get("patches", [])
+	# If no patches: trivial — one cell using defaults; we won’t even look it up later.
+	if patches.is_empty():
+		_zone_cols = 1
+		_zone_rows = 1
+		_zone_grid = PackedInt32Array([_zone_default_flags])
+		return
+
+	# Compute tight bounds from all polygons (AABB in 2D).
+	var first: bool = true
+	var minp: Vector2 = Vector2.ZERO
+	var maxp: Vector2 = Vector2.ZERO
+	for p_any in patches:
+		var polys: Array = Dictionary(p_any).get("polygons_world", [])
+		for poly_any in polys:
+			var poly: PackedVector2Array = poly_any
+			for v in poly:
+				var pt: Vector2 = v
+				if first:
+					minp = pt; maxp = pt; first = false
+				else:
+					minp.x = min(minp.x, pt.x); minp.y = min(minp.y, pt.y)
+					maxp.x = max(maxp.x, pt.x); maxp.y = max(maxp.y, pt.y)
+
+	# Align bounds to our cell grid anchored at _zone_origin_ws
+	var cs: Vector2 = Vector2(_zone_cell_size)
+	var rel_min: Vector2 = (minp - _zone_origin_ws) / cs
+	var rel_max: Vector2 = (maxp - _zone_origin_ws) / cs
+	var cell_min: Vector2i = Vector2i(floor(rel_min.x), floor(rel_min.y))
+	var cell_max: Vector2i = Vector2i(ceil(rel_max.x),  ceil(rel_max.y))
+
+	_zone_cols = max(1, cell_max.x - cell_min.x)
+	_zone_rows = max(1, cell_max.y - cell_min.y)
+	_zone_grid.resize(_zone_cols * _zone_rows)
+	for i in _zone_grid.size():
+		_zone_grid[i] = _zone_default_flags
+
+	# This is the world-space origin of cell (0,0) in our raster box.
+	_zone_origin_ws = _zone_origin_ws + Vector2(cell_min * _zone_cell_size)
+
+	# Sort patches by priority (low→high), later wins.
+	patches.sort_custom(func(a, b):
+		return int(Dictionary(a).get("priority", 0)) < int(Dictionary(b).get("priority", 0))
+	)
+
+	# Paint each patch: center-in-poly; SAFE bias on borders (all 4 corners must be inside for PVP flip).
+	for p_any in patches:
+		var p: Dictionary = p_any
+		var mode_ov: int = int(p.get("mode_override", 0)) # INHERIT=0, SAFE=1, PVP=2
+		var add_mod: int = int(p.get("add_modifiers", 0))
+		var rem_mod: int = int(p.get("remove_modifiers", 0))
+		var polys: Array = p.get("polygons_world", [])
+
+		# Per polygon piece
+		for poly_any in polys:
+			var poly: PackedVector2Array = poly_any
+			# Coarse cell AABB for this poly
+			var poly_min: Vector2 = poly[0]
+			var poly_max: Vector2 = poly[0]
+			for v in poly:
+				poly_min.x = min(poly_min.x, v.x); poly_min.y = min(poly_min.y, v.y)
+				poly_max.x = max(poly_max.x, v.x); poly_max.y = max(poly_max.y, v.y)
+			var cmin: Vector2i = _ws_pos_to_local_cell(poly_min)
+			var cmax: Vector2i = _ws_pos_to_local_cell(poly_max)
+			# expand one cell to be safe
+			cmin.x = clamp(cmin.x - 1, 0, _zone_cols - 1)
+			cmin.y = clamp(cmin.y - 1, 0, _zone_rows - 1)
+			cmax.x = clamp(cmax.x + 1, 0, _zone_cols - 1)
+			cmax.y = clamp(cmax.y + 1, 0, _zone_rows - 1)
+
+			for cy in range(cmin.y, cmax.y + 1):
+				for cx in range(cmin.x, cmax.x + 1):
+					var idx: int = cy * _zone_cols + cx
+					var center: Vector2 = _cell_center_ws(cx, cy)
+					var in_center: bool = Geometry2D.is_point_in_polygon(center, poly)
+					if not in_center:
+						continue
+
+					var prev: int = _zone_grid[idx]
+					var cur_pvp: bool = (prev & 1) == 1
+					var cur_mods: int = prev >> 1
+
+					# Compute wanted mode/mods after override/add/remove
+					var want_pvp: bool = cur_pvp
+					if mode_ov == 1:     # SAFE
+						want_pvp = false
+					elif mode_ov == 2:   # PVP
+						# SAFE bias: require all four corners inside to switch to PVP
+						var half: Vector2 = cs * 0.5
+						var tl: Vector2 = center + Vector2(-half.x, -half.y)
+						var tr: Vector2 = center + Vector2( half.x, -half.y)
+						var br: Vector2 = center + Vector2( half.x,  half.y)
+						var bl: Vector2 = center + Vector2(-half.x,  half.y)
+						var all_inside: bool = (
+							Geometry2D.is_point_in_polygon(tl, poly)
+							and Geometry2D.is_point_in_polygon(tr, poly)
+							and Geometry2D.is_point_in_polygon(br, poly)
+							and Geometry2D.is_point_in_polygon(bl, poly)
+						)
+						if all_inside:
+							want_pvp = true
+					# modifiers: add then remove
+					var want_mods: int = (cur_mods | add_mod) & (~rem_mod)
+
+					_zone_grid[idx] = (1 if want_pvp else 0) | (want_mods << 1)
+
+func _ws_pos_to_local_cell(ws: Vector2) -> Vector2i:
+	var rel: Vector2 = (ws - _zone_origin_ws) / Vector2(_zone_cell_size)
+	return Vector2i(int(floor(rel.x)), int(floor(rel.y)))
+
+func _cell_center_ws(cx: int, cy: int) -> Vector2:
+	var base: Vector2 = _zone_origin_ws + Vector2(cx * _zone_cell_size.x, cy * _zone_cell_size.y)
+	return base + Vector2(_zone_cell_size) * 0.5
+
+
+func _update_zones_one_shot() -> void:
+	# If there’s effectively no grid (interior with no patches), nothing to do; everyone uses defaults in validators.
+	if _zone_grid.is_empty() or peers.is_empty():
+		return
+
+	var now_ms: int = Time.get_ticks_msec()
+	for eid: int in entities.keys():
+		var pos: Vector2 = _eid_position(eid)
+		# Convert to raster-local cell (clamped)
+		var rel: Vector2 = (pos - _zone_origin_ws) / Vector2(_zone_cell_size)
+		var cx: int = clamp(int(floor(rel.x)), 0, _zone_cols - 1)
+		var cy: int = clamp(int(floor(rel.y)), 0, _zone_rows - 1)
+		var idx: int = cy * _zone_cols + cx
+
+		var last_idx: int = _eid_zone_cell_idx.get(eid, -1)
+		if idx == last_idx:
+			continue
+
+		var new_flags: int = _zone_grid[idx]
+		var old_flags: int = _eid_zone_flags.get(eid, _zone_default_flags)
+
+		# Hysteresis only when flipping SAFE <-> PVP (bit 0)
+		var old_pvp: bool = (old_flags & 1) == 1
+		var new_pvp: bool = (new_flags & 1) == 1
+		if old_pvp != new_pvp:
+			var last_ms: int = _eid_zone_last_change_ms.get(eid, 0)
+			if now_ms - last_ms < _zone_hysteresis_ms:
+				# still within grace; skip this flip
+				continue
+			_eid_zone_last_change_ms[eid] = now_ms
+
+		_eid_zone_cell_idx[eid] = idx
+		_eid_zone_flags[eid] = new_flags
+
+		# Notify owner with minimal UI state (server-authoritative fields)
+		entities[eid].root_node.zone_flags = new_flags
+		
+		#print((new_flags & 1) != 0)
+		var pairs: Array = [
+			[PathRegistry.id_of(":zone_flags"), new_flags],
+		]
+		send_correction_to_owner(eid, pairs)

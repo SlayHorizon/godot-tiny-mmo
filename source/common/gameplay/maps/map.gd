@@ -34,9 +34,12 @@ enum ZoneModifiers {
 @export var aoi_origin: Vector2i = Vector2i.ZERO
 @export var aoi_test_point := Vector2.ZERO
 
-@export_group("Default Zone")
+@export_group("Zones")
 @export var default_mode: ZoneMode = ZoneMode.SAFE
 @export_flags("NO_SKILL", "NO_CONSUMABLES", "NO_MOUNT", "NO_SUMMONS") var default_modifiers: int = 0
+# Zoning grid (independent from AOI)
+@export var zone_cell_size: Vector2i = Vector2i(64, 64)
+@export var zone_origin: Vector2i = Vector2i.ZERO
 
 @export_group("")
 @export var replicated_props_container: ReplicatedPropsContainer
@@ -138,6 +141,7 @@ func _draw_aoi_preview() -> void:
 
 	# Origin crosshair
 	_draw_cross(origin_v, Color(1, 1, 0, 0.9), 10.0 * px, max(1.0, 2.0 * px))
+	_draw_cross(p, Color(1, 1, 0, 0.9), 10.0 * px, max(1.0, 2.0 * px))
 
 
 func _snap_floor_to_cell(v: float, cell: int, origin: int) -> float:
@@ -177,3 +181,53 @@ func _draw_dashed_line(a: Vector2, b: Vector2, color: Color, width: float, step:
 func _draw_cross(c: Vector2, color: Color, size: float, width: float) -> void:
 	draw_line(c + Vector2(-size, 0.0), c + Vector2(size, 0.0), color, width, true)
 	draw_line(c + Vector2(0.0, -size), c + Vector2(0.0, size), color, width, true)
+
+
+# Returns defaults + every ZonePatch2D polygon in MAP space.
+# This is the only thing SSM needs at startup to build a zone grid.
+func get_zone_authoring_data() -> Dictionary:
+	var patches: Array = []
+	var nodes: Array[Node] = find_children("*", "ZonePatch2D", true)
+
+	for n: Node in nodes:
+		var z: ZonePatch2D = n as ZonePatch2D
+		if not z.enabled:
+			continue
+
+		var payload: Dictionary = z.get_bake_payload()  # local polys + z.global_transform
+		var polys_local: Array = payload.get("polygons_local", [])
+		var xf: Transform2D = payload.get("global_transform", Transform2D.IDENTITY)
+
+		var polys_world: Array[PackedVector2Array] = _polys_local_to_world(polys_local, xf)
+
+		patches.append({
+			"name_id": z.name_id,
+			"priority": z.priority,
+			"mode_override": z.mode_override,
+			"add_modifiers": z.add_modifiers,
+			"remove_modifiers": z.remove_modifiers,
+			"polygons_world": polys_world,
+		})
+
+	return {
+		"default_mode": default_mode,
+		"default_modifiers": default_modifiers,
+		"zone_cell_size": zone_cell_size,
+		"zone_origin": zone_origin,
+		"patches": patches,
+	}
+
+# Utility: convert a list of local-space polygons to map-space using a transform.
+func _polys_local_to_world(polys_local: Array, xf: Transform2D) -> Array[PackedVector2Array]:
+	var out: Array[PackedVector2Array] = []
+	for pl_any in polys_local:
+		var pl: PackedVector2Array = pl_any
+		var n: int = pl.size()
+		if n < 3:
+			continue
+		var pw: PackedVector2Array = PackedVector2Array()
+		pw.resize(n)
+		for i in n:
+			pw[i] = xf * pl[i]
+		out.append(pw)
+	return out

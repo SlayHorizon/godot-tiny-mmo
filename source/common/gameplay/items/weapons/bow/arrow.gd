@@ -38,6 +38,10 @@ func _physics_process(delta: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body == source or not body.has_node(^"AbilitySystemComponent"):
 		return
+	
+	if not body.is_pvp():
+		return
+	
 	var asc: AbilitySystemComponent = body.get_node(^"AbilitySystemComponent")
 	var burn := BurnDotEffect.new()
 	burn.name_id = &"RedBuffBurn"

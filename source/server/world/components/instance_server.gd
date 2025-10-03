@@ -40,6 +40,7 @@ func _ready() -> void:
 	
 	synchronizer_manager = StateSynchronizerManagerServer.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
+	synchronizer_manager.init_zones_from_map(instance_map)
 	
 	add_child(synchronizer_manager, true)
 
