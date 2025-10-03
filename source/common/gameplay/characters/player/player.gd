@@ -7,7 +7,11 @@ var player_resource: PlayerResource
 var display_name: String = "Unknown":
 	set = _set_display_name
 
-var is_in_pvp_zone: bool = false
+var zone_flags: int = 0
+func is_pvp() -> bool: return (zone_flags & 1) != 0
+func has_modifier(mod: int) -> bool:
+	var mask: int = 1 << (1 + mod)
+	return (zone_flags & mask) != 0
 var just_teleported: bool = false:
 	set(value):
 		just_teleported = value

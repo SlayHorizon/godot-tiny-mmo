@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://c4nf240jpebhj"]
+[gd_scene load_steps=25 format=4 uid="uid://c4nf240jpebhj"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_i04l1"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_ulyvq"]
@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/common/gameplay/maps/props/ground_button/ground_button.tscn" id="21_plgjc"]
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.tscn" id="22_na1pl"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/npc.tscn" id="22_slgwh"]
+[ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="24_slgwh"]
 
 [node name="Overworld" type="Node2D" node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -30,12 +31,15 @@ script = ExtResource("1_i04l1")
 aoi_mode = 1
 aoi_cell_size = Vector2i(220, 220)
 aoi_visible_radius_cells = 1
+preview_aoi = false
 aoi_test_point = Vector2(900, 0)
 replicated_props_container = NodePath("ReplicatedPropsContainer")
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
 [node name="World_tiles" type="Node2D" parent="."]
 y_sort_enabled = true
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
 
 [node name="Ground" type="TileMapLayer" parent="World_tiles"]
 z_index = -1
@@ -54,6 +58,8 @@ tile_set = ExtResource("2_ulyvq")
 
 [node name="Buildings" type="Node2D" parent="."]
 y_sort_enabled = true
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
 
 [node name="Mining_vending" parent="Buildings" instance=ExtResource("8_tuoay")]
 position = Vector2(819, -363)
@@ -94,12 +100,12 @@ scale = Vector2(1.56002, 1)
 target_instance = ExtResource("11_1n3md")
 warper_id = 1
 
-[node name="Shop_entrance" parent="." instance=ExtResource("9_vhwke")]
+[node name="ShopEntrance" parent="." instance=ExtResource("9_vhwke")]
 position = Vector2(1288, 531)
 target_instance = ExtResource("12_bs6wx")
 warper_id = 2
 
-[node name="Guild_Entrance" parent="." instance=ExtResource("9_vhwke")]
+[node name="GuildEntrance" parent="." instance=ExtResource("9_vhwke")]
 position = Vector2(852, 759)
 scale = Vector2(1.79998, 1)
 target_instance = ExtResource("13_u3weo")
@@ -117,13 +123,13 @@ target_instance = ExtResource("13_8qr6v")
 warper_id = 5
 target_id = 1
 
-[node name="Cave_entrance" parent="." instance=ExtResource("9_vhwke")]
+[node name="CaveEntrance" parent="." instance=ExtResource("9_vhwke")]
 position = Vector2(632, -390)
 scale = Vector2(1.6, 1)
 target_instance = ExtResource("15_6ybks")
 warper_id = 6
 
-[node name="Spar_house_entrance" parent="." instance=ExtResource("9_vhwke")]
+[node name="SparHouseEntrance" parent="." instance=ExtResource("9_vhwke")]
 position = Vector2(248, 917)
 target_instance = ExtResource("18_6ybks")
 warper_id = 7
@@ -225,3 +231,29 @@ position = Vector2(760, 928)
 
 [node name="ActivableDoor6" parent="Traps" instance=ExtResource("22_na1pl")]
 position = Vector2(760, 896)
+
+[node name="ZonePatch2D" type="Node2D" parent="."]
+z_index = 2
+script = ExtResource("24_slgwh")
+mode_override = 2
+auto_tint = false
+debug_tint = Color(0.788, 0, 0, 0.425)
+metadata/_edit_group_ = true
+
+[node name="Polygon2D" type="Polygon2D" parent="ZonePatch2D"]
+color = Color(0.788, 0, 0, 0.425)
+polygon = PackedVector2Array(1118, -312, 1248, -446, 2056, -561, 2530, -138, 2607, 156, 2222, 560, 1749, 797, 1528, 693, 1281, 264, 1087, 190)
+uv = PackedVector2Array(1118, -312, 1248, -446, 2056, -561, 2530, -138, 2607, 156, 2222, 560, 1749, 797, 1528, 693, 1281, 264, 1087, 190)
+
+[node name="Polygon2D2" type="Polygon2D" parent="ZonePatch2D"]
+color = Color(0.788, 0, 0, 0.425)
+polygon = PackedVector2Array(576, 960, 768, 960, 768, 1088, 576, 1088)
+
+[node name="Label" type="Label" parent="."]
+z_index = 10
+z_as_relative = false
+offset_left = 584.0
+offset_top = 968.0
+offset_right = 700.0
+offset_bottom = 989.0
+text = "PVP ZONE TEST"
