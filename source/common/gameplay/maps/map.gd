@@ -186,8 +186,8 @@ func _draw_cross(c: Vector2, color: Color, size: float, width: float) -> void:
 # Returns defaults + every ZonePatch2D polygon in MAP space.
 # This is the only thing SSM needs at startup to build a zone grid.
 func get_zone_authoring_data() -> Dictionary:
-	var patches: Array = []
-	var nodes: Array[Node] = find_children("*", "ZonePatch2D", true)
+	var patches: Array
+	var nodes: Array[Node] = find_children("*", "ZonePatch2D", false)
 
 	for n: Node in nodes:
 		var z: ZonePatch2D = n as ZonePatch2D

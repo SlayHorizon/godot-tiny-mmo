@@ -478,7 +478,7 @@ func _build_zone_grid_from_authoring(data: Dictionary) -> void:
 		var mode_ov: int = int(p.get("mode_override", 0)) # INHERIT=0, SAFE=1, PVP=2
 		var add_mod: int = int(p.get("add_modifiers", 0))
 		var rem_mod: int = int(p.get("remove_modifiers", 0))
-		var polys: Array = p.get("polygons_world", [])
+		var polys: Array = p.get("polygons", [])
 
 		# Per polygon piece
 		for poly_any in polys:
