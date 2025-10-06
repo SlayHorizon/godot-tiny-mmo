@@ -39,7 +39,6 @@ enum ZoneModifiers {
 @export_flags("NO_SKILL", "NO_CONSUMABLES", "NO_MOUNT", "NO_SUMMONS") var default_modifiers: int = 0
 # Zoning grid (independent from AOI)
 @export var zone_cell_size: Vector2i = Vector2i(64, 64)
-@export var zone_origin: Vector2i = Vector2i.ZERO
 
 @export_group("")
 @export var replicated_props_container: ReplicatedPropsContainer
@@ -199,6 +198,5 @@ func get_zone_authoring_data() -> Dictionary:
 		"default_mode": default_mode,
 		"default_modifiers": default_modifiers,
 		"zone_cell_size": zone_cell_size,
-		"zone_origin": zone_origin,
 		"patches": patches,
 	}

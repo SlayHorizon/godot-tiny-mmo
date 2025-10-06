@@ -48,7 +48,7 @@ func _process(delta: float) -> void:
 
 	if _accum_ent >= eint:
 		_accum_ent = fmod(_accum_ent, eint)
-		_update_zones_one_shot()
+		update_zones_one_shot()
 		_send_entity_deltas_one_shot()
 
 	if _accum_props >= pint:
@@ -402,29 +402,25 @@ func _aoi_entities_for(peer_id: int) -> Array:
 # Zoning (server)
 var zone_cells: Dictionary[Vector2i, int]
 var zone_cell_size: Vector2i = Vector2i(64, 64)
-var _zone_origin_ws: Vector2 = Vector2.ZERO # world-space anchor for cell (0,0)
-var _zone_default_flags: int = 0
+var zone_default_flags: int = 0
 
-var _eid_zone_cell_idx: Dictionary[int, Vector2i] # eid -> linear cell index
-var _eid_zone_flags: Dictionary[int, int] # eid -> packed flags (mode+modifiers)
-var _eid_zone_last_change_ms: Dictionary[int, int] # hysteresis
-var _zone_hysteresis_ms: int = 300
+var eid_zone_last_change_ms: Dictionary[int, int]
+var zone_hysteresis_ms: int = 500
 
 func init_zones_from_map(map: Map) -> void:
 	var data: Dictionary = map.get_zone_authoring_data()
 
 	zone_cell_size = data.get("zone_cell_size", Vector2i(64, 64))
-	_zone_origin_ws = Vector2(data.get("zone_origin", Vector2i.ZERO))
 
 	var mods: int = data.get("default_modifiers", 0)
-	_zone_default_flags = data.get("default_mode", Map.ZoneMode.SAFE) | (mods << 1)
+	zone_default_flags = data.get("default_mode", Map.ZoneMode.SAFE) | (mods << 1)
 
 	build_zone_grid(data)
 
 
 func build_zone_grid(data: Dictionary) -> void:
 	var patches: Array = data.get("patches", [])
-	(patches as Array).sort_custom(
+	patches.sort_custom(
 		func(a: Dictionary, b: Dictionary):
 			return a.get("priority", 0) < b.get("priority", 0)
 	)
@@ -433,70 +429,68 @@ func build_zone_grid(data: Dictionary) -> void:
 		var add_modifiers: int = patch.get("add_modifiers", 0)
 		var remove_modifiers: int = patch.get("remove_modifiers", 0)
 		for polygon: PackedVector2Array in patch.get("polygons", []):
-			var rect: Rect2i = Rect2i(
-				polygon[0],# as Vector2i - zone_cell_size).snapped(zone_cell_size),
-				Vector2i.ZERO
-			)
-			for vertice: Vector2i in polygon:
-				rect = rect.expand(vertice)
-			for cell_y: int in range(rect.position.y, rect.position.y + rect.size.y, zone_cell_size.y):
-				for cell_x: int in range(rect.position.x, rect.position.x + rect.size.x, zone_cell_size.x):
-					var cell_position: Vector2i = Vector2i(cell_x, cell_y)
-					var cell_index: Vector2i = _ws_pos_to_local_cell(cell_position)
-					if Geometry2D.is_point_in_polygon(cell_position, polygon):
-						var current_flags: int = zone_cells.get(cell_index, _zone_default_flags)
+			if polygon.is_empty():
+				continue
+			
+			var min_vertice: Vector2 = polygon[0]
+			var max_vertice: Vector2 = polygon[0]
+			for vertice: Vector2 in polygon:
+				min_vertice = min_vertice.min(vertice)
+				max_vertice = max_vertice.max(vertice)
+			min_vertice = position_to_cell(min_vertice)
+			max_vertice = Vector2(max_vertice / Vector2(zone_cell_size)).ceil() #position_to_cell_ceil
+			
+			for cell_y: int in range(min_vertice.y, max_vertice.y):
+				for cell_x: int in range(min_vertice.x, max_vertice.x):
+					var cell_index: Vector2i = Vector2i(cell_x, cell_y)
+					if Geometry2D.is_point_in_polygon(get_cell_center(cell_index), polygon):
+						var current_flags: int = zone_cells.get(cell_index, zone_default_flags)
 						var new_mode: int = current_flags & 1 if mode_override == ZonePatch2D.ModeOverride.INHERIT else mode_override & 1
 						var new_modifiers: int = ((current_flags >> 1) | add_modifiers) & (~remove_modifiers)
 						zone_cells.set(cell_index, new_mode | (new_modifiers << 1))
+	print_debug(zone_cells)
 
-func get_zone_flags_at_position(position: Vector2i) -> int:
-	var cell_index: Vector2i = _ws_pos_to_local_cell(position)
-	return zone_cells.get(cell_index, _zone_default_flags)
-
-func _ws_pos_to_local_cell(ws: Vector2) -> Vector2i:
-	var rel: Vector2 = (ws - _zone_origin_ws) / Vector2(zone_cell_size)
-	return Vector2i(int(floor(rel.x)), int(floor(rel.y)))
-#
-#func _cell_center_ws(cx: int, cy: int) -> Vector2:
-	#var base: Vector2 = _zone_origin_ws + Vector2(cx * zone_cell_size.x, cy * zone_cell_size.y)
-	#return base + Vector2(zone_cell_size) * 0.5
+func get_zone_flags_at_position(position: Vector2) -> int:
+	return zone_cells.get(position_to_cell(position), zone_default_flags)
 
 
-func _update_zones_one_shot() -> void:
-	# If there’s effectively no grid (interior with no patches), nothing to do; everyone uses defaults in validators.
+func position_to_cell(position: Vector2) -> Vector2i:
+	return Vector2i((position / Vector2(zone_cell_size)).floor())
+
+
+func get_cell_center(cell: Vector2i) -> Vector2:
+	return Vector2(cell * zone_cell_size) + Vector2(zone_cell_size) * 0.5
+
+
+func update_zones_one_shot() -> void:
+	# If no authored grid or no peers, nothing to do (defaults will be used elsewhere).
 	if zone_cells.is_empty() or peers.is_empty():
 		return
+	
 	var now_ms: int = Time.get_ticks_msec()
 	
 	for eid: int in entities:
+		var entity: Player = entities[eid].root_node as Player
+		if not entity:
+			continue
+		
 		var pos: Vector2 = _eid_position(eid)
-		#print(pos)
-		#var new_flags: int = _zone_flags_at_pos(pos)
+		
 		var new_flags: int = get_zone_flags_at_position(pos)
-		var old_flags: int = _eid_zone_flags.get(eid, _zone_default_flags)
-		if new_flags == old_flags:
+		if new_flags == entity.zone_flags:
 			continue
 		print("new_flags - zone updated", new_flags)
-		# Hysteresis only when flipping SAFE <-> PVP (bit 0)
-		var old_pvp: bool = (old_flags & 1) == 1
-		var new_pvp: bool = (new_flags & 1) == 1
-		if old_pvp != new_pvp:
-			var last_ms: int = _eid_zone_last_change_ms.get(eid, 0)
-			if now_ms - last_ms < _zone_hysteresis_ms:
+		# Hysteresis only when flipping SAFE <-> PVP (bit 0),
+		# allow modifiers to change instantly.
+		if (entity.zone_flags ^ new_flags) & 1:
+			var last_ms: int = eid_zone_last_change_ms.get(eid, -1)
+			if now_ms - last_ms < zone_hysteresis_ms:
 				# still within grace; skip this flip
 				continue
-			_eid_zone_last_change_ms[eid] = now_ms
+			eid_zone_last_change_ms[eid] = now_ms
 
 		# Save new state
-		var cell: Vector2i = _ws_pos_to_local_cell(pos)
-		# cell is also an idx now
-		_eid_zone_cell_idx[eid] = cell
-		_eid_zone_flags[eid] = new_flags
+		entity.zone_flags = new_flags
 
 		# Notify owner with minimal UI state (server-authoritative fields)
-		entities[eid].root_node.zone_flags = new_flags
-		
-		var pairs: Array = [
-			[PathRegistry.id_of(":zone_flags"), new_flags],
-		]
-		send_correction_to_owner(eid, pairs)
+		send_correction_to_owner(eid, [[PathRegistry.id_of(":zone_flags"), new_flags]])
