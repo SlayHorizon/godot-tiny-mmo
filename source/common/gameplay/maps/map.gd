@@ -187,27 +187,13 @@ func _draw_cross(c: Vector2, color: Color, size: float, width: float) -> void:
 # This is the only thing SSM needs at startup to build a zone grid.
 func get_zone_authoring_data() -> Dictionary:
 	var patches: Array
-	var nodes: Array[Node] = find_children("*", "ZonePatch2D", false)
+	var zone_patches: Array[ZonePatch2D]
+	zone_patches.assign(find_children("*", "ZonePatch2D", false))
 
-	for n: Node in nodes:
-		var z: ZonePatch2D = n as ZonePatch2D
-		if not z.enabled:
+	for zone_patch: ZonePatch2D in zone_patches:
+		if not zone_patch.enabled:
 			continue
-
-		var payload: Dictionary = z.get_bake_payload()  # local polys + z.global_transform
-		var polys_local: Array = payload.get("polygons_local", [])
-		var xf: Transform2D = payload.get("global_transform", Transform2D.IDENTITY)
-
-		var polys_world: Array[PackedVector2Array] = _polys_local_to_world(polys_local, xf)
-
-		patches.append({
-			"name_id": z.name_id,
-			"priority": z.priority,
-			"mode_override": z.mode_override,
-			"add_modifiers": z.add_modifiers,
-			"remove_modifiers": z.remove_modifiers,
-			"polygons_world": polys_world,
-		})
+		patches.append(zone_patch.get_bake_payload())
 
 	return {
 		"default_mode": default_mode,
@@ -216,18 +202,3 @@ func get_zone_authoring_data() -> Dictionary:
 		"zone_origin": zone_origin,
 		"patches": patches,
 	}
-
-# Utility: convert a list of local-space polygons to map-space using a transform.
-func _polys_local_to_world(polys_local: Array, xf: Transform2D) -> Array[PackedVector2Array]:
-	var out: Array[PackedVector2Array] = []
-	for pl_any in polys_local:
-		var pl: PackedVector2Array = pl_any
-		var n: int = pl.size()
-		if n < 3:
-			continue
-		var pw: PackedVector2Array = PackedVector2Array()
-		pw.resize(n)
-		for i in n:
-			pw[i] = xf * pl[i]
-		out.append(pw)
-	return out

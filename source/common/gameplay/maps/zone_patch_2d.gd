@@ -1,7 +1,6 @@
 @tool
 class_name ZonePatch2D
 extends Node2D
-
 ## Deleted during export
 ## Authoring-time patch: one shape + rules + priority (drawn in editor, baked later).
 
@@ -46,15 +45,13 @@ enum ModeOverride {
 		custom_tint = value
 
 
+# Outline only (fills are handled by Polygon2D.color)
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
 
-	var polygons: Array[PackedVector2Array]# = collect_polygons()
-	#if polygons.is_empty():
-		#return
-	#draw_set_transform_matrix(global_transform.affine_inverse())
-	# Outline only (fills are handled by Polygon2D.color)
+	var polygons: Array[PackedVector2Array]
+	
 	var tint: Color = pick_tint() if default_tint else custom_tint
 	for child: Node in get_children():
 		if child is Polygon2D:
@@ -62,6 +59,7 @@ func _draw() -> void:
 			polygons.append(child.polygon
 				if child.transform == Transform2D.IDENTITY else
 				child.transform * child.polygon)
+	
 	var outline: Color = tint.darkened(0.35)
 
 	var zoom_scale: float = EditorInterface.get_editor_viewport_2d().global_canvas_transform.get_scale().x
@@ -70,6 +68,8 @@ func _draw() -> void:
 	for poly: PackedVector2Array in polygons:
 		draw_polyline(poly, outline, outline_width, true)
 		draw_line(poly[-1], poly[0], outline, outline_width, true)
+		if name_id:
+			draw_string(ThemeDB.fallback_font, poly[0], name_id)
 
 
 func _notification(what: int) -> void:
@@ -108,17 +108,16 @@ func pick_tint() -> Color:
 func collect_polygons() -> Array[PackedVector2Array]:
 	var polygons: Array[PackedVector2Array]
 	for polygon2d: Node in get_children():
-		if not polygon2d is Polygon2D:
-			continue
-		polygons.append(
-			#polygon2d.polygon
-			#if polygon2d.transform == Transform2D.IDENTITY else
-			polygon2d.global_transform * polygon2d.polygon
-		)
+		if polygon2d is Polygon2D and polygon2d.visible:
+			polygons.append(
+				#polygon2d.polygon
+				#if polygon2d.transform == Transform2D.IDENTITY else
+				polygon2d.global_transform * polygon2d.polygon
+			)
 	return polygons
 
 
-# Export-ready payload (local polys + transform; baker places in map space)
+## Export-ready payload (local polys + transform; baker places in map space)
 func get_bake_payload() -> Dictionary:
 	return {
 		"enabled": enabled,
