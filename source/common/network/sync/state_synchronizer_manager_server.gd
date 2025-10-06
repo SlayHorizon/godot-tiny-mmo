@@ -48,7 +48,6 @@ func _process(delta: float) -> void:
 
 	if _accum_ent >= eint:
 		_accum_ent = fmod(_accum_ent, eint)
-		update_zones_one_shot()
 		_send_entity_deltas_one_shot()
 
 	if _accum_props >= pint:
@@ -67,7 +66,7 @@ func _track_client_pairs(eid: int, pairs: Array) -> void:
 	_owner_recent[eid] = m
 
 
-# --- Entities (hot) -----------------------------------------------------------
+# Entities (hot)
 
 func _send_entity_deltas_one_shot() -> void:
 	if peers.is_empty():
@@ -81,8 +80,10 @@ func _send_entity_deltas_one_shot() -> void:
 	for eid: int in entities:
 		var syn: StateSynchronizer = entities[eid]
 		var pairs: Array = syn.collect_dirty_pairs()
-		if pairs.size() > 0:
+		if not pairs.is_empty():
 			changed_pairs[eid] = pairs
+
+
 	if changed_pairs.is_empty():
 		return
 
@@ -92,7 +93,7 @@ func _send_entity_deltas_one_shot() -> void:
 		block_bytes_by_eid[eid2] = WireCodec.encode_entity_block(eid2, changed_pairs[eid2])
 
 	# 3) assemble per peer (skip self)
-	var now_ms: float = Time.get_ticks_msec()
+	var now_ms: int = Time.get_ticks_msec()
 	for peer_id: int in peers:
 		var aoi_eids: Array = _aoi_entities_for(peer_id)
 		var blocks_for_peer: Array = []
@@ -111,6 +112,8 @@ func _send_entity_deltas_one_shot() -> void:
 						continue
 					var fid: int = pair[0]
 					var value: Variant = pair[1]
+					if fid == PathRegistry.id_of(":position"):
+						update_zone_flags_for_entity(eid)
 					if not _should_suppress_for_owner(peer_id, fid, value, now_ms):
 						filtered.append(pair)
 				if filtered.size() == 0:
@@ -126,7 +129,7 @@ func _send_entity_deltas_one_shot() -> void:
 	_prune_owner_recent(1000)
 
 
-# --- Props (cold) -------------------------------------------------------------
+# Props (cold)
 
 func _send_container_deltas_one_shot() -> void:
 	if peers.is_empty():
@@ -154,11 +157,12 @@ func _send_container_deltas_one_shot() -> void:
 			on_props_delta.rpc_id(peer_id, bb)
 
 
-# --- Entity & peer management -------------------------------------------------
+# Entity & peer management
 
 func add_entity(eid: int, sync: StateSynchronizer) -> void:
 	assert(sync != null, "StateSynchronizer must not be null.")
 	entities[eid] = sync
+	update_zone_flags_for_entity(eid)
 
 
 func remove_entity(eid: int) -> void:
@@ -187,7 +191,7 @@ func unregister_peer(peer_id: int) -> void:
 	peers.erase(peer_id)
 
 
-# --- Bootstrap (server -> client) --------------------------------------------
+# Bootstrap (server -> client)
 
 func send_bootstrap(peer_id: int) -> void:
 	# Send PathRegistry mapping first (if needed)
@@ -239,7 +243,7 @@ func _send_map_updates_if_needed_to_all() -> void:
 		on_bootstrap.rpc_id(peer_id, payload)
 
 
-# --- Owner correction (server → owner only)
+# Owner correction (server → owner only)
 
 func send_correction_to_owner(eid: int, pairs: Array) -> void:
 	var owner_peer_id: int = eid  # Replace by real ownership map later.
@@ -252,7 +256,7 @@ func send_correction_to_owner(eid: int, pairs: Array) -> void:
 	on_state_delta.rpc_id(owner_peer_id, bytes)
 
 
-# --- Client-side handlers mirrored for RPC presence
+# Client-side handlers mirrored for RPC presence
 
 @rpc("authority", "reliable")
 func on_bootstrap(_payload: PackedByteArray) -> void:
@@ -462,35 +466,36 @@ func get_cell_center(cell: Vector2i) -> Vector2:
 	return Vector2(cell * zone_cell_size) + Vector2(zone_cell_size) * 0.5
 
 
-func update_zones_one_shot() -> void:
-	# If no authored grid or no peers, nothing to do (defaults will be used elsewhere).
-	if zone_cells.is_empty() or peers.is_empty():
+func update_zone_flags_for_entity(entity_id: int) -> void:
+	var entity: Player = entities[entity_id].root_node as Player
+	if not entity:
+		return
+	
+	# If no authored grid or no peers, nothing to do (defaults used).
+	if zone_cells.is_empty():
+		entity.zone_flags = zone_default_flags
 		return
 	
 	var now_ms: int = Time.get_ticks_msec()
 	
-	for eid: int in entities:
-		var entity: Player = entities[eid].root_node as Player
-		if not entity:
-			continue
-		
-		var pos: Vector2 = _eid_position(eid)
-		
-		var new_flags: int = get_zone_flags_at_position(pos)
-		if new_flags == entity.zone_flags:
-			continue
-		print("new_flags - zone updated", new_flags)
-		# Hysteresis only when flipping SAFE <-> PVP (bit 0),
-		# allow modifiers to change instantly.
-		if (entity.zone_flags ^ new_flags) & 1:
-			var last_ms: int = eid_zone_last_change_ms.get(eid, -1)
-			if now_ms - last_ms < zone_hysteresis_ms:
-				# still within grace; skip this flip
-				continue
-			eid_zone_last_change_ms[eid] = now_ms
+	
+	var pos: Vector2 = _eid_position(entity_id)
+	
+	var new_flags: int = get_zone_flags_at_position(pos)
+	if new_flags == entity.zone_flags:
+		return
+	# Hysteresis only when flipping SAFE <-> PVP (bit 0),
+	# allow modifiers to change instantly.
+	if (entity.zone_flags ^ new_flags) & 1:
+		var last_ms: int = eid_zone_last_change_ms.get(entity_id, -1)
+		if now_ms - last_ms < zone_hysteresis_ms:
+			# still within grace; skip this flip
+			return
+		eid_zone_last_change_ms[entity_id] = now_ms
 
-		# Save new state
-		entity.zone_flags = new_flags
+	# Save new state
+	print("new_flags - zone updated", new_flags)
+	entity.zone_flags = new_flags
 
-		# Notify owner with minimal UI state (server-authoritative fields)
-		send_correction_to_owner(eid, [[PathRegistry.id_of(":zone_flags"), new_flags]])
+	# Notify owner with minimal UI state (server-authoritative fields)
+	send_correction_to_owner(entity_id, [[PathRegistry.id_of(":zone_flags"), new_flags]])
