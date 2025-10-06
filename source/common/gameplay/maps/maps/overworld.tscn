@@ -201,7 +201,7 @@ position = Vector2(728, 928)
 activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/ActivableDoor2"), NodePath("../../Traps/ActivableDoor3"), NodePath("../../Traps/ActivableDoor8"), NodePath("../../Traps/ActivableDoor9"), NodePath("../../Traps/ActivableDoor4"), NodePath("../../Traps/ActivableDoor5"), NodePath("../../Traps/ActivableDoor7"), NodePath("../../Traps/ActivableDoor6")]
 
 [node name="NPC" parent="ReplicatedPropsContainer" instance=ExtResource("22_slgwh")]
-position = Vector2(344, 1256)
+position = Vector2(128, 1280)
 
 [node name="Traps" type="Node2D" parent="."]
 
@@ -235,19 +235,24 @@ position = Vector2(760, 896)
 [node name="ZonePatch2D" type="Node2D" parent="."]
 top_level = true
 script = ExtResource("24_slgwh")
+name_id = &"PvP"
 mode_override = 1
-custom_tint = Color(0.439049, 0.439049, 0.439049, 0.35)
 metadata/_edit_group_ = true
 
 [node name="Polygon2D" type="Polygon2D" parent="ZonePatch2D"]
+visible = false
 color = Color(1, 0.25, 0.25, 0.16)
 polygon = PackedVector2Array(1118, -312, 1248, -446, 2056, -561, 2530, -138, 2607, 156, 2222, 560, 1749, 797, 1528, 693, 1281, 264, 1087, 190)
 uv = PackedVector2Array(1118, -312, 1248, -446, 2056, -561, 2530, -138, 2607, 156, 2222, 560, 1749, 797, 1528, 693, 1281, 264, 1087, 190)
 
 [node name="Polygon2D2" type="Polygon2D" parent="ZonePatch2D"]
-position = Vector2(200, 0)
+position = Vector2(192, 0)
 color = Color(1, 0.25, 0.25, 0.16)
 polygon = PackedVector2Array(320, 960, 512, 960, 512, 1088, 320, 1088, 320, 1024)
+
+[node name="Polygon2D3" type="Polygon2D" parent="ZonePatch2D"]
+color = Color(1, 0.25, 0.25, 0.16)
+polygon = PackedVector2Array(384, 1024, 512, 1024, 512, 1088, 320, 1088, 320, 1024)
 
 [node name="Label" type="Label" parent="."]
 z_index = 10
