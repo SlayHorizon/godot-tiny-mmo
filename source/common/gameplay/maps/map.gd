@@ -26,18 +26,18 @@ enum ZoneModifiers {
 @export var aoi_cell_size: Vector2i = Vector2i(250, 250)
 @export var aoi_visible_radius_cells: int = 2
 @export var aoi_margin_cells: int = 1
+@export var aoi_origin: Vector2i = Vector2i.ZERO
 
 @export_subgroup("Editor Debug Preview")
 @export var preview_aoi: bool = true
 @export var preview_aoi_follow_mouse: bool = true
-@export var preview_rect := Rect2(-4096, -4096, 8192, 8192)
-@export var aoi_origin: Vector2i = Vector2i.ZERO
-@export var aoi_test_point := Vector2.ZERO
+@export var preview_rect: Rect2 = Rect2(-4096, -4096, 8192, 8192)
+@export var aoi_test_point: Vector2 = Vector2.ZERO
 
+# Independent from AOI
 @export_group("Zones")
 @export var default_mode: ZoneMode = ZoneMode.SAFE
 @export_flags("NO_SKILL", "NO_CONSUMABLES", "NO_MOUNT", "NO_SUMMONS") var default_modifiers: int = 0
-# Zoning grid (independent from AOI)
 @export var zone_cell_size: Vector2i = Vector2i(64, 64)
 
 @export_group("")
@@ -80,7 +80,7 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	if not Engine.is_editor_hint():
 		return
-	if preview_aoi:
+	if aoi_mode == AOIMode.GRID and preview_aoi:
 		_draw_aoi_preview()
 
 
