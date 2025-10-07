@@ -14,7 +14,7 @@ var cooldown: float = 0.7
 
 func _ready() -> void:
 	if not multiplayer.is_server():
-		set_physics_process(false)
+		set_physics_process(multiplayer.is_server())
 		return
 	get_parent().ready.connect(func():
 		container = get_parent()
@@ -32,11 +32,10 @@ func _physics_process(delta: float) -> void:
 	timer += delta
 	if timer >= cooldown and arr:
 		timer = 0
-		var dir: Vector2 = global_position.direction_to(arr.front().global_position)
-		#if equipped_weapon_right.can_use_weapon(0):
-		equipped_weapon_right.perform_action(0, dir)
-		container.queue_op(prop_id, "rp_attack", [dir])
-			#rp_attack(dir)
+		if equipment_component.can_use(&"weapon", 0):
+			var dir: Vector2 = global_position.direction_to(arr.front().global_position)
+			equipment_component._mounted[&"weapon"].perform_action(0, dir)
+			container.queue_op(prop_id, "rp_attack", [dir])
 
 
 func rp_equip(weapon_slug: String):
@@ -45,7 +44,7 @@ func rp_equip(weapon_slug: String):
 
 
 func rp_attack(dir: Vector2):
-	equipped_weapon_right.perform_action(0, dir)
+	equipment_component._mounted[&"weapon"].perform_action(0, dir)
 
 
 func _on_detection_area_body_entered(body: Node2D) -> void:

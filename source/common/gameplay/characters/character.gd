@@ -11,13 +11,6 @@ enum Animations {
 
 var hand_type: Hand.Types
 
-var weapon_name_right: String:
-	set = _set_right_weapon
-var weapon_name_left: String:
-	set = _set_left_weapon
-var equipped_weapon_right: Weapon
-var equipped_weapon_left: Weapon
-
 var character_class: String:
 	set = _set_character_class
 var character_resource: CharacterResource
@@ -59,28 +52,6 @@ func _ready() -> void:
 			$ProgressBar.value = value
 			$ProgressBar.max_value = max_value
 	)
-	
-	# OLD
-	if right_hand_spot.get_child_count():
-		equipped_weapon_right = right_hand_spot.get_child(0)
-		equipped_weapon_right.hand.type = hand_type
-		equipped_weapon_right.hand.side = Hand.Sides.RIGHT
-		equipped_weapon_right.character = self
-	if left_hand_spot.get_child_count():
-		equipped_weapon_left = left_hand_spot.get_child(0)
-		equipped_weapon_left.hand.type = hand_type
-		equipped_weapon_left.hand.side = Hand.Sides.LEFT
-		equipped_weapon_left.character = self
-
-
-func change_weapon(weapon_path: String, _side: bool = true) -> void:
-	if equipped_weapon_right:
-		equipped_weapon_right.queue_free()
-	var new_weapon: Weapon = load("res://source/common/gameplay/items/weapons/" + 
-		weapon_path + ".tscn").instantiate()
-	new_weapon.character = self
-	right_hand_spot.add_child(new_weapon)
-	equipped_weapon_right = new_weapon
 
 
 func update_weapon_animation(state: String) -> void:
@@ -88,16 +59,6 @@ func update_weapon_animation(state: String) -> void:
 	#$AnimationTree.set("parameters/OnFoot/Blend2/blend_amount", 1.0)
 	#equipped_weapon_right.play_animation(state)
 	#equipped_weapon_left.play_animation(state)
-
-
-func _set_left_weapon(weapon_name: String) -> void:
-	weapon_name_left = weapon_name
-	change_weapon(weapon_name, false)
-
-
-func _set_right_weapon(weapon_name: String) -> void:
-	weapon_name_right = weapon_name
-	change_weapon(weapon_name, true)
 
 
 func _set_sprite_frames(new_sprite_frames: String) -> void:
@@ -133,31 +94,3 @@ func _set_character_class(new_class: String):
 		"res://source/common/gameplay/characters/classes/character_collection/" + new_class + ".tres")
 	animated_sprite.sprite_frames = character_resource.character_sprite
 	character_class = new_class
-
-
-#var primary_weapon: Weapon
-#var secondary_weapon: Weapon
-#func equip_weapon(weapon_id: int) -> void:
-	##var weapon: Weapon = ContentRegistryHub.load_by_id(&"weapons", weapon_id)
-	##if not weapon:
-		##return
-	#pass
-	#
-#func handle_action(index: int, direction: Vector2) -> void:
-	#
-	#pass
-
-func equip_weapon(mount_point: StringName, scene: PackedScene) -> void:
-	if mount_point == &"weapon_main":
-		var weapon: Weapon = scene.instantiate()
-		weapon.character = self
-		if equipped_weapon_right:
-			equipped_weapon_right.queue_free()
-		right_hand_spot.add_child(weapon)
-		equipped_weapon_right = weapon
-
-
-func unequip_weapon(mount_point: StringName) -> void:
-	if mount_point == &"weapon_main":
-		if equipped_weapon_right:
-			equipped_weapon_right.queue_free()
