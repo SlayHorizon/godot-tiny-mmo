@@ -158,11 +158,13 @@ func _send_container_deltas_one_shot() -> void:
 
 
 # Entity & peer management
-
 func add_entity(eid: int, sync: StateSynchronizer) -> void:
 	assert(sync != null, "StateSynchronizer must not be null.")
 	entities[eid] = sync
 	update_zone_flags_for_entity(eid)
+	
+	#sync.capture_baseline()
+	sync.mark_many_by_id(sync.capture_baseline(), false)
 
 
 func remove_entity(eid: int) -> void:
@@ -192,13 +194,12 @@ func unregister_peer(peer_id: int) -> void:
 
 
 # Bootstrap (server -> client)
-
 func send_bootstrap(peer_id: int) -> void:
 	# Send PathRegistry mapping first (if needed)
 	var updates: Array = _calc_map_updates_for_peer(peer_id)
 
 	# Entities baselines
-	var objects: Array = []
+	var objects: Array
 	for eid: int in entities:
 		var syn: StateSynchronizer = entities[eid]
 		var pairs: Array = syn.capture_baseline()
@@ -244,7 +245,6 @@ func _send_map_updates_if_needed_to_all() -> void:
 
 
 # Owner correction (server → owner only)
-
 func send_correction_to_owner(eid: int, pairs: Array) -> void:
 	var owner_peer_id: int = eid  # Replace by real ownership map later.
 	if not peers.has(owner_peer_id):
@@ -257,7 +257,6 @@ func send_correction_to_owner(eid: int, pairs: Array) -> void:
 
 
 # Client-side handlers mirrored for RPC presence
-
 @rpc("authority", "reliable")
 func on_bootstrap(_payload: PackedByteArray) -> void:
 	pass
@@ -411,6 +410,7 @@ var zone_default_flags: int = 0
 var eid_zone_last_change_ms: Dictionary[int, int]
 var zone_hysteresis_ms: int = 500
 
+
 func init_zones_from_map(map: Map) -> void:
 	var data: Dictionary = map.get_zone_authoring_data()
 
@@ -452,7 +452,7 @@ func build_zone_grid(data: Dictionary) -> void:
 						var new_mode: int = current_flags & 1 if mode_override == ZonePatch2D.ModeOverride.INHERIT else mode_override & 1
 						var new_modifiers: int = ((current_flags >> 1) | add_modifiers) & (~remove_modifiers)
 						zone_cells.set(cell_index, new_mode | (new_modifiers << 1))
-	print_debug(zone_cells)
+
 
 func get_zone_flags_at_position(position: Vector2) -> int:
 	return zone_cells.get(position_to_cell(position), zone_default_flags)
@@ -494,7 +494,6 @@ func update_zone_flags_for_entity(entity_id: int) -> void:
 		eid_zone_last_change_ms[entity_id] = now_ms
 
 	# Save new state
-	print("new_flags - zone updated", new_flags)
 	entity.zone_flags = new_flags
 
 	# Notify owner with minimal UI state (server-authoritative fields)

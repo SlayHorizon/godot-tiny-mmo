@@ -3,14 +3,15 @@ extends GearItem
 
 
 @export var scene: PackedScene
-@export var mount_point: StringName = &"weapon_main"
 
 
 func on_equip(character: Character) -> void:
 	super.on_equip(character)
-	character.equip_weapon(mount_point, scene)
+	var weapon: Weapon = scene.instantiate()
+	weapon.character = character
+	character.equipment_component._mounted[slot.key] = weapon
+	character.right_hand_spot.add_child(weapon)
 
 
 func on_unequip(character: Character) -> void:
 	super.on_unequip(character)
-	character.unequip_weapon(mount_point)

@@ -230,7 +230,7 @@ func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
 		if not request_handler:
 			return
 		request_handlers[type] = request_handler
-	
+	# Maybe shouldn't send back in every case
 	data_response.rpc_id(
 		peer_id,
 		request_id,

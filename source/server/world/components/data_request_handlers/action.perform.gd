@@ -12,7 +12,8 @@ func data_request_handler(
 	
 	var action_index: int = args.get("i", 0)
 	var action_direction: Vector2 = args.get("d", Vector2.ZERO)
-	if player.equipped_weapon_right.try_perform_action(action_index, action_direction):
+	if player.equipment_component.can_use(&"weapon", 0):
+		player.equipment_component._mounted[&"weapon"].perform_action(action_index, action_direction)
 		instance.propagate_rpc(instance.data_push.bind(
 			&"action.perform",
 			{"i": action_index, "d": action_direction, "p": peer_id}

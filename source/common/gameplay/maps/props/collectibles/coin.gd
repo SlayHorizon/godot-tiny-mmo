@@ -43,6 +43,7 @@ func _on_body_entered(body: Node2D) -> void:
 		timer.timeout.connect(
 			func():
 				container.queue_op(prop_id, "rp_unpause", [])
+				container.set_baseline_ops(prop_id, [["rp_pause", []]])
 				rp_unpause()
 				timer.queue_free()
 		)

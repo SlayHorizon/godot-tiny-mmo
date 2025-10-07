@@ -144,9 +144,9 @@ id_to_node = {
 4: NodePath("Coin5"),
 5: NodePath("Coin6"),
 6: NodePath("Coin7"),
-7: NodePath("Coin8"),
-8: NodePath("Coin9"),
-9: NodePath("Coin10"),
+7: null,
+8: null,
+9: null,
 10: NodePath("GroundButton"),
 11: NodePath("NPC")
 }
@@ -158,11 +158,9 @@ NodePath("Coin4"): 3,
 NodePath("Coin5"): 4,
 NodePath("Coin6"): 5,
 NodePath("Coin7"): 6,
-NodePath("Coin8"): 7,
-NodePath("Coin9"): 8,
-NodePath("Coin10"): 9,
 NodePath("GroundButton"): 10,
-NodePath("NPC"): 11
+NodePath("NPC"): 11,
+null: 9
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 
@@ -186,15 +184,6 @@ position = Vector2(840, 968)
 
 [node name="Coin7" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
 position = Vector2(816, 944)
-
-[node name="Coin8" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(564.112, 317.478)
-
-[node name="Coin9" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(584, 328)
-
-[node name="Coin10" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(536, 320)
 
 [node name="GroundButton" parent="ReplicatedPropsContainer" node_paths=PackedStringArray("activable_door") instance=ExtResource("21_plgjc")]
 position = Vector2(728, 928)
@@ -240,7 +229,6 @@ mode_override = 1
 metadata/_edit_group_ = true
 
 [node name="Polygon2D" type="Polygon2D" parent="ZonePatch2D"]
-visible = false
 color = Color(1, 0.25, 0.25, 0.16)
 polygon = PackedVector2Array(1118, -312, 1248, -446, 2056, -561, 2530, -138, 2607, 156, 2222, 560, 1749, 797, 1528, 693, 1281, 264, 1087, 190)
 uv = PackedVector2Array(1118, -312, 1248, -446, 2056, -561, 2530, -138, 2607, 156, 2222, 560, 1749, 797, 1528, 693, 1281, 264, 1087, 190)
@@ -248,7 +236,7 @@ uv = PackedVector2Array(1118, -312, 1248, -446, 2056, -561, 2530, -138, 2607, 15
 [node name="Polygon2D2" type="Polygon2D" parent="ZonePatch2D"]
 position = Vector2(192, 0)
 color = Color(1, 0.25, 0.25, 0.16)
-polygon = PackedVector2Array(320, 960, 512, 960, 512, 1088, 320, 1088, 320, 1024)
+polygon = PackedVector2Array(332, 971, 501, 976, 492, 1071, 337, 1076, 330, 1023)
 
 [node name="Polygon2D3" type="Polygon2D" parent="ZonePatch2D"]
 color = Color(1, 0.25, 0.25, 0.16)
