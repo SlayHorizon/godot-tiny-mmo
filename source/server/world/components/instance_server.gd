@@ -114,19 +114,19 @@ func spawn_player(peer_id: int) -> void:
 
 func instantiate_player(peer_id: int) -> Player:
 	var player_resource: PlayerResource = world_server.connected_players[peer_id]
-	var character_resource: CharacterResource = ResourceLoader.load(
-		"res://source/common/gameplay/characters/classes/character_collection/" +
-		player_resource.character_class + ".tres"
-	)
+	# Was used before for a classic RPG class centric RPG system
+	#var character_resource: CharacterResource = ResourceLoader.load(
+		#"res://source/common/gameplay/characters/classes/character_collection/" +
+		#player_resource.character_class + ".tres"
+	#)
 	
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
 	new_player.player_resource = player_resource
-	new_player.character_resource = character_resource
 	
 	new_player.ready.connect(func():
 		var syn: StateSynchronizer = new_player.state_synchronizer
-		syn.set_by_path(^":character_class", new_player.player_resource.character_class)
+		syn.set_by_path(^":skin_id", new_player.player_resource.skin_id)
 		syn.set_by_path(^":display_name", new_player.player_resource.display_name)
 		
 
@@ -157,25 +157,9 @@ func instantiate_player(peer_id: int) -> Player:
 				asc.set_value_server(base_attr, value)
 			else:
 				asc.ensure_attr(stat_name, value, value)
-				asc.set_value_server(stat_name, value)
-		
-
-		#var base_stats: Dictionary = new_player.character_resource.build_base_stats(new_player.player_resource.level)
-		#
-		#for stat_name: StringName in base_stats:
-			#var value: float = base_stats[stat_name]
-			#if stat_name.ends_with("_max"):
-				#var base_attr: StringName = stat_name.trim_suffix(&"_max")
-				#asc.ensure_attr(base_attr, value, value)
-				#asc.set_max_server(base_attr, value, true)
-				#asc.set_value_server(base_attr, value)
-			#else:
-				#asc.ensure_attr(stat_name, value, value)
-				#asc.set_value_server(stat_name, value)
-		#asc.install_resources(new_player.character_resource.power_resources, base_stats)
-	,
-	CONNECT_ONE_SHOT)
-	
+				asc.set_value_server(stat_name, value),
+		CONNECT_ONE_SHOT
+	)
 	return new_player
 
 

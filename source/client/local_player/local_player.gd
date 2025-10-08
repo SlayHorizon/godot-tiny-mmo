@@ -88,12 +88,3 @@ func define_sync_state() -> void:
 	synchronizer_manager.send_my_delta(
 		multiplayer.get_unique_id(), syn.collect_dirty_pairs()
 	)
-
-
-func _set_character_class(new_class: String):
-	character_resource = ResourceLoader.load(
-		"res://source/common/gameplay/characters/classes/character_collection/" +
-		new_class + ".tres"
-	)
-	animated_sprite.sprite_frames = character_resource.character_sprite
-	character_class = new_class

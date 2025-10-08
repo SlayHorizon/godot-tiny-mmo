@@ -23,7 +23,8 @@ static func _static_init() -> void:
 	register_field(":scale", Wire.Type.VEC2_F32)
 	
 	register_field(":display_name", Wire.Type.VARIANT)
-	register_field(":character_class", Wire.Type.VARIANT)
+	
+	register_field(":skin_id", Wire.Type.U16)
 	
 	register_field(":zone_flags", Wire.Type.U16)
 	

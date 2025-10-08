@@ -17,7 +17,8 @@ func data_request_handler(
 		"name": player_resource.display_name,
 		"stats": {
 			"money": player_resource.golds,
-			"character_class": player_resource.character_class,
+			"skin_id": player_resource.skin_id,
+			"character_class": "???",
 			"level": player_resource.level
 		}
 	}
