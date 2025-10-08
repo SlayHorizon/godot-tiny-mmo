@@ -2,27 +2,16 @@ class_name Player
 extends Character
 
 
+signal display_name_changed(new_name: String)
+
 var player_resource: PlayerResource
 
 var display_name: String = "Unknown":
 	set = _set_display_name
 
 var zone_flags: int = 0
-func is_pvp() -> bool: return (zone_flags & 1) != 0
-func has_modifier(mod: int) -> bool:
-	var mask: int = 1 << (1 + mod)
-	return (zone_flags & mask) != 0
-var just_teleported: bool = false:
-	set(value):
-		just_teleported = value
-		if not is_inside_tree():
-			await tree_entered
-		if just_teleported:
-			await get_tree().create_timer(0.5).timeout
-			just_teleported = false
 
-@onready var syn: StateSynchronizer = $StateSynchronizer
-@onready var display_name_label: Label = $DisplayNameLabel
+var teleport_lock_until_ms: int = 0
 
 
 func _init() -> void:
@@ -30,5 +19,23 @@ func _init() -> void:
 
 
 func _set_display_name(new_name: String) -> void:
-	display_name_label.text = new_name
 	display_name = new_name
+	if not multiplayer.is_server():
+		display_name_changed.emit(new_name)
+
+
+func is_pvp() -> bool:
+	return zone_flags & Map.ZoneMode.PVP
+
+
+func has_modifier(mod: Map.ZoneModifiers) -> bool:
+	var mask: int = 1 << (1 + mod)
+	return (zone_flags & mask) != 0
+
+
+func mark_just_teleported(cooldown_ms: int = 500) -> void:
+	teleport_lock_until_ms = Time.get_ticks_msec() + cooldown_ms
+
+
+func has_recently_teleported() -> bool:
+	return Time.get_ticks_msec() < teleport_lock_until_ms

@@ -62,14 +62,13 @@ func load_map(map_path: String) -> void:
 
 
 func _on_player_entered_interaction_area(player: Player, interaction_area: InteractionArea) -> void:
-	if player.just_teleported:
+	if player.has_recently_teleported():
 		return
 	if interaction_area is Warper:
 		player_entered_warper.emit.call_deferred(player, self, interaction_area)
 	if interaction_area is Teleporter:
-		if not player.just_teleported:
-			player.just_teleported = true
-			player.syn.set_by_path(^":position", interaction_area.target.global_position)
+		player.mark_just_teleported()
+		player.syn.set_by_path(^":position", interaction_area.target.global_position)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -92,15 +91,15 @@ func spawn_player(peer_id: int) -> void:
 		player = instantiate_player(peer_id)
 		data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
 	
-	player.just_teleported = true
+	player.mark_just_teleported()
 	
 	instance_map.add_child(player, true)
 	
 	players_by_peer_id[peer_id] = player
 	
 	#NEW
-	var syn: StateSynchronizer = player.syn
-	player.state_synchronizer.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
+	var syn: StateSynchronizer = player.state_synchronizer
+	syn.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
 
 	print_debug("baseline server pairs:", syn.capture_baseline())
 	
