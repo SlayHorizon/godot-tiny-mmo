@@ -7,20 +7,19 @@ var stats: Dictionary
 
 
 func _ready() -> void:
-	InstanceClient.subscribe(&"stats.get", fill_stats)
-	InstanceClient.subscribe(&"stats.update", update_stats)
-	if Events.cache_data.has("stats"):
-		fill_stats(Events.cache_data["stats"])
+	InstanceClient.subscribe(&"stats.update", fill_stats)
+	# If already stored.
+	fill_stats(ClientState.stats.data)
 
 
 func fill_stats(data: Dictionary) -> void:
-	#if data.is_empty():
-	if not Events.cache_data.has("stats"):
-		Events.cache_data["stats"] = data
-	#if stats.is_empty():
+	if data.is_empty():
+		return
+	ClientState.stats.data.merge(data, true)
+	
 	stats_display.text = ""
 	
-	stats = (Events.cache_data["stats"] as Dictionary).duplicate()
+	stats = ClientState.stats.data.duplicate()
 	
 	stats_display.push_table(2)
 	stats_display.set_table_column_expand(0, true)
@@ -68,10 +67,6 @@ func add_stat_text(text: String, color: Color, stats: Array) -> void:
 	stats_display.append_text(text % stats)
 	stats_display.pop()
 	stats_display.pop()
-
-
-func update_stats(stats_to_update: Dictionary) -> void:
-	fill_stats(Events.cache_data[&"stats"])
 
 
 func _on_details_button_pressed() -> void:

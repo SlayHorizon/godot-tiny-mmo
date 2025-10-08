@@ -6,7 +6,7 @@ extends Control
 
 
 func _ready() -> void:
-	Events.local_player_ready.connect(
+	ClientState.local_player_ready.connect(
 		func(local_player: LocalPlayer) -> void:
 			var ability_system_component: AbilitySystemComponent = local_player.get_node_or_null(^"AbilitySystemComponent")
 			if not ability_system_component:

@@ -8,7 +8,7 @@ func _export_begin(features: PackedStringArray, is_debug: bool, path: String, fl
 	
 	var config := ConfigFile.new()
 	var override_content: String = "[autoload]
-	Events=null"
+	ClientState=null"
 	add_file(
 		"override.cfg",
 		override_content.to_utf8_buffer(),

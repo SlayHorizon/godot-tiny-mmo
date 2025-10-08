@@ -156,13 +156,13 @@ func _on_hotkey_button_pressed() -> void:
 	if not connect_hotkey_once:
 		connect_hotkey_once = true
 		
-		for hotkey_item: Item in Events.cache_data.get("hotkeys", []):
+		for hotkey_item: Item in ClientState.cache_data.get("hotkeys", []):
 			var button: Button = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_child(hotkey_index)
 			button.icon = hotkey_item.item_icon
 		
 		for button: Button in $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_children():
-			if Events.cache_data.has("hotkeys"):
-				button.icon = Events.cache_data["hotkeys"][hotkey_index].item_icon
+			if ClientState.cache_data.has("hotkeys"):
+				button.icon = ClientState.cache_data["hotkeys"][hotkey_index].item_icon
 			if hotkey_index < 2:
 				button.pressed.connect(_on_hotkey_index_pressed.bind(hotkey_index))
 			else:
@@ -173,7 +173,7 @@ func _on_hotkey_button_pressed() -> void:
 
 
 func _on_hotkey_index_pressed(hotkey_index: int) -> void:
-	Events.item_shortcut_added.emit(selected_item, hotkey_index)
+	ClientState.item_shortcut_added.emit(selected_item, hotkey_index)
 	
 	var button: Button = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_child(hotkey_index)
 	button.icon = selected_item.item_icon

@@ -41,14 +41,13 @@ func _on_attribute_pressed(label: Label, button: Button) -> void:
 	
 	label.text = "%s %d" % [attribute_name, attribute_points]
 	
-	
 	var stats: Dictionary = AttributeMap.attr_to_stats({attribute_name: 1})
 	for stat_name: StringName in stats:
-		if Events.cache_data[&"stats"].has(stat_name):
-			Events.cache_data[&"stats"][stat_name] += stats[stat_name]
+		if ClientState.stats.data.has(stat_name):
+			ClientState.stats.data[stat_name] += stats[stat_name]
 		else:
-			Events.cache_data[&"stats"][stat_name] = stats[stat_name]
-	InstanceClient.current.data_push(&"stats.update", stats)
+			ClientState.stats.data[stat_name] = stats[stat_name]
+	InstanceClient.current.data_push(&"stats.update", ClientState.stats.data)
 	
 	InstanceClient.current.request_data(
 		&"attribute.spend",
