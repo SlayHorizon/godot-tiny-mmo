@@ -11,12 +11,8 @@ enum Animations {
 
 var hand_type: Hand.Types
 
-var character_class: String:
-	set = _set_character_class
-var character_resource: CharacterResource
-
-var sprite_frames: String = "knight":
-	set = _set_sprite_frames
+var skin_id: int:
+	set = _set_skin_id
 
 var anim: Animations = Animations.IDLE:
 	set = _set_anim
@@ -61,10 +57,14 @@ func update_weapon_animation(state: String) -> void:
 	#equipped_weapon_left.play_animation(state)
 
 
-func _set_sprite_frames(new_sprite_frames: String) -> void:
-	animated_sprite.sprite_frames = ResourceLoader.load(
-		"res://source/common/gameplay/characters/sprite_frames/" + new_sprite_frames + ".tres"
-	)
+func _set_skin_id(id: int) -> void:
+	skin_id = id
+	# Avoid uncessary load on server
+	if multiplayer.is_server():
+		return
+	var sprite_frames: SpriteFrames = ContentRegistryHub.load_by_id(&"sprites", id) as SpriteFrames
+	if sprite_frames:
+		animated_sprite.sprite_frames = sprite_frames
 
 
 func _set_anim(new_anim: Animations) -> void:
@@ -87,10 +87,3 @@ func _set_flip(new_flip: bool) -> void:
 func _set_pivot(new_pivot: float) -> void:
 	pivot = new_pivot
 	hand_pivot.rotation = new_pivot
-
-
-func _set_character_class(new_class: String):
-	character_resource = ResourceLoader.load(
-		"res://source/common/gameplay/characters/classes/character_collection/" + new_class + ".tres")
-	animated_sprite.sprite_frames = character_resource.character_sprite
-	character_class = new_class

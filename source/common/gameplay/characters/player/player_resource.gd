@@ -18,7 +18,7 @@ const BASE_STATS: Dictionary[StringName, float] = {
 @export var account_name: String
 
 @export var display_name: String = "Player"
-@export var character_class: String = "knight"
+@export var skin_id: int = 1 # Default skin
 
 @export var golds: int
 @export var inventory: Dictionary
@@ -42,12 +42,12 @@ func init(
 	_player_id: int,
 	_account_name: String,
 	_display_name: String = display_name,
-	_character_class: String = character_class
+	_skin_id: int = skin_id
 ) -> void:
 	player_id = _player_id
 	account_name = _account_name
 	display_name = _display_name
-	character_class = _character_class
+	skin_id = _skin_id
 
 
 func level_up() -> void:

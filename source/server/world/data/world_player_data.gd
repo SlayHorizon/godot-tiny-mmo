@@ -47,7 +47,7 @@ func create_player_character(username: String, character_data: Dictionary) -> in
 	
 	player_character.init(
 		player_id, username,
-		character_data["name"], character_data["class"]
+		character_data["name"], character_data["skin"]
 	)
 	players[player_id] = player_character
 	if accounts.has(username):
@@ -62,11 +62,12 @@ func get_account_characters(account_name: String) -> Dictionary:
 	
 	if accounts.has(account_name):
 		for player_id: int in accounts[account_name]:
-			var player_character := get_player_resource(player_id)
+			var player_character: PlayerResource = get_player_resource(player_id)
 			if player_character:
 				data[player_id] = {
 					"name": player_character.display_name,
-					"class": player_character.character_class,
+					"skin": player_character.skin_id,
+					"class": "???",
 					"level": player_character.level
 				}
 	return data

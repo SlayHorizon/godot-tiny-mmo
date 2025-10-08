@@ -12,7 +12,7 @@ var account_name: String
 var token: int = randi()
 
 var current_world_id: int
-var selected_skin: String = "rogue"
+var selected_skin_id: int
 
 var menu_stack: Array[Control]
 
@@ -54,10 +54,10 @@ func _ready() -> void:
 	for button: Button in v_box_container.get_children():
 		button.pressed.connect(
 		func():
-			var sprite = ContentRegistryHub.load_by_slug(&"sprites", button.text.to_lower())
+			var sprite: SpriteFrames = ContentRegistryHub.load_by_slug(&"sprites", button.text.to_lower()) as SpriteFrames
 			if not sprite:
 				return
-			selected_skin = button.text.to_lower()
+			selected_skin_id =  ContentRegistryHub.id_from_slug(&"sprites", button.text.to_lower())
 			animated_sprite_2d.sprite_frames = sprite
 			animated_sprite_2d.play(&"run")
 		)
@@ -250,7 +250,7 @@ func _on_create_character_button_pressed() -> void:
 			GatewayApi.KEY_TOKEN_ID: token,
 			"data": {
 				"name": username_edit.text,
-				"class": selected_skin,
+				"skin": selected_skin_id,
 			},
 			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
 			GatewayApi.KEY_WORLD_ID: current_world_id
