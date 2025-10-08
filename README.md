@@ -27,13 +27,12 @@ It explores scalable multiplayer architecture, efficient byte-packed networking,
 
 ---
 
-## Screenshots
+<img width="1813" height="985" alt="image" src="https://github.com/user-attachments/assets/216a946e-26f5-4829-886e-5b58e323f9c8" />
 
 <details>
-<summary>See screenshots:</summary>
+<summary>See more screenshots:</summary>
    
 ![architecture-diagram](https://github.com/user-attachments/assets/78b1cce2-b070-4544-8ecd-59784743c7a0)
-<img width="1813" height="985" alt="image" src="https://github.com/user-attachments/assets/216a946e-26f5-4829-886e-5b58e323f9c8" />
 <img width="1718" height="573" alt="image" src="https://github.com/user-attachments/assets/cdd8da32-be03-4a9b-a93d-0d83858a086c" />
 
 </details>
