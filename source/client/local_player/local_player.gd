@@ -84,7 +84,7 @@ func define_sync_state() -> void:
 		[fid_anim, anim],
 		[fid_pivot, snappedf(hand_pivot.rotation, 0.05)],
 	]
-	syn.mark_many_by_id(pairs, true)
+	state_synchronizer.mark_many_by_id(pairs, true)
 	synchronizer_manager.send_my_delta(
-		multiplayer.get_unique_id(), syn.collect_dirty_pairs()
+		multiplayer.get_unique_id(), state_synchronizer.collect_dirty_pairs()
 	)

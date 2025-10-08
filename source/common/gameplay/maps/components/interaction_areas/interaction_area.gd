@@ -12,6 +12,4 @@ func _init() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body is Player:
-		body = body as Player
-		if not body.just_teleported:
-			player_entered_interaction_area.emit(body, self)
+		player_entered_interaction_area.emit(body, self)
