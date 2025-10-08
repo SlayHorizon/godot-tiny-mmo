@@ -15,12 +15,13 @@ var fid_pivot: int
 
 var synchronizer_manager: StateSynchronizerManagerClient
 
+@onready var camera_2d: Camera2D = $Camera2D
 @onready var mouse: Node2D = $MouseComponent
 
 
 func _ready() -> void:
-	Events.local_player = self
-	Events.local_player_ready.emit(self)
+	ClientState.local_player = self
+	ClientState.local_player_ready.emit(self)
 	
 	super._ready()
 	
@@ -82,5 +83,15 @@ func process_synchronization() -> void:
 
 
 func apply_settings() -> void:
-	if Events.settings.has("zoom"):
-		$Camera2D.zoom = Vector2.ONE * Events.settings["zoom"]
+	set_camera_zoom(ClientState.settings.get_key(&"zoom", 2) * Vector2.ONE)
+	ClientState.settings.data_changed.connect(_on_settings_changed)
+
+
+func _on_settings_changed(property: StringName, value: Variant) -> void:
+	match property:
+		&"camera_zoom":
+			set_camera_zoom(clampi(value, 1, 4) * Vector2.ONE)
+
+
+func set_camera_zoom(zoom: Vector2) -> void:
+	camera_2d.zoom = zoom

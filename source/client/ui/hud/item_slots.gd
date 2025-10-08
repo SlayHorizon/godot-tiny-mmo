@@ -12,12 +12,12 @@ func _ready() -> void:
 	item_shortcuts.resize(i)
 	item_shortcuts.fill(null)
 	
-	if Events.cache_data.has(&"hotkey"):
+	if ClientState.cache_data.has(&"hotkey"):
 		#add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 1), 0)
 		#add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 5), 1)
 		pass
 		
-	Events.item_shortcut_added.connect(add_item_to_shorcut)
+	ClientState.item_shortcut_added.connect(add_item_to_shorcut)
 	
 
 

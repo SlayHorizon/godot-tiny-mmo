@@ -18,7 +18,7 @@ config/icon="res://assets/project_icon/icon_svg.svg"
 
 [autoload]
 
-Events="*res://source/client/autoload/events.gd"
+ClientState="*res://source/client/autoload/client_state.gd"
 
 [debug]
 

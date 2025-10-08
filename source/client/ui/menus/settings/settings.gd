@@ -2,18 +2,17 @@ extends Control
 
 
 func _ready() -> void:
-	if Events.local_player:
-		$VBoxContainer/HBoxContainer/HSlider.value = Events.local_player.get_node(^"Camera2D").zoom.x
+	$VBoxContainer/HBoxContainer/HSlider.value = ClientState.settings.get_key(&"camera_zoom", 2)
 
 
 func _on_h_slider_drag_ended(value_changed: bool) -> void:
 	if not value_changed:
 		return
 	var h_slider: HSlider = $VBoxContainer/HBoxContainer/HSlider
-	if Events.local_player:
-		Events.local_player.get_node(^"Camera2D").zoom = Vector2.ONE * h_slider.value 
+	if ClientState.local_player:
+		ClientState.local_player.set_camera_zoom(h_slider.value * Vector2.ONE)
 	
-	Events.settings["zoom"] = h_slider.value
+	ClientState.settings[&"camera_zoom"] = h_slider.value
 
 
 func _on_button_pressed() -> void:
