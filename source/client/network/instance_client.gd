@@ -19,21 +19,6 @@ static var _data_subscriptions: Dictionary[StringName, Array]
 
 
 static func _static_init() -> void:
-	#subscribe(&"item.equip", func(data: Dictionary) -> void:
-		#if data.is_empty() or not data.has_all(["p", "i"]):
-			#return
-		#var player: Player = InstanceClient.current.players_by_peer_id.get(data["p"], null)
-		#if not player:
-			#return
-		#
-		#var item: Item = ContentRegistryHub.load_by_id(&"items", data["i"])
-		#if item:
-			#if item is WeaponItem:
-				#player.equipment_component.equip(item.slot.key, item)
-			#elif item is ConsumableItem:
-				#item.on_use(player)
-	#)
-	
 	subscribe(&"action.perform", func(data: Dictionary) -> void:
 		if data.is_empty() or not data.has_all(["p", "d", "i"]):
 			return
@@ -42,8 +27,8 @@ static func _static_init() -> void:
 			return
 		
 		player.equipment_component._mounted[&"weapon"].perform_action(data["i"], data["d"])
-		#player.equipped_weapon_right.perform_action(data["i"], data["d"])
 	)
+
 
 func _ready() -> void:
 	current = self
