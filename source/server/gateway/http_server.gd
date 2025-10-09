@@ -1,14 +1,15 @@
 extends "res://addons/httpserver/http_server.gd"
 
 
+const GatewayApi = preload("res://source/common/network/gateway_api.gd")
+const CredentialsUtils = preload("res://source/common/utils/credentials_utils.gd")
+
 var next_id: int
 
 @onready var gateway_manager_client: GatewayManagerClient = $"../GatewayManagerClient"
 
 
 func _ready() -> void:
-	#set_physics_process(false)
-	#return
 	super._ready()
 	router.register_route(
 		HTTPClient.Method.METHOD_POST,
@@ -66,12 +67,23 @@ func handle_guest(payload: Dictionary) -> Dictionary:
 
 
 func handle_character_create(payload: Dictionary) -> Dictionary:
+	if not payload.has_all(
+		[GatewayApi.KEY_TOKEN_ID, GatewayApi.KEY_ACCOUNT_USERNAME,
+		"data", GatewayApi.KEY_WORLD_ID]
+	):
+		return {"error": 1}
+	var character_data: Dictionary = payload.get("data", null) as Dictionary
+	if character_data.is_empty():
+		return {"error": 1}
+	var result: Dictionary = CredentialsUtils.validate_username(character_data.get("name", ""))
+	if result.get("code", CredentialsUtils.UsernameError.EMPTY) != CredentialsUtils.UsernameError.OK:
+		return {"error": result}
 	gateway_manager_client.create_player_character_request.rpc_id(
 		1,
-		payload["t-id"],
-		payload["a-u"],
+		payload[GatewayApi.KEY_TOKEN_ID],
+		payload[GatewayApi.KEY_ACCOUNT_USERNAME],
 		payload["data"],
-		payload["w-id"]
+		payload[GatewayApi.KEY_WORLD_ID]
 	)
 	while true:
 		var d: Dictionary = await gateway_manager_client.response_received

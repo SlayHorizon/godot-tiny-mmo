@@ -242,7 +242,19 @@ func _on_create_character_button_pressed() -> void:
 
 	var create_button: Button = $CharacterCreation/VBoxContainer/VBoxContainer/CreateButton
 	create_button.disabled = true
+	$BackButton.hide()
+	$CharacterCreation.hide()
 	
+	var result: Dictionary
+	result = CredentialsUtils.validate_username(username_edit.text)
+	if result.code != CredentialsUtils.UsernameError.OK:
+		await popup_panel.confirm_message("Username:\n" + result.message)
+		create_button.disabled = false
+		$BackButton.show()
+		$CharacterCreation.show()
+		return
+
+	popup_panel.display_waiting_popup()
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
 		GatewayApi.world_create_char(),
@@ -259,6 +271,7 @@ func _on_create_character_button_pressed() -> void:
 	if d.has("error"):
 		await popup_panel.confirm_message(str(d))
 		create_button.disabled = false
+		$CharacterCreation.show()
 		return
 	
 	world_server.connect_to_server(
