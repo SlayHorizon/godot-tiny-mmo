@@ -12,13 +12,12 @@ func _ready() -> void:
 	item_shortcuts.resize(i)
 	item_shortcuts.fill(null)
 	
-	if ClientState.cache_data.has(&"hotkey"):
-		#add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 1), 0)
-		#add_item_to_shorcut(ContentRegistryHub.load_by_id(&"items", 5), 1)
-		pass
-		
-	ClientState.item_shortcut_added.connect(add_item_to_shorcut)
-	
+	for slot_index: int in ClientState.quick_slots.data:
+		add_item_to_shorcut(
+			slot_index,
+			ClientState.quick_slots.data.get(slot_index, null)
+		)
+	ClientState.quick_slots.data_changed.connect(add_item_to_shorcut)
 
 
 func _on_item_shortcut_pressed(button: Button, index: int) -> void:
@@ -33,7 +32,7 @@ func _on_item_shortcut_pressed(button: Button, index: int) -> void:
 	)
 
 
-func add_item_to_shorcut(item: Item, index: int) -> void:
+func add_item_to_shorcut(index: int, item: Item) -> void:
 	if not index < item_shortcuts.size():
 		return
 	
