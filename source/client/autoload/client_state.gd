@@ -4,8 +4,6 @@ extends Node
 
 
 signal local_player_ready(local_player: LocalPlayer)
-signal item_shortcut_added(item: Item, index: int)
-
 
 var local_player: LocalPlayer
 var stats: DataDict = DataDict.new()
