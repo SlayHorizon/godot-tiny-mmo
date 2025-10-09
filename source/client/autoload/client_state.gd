@@ -6,11 +6,11 @@ extends Node
 signal local_player_ready(local_player: LocalPlayer)
 signal item_shortcut_added(item: Item, index: int)
 
-var cache_data: Dictionary
 
 var local_player: LocalPlayer
 var stats: DataDict = DataDict.new()
 var settings: DataDict = DataDict.new()
+var quick_slots: DataDict = DataDict.new()
 
 
 func _ready() -> void:
@@ -21,13 +21,8 @@ func _ready() -> void:
 	)
 
 
-func add_data(data: Dictionary, key: StringName) -> void:
-	print_debug(data, key)
-	cache_data[key] = data
-
-
 class DataDict:
-	signal data_changed(property: StringName, value: Variant)
+	signal data_changed(property: Variant, value: Variant)
 	
 	var data: Dictionary
 	
@@ -40,5 +35,10 @@ class DataDict:
 		return true
 	
 	
-	func get_key(property: StringName, default: Variant = null) -> Variant:
+	func set_key(key: Variant, value: Variant) -> void:
+		data.set(key, value)
+		data_changed.emit(key, value)
+	
+	
+	func get_key(property: Variant, default: Variant = null) -> Variant:
 		return data.get(property, default)

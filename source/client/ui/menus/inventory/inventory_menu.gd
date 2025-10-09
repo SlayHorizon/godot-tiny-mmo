@@ -19,6 +19,7 @@ var selected_item: Item
 @onready var item_preview_icon: TextureRect = $ItemInfo/PanelContainer/VBoxContainer/ItemPreviewIcon
 @onready var item_description: RichTextLabel = $ItemInfo/PanelContainer/VBoxContainer/ItemDescription
 @onready var item_action_button: Button = $ItemInfo/PanelContainer/VBoxContainer/HBoxContainer/ItemActionButton
+@onready var quick_slots_container: HBoxContainer = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer
 
 
 func _ready() -> void:
@@ -152,30 +153,26 @@ class InventorySlot:
 
 var connect_hotkey_once: bool = false
 func _on_hotkey_button_pressed() -> void:
-	var hotkey_index: int
-	if not connect_hotkey_once:
-		connect_hotkey_once = true
-		
-		for hotkey_item: Item in ClientState.cache_data.get("hotkeys", []):
-			var button: Button = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_child(hotkey_index)
-			button.icon = hotkey_item.item_icon
-		
-		for button: Button in $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_children():
-			if ClientState.cache_data.has("hotkeys"):
-				button.icon = ClientState.cache_data["hotkeys"][hotkey_index].item_icon
+	var hotkey_index: int = 0
+	
+	for button: Button in quick_slots_container.get_children():
+		if ClientState.quick_slots.data.has(hotkey_index):
+			button.icon = (ClientState.quick_slots.get_key(hotkey_index, null) as Item).item_icon
+			button.text = ""
+		if not connect_hotkey_once:
 			if hotkey_index < 2:
 				button.pressed.connect(_on_hotkey_index_pressed.bind(hotkey_index))
 			else:
 				button.text = "Lock"
-			hotkey_index += 1
-	
+		hotkey_index += 1
+	connect_hotkey_once = true
 	$ItemInfo/HotkeyPanel.show()
 
 
 func _on_hotkey_index_pressed(hotkey_index: int) -> void:
-	ClientState.item_shortcut_added.emit(selected_item, hotkey_index)
+	ClientState.quick_slots.set_key(hotkey_index, selected_item)
 	
-	var button: Button = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer.get_child(hotkey_index)
+	var button: Button = quick_slots_container.get_child(hotkey_index)
 	button.icon = selected_item.item_icon
 	$ItemInfo/HotkeyPanel.hide()
 
