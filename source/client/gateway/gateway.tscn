@@ -614,12 +614,13 @@ layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="LineEdit" type="LineEdit" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(200, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Character name"
 
 [node name="Button" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer2"]
+visible = false
 layout_mode = 2
 text = "Random"
 

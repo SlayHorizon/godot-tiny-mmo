@@ -1,11 +1,11 @@
 
 
 ## Shared keys (client + gateway)
-const KEY_TOKEN_ID := "t-id"
-const KEY_ACCOUNT_ID := "a-id"
-const KEY_ACCOUNT_USERNAME := "a-u"
-const KEY_WORLD_ID := "w-id"
-const KEY_CHAR_ID := "c-id"
+const KEY_TOKEN_ID: String = "t-id"
+const KEY_ACCOUNT_ID: String = "a-id"
+const KEY_ACCOUNT_USERNAME: String = "a-u"
+const KEY_WORLD_ID: String = "w-id"
+const KEY_CHAR_ID: String = "c-id"
 
 
 static func base_url() -> String:
