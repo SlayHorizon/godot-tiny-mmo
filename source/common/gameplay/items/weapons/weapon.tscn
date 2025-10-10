@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://c4mlxpbwyc1tw" path="res://source/common/gameplay/characters/components/hand/hand.tscn" id="3_ydnw2"]
 
 [node name="Weapon" type="Node2D"]
-position = Vector2(0, 2)
 script = ExtResource("1_aiw52")
 
 [node name="WeaponSprite" type="Sprite2D" parent="."]

@@ -35,7 +35,8 @@ var pivot: float = 0.0:
 @onready var equipment_component: EquipmentComponent = $EquipmentComponent
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var animation_tree: AnimationTree = $AnimationTree
-@onready var state_machine: AnimationNodeStateMachinePlayback = $AnimationTree.get("parameters/OnFoot/LocomotionSM/playback")
+@onready var locomotion_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/LocomotionSM/playback")
+@onready var weapon_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/WeaponSM/playback")
 
 
 func _ready() -> void:
@@ -70,11 +71,11 @@ func _set_skin_id(id: int) -> void:
 func _set_anim(new_anim: Animations) -> void:
 	match new_anim:
 		Animations.IDLE:
-			state_machine.travel(&"locomotion_idle")
+			locomotion_state_machine.travel(&"locomotion_idle")
 		Animations.RUN:
-			state_machine.travel(&"locomotion_run")
+			locomotion_state_machine.travel(&"locomotion_run")
 		Animations.DEATH:
-			state_machine[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
+			locomotion_state_machine[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
 	anim = new_anim
 
 

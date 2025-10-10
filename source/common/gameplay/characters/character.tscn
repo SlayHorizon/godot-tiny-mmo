@@ -1,10 +1,9 @@
-[gd_scene load_steps=36 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=41 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/gameplay/characters/character.gd" id="1_uqmoo"]
 [ext_resource type="AnimationLibrary" uid="uid://n1w3r0jaxp0q" path="res://source/common/gameplay/characters/animations/locomotion.tres" id="2_k3wew"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_pypn5"]
 [ext_resource type="AnimationLibrary" uid="uid://rbv6cl1ldcc7" path="res://source/common/gameplay/items/weapons/sword/sword_animations.tres" id="3_8hp20"]
-[ext_resource type="PackedScene" uid="uid://dslec2qgwwig2" path="res://source/common/gameplay/items/weapons/empty_hand/empty_hand.tscn" id="3_eddh2"]
 [ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/sync/state_synchronizer.gd" id="5_eyotc"]
 [ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/gameplay/combat/components/ability_system_component.gd" id="6_fg3fs"]
 [ext_resource type="Resource" uid="uid://djprqmldadljv" path="res://source/common/gameplay/combat/damage_model/DamageModelResource.tres" id="6_k71qx"]
@@ -85,10 +84,10 @@ filters = ["HandOffset/HandPivot/LeftHandSpot:position", "HandOffset/HandPivot/L
 
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_8hp20"]
 filter_enabled = true
-filters = ["HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation"]
+filters = ["HandOffset/HandPivot/LeftHandSpot:position", "HandOffset/HandPivot/LeftHandSpot:rotation", "HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation", "HandOffset:visible"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7g734"]
-animation = &"locomotion/death"
+animation = &"weapon/bow.charge"
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_ln0ku"]
 
@@ -122,25 +121,45 @@ states/locomotion_idle/position = Vector2(458, -29)
 states/locomotion_run/node = SubResource("AnimationNodeAnimation_wq2ob")
 states/locomotion_run/position = Vector2(458, 116)
 transitions = ["locomotion_idle", "locomotion_run", SubResource("AnimationNodeStateMachineTransition_pypn5"), "locomotion_run", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_wq2ob"), "Start", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_k3wew")]
-graph_offset = Vector2(35, -185)
+graph_offset = Vector2(8, -148.941)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k3wew"]
-animation = &"weapon/sword.swing"
+animation = &"weapon/bow.charge"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dpqhx"]
 animation = &"weapon/sword.idle"
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_2wxx6"]
-filter_enabled = true
-filters = ["HandOffset/HandPivot/RightHandSpot/EmptyHand:position", "HandOffset/HandPivot/RightHandSpot/Sword:position", "HandOffset/HandPivot/RightHandSpot/Sword:rotation", "HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation"]
+filters = ["HandOffset/HandPivot/RightHandSpot/EmptyHand:position", "HandOffset/HandPivot/RightHandSpot/Sword:position", "HandOffset/HandPivot/RightHandSpot/Sword:rotation", "HandOffset/HandPivot/RightHandSpot/WoodenBow/Hand:visible", "HandOffset/HandPivot/RightHandSpot/WoodenBow/WeaponSprite:region_rect", "HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation"]
 break_loop_at_end = true
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ln0ku"]
+animation = &"weapon/bow.charge"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_d15ip"]
+animation = &"weapon/sword.idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_dpqhx"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2wxx6"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_65mbs"]
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_gvcre"]
+states/Start/position = Vector2(169, 92)
+states/weapon_charge/node = SubResource("AnimationNodeAnimation_ln0ku")
+states/weapon_charge/position = Vector2(408, 188)
+states/weapon_idle/node = SubResource("AnimationNodeAnimation_d15ip")
+states/weapon_idle/position = Vector2(413, 92)
+transitions = ["Start", "weapon_idle", SubResource("AnimationNodeStateMachineTransition_dpqhx"), "weapon_idle", "weapon_charge", SubResource("AnimationNodeStateMachineTransition_2wxx6"), "weapon_charge", "weapon_idle", SubResource("AnimationNodeStateMachineTransition_65mbs")]
+
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_65mbs"]
-graph_offset = Vector2(1058.01, 794.98)
+graph_offset = Vector2(722.962, 825.874)
 nodes/Blend2/node = SubResource("AnimationNodeBlend2_8hp20")
 nodes/Blend2/position = Vector2(1580, 680)
 "nodes/Blend2 2/node" = SubResource("AnimationNodeBlend2_k3wew")
-"nodes/Blend2 2/position" = Vector2(1820, 640)
+"nodes/Blend2 2/position" = Vector2(1820, 700)
 nodes/InteruptAnimation/node = SubResource("AnimationNodeAnimation_7g734")
 nodes/InteruptAnimation/position = Vector2(1040, -240)
 nodes/InteruptShot/node = SubResource("AnimationNodeOneShot_ln0ku")
@@ -158,9 +177,11 @@ nodes/RightAction/position = Vector2(1040, 800)
 nodes/RightIdle/node = SubResource("AnimationNodeAnimation_dpqhx")
 nodes/RightIdle/position = Vector2(1040, 1060)
 nodes/RightOneShot/node = SubResource("AnimationNodeOneShot_2wxx6")
-nodes/RightOneShot/position = Vector2(1360, 740)
+nodes/RightOneShot/position = Vector2(1400, 860)
+nodes/WeaponSM/node = SubResource("AnimationNodeStateMachine_gvcre")
+nodes/WeaponSM/position = Vector2(750.49, 681.791)
 nodes/output/position = Vector2(2280, 620)
-node_connections = [&"Blend2", 0, &"LocomotionSM", &"Blend2", 1, &"RightOneShot", &"Blend2 2", 0, &"Blend2", &"Blend2 2", 1, &"LeftOneShot", &"InteruptShot", 0, &"Blend2 2", &"InteruptShot", 1, &"InteruptAnimation", &"LeftOneShot", 0, &"LeftIdle", &"LeftOneShot", 1, &"LeftAction", &"RightOneShot", 0, &"RightIdle", &"RightOneShot", 1, &"RightAction", &"output", 0, &"InteruptShot"]
+node_connections = [&"Blend2", 0, &"LocomotionSM", &"Blend2", 1, &"WeaponSM", &"InteruptShot", 0, &"Blend2", &"InteruptShot", 1, &"InteruptAnimation", &"LeftOneShot", 0, &"LeftIdle", &"LeftOneShot", 1, &"LeftAction", &"RightOneShot", 0, &"RightIdle", &"RightOneShot", 1, &"RightAction", &"output", 0, &"InteruptShot"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8hp20"]
 advance_mode = 2
@@ -168,10 +189,10 @@ advance_mode = 2
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_vih0n"]
 states/End/position = Vector2(844, 84)
 states/OnFoot/node = SubResource("AnimationNodeBlendTree_65mbs")
-states/OnFoot/position = Vector2(534, 47)
+states/OnFoot/position = Vector2(526, 62)
 states/Start/position = Vector2(253, 84)
 transitions = ["Start", "OnFoot", SubResource("AnimationNodeStateMachineTransition_8hp20")]
-graph_offset = Vector2(0, -179)
+graph_offset = Vector2(13.9791, -42)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
 size = Vector2(14, 6)
@@ -221,10 +242,12 @@ speed_scale = 1.5
 offset = Vector2(0, -30)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_3w1m3")
 
 [node name="HandOffset" type="Node2D" parent="."]
+z_index = 1
 position = Vector2(0, -10)
 
 [node name="HandPivot" type="Node2D" parent="HandOffset"]
@@ -232,21 +255,17 @@ position = Vector2(0, -10)
 [node name="RightHandSpot" type="Node2D" parent="HandOffset/HandPivot"]
 position = Vector2(15, 0)
 
-[node name="EmptyHand" parent="HandOffset/HandPivot/RightHandSpot" instance=ExtResource("3_eddh2")]
-position = Vector2(0, 0)
-
 [node name="LeftHandSpot" type="Node2D" parent="HandOffset/HandPivot"]
 position = Vector2(-15, 0)
 scale = Vector2(-1, 1)
-
-[node name="EmptyHand" parent="HandOffset/HandPivot/LeftHandSpot" instance=ExtResource("3_eddh2")]
-position = Vector2(0, 0)
+metadata/_edit_group_ = true
 
 [node name="RightRig" type="Node2D" parent="HandOffset/HandPivot"]
 
 [node name="LeftRig" type="Node2D" parent="HandOffset/HandPivot"]
 
 [node name="HurtBox" type="Area2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
 position = Vector2(0, -16)

@@ -23,6 +23,6 @@ tile_set = ExtResource("2_r6dc5")
 
 [node name="Warper" parent="." instance=ExtResource("2_sqr4w")]
 
-[node name="ReplicatedPropsContainer" type="Node" parent="."]
+[node name="ReplicatedPropsContainer" type="Node2D" parent="."]
 script = ExtResource("4_cva54")
 metadata/_custom_type_script = "uid://wq8klpndipnu"
