@@ -60,3 +60,8 @@ func unequip(slot: StringName) -> void:
 
 func can_use(slot: StringName, index: int) -> bool:
 	return _mounted.has(slot) and _mounted[slot].can_use_weapon(index)
+
+
+func process_input(local_player: LocalPlayer) -> void:
+	if _mounted.has(&"weapon"):
+		_mounted[&"weapon"].process_input(local_player)

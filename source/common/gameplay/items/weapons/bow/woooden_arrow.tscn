@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://c8ips7xp2ycic"]
+
+[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_4mr15"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_x105q"]
+
+[node name="WoodenArrow" instance=ExtResource("1_4mr15")]
+
+[node name="WeaponSprite" parent="." index="0"]
+rotation = -1.5708
+texture = ExtResource("2_x105q")
+offset = Vector2(1, 1)
+flip_h = false
+region_rect = Rect2(32, 0, 16, 16)

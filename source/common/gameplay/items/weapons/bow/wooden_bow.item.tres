@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponItem" load_steps=8 format=3 uid="uid://b64q6sv46brpr"]
+[gd_resource type="Resource" script_class="WeaponItem" load_steps=9 format=3 uid="uid://b64q6sv46brpr"]
 
 [ext_resource type="Script" uid="uid://chp0417yx5dgc" path="res://source/common/gameplay/combat/gameplay_effect/gameplay_effect.gd" id="1_ibcoj"]
 [ext_resource type="Script" uid="uid://b61c4gs0ie8a6" path="res://source/common/gameplay/combat/attributes/stat_growth/stat_growth.gd" id="2_wi6rl"]
@@ -7,10 +7,12 @@
 [ext_resource type="PackedScene" uid="uid://e6kqwoh5tlxp" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn" id="4_x4sqe"]
 [ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="5_ts60e"]
 [ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="6_j3qvs"]
+[ext_resource type="PackedScene" uid="uid://c8ips7xp2ycic" path="res://source/common/gameplay/items/weapons/bow/woooden_arrow.tscn" id="7_10omy"]
 
 [resource]
 script = ExtResource("5_ts60e")
 scene = ExtResource("4_x4sqe")
+second_hand = ExtResource("7_10omy")
 slot = ExtResource("6_j3qvs")
 required_level = 0
 base_modifiers = Array[ExtResource("3_10omy")]([])

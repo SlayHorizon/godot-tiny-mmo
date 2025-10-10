@@ -48,3 +48,7 @@ func perform_action(action_index: int, direction: Vector2) -> void:
 	if action_index >= abilities.size():
 		return
 	abilities[action_index].use_ability(character, direction)
+
+
+func process_input(local_player: LocalPlayer) -> void:
+	pass

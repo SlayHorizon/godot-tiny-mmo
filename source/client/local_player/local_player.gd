@@ -48,6 +48,7 @@ func process_movement() -> void:
 func process_input() -> void:
 	input_direction = Input.get_vector("left", "right", "up", "down")
 	action_input = Input.is_action_pressed("action")
+	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):
 		InstanceClient.current.request_data(&"action.perform", Callable(),
 		{"d": global_position.direction_to(mouse.position), "i": 0})
