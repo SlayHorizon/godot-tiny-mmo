@@ -4,6 +4,8 @@ extends Node
 
 signal instance_changed(instance: InstanceClient)
 
+@export var world_client: WorldClient
+
 var current_ui: UI
 var current_instance: InstanceClient
 
@@ -16,6 +18,7 @@ func _ready() -> void:
 func charge_new_instance(map_path: String, instance_id: String) -> void:
 	var new_instance: InstanceClient = InstanceClient.new()
 	new_instance.name = instance_id
+	new_instance.world_client = world_client
 	
 	print("Loading new map: %s." % map_path)
 	var map: Map = load(map_path).instantiate() as Map

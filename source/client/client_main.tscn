@@ -11,8 +11,9 @@ script = ExtResource("1_hoyng")
 [node name="WorldClient" type="Node" parent="."]
 script = ExtResource("2_ey548")
 
-[node name="InstanceManager" type="Node" parent="WorldClient"]
+[node name="InstanceManager" type="Node" parent="WorldClient" node_paths=PackedStringArray("world_client")]
 script = ExtResource("3_s85jl")
+world_client = NodePath("..")
 
 [node name="Gateway" parent="." node_paths=PackedStringArray("world_server") instance=ExtResource("4_s85jl")]
 world_server = NodePath("../WorldClient")

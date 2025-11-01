@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://c4nf240jpebhj"]
+[gd_scene load_steps=26 format=4 uid="uid://c4nf240jpebhj"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_i04l1"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_ulyvq"]
@@ -24,6 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.tscn" id="22_na1pl"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/npc.tscn" id="22_slgwh"]
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="24_slgwh"]
+[ext_resource type="Script" uid="uid://bvwcr61l1deso" path="res://source/common/gameplay/time/world_clock_display.gd" id="25_gimy5"]
 
 [node name="Overworld" type="Node2D" node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -165,28 +166,28 @@ null: 9
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 
 [node name="Coin" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(792, 920)
+position = Vector2(736, 1024)
 
 [node name="Coin2" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(776, 928)
+position = Vector2(748, 1047)
 
 [node name="Coin3" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(760, 952)
+position = Vector2(712, 1076)
 
 [node name="Coin4" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(776, 992)
+position = Vector2(704, 1047)
 
 [node name="Coin5" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(808, 1000)
+position = Vector2(712, 1024)
 
 [node name="Coin6" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(840, 968)
+position = Vector2(723, 1047)
 
 [node name="Coin7" parent="ReplicatedPropsContainer" instance=ExtResource("20_jp3f0")]
-position = Vector2(816, 944)
+position = Vector2(736, 1076)
 
 [node name="GroundButton" parent="ReplicatedPropsContainer" node_paths=PackedStringArray("activable_door") instance=ExtResource("21_plgjc")]
-position = Vector2(728, 928)
+position = Vector2(664, 904)
 activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/ActivableDoor2"), NodePath("../../Traps/ActivableDoor3"), NodePath("../../Traps/ActivableDoor8"), NodePath("../../Traps/ActivableDoor9"), NodePath("../../Traps/ActivableDoor4"), NodePath("../../Traps/ActivableDoor5"), NodePath("../../Traps/ActivableDoor7"), NodePath("../../Traps/ActivableDoor6")]
 
 [node name="NPC" parent="ReplicatedPropsContainer" instance=ExtResource("22_slgwh")]
@@ -195,31 +196,31 @@ position = Vector2(128, 1280)
 [node name="Traps" type="Node2D" parent="."]
 
 [node name="ActivableDoor" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(728, 896)
+position = Vector2(664, 872)
 
 [node name="ActivableDoor2" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(712, 896)
+position = Vector2(648, 872)
 
 [node name="ActivableDoor3" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(696, 896)
+position = Vector2(632, 872)
 
 [node name="ActivableDoor8" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(696, 912)
+position = Vector2(632, 888)
 
 [node name="ActivableDoor9" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(696, 928)
+position = Vector2(632, 904)
 
 [node name="ActivableDoor4" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(744, 896)
+position = Vector2(680, 872)
 
 [node name="ActivableDoor5" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(760, 912)
+position = Vector2(696, 888)
 
 [node name="ActivableDoor7" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(760, 928)
+position = Vector2(696, 904)
 
 [node name="ActivableDoor6" parent="Traps" instance=ExtResource("22_na1pl")]
-position = Vector2(760, 896)
+position = Vector2(696, 872)
 
 [node name="ZonePatch2D" type="Node2D" parent="."]
 top_level = true
@@ -250,3 +251,13 @@ offset_top = 968.0
 offset_right = 652.0
 offset_bottom = 989.0
 text = "PVP ZONE TEST"
+
+[node name="Label2" type="Label" parent="."]
+z_index = 10
+z_as_relative = false
+offset_left = 748.0
+offset_top = 917.0
+offset_right = 864.0
+offset_bottom = 938.0
+text = "World Time:"
+script = ExtResource("25_gimy5")

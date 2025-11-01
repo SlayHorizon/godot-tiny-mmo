@@ -7,6 +7,7 @@ const DUMMY_PLAYER: PackedScene = preload("res://source/common/gameplay/characte
 
 static var current: InstanceClient
 static var local_player: LocalPlayer
+static var world_client: WorldClient
 
 var players_by_peer_id: Dictionary[int, Player]
 

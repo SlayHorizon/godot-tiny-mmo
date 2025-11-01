@@ -5,6 +5,7 @@ extends BaseMultiplayerEndpoint
 signal connection_changed(connected_to_server: bool)
 signal authentication_requested
 
+var world_clock: WorldClockClient
 var peer_id: int
 var is_connected_to_server: bool = false:
 	set(value):
@@ -51,6 +52,11 @@ func _on_connection_succeeded() -> void:
 	print("Successfully connected to the server as %d!" % multiplayer.get_unique_id())
 	peer_id = multiplayer.get_unique_id()
 	is_connected_to_server = true
+
+	world_clock = WorldClockClient.new()
+	world_clock.name = "WorldClockClient"
+	add_child(world_clock)
+
 	if OS.has_feature("debug"):
 		DisplayServer.window_set_title("Client - %d" % peer_id)
 
