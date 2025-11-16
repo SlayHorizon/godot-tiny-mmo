@@ -30,7 +30,6 @@ static func _static_init() -> void:
 	
 	register_field("EquipmentComponent:mainhand_id", Wire.Type.U16)
 	# Stat fields are registered at run-time.
-	#register_field("AbilitySystemComponent/AttributesMirror:health",       WIRE_F32)
 
 
 static func reset() -> void:

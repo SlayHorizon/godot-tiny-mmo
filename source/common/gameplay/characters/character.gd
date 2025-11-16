@@ -40,15 +40,17 @@ var pivot: float = 0.0:
 
 
 func _ready() -> void:
-	# NEW
-	$AbilitySystemComponent/AttributesMirror.attribute_local_changed.connect(
-		func(attr: StringName, value: float, max_value: float):
-			#print(attr, " value = ", value, " max_value = ", max_value)
-			if attr != &"health":
-				return
+	if multiplayer.is_server():
+		return
+	ability_system_component.attributes.connect_watcher(Stat.HEALTH,
+		func(value: float) -> void:
 			$ProgressBar.value = value
-			$ProgressBar.max_value = max_value
 	)
+	ability_system_component.attributes.connect_watcher(Stat.HEALTH_MAX,
+		func(value: float) -> void:
+			$ProgressBar.max_value = value
+	)
+	
 
 
 func update_weapon_animation(state: String) -> void:

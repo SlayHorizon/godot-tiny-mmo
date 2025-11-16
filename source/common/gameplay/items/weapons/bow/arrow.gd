@@ -42,17 +42,19 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Player and not body.is_pvp():
 		return
 	
-	var asc: AbilitySystemComponent = body.get_node(^"AbilitySystemComponent")
-	var burn := BurnDotEffect.new()
-	burn.name_id = &"RedBuffBurn"
-	burn.duration = 3.0
-	burn.period = 0.5
-	asc.add_effect(burn, null)
+	var asc: AbilitySystemComponent = body.ability_system_component
+	asc.apply_damage(10)
 
-	asc.apply_spec_server(
-		effect,
-		source.get_node(^"AbilitySystemComponent")
-	)
+	#var burn := BurnDotEffect.new()
+	#burn.name_id = &"RedBuffBurn"
+	#burn.duration = 3.0
+	#burn.period = 0.5
+	#asc.add_effect(burn, null)
+	#asc.set_attribute_value(&"health")
+	#asc.apply_spec_server(
+		#effect,
+		#source.get_node(^"AbilitySystemComponent")
+	#)
 	if not piercing or pierce_left <= 0:
 		queue_free()
 	pierce_left -= 1

@@ -23,3 +23,5 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/sprite_frames/wizard.tres",
 &"slug": &"wizard"
 }])
+scan_path = ""
+filters = PackedStringArray()

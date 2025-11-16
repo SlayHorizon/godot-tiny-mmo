@@ -10,7 +10,6 @@ extends Node
 @export var dict_empty: Dictionary
 
 @export var integer: int
-@export var char: CharacterResource = null
 @export var position2d: Vector2 = Vector2.ONE
 
 

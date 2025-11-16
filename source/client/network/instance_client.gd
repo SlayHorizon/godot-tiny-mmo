@@ -26,7 +26,9 @@ static func _static_init() -> void:
 		if not player:
 			return
 		
-		player.equipment_component._mounted[&"weapon"].perform_action(data["i"], data["d"])
+		# To fix
+		if player.equipment_component._mounted.has(&"weapon"):
+			player.equipment_component._mounted[&"weapon"].perform_action(data["i"], data["d"])
 	)
 
 

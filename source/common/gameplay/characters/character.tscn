@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://6bcg7fwcl6mi"]
+[gd_scene load_steps=39 format=3 uid="uid://6bcg7fwcl6mi"]
 
 [ext_resource type="Script" uid="uid://bu6yn6ww7d7c8" path="res://source/common/gameplay/characters/character.gd" id="1_uqmoo"]
 [ext_resource type="AnimationLibrary" uid="uid://n1w3r0jaxp0q" path="res://source/common/gameplay/characters/animations/locomotion.tres" id="2_k3wew"]
@@ -6,8 +6,6 @@
 [ext_resource type="AnimationLibrary" uid="uid://rbv6cl1ldcc7" path="res://source/common/gameplay/items/weapons/sword/sword_animations.tres" id="3_8hp20"]
 [ext_resource type="Script" uid="uid://d1a30n4ktgm71" path="res://source/common/network/sync/state_synchronizer.gd" id="5_eyotc"]
 [ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/gameplay/combat/components/ability_system_component.gd" id="6_fg3fs"]
-[ext_resource type="Resource" uid="uid://djprqmldadljv" path="res://source/common/gameplay/combat/damage_model/DamageModelResource.tres" id="6_k71qx"]
-[ext_resource type="Script" uid="uid://natfmyvgikpe" path="res://source/common/gameplay/combat/components/attributes_mirror.gd" id="7_k71qx"]
 [ext_resource type="Script" uid="uid://bu62r4mj8ohfc" path="res://source/common/gameplay/combat/components/equipment_component.gd" id="8_wql3f"]
 
 [sub_resource type="Animation" id="Animation_pypn5"]
@@ -280,7 +278,7 @@ offset_bottom = -34.0
 theme_override_styles/background = SubResource("StyleBoxFlat_cgfpq")
 theme_override_styles/fill = SubResource("StyleBoxFlat_eyotc")
 step = 0.5
-value = 84.5
+value = 50.0
 allow_greater = true
 show_percentage = false
 
@@ -289,16 +287,10 @@ script = ExtResource("5_eyotc")
 root_node = NodePath("..")
 metadata/_custom_type_script = "uid://d1a30n4ktgm71"
 
-[node name="AbilitySystemComponent" type="Node" parent="." node_paths=PackedStringArray("synchronizer", "mirror")]
+[node name="AbilitySystemComponent" type="Node" parent="." node_paths=PackedStringArray("synchronizer")]
 script = ExtResource("6_fg3fs")
 synchronizer = NodePath("../StateSynchronizer")
-mirror = NodePath("AttributesMirror")
-damage_model = ExtResource("6_k71qx")
 metadata/_custom_type_script = "uid://gl2cwrrfvlkh"
-
-[node name="AttributesMirror" type="Node" parent="AbilitySystemComponent"]
-script = ExtResource("7_k71qx")
-metadata/_custom_type_script = "uid://natfmyvgikpe"
 
 [node name="EquipmentComponent" type="Node" parent="." node_paths=PackedStringArray("_asc", "character")]
 script = ExtResource("8_wql3f")
