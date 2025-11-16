@@ -18,13 +18,9 @@ func data_request_handler(
 		)
 		var value: float
 		for stat_name: StringName in gained_stats:
-			value = player.ability_system_component.get_value(stat_name)
+			value = player.ability_system_component.get_attribute_value(stat_name)
 			value += gained_stats[stat_name]
-			player.ability_system_component.set_max_server(
-				stat_name,
-				value
-			)
-			player.ability_system_component.set_value_server(
+			player.ability_system_component.set_attribute_value(
 				stat_name,
 				value
 			)

@@ -113,11 +113,6 @@ func spawn_player(peer_id: int) -> void:
 
 func instantiate_player(peer_id: int) -> Player:
 	var player_resource: PlayerResource = world_server.connected_players[peer_id]
-	# Was used before for a classic RPG class centric RPG system
-	#var character_resource: CharacterResource = ResourceLoader.load(
-		#"res://source/common/gameplay/characters/classes/character_collection/" +
-		#player_resource.character_class + ".tres"
-	#)
 	
 	var new_player: Player = PLAYER.instantiate() as Player
 	new_player.name = str(peer_id)
@@ -149,14 +144,7 @@ func instantiate_player(peer_id: int) -> Player:
 		for stat_name: StringName in player_stats:
 			var value: float = player_stats[stat_name]
 			print(stat_name, " : ", value)
-			if stat_name.ends_with("_max"):
-				var base_attr: StringName = stat_name.trim_suffix(&"_max")
-				asc.ensure_attr(base_attr, value, value)
-				asc.set_max_server(base_attr, value, true)
-				asc.set_value_server(base_attr, value)
-			else:
-				asc.ensure_attr(stat_name, value, value)
-				asc.set_value_server(stat_name, value),
+			asc.set_attribute_value(stat_name, value)
 		CONNECT_ONE_SHOT
 	)
 	return new_player
@@ -250,7 +238,7 @@ func get_player_syn(peer_id: int) -> StateSynchronizer:
 
 
 ## Fixe une propriété arbitraire relative à la racine du Player via le Synchronizer.
-## Exemple: ^":scale", ^"Sprite2D:modulate", ^"AbilitySystemComponent/AttributesMirror:health"
+## Exemple: ^":scale", ^"Sprite2D:modulate", ^"AbilitySystemComponent:health"
 func set_player_path_value(peer_id: int, rel_path: NodePath, value: Variant) -> bool:
 	var syn: StateSynchronizer = get_player_syn(peer_id)
 	if syn == null:
@@ -267,11 +255,11 @@ func set_player_attr_current(peer_id: int, attr: StringName, value: float) -> bo
 	if p == null:
 		return false
 
-	var asc: AbilitySystemComponent = p.get_node_or_null(^"AbilitySystemComponent")
+	var asc: AbilitySystemComponent = p.ability_system_component
 	if asc != null and asc.has_method("set_attr_current"):
 		asc.set_attr_current(attr, value)
 		return true
 
 	# Fallback (si pas encore d'API ASC dédiée) : pousser le miroir côté client.
-	var np := NodePath("AbilitySystemComponent/AttributesMirror:" + String(attr))
+	var np := NodePath("AbilitySystemComponent:" + String(attr))
 	return set_player_path_value(peer_id, np, value)

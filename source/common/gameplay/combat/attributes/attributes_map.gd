@@ -2,44 +2,49 @@ class_name AttributeMap
 
 
 const VITALITY: Dictionary[StringName, float] = {
-	StatsCatalog.HEALTH: 5.0,
+	Stat.HEALTH: 5.0,
+	Stat.HEALTH_MAX: 5.0
 }
 
 const STRENGHT: Dictionary[StringName, float] = {
-	StatsCatalog.AD: 2.0,
+	Stat.AD: 2.0,
 }
 
 const INTELLIGENCE: Dictionary[StringName, float] = {
-	StatsCatalog.AP: 2.0,
+	Stat.AP: 2.0,
 }
 
 const SPIRIT: Dictionary[StringName, float] = {
-	StatsCatalog.MANA: 10.0,
-	StatsCatalog.ENERGY: 10.0,
+	Stat.MANA: 10.0,
+	Stat.MANA_MAX: 10.0,
+	Stat.ENERGY: 10.0,
 }
 
 const MAGICAL_DEFENSE: Dictionary[StringName, float] = {
-	StatsCatalog.MR: 1.5,
-	StatsCatalog.HEALTH: 2.0,
+	Stat.MR: 1.5,
+	Stat.HEALTH: 2.0,
+	Stat.HEALTH_MAX: 2.0
 }
 
 const PHYSICAL_DEFENSE: Dictionary[StringName, float] = {
-	StatsCatalog.ARMOR: 1.5,
-	StatsCatalog.HEALTH: 2.0,
+	Stat.ARMOR: 1.5,
+	Stat.HEALTH: 2.0,
+	Stat.HEALTH_MAX: 2.0
 }
 
 
 const CONDITION: Dictionary[StringName, float] = {
-	&"tenacity": 3.0,#StatsCatalog.TENACITY
-	StatsCatalog.ARMOR: 1.0,
-	StatsCatalog.MR: 1.0,
-	StatsCatalog.HEALTH: 2.0,
+	&"tenacity": 3.0,#Stat.TENACITY
+	Stat.ARMOR: 1.0,
+	Stat.MR: 1.0,
+	Stat.HEALTH: 2.0,
+	Stat.HEALTH_MAX: 2.0
 }
 
 
 const AGILITY: Dictionary[StringName, float] = {
-	StatsCatalog.MOVE_SPEED: 4,
-	StatsCatalog.ATTACK_SPEED: 0.1
+	Stat.MOVE_SPEED: 4,
+	Stat.ATTACK_SPEED: 0.1
 }
 
 static func attr_to_stats(attributes: Dictionary[StringName, int]) -> Dictionary[StringName, float]:

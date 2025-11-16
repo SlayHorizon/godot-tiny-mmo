@@ -1,4 +1,4 @@
-class_name StatsCatalog
+class_name Stat
 
 
 const HEALTH: StringName = &"health"
@@ -30,3 +30,32 @@ const MOVE_SPEED: StringName = &"move_speed"
 const CRIT_CHANCE: StringName = &"crit_chance"
 const CRIT_DAMAGE: StringName = &"crit_damage"
 const ABILITY_HASTE: StringName = &"ability_haste"
+
+enum Id {
+	HEALTH,
+	HEALTH_MAX,
+
+	MANA,
+	MANA_MAX,
+
+	ENERGY,
+	ENERGY_MAX,
+
+	SHIELD,
+
+	ARMOR,# Physical resistance
+	MR,# Magic resistance
+
+	AD,# Attack Damage
+	AP,# Ability Power
+
+	ATTACK_SPEED,
+	ATTACK_RANGE,
+
+	MOVE_SPEED,
+
+	CRIT_CHANCE,
+	CRIT_DAMAGE,
+
+	ABILITY_HASTE,
+}

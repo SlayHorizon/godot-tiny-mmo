@@ -5,13 +5,13 @@ extends Resource
 const ATTRIBUTE_POINTS_PER_LEVEL: int = 3
 
 const BASE_STATS: Dictionary[StringName, float] = {
-	StatsCatalog.HEALTH_MAX: 100.0,
-	StatsCatalog.HEALTH: 100.0,
-	StatsCatalog.AD: 20.0,
-	StatsCatalog.ARMOR: 15.0,
-	StatsCatalog.MR: 15.0,
-	StatsCatalog.MOVE_SPEED: 75.0,
-	StatsCatalog.ATTACK_SPEED: 0.8
+	Stat.HEALTH_MAX: 100.0,
+	Stat.HEALTH: 100.0,
+	Stat.AD: 20.0,
+	Stat.ARMOR: 15.0,
+	Stat.MR: 15.0,
+	Stat.MOVE_SPEED: 75.0,
+	Stat.ATTACK_SPEED: 0.8
 }
 
 @export var player_id: int

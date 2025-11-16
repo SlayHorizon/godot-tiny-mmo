@@ -7,10 +7,6 @@ extends Item
 
 ## Main Stats (Base stats)
 @export var base_modifiers: Array[StatModifier]
-## Define the growth of an attribute depending of the level.
-## (Additionnal Attributes by level)
-@export var base_growth: Array[StatGrowthResource]
-@export var base_effects: Array[GameplayEffect]
 
 
 func can_equip(player: Player) -> bool:
@@ -22,12 +18,8 @@ func can_equip(player: Player) -> bool:
 func on_equip(character: Character) -> void:
 	for modifier: StatModifier in base_modifiers:
 		character.ability_system_component.add_modifier(modifier)
-	for effect: GameplayEffect in base_effects:
-		character.ability_system_component.add_effect(effect)
 
 
 func on_unequip(character: Character) -> void:
 	for modifier: StatModifier in base_modifiers:
 		character.ability_system_component.remove_modifier_by_id(modifier.runtime_id)
-	for effect: GameplayEffect in base_effects:
-		character.ability_system_component.remove_effect_by_name(effect.name_id)
