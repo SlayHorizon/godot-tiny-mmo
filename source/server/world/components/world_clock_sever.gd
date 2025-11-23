@@ -9,3 +9,4 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not enabled: return
 	total_elapsed_time += delta
+	total_elapsed_time = fmod(total_elapsed_time, day_speed)

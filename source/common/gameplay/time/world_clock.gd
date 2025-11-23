@@ -8,11 +8,6 @@ extends Node
 
 var total_elapsed_time: float = 0.0
 
-## Returns real-time seconds of the current cycle.
-func get_cycle_time() -> float:
-    return fmod(total_elapsed_time, day_speed)
-
 ## Returns the in-game hours of the current cycle.
 func get_current_time() -> float:
-    var seconds: float = get_cycle_time()
-    return (seconds / day_speed) * 24.0
+    return (total_elapsed_time / day_speed) * 24.0
