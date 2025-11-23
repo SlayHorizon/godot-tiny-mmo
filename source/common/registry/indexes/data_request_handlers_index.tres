@@ -80,8 +80,8 @@ entries = Array[Dictionary]([{
 }, {
 &"hash": "",
 &"id": 15,
-&"path": "res://source/server/world/components/data_request_handlers/servertime.get.gd",
-&"slug": &"servertime.get"
+&"path": "res://source/server/world/components/data_request_handlers/get.server_time.gd",
+&"slug": &"get.server_time"
 }])
 scan_path = ""
 filters = PackedStringArray()
