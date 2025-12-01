@@ -5,6 +5,11 @@ extends BaseMultiplayerEndpoint
 signal connection_changed(connected_to_server: bool)
 signal authentication_requested
 
+
+@export var world_clock: WorldClockClient
+
+static var current: WorldClient
+
 var peer_id: int
 var is_connected_to_server: bool = false:
 	set(value):
@@ -15,7 +20,7 @@ var authentication_token: String
 
 
 func _ready() -> void:
-	pass
+	current = self
 
 
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
@@ -51,6 +56,7 @@ func _on_connection_succeeded() -> void:
 	print("Successfully connected to the server as %d!" % multiplayer.get_unique_id())
 	peer_id = multiplayer.get_unique_id()
 	is_connected_to_server = true
+
 	if OS.has_feature("debug"):
 		DisplayServer.window_set_title("Client - %d" % peer_id)
 

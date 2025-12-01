@@ -4,6 +4,7 @@ extends Node
 
 signal instance_changed(instance: InstanceClient)
 
+
 var current_ui: UI
 var current_instance: InstanceClient
 
