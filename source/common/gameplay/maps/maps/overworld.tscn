@@ -1,7 +1,9 @@
-[gd_scene load_steps=26 format=4 uid="uid://c4nf240jpebhj"]
+[gd_scene load_steps=28 format=4 uid="uid://c4nf240jpebhj"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_i04l1"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_ulyvq"]
+[ext_resource type="Script" uid="uid://cawbe8qtyfdtk" path="res://source/common/gameplay/maps/components/ambient_light/ambient_light.gd" id="2_uytus"]
+[ext_resource type="Texture2D" uid="uid://bkpc1kjm4t2xn" path="res://source/common/gameplay/maps/components/ambient_light/textures/day_night_gradient.tres" id="3_mvj6e"]
 [ext_resource type="PackedScene" uid="uid://bihlmci6oa6b8" path="res://source/common/gameplay/maps/maps/guild_house/outside_building.tscn" id="5_7dcs4"]
 [ext_resource type="PackedScene" uid="uid://dfgyo6udh8k1s" path="res://source/common/gameplay/maps/maps/trade_house/outside_building.tscn" id="6_o3rdu"]
 [ext_resource type="PackedScene" uid="uid://bm5002tcxs41l" path="res://source/common/gameplay/maps/maps/misc_buildings/house.tscn" id="7_bs6wx"]
@@ -36,6 +38,12 @@ preview_aoi = false
 aoi_test_point = Vector2(900, 0)
 replicated_props_container = NodePath("ReplicatedPropsContainer")
 metadata/_custom_type_script = "uid://7mbux4mybta0"
+
+[node name="AmbientLight" type="CanvasModulate" parent="."]
+script = ExtResource("2_uytus")
+enabled = true
+light_texture = ExtResource("3_mvj6e")
+metadata/_custom_type_script = "uid://cawbe8qtyfdtk"
 
 [node name="World_tiles" type="Node2D" parent="."]
 y_sort_enabled = true
