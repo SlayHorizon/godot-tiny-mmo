@@ -164,10 +164,10 @@ func _draw_rect_border(r: Rect2, color: Color, width: float, dashed: bool=false,
 
 func _draw_dashed_line(a: Vector2, b: Vector2, color: Color, width: float, step: float) -> void:
 	var dir: Vector2 = b - a
-	var len: float = dir.length()
-	if len <= 0.001:
+	var length: float = dir.length()
+	if length <= 0.001:
 		return
-	var n: int = int(len / step)
+	var n: int = int(length / step)
 	if n <= 0:
 		draw_line(a, b, color, width, true)
 		return

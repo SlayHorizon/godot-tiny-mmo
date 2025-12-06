@@ -6,7 +6,7 @@ static func get_all_file_at(
 	pattern: String = "*",
 	recursive: bool = true
 ) -> PackedStringArray:
-	var result_files: PackedStringArray
+	var result_files: PackedStringArray = []
 	var dir: DirAccess = DirAccess.open(path)
 	
 	if not dir:

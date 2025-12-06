@@ -61,10 +61,10 @@ func fill_stats(data: Dictionary) -> void:
 	stats_display.pop()
 
 
-func add_stat_text(text: String, color: Color, stats: Array) -> void:
+func add_stat_text(text: String, color: Color, _stats: Array) -> void:
 	stats_display.push_cell()
 	stats_display.push_color(color)
-	stats_display.append_text(text % stats)
+	stats_display.append_text(text % _stats)
 	stats_display.pop()
 	stats_display.pop()
 
