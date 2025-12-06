@@ -118,7 +118,7 @@ func instantiate_player(peer_id: int) -> Player:
 	new_player.name = str(peer_id)
 	new_player.player_resource = player_resource
 	
-	new_player.ready.connect(func():
+	var setup_new_player: Callable = func():
 		var syn: StateSynchronizer = new_player.state_synchronizer
 		syn.set_by_path(^":skin_id", new_player.player_resource.skin_id)
 		syn.set_by_path(^":display_name", new_player.player_resource.display_name)
@@ -145,8 +145,8 @@ func instantiate_player(peer_id: int) -> Player:
 			var value: float = player_stats[stat_name]
 			print(stat_name, " : ", value)
 			asc.set_attribute_value(stat_name, value)
-		CONNECT_ONE_SHOT
-	)
+
+	new_player.ready.connect(setup_new_player,CONNECT_ONE_SHOT)
 	return new_player
 
 
