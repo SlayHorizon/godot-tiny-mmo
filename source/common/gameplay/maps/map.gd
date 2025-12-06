@@ -42,7 +42,7 @@ enum ZoneModifiers {
 
 @export_group("")
 @export var replicated_props_container: ReplicatedPropsContainer
-@export var map_background_color := Color(0,0,0)
+@export var map_background_color: Color = Color(0,0,0)
 
 var warpers: Dictionary[int, Warper]
 
@@ -57,7 +57,7 @@ func _ready() -> void:
 			var warper_id: int = child.warper_id
 			warpers[warper_id] = child
 
-	if OS.has_feature("client"):
+	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
 
 
