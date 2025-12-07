@@ -163,10 +163,10 @@ static func _arc(center: Vector2, radius: float, from_angle: float, to_angle: fl
 	return pts
 
 func _rounded_rect_points(rect: Rect2, r: Dictionary) -> PackedVector2Array:
-	var tl: float = r.tl
-	var tr: float = r.tr
-	var br: float = r.br
-	var bl: float = r.bl
+	var top_left: float = r.tl
+	var top_right: float = r.tr
+	var bottom_right: float = r.br
+	var bottom_left: float = r.bl
 
 	var left = rect.position.x
 	var top = rect.position.y
@@ -174,24 +174,24 @@ func _rounded_rect_points(rect: Rect2, r: Dictionary) -> PackedVector2Array:
 	var bottom = rect.position.y + rect.size.y
 
 	var pts = PackedVector2Array()
-	pts.append_array(_arc(Vector2(left + tl,  top + tl),    tl, PI,       PI * 1.5, segments_per_corner))
-	pts.append_array(_arc(Vector2(right - tr, top + tr),    tr, PI * 1.5, PI * 2.0, segments_per_corner))
-	pts.append_array(_arc(Vector2(right - br, bottom - br), br, 0.0,      PI * 0.5, segments_per_corner))
-	pts.append_array(_arc(Vector2(left + bl,  bottom - bl), bl, PI * 0.5, PI,       segments_per_corner))
+	pts.append_array(_arc(Vector2(left + top_left,  top + top_left),    top_left, PI,       PI * 1.5, segments_per_corner))
+	pts.append_array(_arc(Vector2(right - top_right, top + top_right),    top_right, PI * 1.5, PI * 2.0, segments_per_corner))
+	pts.append_array(_arc(Vector2(right - bottom_right, bottom - bottom_right), bottom_right, 0.0,      PI * 0.5, segments_per_corner))
+	pts.append_array(_arc(Vector2(left + bottom_left,  bottom - bottom_left), bottom_left, PI * 0.5, PI,       segments_per_corner))
 	return pts
 
 func _radii_clamped(size: Vector2) -> Dictionary:
 	var w = size.x
 	var h = size.y
-	var tl = max(0.0, corner_radius_top_left)
-	var tr = max(0.0, corner_radius_top_right)
-	var br = max(0.0, corner_radius_bottom_right)
-	var bl = max(0.0, corner_radius_bottom_left)
+	var top_left = max(0.0, corner_radius_top_left)
+	var top_right = max(0.0, corner_radius_top_right)
+	var bottom_right = max(0.0, corner_radius_bottom_right)
+	var bottom_left = max(0.0, corner_radius_bottom_left)
 
-	var sum_h_top = tl + tr
-	var sum_h_bot = bl + br
-	var sum_v_left = tl + bl
-	var sum_v_right = tr + br
+	var sum_h_top = top_left + top_right
+	var sum_h_bot = bottom_left + bottom_right
+	var sum_v_left = top_left + bottom_left
+	var sum_v_right = top_right + bottom_right
 
 	var scale_x = 1.0
 	var scale_y = 1.0
@@ -205,12 +205,12 @@ func _radii_clamped(size: Vector2) -> Dictionary:
 		scale_y = min(scale_y, h / max(sum_v_right, 0.00001))
 
 	var s = min(scale_x, scale_y)
-	tl *= s
-	tr *= s
-	br *= s
-	bl *= s
+	top_left *= s
+	top_right *= s
+	bottom_right *= s
+	bottom_left *= s
 
-	return { "tl": tl, "tr": tr, "br": br, "bl": bl }
+	return { "tl": top_left, "tr": top_right, "br": bottom_right, "bl": bottom_left }
 
 func _radii_inset(r: Dictionary, inset: float, inner_size: Vector2) -> Dictionary:
 	return {

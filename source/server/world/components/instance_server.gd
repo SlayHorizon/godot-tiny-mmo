@@ -68,7 +68,7 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		player_entered_warper.emit.call_deferred(player, self, interaction_area)
 	if interaction_area is Teleporter:
 		player.mark_just_teleported()
-		player.syn.set_by_path(^":position", interaction_area.target.global_position)
+		player.state_synchronizer.set_by_path(^":position", interaction_area.target.global_position)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -118,7 +118,7 @@ func instantiate_player(peer_id: int) -> Player:
 	new_player.name = str(peer_id)
 	new_player.player_resource = player_resource
 	
-	new_player.ready.connect(func():
+	var setup_new_player: Callable = func():
 		var syn: StateSynchronizer = new_player.state_synchronizer
 		syn.set_by_path(^":skin_id", new_player.player_resource.skin_id)
 		syn.set_by_path(^":display_name", new_player.player_resource.display_name)
@@ -145,8 +145,8 @@ func instantiate_player(peer_id: int) -> Player:
 			var value: float = player_stats[stat_name]
 			print(stat_name, " : ", value)
 			asc.set_attribute_value(stat_name, value)
-		CONNECT_ONE_SHOT
-	)
+
+	new_player.ready.connect(setup_new_player,CONNECT_ONE_SHOT)
 	return new_player
 
 

@@ -60,8 +60,8 @@ func add_item(item_id: int, item_data: Dictionary) -> void:
 	# If we don't want to have blrurry pixel art
 	var sb: StyleBox = BetterThemeDB.theme.get_stylebox(&"normal", &"Button")
 	var content_margin: Vector2i = Vector2i(
-		sb.get_content_margin(SIDE_LEFT) + sb.get_content_margin(SIDE_RIGHT),
-		sb.get_content_margin(SIDE_TOP) +  sb.get_content_margin(SIDE_BOTTOM),
+		int(sb.get_content_margin(SIDE_LEFT)) + int(sb.get_content_margin(SIDE_RIGHT)),
+		int(sb.get_content_margin(SIDE_TOP)) +  int(sb.get_content_margin(SIDE_BOTTOM)),
 	)
 	var available_size: Vector2i = Vector2i(new_button.custom_minimum_size) - content_margin
 	var item_icon_size: Vector2i = item.item_icon.get_size()
