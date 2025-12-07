@@ -42,7 +42,7 @@ enum ZoneModifiers {
 
 @export_group("")
 @export var replicated_props_container: ReplicatedPropsContainer
-@export var map_background_color := Color(0,0,0)
+@export var map_background_color: Color = Color(0,0,0)
 
 var warpers: Dictionary[int, Warper]
 
@@ -57,7 +57,7 @@ func _ready() -> void:
 			var warper_id: int = child.warper_id
 			warpers[warper_id] = child
 
-	if OS.has_feature("client"):
+	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
 
 
@@ -164,10 +164,10 @@ func _draw_rect_border(r: Rect2, color: Color, width: float, dashed: bool=false,
 
 func _draw_dashed_line(a: Vector2, b: Vector2, color: Color, width: float, step: float) -> void:
 	var dir: Vector2 = b - a
-	var len: float = dir.length()
-	if len <= 0.001:
+	var length: float = dir.length()
+	if length <= 0.001:
 		return
-	var n: int = int(len / step)
+	var n: int = int(length / step)
 	if n <= 0:
 		draw_line(a, b, color, width, true)
 		return

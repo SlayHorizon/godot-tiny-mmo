@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://clhv7kagrqam3"]
-
-[ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_duefv"]
-
-[node name="Spar_house_inside" type="Node2D"]
-script = ExtResource("1_duefv")
-metadata/_custom_type_script = "uid://7mbux4mybta0"
