@@ -68,7 +68,7 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		player_entered_warper.emit.call_deferred(player, self, interaction_area)
 	if interaction_area is Teleporter:
 		player.mark_just_teleported()
-		player.syn.set_by_path(^":position", interaction_area.target.global_position)
+		player.state_synchronizer.set_by_path(^":position", interaction_area.target.global_position)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
