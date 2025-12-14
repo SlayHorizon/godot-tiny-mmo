@@ -6,7 +6,7 @@ var _pending_time_requests: Array
 
 
 func _ready() -> void:
-	sync_time_with_server()
+	get_parent().connection_changed.connect(_on_client_connected)
 
 
 func _process(delta: float) -> void:
@@ -15,18 +15,27 @@ func _process(delta: float) -> void:
 	total_elapsed_time = fmod(total_elapsed_time, day_speed)
 
 
-func sync_time_with_server() -> void:
-	while not InstanceClient.current:
-		await get_tree().process_frame
+func _on_client_connected(is_connected_to_server: bool) -> void:
+	if is_connected_to_server:
+		sync_time_with_server()
 
+
+func sync_time_with_server() -> void:
 	var request_time: int = Time.get_ticks_msec()
 	_pending_time_requests.append(request_time)
 
-	InstanceClient.current.request_data(
-		&"get.server_time", 
+
+	NetworkManagerClient._self.request_data(
+		&"get.server_time",
 		_on_request_time_response,
 		{"id": request_time}
 	)
+
+	#InstanceClient.current.request_data(
+	#	&"get.server_time", 
+	#	_on_request_time_response,
+	#	{"id": request_time}
+	#)
 
 
 func _on_request_time_response(args: Dictionary) -> void:
