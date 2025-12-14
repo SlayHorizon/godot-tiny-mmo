@@ -50,9 +50,9 @@ func process_input() -> void:
 	action_input = Input.is_action_pressed("action")
 	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):
-		NetworkManagerClient._self.request_data(&"action.perform", Callable(),
+		DataSynchronizerClient._self.request_data(&"action.perform", Callable(),
 		{"d": global_position.direction_to(mouse.position), "i": 0}, InstanceClient.current.name)
-		#InstanceClient.current.request_data(&"action.perform", Callable(),
+		#DataSynchronizerClient._self.request_data(&"action.perform", Callable(),
 		#{"d": global_position.direction_to(mouse.position), "i": 0})
 
 

@@ -89,7 +89,7 @@ func spawn_player(peer_id: int) -> void:
 		awaiting_peers.erase(peer_id)
 	else:
 		player = instantiate_player(peer_id)
-		data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
+		DataSynchronizerServer._self.data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
 	
 	player.mark_just_teleported()
 	
@@ -139,7 +139,7 @@ func instantiate_player(peer_id: int) -> Player:
 				player_stats[stat_name] += stats_from_attributes[stat_name]
 		
 		player_resource.stats = player_stats
-		data_push.rpc_id(peer_id, &"stats.get", player_stats)
+		DataSynchronizerServer._self.data_push.rpc_id(peer_id, &"stats.get", player_stats)
 		
 		for stat_name: StringName in player_stats:
 			var value: float = player_stats[stat_name]
@@ -182,44 +182,44 @@ func despawn_player(peer_id: int, delete: bool = false) -> void:
 		despawn_player.rpc_id(id, peer_id)
 #endregion
 
-
-@rpc("any_peer", "call_remote", "reliable", 1)
-func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
-	var peer_id: int = multiplayer.get_remote_sender_id()
+# OLD
+#@rpc("any_peer", "call_remote", "reliable", 1)
+#func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
+#	var peer_id: int = multiplayer.get_remote_sender_id()
 	# Rate-limit
 	#if not _rate_ok(
 		#return
 	
-	if not request_handlers.has(type):
-		var script: GDScript = ContentRegistryHub.load_by_slug(
-			&"data_request_handlers",
-			type
-		) as GDScript
-		if not script:
-			return
-		var request_handler: DataRequestHandler = script.new() as DataRequestHandler
-		if not request_handler:
-			return
-		request_handlers[type] = request_handler
+#	if not request_handlers.has(type):
+#		var script: GDScript = ContentRegistryHub.load_by_slug(
+#			&"data_request_handlers",
+#			type
+#		) as GDScript
+#		if not script:
+#			return
+#		var request_handler: DataRequestHandler = script.new() as DataRequestHandler
+#		if not request_handler:
+#			return
+#		request_handlers[type] = request_handler
 	# Maybe shouldn't send back in every case
-	data_response.rpc_id(
-		peer_id,
-		request_id,
-		type,
-		request_handlers[type].data_request_handler(peer_id, self, args)
-	)
+#	data_response.rpc_id(
+#		peer_id,
+#		request_id,
+#		type,
+#		request_handlers[type].data_request_handler(peer_id, self, args)
+#	)
 
 
-@rpc("authority", "call_remote", "reliable", 1)
-func data_response(request_id: int, type: StringName, data: Dictionary) -> void:
+#@rpc("authority", "call_remote", "reliable", 1)
+#func data_response(request_id: int, type: StringName, data: Dictionary) -> void:
 	# Only implemented in the client
-	pass
+#	pass
 
 
-@rpc("authority", "call_remote", "reliable", 1)
-func data_push(type: StringName, data: Dictionary) -> void:
+#@rpc("authority", "call_remote", "reliable", 1)
+#func data_push(type: StringName, data: Dictionary) -> void:
 	# Only implemented in the client
-	pass
+#	pass
 
 
 func propagate_rpc(callable: Callable) -> void:

@@ -7,7 +7,7 @@ var stats: Dictionary
 
 
 func _ready() -> void:
-	InstanceClient.subscribe(&"stats.update", fill_stats)
+	DataSynchronizerClient.subscribe(&"stats.update", fill_stats)
 	# If already stored.
 	fill_stats(ClientState.stats.data)
 

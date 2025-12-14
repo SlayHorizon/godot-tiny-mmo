@@ -19,7 +19,7 @@ static var _data_subscriptions: Dictionary[StringName, Array]
 
 
 static func _static_init() -> void:
-	subscribe(&"action.perform", func(data: Dictionary) -> void:
+	var _on_data_receive: Callable = func(data: Dictionary):
 		if data.is_empty() or not data.has_all(["p", "d", "i"]):
 			return
 		var player: Player = InstanceClient.current.players_by_peer_id.get(data["p"])
@@ -29,7 +29,8 @@ static func _static_init() -> void:
 		# To fix
 		if player.equipment_component._mounted.has(&"weapon"):
 			player.equipment_component._mounted[&"weapon"].perform_action(data["i"], data["d"])
-	)
+
+	DataSynchronizerClient.subscribe(&"action.perform", _on_data_receive)
 
 
 func _ready() -> void:
@@ -89,61 +90,61 @@ func despawn_player(player_id: int) -> void:
 	players_by_peer_id.erase(player_id)
 #endregion
 
-
+# OLD
 ## Suscribe to a kind of data from anywhere in the project.
 ## Used like this InstanceClient.suscribre(&"inventory.get", fill_inventory)
 ## Then each update of the data type &"inventory.get" will call fill_inventory function. 
 ## Super practicale if you want to listen to specific data from GUI.
-static func subscribe(type: StringName, handler: Callable) -> void:
-	if _data_subscriptions.has(type):
-		_data_subscriptions[type].append(handler)
-	else:
-		_data_subscriptions[type] = [handler]
-
-
-static func unsubscribe(type: StringName, handler: Callable) -> void:
-	if not _data_subscriptions.has(type):
-		return
-	_data_subscriptions[type].erase(handler)
-
-
+#static func subscribe(type: StringName, handler: Callable) -> void:
+	#if _data_subscriptions.has(type):
+		#_data_subscriptions[type].append(handler)
+	#else:
+		#_data_subscriptions[type] = [handler]
+#
+#
+#static func unsubscribe(type: StringName, handler: Callable) -> void:
+	#if not _data_subscriptions.has(type):
+		#return
+	#_data_subscriptions[type].erase(handler)
+#
+#
 ## Request the server about a data_type with optional args,
 ## the handler is called with the result similar to suscribre but only once.
-func request_data(type: StringName, handler: Callable, args: Dictionary = {}) -> int:
-	var request_id: int = _next_data_request_id
-	_next_data_request_id += 1
-	_pending_data_requests[request_id] = handler
-	data_request.rpc_id(1, request_id, type, args)
-	# Return request_id in case you may want to keep track of it for cancelation.
-	return request_id
-
-
+#func request_data(type: StringName, handler: Callable, args: Dictionary = {}) -> int:
+	#var request_id: int = _next_data_request_id
+	#_next_data_request_id += 1
+	#_pending_data_requests[request_id] = handler
+	#data_request.rpc_id(1, request_id, type, args)
+	## Return request_id in case you may want to keep track of it for cancelation.
+	#return request_id
+#
+#
 ## Ignore incoming request id.
-func cancel_request_data(request_id: int) -> bool:
-	# Dictionary.erase eturns true if the given key existed in the dictionary, otherwise false.
-	return _pending_data_requests.erase(request_id)
-
-
-@rpc("any_peer", "call_remote", "reliable", 1)
-func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
-	# Only implemented in the server.
-	pass
-
-
-@rpc("authority", "call_remote", "reliable", 1)
-func data_response(request_id: int, type: StringName, data: Dictionary) -> void:
-	var callable: Callable = _pending_data_requests.get(request_id, Callable())
-	_pending_data_requests.erase(request_id)
-	if callable.is_valid():
-		callable.call(data)
-	data_push(type, data)
-
-
-@rpc("authority", "call_remote", "reliable", 1)
-func data_push(type: StringName, data: Dictionary) -> void:
-	for handler: Callable in _data_subscriptions.get(type, []):
-		if handler.is_valid():
-			handler.call(data)
-		# Can be optional: if not valid anymore, remove it.
-		else:
-			unsubscribe(type, handler)
+#func cancel_request_data(request_id: int) -> bool:
+	## Dictionary.erase eturns true if the given key existed in the dictionary, otherwise false.
+	#return _pending_data_requests.erase(request_id)
+#
+#
+#@rpc("any_peer", "call_remote", "reliable", 1)
+#func data_request(request_id: int, type: StringName, args: Dictionary) -> void:
+	## Only implemented in the server.
+	#pass
+#
+#
+#@rpc("authority", "call_remote", "reliable", 1)
+#func data_response(request_id: int, type: StringName, data: Dictionary) -> void:
+	#var callable: Callable = _pending_data_requests.get(request_id, Callable())
+	#_pending_data_requests.erase(request_id)
+	#if callable.is_valid():
+		#callable.call(data)
+	#data_push(type, data)
+#
+#
+#@rpc("authority", "call_remote", "reliable", 1)
+#func data_push(type: StringName, data: Dictionary) -> void:
+	#for handler: Callable in _data_subscriptions.get(type, []):
+		#if handler.is_valid():
+			#handler.call(data)
+		## Can be optional: if not valid anymore, remove it.
+		#else:
+			#unsubscribe(type, handler)

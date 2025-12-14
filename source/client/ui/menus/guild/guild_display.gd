@@ -19,12 +19,12 @@ func open(data: Dictionary) -> void:
 func _on_button_pressed() -> void:
 	# Quick n Dirty
 	if button.text.begins_with("Leave"):
-		InstanceClient.current.request_data(
+		DataSynchronizerClient._self.request_data(
 			&"guild.quit",
 			func(d): swap_requested.emit(no_guild_panel, {})
 		)
 	#else:
-		#InstanceClient.current.request_data(
+		#DataSynchronizerClient._self.request_data(
 			#&"guild.apply",
 			#Callable()
 		#)

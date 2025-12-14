@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://bfybdk1kgy125" path="res://source/client/client_main.gd" id="1_hoyng"]
 [ext_resource type="Script" uid="uid://siq7b6qqrjyq" path="res://source/client/network/world_client.gd" id="2_ey548"]
 [ext_resource type="Script" uid="uid://cy00y2hsdyloy" path="res://source/client/gameplay/time/world_clock_client.gd" id="3_cgybg"]
+[ext_resource type="Script" uid="uid://d4ess0o0jhiqx" path="res://source/client/network/data_sync_client.gd" id="3_re4x3"]
 [ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="3_s85jl"]
-[ext_resource type="Script" uid="uid://d4ess0o0jhiqx" path="res://source/client/network/network_manager_client.gd" id="4_re4x3"]
 [ext_resource type="PackedScene" uid="uid://5wv1gfwppcnf" path="res://source/client/gateway/gateway.tscn" id="4_s85jl"]
 
 [node name="ClientMain" type="Node"]
@@ -14,12 +14,12 @@ script = ExtResource("1_hoyng")
 script = ExtResource("2_ey548")
 world_clock = NodePath("WorldClockClient")
 
+[node name="DataSynchronizer" type="Node" parent="WorldClient" node_paths=PackedStringArray("instance_manager")]
+script = ExtResource("3_re4x3")
+instance_manager = NodePath("../InstanceManager")
+
 [node name="WorldClockClient" type="Node" parent="WorldClient"]
 script = ExtResource("3_cgybg")
-
-[node name="NetworkManager" type="Node" parent="WorldClient" node_paths=PackedStringArray("instance_manager")]
-script = ExtResource("4_re4x3")
-instance_manager = NodePath("../InstanceManager")
 
 [node name="InstanceManager" type="Node" parent="WorldClient"]
 script = ExtResource("3_s85jl")

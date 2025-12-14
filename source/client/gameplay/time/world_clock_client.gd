@@ -25,17 +25,11 @@ func sync_time_with_server() -> void:
 	_pending_time_requests.append(request_time)
 
 
-	NetworkManagerClient._self.request_data(
+	DataSynchronizerClient._self.request_data(
 		&"get.server_time",
 		_on_request_time_response,
 		{"id": request_time}
 	)
-
-	#InstanceClient.current.request_data(
-	#	&"get.server_time", 
-	#	_on_request_time_response,
-	#	{"id": request_time}
-	#)
 
 
 func _on_request_time_response(args: Dictionary) -> void:

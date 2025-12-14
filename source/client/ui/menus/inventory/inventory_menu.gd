@@ -30,7 +30,12 @@ func _ready() -> void:
 		else:
 			equipment_slot.icon = null
 			equipment_slot.text = "Lock"
-	InstanceClient.current.request_data(&"inventory.get", fill_inventory)
+	DataSynchronizerClient._self.request_data(
+		&"inventory.get",
+		fill_inventory,
+		{},
+		InstanceClient.current.name
+	)
 
 
 func fill_inventory(inventory_data: Dictionary) -> void:
@@ -126,10 +131,11 @@ func _on_item_action_button_pressed() -> void:
 	if selected_item is GearItem or selected_item is WeaponItem:
 		var item_id: int = selected_item.get_meta(&"id", -1)
 		if item_id != -1:
-			InstanceClient.current.request_data(
+			DataSynchronizerClient._self.request_data(
 				&"item.equip",
 				Callable(),
-				{"id": item_id}
+				{"id": item_id},
+				InstanceClient.current.name
 			)
 			for equipment_slot: GearSlotButton in equipment_slots.get_children():
 				if selected_item.slot == equipment_slot.gear_slot:
