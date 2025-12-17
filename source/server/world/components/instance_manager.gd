@@ -167,7 +167,6 @@ func unload_unused_instances() -> void:
 
 
 func get_instance_server_by_id(id: String) -> ServerInstance:
-	if has_node(id):
-		return get_node(id)
-	
-	return
+	if self.has_node(id): 
+		return self.get_node(id)
+	return null

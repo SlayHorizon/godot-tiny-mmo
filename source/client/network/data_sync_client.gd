@@ -1,6 +1,7 @@
 class_name DataSynchronizerClient
 extends Node
 
+
 @export var instance_manager: InstanceManagerClient
 
 static var _next_data_request_id: int = 0
@@ -61,6 +62,7 @@ func _data_response(request_id: int, type: String, data: Dictionary) -> void:
 	_pending_data_requests.erase(request_id)
 	if callable.is_valid():
 		callable.call(data)
+	data_push(type, data)
 
 
 @rpc("authority", "call_remote", "reliable", 1)
