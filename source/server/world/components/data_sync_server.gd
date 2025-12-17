@@ -13,6 +13,17 @@ func _ready() -> void:
     _self = self
 
 
+## If no instance_id is provided, will use all peers connected in the world.
+func propagate_rpc(callable: Callable, instance_id: String = "") -> void:
+    var instance: ServerInstance = instance_manager.get_instance_server_by_id(instance_id)
+    if instance:
+        for peer_id: int in instance.connected_peers:
+            callable.rpc_id(peer_id)
+    else:
+        for peer_id: int in instance_manager.world_server.connected_players:
+            callable.rpc_id(peer_id)
+
+
 @rpc("any_peer", "call_remote", "reliable", 1)
 func _data_request(
     request_id: int,
