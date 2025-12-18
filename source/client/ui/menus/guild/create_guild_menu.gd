@@ -29,7 +29,7 @@ func request_create_guild(guild_name: String) -> void:
 		_on_guild_create_response,
 		{"name": guild_name},
 		InstanceClient.current.name
-	)
+	).request_id
 
 
 func _on_guild_create_response(data: Dictionary) -> void:

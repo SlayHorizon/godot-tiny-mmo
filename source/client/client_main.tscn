@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bfybdk1kgy125" path="res://source/client/client_main.gd" id="1_hoyng"]
 [ext_resource type="Script" uid="uid://siq7b6qqrjyq" path="res://source/client/network/world_client.gd" id="2_ey548"]
 [ext_resource type="Script" uid="uid://cy00y2hsdyloy" path="res://source/client/gameplay/time/world_clock_client.gd" id="3_cgybg"]
-[ext_resource type="Script" uid="uid://d4ess0o0jhiqx" path="res://source/client/network/data_sync_client.gd" id="3_re4x3"]
+[ext_resource type="Script" uid="uid://d4ess0o0jhiqx" path="res://source/client/network/data_sync/data_sync_client.gd" id="3_re4x3"]
 [ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="3_s85jl"]
 [ext_resource type="PackedScene" uid="uid://5wv1gfwppcnf" path="res://source/client/gateway/gateway.tscn" id="4_s85jl"]
 

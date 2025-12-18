@@ -11,12 +11,13 @@ var request_id: int
 
 func _on_line_edit_text_submitted(new_text: String) -> void:
 	if request_id:
-		DataSynchronizerClient._self.cancel_request_data(request_id)
+		DataSynchronizerClient.cancel_request_data(request_id)
+
 	request_id = DataSynchronizerClient._self.request_data(
 		&"guild.search",
 		_on_research_result_received,
 		{"q": new_text}
-	)
+	).request_id
 	
 
 
@@ -49,9 +50,10 @@ func _on_search_guild_button_pressed() -> void:
 		return
 	
 	if request_id:
-		DataSynchronizerClient._self.cancel_request_data(request_id)
+		DataSynchronizerClient.cancel_request_data(request_id)
+	
 	request_id = DataSynchronizerClient._self.request_data(
 		&"guild.search",
 		_on_research_result_received,
 		{"q": to_search}
-	)
+	).request_id
