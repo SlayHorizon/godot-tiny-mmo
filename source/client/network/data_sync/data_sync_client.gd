@@ -5,7 +5,7 @@ extends Node
 @export var instance_manager: InstanceManagerClient
 
 static var _next_data_request_id: int = 0
-static var _pending_data_requests: Dictionary[int, Callable]
+static var _pending_data_requests: Dictionary[int, DataRequest]
 static var _data_subscriptions: Dictionary[StringName, Array]
 static var _self: DataSynchronizerClient
 
@@ -26,28 +26,45 @@ static func unsubscribe(type: StringName, callable: Callable) -> void:
 	_data_subscriptions[type].erase(callable)
 
 
+static func cancel_request_data(request_id: int) -> bool:
+	return _pending_data_requests.erase(request_id)
+
+
+## Returns a array containing [data, DataRequest.Error]
+func request_data_await(
+	type: StringName,
+	args: Dictionary = {},
+	instance_id: String = ""
+) -> Array:
+	var request: DataRequest = request_data(type, Callable(), args, instance_id)
+	var result = await request.finished
+
+	return result
+
+
 func request_data(
 	type: StringName,
 	callable: Callable,
 	args: Dictionary = {},
 	instance_id: String = ""
-) -> int:
-	var request_id: int = _next_data_request_id
+) -> DataRequest:
+	var request: DataRequest = DataRequest.new()
+	var request_id = _next_data_request_id
 	_next_data_request_id += 1
-	_pending_data_requests.set(request_id, callable)
 
-	_data_request.rpc_id(
-		1,
+	request.request_id = request_id
+	request.callable = callable
+	_pending_data_requests[request_id] = request
+
+	_data_request.rpc_id(1,
 		request_id,
 		type,
 		args,
 		instance_id
 	)
-	return request_id
 
-
-func cancel_request_data(request_id: int) -> bool:
-	return _pending_data_requests.erase(request_id)
+	request.start_timeout(5.0)
+	return request
 
 
 @rpc("any_peer", "call_remote", "reliable", 1)
@@ -58,10 +75,13 @@ func _data_request(request_id: int, type: String, args: Dictionary, instance_id:
 
 @rpc("authority", "call_remote", "reliable", 1)
 func _data_response(request_id: int, type: String, data: Dictionary) -> void:
-	var callable: Callable = _pending_data_requests.get(request_id, Callable())
+	var request: DataRequest = _pending_data_requests.get(request_id, DataRequest.new())
 	_pending_data_requests.erase(request_id)
-	if callable.is_valid():
-		callable.call(data)
+	
+	if request.callable.is_valid():
+		request.callable.call(data)
+		
+	request.finish(data)
 	data_push(type, data)
 
 
