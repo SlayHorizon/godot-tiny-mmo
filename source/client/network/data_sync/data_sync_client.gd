@@ -75,12 +75,13 @@ func _data_request(request_id: int, type: String, args: Dictionary, instance_id:
 
 @rpc("authority", "call_remote", "reliable", 1)
 func _data_response(request_id: int, type: String, data: Dictionary) -> void:
-	var request: DataRequest = _pending_data_requests.get(request_id, DataRequest.new())
-	_pending_data_requests.erase(request_id)
+	if not _pending_data_requests.has(request_id): return
 	
+	var request: DataRequest = _pending_data_requests[request_id]
+	_pending_data_requests.erase(request_id)
+
 	if request.callable.is_valid():
 		request.callable.call(data)
-		
 	request.finish(data)
 	data_push(type, data)
 
