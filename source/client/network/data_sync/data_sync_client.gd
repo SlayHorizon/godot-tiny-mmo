@@ -30,7 +30,7 @@ static func cancel_request_data(request_id: int) -> bool:
 	return _pending_data_requests.erase(request_id)
 
 
-## Returns a array containing [data, DataRequest.Error]
+## Returns a array containing [Dictionary, Request.Error]
 func request_data_await(
 	type: StringName,
 	args: Dictionary = {},
