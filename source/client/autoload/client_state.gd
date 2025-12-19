@@ -14,7 +14,7 @@ var quick_slots: DataDict = DataDict.new()
 func _ready() -> void:
 	if not OS.has_feature("client"):
 		queue_free()
-	InstanceClient.subscribe(&"stats.get", func(data: Dictionary):
+	DataSynchronizerClient.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)
 

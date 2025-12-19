@@ -18,7 +18,7 @@ var fade_out_tween: Tween
 
 
 func _ready() -> void:
-	InstanceClient.subscribe(&"chat.message", _on_chat_message)
+	DataSynchronizerClient.subscribe(&"chat.message", _on_chat_message)
 	
 	peek_feed_message_edit.text_submitted.connect(_on_message_edit_text_submitted.bind(peek_feed_message_edit))
 	full_feed_message_edit.text_submitted.connect(_on_message_edit_text_submitted.bind(full_feed_message_edit))
@@ -137,14 +137,16 @@ func _on_message_edit_text_submitted(new_text: String, line_edit: LineEdit) -> v
 		var cmd: String = split[0]
 		var params: PackedStringArray = split
 		
-		InstanceClient.current.request_data(
+		DataSynchronizerClient._self.request_data(
 			&"chat.command.exec",
 			print_debug,
-			{"cmd": cmd, "params": params}
+			{"cmd": cmd, "params": params},
+			InstanceClient.current.name
 		)
 	else:
-		InstanceClient.current.request_data(
+		DataSynchronizerClient._self.request_data(
 			&"chat.message.send",
 			Callable(), # ACK later
-			{"text": new_text, "channel": current_channel}
+			{"text": new_text, "channel": current_channel},
+			InstanceClient.current.name
 		)

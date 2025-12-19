@@ -25,10 +25,11 @@ func _on_item_shortcut_pressed(button: Button, index: int) -> void:
 	if not item:
 		return
 	
-	InstanceClient.current.request_data(
+	DataSynchronizerClient._self.request_data(
 		&"item.equip",
 		Callable(),
-		{"id": item.get_meta(&"id", -1)}
+		{"id": item.get_meta(&"id", -1)},
+		InstanceClient.current.name
 	)
 
 

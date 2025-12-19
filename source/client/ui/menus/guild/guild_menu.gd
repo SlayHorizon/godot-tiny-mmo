@@ -12,7 +12,12 @@ var history: Array[Control]
 
 
 func _ready() -> void:
-	InstanceClient.current.request_data(&"guild.self", _set_current_guild)
+	DataSynchronizerClient._self.request_data(
+		&"guild.self", 
+		_set_current_guild,
+		{},
+		InstanceClient.current.name
+		)
 	# Hide all by default.
 	for child: Control in get_children():
 		if child is GuildPanel:
