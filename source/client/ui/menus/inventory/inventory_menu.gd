@@ -30,15 +30,16 @@ func _ready() -> void:
 		else:
 			equipment_slot.icon = null
 			equipment_slot.text = "Lock"
-	DataSynchronizerClient._self.request_data(
-		&"inventory.get",
-		fill_inventory,
-		{},
-		InstanceClient.current.name
-	)
+	fill_inventory()
 
 
-func fill_inventory(inventory_data: Dictionary) -> void:
+func fill_inventory() -> void:
+	var request_result: Array = await DataSynchronizerClient._self.request_data_await(&"inventory.get", {}, InstanceClient.current.name)
+	if request_result[1] != OK:
+		fill_inventory() 
+		return
+
+	var inventory_data: Dictionary = request_result[0]
 	for item_id: int in inventory_data:
 		var item_data: Dictionary = inventory_data[item_id]
 		if not inventory.has(item_id):
