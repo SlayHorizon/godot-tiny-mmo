@@ -7,6 +7,7 @@ const GLOBAL_COMMANDS_PATH: String = "res://source/server/world/components/chat_
 
 var loading_instances: Dictionary[InstanceResource, ServerInstance]
 var instance_collection: Array[InstanceResource]
+var default_instance: InstanceResource
 
 @export var world_server: WorldServer
 
@@ -131,8 +132,6 @@ func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
 
 
 func set_instance_collection() -> void:
-	var default_instance: InstanceResource
-	
 	for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH, "*.tres"):
 		print(file_path)
 	#for file_path: String in ResourceLoader.list_directory(INSTANCE_COLLECTION_PATH):
@@ -165,3 +164,9 @@ func unload_unused_instances() -> void:
 			continue
 		instance.instance_resource.charged_instances.erase(instance)
 		instance.queue_free()
+
+
+func get_instance_server_by_id(id: String) -> ServerInstance:
+	if self.has_node(id): 
+		return self.get_node(id)
+	return null

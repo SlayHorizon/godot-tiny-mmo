@@ -9,9 +9,11 @@ var available_points: int:
 
 
 func _ready() -> void:
-	InstanceClient.current.request_data(
+	DataSynchronizerClient._self.request_data(
 		&"attribute.get",
 		_on_attribute_received,
+		{},
+		InstanceClient.current.name
 	)
 	for child: Node in get_children():
 		if child is HBoxContainer:
@@ -47,12 +49,13 @@ func _on_attribute_pressed(label: Label, button: Button) -> void:
 			ClientState.stats.data[stat_name] += stats[stat_name]
 		else:
 			ClientState.stats.data[stat_name] = stats[stat_name]
-	InstanceClient.current.data_push(&"stats.update", ClientState.stats.data)
+	DataSynchronizerClient._self.data_push(&"stats.update", ClientState.stats.data)
 	
-	InstanceClient.current.request_data(
+	DataSynchronizerClient._self.request_data(
 		&"attribute.spend",
 		Callable(), #_on_attribute_result_received
-		{"attr": attribute_name}
+		{"attr": attribute_name},
+		InstanceClient.current.name
 	)
 
 

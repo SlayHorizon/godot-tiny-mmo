@@ -76,16 +76,28 @@ func process_input(local_player: LocalPlayer) -> void:
 	# Check cooldown locally here too to avoid spamming server with requests.
 	if Input.is_action_just_pressed(&"action") and can_use_weapon(0):
 		state = State.CHARGING
-		InstanceClient.current.request_data(
-			&"action.perform", Callable(),
-			{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 0}
+
+		DataSynchronizerClient._self.request_data(&"action.perform", Callable(),
+		{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 0},
+		InstanceClient.current.name
 		)
+
+		#DataSynchronizerClient._self.request_data(
+		#	&"action.perform", Callable(),
+		#	{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 0}
+		#)
 	elif Input.is_action_just_released(&"action") and can_use_weapon(1):
 		state = State.READY
-		InstanceClient.current.request_data(
-			&"action.perform", Callable(),
-			{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 1}
+
+		DataSynchronizerClient._self.request_data(&"action.perform", Callable(),
+		{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 1},
+		InstanceClient.current.name
 		)
+
+		#DataSynchronizerClient._self.request_data(
+		#	&"action.perform", Callable(),
+		#	{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 1}
+		#)
 
 
 func shoot_arrow(entity: Entity, direction: Vector2) -> void:

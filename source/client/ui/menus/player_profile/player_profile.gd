@@ -16,10 +16,11 @@ func open_player_profile(player_id: int) -> void:
 	if cache.has(player_id):
 		apply_profile(cache[player_id])
 	else:
-		InstanceClient.current.request_data(
+		DataSynchronizerClient._self.request_data(
 			&"profile.get",
 			apply_profile,
-			{"q": player_id}
+			{"q": player_id},
+			InstanceClient.current.name
 		)
 
 

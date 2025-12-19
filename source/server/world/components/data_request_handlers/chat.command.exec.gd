@@ -20,7 +20,7 @@ func data_request_handler(
 		)
 	else:
 		result = "Command not found."
-	instance.data_push.rpc_id(
+	DataSynchronizerServer._self.data_push.rpc_id(
 		peer_id,
 		&"chat.message",
 		{"text": result, "name": "Server", "id": 1}
