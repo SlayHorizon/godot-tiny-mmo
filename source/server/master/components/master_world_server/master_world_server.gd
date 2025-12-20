@@ -4,7 +4,6 @@ extends BaseMultiplayerEndpoint
 
 @export var authentication_manager: AuthenticationManager
 @export var gateway_manager: GatewayManagerServer
-@export var database: MasterDatabase
 
 # Active Connections
 var next_world_id: int = 0
@@ -47,7 +46,7 @@ func fetch_token(_auth_token: String, _username: String, _character_id: int) -> 
 
 @rpc("any_peer")
 func player_disconnected(username: String) -> void:
-	database.account_collection.collection[username].peer_id = 0
+	authentication_manager.account_collection.collection[username].peer_id = 0
 
 
 @rpc("authority")
@@ -57,9 +56,9 @@ func create_player_character_request(_gateway_id: int, _peer_id: int, _username:
 
 @rpc("any_peer")
 func player_character_creation_result(gateway_id: int, peer_id: int, username: String, result_code: int) -> void:
-	var world_id := multiplayer_api.get_remote_sender_id()
+	var world_id: int = multiplayer_api.get_remote_sender_id()
 	if result_code:
-		var auth_token := authentication_manager.generate_random_token()
+		var auth_token: String = authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, auth_token, username, result_code)
 		gateway_manager.player_character_creation_result.rpc_id(
 			gateway_id, peer_id, {
@@ -94,7 +93,7 @@ func request_login(_gateway_id: int, _peer_id: int, _username: String, _characte
 func result_login(result_code: int, gateway_id: int, peer_id: int, username: String, character_id: int) -> void:
 	var world_id := multiplayer_api.get_remote_sender_id()
 	if result_code == OK:
-		var auth_token := authentication_manager.generate_random_token()
+		var auth_token: String = authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, auth_token, username, character_id)
 		await get_tree().create_timer(0.5).timeout
 		gateway_manager.fetch_auth_token.rpc_id(
