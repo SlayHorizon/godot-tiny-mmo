@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MobResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/mob/resources/mob_resource.gd" id="1_mob_resource"]
+
+[resource]
+script = ExtResource("1_mob_resource")
+base_stats = {
+"ad": 25.0,
+"armor": 5.0,
+"attack_speed": 0.9,
+"health": 80.0,
+"health_max": 80.0,
+"mr": 20.0,
+"move_speed": 85.0
+}
+display_name = "Skeleton"
+sprite_id = 9
+experience_reward = 15
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 0.8
+detection_radius = 250.0
+gold_reward = 8
+loot_table = []
+respawn_delay = 30.0
+respawn_check_radius = 500.0
+mana_max = 0.0
+abilities = []
+

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="NPCResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/resources/npc_resource.gd" id="1_npc_resource"]
+
+[resource]
+script = ExtResource("1_npc_resource")
+base_stats = {
+"ad": 20.0,
+"armor": 10.0,
+"attack_speed": 0.8,
+"health": 100.0,
+"health_max": 100.0,
+"mr": 5.0,
+"move_speed": 75.0
+}
+display_name = "Goblin"
+sprite_id = 4
+experience_reward = 10
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 0.7
+detection_radius = 230.0
+gold_reward = 5
+loot_table = []
+

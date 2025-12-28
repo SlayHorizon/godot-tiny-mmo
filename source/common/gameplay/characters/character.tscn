@@ -263,7 +263,8 @@ metadata/_edit_group_ = true
 [node name="LeftRig" type="Node2D" parent="HandOffset/HandPivot"]
 
 [node name="HurtBox" type="Area2D" parent="."]
-visible = false
+collision_layer = 1
+monitorable = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
 position = Vector2(0, -16)
@@ -271,6 +272,7 @@ shape = SubResource("RectangleShape2D_eyotc")
 debug_color = Color(0.846048, 0.237298, 0.730831, 0.42)
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
+visible = true
 offset_left = -16.0
 offset_top = -38.0
 offset_right = 16.0
@@ -278,7 +280,8 @@ offset_bottom = -34.0
 theme_override_styles/background = SubResource("StyleBoxFlat_cgfpq")
 theme_override_styles/fill = SubResource("StyleBoxFlat_eyotc")
 step = 0.5
-value = 50.0
+max_value = 100.0
+value = 100.0
 allow_greater = true
 show_percentage = false
 

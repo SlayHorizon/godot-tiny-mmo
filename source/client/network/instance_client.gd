@@ -35,8 +35,14 @@ func _ready() -> void:
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
 
+	# Register all ReplicatedPropsContainers with unique IDs (must match server IDs)
+	var container_id: int = 1_000_000
 	if instance_map.replicated_props_container:
-		synchronizer_manager.add_container(1_000_000, instance_map.replicated_props_container)
+		synchronizer_manager.add_container(container_id, instance_map.replicated_props_container)
+		container_id += 1
+	
+	# Find and register all other ReplicatedPropsContainers in the scene
+	_register_containers_recursive(instance_map, container_id)
 
 	add_child(synchronizer_manager, true)
 
@@ -85,3 +91,18 @@ func despawn_player(player_id: int) -> void:
 		player.queue_free()
 	players_by_peer_id.erase(player_id)
 #endregion
+
+
+func _register_containers_recursive(node: Node, start_id: int) -> int:
+	# Recursively find and register all ReplicatedPropsContainers
+	var current_id: int = start_id
+	for child in node.get_children():
+		if child is ReplicatedPropsContainer:
+			# Skip the main container (already registered)
+			if child != instance_map.replicated_props_container:
+				synchronizer_manager.add_container(current_id, child)
+				print_debug("InstanceClient: Registered container '%s' with ID %d" % [child.name, current_id])
+				current_id += 1
+		# Recursively check children
+		current_id = _register_containers_recursive(child, current_id)
+	return current_id

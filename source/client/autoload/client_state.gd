@@ -7,6 +7,7 @@ signal local_player_ready(local_player: LocalPlayer)
 
 var local_player: LocalPlayer
 var stats: DataDict = DataDict.new()
+var xp: DataDict = DataDict.new()
 var settings: DataDict = DataDict.new()
 var quick_slots: DataDict = DataDict.new()
 
@@ -17,10 +18,18 @@ func _ready() -> void:
 	DataSynchronizerClient.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)
+	DataSynchronizerClient.subscribe(&"xp.update", func(data: Dictionary):
+		# Merge data and emit signals for each key
+		for key in data:
+			xp.set_key(key, data[key])
+		# Emit bulk update signal once after all keys are set
+		xp.data_updated.emit()
+	)
 
 
 class DataDict:
-	signal data_changed(property: Variant, value: Variant)
+	signal data_changed(property: Variant, value: Variant)  # Emitted when a single property changes
+	signal data_updated()  # Emitted after bulk updates (no args, for UI that needs all data)
 	
 	var data: Dictionary
 	

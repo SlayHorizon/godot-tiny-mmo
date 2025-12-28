@@ -20,6 +20,8 @@ var selected_item: Item
 @onready var item_description: RichTextLabel = $ItemInfo/PanelContainer/VBoxContainer/ItemDescription
 @onready var item_action_button: Button = $ItemInfo/PanelContainer/VBoxContainer/HBoxContainer/ItemActionButton
 @onready var quick_slots_container: HBoxContainer = $ItemInfo/HotkeyPanel/VBoxContainer/HBoxContainer
+@onready var level_label: Label = $MarginContainer/VBoxContainer/MainContainer/TabContainer/Status/Label2
+@onready var experience_label: Label = $MarginContainer/VBoxContainer/MainContainer/TabContainer/Status/Label8
 
 
 func _ready() -> void:
@@ -31,6 +33,10 @@ func _ready() -> void:
 			equipment_slot.icon = null
 			equipment_slot.text = "Lock"
 	fill_inventory()
+	
+	# Subscribe to XP updates
+	ClientState.xp.data_updated.connect(_update_xp_display)
+	_update_xp_display()
 
 
 func fill_inventory() -> void:
@@ -186,3 +192,18 @@ func _on_hotkey_index_pressed(hotkey_index: int) -> void:
 
 func _on_hotkey_cancel_button_pressed() -> void:
 	$ItemInfo/HotkeyPanel.hide()
+
+
+func _update_xp_display() -> void:
+	var level: int = ClientState.xp.data.get("level", 1)
+	var experience: int = ClientState.xp.data.get("experience", 0)
+	var xp_required: int = ClientState.xp.data.get("xp_required", 1)
+	
+	# Get golds from stats (if available)
+	var golds: int = ClientState.stats.data.get("golds", 0)
+	
+	# Update level label (format: "Level X\nJob Fighter\nGolds Y")
+	level_label.text = "Level %d\nJob Fighter\nGolds %d" % [level, golds]
+	
+	# Update experience label
+	experience_label.text = "Experience %d/%d" % [experience, xp_required]
