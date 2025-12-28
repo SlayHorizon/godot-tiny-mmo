@@ -9,6 +9,7 @@ var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
 @onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
+@onready var experience_bar: ProgressBar = $Resources/ExperienceBar
 
 
 func _ready() -> void:
@@ -17,6 +18,10 @@ func _ready() -> void:
 			button.pressed.connect(_on_overlay_menu_close_button_pressed)
 			continue
 		button.pressed.connect(display_menu.bind(button.text.to_lower()))
+	
+	# Subscribe to XP updates
+	ClientState.xp.data_updated.connect(_update_experience_bar)
+	_update_experience_bar()
 
 
 func _on_overlay_menu_close_button_pressed() -> void:
@@ -56,3 +61,11 @@ func _on_overlay_menu_button_pressed() -> void:
 
 func _on_notification_button_pressed() -> void:
 	pass # Replace with function body.
+
+
+func _update_experience_bar() -> void:
+	var experience: int = ClientState.xp.data.get("experience", 0)
+	var xp_required: int = ClientState.xp.data.get("xp_required", 1)
+	
+	experience_bar.value = experience
+	experience_bar.max_value = xp_required

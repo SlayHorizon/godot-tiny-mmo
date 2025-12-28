@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MobResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/mob/resources/mob_resource.gd" id="1_mob_resource"]
+
+[resource]
+script = ExtResource("1_mob_resource")
+base_stats = {
+"ad": 35.0,
+"armor": 25.0,
+"attack_speed": 0.6,
+"health": 120.0,
+"health_max": 120.0,
+"mr": 15.0,
+"move_speed": 65.0
+}
+display_name = "Skeleton Warrior"
+sprite_id = 12
+experience_reward = 25
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 0.8
+detection_radius = 260.0
+gold_reward = 15
+loot_table = []
+respawn_delay = 45.0
+respawn_check_radius = 520.0
+mana_max = 0.0
+abilities = []
+

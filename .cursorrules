@@ -1,0 +1,292 @@
+# Godot Tiny MMO - Cursor Rules
+
+## Project Overview
+This is an experimental open-source MMORPG framework built with Godot 4, featuring:
+- Custom byte-packed networking protocol (PackedByteArray)
+- Three-tier server architecture (Gateway, Master, World servers)
+- Unified codebase (client and servers in one repo)
+- Cross-platform support (browser, desktop, mobile)
+
+## Naming Conventions
+
+### Files
+- Use `snake_case` for all filenames (e.g., `player_resource.gd`, `xp_calculator.gd`)
+- Script files: `*.gd`
+- Scene files: `*.tscn`
+- Resource files: `*.tres`
+
+### Classes
+- Use `PascalCase` for class names with `class_name` (e.g., `PlayerResource`, `XPCalculator`)
+- Example: `class_name PlayerResource extends Resource`
+
+### Variables
+- Use `snake_case` for all variables including member variables (e.g., `player_id`, `experience`, `total_experience`)
+- Use type hints: `var experience: int = 0`
+- Use `@export` for editor-visible properties
+
+### Constants
+- Use `ALL_CAPS_SNAKE_CASE` for constants (e.g., `ATTRIBUTE_POINTS_PER_LEVEL`, `XP_AWARD_DISTANCE`)
+- Define constants at class level, not inside functions
+- Group related constants with comments
+- Example:
+```gdscript
+const ATTRIBUTE_POINTS_PER_LEVEL: int = 3
+const HEALTH_MANA_SCALE_PER_LEVEL: float = 0.15
+```
+
+### Functions
+- Use `snake_case` for all functions (e.g., `add_experience()`, `get_xp_for_level()`)
+- Use descriptive names that indicate action
+- Use type hints for parameters and return values
+
+### Signals
+- Use `snake_case` in past tense to name events (e.g., `experience_changed`, `level_changed`, `entity_died`)
+- Include parameter types in signal definitions when helpful
+
+## Code Organization
+
+### Directory Structure
+- `source/client/` - Client-side only code
+- `source/server/` - Server-side only code
+- `source/common/` - Shared code (client & server)
+  - `source/common/gameplay/` - Gameplay systems
+  - `source/common/network/` - Network protocol
+  - `source/common/registry/` - PathRegistry and content registry
+  - `source/common/utils/` - Shared utilities
+
+### Class Organization
+1. Constants (at top)
+2. Exported variables (`@export`)
+3. Regular variables
+4. Signals
+5. `_ready()` and lifecycle functions
+6. Public methods
+7. Private methods (prefixed with `_`)
+
+### Example Structure:
+```gdscript
+class_name ExampleClass
+extends Node
+
+# Constants
+const SOME_CONSTANT: int = 10
+
+# Exported variables
+@export var some_property: int
+
+# Regular variables
+var internal_state: Dictionary
+
+# Signals
+signal something_happened(value: int)
+
+func _ready() -> void:
+    pass
+
+func public_method() -> void:
+    pass
+
+func _private_method() -> void:
+    pass
+```
+
+## Constants and Configuration
+
+### No Magic Numbers
+- **NEVER** use hardcoded numeric values in code
+- Always define constants at class level
+- Use descriptive constant names that explain their purpose
+- Group related constants together with comments
+
+### Bad Example:
+```gdscript
+func calculate_xp() -> int:
+    return int(50.0 * level * (level - 1) * 1.5 / 3.0)  # Magic numbers!
+```
+
+### Good Example:
+```gdscript
+const BASE_XP_MULTIPLIER: float = 50.0
+const XP_CURVE_COEFFICIENT: float = 1.5
+const XP_FORMULA_DIVISOR: float = 3.0
+
+func calculate_xp() -> int:
+    return int(BASE_XP_MULTIPLIER * level * (level - 1) * XP_CURVE_COEFFICIENT / XP_FORMULA_DIVISOR)
+```
+
+## Server-Client Architecture
+
+### Server Authority
+- **ALL game logic must be server-authoritative**
+- Server validates all player actions
+- Server calculates combat, XP, loot, etc.
+- Client only sends intents and displays server state
+
+### Data Synchronization
+- Use `DataSynchronizerServer` and `DataSynchronizerClient` for data sync
+- Server pushes data via `data_push.rpc_id()` with type identifiers
+- Client subscribes via `DataSynchronizerClient.subscribe(&"type", callback)`
+- Store synced data in `ClientState` (e.g., `ClientState.stats.data`, `ClientState.xp.data`)
+
+### Example Pattern:
+```gdscript
+# Server side
+DataSynchronizerServer._self.data_push.rpc_id(
+    peer_id,
+    &"xp.update",
+    {"experience": xp, "level": level}
+)
+
+# Client side
+DataSynchronizerClient.subscribe(&"xp.update", func(data: Dictionary):
+    ClientState.xp.data.merge(data, true)
+)
+```
+
+### Network Code Guidelines
+- Always validate input on the server
+- Use server-authoritative game logic
+- Send only necessary data (deltas, not full state)
+- Handle network errors gracefully
+- Implement proper cleanup in `_exit_tree()`
+- Use `PackedByteArray` for efficient network messages (via WireCodec)
+
+## Resource Management
+
+### PlayerResource Pattern
+- Use `PlayerResource` for persistent player data
+- Store in `WorldDatabase` on server
+- Access via `world_server.connected_players[peer_id]`
+- Sync changes to client via data push
+
+### Item Resources
+- Items extend `Resource` (e.g., `WeaponItem`, `GearItem`, `ConsumableItem`)
+- Use `@export` for configurable properties
+- Load via `ContentRegistryHub.load_by_slug()`
+
+## UI Patterns
+
+### ClientState Integration
+- Store UI data in `ClientState` (e.g., `ClientState.stats`, `ClientState.xp`)
+- Subscribe to data updates in `_ready()`
+- Merge incoming data: `ClientState.xp.data.merge(data, true)`
+- Read from `ClientState` when displaying, not from hardcoded defaults
+
+### Bad Example:
+```gdscript
+var xp_data: Dictionary = {"experience": 0, "level": 1}  # Hardcoded!
+```
+
+### Good Example:
+```gdscript
+func update_xp(data: Dictionary) -> void:
+    ClientState.xp.data.merge(data, true)
+    # Then read from ClientState.xp.data when displaying
+```
+
+## Code Quality
+
+### Type Hints
+- **Always** use type hints for variables and function parameters
+- Use explicit return types: `func method() -> void:` or `func method() -> int:`
+- Use `Dictionary[KeyType, ValueType]` for typed dictionaries
+
+### Error Handling
+- Check for null/empty before operations
+- Use early returns for validation
+- Log errors appropriately (server-side)
+
+### Comments
+- Document complex logic with comments
+- Explain "why" not "what" in comments
+- Use docstrings for public methods when helpful
+
+### Example:
+```gdscript
+## Add experience points
+## Returns true if player leveled up
+func add_experience(amount: int) -> bool:
+    if amount <= 0:
+        return false
+    # ... rest of logic
+```
+
+## Instance and Entity Management
+
+### ServerInstance Pattern
+- Use `ServerInstance` for managing map instances
+- Track players via `players_by_peer_id: Dictionary[int, Player]`
+- Use `connected_peers: PackedInt64Array` for peer tracking
+- Connect to entity signals in `_setup_entity_death_listeners()`
+
+### Entity Death Handling
+- Connect to `AbilitySystemComponent.entity_died` signal
+- Award XP/server logic on server side only
+- Use `multiplayer.is_server()` checks for server-only code
+
+## Testing and Development
+
+### Feature Tags
+- Use feature tags to determine instance role:
+  - `client` - Game client
+  - `gateway-server` - Gateway server
+  - `master-server` - Master server
+  - `world-server` - World server
+
+### Multiple Instances
+- Use Godot's "Customizable Run Instance..." for local testing
+- Run multiple servers and clients simultaneously
+
+## Common Patterns
+
+### Signal Connection Pattern
+```gdscript
+if not signal_name.is_connected(callback):
+    signal_name.connect(callback)
+```
+
+### Dictionary Merge Pattern
+```gdscript
+target_dict.merge(source_dict, true)  # true = overwrite existing
+```
+
+### Server-Only Code Pattern
+```gdscript
+if not multiplayer.is_server():
+    return
+# Server-only logic here
+```
+
+### Client-Only Code Pattern
+```gdscript
+if multiplayer.is_server():
+    return
+# Client-only logic here
+```
+
+## File Locations Reference
+
+### Core Systems
+- Player data: `source/common/gameplay/characters/player/player_resource.gd`
+- XP system: `source/common/gameplay/combat/attributes/xp_calculator.gd`
+- Network sync: `source/common/network/sync/`
+- Server instance: `source/server/world/components/instance_server.gd`
+- Client state: `source/client/autoload/client_state.gd`
+
+### Data Handlers
+- Server handlers: `source/server/world/components/data_request_handlers/`
+- Pattern: `{type}.{action}.gd` (e.g., `xp.gain.gd`, `profile.get.gd`)
+
+## Best Practices Summary
+
+1. **No magic numbers** - Always use named constants
+2. **Server-authoritative** - All game logic on server
+3. **Type hints everywhere** - Explicit types for clarity
+4. **Use ClientState** - Don't hardcode UI data
+5. **Follow naming conventions** - snake_case for files/vars, PascalCase for classes
+6. **Group related constants** - Use comments to organize
+7. **Validate on server** - Never trust client input
+8. **Sync via DataSynchronizer** - Use established sync patterns
+9. **Clean up signals** - Disconnect in `_exit_tree()` when needed
+10. **Document complex logic** - Comments explain "why", code explains "what"
+

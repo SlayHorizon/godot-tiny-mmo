@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MobResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/mob/resources/mob_resource.gd" id="1_mob_resource"]
+
+[resource]
+script = ExtResource("1_mob_resource")
+base_stats = {
+"ad": 35.0,
+"armor": 20.0,
+"attack_speed": 0.6,
+"health": 200.0,
+"health_max": 200.0,
+"mr": 10.0,
+"move_speed": 60.0
+}
+display_name = "Orc Warrior"
+sprite_id = 8
+experience_reward = 25
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 1.0
+detection_radius = 300.0
+gold_reward = 15
+loot_table = []
+respawn_delay = 45.0
+respawn_check_radius = 600.0
+mana_max = 0.0
+abilities = []
+

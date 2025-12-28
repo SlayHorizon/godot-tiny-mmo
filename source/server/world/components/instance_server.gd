@@ -41,6 +41,11 @@ func _ready() -> void:
 	synchronizer_manager.init_zones_from_map(instance_map)
 	
 	add_child(synchronizer_manager, true)
+	
+	# Add mob respawn manager
+	var respawn_manager: MobRespawnManager = MobRespawnManager.new()
+	respawn_manager.name = "MobRespawnManager"
+	add_child(respawn_manager, true)
 
 
 func load_map(map_path: String) -> void:
@@ -51,12 +56,137 @@ func load_map(map_path: String) -> void:
 	#add_child(CameraProbe.new())
 	
 	ready.connect(func():
+		# Register all ReplicatedPropsContainers with unique IDs
+		# Main container gets ID 1_000_000, others get sequential IDs
+		var container_id: int = 1_000_000
 		if instance_map.replicated_props_container:
-			synchronizer_manager.add_container(1_000_000, instance_map.replicated_props_container)
+			synchronizer_manager.add_container(container_id, instance_map.replicated_props_container)
+			container_id += 1
+		
+		# Find and register all other ReplicatedPropsContainers in the scene
+		_register_containers_recursive(instance_map, container_id)
+		
 		for child in instance_map.get_children():
 			if child is InteractionArea:
 				child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
+		
+		# Setup entity death listeners for XP awards
+		_setup_entity_death_listeners()
 		)
+
+
+func _register_containers_recursive(node: Node, start_id: int) -> int:
+	# Recursively find and register all ReplicatedPropsContainers
+	var current_id: int = start_id
+	for child in node.get_children():
+		if child is ReplicatedPropsContainer:
+			# Skip the main container (already registered)
+			if child != instance_map.replicated_props_container:
+				synchronizer_manager.add_container(current_id, child)
+				print_debug("InstanceServer: Registered container '%s' with ID %d" % [child.name, current_id])
+				current_id += 1
+		# Recursively check children
+		current_id = _register_containers_recursive(child, current_id)
+	return current_id
+
+
+func _setup_entity_death_listeners() -> void:
+	# Connect to all existing entities' death signals
+	_setup_entity_death_listeners_recursive(instance_map)
+	
+	# Also connect to mob respawn manager to hook new mobs when they respawn
+	var respawn_manager: MobRespawnManager = get_node_or_null("MobRespawnManager")
+	if respawn_manager:
+		# We'll connect to mob spawns via a signal or check periodically
+		# For now, the recursive check should catch most cases
+		pass
+
+
+func _setup_entity_death_listeners_recursive(node: Node) -> void:
+	for child in node.get_children():
+		if child is Character:
+			var character: Character = child as Character
+			var asc: AbilitySystemComponent = character.ability_system_component
+			if asc and not asc.entity_died.is_connected(_on_entity_died):
+				asc.entity_died.connect(_on_entity_died)
+		# Recursively check children
+		_setup_entity_death_listeners_recursive(child)
+
+
+func _on_entity_died(entity: Character, killer: Character) -> void:
+	# Only award XP if killer is a Player
+	if not killer is Player:
+		return
+	
+	var player: Player = killer as Player
+	if not player or not player.player_resource:
+		return
+	
+	# Get XP reward from entity
+	var xp_reward: int = 0
+	
+	if entity is Mob and entity.mob_resource:
+		xp_reward = entity.mob_resource.experience_reward
+	elif entity.has_method("get") and entity.get("npc_resource"):
+		var npc_resource = entity.get("npc_resource")
+		if npc_resource and npc_resource.has("experience_reward"):
+			xp_reward = npc_resource.experience_reward
+	
+	if xp_reward <= 0:
+		return
+	
+	# Award XP to player
+	var player_resource: PlayerResource = player.player_resource
+	var leveled_up: bool = player_resource.add_experience(xp_reward)
+	
+	# Find peer_id from players_by_peer_id
+	var player_peer_id: int = -1
+	for pid: int in players_by_peer_id:
+		if players_by_peer_id[pid] == player:
+			player_peer_id = pid
+			break
+	
+	if player_peer_id < 0:
+		return
+	
+	# If leveled up, update stats with scaled values
+	if leveled_up:
+		var scaled_stats: Dictionary[StringName, float] = player_resource.get_scaled_stats()
+		var asc: AbilitySystemComponent = player.ability_system_component
+		
+		# Update all stats
+		for stat_name: StringName in scaled_stats:
+			var value: float = scaled_stats[stat_name]
+			asc.set_attribute_value(stat_name, value)
+		
+		# Ensure health doesn't exceed new max
+		var current_health: float = asc.get_attribute_value(Stat.HEALTH)
+		var new_health_max: float = scaled_stats[Stat.HEALTH_MAX]
+		if current_health > new_health_max:
+			asc.set_attribute_value(Stat.HEALTH, new_health_max)
+		
+		# Sync updated stats to client
+		DataSynchronizerServer._self.data_push.rpc_id(
+			player_peer_id,
+			&"stats.get",
+			scaled_stats
+		)
+	
+	# Always sync XP update to client (whether leveled up or not)
+	var xp_required: int = XPCalculator.get_xp_required_for_level(player_resource.level + 1)
+	
+	var xp_data: Dictionary = {
+		"experience": player_resource.experience,
+		"level": player_resource.level,
+		"xp_required": xp_required,
+		"total_experience": player_resource.total_experience
+	}
+	
+	DataSynchronizerServer._self.data_push.rpc_id(
+		player_peer_id,
+		&"xp.update",
+		xp_data
+	)
 
 
 func _on_player_entered_interaction_area(player: Player, interaction_area: InteractionArea) -> void:
@@ -121,10 +251,22 @@ func instantiate_player(peer_id: int) -> Player:
 		syn.set_by_path(^":skin_id", new_player.player_resource.skin_id)
 		syn.set_by_path(^":display_name", new_player.player_resource.display_name)
 		
+		# Initialize XP/level if new player
+		if player_resource.total_experience == 0 and player_resource.level == 0:
+			player_resource.level = 1
+			player_resource.experience = 0
+			player_resource.total_experience = 0
+		elif player_resource.total_experience > 0:
+			# Recalculate level from total_experience
+			player_resource.level = XPCalculator.get_level_from_total_xp(player_resource.total_experience)
+			# Calculate current level's XP
+			var total_xp_for_current_level: int = XPCalculator.get_total_xp_for_level(player_resource.level)
+			player_resource.experience = player_resource.total_experience - total_xp_for_current_level
 
 		var asc: AbilitySystemComponent = new_player.ability_system_component
 		
-		var player_stats: Dictionary[StringName, float] = player_resource.BASE_STATS
+		# Use scaled stats based on level
+		var player_stats: Dictionary[StringName, float] = player_resource.get_scaled_stats()
 		const AttributesMap = preload("res://source/common/gameplay/combat/attributes/attributes_map.gd")
 		var stats_from_attributes: Dictionary[StringName, float]
 		stats_from_attributes.assign(AttributesMap.attr_to_stats(player_resource.attributes))
@@ -143,6 +285,19 @@ func instantiate_player(peer_id: int) -> Player:
 			var value: float = player_stats[stat_name]
 			print(stat_name, " : ", value)
 			asc.set_attribute_value(stat_name, value)
+		
+		# Sync XP data to client
+		var xp_required: int = XPCalculator.get_xp_required_for_level(player_resource.level + 1)
+		DataSynchronizerServer._self.data_push.rpc_id(
+			peer_id,
+			&"xp.update",
+			{
+				"experience": player_resource.experience,
+				"level": player_resource.level,
+				"xp_required": xp_required,
+				"total_experience": player_resource.total_experience
+			}
+		)
 
 	new_player.ready.connect(setup_new_player,CONNECT_ONE_SHOT)
 	return new_player

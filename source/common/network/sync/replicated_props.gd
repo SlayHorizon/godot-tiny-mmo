@@ -66,6 +66,10 @@ var _pending_by_cpid: Dictionary[int, Variant]
 func _ready() -> void:
 	if Engine.is_editor_hint() and id_to_node.is_empty():
 		_bake_static_map()
+	elif not Engine.is_editor_hint():
+		# At runtime, verify bake state
+		if id_to_node.is_empty():
+			push_warning("ReplicatedPropsContainer '%s': Not baked! Please bake in the editor and save the scene." % name)
 
 
 ## Bake (editor): all immediate children become "static props"

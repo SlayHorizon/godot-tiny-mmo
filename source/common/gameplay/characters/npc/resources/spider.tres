@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="NPCResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/resources/npc_resource.gd" id="1_npc_resource"]
+
+[resource]
+script = ExtResource("1_npc_resource")
+base_stats = {
+"ad": 15.0,
+"armor": 5.0,
+"attack_speed": 1.2,
+"health": 50.0,
+"health_max": 50.0,
+"mr": 5.0,
+"move_speed": 100.0
+}
+display_name = "Giant Spider"
+sprite_id = 4
+experience_reward = 8
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 0.5
+detection_radius = 200.0
+gold_reward = 3
+loot_table = []
+

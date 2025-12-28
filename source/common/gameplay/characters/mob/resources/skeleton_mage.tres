@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MobResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/mob/resources/mob_resource.gd" id="1_mob_resource"]
+
+[resource]
+script = ExtResource("1_mob_resource")
+base_stats = {
+"ad": 20.0,
+"armor": 3.0,
+"attack_speed": 1.0,
+"health": 60.0,
+"health_max": 60.0,
+"mr": 25.0,
+"move_speed": 80.0
+}
+display_name = "Skeleton Mage"
+sprite_id = 10
+experience_reward = 18
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 0.7
+detection_radius = 280.0
+gold_reward = 12
+loot_table = []
+respawn_delay = 30.0
+respawn_check_radius = 560.0
+mana_max = 100.0
+abilities = []
+

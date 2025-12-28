@@ -1,14 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://v32667qwpj2l"]
+[gd_scene load_steps=5 format=3 uid="uid://bqcsne8jhbmi9"]
 
 [ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/gameplay/characters/character.tscn" id="1_w5sp3"]
-[ext_resource type="Script" uid="uid://cqoy5bqvcyv5b" path="res://source/common/gameplay/characters/npc/npc.gd" id="2_yivip"]
+[ext_resource type="Script" path="res://source/common/gameplay/characters/mob/mob.gd" id="2_mob"]
 [ext_resource type="Script" uid="uid://cibbkjmyj3j2x" path="res://source/common/gameplay/characters/player/display_name_label.gd" id="3_display_name"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e1g67"]
 radius = 230.0
 
-[node name="NPC" instance=ExtResource("1_w5sp3")]
-script = ExtResource("2_yivip")
+[node name="Mob" instance=ExtResource("1_w5sp3")]
+script = ExtResource("2_mob")
 
 [node name="AnimatedSprite2D" parent="." index="3"]
 frame_progress = 0.0
@@ -31,3 +31,4 @@ script = ExtResource("3_display_name")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" index="0"]
 shape = SubResource("CircleShape2D_e1g67")
+

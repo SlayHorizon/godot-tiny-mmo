@@ -6,7 +6,7 @@
 script = ExtResource("1_ccyyb")
 content_name = &"sprites"
 version = 1757682500
-next_id = 4
+next_id = 13
 entries = Array[Dictionary]([{
 &"hash": "b20c36766102dfdb9082db2882c32c878146f67e186800b55870eb4fec192a63",
 &"id": 1,
@@ -22,6 +22,51 @@ entries = Array[Dictionary]([{
 &"id": 3,
 &"path": "res://source/common/gameplay/characters/sprite_frames/wizard.tres",
 &"slug": &"wizard"
+}, {
+&"hash": "placeholder_goblin",
+&"id": 4,
+&"path": "res://source/common/gameplay/characters/sprite_frames/goblin.tres",
+&"slug": &"goblin"
+}, {
+&"hash": "placeholder_orc",
+&"id": 5,
+&"path": "res://source/common/gameplay/characters/sprite_frames/orc.tres",
+&"slug": &"orc"
+}, {
+&"hash": "placeholder_orc_rogue",
+&"id": 6,
+&"path": "res://source/common/gameplay/characters/sprite_frames/orc_rogue.tres",
+&"slug": &"orc_rogue"
+}, {
+&"hash": "placeholder_orc_shaman",
+&"id": 7,
+&"path": "res://source/common/gameplay/characters/sprite_frames/orc_shaman.tres",
+&"slug": &"orc_shaman"
+}, {
+&"hash": "placeholder_orc_warrior",
+&"id": 8,
+&"path": "res://source/common/gameplay/characters/sprite_frames/orc_warrior.tres",
+&"slug": &"orc_warrior"
+}, {
+&"hash": "placeholder_skeleton",
+&"id": 9,
+&"path": "res://source/common/gameplay/characters/sprite_frames/skeleton.tres",
+&"slug": &"skeleton"
+}, {
+&"hash": "placeholder_skeleton_mage",
+&"id": 10,
+&"path": "res://source/common/gameplay/characters/sprite_frames/skeleton_mage.tres",
+&"slug": &"skeleton_mage"
+}, {
+&"hash": "placeholder_skeleton_rogue",
+&"id": 11,
+&"path": "res://source/common/gameplay/characters/sprite_frames/skeleton_rogue.tres",
+&"slug": &"skeleton_rogue"
+}, {
+&"hash": "placeholder_skeleton_warrior",
+&"id": 12,
+&"path": "res://source/common/gameplay/characters/sprite_frames/skeleton_warrior.tres",
+&"slug": &"skeleton_warrior"
 }])
 scan_path = ""
 filters = PackedStringArray()

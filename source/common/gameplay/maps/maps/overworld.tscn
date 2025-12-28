@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=4 uid="uid://c4nf240jpebhj"]
+[gd_scene load_steps=30 format=4 uid="uid://c4nf240jpebhj"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_i04l1"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_ulyvq"]
@@ -23,8 +23,10 @@
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="19_ysxe5"]
 [ext_resource type="PackedScene" uid="uid://digkg4swbl27x" path="res://source/common/gameplay/maps/props/collectibles/coin.tscn" id="20_jp3f0"]
 [ext_resource type="PackedScene" uid="uid://bojii5hxh2lgh" path="res://source/common/gameplay/maps/props/ground_button/ground_button.tscn" id="21_plgjc"]
+[ext_resource type="PackedScene" uid="uid://bqcsne8jhbmja" path="res://source/common/gameplay/characters/mob/mob.tscn" id="22_mvj6e"]
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.tscn" id="22_na1pl"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/npc.tscn" id="22_slgwh"]
+[ext_resource type="Resource" path="res://source/common/gameplay/characters/mob/resources/orc.tres" id="23_2j5gi"]
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="24_slgwh"]
 [ext_resource type="Script" uid="uid://bvwcr61l1deso" path="res://source/common/gameplay/time/world_clock_display.gd" id="25_gimy5"]
 
@@ -143,7 +145,23 @@ position = Vector2(248, 917)
 target_instance = ExtResource("18_6ybks")
 warper_id = 7
 
+[node name="OrcLand" type="Node2D" parent="." node_paths=PackedStringArray("id_to_node", "node_to_id")]
+position = Vector2(706, 953)
+script = ExtResource("19_ysxe5")
+id_to_node = {
+0: NodePath("Orc")
+}
+node_to_id = {
+NodePath("Orc"): 0
+}
+metadata/_custom_type_script = "uid://wq8klpndipnu"
+
+[node name="Orc" parent="OrcLand" instance=ExtResource("22_mvj6e")]
+position = Vector2(-117, 10)
+mob_resource = ExtResource("23_2j5gi")
+
 [node name="ReplicatedPropsContainer" type="Node2D" parent="." node_paths=PackedStringArray("id_to_node", "node_to_id")]
+position = Vector2(98, -4)
 script = ExtResource("19_ysxe5")
 id_to_node = {
 0: NodePath("Coin"),
@@ -199,9 +217,10 @@ position = Vector2(664, 904)
 activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/ActivableDoor2"), NodePath("../../Traps/ActivableDoor3"), NodePath("../../Traps/ActivableDoor8"), NodePath("../../Traps/ActivableDoor9"), NodePath("../../Traps/ActivableDoor4"), NodePath("../../Traps/ActivableDoor5"), NodePath("../../Traps/ActivableDoor7"), NodePath("../../Traps/ActivableDoor6")]
 
 [node name="NPC" parent="ReplicatedPropsContainer" instance=ExtResource("22_slgwh")]
-position = Vector2(128, 1280)
+position = Vector2(144, 1371)
 
 [node name="Traps" type="Node2D" parent="."]
+position = Vector2(24, -2)
 
 [node name="ActivableDoor" parent="Traps" instance=ExtResource("22_na1pl")]
 position = Vector2(664, 872)
@@ -232,6 +251,7 @@ position = Vector2(696, 872)
 
 [node name="ZonePatch2D" type="Node2D" parent="."]
 top_level = true
+position = Vector2(-144, -32)
 script = ExtResource("24_slgwh")
 name_id = &"PvP"
 mode_override = 1
