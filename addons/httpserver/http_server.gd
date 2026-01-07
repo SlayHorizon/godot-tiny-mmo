@@ -15,7 +15,6 @@ var to_wait: float = 2.0
 func _ready() -> void:
 	server = TCPServer.new()
 	router = HttpRouter.new()
-	server.listen(8088, "127.0.0.1")
 
 
 func _physics_process(delta: float) -> void:
@@ -28,6 +27,10 @@ func _physics_process(delta: float) -> void:
 		for connection: StreamPeerTCP in current_connections:
 			handle_connection(connection)
 		time = 0.0
+
+
+func listen(port: int, bind_address: String = "*") -> void:
+	server.listen(port, bind_address)
 
 
 func handle_connection(connection: StreamPeerTCP) -> void:
@@ -54,18 +57,37 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 		return
 	
 	var header: PackedStringArray = headers.get_slice("\r\n", 0).split(" ")
-	var method: String = header[0]
+	
+	var method_str: String = header[0]
+	var method: HTTPClient.Method = HTTPClient.Method.METHOD_GET
+	
+	match method_str:
+		"GET":
+			method = HTTPClient.Method.METHOD_GET
+		"HEAD":
+			method = HTTPClient.Method.METHOD_HEAD
+		"POST":
+			method = HTTPClient.Method.METHOD_POST
+		"PUT":
+			method = HTTPClient.Method.METHOD_PUT
+		"DELETE":
+			method = HTTPClient.Method.METHOD_DELETE
+	
+	# Hardcoded CORS handler
+	if method == HTTPClient.Method.METHOD_OPTIONS:
+		http_send(connection, {}, HTTPClient.ResponseCode.RESPONSE_OK)
+		return
+	
 	var path: String = header[1]
 	
-	var payload: Dictionary = JSON.parse_string(
-		as_string.get_slice("\r\n\r\n", 1)
-	)
+	var payload: Dictionary
+	var body: String = as_string.get_slice("\r\n\r\n", 1)
+	if body.strip_edges() != "":
+		var parsed: Variant = JSON.parse_string(body)
+		if typeof(parsed) == TYPE_DICTIONARY:
+			payload = parsed
 	
-	var handler: Callable = router.find_route_handler(
-		HTTPClient.Method.METHOD_POST,
-		path
-	)
-	
+	var handler: Callable = router.find_route_handler(method, path)
 	var result: Dictionary
 	if handler.is_valid():
 		result = await handler.call(payload)
@@ -79,7 +101,6 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 	)
 	connection.disconnect_from_host()
 	current_connections.erase(connection)
-	
 
 
 func http_send(
@@ -92,7 +113,12 @@ func http_send(
 	var headers: Dictionary = {
 		"Content-Type": "application/json",
 		"Content-Length": body_buffer.size(),
-		"Connection": "close"
+		"Connection": "close",
+		
+		# CORS
+		"Access-Control-Allow-Origin": "*",
+		"Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+		"Access-Control-Allow-Headers": "Content-Type"
 	}
 	var header_to_buffer: String = "HTTP/1.1 %d OK\r\n" % code
 	
@@ -104,6 +130,3 @@ func http_send(
 	connection.put_data(header_to_buffer.to_ascii_buffer())
 	# Content/Body block
 	connection.put_data(body_buffer)
-	
-	current_connections.erase(connection)
-	connection.disconnect_from_host()

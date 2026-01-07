@@ -42,6 +42,7 @@ func _ready() -> void:
 		&"/v1/account/create",
 		handle_account_creation
 	)
+	server.listen(8088, "127.0.0.1")
 
 func handle_login(payload: Dictionary) -> Dictionary:
 	gateway_manager_client.login_request.rpc_id(
