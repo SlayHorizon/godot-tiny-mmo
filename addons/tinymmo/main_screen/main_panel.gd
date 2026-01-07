@@ -144,8 +144,11 @@ func generate_content_index(
 		content_index = ResourceLoader.load(content_index_path)
 	else:
 		content_index = ContentIndex.new()
-	content_index.content_name = content_name
+		
+	content_index.content_name = StringName(content_name)
 	content_index.version = int(Time.get_unix_time_from_system())
+	content_index.scan_path = path
+	content_index.filters = filters 
 	
 	var entries: Array[Dictionary]
 	for resource_path: String in resource_paths:
@@ -254,54 +257,11 @@ func _on_update_file_dialog_file_selected(path: String) -> void:
 		print_plugin("Scan path of content index empty.")
 		return
 	
-	print_plugin("Update content index not implemented yet.")
-	#var resource_paths: PackedStringArray = get_resource_file_paths(
-		#content_index.scan_path, content_index.filters
-	#)
-	#var entries: Array[Dictionary] = content_index.entries
-	#var used_paths: PackedStringArray = entries.map(func(d): return d[&"path"])
-	#
-	#
-	#for resource_path: String in resource_paths:
-		#var resource: Resource = ResourceLoader.load(resource_path)
-		#if not resource:
-			#continue
-		#
-		#var entry_index: int = content_index.entries.find_custom(
-			#func(d: Dictionary):
-				#return d[&"slug"] == slug
-		#)
-		#
-		#var slug: StringName = resource_path.get_file().get_basename()
-		#var id: int = get_slug_id(content_index, slug)
-		#
-		#resource.set_meta(&"slug", slug)
-		#resource.set_meta(&"id", id)
-		#ResourceSaver.save(resource, resource_path)
-		#
-		#entries.append({
-			#&"id": id,
-			#&"slug": slug,
-			#&"path": resource_path,
-			#&"hash": FileAccess.get_sha256(resource_path)
-		#})
-		#if id == content_index.next_id:
-			#content_index.next_id += 1
-	#
-	#content_index.entries = entries
-	#
-	#var error: Error = ResourceSaver.save(content_index, content_index_path)
-	#if error:
-		#printerr(error_string(error))
-	#else:
-		#var accept_dialog: AcceptDialog = AcceptDialog.new()
-		#accept_dialog.canceled.connect(accept_dialog.queue_free)
-		#accept_dialog.confirmed.connect(func():
-			#accept_dialog.queue_free()
-			#_on_file_dialog_file_selected(content_index_path)
-			#)
-		#accept_dialog.dialog_text = "%s generated at %s\nWant to preview it ?" % [content_name, content_index_path]
-		#EditorInterface.popup_dialog_centered(accept_dialog)
+	generate_content_index(
+		content_index.content_name,
+		content_index.scan_path,
+		content_index.filters
+	)
 
 
 func _on_update_file_dialog_canceled() -> void:
