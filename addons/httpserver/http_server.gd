@@ -4,12 +4,13 @@ extends Node
 
 const HttpRouter = preload("res://addons/httpserver/http_router.gd")
 
+const DEFAULT_BIND_ADDRESS: String = "127.0.0.1"
+const MAX_REQUEST_BYTES: int = 1024 * 1024 # 1 MiB safety cap
+
 var server: TCPServer
 var router: HttpRouter
 
 var current_connections: Array[StreamPeerTCP]
-var time: float
-var to_wait: float = 2.0
 
 
 func _ready() -> void:
@@ -20,17 +21,18 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if server.is_connection_available():
 		var connection: StreamPeerTCP = server.take_connection()
-		handle_connection(connection)
 		current_connections.append(connection)
-	time += delta
-	if time >= to_wait:
-		for connection: StreamPeerTCP in current_connections:
-			handle_connection(connection)
-		time = 0.0
+	for connection: StreamPeerTCP in current_connections:
+		handle_connection(connection)
 
 
 func listen(port: int, bind_address: String = "*") -> void:
 	server.listen(port, bind_address)
+
+
+func close_connection(connection: StreamPeerTCP) -> void:
+	connection.disconnect_from_host()
+	current_connections.erase(connection)
 
 
 func handle_connection(connection: StreamPeerTCP) -> void:
@@ -47,20 +49,25 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 	var available_bytes: int = connection.get_available_bytes()
 	if not available_bytes:
 		return
-	
+
+	if available_bytes > MAX_REQUEST_BYTES:
+		close_connection(connection)
+		return
+
 	var as_string: String = connection.get_string(available_bytes)
 	if not as_string.contains("\r\n\r\n"):
+		# Not full headers yet.
 		return
-	
+
 	var headers: String = as_string.get_slice("\r\n\r\n", 0)
 	if headers.is_empty() or headers == as_string:
 		return
-	
+
 	var header: PackedStringArray = headers.get_slice("\r\n", 0).split(" ")
-	
+
 	var method_str: String = header[0]
 	var method: HTTPClient.Method = HTTPClient.Method.METHOD_GET
-	
+
 	match method_str:
 		"GET":
 			method = HTTPClient.Method.METHOD_GET
@@ -72,35 +79,39 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 			method = HTTPClient.Method.METHOD_PUT
 		"DELETE":
 			method = HTTPClient.Method.METHOD_DELETE
+		"OPTIONS":
+			method = HTTPClient.Method.METHOD_OPTIONS
 	
 	# Hardcoded CORS handler
 	if method == HTTPClient.Method.METHOD_OPTIONS:
 		http_send(connection, {}, HTTPClient.ResponseCode.RESPONSE_OK)
+		close_connection(connection)
 		return
-	
-	var path: String = header[1]
-	
+
+	# If browser sends "/v1/foo?bar=baz", keep only path for routing.
+	var path: String = header[1].get_slice("?", 0)
+
 	var payload: Dictionary
 	var body: String = as_string.get_slice("\r\n\r\n", 1)
 	if body.strip_edges() != "":
 		var parsed: Variant = JSON.parse_string(body)
 		if typeof(parsed) == TYPE_DICTIONARY:
 			payload = parsed
-	
+
 	var handler: Callable = router.find_route_handler(method, path)
 	var result: Dictionary
 	if handler.is_valid():
 		result = await handler.call(payload)
 	else:
-		result = {"error":"not_found555"}
-	
+		result = {"ok": false, "error":"not_found"}
+
 	http_send(
 		connection,
 		result,
 		HTTPClient.ResponseCode.RESPONSE_OK
 	)
-	connection.disconnect_from_host()
-	current_connections.erase(connection)
+
+	close_connection(connection)
 
 
 func http_send(
@@ -114,7 +125,7 @@ func http_send(
 		"Content-Type": "application/json",
 		"Content-Length": body_buffer.size(),
 		"Connection": "close",
-		
+
 		# CORS
 		"Access-Control-Allow-Origin": "*",
 		"Access-Control-Allow-Methods": "POST, GET, OPTIONS",
