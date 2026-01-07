@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Tiny MMO Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1>Tiny MMO Admin</h1>
+      <div class="meta">
+        <span id="connDot" class="dot"></span>
+        <span id="connText">Connecting…</span>
+        <span class="sep">•</span>
+        <span>Last refresh:</span>
+        <span id="lastRefresh">—</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="btnRefresh">Refresh</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="row between">
+        <h2>Overview</h2>
+        <span class="muted" id="overviewStamp">—</span>
+      </div>
+
+      <div class="kpis mt">
+        <div class="kpi">
+          <div class="k">Online players</div>
+          <div class="v" id="kpiOnline">—</div>
+        </div>
+        <div class="kpi">
+          <div class="k">Registered accounts</div>
+          <div class="v" id="kpiAccounts">—</div>
+        </div>
+      </div>
+
+      <details class="mt">
+        <summary class="muted">Raw JSON</summary>
+        <pre id="overviewRaw">{}</pre>
+      </details>
+    </section>
+
+    <section class="card">
+      <div class="row between">
+        <h2>Accounts</h2>
+        <span class="muted" id="accountsMeta">—</span>
+      </div>
+
+      <div class="row mt">
+        <input id="accountQuery" class="input" placeholder="Search username or id…" />
+        <button id="btnFind">Find</button>
+        <button id="btnLoad">Load list</button>
+        <button id="btnSave" class="danger">Save accounts</button>
+      </div>
+
+      <div class="accountsGrid mt">
+        <div class="panel">
+          <div class="row between mb">
+            <div class="muted">Results</div>
+            <span class="muted" id="resultsStamp">—</span>
+          </div>
+
+          <div id="accountsList" class="list"></div>
+
+          <details class="mt">
+            <summary class="muted">Raw response</summary>
+            <pre id="accountsRaw">[]</pre>
+          </details>
+        </div>
+
+        <div class="panel">
+          <div class="row between mb">
+            <div class="muted">Editor</div>
+            <span class="muted" id="selectedHint">None</span>
+          </div>
+
+          <textarea id="editor" class="textarea" placeholder="{ ... }"></textarea>
+
+          <div class="row mt">
+            <button id="btnUpdate">Update (server)</button>
+            <span class="muted" id="status">—</span>
+          </div>
+
+          <details class="mt">
+            <summary class="muted">Last action</summary>
+            <pre id="raw">{}</pre>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
