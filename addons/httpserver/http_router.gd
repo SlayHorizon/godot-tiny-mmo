@@ -1,7 +1,5 @@
 extends RefCounted
 #class_name HttpRouter
-
-## Horizon:
 ## My implementation doesn't use class_name to not flow global project classes.
 ## Feel free to change this while waiting namespacing or else.
 
