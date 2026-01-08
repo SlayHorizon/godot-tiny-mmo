@@ -235,7 +235,6 @@ text = "Menu"
 metadata/_edit_lock_ = true
 
 [node name="MenuOverlay" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -281,5 +280,13 @@ text = "SETTINGS"
 layout_mode = 2
 text = "CLOSE"
 
+[node name="ProfileButton" type="Button" parent="MenuOverlay"]
+layout_mode = 2
+offset_top = 161.0
+offset_right = 145.0
+offset_bottom = 190.0
+text = "PROFILE"
+
 [connection signal="pressed" from="MenuButtons/HBoxContainer/NotificationButton" to="." method="_on_notification_button_pressed"]
 [connection signal="pressed" from="MenuButtons/HBoxContainer/MenuButton" to="." method="_on_overlay_menu_button_pressed"]
+[connection signal="pressed" from="MenuOverlay/ProfileButton" to="." method="_on_profile_button_pressed"]

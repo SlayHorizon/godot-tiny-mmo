@@ -12,7 +12,7 @@ var account_name: String
 var token: int = randi()
 
 var current_world_id: int
-var selected_skin_id: int
+var selected_skin_id: int = 1
 
 var menu_stack: Array[Control]
 
@@ -57,7 +57,9 @@ func _ready() -> void:
 			var sprite: SpriteFrames = ContentRegistryHub.load_by_slug(&"sprites", button.text.to_lower()) as SpriteFrames
 			if not sprite:
 				return
-			selected_skin_id =  ContentRegistryHub.id_from_slug(&"sprites", button.text.to_lower())
+			selected_skin_id = ContentRegistryHub.id_from_slug(&"sprites", button.text.to_lower())
+			if selected_skin_id == 0:
+				selected_skin_id = 1
 			animated_sprite_2d.sprite_frames = sprite
 			animated_sprite_2d.play(&"run")
 		)
