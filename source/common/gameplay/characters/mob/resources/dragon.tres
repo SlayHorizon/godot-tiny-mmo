@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="MobResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/mob/resources/mob_resource.gd" id="1_mob_resource"]
+
+[resource]
+script = ExtResource("1_mob_resource")
+base_stats = {
+"ad": 60.0,
+"armor": 40.0,
+"attack_speed": 0.4,
+"health": 500.0,
+"health_max": 500.0,
+"mr": 30.0,
+"move_speed": 70.0
+}
+display_name = "Dragon"
+sprite_id = 8
+experience_reward = 200
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 2.0
+detection_radius = 500.0
+gold_reward = 100
+loot_table = []
+respawn_delay = 120.0
+respawn_check_radius = 1000.0
+mana_max = 0.0
+abilities = []
+

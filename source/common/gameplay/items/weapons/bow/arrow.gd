@@ -1,7 +1,7 @@
 class_name Projectile
 extends Area2D
 
-var speed: float = 200.0
+var speed: float = 300.0
 var direction: Vector2 = Vector2.RIGHT
 
 var piercing: bool = false
@@ -15,6 +15,8 @@ var effect: EffectSpec
 func _ready() -> void:
 	# Quick and dirty for tests - Need proper system
 	if multiplayer.is_server():
+		monitoring = true
+		area_entered.connect(_on_area_entered)
 		body_entered.connect(_on_body_entered)
 	else:
 		var vosn := VisibleOnScreenNotifier2D.new()
@@ -35,15 +37,65 @@ func _physics_process(delta: float) -> void:
 	position += speed * direction * delta
 
 
+func _on_area_entered(area: Area2D) -> void:
+	# Check if this is a HurtBox
+	if area.name != "HurtBox":
+		return
+	
+	# Get the Character parent from the HurtBox
+	var character: Character = area.get_parent() as Character
+	if not character:
+		return
+	
+	if character == source:
+		return
+	
+	# Damage logic:
+	# - NPCs can always damage players (regardless of PvP)
+	# - Players can always damage NPCs
+	# - Players can only damage other players in PvP zones
+	if character is Player:
+		# Target is a Player
+		# If source is not a Player (i.e., it's an NPC), allow damage regardless of PvP
+		if not (source is Player):
+			_apply_damage_to_character(character)
+		# If source is a Player, only damage in PvP
+		elif source is Player and character.is_pvp():
+			_apply_damage_to_character(character)
+	else:
+		# Target is an NPC (or other Character that's not a Player)
+		# Players can always damage NPCs - this should work for player arrows hitting NPCs
+		_apply_damage_to_character(character)
+
+
 func _on_body_entered(body: Node2D) -> void:
+	# Legacy support - but prefer area_entered for HurtBox
 	if body == source or not body.has_node(^"AbilitySystemComponent"):
 		return
 	
-	if body is Player and not body.is_pvp():
+	# Only apply damage if it's not a player, or if PvP is enabled
+	if body is Player:
+		# NPCs can always damage players (source is not a Player)
+		if not (source is Player):
+			_apply_damage_to_character(body as Character)
+		# Players can only damage other players in PvP
+		elif source is Player and body.is_pvp():
+			_apply_damage_to_character(body as Character)
+	else:
+		_apply_damage_to_character(body as Character)
+
+
+func _apply_damage_to_character(character: Character) -> void:
+	if not character or not character.has_node(^"AbilitySystemComponent"):
 		return
 	
-	var asc: AbilitySystemComponent = body.ability_system_component
-	asc.apply_damage(10)
+	# Don't damage dead characters
+	if character.is_dead:
+		return
+	
+	var asc: AbilitySystemComponent = character.ability_system_component
+	var damage_source: Character = source as Character
+	asc.apply_damage(10, damage_source)
 
 	#var burn := BurnDotEffect.new()
 	#burn.name_id = &"RedBuffBurn"

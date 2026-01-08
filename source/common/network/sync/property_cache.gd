@@ -26,17 +26,22 @@ func _init(
 ## Applies a value to the cached node's property. If the cached node reference is
 ## invalid, it attempts to re-resolve the node before applying the value.
 func apply_or_try_resolve(root: Node, value: Variant) -> bool:
-	if node != null and is_instance_valid(node):
-		node.set_indexed(property_path, value)
-		return true
+	# Always re-resolve from the root to ensure we're targeting the correct instance
+	# This is critical for ReplicatedPropsContainer where server and client have separate instances
+	var target_node: Node = null
+	
 	# IMPORTANT: empty node_path means "root_node"
 	if node_path.is_empty():
-		node = root
+		target_node = root
 	else:
-		node = root.get_node_or_null(node_path)
-	if node != null:
-		node.set_indexed(property_path, value)
+		target_node = root.get_node_or_null(node_path)
+	
+	if target_node != null:
+		# Update cached reference for next time
+		node = target_node
+		target_node.set_indexed(property_path, value)
 		return true
+	
 	return false
 
 

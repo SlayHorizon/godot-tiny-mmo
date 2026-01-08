@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="NPCResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/resources/npc_resource.gd" id="1_npc_resource"]
+
+[resource]
+script = ExtResource("1_npc_resource")
+base_stats = {
+"ad": 40.0,
+"armor": 30.0,
+"attack_speed": 0.5,
+"health": 300.0,
+"health_max": 300.0,
+"mr": 15.0,
+"move_speed": 50.0
+}
+display_name = "Troll"
+sprite_id = 5
+experience_reward = 50
+weapon_slug = "wooden_bow.item"
+attack_cooldown = 1.5
+detection_radius = 350.0
+gold_reward = 25
+loot_table = []
+
