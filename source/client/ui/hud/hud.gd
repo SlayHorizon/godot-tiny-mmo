@@ -56,3 +56,26 @@ func _on_overlay_menu_button_pressed() -> void:
 
 func _on_notification_button_pressed() -> void:
 	pass # Replace with function body.
+
+
+func _on_profile_button_pressed() -> void:
+	open_player_profile(0)
+	#if not menus.has(&"player_profile"):
+		#var profile_menu: PackedScene = load("res://source/client/ui/menus/player_profile/player_profile_menu.tscn")
+		#var new_menu: Control = profile_menu.instantiate()
+		#new_menu.visibility_changed.connect(_on_submenu_visiblity_changed.bind(new_menu))
+		#sub_menu.add_child(new_menu)
+		#menus[&"player_profile"] = new_menu
+	#menus[&"player_profile"].open_player_profile(0)
+
+#func add_menu(menu_name: StringName, custom_open: Callable = Callable()) -> Node:
+	#if menus.has(menu_name):
+		#return menus[menu_name]
+	#var path: String = "res://source/client/ui/menus/" + menu_name + "/" + menu_name + "_menu.tscn"
+	#if not ResourceLoader.exists(path):
+		#return null
+	#var new_menu: Control = load(path).instantiate()
+	#new_menu.visibility_changed.connect(_on_submenu_visiblity_changed.bind(new_menu))
+	#sub_menu.add_child(new_menu)
+	#menus[menu_name] = new_menu
+	#return new_menu

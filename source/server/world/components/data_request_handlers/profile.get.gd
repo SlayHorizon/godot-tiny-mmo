@@ -6,10 +6,11 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	var to_get: int = args.get("q", 0)
-	if not to_get:
-		return {}
-	var target_player: Player = instance.players_by_peer_id.get(to_get, null)
+	
+	var target_id: int = args.get("id", 0)
+	if target_id == 0:
+		target_id = peer_id
+	var target_player: Player = instance.players_by_peer_id.get(target_id, null)
 	if not target_player:
 		return {}
 	var player_resource: PlayerResource = target_player.player_resource

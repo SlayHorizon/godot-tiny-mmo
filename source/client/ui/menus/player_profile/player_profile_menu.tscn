@@ -1,16 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://beypr510eoqml"]
+[gd_scene load_steps=3 format=3 uid="uid://beypr510eoqml"]
 
 [ext_resource type="Script" uid="uid://2dnwg3gkbaeg" path="res://source/client/ui/menus/player_profile/player_profile.gd" id="1_fnhhi"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_21o1w"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x41y2"]
-content_margin_left = 15.0
-content_margin_top = 15.0
-content_margin_right = 15.0
-content_margin_bottom = 15.0
-bg_color = Color(0.237539, 0.237539, 0.237539, 1)
-
-[node name="PlayerProfile" type="Control"]
+[node name="PlayerProfile" type="Control" node_paths=PackedStringArray("name_label")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,6 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_fnhhi")
+name_label = NodePath("PanelContainer/HBoxContainer/VBoxContainer2/Label")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
@@ -30,7 +24,6 @@ offset_right = -38.0
 offset_bottom = -33.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_x41y2")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -74,6 +67,7 @@ animation = &"death"
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
+text = "Hello I'am new!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -90,6 +84,10 @@ text = "Message"
 [node name="FriendButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Add friend"
+
+[node name="InviteButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Invite in guild"
 
 [node name="Close" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
