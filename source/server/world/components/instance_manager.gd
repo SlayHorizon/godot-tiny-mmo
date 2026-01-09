@@ -6,7 +6,7 @@ const INSTANCE_COLLECTION_PATH: String = "res://source/common/gameplay/maps/inst
 const GLOBAL_COMMANDS_PATH: String = "res://source/server/world/components/chat_command/global_commands/"
 
 var loading_instances: Dictionary[InstanceResource, ServerInstance]
-var instance_collection: Array[InstanceResource]
+var instance_collection: Dictionary[String, InstanceResource]
 var default_instance: InstanceResource
 
 @export var world_server: WorldServer
@@ -18,7 +18,8 @@ func start_instance_manager() -> void:
 	setup_global_commands_and_roles()
 
 	set_instance_collection.call_deferred()
-	
+	world_server.multiplayer_api.peer_connected.connect(_on_peer_connected)
+
 	# Timer which will call unload_unused_instances
 	var timer: Timer = Timer.new()
 	timer.wait_time = 20.0 # 20.0 is for testing, consider increasing it
@@ -26,6 +27,7 @@ func start_instance_manager() -> void:
 	timer.autostart = true
 	timer.timeout.connect(unload_unused_instances)
 	add_sibling(timer)
+
 
 func setup_global_commands_and_roles() -> void:
 	var files: PackedStringArray = FileUtils.get_all_file_at(GLOBAL_COMMANDS_PATH, "*.gd")
@@ -51,8 +53,35 @@ func setup_global_commands_and_roles() -> void:
 
 
 @rpc("authority", "call_remote", "reliable", 0)
-func charge_new_instance(_map_path: String, _instance_id: String) -> void:
+func charge_new_instance(_map_path: String, _instance_id: String, _spawn_data: Dictionary = {}) -> void:
 	pass
+
+
+func _on_peer_connected(peer_id: int) -> void:
+	var player_resource: PlayerResource = world_server.connected_players[peer_id]
+	var last_instance: InstanceResource = instance_collection.get(player_resource.current_instance, null)
+	
+	var _charge_instance: Callable = func(instance: InstanceResource):
+		var instance_id: String
+		var spawn_data: Dictionary = {
+			"spawn_type": "exact",
+			"position": player_resource.last_position
+		}
+		if instance.get_instance(0):
+			instance_id = instance.get_instance(0).name
+		else:
+			instance_id = charge_instance(instance).name
+		charge_new_instance.rpc_id(peer_id, instance.map_path, instance_id, spawn_data)
+
+	if last_instance == default_instance:
+		_charge_instance.call(default_instance)
+		return
+
+	if not last_instance:
+		_charge_instance.call(default_instance)
+		return
+	
+	_charge_instance.call(last_instance)
 
 
 func _on_player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper) -> void:
@@ -108,11 +137,12 @@ func player_switch_instance(
 	}
 
 
-func charge_instance(instance_resource: InstanceResource) -> void:
+func charge_instance(instance_resource: InstanceResource) -> ServerInstance:
 	if loading_instances.has(instance_resource):
 		return
 	var new_instance: ServerInstance = prepare_instance(instance_resource)
 	add_child.call_deferred(new_instance, true)
+	return new_instance
 
 
 func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
@@ -134,25 +164,14 @@ func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
 func set_instance_collection() -> void:
 	for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH, "*.tres"):
 		print(file_path)
-	#for file_path: String in ResourceLoader.list_directory(INSTANCE_COLLECTION_PATH):
-		#print(INSTANCE_COLLECTION_PATH + file_path)
-		#instance_collection.append(ResourceLoader.load(INSTANCE_COLLECTION_PATH + file_path))
-		instance_collection.append(ResourceLoader.load(file_path, "InstanceResource"))
+		var instance_resource: InstanceResource = ResourceLoader.load(file_path, "InstanceResource")
+		instance_collection.set(instance_resource.instance_name, instance_resource)
 	
-	for instance_resource: InstanceResource in instance_collection:
+	for instance_resource: InstanceResource in instance_collection.values():
 		if instance_resource.load_at_startup:
 			charge_instance(instance_resource)
 		if instance_resource.instance_name == "Overworld":
 			default_instance = instance_resource
-	
-	world_server.multiplayer_api.peer_connected.connect(
-		func(peer_id: int):
-			charge_new_instance.rpc_id(
-				peer_id,
-				default_instance.map_path,
-				default_instance.charged_instances[0].name
-			)
-	)
 
 
 func unload_unused_instances() -> void:

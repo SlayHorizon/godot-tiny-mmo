@@ -33,6 +33,9 @@ func _ready() -> void:
 	world_server.multiplayer_api.peer_disconnected.connect(
 		func(peer_id: int):
 			if connected_peers.has(peer_id):
+				var player: Player = get_player(peer_id)
+				if player:
+					player.player_resource.last_position = player.global_position
 				despawn_player(peer_id)
 	)
 	
@@ -70,14 +73,14 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func ready_to_enter_instance() -> void:
+func ready_to_enter_instance(spawn_data: Dictionary) -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
-	spawn_player(peer_id)
+	spawn_player(peer_id, spawn_data)
 
 
 #region spawn/despawn
 @rpc("authority", "call_remote", "reliable", 0)
-func spawn_player(peer_id: int) -> void:
+func spawn_player(peer_id: int, spawn_data: Dictionary) -> void:
 	var player: Player
 	var spawn_index: int = 0
 	
@@ -89,15 +92,25 @@ func spawn_player(peer_id: int) -> void:
 		player = instantiate_player(peer_id)
 		DataSynchronizerServer._self.data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
 	
+	player.player_resource.current_instance = instance_resource.instance_name
 	player.mark_just_teleported()
 	
 	instance_map.add_child(player, true)
 	
 	players_by_peer_id[peer_id] = player
 	
-	#NEW
+	var spawn_position: Vector2
+	if "position" in spawn_data:
+		spawn_position = spawn_data["position"]
+	else:
+		spawn_index = spawn_data.get("warper_index", spawn_index)
+		spawn_position = instance_map.get_spawn_position(spawn_index)
+	
+	if spawn_position == Vector2.ZERO:
+		spawn_position = instance_map.get_spawn_position(0)
+
 	var syn: StateSynchronizer = player.state_synchronizer
-	syn.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
+	syn.set_by_path(^":position", spawn_position)
 
 	print_debug("baseline server pairs:", syn.capture_baseline())
 	

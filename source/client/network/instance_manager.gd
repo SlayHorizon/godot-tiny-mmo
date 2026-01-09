@@ -14,7 +14,7 @@ func _ready() -> void:
 
 
 @rpc("authority", "call_remote", "reliable", 0)
-func charge_new_instance(map_path: String, instance_id: String) -> void:
+func charge_new_instance(map_path: String, instance_id: String, spawn_data: Dictionary = {}) -> void:
 	var new_instance: InstanceClient = InstanceClient.new()
 	new_instance.name = instance_id
 	
@@ -25,7 +25,7 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 	new_instance.instance_map = map
 	
 	map.ready.connect(
-		new_instance.ready_to_enter_instance.rpc_id.bind(1),
+		new_instance.ready_to_enter_instance.rpc_id.bind(1, spawn_data),
 		CONNECT_ONE_SHOT
 	)
 	map.ready.connect(
