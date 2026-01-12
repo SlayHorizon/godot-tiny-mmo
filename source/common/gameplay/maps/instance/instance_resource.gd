@@ -1,10 +1,19 @@
 class_name InstanceResource
 extends Resource
 
+## [DEFAULT] - uses default map spawn logic.
+## [ENTRY] - spawn player on map entrance.
+## [WORLD] - spawn player on default map spawn.
+enum SpawnOverride {
+	DEFAULT,
+	ENTRY,
+	WORLD
+}
 
 @export var instance_name: StringName
 @export_file("*.tscn") var map_path: String
 @export var load_at_startup: bool = false
+@export var spawn_override: SpawnOverride = SpawnOverride.DEFAULT
 
 var loading_instances: Array
 var charged_instances: Array[ServerInstance]

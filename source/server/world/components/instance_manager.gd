@@ -53,35 +53,31 @@ func setup_global_commands_and_roles() -> void:
 
 
 @rpc("authority", "call_remote", "reliable", 0)
-func charge_new_instance(_map_path: String, _instance_id: String, _spawn_data: Dictionary = {}) -> void:
+func charge_new_instance(_map_path: String, _instance_id: String) -> void:
 	pass
 
 
+## Deal with player respawn on login. Should replace this with proper map respawn logic later?
 func _on_peer_connected(peer_id: int) -> void:
 	var player_resource: PlayerResource = world_server.connected_players[peer_id]
 	var last_instance: InstanceResource = instance_collection.get(player_resource.current_instance, null)
-	
-	var _charge_instance: Callable = func(instance: InstanceResource):
-		var instance_id: String
-		var spawn_data: Dictionary = {
-			"spawn_type": "exact",
-			"position": player_resource.last_position
-		}
-		if instance.get_instance(0):
-			instance_id = instance.get_instance(0).name
-		else:
-			instance_id = charge_instance(instance).name
-		charge_new_instance.rpc_id(peer_id, instance.map_path, instance_id, spawn_data)
 
-	if last_instance == default_instance:
-		_charge_instance.call(default_instance)
+	if not last_instance or last_instance.spawn_override == InstanceResource.SpawnOverride.WORLD:
+		charge_new_instance.rpc_id(peer_id, default_instance.map_path, default_instance.charged_instances[0].name)
 		return
 
-	if not last_instance:
-		_charge_instance.call(default_instance)
-		return
-	
-	_charge_instance.call(last_instance)
+	match last_instance.spawn_override:
+		InstanceResource.SpawnOverride.DEFAULT:
+			var instance: ServerInstance
+			if last_instance.charged_instances.is_empty():
+				instance = charge_instance(last_instance)
+			else:
+				instance = last_instance.get_instance(0)
+			charge_new_instance.rpc_id(peer_id, last_instance.map_path, instance.name)
+			instance.awaiting_peers[peer_id] = {"target_position": player_resource.last_position}
+		InstanceResource.SpawnOverride.ENTRY:
+			# TO DO
+			charge_new_instance.rpc_id(peer_id, default_instance.map_path, default_instance.charged_instances[0].name)
 
 
 func _on_player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper) -> void:
@@ -163,15 +159,13 @@ func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
 
 func set_instance_collection() -> void:
 	for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH, "*.tres"):
-		print(file_path)
 		var instance_resource: InstanceResource = ResourceLoader.load(file_path, "InstanceResource")
-		instance_collection.set(instance_resource.instance_name, instance_resource)
-	
-	for instance_resource: InstanceResource in instance_collection.values():
 		if instance_resource.load_at_startup:
 			charge_instance(instance_resource)
 		if instance_resource.instance_name == "Overworld":
 			default_instance = instance_resource
+		instance_collection.set(instance_resource.instance_name, instance_resource)
+		print(file_path)
 
 
 func unload_unused_instances() -> void:
