@@ -42,7 +42,7 @@ func _ready() -> void:
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
-func ready_to_enter_instance(_spawn_data: Dictionary) -> void:
+func ready_to_enter_instance() -> void:
 	pass
 
 
