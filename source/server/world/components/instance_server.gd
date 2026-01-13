@@ -19,7 +19,7 @@ var players_by_peer_id: Dictionary[int, Player]
 ## Current connected peers to the instance.
 var connected_peers: PackedInt64Array = PackedInt64Array()
 ## Peers coming from another instance.
-var awaiting_peers: Dictionary = {}#[int, Player]
+var awaiting_peers: Dictionary[int, Dictionary] = {}#[int, Player]
 
 var last_accessed_time: float
 
@@ -33,6 +33,9 @@ func _ready() -> void:
 	world_server.multiplayer_api.peer_disconnected.connect(
 		func(peer_id: int):
 			if connected_peers.has(peer_id):
+				var player: Player = get_player(peer_id)
+				if player:
+					player.player_resource.last_position = player.global_position
 				despawn_player(peer_id)
 	)
 	
@@ -80,24 +83,31 @@ func ready_to_enter_instance() -> void:
 func spawn_player(peer_id: int) -> void:
 	var player: Player
 	var spawn_index: int = 0
-	
+	var spawn_position: Vector2
+
 	if awaiting_peers.has(peer_id):
-		player = awaiting_peers[peer_id]["player"]
-		spawn_index = awaiting_peers[peer_id]["target_id"]
+		var player_info: Dictionary = awaiting_peers[peer_id]
+		player = player_info["player"] if "player" in player_info else instantiate_player(peer_id)
+		spawn_index = player_info.get("target_id", 0)
+		spawn_position = player_info["target_position"] if "target_position" in player_info else instance_map.get_spawn_position(spawn_index)
 		awaiting_peers.erase(peer_id)
 	else:
 		player = instantiate_player(peer_id)
+		spawn_position = instance_map.get_spawn_position(spawn_index)
 		DataSynchronizerServer._self.data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
-	
+
+	player.player_resource.current_instance = instance_resource.instance_name
 	player.mark_just_teleported()
 	
 	instance_map.add_child(player, true)
 	
 	players_by_peer_id[peer_id] = player
 	
-	#NEW
+	if spawn_position == Vector2.ZERO:
+		spawn_position = instance_map.get_spawn_position(0)
+
 	var syn: StateSynchronizer = player.state_synchronizer
-	syn.set_by_path(^":position", instance_map.get_spawn_position(spawn_index))
+	syn.set_by_path(^":position", spawn_position)
 
 	print_debug("baseline server pairs:", syn.capture_baseline())
 	

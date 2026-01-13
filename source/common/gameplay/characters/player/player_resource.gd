@@ -32,6 +32,9 @@ const BASE_STATS: Dictionary[StringName, float] = {
 ##
 @export var server_roles: Dictionary
 
+@export var last_position: Vector2 = Vector2.ZERO
+@export var current_instance: String
+
 ## Current Network ID
 var current_peer_id: int
 
