@@ -7,4 +7,5 @@ script = ExtResource("1_1h1k1")
 instance_name = &"TradeHouse"
 map_path = "uid://be82v7hsu1yi2"
 load_at_startup = false
+spawn_override = 2
 metadata/_custom_type_script = "uid://deqjrbn7hm53u"
