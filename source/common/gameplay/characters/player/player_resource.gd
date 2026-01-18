@@ -32,6 +32,10 @@ const BASE_STATS: Dictionary[StringName, float] = {
 ##
 @export var server_roles: Dictionary
 
+# Profile
+@export var profile_status: String = "Hello I'am new!"
+@export var profile_animation: String = "idle"
+
 ## Current Network ID
 var current_peer_id: int
 

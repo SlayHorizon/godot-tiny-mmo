@@ -28,7 +28,7 @@ func open_player_profile(player_id: int) -> void:
 func apply_profile(profile: Dictionary) -> void:
 	var stats: Dictionary = profile.get("stats", {})
 	var player_name: String = profile.get("name", "No Name")
-	var player_skin: int = stats.get("skin_id", 1)
+	var player_skin: int = profile.get("skin_id", 1)
 	var animation: String = profile.get("animation", "idle")
 	var description: String = profile.get("description", "Hello I'am new!")
 	

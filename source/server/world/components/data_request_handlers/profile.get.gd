@@ -16,11 +16,14 @@ func data_request_handler(
 	var player_resource: PlayerResource = target_player.player_resource
 	var profile: Dictionary = {
 		"name": player_resource.display_name,
+		"skin_id": player_resource.skin_id,
 		"stats": {
 			"money": player_resource.golds,
-			"skin_id": player_resource.skin_id,
 			"character_class": "???",
 			"level": player_resource.level
-		}
+		},
+		"animation": player_resource.profile_animation,
+		"description": player_resource.profile_status,
+		"self": true if target_id  == peer_id else false
 	}
 	return profile
