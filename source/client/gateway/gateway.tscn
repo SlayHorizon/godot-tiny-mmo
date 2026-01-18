@@ -190,6 +190,8 @@ label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.631373)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "Enter your account name here"
 
@@ -203,6 +205,8 @@ label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2"]
 layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.631373)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "Enter your password here"
 
@@ -261,6 +265,8 @@ label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "Enter your account name here"
 
@@ -274,6 +280,8 @@ label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2"]
 layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "Enter your password here"
 
@@ -287,6 +295,8 @@ label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3"]
 layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "Enter your password again here"
 
