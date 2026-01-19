@@ -85,6 +85,8 @@ scroll_following = true
 
 [node name="MessageEdit" type="LineEdit" parent="PeekFeed"]
 layout_mode = 2
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.34902)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_14md2")
 placeholder_text = "Enter your message here"
 
@@ -93,6 +95,7 @@ wait_time = 3.0
 one_shot = true
 
 [node name="FullFeed" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
