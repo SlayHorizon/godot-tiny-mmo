@@ -1,7 +1,7 @@
-extends GuildPanel
+extends NavPanel
 
 
-@export var display_panel: GuildPanel
+@export var guild_details_panel: NavPanel
 
 var request_id: int
 
@@ -21,6 +21,9 @@ func request_create_guild(guild_name: String) -> void:
 	if line_edit.text.is_empty() or request_id:
 		return
 	
+	line_edit.editable = false
+	confirm_button.disabled = true
+	
 	guild_name.strip_edges(true, true)
 	guild_name = guild_name.substr(0, 21)
 	
@@ -33,6 +36,7 @@ func request_create_guild(guild_name: String) -> void:
 
 
 func _on_guild_create_response(data: Dictionary) -> void:
+	if data.has("error"):
+		$MarginContainer/VBoxContainer/Label.text = data.get("message", "error")
 	if data.has("name"):
-		swap_requested.emit(display_panel, data)
-		get_parent().history.clear()
+		navigate_requested.emit(NavigationAction.REPLACE, guild_details_panel, data)

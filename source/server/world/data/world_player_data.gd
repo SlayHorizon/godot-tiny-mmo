@@ -73,13 +73,20 @@ func get_account_characters(account_name: String) -> Dictionary:
 	return data
 
 
-func create_guild(guild_name: String, player_id: int) -> bool:
+func create_guild(guild_name: String, player_id: int) -> Guild:
 	var player: PlayerResource = players.get(player_id)
 	if not player or guilds.has(guild_name):
-		return false
+		return null
 	var new_guild: Guild = Guild.new()
 	new_guild.leader_id = player_id
 	new_guild.guild_name = guild_name
-	new_guild.add_member(player_id, "Leader")
+	new_guild.add_member(player_id)
+	new_guild.members[player_id] = 0 # Promote to leader.
+
 	guilds[guild_name] = new_guild
-	return true
+
+	player.active_guild = new_guild
+	player.joined_guilds.append(new_guild)
+	player.led_guild = new_guild
+
+	return new_guild

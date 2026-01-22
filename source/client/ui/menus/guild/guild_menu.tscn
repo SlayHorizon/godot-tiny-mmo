@@ -1,12 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://la1wru6pvnyy"]
+[gd_scene load_steps=10 format=3 uid="uid://la1wru6pvnyy"]
 
 [ext_resource type="Script" uid="uid://d1cseo7blcif2" path="res://source/client/ui/menus/guild/guild_menu.gd" id="1_njed6"]
-[ext_resource type="Script" uid="uid://o3kj4urvrykf" path="res://source/client/ui/menus/guild/no_guild_menu.gd" id="2_etk61"]
-[ext_resource type="Script" uid="uid://c0wbbw6du00cs" path="res://source/client/ui/menus/guild/search_guild_menu.gd" id="2_wnmab"]
-[ext_resource type="Script" uid="uid://dlo5k2qp1v3dm" path="res://source/client/ui/menus/guild/guild_display.gd" id="3_ysvbj"]
 [ext_resource type="Script" uid="uid://b6ywedmocoh7m" path="res://source/client/ui/menus/guild/create_guild_menu.gd" id="4_etk61"]
+[ext_resource type="Script" uid="uid://c4k4emciy3q2w" path="res://source/client/ui/menus/guild/guild_members_panel.gd" id="5_p6bnm"]
+[ext_resource type="Texture2D" uid="uid://7ce7m0221tey" path="res://assets/node_icons/blue/icon_hat.png" id="6_i4fuu"]
+[ext_resource type="Script" uid="uid://bm6lrtmnwjhqt" path="res://source/client/ui/menus/guild/guild_main.gd" id="7_7uocm"]
+[ext_resource type="Script" uid="uid://c437u84bullo2" path="res://source/client/ui/shared/nav_panel.gd" id="7_l1nt1"]
+[ext_resource type="Script" uid="uid://jq00b5cd64yb" path="res://source/client/ui/menus/guild/my_guilds_panel.gd" id="8_l1nt1"]
+[ext_resource type="Script" uid="uid://bvf0g8usqr6fh" path="res://source/client/ui/menus/guild/guild_details.gd" id="8_p6bnm"]
+[ext_resource type="Script" uid="uid://dwnvysyvvgbno" path="res://source/client/ui/menus/guild/guild_search.gd" id="10_hymua"]
 
-[node name="GuildMenu" type="Control"]
+[node name="GuildMenu" type="Control" node_paths=PackedStringArray("initial_panel", "nav_panels")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,8 +18,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_njed6")
+initial_panel = NodePath("PanelContainer/MarginContainer/VBoxContainer/GuildMain")
+nav_panels = [NodePath("PanelContainer/MarginContainer/VBoxContainer/GuildMain"), NodePath("PanelContainer/MarginContainer/VBoxContainer/GuildDetails"), NodePath("PanelContainer/MarginContainer/VBoxContainer/GuildMembers"), NodePath("PanelContainer/MarginContainer/VBoxContainer/GuildSearch"), NodePath("PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel"), NodePath("PanelContainer/MarginContainer/VBoxContainer/GuildOptions"), NodePath("PanelContainer/MarginContainer/VBoxContainer/MyGuildsPanel")]
 
-[node name="NoGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("search_panel", "create_panel")]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(320, 200)
 layout_mode = 1
 anchors_preset = 8
@@ -23,203 +29,374 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -100.0
-offset_right = 160.0
-offset_bottom = 100.0
+offset_left = -320.0
+offset_top = -200.0
+offset_right = 320.0
+offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("2_etk61")
-search_panel = NodePath("../SearchGuildMenu")
-create_panel = NodePath("../CreateGuildMenu")
-metadata/_custom_type_script = "uid://dnd53fxkhfu66"
 metadata/_edit_group_ = true
 
-[node name="MarginContainer" type="MarginContainer" parent="NoGuildMenu"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_right = 12
 
-[node name="VBoxContainer" type="VBoxContainer" parent="NoGuildMenu/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
-alignment = 1
 
-[node name="Label" type="Label" parent="NoGuildMenu/MarginContainer/VBoxContainer"]
+[node name="Header" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "You don't have a guild yet.
-You can either join one or create your."
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+text = "Guilds"
 horizontal_alignment = 1
 
-[node name="SearchGuildButton" type="Button" parent="NoGuildMenu/MarginContainer/VBoxContainer"]
+[node name="BackButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
-text = "Search huild"
+size_flags_horizontal = 10
+text = "Back"
 
-[node name="CreateGuildButton" type="Button" parent="NoGuildMenu/MarginContainer/VBoxContainer"]
+[node name="GuildMain" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_search_panel", "guild_create_panel", "my_guilds_panel")]
 layout_mode = 2
-text = "Create a guild"
+size_flags_vertical = 3
+script = ExtResource("7_7uocm")
+guild_search_panel = NodePath("../GuildSearch")
+guild_create_panel = NodePath("../CreateGuildPanel")
+my_guilds_panel = NodePath("../MyGuildsPanel")
+metadata/_custom_type_script = "uid://c437u84bullo2"
 
-[node name="SearchGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("display_panel")]
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+columns = 5
+
+[node name="SearchGuildButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Search Guild"
+
+[node name="CreateGuildButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Create Guild"
+
+[node name="MyGuildsButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "My Guilds"
+
+[node name="LeaderboardButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Leaderboard"
+
+[node name="GuildHelpButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Guild help"
+
+[node name="Button6" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "???"
+
+[node name="Button7" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "???"
+
+[node name="Button8" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "???"
+
+[node name="Button9" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "???"
+
+[node name="Button10" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "???"
+
+[node name="GuildDetails" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_members_panel", "guild_name_label")]
 visible = false
-custom_minimum_size = Vector2(320, 200)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -236.0
-offset_right = 160.0
-offset_bottom = 105.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("2_wnmab")
-display_panel = NodePath("../GuildDisplay")
-metadata/_custom_type_script = "uid://dnd53fxkhfu66"
-metadata/_edit_group_ = true
-
-[node name="MarginContainer" type="MarginContainer" parent="SearchGuildMenu"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_right = 12
+size_flags_vertical = 3
+script = ExtResource("8_p6bnm")
+guild_members_panel = NodePath("../GuildMembers")
+guild_name_label = NodePath("../Header/Label")
+metadata/_custom_type_script = "uid://c437u84bullo2"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SearchGuildMenu/MarginContainer"]
+[node name="GuildDisplay" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails"]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("6_i4fuu")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "eque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit."
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "eque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit."
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="TagButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tag"
+
+[node name="MembersButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Members"
+
+[node name="MoreButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "More"
+
+[node name="GuildMembers" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("5_p6bnm")
+metadata/_custom_type_script = "uid://c437u84bullo2"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMembers"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMembers/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+columns = 2
+
+[node name="GuildOptions" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+script = ExtResource("7_l1nt1")
+metadata/_custom_type_script = "uid://c437u84bullo2"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+columns = 2
+
+[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button2" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button3" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button4" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button5" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button6" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button7" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button8" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button9" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button10" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button11" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button12" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button13" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button14" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="Button15" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildOptions/ScrollContainer/GridContainer"]
+custom_minimum_size = Vector2(190, 80)
+layout_mode = 2
+text = "Members"
+
+[node name="GuildSearch" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_details_panel")]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("10_hymua")
+guild_details_panel = NodePath("../GuildDetails")
+metadata/_custom_type_script = "uid://c437u84bullo2"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildSearch"]
+layout_mode = 2
+size_flags_vertical = 3
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Label" type="Label" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer"]
 layout_mode = 2
 text = "Search a guild"
 horizontal_alignment = 1
 
-[node name="LineEdit" type="LineEdit" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer"]
 layout_mode = 2
 placeholder_text = "Enter the guild name here"
 
-[node name="SearchGuildButton" type="Button" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+[node name="SearchGuildButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer"]
 layout_mode = 2
 text = "Search huild"
 
-[node name="Label2" type="Label" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer"]
 layout_mode = 2
 text = "Result"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="SearchGuildMenu/MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="SearchGuildMenu/MarginContainer/VBoxContainer/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CreateGuildMenu" type="PanelContainer" parent="." node_paths=PackedStringArray("display_panel")]
+[node name="CreateGuildPanel" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_details_panel")]
 visible = false
 custom_minimum_size = Vector2(320, 200)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -100.0
-offset_right = 160.0
-offset_bottom = 100.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_vertical = 3
 script = ExtResource("4_etk61")
-display_panel = NodePath("../GuildDisplay")
-metadata/_custom_type_script = "uid://dnd53fxkhfu66"
+guild_details_panel = NodePath("../GuildDetails")
 metadata/_edit_group_ = true
 
-[node name="MarginContainer" type="MarginContainer" parent="CreateGuildMenu"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_right = 12
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CreateGuildMenu/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="Label" type="Label" parent="CreateGuildMenu/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Create guild menu"
 horizontal_alignment = 1
 
-[node name="LineEdit" type="LineEdit" parent="CreateGuildMenu/MarginContainer/VBoxContainer"]
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 placeholder_text = "Guild name"
 
-[node name="Button" type="Button" parent="CreateGuildMenu/MarginContainer/VBoxContainer"]
+[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Confirm"
 
-[node name="GuildDisplay" type="PanelContainer" parent="." node_paths=PackedStringArray("no_guild_panel")]
+[node name="MyGuildsPanel" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_details_panel")]
 visible = false
-custom_minimum_size = Vector2(320, 200)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -100.0
-offset_right = 160.0
-offset_bottom = 100.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("3_ysvbj")
-no_guild_panel = NodePath("../NoGuildMenu")
-metadata/_custom_type_script = "uid://dnd53fxkhfu66"
-metadata/_edit_group_ = true
-
-[node name="MarginContainer" type="MarginContainer" parent="GuildDisplay"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_right = 12
+size_flags_vertical = 3
+script = ExtResource("8_l1nt1")
+guild_details_panel = NodePath("../GuildDetails")
+metadata/_custom_type_script = "uid://c437u84bullo2"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GuildDisplay/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MyGuildsPanel"]
 layout_mode = 2
-theme_override_constants/separation = 12
-alignment = 1
 
-[node name="Label" type="Label" parent="GuildDisplay/MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/MyGuildsPanel/ScrollContainer"]
 layout_mode = 2
-text = "Guild name"
-horizontal_alignment = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="GuildDisplay/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Leave Guild"
-
-[node name="CloseButton" type="Button" parent="."]
-custom_minimum_size = Vector2(110, 0)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -40.0
-offset_top = 134.5
-offset_right = 40.0
-offset_bottom = 165.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "CLOSE"
-
-[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
-[connection signal="pressed" from="NoGuildMenu/MarginContainer/VBoxContainer/SearchGuildButton" to="NoGuildMenu" method="_on_search_guild_button_pressed"]
-[connection signal="pressed" from="NoGuildMenu/MarginContainer/VBoxContainer/CreateGuildButton" to="NoGuildMenu" method="_on_create_guild_button_pressed"]
-[connection signal="text_submitted" from="SearchGuildMenu/MarginContainer/VBoxContainer/LineEdit" to="SearchGuildMenu" method="_on_line_edit_text_submitted"]
-[connection signal="pressed" from="SearchGuildMenu/MarginContainer/VBoxContainer/SearchGuildButton" to="SearchGuildMenu" method="_on_search_guild_button_pressed"]
-[connection signal="text_submitted" from="CreateGuildMenu/MarginContainer/VBoxContainer/LineEdit" to="CreateGuildMenu" method="_on_line_edit_text_submitted"]
-[connection signal="pressed" from="CreateGuildMenu/MarginContainer/VBoxContainer/Button" to="CreateGuildMenu" method="_on_button_pressed"]
-[connection signal="pressed" from="GuildDisplay/MarginContainer/VBoxContainer/Button" to="GuildDisplay" method="_on_button_pressed"]
-[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer/SearchGuildButton" to="PanelContainer/MarginContainer/VBoxContainer/GuildMain" method="_on_search_guild_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer/CreateGuildButton" to="PanelContainer/MarginContainer/VBoxContainer/GuildMain" method="_on_create_guild_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer/MyGuildsButton" to="PanelContainer/MarginContainer/VBoxContainer/GuildMain" method="_on_my_guilds_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer/HBoxContainer2/TagButton" to="PanelContainer/MarginContainer/VBoxContainer/GuildDetails" method="_on_tag_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer/HBoxContainer2/MembersButton" to="PanelContainer/MarginContainer/VBoxContainer/GuildDetails" method="_on_members_button_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/GuildDetails/GuildDisplay/VBoxContainer/HBoxContainer2/MoreButton" to="PanelContainer/MarginContainer/VBoxContainer/GuildDetails" method="_on_more_button_pressed"]
+[connection signal="text_submitted" from="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer/LineEdit" to="PanelContainer/MarginContainer/VBoxContainer/GuildSearch" method="_on_line_edit_text_submitted"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/GuildSearch/VBoxContainer/SearchGuildButton" to="PanelContainer/MarginContainer/VBoxContainer/GuildSearch" method="_on_search_guild_button_pressed"]
+[connection signal="text_submitted" from="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel/MarginContainer/VBoxContainer/LineEdit" to="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel" method="_on_line_edit_text_submitted"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel/MarginContainer/VBoxContainer/Button" to="PanelContainer/MarginContainer/VBoxContainer/CreateGuildPanel" method="_on_button_pressed"]

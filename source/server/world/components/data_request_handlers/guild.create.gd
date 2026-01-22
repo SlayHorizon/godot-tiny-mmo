@@ -10,22 +10,16 @@ func data_request_handler(
 	var player_resource: PlayerResource = instance.world_server.connected_players.get(peer_id, null)
 	
 	if guild_name.is_empty() or not player_resource:
-		return {}
-	
-	var guild_created: bool = instance.world_server.database.player_data.create_guild(
+		return {"error": 1, "ok": false, "message": "Couldn't find player."}
+
+	if player_resource.led_guild:
+		return {"error": 1, "ok": false, "message": "You already has a guild."}
+
+	var guild: Guild = instance.world_server.database.player_data.create_guild(
 		guild_name, player_resource.player_id
 	)
-	if not guild_created:
-		return {}
-	
-	var guild: Guild = instance.world_server.database.player_data.guilds.get(guild_name)
 	if not guild:
-		return {}
-	
-	guild.add_member(player_resource.player_id, "Leader")
-	guild.leader_id = player_resource.player_id
-	
-	player_resource.guild = guild
+		return {"error": 1, "ok": false, "message": "Error while creating guild."}
 	
 	var guild_info: Dictionary = {
 		"name": guild.guild_name,

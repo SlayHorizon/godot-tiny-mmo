@@ -10,9 +10,8 @@ func data_request_handler(
 	if not player:
 		return {}
 	
-	var guild: Guild = player.player_resource.active_guild
+	var joined_guilds: Array[Guild] = player.player_resource.joined_guilds
 	var data: Dictionary
-	if not guild:
-		return {}
-	data = {"name": guild.guild_name}
+	for guild: Guild in joined_guilds:
+		data[guild.guild_name] = guild.members.size()
 	return data

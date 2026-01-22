@@ -31,6 +31,7 @@ func _data_request(
 	args: Dictionary = {},
 	instance_id: String = ""
 ) -> void:
+	const DATA_REQUEST_HANDLERS_PATH: String = "res://source/server/world/components/data_request_handlers/"
 	var peer_id: int = multiplayer.get_remote_sender_id()
 	var instance: ServerInstance = instance_manager.get_instance_server_by_id(instance_id)
 
@@ -38,12 +39,17 @@ func _data_request(
 		instance = instance_manager.default_instance.charged_instances[0]
 
 	if not data_handlers.has(type):
-		var script: GDScript = ContentRegistryHub.load_by_slug(
-			&"data_request_handlers",
-			type
-		)
-		if not script: return
-		
+		var path: String = DATA_REQUEST_HANDLERS_PATH + type + ".gd"
+		if not ResourceLoader.exists(path):
+			return
+		var script: GDScript = load(path)
+		#var script: GDScript = ContentRegistryHub.load_by_slug(
+			#&"data_request_handlers",
+			#type
+		#)
+		if not script:
+			return
+
 		var handler = script.new() as DataRequestHandler
 		if not handler: return
 		data_handlers[type] = handler

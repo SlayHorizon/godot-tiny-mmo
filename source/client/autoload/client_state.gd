@@ -9,6 +9,7 @@ var local_player: LocalPlayer
 var stats: DataDict = DataDict.new()
 var settings: DataDict = DataDict.new()
 var quick_slots: DataDict = DataDict.new()
+var guilds: DataDict = DataDict.new()
 
 
 func _ready() -> void:
