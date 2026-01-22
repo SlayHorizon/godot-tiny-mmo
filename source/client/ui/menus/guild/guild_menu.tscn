@@ -60,6 +60,7 @@ size_flags_horizontal = 10
 text = "Back"
 
 [node name="GuildMain" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_search_panel", "guild_create_panel", "my_guilds_panel")]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_7uocm")

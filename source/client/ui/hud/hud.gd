@@ -4,7 +4,6 @@ extends Control
 
 @export var sub_menu: Control
 
-var last_opened_interface: Control
 var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
@@ -12,11 +11,13 @@ var menus: Dictionary[StringName, Control]
 
 
 func _ready() -> void:
+	ClientState.player_profile_requested.connect(open_player_profile)
+
 	for button: Button in $MenuOverlay/VBoxContainer.get_children():
 		if button.text.containsn("CLOSE"):
 			button.pressed.connect(_on_overlay_menu_close_button_pressed)
-			continue
-		button.pressed.connect(display_menu.bind(button.text.to_lower()))
+		else:
+			button.pressed.connect(display_menu.bind(button.text.to_lower()))
 
 
 func _on_overlay_menu_close_button_pressed() -> void:
@@ -60,22 +61,3 @@ func _on_notification_button_pressed() -> void:
 
 func _on_profile_button_pressed() -> void:
 	open_player_profile(0)
-	#if not menus.has(&"player_profile"):
-		#var profile_menu: PackedScene = load("res://source/client/ui/menus/player_profile/player_profile_menu.tscn")
-		#var new_menu: Control = profile_menu.instantiate()
-		#new_menu.visibility_changed.connect(_on_submenu_visiblity_changed.bind(new_menu))
-		#sub_menu.add_child(new_menu)
-		#menus[&"player_profile"] = new_menu
-	#menus[&"player_profile"].open_player_profile(0)
-
-#func add_menu(menu_name: StringName, custom_open: Callable = Callable()) -> Node:
-	#if menus.has(menu_name):
-		#return menus[menu_name]
-	#var path: String = "res://source/client/ui/menus/" + menu_name + "/" + menu_name + "_menu.tscn"
-	#if not ResourceLoader.exists(path):
-		#return null
-	#var new_menu: Control = load(path).instantiate()
-	#new_menu.visibility_changed.connect(_on_submenu_visiblity_changed.bind(new_menu))
-	#sub_menu.add_child(new_menu)
-	#menus[menu_name] = new_menu
-	#return new_menu

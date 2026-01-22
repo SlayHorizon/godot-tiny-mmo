@@ -22,7 +22,12 @@ func _on_members_list_received(result: Dictionary) -> void:
 		var button: Button = Button.new()
 		button.custom_minimum_size = Vector2(240, 65)
 		button.text = member
-		if result.get("members", {}).get(member, 2) == 0:
-			button.text += " (Leader)"
-		#button.pressed.connect(_on_guild_button_pressed.bind(button, guild_name))
+
+		var player_id: int = result.get("members", {}).get(member, 0)
+
+		button.pressed.connect(_on_member_button_pressed.bind(button, player_id))
 		grid_container.add_child(button)
+
+
+func _on_member_button_pressed(button: Button, player_id: int) -> void:
+	ClientState.player_profile_requested.emit(player_id)

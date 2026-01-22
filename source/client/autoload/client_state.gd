@@ -4,6 +4,7 @@ extends Node
 
 
 signal local_player_ready(local_player: LocalPlayer)
+signal player_profile_requested(id: int)
 
 var local_player: LocalPlayer
 var stats: DataDict = DataDict.new()

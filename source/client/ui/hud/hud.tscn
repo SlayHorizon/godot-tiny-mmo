@@ -237,6 +237,7 @@ text = "Menu"
 metadata/_edit_lock_ = true
 
 [node name="MenuOverlay" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0

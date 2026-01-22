@@ -115,7 +115,7 @@ func reset_view() -> void:
 
 
 func _on_rich_text_label_meta_clicked(meta: Variant) -> void:
-	$"..".open_player_profile(str(meta).to_int())
+	ClientState.player_profile_requested.emit(str(meta).to_int())
 
 
 func _on_message_edit_text_submitted(new_text: String, line_edit: LineEdit) -> void:

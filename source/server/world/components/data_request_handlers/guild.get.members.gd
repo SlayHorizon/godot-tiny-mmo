@@ -13,9 +13,8 @@ func data_request_handler(
 	var guild_info: Dictionary
 	if guild:
 		guild_info = {"name": guild.guild_name, "size": guild.members.size(), "members": {}}
+		guild_info["leader_id"] = guild.leader_id
 		for member_id: int in guild.members:
 			var member: PlayerResource = instance.world_server.database.player_data.players.get(member_id)
-			guild_info["members"][member.display_name] = 2
-			if member_id == guild.leader_id:
-				guild_info["members"][member.display_name] = 0
+			guild_info["members"][member.display_name] = member_id
 	return guild_info
