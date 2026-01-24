@@ -24,6 +24,11 @@ func data_request_handler(
 	var guild_info: Dictionary = {
 		"name": guild.guild_name,
 		"size": guild.members.size(),
-		"is_in_guild": true,
+		"logo_id": guild.logo_id,
+		"leader_id": guild.leader_id,
+		"description": guild.description
 	}
+	if guild.members.has(player_resource.player_id):
+		guild_info["is_member"] = true
+		guild_info["permissions"] = guild.get_member_rank(player_resource.player_id).get("permissions", Guild.Permissions.NONE)
 	return guild_info

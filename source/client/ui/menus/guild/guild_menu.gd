@@ -9,11 +9,11 @@ func _ready() -> void:
 
 	back_button.pressed.connect(_on_back_requested.bind({}))
 
-	DataSynchronizerClient._self.request_data(
-		&"guild.self",
-		func(data: Dictionary):
-			ClientState.guilds.data.merge(data, true),
-		#ClientState.guilds.data.assign,
-		{},
-		InstanceClient.current.name
-	)
+	#DataSynchronizerClient._self.request_data(
+		#&"guild.self",
+		#func(data: Dictionary):
+			#ClientState.guilds.data.merge(data, true),
+		##ClientState.guilds.data.assign,
+		#{},
+		#InstanceClient.current.name
+	#)

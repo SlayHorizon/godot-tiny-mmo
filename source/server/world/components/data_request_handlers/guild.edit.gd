@@ -6,7 +6,7 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	var guild_name: String = args.get("guild_name", "")
+	var guild_name: String = args.get("name", "")
 	if guild_name.is_empty():
 		return {"error": 1, "ok": false, "message": "Guild doesn't exist."}
 
@@ -16,17 +16,16 @@ func data_request_handler(
 
 	var guild: Guild = instance.world_server.database.player_data.guilds.get(guild_name)
 	if not guild:
-		return {"error": 1, "ok": false, "message": ""}
+		return {"error": 1, "ok": false, "message": "Guild not found."}
 
 	if not guild.members.has(player_resource.player_id):
 		return {"error": 1, "ok": false, "message": ""}
 
-	if guild.leader_id == player_resource.player_id:
-		return {"error": 1, "ok": false, "message": ""}
+	var has_permission: bool = guild.has_permission(player_resource.player_id, Guild.Permissions.EDIT)
+	if not has_permission:
+		return {"error": 1, "ok": false, "message": "Not allowed."}
 
-	if player_resource.active_guild == guild:
-		player_resource.active_guild = null
-	guild.remove_member(player_resource.player_id)
-	player_resource.joined_guilds.erase(guild)
+	guild.description = args.get("description", "")
+	guild.logo_id = args.get("logo_id", 0)
 
-	return {"error": 0, "ok": true, "message": "Guild left."}
+	return {"error": 0, "ok": true, "message": "Saved."}

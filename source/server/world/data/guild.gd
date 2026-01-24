@@ -7,7 +7,7 @@ enum Permissions {
 	INVITE = 1 << 0,
 	KICK = 1 << 1,
 	PROMOTE = 1 << 2,
-	
+	EDIT = 1 << 3,
 }
 
 const DEFAULT_RANKS: Dictionary[int, Dictionary] = {
@@ -33,6 +33,7 @@ const DEFAULT_RANKS: Dictionary[int, Dictionary] = {
 
 @export var motd: String
 @export var description: String
+@export var logo_id: int
 
 ## player_id: rank_name
 @export var members: Dictionary[int, int]
