@@ -35,7 +35,7 @@ func _on_save_button_pressed() -> void:
 		description_edit.text  = description_edit.text.left(220)
 	guild_details["description"] = description_edit.text
 
-	DataSynchronizerClient._self.request_data(
+	Client.request_data(
 		&"guild.edit",
 		_on_save_result,
 		{

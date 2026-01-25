@@ -17,7 +17,7 @@ func open_player_profile(player_id: int) -> void:
 	if cache.has(player_id):
 		apply_profile(cache[player_id])
 	else:
-		DataSynchronizerClient._self.request_data(
+		Client.request_data(
 			&"profile.get",
 			apply_profile,
 			{"id": player_id},

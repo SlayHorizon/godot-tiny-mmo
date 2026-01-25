@@ -25,7 +25,7 @@ func _on_item_shortcut_pressed(button: Button, index: int) -> void:
 	if not item:
 		return
 	
-	DataSynchronizerClient._self.request_data(
+	Client.request_data(
 		&"item.equip",
 		Callable(),
 		{"id": item.get_meta(&"id", -1)},

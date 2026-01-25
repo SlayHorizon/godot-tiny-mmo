@@ -5,8 +5,6 @@ extends Control#can be refactor, 350 lines script too much?
 const CredentialsUtils = preload("res://source/common/utils/credentials_utils.gd")
 const GatewayApi = preload("res://source/common/network/gateway_api.gd")
 
-@export var world_server: WorldClient
-
 var account_id: int
 var account_name: String
 var token: int = randi()
@@ -235,7 +233,7 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 		$BackButton.show()
 		return
 	
-	world_server.connect_to_server(d["address"], d["port"], d["token"])
+	Client.connect_to_server(d["address"], d["port"], d["token"])
 	queue_free.call_deferred()
 
 
@@ -276,7 +274,7 @@ func _on_create_character_button_pressed() -> void:
 		$CharacterCreation.show()
 		return
 	
-	world_server.connect_to_server(
+	Client.connect_to_server(
 		d["data"]["address"],
 		d["data"]["port"],
 		d["data"]["auth-token"]

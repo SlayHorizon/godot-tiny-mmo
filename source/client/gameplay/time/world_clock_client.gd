@@ -19,7 +19,7 @@ func _on_client_connected(is_connected_to_server: bool) -> void:
 
 func sync_time_with_server() -> void:
 	var sent_time: int = Time.get_ticks_msec()
-	var request_result: Array = await DataSynchronizerClient._self.request_data_await(&"get.server_time")
+	var request_result: Array = await Client.request_data_await(&"get.server_time")
 	if request_result[1] != OK: return
 
 	var data: Dictionary = request_result[0]

@@ -10,9 +10,9 @@ var request_id: int
 
 func enter(payload: Dictionary = {}) -> void:
 	if request_id:
-		DataSynchronizerClient.cancel_request_data(request_id)
+		Client.cancel_request_data(request_id)
 
-	request_id = DataSynchronizerClient._self.request_data(
+	request_id = Client.request_data(
 		&"guild.get.joined_guilds",
 		_on_research_result_received
 	).request_id
@@ -20,7 +20,7 @@ func enter(payload: Dictionary = {}) -> void:
 
 
 func _on_guild_button_pressed(button: Button, guild_name: String) -> void:
-	DataSynchronizerClient._self.request_data(
+	Client.request_data(
 		&"guild.get",
 		_on_guild_data_received,
 		{"q": guild_name}

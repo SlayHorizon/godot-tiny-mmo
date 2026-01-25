@@ -27,7 +27,7 @@ func request_create_guild(guild_name: String) -> void:
 	guild_name.strip_edges(true, true)
 	guild_name = guild_name.substr(0, 21)
 	
-	request_id = DataSynchronizerClient._self.request_data(
+	request_id = Client.request_data(
 		&"guild.create",
 		_on_guild_create_response,
 		{"name": guild_name},

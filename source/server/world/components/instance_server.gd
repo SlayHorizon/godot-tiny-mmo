@@ -94,7 +94,7 @@ func spawn_player(peer_id: int) -> void:
 	else:
 		player = instantiate_player(peer_id)
 		spawn_position = instance_map.get_spawn_position(spawn_index)
-		DataSynchronizerServer._self.data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
+		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
 
 	player.player_resource.current_instance = instance_resource.instance_name
 	player.mark_just_teleported()
@@ -147,7 +147,7 @@ func instantiate_player(peer_id: int) -> Player:
 				player_stats[stat_name] += stats_from_attributes[stat_name]
 		
 		player_resource.stats = player_stats
-		DataSynchronizerServer._self.data_push.rpc_id(peer_id, &"stats.get", player_stats)
+		WorldServer.curr.data_push.rpc_id(peer_id, &"stats.get", player_stats)
 		
 		for stat_name: StringName in player_stats:
 			var value: float = player_stats[stat_name]

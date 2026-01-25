@@ -22,7 +22,7 @@ func _on_edit_button_pressed() -> void:
 
 
 func _on_leave_button_pressed() -> void:
-	DataSynchronizerClient._self.request_data(
+	Client.request_data(
 		&"guild.quit",
 		navigate_requested.emit.bind(NavigationAction.PUSH, guild_main, {}),
 		{"guild_name": guild_details.get("name", "")}

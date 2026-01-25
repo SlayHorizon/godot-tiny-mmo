@@ -77,24 +77,24 @@ func process_input(local_player: LocalPlayer) -> void:
 	if Input.is_action_just_pressed(&"action") and can_use_weapon(0):
 		state = State.CHARGING
 
-		DataSynchronizerClient._self.request_data(&"action.perform", Callable(),
+		Client.request_data(&"action.perform", Callable(),
 		{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 0},
 		InstanceClient.current.name
 		)
 
-		#DataSynchronizerClient._self.request_data(
+		#Client.request_data(
 		#	&"action.perform", Callable(),
 		#	{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 0}
 		#)
 	elif Input.is_action_just_released(&"action") and can_use_weapon(1):
 		state = State.READY
 
-		DataSynchronizerClient._self.request_data(&"action.perform", Callable(),
+		Client.request_data(&"action.perform", Callable(),
 		{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 1},
 		InstanceClient.current.name
 		)
 
-		#DataSynchronizerClient._self.request_data(
+		#Client.request_data(
 		#	&"action.perform", Callable(),
 		#	{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 1}
 		#)

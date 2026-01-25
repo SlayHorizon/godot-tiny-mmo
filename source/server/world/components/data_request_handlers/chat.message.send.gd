@@ -13,8 +13,8 @@ func data_request_handler(
 		"id": peer_id
 		#"time": Time.get_
 	}
-	DataSynchronizerServer._self.propagate_rpc(
-		DataSynchronizerServer._self.data_push.bind(&"chat.message", message),
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"chat.message", message),
 		instance.name
 	)
 	return {} # ACK later #{"error": 0}

@@ -64,7 +64,6 @@ size_flags_horizontal = 10
 text = "Back"
 
 [node name="GuildMain" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_search_panel", "guild_create_panel", "my_guilds_panel")]
-visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_7uocm")
@@ -78,6 +77,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 40
 columns = 5
 
 [node name="SearchGuildButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/GuildMain/GridContainer"]
@@ -141,6 +141,7 @@ size_flags_vertical = 3
 text = "???"
 
 [node name="GuildDetails" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer" node_paths=PackedStringArray("guild_members_panel", "guild_more_panel", "guild_name_label")]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("8_p6bnm")

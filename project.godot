@@ -19,6 +19,7 @@ config/icon="res://assets/project_icon/icon_svg.svg"
 [autoload]
 
 ClientState="*res://source/client/autoload/client_state.gd"
+Client="*res://source/client/autoload/client.tscn"
 
 [debug]
 

@@ -7,7 +7,7 @@ extends NavPanel
 func enter(payload: Dictionary = {}) -> void:
 	if not payload.has("name"):
 		return
-	DataSynchronizerClient._self.request_data(
+	Client.request_data(
 		&"guild.get.members",
 		_on_members_list_received,
 		{"q": payload["name"]}

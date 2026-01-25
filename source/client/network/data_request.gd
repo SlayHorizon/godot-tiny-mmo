@@ -28,7 +28,7 @@ func _on_timer_timeout() -> void:
 	if _completed: return
 	_completed = true
 
-	DataSynchronizerClient.cancel_request_data(request_id)
+	Client.cancel_request_data(request_id)
 	finished.emit({}, Error.TIMEOUT)
 
 
@@ -49,5 +49,5 @@ func cancel() -> void:
 	if _timer and _timer.timeout.is_connected(_on_timer_timeout):
 		_timer.timeout.disconnect(_on_timer_timeout)
 
-	DataSynchronizerClient.cancel_request_data(request_id)
+	Client.cancel_request_data(request_id)
 	finished.emit({}, Error.CANCELLED)

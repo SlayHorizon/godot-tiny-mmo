@@ -14,23 +14,24 @@ var synchronizer_manager: StateSynchronizerManagerClient
 var instance_map: Map
 
 
-static func _static_init() -> void:
-	var _on_data_receive: Callable = func(data: Dictionary):
-		if data.is_empty() or not data.has_all(["p", "d", "i"]):
-			return
-		var player: Player = InstanceClient.current.players_by_peer_id.get(data["p"])
-		if not player:
-			return
-		
-		# To fix
-		if player.equipment_component._mounted.has(&"weapon"):
-			player.equipment_component._mounted[&"weapon"].perform_action(data["i"], data["d"])
-
-	DataSynchronizerClient.subscribe(&"action.perform", _on_data_receive)
+static var suscribed: bool = false # Change this fast
+func _on_action_performed(payload: Dictionary) -> void:
+	if payload.is_empty() or not payload.has_all(["p", "d", "i"]):
+		return
+	var player: Player = InstanceClient.current.players_by_peer_id.get(payload["p"])
+	if not player:
+		return
+	
+	# To fix
+	if player.equipment_component._mounted.has(&"weapon"):
+		player.equipment_component._mounted[&"weapon"].perform_action(payload["i"], payload["d"])
 
 
 func _ready() -> void:
 	current = self
+	if not suscribed:
+		Client.subscribe(&"action.perform", _on_action_performed)
+		suscribed = true
 	
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"

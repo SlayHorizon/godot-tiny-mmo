@@ -34,7 +34,7 @@ func _ready() -> void:
 
 
 func fill_inventory() -> void:
-	var request_result: Array = await DataSynchronizerClient._self.request_data_await(&"inventory.get", {}, InstanceClient.current.name)
+	var request_result: Array = await Client.request_data_await(&"inventory.get", {}, InstanceClient.current.name)
 	if request_result[1] != OK:
 		fill_inventory() 
 		return
@@ -132,7 +132,7 @@ func _on_item_action_button_pressed() -> void:
 	if selected_item is GearItem or selected_item is WeaponItem:
 		var item_id: int = selected_item.get_meta(&"id", -1)
 		if item_id != -1:
-			DataSynchronizerClient._self.request_data(
+			Client.request_data(
 				&"item.equip",
 				Callable(),
 				{"id": item_id},

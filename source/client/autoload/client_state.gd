@@ -16,7 +16,7 @@ var guilds: DataDict = DataDict.new()
 func _ready() -> void:
 	if not OS.has_feature("client"):
 		queue_free()
-	DataSynchronizerClient.subscribe(&"stats.get", func(data: Dictionary):
+	Client.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)
 

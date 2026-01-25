@@ -3,7 +3,7 @@ extends Label
 func _process(delta: float) -> void:
 	if multiplayer.is_server(): return
 
-	var world_clock: WorldClockClient = WorldClient.current.world_clock
+	var world_clock: WorldClockClient = Client.world_clock
 	var current_time: float = world_clock.get_current_time()
 
 	var hour = int(current_time)
