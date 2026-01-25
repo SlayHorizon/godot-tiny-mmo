@@ -4,9 +4,6 @@ extends BaseMultiplayerEndpoint
 signal connection_changed(connected_to_server: bool)
 signal authentication_requested
 
-
-@export var world_clock: WorldClockClient
-
 var peer_id: int
 var is_connected_to_server: bool = false:
 	set(value):
@@ -14,6 +11,8 @@ var is_connected_to_server: bool = false:
 		connection_changed.emit(value)
 
 var authentication_token: String
+
+@onready var world_clock: WorldClockClient = $WorldClockClient
 
 
 func _enter_tree() -> void:

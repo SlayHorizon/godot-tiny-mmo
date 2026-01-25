@@ -4,9 +4,8 @@
 [ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="2_pk5uk"]
 [ext_resource type="Script" uid="uid://cy00y2hsdyloy" path="res://source/client/gameplay/time/world_clock_client.gd" id="3_pk5uk"]
 
-[node name="Client" type="Node" node_paths=PackedStringArray("world_clock")]
+[node name="Client" type="Node"]
 script = ExtResource("1_dp78e")
-world_clock = NodePath("WorldClockClient")
 
 [node name="InstanceManager" type="Node" parent="."]
 script = ExtResource("2_pk5uk")

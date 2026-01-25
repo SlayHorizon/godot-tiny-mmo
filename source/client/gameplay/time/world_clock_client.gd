@@ -3,7 +3,7 @@ extends WorldClock
 
 
 func _ready() -> void:
-	get_parent().connection_changed.connect(_on_client_connected)
+	Client.connection_changed.connect(_on_client_connected)
 
 
 func _process(delta: float) -> void:

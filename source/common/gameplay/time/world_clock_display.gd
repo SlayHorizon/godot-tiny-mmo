@@ -1,8 +1,12 @@
 extends Label
 
-func _process(delta: float) -> void:
-	if multiplayer.is_server(): return
 
+func _enter_tree() -> void:
+	if multiplayer.is_server():
+		queue_free()
+
+
+func _process(delta: float) -> void:
 	var world_clock: WorldClockClient = Client.world_clock
 	var current_time: float = world_clock.get_current_time()
 
