@@ -66,8 +66,8 @@ func _on_notification_button_pressed() -> void:
 		notification_button.visible = false
 		notification_button.disabled = true
 		return
-	var notification: Dictionary = notifications.pop_back()
-	$NotificationPopup.pop_notification(notification.get("topic", ""), notification)
+	var notification_payload: Dictionary = notifications.pop_back()
+	$NotificationPopup.pop_notification(notification_payload.get("topic", ""), notification)
 	if notifications.is_empty():
 		notification_button.visible = false
 		notification_button.disabled = true
