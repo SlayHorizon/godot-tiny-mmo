@@ -45,7 +45,7 @@ func apply_profile(profile: Dictionary) -> void:
 	if profile.get("guild_name", ""):
 		name_label.text += " (%s)" % profile.get("guild_name", "")
 
-	message_button.visible = not is_self;print_debug(profile)
+	message_button.visible = not is_self
 	friend_button.visible = not is_self
 	friend_button.disabled = is_self
 	friend_button.text = "Add friend" if not profile.get("friend", false) else "Remove Friend"

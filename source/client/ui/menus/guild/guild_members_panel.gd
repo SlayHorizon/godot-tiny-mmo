@@ -21,7 +21,7 @@ func _on_members_list_received(result: Dictionary) -> void:
 	for member: String in result.get("members", {}):
 		var button: Button = Button.new()
 		button.custom_minimum_size = Vector2(240, 65)
-		button.text = member;print_debug(result)
+		button.text = member
 
 		var player_id: int = result.get("members", {}).get(member, 0);print(player_id)
 

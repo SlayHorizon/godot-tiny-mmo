@@ -272,6 +272,10 @@ alignment = 1
 layout_mode = 2
 text = "GUILD"
 
+[node name="FriendsButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=1063569220]
+layout_mode = 2
+text = "FRIENDS"
+
 [node name="InventoryButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=422464795]
 layout_mode = 2
 text = "INVENTORY"
@@ -285,10 +289,15 @@ layout_mode = 2
 text = "CLOSE"
 
 [node name="ProfileButton" type="Button" parent="MenuOverlay" unique_id=1666775440]
-layout_mode = 0
-offset_top = 161.0
-offset_right = 145.0
-offset_bottom = 190.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -133.0
+offset_top = 20.0
+offset_right = -13.0
+offset_bottom = 49.0
+grow_horizontal = 0
 text = "PROFILE"
 
 [node name="NotificationPopup" type="Control" parent="." unique_id=1966233478]

@@ -78,7 +78,6 @@ func _on_profile_button_pressed() -> void:
 
 
 func _on_notification_received(payload: Dictionary) -> void:
-	print_debug("NOTIF ", payload)
 	notifications.append(payload)
 	notification_button.visible = true
 	notification_button.disabled = false

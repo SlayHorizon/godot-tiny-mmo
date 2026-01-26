@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://le1xlxe1y5sf"]
+
+[ext_resource type="Script" uid="uid://jnh1scjgvr84" path="res://source/client/ui/menus/friends/friends_menu.gd" id="1_l3dt6"]
+
+[node name="FriendMenu" type="Control" unique_id=1680261133]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l3dt6")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=590907716]
+custom_minimum_size = Vector2(768, 432)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=695176555]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1487425506]
+layout_mode = 2
+text = "Friends List"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer" unique_id=77854734]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/ScrollContainer" unique_id=1806235188]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CloseButtonn" type="Button" parent="PanelContainer/VBoxContainer" unique_id=984586822]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Close"
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/CloseButtonn" to="." method="_on_close_buttonn_pressed"]
