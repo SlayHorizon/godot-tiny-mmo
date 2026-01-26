@@ -61,6 +61,26 @@ func _ready() -> void:
 			animated_sprite_2d.sprite_frames = sprite
 			animated_sprite_2d.play(&"run")
 		)
+		
+	var debug_id: String = CmdlineUtils.get_parsed_args().get("dum", "")
+	if debug_id:
+		$Debugbutton.visible = true
+		$Debugbutton.pressed.connect(
+			func():
+				var debug_credentials: Dictionary = ConfigFileUtils.load_section_safe(debug_id, "res://data/config/client_config.cfg", ["username", "password"])
+				var d: Dictionary = await do_request(
+					HTTPClient.Method.METHOD_POST,
+					GatewayApi.login(),
+					{"u": debug_credentials["username"], "p": debug_credentials["password"],
+					GatewayApi.KEY_TOKEN_ID: token}
+				)
+				if d.has("error"):
+					await popup_panel.confirm_message(str(d))
+				$Debugbutton.visible = false
+				fill_connection_info(d["a"]["name"], d["a"]["id"])
+				populate_worlds(d.get("w", {}))
+				_show($WorldSelection, false)
+		)
 
 
 func do_request(

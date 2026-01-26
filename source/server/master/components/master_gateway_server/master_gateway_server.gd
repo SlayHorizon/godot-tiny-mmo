@@ -25,7 +25,7 @@ func _on_peer_connected(peer_id: int) -> void:
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
-	print("Gateway: %d is disconnected to GatewayManager." % peer_id)
+	print("Gateway: %d is disconnected from GatewayManager." % peer_id)
 
 
 @rpc("authority")

@@ -93,7 +93,7 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_fnfxe"]
-color = Color(0.2317, 0.427629, 0.468198, 0.84)
+color = Color(0.18281268, 0.3475012, 0.38109186, 0.88000005)
 thickness = 3
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fipin"]

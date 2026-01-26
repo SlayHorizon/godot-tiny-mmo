@@ -24,19 +24,19 @@ func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 
 
 func _on_peer_connected(peer_id: int) -> void:
-	print("Gateway: %d is connected to GatewayManager." % peer_id)
+	print("World: %d is connected to WorldManager." % peer_id)
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
-	print("Gateway: %d is disconnected to GatewayManager." % peer_id)
+	connected_worlds.erase(peer_id)
+	print("World: %d is disconnected from WorldManager." % peer_id)
 
 
 @rpc("any_peer")
 func fetch_server_info(info: Dictionary) -> void:
-	var game_server_id := multiplayer_api.get_remote_sender_id()
+	var game_server_id: int = multiplayer_api.get_remote_sender_id()
 	connected_worlds[game_server_id] = info
 	gateway_manager.update_worlds_info.rpc(connected_worlds)
-	print(connected_worlds)
 
 
 @rpc("authority")
