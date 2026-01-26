@@ -1,8 +1,8 @@
 > [!NOTE]
-> The repository's documentation website: [**slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/)  
-> Latest research note: [**Byte-Level Networking Protocol for MMO Scalability**](https://slayhorizon.github.io/godot-tiny-mmo/#/pages/notes/next_level)
+> **Documentation & Guides**: [**slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/)  
+> **Latest research note**: [**Byte-Level Networking Protocol for MMO Scalability**](https://slayhorizon.github.io/godot-tiny-mmo/#/pages/notes/next_level)
 
-[![Godot Engine](https://img.shields.io/badge/Godot-4.4+-blue?logo=godot-engine)](https://godotengine.org/)
+[![Godot Engine](https://img.shields.io/badge/Godot-4.5+-blue?logo=godot-engine)](https://godotengine.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/docs-website-blue.svg)](https://slayhorizon.github.io/godot-tiny-mmo/)
 
@@ -10,30 +10,29 @@
 
 **Experimental open-source MMORPG framework** built with **Godot 4**.  
 Inspired by proven MMO systems, this project pushes the boundaries of what can be achieved with Godot in large-scale multiplayer.  
-It explores scalable multiplayer architecture, efficient byte-packed networking, while staying clear and simple in our learning journey.
+It explores scalable multiplayer architecture and efficient byte-packed networking, while remaining clear and approachable as a learning project.
 
 - **Cross-platform**: browser + desktop + mobile
 - **Unified codebase**: Client & multiple servers in one repo
   - Faster iteration, develop in one place, test in one click
   - Separate export presets for clean client/server builds 
 - **"Custom netcode"** but stay simple  
-  - No reliance on Godot’s `MultiplayerSynchronizer/Spawner` for better control
-  - Packed protocol format (efficient PackedByteArray instead of string-based messages) for hot synchronization
-  - Entity interpolation, multi-map instances, seamless transitions
-- **True MMOO architecture**
+  - No reliance on Godot’s `MultiplayerSynchronizer/Spawner`
+  - ID-based, byte-packed protocol (PackedByteArray instead of string-based messages) for efficient replication
+  - Built to support interpolation, multi-map instances, and seamless transitions
+- **True MMO-style architecture**
   - **Gateway server**: authentication & routing
   - **Master server**: orchestrator, account management & bridge between gateways and world servers
   - **World server**: host multiple concurrent maps and instances; the place where gameplay actually happens
 
----
-
-<img width="1813" height="985" alt="image" src="https://github.com/user-attachments/assets/216a946e-26f5-4829-886e-5b58e323f9c8" />
+<img width="1618" height="946" alt="image" src="https://github.com/user-attachments/assets/105805dd-b356-4a3a-9576-c3b0f2e2ea2a" />
 
 <details>
 <summary>See more screenshots:</summary>
    
 ![architecture-diagram](https://github.com/user-attachments/assets/78b1cce2-b070-4544-8ecd-59784743c7a0)
-<img width="1718" height="573" alt="image" src="https://github.com/user-attachments/assets/cdd8da32-be03-4a9b-a93d-0d83858a086c" />
+
+<img width="1132" height="830" alt="image" src="https://github.com/user-attachments/assets/bfa43924-529b-4f66-99f8-88142d7a7c53" />
 
 </details>
 
@@ -67,6 +66,9 @@ It explores scalable multiplayer architecture, efficient byte-packed networking,
    - [ ] **Private instances** for solo players or small groups
 - [ ] **Server-side anti-cheat** (basic validation for speed hacks, teleport hacks, etc.)
 - [x] **Server-side NPCs** (AI logic processed on the server)
+
+- [x] **Interest management** (AOI filtering using grid on large maps)
+- [x] **Web-based admin dashboard** (monitor servers, instances, and connections)
 
 </details>
 
