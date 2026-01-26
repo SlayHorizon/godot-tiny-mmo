@@ -2,7 +2,7 @@
 > **Documentation & Guides**: [**slayhorizon.github.io/godot-tiny-mmo/**](https://slayhorizon.github.io/godot-tiny-mmo/)  
 > **Latest research note**: [**Byte-Level Networking Protocol for MMO Scalability**](https://slayhorizon.github.io/godot-tiny-mmo/#/pages/notes/next_level)
 
-[![Godot Engine](https://img.shields.io/badge/Godot-4.5+-blue?logo=godot-engine)](https://godotengine.org/)
+[![Godot Engine](https://img.shields.io/badge/Godot-4.6+-blue?logo=godot-engine)](https://godotengine.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/docs-website-blue.svg)](https://slayhorizon.github.io/godot-tiny-mmo/)
 
@@ -78,7 +78,7 @@ It explores scalable multiplayer architecture and efficient byte-packed networki
 
 To run the project, follow these steps:
 
-1. Open the project in **Godot 4.4 or 4.5**.
+1. Open the project in **Godot 4.6**.
 2. Go to Debug tab, select **"Customizable Run Instance..."**.
 3. Enable **Multiple Instances** and set the count to **4 or more**.
 4. Under **Feature Tags**, ensure you have:
