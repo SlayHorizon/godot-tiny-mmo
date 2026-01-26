@@ -90,6 +90,9 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 
 	# If browser sends "/v1/foo?bar=baz", keep only path for routing.
 	var path: String = header[1].get_slice("?", 0)
+	if _try_serve_static(connection, method, path):
+		close_connection(connection)
+		return
 
 	var payload: Dictionary
 	var body: String = as_string.get_slice("\r\n\r\n", 1)
@@ -98,6 +101,7 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 		if typeof(parsed) == TYPE_DICTIONARY:
 			payload = parsed
 
+	payload["__path__"] = path
 	var handler: Callable = router.find_route_handler(method, path)
 	var result: Dictionary
 	if handler.is_valid():
@@ -105,11 +109,14 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 	else:
 		result = {"ok": false, "error":"not_found"}
 
-	http_send(
-		connection,
-		result,
-		HTTPClient.ResponseCode.RESPONSE_OK
-	)
+
+	if result.get("__raw__", false):
+		var code: int = result.get("code", 200)
+		var ct: String = result.get("content_type", "text/plain; charset=utf-8")
+		var _body: PackedByteArray = result.get("body", PackedByteArray())
+		http_send_bytes(connection, _body, code, ct)
+	else:
+		http_send(connection, result, HTTPClient.ResponseCode.RESPONSE_OK)
 
 	close_connection(connection)
 
@@ -141,3 +148,97 @@ func http_send(
 	connection.put_data(header_to_buffer.to_ascii_buffer())
 	# Content/Body block
 	connection.put_data(body_buffer)
+
+
+func http_send_bytes(
+	connection: StreamPeerTCP,
+	body: PackedByteArray,
+	code: int,
+	content_type: String
+) -> void:
+	var headers: Dictionary = {
+		"Content-Type": content_type,
+		"Content-Length": body.size(),
+		"Connection": "close",
+
+		# CORS (optional)
+		"Access-Control-Allow-Origin": "*",
+		"Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+		"Access-Control-Allow-Headers": "Content-Type"
+	}
+
+	var header_to_buffer := "HTTP/1.1 %d OK\r\n" % code
+	for header in headers.keys():
+		header_to_buffer += "%s: %s\r\n" % [header, str(headers[header])]
+	header_to_buffer += "\r\n"
+
+	connection.put_data(header_to_buffer.to_ascii_buffer())
+	connection.put_data(body)
+
+
+func _mime_for(file_path: String) -> String:
+	var ext: String = file_path.get_extension().to_lower()
+	match ext:
+		"html": return "text/html; charset=utf-8"
+		"css": return "text/css; charset=utf-8"
+		"js": return "application/javascript; charset=utf-8"
+		"json": return "application/json; charset=utf-8"
+		"png": return "image/png"
+		"jpg", "jpeg": return "image/jpeg"
+		"svg": return "image/svg+xml"
+		"ico": return "image/x-icon"
+		"woff": return "font/woff"
+		"woff2": return "font/woff2"
+		"ttf": return "font/ttf"
+		_: return "application/octet-stream"
+
+
+func _is_bad_path(req_path: String) -> bool:
+	return req_path.contains("..") or req_path.contains("\\") or req_path.contains(":")
+
+
+func _try_serve_static(connection: StreamPeerTCP, method: HTTPClient.Method, path: String) -> bool:
+	if method != HTTPClient.Method.METHOD_GET:
+		return false
+
+	if path.begins_with("/v1/"):
+		return false
+
+	var best_prefix: String
+	var best_mount: Dictionary
+
+	for mount in router.static_mounts:
+		var prefix: String = mount.get("prefix", "")
+		if path.begins_with(prefix) and prefix.length() > best_prefix.length():
+			best_prefix = prefix
+			best_mount = mount
+
+	if best_mount.is_empty():
+		return false
+
+	var rel_path: String
+	if best_prefix == "/":
+		rel_path = path
+	else:
+		# Remove the mount prefix; keep the remainder as a path
+		rel_path = path.trim_prefix(best_prefix)
+
+	if rel_path.is_empty() or rel_path == "/":
+		rel_path = "/" + String(best_mount.get("index", "index.html"))
+
+	if not rel_path.begins_with("/"):
+		rel_path = "/" + rel_path
+
+	if _is_bad_path(rel_path):
+		http_send_bytes(connection, "Bad path".to_utf8_buffer(), 400, "text/plain; charset=utf-8")
+		return true
+
+	var base_dir: String = String(best_mount.get("dir", "")).trim_suffix("/")
+	var file_path: String = base_dir.path_join(rel_path.trim_prefix("/"))
+
+	if not FileAccess.file_exists(file_path):
+		http_send_bytes(connection, "Not found".to_utf8_buffer(), 404, "text/plain; charset=utf-8")
+		return true
+
+	http_send_bytes(connection, FileAccess.get_file_as_bytes(file_path), 200, _mime_for(file_path))
+	return true

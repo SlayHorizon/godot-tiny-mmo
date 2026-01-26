@@ -1,7 +1,9 @@
 extends "res://addons/httpserver/http_server.gd"
 
+
 @onready var authentication_manager: AuthenticationManager = $"../AuthenticationManager"
 
+const PORT: int = 8089
 const PREVIEW_LIMIT: int = 50
 const ALLOW_PASSWORD_READ: bool = false
 const ALLOW_PASSWORD_WRITE: bool = false
@@ -9,6 +11,8 @@ const ALLOW_PASSWORD_WRITE: bool = false
 
 func _ready() -> void:
 	super._ready()
+
+	router.register_static_dir(&"/", "res://source/server/master/dashboard", "index.html")
 
 	router.register_route(HTTPClient.Method.METHOD_GET, &"/v1/ping", handle_ping)
 	router.register_route(HTTPClient.Method.METHOD_GET, &"/v1/overview", handle_overview)
@@ -20,7 +24,10 @@ func _ready() -> void:
 
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/save", handle_save)
 
-	server.listen(8089, "127.0.0.1")
+	server.listen(PORT, "127.0.0.1")
+
+	OS.shell_open("http://127.0.0.1:%d/" % PORT)
+	#OS.shell_open(ProjectSettings.globalize_path("res://source/server/master/dashboard/index.html"))
 
 
 func handle_ping(_payload: Dictionary) -> Dictionary:
