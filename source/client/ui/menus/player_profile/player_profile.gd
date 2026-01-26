@@ -11,18 +11,21 @@ var cache: Dictionary[int, Dictionary]
 
 @onready var message_button: Button = $PanelContainer/HBoxContainer/VBoxContainer/MessageButton
 @onready var friend_button: Button = $PanelContainer/HBoxContainer/VBoxContainer/FriendButton
+@onready var invite_guild_button: Button = $PanelContainer/HBoxContainer/VBoxContainer/InviteGuildButton
 
 
 func open_player_profile(player_id: int) -> void:
-	if cache.has(player_id):
-		apply_profile(cache[player_id])
-	else:
-		Client.request_data(
-			&"profile.get",
-			apply_profile,
-			{"id": player_id},
-			InstanceClient.current.name
-		)
+	#if cache.has(player_id):
+		#print_debug("Cache used")
+		#apply_profile(cache[player_id])
+	#else:
+	print("open = ", player_id)
+	Client.request_data(
+		&"profile.get",
+		apply_profile,
+		{"id": player_id},
+		InstanceClient.current.name
+	)
 
 
 func apply_profile(profile: Dictionary) -> void:
@@ -32,19 +35,33 @@ func apply_profile(profile: Dictionary) -> void:
 	var animation: String = profile.get("animation", "idle")
 	var description: String = profile.get("description", "Hello I'am new!")
 	
-	var params: Dictionary = profile.get("params", {})
-	
+	var is_self: bool = profile.get("self", false)
 	description_text.clear()
 	description_text.append_text(description)
 
 	add_stats(stats)
 	set_player_character(player_skin, animation)
 	name_label.text = player_name
+	if profile.get("guild_name", ""):
+		name_label.text += " (%s)" % profile.get("guild_name", "")
 
-	friend_button.visible = params.get("self", false)
-	message_button.visible = params.get("self", false)
-	friend_button.text = "Add friend" if params.get("friend", false) == true else "Remove Friend"
+	message_button.visible = not is_self;print_debug(profile)
+	friend_button.visible = not is_self
+	friend_button.disabled = is_self
+	friend_button.text = "Add friend" if not profile.get("friend", false) else "Remove Friend"
+	invite_guild_button.visible = profile.get("can_guild_invite", false)
 
+	var is_friend: bool = profile.get("friend", false)
+	if is_friend:
+		friend_button.text = "Remove friend"
+	else:
+		friend_button.text = "Add friend"
+		if friend_button.pressed.is_connected(_on_friend_button_pressed):
+			friend_button.pressed.disconnect(_on_friend_button_pressed)
+		friend_button.pressed.connect(
+			_on_friend_button_pressed.bind(profile.get("id", 0)),
+			CONNECT_ONE_SHOT
+		)
 	show()
 
 	if profile.get("id", 0):
@@ -72,3 +89,9 @@ func set_player_character(skin_id: int, animation: String) -> void:
 
 func _on_close_pressed() -> void:
 	hide()
+
+
+func _on_friend_button_pressed(player_id: int) ->void:
+	Client.request_data(&"friend.request", Callable(), {"id": player_id})
+	friend_button.disabled = true
+	friend_button.text = "Added"

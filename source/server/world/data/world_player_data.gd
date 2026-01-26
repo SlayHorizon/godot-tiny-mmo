@@ -14,7 +14,7 @@ extends Resource
 @export var max_character_per_account: int = 3
 
 @export var players: Dictionary[int, PlayerResource]
-@export var next_player_id: int = 0
+@export var next_player_id: int = 2
 
 @export var admin_ids: PackedInt32Array
 @export var user_roles: Dictionary[int, Array]

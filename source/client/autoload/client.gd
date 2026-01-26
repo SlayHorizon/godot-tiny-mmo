@@ -119,7 +119,7 @@ func request_data_await(
 
 func request_data(
 	type: StringName,
-	callable: Callable,
+	callable: Callable = Callable(),
 	args: Dictionary = {},
 	instance_id: String = ""
 ) -> DataRequest:

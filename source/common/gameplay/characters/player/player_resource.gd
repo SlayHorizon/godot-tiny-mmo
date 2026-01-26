@@ -38,6 +38,8 @@ const BASE_STATS: Dictionary[StringName, float] = {
 
 @export var server_roles: Dictionary
 
+@export var friends: PackedInt64Array
+
 # Profile
 @export var profile_status: String = "Hello I'am new!"
 @export var profile_animation: String = "idle"

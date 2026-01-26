@@ -15,6 +15,9 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 	
 	if server_instance.get_player(target) == null:
 		return "Target not found."
-	
+	var p: Player = server_instance.get_player(peer_id)
+
+	#TODO
+
 	var error: bool = server_instance.set_player_attr_current(target, &"health", amount)
 	return ("/heal %s %s" % [str(target), str(amount)]) + (" successful" if error else " failed")

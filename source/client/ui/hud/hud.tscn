@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://dqt8fnt1l33eu"]
+[gd_scene load_steps=11 format=3 uid="uid://dqt8fnt1l33eu"]
 
 [ext_resource type="Script" uid="uid://dshitaaapbs6x" path="res://source/client/ui/hud/hud.gd" id="1_rchld"]
 [ext_resource type="PackedScene" uid="uid://rncsatpcsbm" path="res://source/client/ui/hud/health_bar/health_bar.tscn" id="2_klco5"]
 [ext_resource type="PackedScene" uid="uid://cmv168mgurrlp" path="res://source/client/ui/menus/chat/chat_menu.tscn" id="2_xs74v"]
 [ext_resource type="Script" uid="uid://pkprr0ll1y44" path="res://source/client/ui/hud/item_slots.gd" id="4_8qpw0"]
 [ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
+[ext_resource type="Script" uid="uid://claf178meo0f7" path="res://source/client/ui/hud/notification_popup.gd" id="6_yow4d"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
 bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
@@ -290,6 +291,59 @@ offset_right = 145.0
 offset_bottom = 190.0
 text = "PROFILE"
 
+[node name="NotificationPopup" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_yow4d")
+
+[node name="PanelContainer" type="PanelContainer" parent="NotificationPopup"]
+z_index = 1
+custom_minimum_size = Vector2(480, 270)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -135.0
+offset_right = 240.0
+offset_bottom = 135.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NotificationPopup/PanelContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="NotificationPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="NotificationPopup/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 60
+alignment = 1
+
+[node name="CancelButton" type="Button" parent="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(95, 40)
+layout_mode = 2
+text = "Cancel"
+
+[node name="ConfirmButton" type="Button" parent="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(95, 40)
+layout_mode = 2
+text = "Confirm"
+
 [connection signal="pressed" from="MenuButtons/HBoxContainer/NotificationButton" to="." method="_on_notification_button_pressed"]
 [connection signal="pressed" from="MenuButtons/HBoxContainer/MenuButton" to="." method="_on_overlay_menu_button_pressed"]
 [connection signal="pressed" from="MenuOverlay/ProfileButton" to="." method="_on_profile_button_pressed"]
+[connection signal="pressed" from="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer/CancelButton" to="NotificationPopup" method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer/ConfirmButton" to="NotificationPopup" method="_on_confirm_button_pressed"]

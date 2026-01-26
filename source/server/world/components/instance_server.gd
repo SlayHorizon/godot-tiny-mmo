@@ -38,7 +38,7 @@ func _ready() -> void:
 					player.player_resource.last_position = player.global_position
 				despawn_player(peer_id)
 	)
-	
+
 	synchronizer_manager = StateSynchronizerManagerServer.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
 	synchronizer_manager.init_zones_from_map(instance_map)
@@ -51,8 +51,7 @@ func load_map(map_path: String) -> void:
 		instance_map.queue_free()
 	instance_map = load(map_path).instantiate()
 	add_child(instance_map)
-	#add_child(CameraProbe.new())
-	
+
 	ready.connect(func():
 		if instance_map.replicated_props_container:
 			synchronizer_manager.add_container(1_000_000, instance_map.replicated_props_container)
@@ -199,31 +198,3 @@ func get_player(peer_id: int) -> Player:
 func get_player_syn(peer_id: int) -> StateSynchronizer:
 	var p: Player = get_player(peer_id)
 	return null if p == null else p.get_node_or_null(^"StateSynchronizer")
-
-
-## Fixe une propriété arbitraire relative à la racine du Player via le Synchronizer.
-## Exemple: ^":scale", ^"Sprite2D:modulate", ^"AbilitySystemComponent:health"
-func set_player_path_value(peer_id: int, rel_path: NodePath, value: Variant) -> bool:
-	var syn: StateSynchronizer = get_player_syn(peer_id)
-	if syn == null:
-		return false
-	syn.set_by_path(rel_path, value)  # applique local + marque dirty
-	return true
-
-
-# To translate in english
-## API “propre” pour les attributs (serveur = source de vérité).
-## Utilise l’ASC si présent ; sinon fallback en poussant le miroir.
-func set_player_attr_current(peer_id: int, attr: StringName, value: float) -> bool:
-	var p: Player = get_player(peer_id)
-	if p == null:
-		return false
-
-	var asc: AbilitySystemComponent = p.ability_system_component
-	if asc != null and asc.has_method("set_attr_current"):
-		asc.set_attr_current(attr, value)
-		return true
-
-	# Fallback (si pas encore d'API ASC dédiée) : pousser le miroir côté client.
-	var np := NodePath("AbilitySystemComponent:" + String(attr))
-	return set_player_path_value(peer_id, np, value)

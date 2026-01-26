@@ -16,5 +16,10 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 	if server_instance.get_player(target) == null:
 		return "Target not found."
 	
-	var ok := server_instance.set_player_path_value(target, ^":scale", Vector2(amount, amount))
+	var ok: bool = true
+	var player_target: Player = server_instance.get_player(target)
+	if player_target:
+		player_target.state_synchronizer.set_by_path(^":scale", Vector2(amount, amount))
+	else:
+		ok = false
 	return ("/size %s %s" % [str(target), str(amount)]) + (" successful" if ok else " failed")

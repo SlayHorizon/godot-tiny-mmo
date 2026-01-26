@@ -85,7 +85,7 @@ text = "Message"
 layout_mode = 2
 text = "Add friend"
 
-[node name="InviteButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="InviteGuildButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 text = "Invite in guild"
 

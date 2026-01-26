@@ -4,13 +4,18 @@ extends Control
 
 @export var sub_menu: Control
 
+var notifications: Array[Dictionary]
 var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
 @onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
+@onready var notification_button: Button = $MenuButtons/HBoxContainer/NotificationButton
 
 
 func _ready() -> void:
+	notification_button.visible = false
+	notification_button.disabled = true
+	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
 
 	for button: Button in $MenuOverlay/VBoxContainer.get_children():
@@ -56,8 +61,24 @@ func _on_overlay_menu_button_pressed() -> void:
 
 
 func _on_notification_button_pressed() -> void:
-	pass # Replace with function body.
+	# Weird safety case where notification button could be visible
+	if notifications.is_empty():
+		notification_button.visible = false
+		notification_button.disabled = true
+		return
+	var notification: Dictionary = notifications.pop_back()
+	$NotificationPopup.pop_notification(notification.get("topic", ""), notification)
+	if notifications.is_empty():
+		notification_button.visible = false
+		notification_button.disabled = true
 
 
 func _on_profile_button_pressed() -> void:
 	open_player_profile(0)
+
+
+func _on_notification_received(payload: Dictionary) -> void:
+	print_debug("NOTIF ", payload)
+	notifications.append(payload)
+	notification_button.visible = true
+	notification_button.disabled = false

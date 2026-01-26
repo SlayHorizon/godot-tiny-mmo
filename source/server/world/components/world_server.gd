@@ -52,6 +52,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 		1,
 		connected_players[peer_id].account_name
 	)
+	connected_players[peer_id].current_peer_id = 0
 	connected_players.erase(peer_id)
 
 
@@ -70,6 +71,7 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 	if is_valid_authentication_token(auth_token):
 		multiplayer.complete_auth(peer_id)
 		connected_players[peer_id] = token_list[auth_token]
+		connected_players[peer_id].current_peer_id = peer_id
 		token_list.erase(auth_token)
 	else:
 		peer.disconnect_peer(peer_id)
@@ -120,15 +122,12 @@ func _data_request(
 		if not ResourceLoader.exists(path):
 			return
 		var script: GDScript = load(path)
-		#var script: GDScript = ContentRegistryHub.load_by_slug(
-			#&"data_request_handlers",
-			#type
-		#)
 		if not script:
 			return
 
 		var handler = script.new() as DataRequestHandler
-		if not handler: return
+		if not handler:
+			return
 		data_handlers[type] = handler
 
 	_data_response.rpc_id(
@@ -146,6 +145,6 @@ func _data_response(request_id: int, type: String, data: Dictionary) -> void:
 
 
 @rpc("authority", "call_remote", "reliable", 1)
-func data_push(instance_id: String, type: StringName, data: Dictionary) -> void:
+func data_push(type: StringName, data: Dictionary) -> void:
 	# Client only
 	pass
