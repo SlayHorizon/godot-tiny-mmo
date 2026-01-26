@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ConsumableItem" load_steps=3 format=3 uid="uid://onx5sxsctc6a"]
+
+[ext_resource type="Script" uid="uid://bprsise4rcsak" path="res://source/common/gameplay/items/consumable_item.gd" id="2_oie41"]
+[ext_resource type="Texture2D" uid="uid://j05ahoas0tcu" path="res://assets/sprites/items/icons/Icon303.png" id="3_35wr3"]
+
+[resource]
+script = ExtResource("2_oie41")
+shared_cooldown_ms = 1500
+cooldown_category = &"potion"
+default_charges = 1
+item_name = &"Health Potion"
+item_icon = ExtResource("3_35wr3")
+description = "A simple potion healing a bit."
+can_trade = false
+can_sell = false
+minimum_price = 0
+stack_limit = 0
+tags = []
+metadata/_custom_type_script = "uid://bprsise4rcsak"
+metadata/slug = &"health_potion"
+metadata/id = 1

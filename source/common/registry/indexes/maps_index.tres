@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://bhnkv8ma51g03"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_6aasg"]
+
+[resource]
+script = ExtResource("1_6aasg")
+content_name = &"maps"
+version = 1756849216
+next_id = 4
+entries = Array[Dictionary]([{
+&"hash": "83fc616302cc15fc39f222b6e5cb7de9cce281cec5af8abd8d9061fa10879ee1",
+&"id": 1,
+&"path": "res://source/common/gameplay/maps/maps/dungeon/dungeon.tscn",
+&"slug": &"dungeon"
+}, {
+&"hash": "8e89c7fe1c587d23c6bae02552d56c188a747efb342ae01b008907d1e8fe7311",
+&"id": 2,
+&"path": "res://source/common/gameplay/maps/maps/dungeon/dungeon_entrance.tscn",
+&"slug": &"dungeon_entrance"
+}, {
+&"hash": "543c4fbf6046a0a1f367dd6d6f352fed982db7594a2985eae99797a0e26d35d9",
+&"id": 3,
+&"path": "res://source/common/gameplay/maps/maps/overworld.tscn",
+&"slug": &"overworld"
+}])
+scan_path = ""
+filters = PackedStringArray()

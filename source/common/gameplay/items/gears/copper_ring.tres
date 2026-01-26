@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="GearItem" load_steps=6 format=3 uid="uid://c7y0m821gjf6s"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_uifqm"]
+[ext_resource type="Texture2D" uid="uid://bd0ohyvo6looc" path="res://assets/sprites/items/icons/Icon202.png" id="4_mji2t"]
+[ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="5_ikgwr"]
+[ext_resource type="Resource" uid="uid://cdrd3x2ugfrev" path="res://source/common/gameplay/items/item_slot/slots/ring.tres" id="6_ythj5"]
+
+[sub_resource type="Resource" id="Resource_23e0y"]
+script = ExtResource("1_uifqm")
+stat_id = 0
+value = 0.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[resource]
+script = ExtResource("5_ikgwr")
+slot = ExtResource("6_ythj5")
+required_level = 0
+base_modifiers = Array[ExtResource("1_uifqm")]([SubResource("Resource_23e0y")])
+item_name = &"Ring"
+item_icon = ExtResource("4_mji2t")
+description = "Copper ring -description"
+can_trade = false
+can_sell = false
+minimum_price = 0
+stack_limit = 0
+tags = []
+metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"copper_ring"
+metadata/id = 2

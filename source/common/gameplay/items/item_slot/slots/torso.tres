@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemSlot" load_steps=4 format=3 uid="uid://wi13k03tseev"]
+
+[ext_resource type="Script" uid="uid://e40odrowquc8" path="res://source/common/gameplay/items/item_slot/item_slot.gd" id="1_d5xem"]
+[ext_resource type="Script" uid="uid://b31ll8nrh57dx" path="res://source/common/gameplay/items/item_slot/item_slot_unlock_rule.gd" id="2_bbfj2"]
+
+[sub_resource type="Resource" id="Resource_jrgqs"]
+script = ExtResource("2_bbfj2")
+kind = 0
+level = 0
+quest_id = 0
+flag_key = &""
+metadata/_custom_type_script = "uid://b31ll8nrh57dx"
+
+[resource]
+script = ExtResource("1_d5xem")
+key = &"torso"
+display_name = "Torso"
+unlock_rule = SubResource("Resource_jrgqs")
+metadata/_custom_type_script = "uid://e40odrowquc8"
+metadata/slug = &"torso"
+metadata/id = 7

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemSlot" load_steps=4 format=3 uid="uid://cdrd3x2ugfrev"]
+
+[ext_resource type="Script" uid="uid://e40odrowquc8" path="res://source/common/gameplay/items/item_slot/item_slot.gd" id="1_8gb5j"]
+[ext_resource type="Script" uid="uid://b31ll8nrh57dx" path="res://source/common/gameplay/items/item_slot/item_slot_unlock_rule.gd" id="2_3qvo8"]
+
+[sub_resource type="Resource" id="Resource_kheba"]
+script = ExtResource("2_3qvo8")
+kind = 1
+level = 5
+quest_id = 0
+flag_key = &""
+metadata/_custom_type_script = "uid://b31ll8nrh57dx"
+
+[resource]
+script = ExtResource("1_8gb5j")
+key = &"ring"
+display_name = "Ring"
+unlock_rule = SubResource("Resource_kheba")
+metadata/_custom_type_script = "uid://e40odrowquc8"
+metadata/slug = &"ring"
+metadata/id = 6

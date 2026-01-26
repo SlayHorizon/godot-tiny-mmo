@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="InstanceResource" load_steps=2 format=3 uid="uid://c0xqjh15bmdkm"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_2uix5"]
+
+[resource]
+script = ExtResource("1_2uix5")
+instance_name = &"GuildHouse"
+map_path = "uid://d3td3u4jic7j6"
+load_at_startup = false
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"

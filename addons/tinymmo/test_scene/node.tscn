@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://m2yryo0nxj3c"]
+
+[ext_resource type="Script" uid="uid://1stwntyy7jv3" path="res://addons/tinymmo/test_scene/node.gd" id="1_8hu6a"]
+[ext_resource type="Script" uid="uid://brx5ni2u12nwd" path="res://addons/tinymmo/test_scene/health_component.gd" id="2_o4e2x"]
+
+[node name="Node" type="Node"]
+script = ExtResource("1_8hu6a")
+spawn_state = Dictionary[NodePath, Variant]({
+NodePath("HealthComponent:health"): 33,
+NodePath("HealthComponent:max_health"): 33,
+NodePath("Salade"): 2,
+NodePath(".:integer"): 1,
+NodePath(".:position2d"): Vector2(2, 1)
+})
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_o4e2x")
+
+[node name="Node2D" type="Node2D" parent="."]
+script = ExtResource("2_o4e2x")
+
+[node name="Node" type="Node" parent="."]

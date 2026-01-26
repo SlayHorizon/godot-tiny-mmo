@@ -1,0 +1,18 @@
+# Godot 4+ specific ignores
+.godot/
+export_presets.cfg
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# System/tool-specific ignores
+.directory
+*DS_Store
+*~
+
+# Godot tmp files (https://github.com/godotengine/godot/issues/82270)
+*.tmp
+
+# Project-local volatile data
+data/local/
+/source/server/master/account_collection.tres

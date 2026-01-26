@@ -1,0 +1,65 @@
+[gd_scene load_steps=3 format=3 uid="uid://dsvir1p20d8qp"]
+
+[ext_resource type="Script" uid="uid://bdo6vhrtb1efa" path="res://addons/tinymmo/main_screen/main_panel.gd" id="1_qau0y"]
+
+[sub_resource type="GDScriptSyntaxHighlighter" id="GDScriptSyntaxHighlighter_qau0y"]
+
+[node name="MainScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_qau0y")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Current selected content index: None"
+
+[node name="GenerateButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Generate ContentIndex"
+
+[node name="UpdateButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Update ContentIndex"
+
+[node name="PreviewButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Preview ContentIndex"
+
+[node name="ClearButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Clear Preview"
+
+[node name="CodeEdit" type="CodeEdit" parent="VBoxContainer"]
+custom_minimum_size = Vector2(100, 300)
+layout_mode = 2
+size_flags_vertical = 3
+text = "## Hello it's horizon, just to say you can edit / select there like in editor.
+## It supports GDScript Highlighter.
+func _ready() -> void:
+	pass
+{&\"id\": 1}
+Array[StringName]
+# But doesn't support error check and other features."
+syntax_highlighter = SubResource("GDScriptSyntaxHighlighter_qau0y")
+draw_tabs = true
+
+[connection signal="pressed" from="VBoxContainer/GenerateButton" to="." method="_on_generate_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/UpdateButton" to="." method="_on_update_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/PreviewButton" to="." method="_on_preview_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/ClearButton" to="." method="_on_clear_button_pressed"]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://dbg8y8if4vv5p"]
+
+[ext_resource type="Script" uid="uid://dd13qn2chpxp2" path="res://source/common/gameplay/maps/components/interaction_areas/teleporter/teleporter.gd" id="1_ctuaa"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_atxum"]
+size = Vector2(16, 16)
+
+[node name="Teleporter" type="Area2D"]
+z_index = 10
+script = ExtResource("1_ctuaa")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_atxum")

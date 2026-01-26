@@ -1,0 +1,57 @@
+[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://b2smdkhqrfxad"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_qy3gh"]
+
+[resource]
+script = ExtResource("1_qy3gh")
+content_name = &"instance_collection"
+version = 1767746000
+next_id = 12
+entries = Array[Dictionary]([{
+&"hash": "4b6edc2ea758a360490e68f611c88c27bd16289e6a1b7afd7de2dcd7ef00e4a8",
+&"id": 11,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/dungeon/dungeon.tres",
+&"slug": &"dungeon"
+}, {
+&"hash": "5cd7a1b2c639489b1881c7760ebd16502475d69e2989831a7568f2f5c70ddc9f",
+&"id": 2,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/dungeon/dungeon_entrance.tres",
+&"slug": &"dungeon_entrance"
+}, {
+&"hash": "0915b67a718a7923c9d7979ffa59d164eac9d5e45f7ab5c21cd900780a6dd969",
+&"id": 3,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/guild_house/guild_house.tres",
+&"slug": &"guild_house"
+}, {
+&"hash": "e33e379a45eddb77b0c9d3e42b62c6cf5e46e41bcd600db94aec54540e965b16",
+&"id": 4,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/guild_outpost_base/guild_outpost.tres",
+&"slug": &"guild_outpost"
+}, {
+&"hash": "0b4bb7a220a750bf781ff260c6ee09ea7ff2e01569e674ae2872d7b0d147d3a3",
+&"id": 5,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/mining_cave/cave_area1.tres",
+&"slug": &"cave_area1"
+}, {
+&"hash": "5ef0ff546ace2f56b2fe6a7dbee04833701d89c3272ceb68091d9e57f83f25c4",
+&"id": 6,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/overworld.tres",
+&"slug": &"overworld"
+}, {
+&"hash": "cddc4a05bea327720553c27a1b6700c85c67ec63df0d7e03057e9c6ca0e24786",
+&"id": 7,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_house.tres",
+&"slug": &"spar_house"
+}, {
+&"hash": "d108ae2e1942a913d46b3b936754bb9c4a7355ee99596ccc8e7813353135e435",
+&"id": 8,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/starter_shop/starter_shop.tres",
+&"slug": &"starter_shop"
+}, {
+&"hash": "6ae953bd1604ce2bce53727ec081ed252e2eedd99f9daa365d415d8cdf206e52",
+&"id": 9,
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/trade_house/trade_house.tres",
+&"slug": &"trade_house"
+}])
+scan_path = "res://source/common/gameplay/maps/instance/instance_collection"
+filters = PackedStringArray("*.tres", "*.tscn")

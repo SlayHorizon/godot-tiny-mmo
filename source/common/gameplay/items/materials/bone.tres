@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="MaterialItem" load_steps=3 format=3 uid="uid://bme5xgselkbng"]
+
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="1_38lmc"]
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="1_t2ilm"]
+
+[resource]
+script = ExtResource("1_38lmc")
+item_name = &"ItemDefault"
+item_icon = ExtResource("1_t2ilm")
+description = "A dark magical boned collected from evil skeletons."
+can_trade = false
+can_sell = false
+minimum_price = 0
+stack_limit = 0
+tags = []
+metadata/_custom_type_script = "uid://nsr1timk430j"
+metadata/slug = &"bone"
+metadata/id = 4

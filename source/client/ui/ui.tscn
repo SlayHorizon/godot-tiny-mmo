@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://b20pv25ct6nmt"]
+
+[ext_resource type="Script" uid="uid://bkb1spvl3spry" path="res://source/client/ui/ui.gd" id="1_wpqoj"]
+[ext_resource type="PackedScene" uid="uid://dqt8fnt1l33eu" path="res://source/client/ui/hud/hud.tscn" id="2_equq2"]
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_wpqoj")
+
+[node name="HUD" parent="." node_paths=PackedStringArray("sub_menu") instance=ExtResource("2_equq2")]
+sub_menu = NodePath("../Submenu")
+
+[node name="Submenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

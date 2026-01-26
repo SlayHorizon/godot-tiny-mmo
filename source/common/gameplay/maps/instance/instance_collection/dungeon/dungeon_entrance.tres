@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="InstanceResource" load_steps=2 format=3 uid="uid://4utja3eou6l6"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_n2sgl"]
+
+[resource]
+script = ExtResource("1_n2sgl")
+instance_name = &"DungeonEntrance"
+map_path = "uid://5ke1s1ydu7ty"
+load_at_startup = false
+metadata/slug = &"dungeon_entrance"
+metadata/id = 5

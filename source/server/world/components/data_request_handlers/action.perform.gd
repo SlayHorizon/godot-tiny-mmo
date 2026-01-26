@@ -1,0 +1,24 @@
+extends DataRequestHandler
+
+
+func data_request_handler(
+	peer_id: int,
+	instance: ServerInstance,
+	args: Dictionary
+) -> Dictionary:
+	var player: Player = instance.players_by_peer_id.get(peer_id, null)
+	if not player:
+		return {}
+	
+	var action_index: int = args.get("i", 0)
+	var action_direction: Vector2 = args.get("d", Vector2.ZERO)
+	if player.equipment_component.can_use(&"weapon", action_index):
+		player.equipment_component._mounted[&"weapon"].perform_action(action_index, action_direction)
+		WorldServer.curr.propagate_rpc(
+			WorldServer.curr.data_push.bind(
+				&"action.perform",
+				{"i": action_index, "d": action_direction, "p": peer_id}
+			), 
+			instance.name
+		)
+	return {}

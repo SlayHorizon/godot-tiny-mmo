@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemSlot" load_steps=4 format=3 uid="uid://dnbj6tmyghec4"]
+
+[ext_resource type="Script" uid="uid://e40odrowquc8" path="res://source/common/gameplay/items/item_slot/item_slot.gd" id="1_xg0yy"]
+[ext_resource type="Script" uid="uid://b31ll8nrh57dx" path="res://source/common/gameplay/items/item_slot/item_slot_unlock_rule.gd" id="2_itos6"]
+
+[sub_resource type="Resource" id="Resource_0hho8"]
+script = ExtResource("2_itos6")
+kind = 0
+level = 0
+quest_id = 0
+flag_key = &""
+metadata/_custom_type_script = "uid://b31ll8nrh57dx"
+
+[resource]
+script = ExtResource("1_xg0yy")
+key = &"relic"
+display_name = "Relic"
+unlock_rule = SubResource("Resource_0hho8")
+metadata/_custom_type_script = "uid://e40odrowquc8"
+metadata/slug = &"helmet"
+metadata/id = 4

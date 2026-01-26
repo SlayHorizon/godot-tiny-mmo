@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://bvnp50b85cxif"]
+
+[ext_resource type="Script" uid="uid://3snlehf663qv" path="res://source/server/gateway/gateway_main.gd" id="1_v0yps"]
+[ext_resource type="Script" uid="uid://l075wdufq4jr" path="res://source/server/gateway/master_gateway_client/gateway_manager_client.gd" id="3_m66nj"]
+[ext_resource type="Script" uid="uid://bjxnn8cv1untw" path="res://source/server/gateway/http_server.gd" id="5_mufm1"]
+
+[node name="GatewayMain" type="Node"]
+script = ExtResource("1_v0yps")
+
+[node name="GatewayManagerClient" type="Node" parent="."]
+script = ExtResource("3_m66nj")
+
+[node name="GatewayHTTPServer" type="Node" parent="."]
+script = ExtResource("5_mufm1")
