@@ -1,7 +1,6 @@
-[gd_resource type="Theme" load_steps=27 format=3 uid="uid://cf1ayo3dckj67"]
+[gd_resource type="Theme" load_steps=26 format=3 uid="uid://cf1ayo3dckj67"]
 
 [ext_resource type="FontFile" uid="uid://dkhbwo1ivbqjd" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" id="1_pa11d"]
-[ext_resource type="StyleBox" uid="uid://bi8r7kxlh83no" path="res://source/client/ui/themes/styles/gradient_button.tres" id="1_ux2xq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c84ii"]
 content_margin_left = 4.0
@@ -277,8 +276,6 @@ Button/styles/hover = SubResource("StyleBoxFlat_a2tkg")
 Button/styles/hover_pressed = SubResource("StyleBoxFlat_a2tkg")
 Button/styles/normal = SubResource("StyleBoxFlat_7rxr3")
 Button/styles/pressed = SubResource("StyleBoxFlat_7rxr3")
-GradientButton/base_type = &"Button"
-GradientButton/styles/normal = ExtResource("1_ux2xq")
 HScrollBar/styles/grabber = SubResource("StyleBoxFlat_ux2xq")
 HScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_24q0k")
 HScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_24q0k")
