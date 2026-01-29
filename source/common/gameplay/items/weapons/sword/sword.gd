@@ -30,5 +30,4 @@ func can_use_weapon(action_index: int) -> bool:
 
 func perform_action(action_index: int, direction: Vector2) -> void:
 	last_used = Time.get_ticks_msec() / 1000.0
-	#print_debug("perform action")
 	character.animation_tree[&"parameters/OnFoot/RightOneShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE

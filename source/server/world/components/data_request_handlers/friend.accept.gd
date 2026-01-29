@@ -6,20 +6,30 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	var target_id: int = args.get("player_id", 0)
-	var target_player: PlayerResource
-	target_player = instance.world_server.database.player_data.players.get(target_id, null)
-	if not target_player:
+	var world_server: WorldServer = instance.world_server
+	var store: WorldStoreSqlite = world_server.database.store
+
+	var from_player: PlayerResource = world_server.connected_players.get(peer_id)
+	if from_player == null:
 		return {"error": 1, "ok": false, "name": "Unknown"}
 
-	var from_player: PlayerResource = instance.world_server.connected_players.get(peer_id, null)
-	if not from_player:
-		return {"error": 1, "ok": false, "name": "Unknown"}
+	var target_id: int = int(args.get("player_id", 0))
+	if target_id <= 0:
+		return {"error": 1, "ok": false, "msg": "Invalid player."}
 
-	if target_player == from_player:
+	if target_id == from_player.player_id:
 		return {"error": 1, "ok": false, "msg": "Can't add yourself."}
-	if from_player.friends.has(target_player.player_id):
+
+	var row: Dictionary = store.get_player_profile_row(target_id)
+	if row.is_empty():
+		return {"error": 1, "ok": false, "name": "Unknown"}
+
+	if from_player.friends.has(target_id):
 		return {"error": 1, "ok": false, "msg": "Already friend."}
 
-	from_player.friends.append(target_player.player_id)
+	from_player.friends.append(target_id)
+
+	# Persist now (safe + predictable)
+	world_server.database.save_player(from_player)
+
 	return {"error": 0, "ok": true, "msg": "Added friend."}

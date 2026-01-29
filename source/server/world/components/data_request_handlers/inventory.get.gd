@@ -6,4 +6,8 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	return instance.players_by_peer_id[peer_id].player_resource.inventory
+	var player: PlayerResource = instance.world_server.connected_players.get(peer_id)
+	if player == null:
+		return {"error": 1, "ok": false, "message": "Player not registered."}
+
+	return player.inventory

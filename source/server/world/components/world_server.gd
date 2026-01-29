@@ -6,17 +6,22 @@ extends BaseMultiplayerEndpoint
 @export var database: WorldDatabase
 @export var world_manager: WorldManagerClient
 @export var world_clock: WorldClockServer
+@export var chat_service: ChatService
 
 var token_list: Dictionary[String, PlayerResource]
 
+## {peer_id: PlayerResource}
 var connected_players: Dictionary[int, PlayerResource]
+## {player_id: peer_id}
+var player_id_to_peer_id: Dictionary[int, int]
+
 static var curr: WorldServer
 
 
 func start_world_server() -> void:
 	world_manager.token_received.connect(
 		func(auth_token: String, _username: String, character_id: int):
-			var player: PlayerResource = database.player_data.get_player_resource(character_id)
+			var player: PlayerResource = database.get_player_resource(character_id)
 			token_list[auth_token] = player
 	)
 
@@ -29,7 +34,8 @@ func start_world_server() -> void:
 		pass
 	else:
 		create(Role.SERVER, configuration.bind_address, configuration.port)
-	
+
+	chat_service.setup_with_db(database.db)
 	$InstanceManager.start_instance_manager()
 
 
@@ -48,11 +54,16 @@ func _on_peer_connected(peer_id: int) -> void:
 
 func _on_peer_disconnected(peer_id: int) -> void:
 	print("Peer: %d is disconnected." % peer_id)
-	world_manager.player_disconnected.rpc_id(
-		1,
-		connected_players[peer_id].account_name
-	)
-	connected_players[peer_id].current_peer_id = 0
+	world_manager.player_disconnected.rpc_id(1, connected_players[peer_id].account_name)
+	var player: PlayerResource = connected_players.get(peer_id)
+	if not player:
+		return
+
+	database.save_player(player)
+
+	player_id_to_peer_id.erase(player.player_id)
+
+	player.current_peer_id = 0
 	connected_players.erase(peer_id)
 
 
@@ -72,6 +83,7 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 		multiplayer.complete_auth(peer_id)
 		connected_players[peer_id] = token_list[auth_token]
 		connected_players[peer_id].current_peer_id = peer_id
+		player_id_to_peer_id[connected_players[peer_id].player_id] = peer_id
 		token_list.erase(auth_token)
 	else:
 		peer.disconnect_peer(peer_id)

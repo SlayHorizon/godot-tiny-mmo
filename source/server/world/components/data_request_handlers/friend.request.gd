@@ -6,29 +6,40 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	var target_id: int = args.get("id", 0)
-	var target_player: PlayerResource
-	target_player = instance.world_server.database.player_data.players.get(target_id, null)
-	if not target_player:
+	var world_server: WorldServer = instance.world_server
+	var store: WorldStoreSqlite = world_server.database.store
+
+	var from_player: PlayerResource = world_server.connected_players.get(peer_id)
+	if from_player == null:
 		return {"error": 1, "ok": false, "name": "Unknown"}
 
-	var from_player: PlayerResource = instance.world_server.connected_players.get(peer_id, null)
-	if not from_player:
+	var target_id: int = int(args.get("id", 0))
+	if target_id <= 0:
 		return {"error": 1, "ok": false, "name": "Unknown"}
 
-	if target_player == from_player:
+	if target_id == from_player.player_id:
 		return {"error": 1, "ok": false, "msg": "Can't add yourself."}
-	if from_player.friends.has(target_player.player_id):
+
+	var target_row: Dictionary = store.get_player_profile_row(target_id)
+	if target_row.is_empty():
+		return {"error": 1, "ok": false, "name": "Unknown"}
+
+	if from_player.friends.has(target_id):
 		return {"error": 1, "ok": false, "msg": "Already friend."}
 
-	from_player.friends.append(target_player.player_id)
-	
-	if target_player.current_peer_id:
-		instance.world_server.data_push.rpc_id(target_player.current_peer_id, &"notification",
+	from_player.friends.append(target_id)
+	world_server.database.save_player(from_player)
+
+	var target_peer_id: int = int(world_server.player_id_to_peer_id.get(target_id, 0))
+	if target_peer_id > 0:
+		world_server.data_push.rpc_id(
+			target_peer_id,
+			&"notification",
 			{
 				"topic": "friend.request",
-				"player_name": from_player.display_name, 
+				"player_name": from_player.display_name,
 				"player_id": from_player.player_id
 			}
 		)
+
 	return {"error": 0, "ok": true, "msg": "Added friend."}

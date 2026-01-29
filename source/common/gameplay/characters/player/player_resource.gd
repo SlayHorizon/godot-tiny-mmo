@@ -29,12 +29,12 @@ const BASE_STATS: Dictionary[StringName, float] = {
 @export var level: int
 
 ## The guild currently selected as the player's active guild.
-@export var active_guild: Guild
+@export var active_guild_id: int
 ## All guilds the player is a member of.
 ## A player may belong to multiple guilds, but only one can be active at a time.
-@export var joined_guilds: Array[Guild]
+@export var joined_guild_ids: PackedInt64Array
 ## The guild in which the player holds the leader role.
-@export var led_guild: Guild
+@export var led_guild_id: int
 
 @export var server_roles: Dictionary
 

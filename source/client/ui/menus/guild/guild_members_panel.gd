@@ -23,7 +23,7 @@ func _on_members_list_received(result: Dictionary) -> void:
 		button.custom_minimum_size = Vector2(240, 65)
 		button.text = member
 
-		var player_id: int = result.get("members", {}).get(member, 0);print(player_id)
+		var player_id: int = result.get("members", {}).get(member, 0)
 
 		button.pressed.connect(_on_member_button_pressed.bind(button, player_id))
 		grid_container.add_child(button)

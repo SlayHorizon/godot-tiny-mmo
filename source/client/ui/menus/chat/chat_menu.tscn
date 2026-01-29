@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cmv168mgurrlp"]
+[gd_scene format=3 uid="uid://cmv168mgurrlp"]
 
 [ext_resource type="Script" uid="uid://678x32kmrkb5" path="res://source/client/ui/menus/chat/chat_menu.gd" id="1_hxcw4"]
 
@@ -46,9 +46,6 @@ expand_margin_right = 15.0
 content_margin_top = 10.0
 content_margin_bottom = 10.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s6uxj"]
-bg_color = Color(1, 0.0237725, 0.860263, 1)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oenax"]
 content_margin_left = 5.0
 content_margin_top = 5.0
@@ -56,7 +53,10 @@ content_margin_right = 5.0
 content_margin_bottom = 5.0
 bg_color = Color(0.101961, 0.101961, 0.101961, 0.352941)
 
-[node name="Chat" type="Control"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s6uxj"]
+bg_color = Color(1, 0.0237725, 0.860263, 1)
+
+[node name="Chat" type="Control" unique_id=1655490089]
 z_index = 1
 layout_mode = 3
 anchors_preset = 15
@@ -67,7 +67,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_hxcw4")
 
-[node name="PeekFeed" type="VBoxContainer" parent="."]
+[node name="PeekFeed" type="VBoxContainer" parent="." unique_id=2093161680]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
@@ -75,7 +75,7 @@ offset_right = 310.0
 offset_bottom = 205.0
 mouse_filter = 0
 
-[node name="MessageDisplay" type="RichTextLabel" parent="PeekFeed"]
+[node name="MessageDisplay" type="RichTextLabel" parent="PeekFeed" unique_id=1999926943]
 custom_minimum_size = Vector2(300, 125)
 layout_mode = 2
 mouse_filter = 1
@@ -83,19 +83,18 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_14md2")
 bbcode_enabled = true
 scroll_following = true
 
-[node name="MessageEdit" type="LineEdit" parent="PeekFeed"]
+[node name="MessageEdit" type="LineEdit" parent="PeekFeed" unique_id=998192108]
 layout_mode = 2
-theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.34902)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.34902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_14md2")
 placeholder_text = "Enter your message here"
 
-[node name="FadeOutTimer" type="Timer" parent="PeekFeed"]
+[node name="FadeOutTimer" type="Timer" parent="PeekFeed" unique_id=91928970]
 wait_time = 3.0
 one_shot = true
 
-[node name="FullFeed" type="Control" parent="."]
-visible = false
+[node name="FullFeed" type="Control" parent="." unique_id=809452961]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -103,7 +102,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BackgroundGradient" type="TextureRect" parent="FullFeed"]
+[node name="BackgroundGradient" type="TextureRect" parent="FullFeed" unique_id=329433869]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -113,123 +112,121 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture1D_oenax")
 
-[node name="Control" type="MarginContainer" parent="FullFeed"]
+[node name="Control" type="MarginContainer" parent="FullFeed" unique_id=539554818]
 layout_mode = 0
 offset_right = 522.0
 offset_bottom = 539.0
 theme_override_constants/margin_top = 1
 theme_override_constants/margin_right = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="FullFeed/Control"]
+[node name="HBoxContainer" type="HBoxContainer" parent="FullFeed/Control" unique_id=1490547651]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="ContactPanel" type="PanelContainer" parent="FullFeed/Control/HBoxContainer"]
+[node name="ContactPanel" type="PanelContainer" parent="FullFeed/Control/HBoxContainer" unique_id=1719854824]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ary8x")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ContactPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ContactPanel" unique_id=547936455]
 layout_mode = 2
 
-[node name="PublicLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="PublicLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=504457585]
 layout_mode = 2
 text = "Public"
 
-[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1073712241]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "System"
 
-[node name="Button2" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="Button2" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=2044612260]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "World"
 
-[node name="Button6" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="Button6" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1381271110]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "Team"
 
-[node name="Button5" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="Button5" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=952495106]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "Guild"
 
-[node name="HSeparator" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=79700248]
 layout_mode = 2
 theme_override_constants/separation = 5
 theme_override_styles/separator = SubResource("StyleBoxFlat_jlimx")
 
-[node name="PrivateLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="PrivateLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=2028010120]
 layout_mode = 2
 text = "Private"
 
-[node name="Button3" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 35)
+[node name="ScrollContainer" type="ScrollContainer" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1122993490]
 layout_mode = 2
-text = " New message"
+size_flags_vertical = 3
 
-[node name="Button4" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 35)
+[node name="VBoxContainer" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/ScrollContainer" unique_id=1138757992]
 layout_mode = 2
-text = " New message"
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="HSeparator2" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="HSeparator2" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1217002728]
 layout_mode = 2
 theme_override_constants/separation = 5
 theme_override_styles/separator = SubResource("StyleBoxFlat_jlimx")
 
-[node name="AddButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="AddButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1877479694]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-size_flags_vertical = 10
 size_flags_stretch_ratio = 4.0
 text = "Add"
 
-[node name="CloseButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer"]
+[node name="CloseButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=542121379]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-size_flags_vertical = 10
 text = "Close"
 
-[node name="VSeparator" type="VSeparator" parent="FullFeed/Control/HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="FullFeed/Control/HBoxContainer" unique_id=1769013706]
 modulate = Color(0.2, 0.2, 0.2, 1)
 layout_mode = 2
 theme_override_constants/separation = -1
 
-[node name="ChatPanel" type="PanelContainer" parent="FullFeed/Control/HBoxContainer"]
+[node name="ChatPanel" type="PanelContainer" parent="FullFeed/Control/HBoxContainer" unique_id=307283537]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_jlimx")
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel" unique_id=1842339808]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=114870669]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer"]
+[node name="Label" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer" unique_id=1898954717]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "World"
 horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer"]
+[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer" unique_id=642934236]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 text = "Settings"
 
-[node name="HSeparator" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2"]
+[node name="HSeparator" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=1701366161]
 self_modulate = Color(0.2, 0.2, 0.2, 1)
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2"]
+[node name="RichTextLabel" type="RichTextLabel" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=23412422]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/background = SubResource("StyleBoxFlat_s6uxj")
 theme_override_styles/normal = SubResource("StyleBoxFlat_oenax")
+theme_override_styles/background = SubResource("StyleBoxFlat_s6uxj")
 bbcode_enabled = true
 text = "[color=gray]SenderName[/color]
 Hello
@@ -237,20 +234,21 @@ Hello
 [right]Hi
 "
 
-[node name="HSeparator2" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2"]
+[node name="HSeparator2" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=435358593]
 modulate = Color(0.2, 0.2, 0.2, 1)
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=1937053820]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2"]
+[node name="LineEdit" type="LineEdit" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2" unique_id=1939809315]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Enter a message"
 alignment = 1
 
-[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2"]
+[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2" unique_id=118337575]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3

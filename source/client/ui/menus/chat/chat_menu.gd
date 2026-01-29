@@ -18,6 +18,7 @@ var fade_out_tween: Tween
 
 
 func _ready() -> void:
+	Client.request_data(&"chat.history")
 	Client.subscribe(&"chat.message", _on_chat_message)
 	
 	peek_feed_message_edit.text_submitted.connect(_on_message_edit_text_submitted.bind(peek_feed_message_edit))
@@ -69,6 +70,7 @@ func _on_chat_message(message: Dictionary) -> void:
 		reset_view()
 		peek_feed_text_display.show()
 		fade_out_timer.start()
+
 	if channel_messages.has(channel):
 		channel_messages[channel].append(text_to_display)
 	else:
@@ -139,14 +141,19 @@ func _on_message_edit_text_submitted(new_text: String, line_edit: LineEdit) -> v
 		
 		Client.request_data(
 			&"chat.command.exec",
-			print_debug,
+			Callable(),
 			{"cmd": cmd, "params": params},
 			InstanceClient.current.name
 		)
 	else:
 		Client.request_data(
 			&"chat.message.send",
-			Callable(), # ACK later
+			#Callable(), # ACK later
+			Callable(),
 			{"text": new_text, "channel": current_channel},
 			InstanceClient.current.name
 		)
+
+
+#func _on_chat_history_received(payload: Dictionary) -> void:
+	

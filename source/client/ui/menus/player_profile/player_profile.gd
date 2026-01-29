@@ -19,7 +19,6 @@ func open_player_profile(player_id: int) -> void:
 		#print_debug("Cache used")
 		#apply_profile(cache[player_id])
 	#else:
-	print("open = ", player_id)
 	Client.request_data(
 		&"profile.get",
 		apply_profile,
@@ -72,7 +71,7 @@ func add_stats(stats: Dictionary):
 	stats_text.clear()
 	stats_text.text = ""
 	for stat_name: String in stats:
-		print("%s: %s" % [stat_name, stats[stat_name]])
+		#print("%s: %s" % [stat_name, stats[stat_name]])
 		stats_text.append_text("%s: %s\n" % [stat_name, stats[stat_name]])
 
 

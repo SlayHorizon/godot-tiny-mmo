@@ -1,17 +1,18 @@
 extends DataRequestHandler
 
 
-func data_request_handler(
-	peer_id: int,
-	instance: ServerInstance,
-	args: Dictionary
-) -> Dictionary:
-	var player: Player = instance.players_by_peer_id.get(peer_id)
-	if not player:
+func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictionary) -> Dictionary:
+	var world_server: WorldServer = instance.world_server
+	var store: WorldStoreSqlite = world_server.database.store
+
+	var player_resource: PlayerResource = world_server.connected_players.get(peer_id)
+	if player_resource == null:
 		return {}
-	
-	var joined_guilds: Array[Guild] = player.player_resource.joined_guilds
-	var data: Dictionary
-	for guild: Guild in joined_guilds:
-		data[guild.guild_name] = guild.members.size()
-	return data
+
+	var out: Dictionary = {}
+	for guild_id: int in player_resource.joined_guild_ids:
+		var guild: Guild = store.get_guild(int(guild_id))
+		if guild != null:
+			out[guild.guild_name] = guild.members.size()
+
+	return out

@@ -26,7 +26,7 @@ func _ready() -> void:
 
 	server.listen(PORT, "127.0.0.1")
 
-	OS.shell_open("http://127.0.0.1:%d/" % PORT)
+	#OS.shell_open("http://127.0.0.1:%d/" % PORT)
 	#OS.shell_open(ProjectSettings.globalize_path("res://source/server/master/dashboard/index.html"))
 
 

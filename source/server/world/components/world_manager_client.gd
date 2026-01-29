@@ -64,12 +64,14 @@ func player_disconnected(_username: String) -> void:
 
 @rpc("authority")
 func create_player_character_request(gateway_id: int, peer_id: int, username: String, character_data: Dictionary) -> void:
+	var character_id: int = database.create_player_character(username, character_data)
+	
 	player_character_creation_result.rpc_id(
 		1,
 		gateway_id,
 		peer_id,
 		username,
-		database.player_data.create_player_character(username, character_data)
+		character_id
 	)
 
 
@@ -80,9 +82,11 @@ func player_character_creation_result(_gateway_id: int, _peer_id: int, _username
 
 @rpc("authority")
 func request_player_characters(gateway_id: int, peer_id: int, username: String) -> void:
+	var characters: Dictionary = database.get_account_characters(username)
+	
 	receive_player_characters.rpc_id(
 		1,
-		database.player_data.get_account_characters(username),
+		characters,
 		gateway_id,
 		peer_id
 	)
@@ -100,18 +104,21 @@ func request_login(
 	username: String,
 	character_id: int
 ) -> void:
-	if (
-		database.player_data.players.has(character_id)
-		and database.player_data.players[character_id].account_name == username
-	):
-		result_login.rpc_id(
-			1,
-			OK,
-			gateway_id,
-			peer_id,
-			username,
-			character_id,
-		)
+	var player: PlayerResource = database.get_player_resource(character_id)
+	if player == null:
+		return
+
+	if player.account_name != username:
+		return
+
+	result_login.rpc_id(
+		1,
+		OK,
+		gateway_id,
+		peer_id,
+		username,
+		character_id,
+	)
 
 
 @rpc("any_peer")

@@ -1,0 +1,32 @@
+[configuration]
+
+entry_symbol = "sqlite_library_init"
+compatibility_minimum = "4.5"
+
+[libraries]
+
+macos.debug = "res://addons/godot-sqlite/bin/libgdsqlite.macos.template_debug.framework"
+macos.release = "res://addons/godot-sqlite/bin/libgdsqlite.macos.template_release.framework"
+windows.debug.x86_64 = "res://addons/godot-sqlite/bin/libgdsqlite.windows.template_debug.x86_64.dll"
+windows.release.x86_64 = "res://addons/godot-sqlite/bin/libgdsqlite.windows.template_release.x86_64.dll"
+linux.debug.x86_64 = "res://addons/godot-sqlite/bin/libgdsqlite.linux.template_debug.x86_64.so"
+linux.release.x86_64 = "res://addons/godot-sqlite/bin/libgdsqlite.linux.template_release.x86_64.so"
+android.debug.arm64 = "res://addons/godot-sqlite/bin/libgdsqlite.android.template_debug.arm64.so"
+android.release.arm64 = "res://addons/godot-sqlite/bin/libgdsqlite.android.template_release.arm64.so"
+android.debug.x86_64 = "res://addons/godot-sqlite/bin/libgdsqlite.android.template_debug.x86_64.so"
+android.release.x86_64 = "res://addons/godot-sqlite/bin/libgdsqlite.android.template_release.x86_64.so"
+ios.debug = "res://addons/godot-sqlite/bin/libgdsqlite.ios.template_debug.xcframework"
+ios.release = "res://addons/godot-sqlite/bin/libgdsqlite.ios.template_release.xcframework"
+web.debug.threads.wasm32 = "res://addons/godot-sqlite/bin/libgdsqlite.web.template_debug.wasm32.wasm"
+web.release.threads.wasm32 = "res://addons/godot-sqlite/bin/libgdsqlite.web.template_release.wasm32.wasm"
+web.debug.wasm32 = "res://addons/godot-sqlite/bin/libgdsqlite.web.template_debug.wasm32.nothreads.wasm"
+web.release.wasm32 = "res://addons/godot-sqlite/bin/libgdsqlite.web.template_release.wasm32.nothreads.wasm"
+
+[dependencies]
+
+ios.debug = { 
+    "res://addons/godot-sqlite/bin/libgodot-cpp.ios.template_debug.xcframework": "" 
+}
+ios.release = { 
+    "res://addons/godot-sqlite/bin/libgodot-cpp.ios.template_release.xcframework": "" 
+}

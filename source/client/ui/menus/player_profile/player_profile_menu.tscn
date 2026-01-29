@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://beypr510eoqml"]
+[gd_scene format=3 uid="uid://beypr510eoqml"]
 
 [ext_resource type="Script" uid="uid://2dnwg3gkbaeg" path="res://source/client/ui/menus/player_profile/player_profile.gd" id="1_fnhhi"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_21o1w"]
 
-[node name="PlayerProfile" type="Control" node_paths=PackedStringArray("name_label")]
+[node name="PlayerProfile" type="Control" unique_id=1646742402 node_paths=PackedStringArray("name_label")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,7 +13,7 @@ grow_vertical = 2
 script = ExtResource("1_fnhhi")
 name_label = NodePath("PanelContainer/HBoxContainer/VBoxContainer2/Label")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1683708645]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,15 +25,15 @@ offset_bottom = -33.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer" unique_id=546283124]
 layout_mode = 2
 
-[node name="StatsContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer"]
+[node name="StatsContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=648757526]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.4
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/StatsContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/StatsContainer" unique_id=709298523]
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
@@ -43,27 +43,27 @@ level: 0"
 horizontal_alignment = 3
 vertical_alignment = 1
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/HBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=519648178]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="PanelContainer/HBoxContainer/VBoxContainer2"]
+[node name="Label" type="Label" parent="PanelContainer/HBoxContainer/VBoxContainer2" unique_id=920759532]
 layout_mode = 2
 text = "hori"
 
-[node name="Control" type="CenterContainer" parent="PanelContainer/HBoxContainer/VBoxContainer2"]
+[node name="Control" type="CenterContainer" parent="PanelContainer/HBoxContainer/VBoxContainer2" unique_id=562965845]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="PanelContainer/HBoxContainer/VBoxContainer2/Control"]
+[node name="Control" type="Control" parent="PanelContainer/HBoxContainer/VBoxContainer2/Control" unique_id=316819221]
 layout_mode = 2
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="PanelContainer/HBoxContainer/VBoxContainer2/Control/Control"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="PanelContainer/HBoxContainer/VBoxContainer2/Control/Control" unique_id=625580620]
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("2_21o1w")
 animation = &"death"
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/VBoxContainer2"]
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/VBoxContainer2" unique_id=429410590]
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
@@ -71,25 +71,25 @@ text = "Hello I'am new!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=1856833360]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 alignment = 1
 
-[node name="MessageButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="MessageButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=670915641]
 layout_mode = 2
 text = "Message"
 
-[node name="FriendButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="FriendButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=1488828607]
 layout_mode = 2
 text = "Add friend"
 
-[node name="InviteGuildButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="InviteGuildButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=1083767612]
 layout_mode = 2
 text = "Invite in guild"
 
-[node name="Close" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="Close" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=827641519]
 layout_mode = 2
 size_flags_vertical = 10
 text = "Close"

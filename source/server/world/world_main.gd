@@ -34,6 +34,7 @@ func _ready() -> void:
 		}
 		
 	)
+	await get_tree().create_timer(0.5).timeout
 	if world_info.has("error"):
 		printerr("World server loading configuration failed.")
 	else:

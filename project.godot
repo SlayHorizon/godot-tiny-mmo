@@ -42,7 +42,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/tinymmo/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg", "res://addons/tinymmo/plugin.cfg")
 
 [file_customization]
 
