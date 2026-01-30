@@ -1,10 +1,8 @@
 [gd_resource type="GradientTexture1D" format=3 uid="uid://bkpc1kjm4t2xn"]
 
-[sub_resource type="Gradient" id="Gradient_faefq"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.1, 0.2, 0.4, 0.5, 0.6, 1)
-colors = PackedColorArray(0.169088, 0.18037, 0.333017, 1, 0.215204, 0.199866, 0.394424, 1, 0.428431, 0.193332, 0.564388, 1, 0.906974, 0.5403, 0.406134, 1, 0.979378, 0.628686, 0.446542, 1, 1, 0.877789, 0.818239, 1, 1, 1, 1, 1)
-metadata/_snap_enabled = true
+[sub_resource type="Gradient" id="Gradient_day_night"]
+offsets = PackedFloat32Array(0, 0.2, 0.25, 0.3, 0.5, 0.65, 0.7, 0.75, 0.8, 0.85, 1)
+colors = PackedColorArray(0.15702537, 0.18301716, 0.3488172, 1, 0.29494515, 0.29561988, 0.46178836, 1, 1, 0.419608, 0.419608, 1, 1, 0.98039216, 0.8039216, 1, 1, 1, 1, 1, 1, 0.980392, 0.803922, 1, 1, 0.603922, 0.462745, 1, 0.839216, 0.560784, 0.705882, 1, 0.423529, 0.360784, 0.905882, 1, 0.29411766, 0.29411766, 0.4627451, 1, 0.15686275, 0.18431373, 0.34901962, 1)
 
 [resource]
-gradient = SubResource("Gradient_faefq")
+gradient = SubResource("Gradient_day_night")

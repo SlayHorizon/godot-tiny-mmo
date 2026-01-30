@@ -12,15 +12,7 @@ func _enter_tree() -> void:
 		queue_free()
 
 
-func _ready() -> void:
-	pass
-
-
-func _process(_delta: float) -> void:
-	if not enabled:
-		return
-
-	var current_time: float = Client.world_clock.get_current_time()
-	var gradient_pos: float = -cos(current_time * PI / 12.0) * 0.5 + 0.5
-
+func _process(delta: float) -> void:
+	if not enabled: return
+	var gradient_pos: float = Client.world_clock.get_day_progress()
 	self.color = light_texture.gradient.sample(gradient_pos)

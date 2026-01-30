@@ -88,14 +88,21 @@ func _on_client_time_received(data: Dictionary) -> void:
 ## This method also update all connected clients clock.
 func server_set_current_time(hour: int) -> void:
 	if not multiplayer.is_server(): return
+
+	hour = int(clamp(hour, 0, HOURS_PER_DAY))
 	_real_time_anchor = Time.get_ticks_msec() / 1000.0
-	_game_time_anchor = (hour / HOURS_PER_DAY) * day_speed 
+	_game_time_anchor = (hour / HOURS_PER_DAY) * day_speed
+
+	current_hour = hour
+	_previous_hour = hour
+
+	_handle_time_change()
 	server_propagate_time()
 
 ## Updates all connected clients clock.
 func server_propagate_time() -> void:
 	if not multiplayer.is_server(): return
-	var data = {
+	var data: Dictionary = {
 		"enabled": enabled,
 		"day_speed": day_speed,
 		"elapsed_time": get_game_time_seconds(),
@@ -130,4 +137,4 @@ func get_formatted_time() -> String:
 	var time: float = get_game_time_hour()
 	var hour: int = int(time)
 	var minutes: int = int((time - hour) * 60.0)
-	return "%s:%d" % [hour, minutes]
+	return "%02d:%02d" % [hour, minutes]
