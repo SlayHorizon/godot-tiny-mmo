@@ -49,7 +49,7 @@ It explores scalable multiplayer architecture and efficient byte-packed networki
 - [X] **Authentication system** through gateway server with Login UI
 - [x] **Account Creation** for permanent player accounts
 - [x] **Server Selection UI** to let the player choose between different servers
-- [x] **QAD Database** to save persistent data
+- [x] **SQLite persistence** (players, guilds, chat)
 - [x] **Guest Login** option for quick access
 - [x] **Game version check** to ensure client compatibility
 
@@ -57,6 +57,8 @@ It explores scalable multiplayer architecture and efficient byte-packed networki
 - [x] **Basic RPG class system** with three initial classes: Knight, Rogue, Wizard
 - [x] **Weapons** at least one usable weapon per class
 - [x] **Basic combat system**
+- [x] **Friend list**
+- [x] **Guild**
 
 - [X] **Entity synchronization** for players within the same instance
 - [ ] **Entity interpolation** to handle rubber banding
