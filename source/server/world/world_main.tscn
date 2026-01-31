@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://cf4xahse7mg4d" path="res://source/server/world/components/world_manager_client.gd" id="2_bxid2"]
 [ext_resource type="Script" uid="uid://dt8py6evrtkvk" path="res://source/server/world/components/world_server.gd" id="3_u7bqt"]
 [ext_resource type="Script" uid="uid://d1fja2um2iixv" path="res://source/server/world/components/instance_manager.gd" id="4_6abmg"]
+[ext_resource type="Script" uid="uid://vetsypglioqo" path="res://source/common/gameplay/time/world_clock.gd" id="4_ve2xu"]
 [ext_resource type="Script" uid="uid://32l8t618k7dp" path="res://source/server/world/components/console.gd" id="6_klp0y"]
-[ext_resource type="Script" uid="uid://buf71msmux5os" path="res://source/server/world/components/world_clock_sever.gd" id="7_tcwus"]
 [ext_resource type="Script" uid="uid://1a0b5kjomqfp" path="res://source/server/world/database/world_database.gd" id="8_lg0cs"]
 [ext_resource type="Script" uid="uid://dlqfoil0exjc2" path="res://source/server/world/components/chat/chat_service.gd" id="8_ve2xu"]
 
@@ -21,14 +21,14 @@ world_server = NodePath("../WorldServer")
 script = ExtResource("3_u7bqt")
 database = NodePath("../Database")
 world_manager = NodePath("../WorldManagerClient")
-world_clock = NodePath("WorldClockServer")
+world_clock = NodePath("WorldClock")
 chat_service = NodePath("../ChatService")
 instance_manager = NodePath("InstanceManager")
 
-[node name="WorldClockServer" type="Node" parent="WorldServer" unique_id=1702874766]
-script = ExtResource("7_tcwus")
-day_speed = 1440
+[node name="WorldClock" type="Node" parent="WorldServer" unique_id=1360324802]
+script = ExtResource("4_ve2xu")
 enabled = true
+metadata/_custom_type_script = "uid://vetsypglioqo"
 
 [node name="InstanceManager" type="SubViewportContainer" parent="WorldServer" unique_id=287380028 node_paths=PackedStringArray("world_server")]
 anchors_preset = 15
@@ -40,9 +40,8 @@ stretch = true
 script = ExtResource("4_6abmg")
 world_server = NodePath("..")
 
-[node name="Console" type="Node" parent="." unique_id=1984516015 node_paths=PackedStringArray("database", "world_server")]
+[node name="Console" type="Node" parent="." unique_id=1984516015 node_paths=PackedStringArray("world_server")]
 script = ExtResource("6_klp0y")
-database = NodePath("")
 world_server = NodePath("../WorldServer")
 
 [node name="ChatService" type="Node" parent="." unique_id=761170866]

@@ -12,7 +12,7 @@ var is_connected_to_server: bool = false:
 
 var authentication_token: String
 
-@onready var world_clock: WorldClockClient = $WorldClockClient
+@onready var world_clock: WorldClock = $WorldClock
 
 
 func _enter_tree() -> void:

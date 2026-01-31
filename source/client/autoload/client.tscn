@@ -1,14 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://tw7rsqcl82mr"]
+[gd_scene format=3 uid="uid://tw7rsqcl82mr"]
 
 [ext_resource type="Script" uid="uid://jbqm8d114o0u" path="res://source/client/autoload/client.gd" id="1_dp78e"]
 [ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="2_pk5uk"]
-[ext_resource type="Script" uid="uid://cy00y2hsdyloy" path="res://source/client/gameplay/time/world_clock_client.gd" id="3_pk5uk"]
+[ext_resource type="Script" uid="uid://vetsypglioqo" path="res://source/common/gameplay/time/world_clock.gd" id="3_pk5uk"]
 
-[node name="Client" type="Node"]
+[node name="Client" type="Node" unique_id=1458854616]
 script = ExtResource("1_dp78e")
 
-[node name="InstanceManager" type="Node" parent="."]
-script = ExtResource("2_pk5uk")
-
-[node name="WorldClockClient" type="Node" parent="."]
+[node name="WorldClock" type="Node" parent="." unique_id=840485078]
 script = ExtResource("3_pk5uk")
+metadata/_custom_type_script = "uid://vetsypglioqo"
+
+[node name="InstanceManager" type="Node" parent="." unique_id=683323300]
+script = ExtResource("2_pk5uk")

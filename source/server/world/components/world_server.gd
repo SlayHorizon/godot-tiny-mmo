@@ -5,7 +5,7 @@ extends BaseMultiplayerEndpoint
 
 @export var database: WorldDatabase
 @export var world_manager: WorldManagerClient
-@export var world_clock: WorldClockServer
+@export var world_clock: WorldClock
 @export var chat_service: ChatService
 
 var token_list: Dictionary[String, PlayerResource]
