@@ -18,11 +18,7 @@ data/local/
 /source/server/master/account_collection.tres
 
 # godot-sqlite: ignore unused platform binaries
-addons/godot-sqlite/bin/libgdsqlite.android.*
-addons/godot-sqlite/bin/libgdsqlite.web.*
-addons/godot-sqlite/bin/libgdsqlite.ios.*
-addons/godot-sqlite/bin/libgodot-cpp.ios.*
-addons/godot-sqlite/bin/*.xcframework/
+addons/godot-sqlite/bin/*
 
 # SQLite runtime files
 *.db
