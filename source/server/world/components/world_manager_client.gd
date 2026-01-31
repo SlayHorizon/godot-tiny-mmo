@@ -41,10 +41,14 @@ func _on_connection_succeeded() -> void:
 
 func _on_connection_failed() -> void:
 	print("Failed to connect to the MasterServer as WorldServer.")
+	await get_tree().create_timer(3.0).timeout
+	start_client_to_master_server(world_info)
 
 
 func _on_server_disconnected() -> void:
-	print("Game Server disconnected.")
+	print("WorldServer disconnected from MasterServer.")
+	await get_tree().create_timer(3.0).timeout
+	start_client_to_master_server(world_info)
 
 
 @rpc("any_peer")

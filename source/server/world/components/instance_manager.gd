@@ -165,7 +165,6 @@ func set_instance_collection() -> void:
 		if instance_resource.instance_name == "Overworld":
 			default_instance = instance_resource
 		instance_collection.set(instance_resource.instance_name, instance_resource)
-		print(file_path)
 
 
 func unload_unused_instances() -> void:

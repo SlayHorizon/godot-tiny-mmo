@@ -49,8 +49,10 @@ func _ready() -> void:
 func load_map(map_path: String) -> void:
 	if instance_map:
 		instance_map.queue_free()
-	instance_map = load(map_path).instantiate()
-	add_child(instance_map)
+	if ResourceLoader.exists(map_path):
+		var map_scene: PackedScene = load(map_path)
+		instance_map = map_scene.instantiate()
+		add_child.call_deferred(instance_map)
 
 	ready.connect(func():
 		if instance_map.replicated_props_container:
