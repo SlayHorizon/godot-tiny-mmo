@@ -135,22 +135,22 @@ layout_mode = 2
 layout_mode = 2
 text = "Public"
 
-[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1073712241]
+[node name="SystemChatButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1073712241]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "System"
 
-[node name="Button2" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=2044612260]
+[node name="WorldChatButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=2044612260]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "World"
 
-[node name="Button6" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1381271110]
+[node name="TeamChatButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1381271110]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "Team"
 
-[node name="Button5" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=952495106]
+[node name="GuildChatButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=952495106]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 text = "Guild"

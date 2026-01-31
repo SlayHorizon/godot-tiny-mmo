@@ -2,8 +2,6 @@ class_name WorldDatabase
 extends Node
 
 
-const WorldSchema: GDScript = preload("res://source/server/world/database/world_schema.gd")
-
 var database_path: String
 var db: SQLite
 var store: WorldStoreSqlite

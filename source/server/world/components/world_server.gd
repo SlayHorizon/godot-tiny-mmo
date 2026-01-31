@@ -85,6 +85,7 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 		connected_players[peer_id].current_peer_id = peer_id
 		player_id_to_peer_id[connected_players[peer_id].player_id] = peer_id
 		token_list.erase(auth_token)
+		data_push.rpc_id.call_deferred(peer_id, &"player_id.set", {"player_id": connected_players[peer_id].player_id})
 	else:
 		peer.disconnect_peer(peer_id)
 

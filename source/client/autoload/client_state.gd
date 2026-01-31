@@ -5,8 +5,10 @@ extends Node
 
 signal local_player_ready(local_player: LocalPlayer)
 signal player_profile_requested(id: int)
+signal dm_requested(id: int)
 
 var local_player: LocalPlayer
+var player_id: int
 var stats: DataDict = DataDict.new()
 var settings: DataDict = DataDict.new()
 var quick_slots: DataDict = DataDict.new()
@@ -16,6 +18,8 @@ var guilds: DataDict = DataDict.new()
 func _ready() -> void:
 	if not OS.has_feature("client"):
 		queue_free()
+	Client.subscribe(&"player_id.set", func(payload: Dictionary):
+		player_id = payload.get("player_id", 0))
 	Client.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)
