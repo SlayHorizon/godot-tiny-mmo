@@ -324,12 +324,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
 
-[node name="PanelRect" type="TextureRect" parent="WorldSelection" unique_id=554156689]
-visible = false
-material = SubResource("CanvasItemMaterial_q35d6")
-layout_mode = 2
-texture = SubResource("GradientTexture2D_rk5g7")
-
 [node name="VBoxContainer" type="VBoxContainer" parent="WorldSelection" unique_id=1830473629]
 layout_mode = 2
 theme_override_constants/separation = 16
@@ -350,40 +344,6 @@ size_flags_horizontal = 4
 layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
-
-[node name="Button" type="Button" parent="WorldSelection/VBoxContainer/HBoxContainer" unique_id=1053815138]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-text = "Sladida
-kkkkkkkkkkkkkkkkkkkkkkkkkk
-Rules:
-Vladi
-gz
-
-Mondial"
-clip_text = true
-
-[node name="Button2" type="Button" parent="WorldSelection/VBoxContainer/HBoxContainer" unique_id=1698194278]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-text = "Sladida
-
-Rules:
-Vladi
-gz
-
-Mondial"
-
-[node name="Button3" type="Button" parent="WorldSelection/VBoxContainer/HBoxContainer" unique_id=1867590284]
-custom_minimum_size = Vector2(150, 250)
-layout_mode = 2
-text = "Sladida
-
-Rules:
-Vladi
-gz
-
-Mondial"
 
 [node name="CharacterSelection" type="PanelContainer" parent="." unique_id=1308493296]
 visible = false

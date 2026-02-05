@@ -348,22 +348,10 @@ func _on_create_account_button_pressed() -> void:
 
 func populate_worlds(world_info: Dictionary) -> void:
 	var container: HBoxContainer = $WorldSelection/VBoxContainer/HBoxContainer
-	
-	var i: int = 0
-	for button: Button in container.get_children():
-		if button.pressed.is_connected(_on_world_selected):
-			button.pressed.disconnect(_on_world_selected)
-		if i < world_info.size():
-			var world_id: String = world_info.keys()[i]
-			button.text = "%s\n\n%s" % [
-				world_info[world_id].get("name", "name"),
-				" \n".join(str(world_info[world_id]["info"]).split(", "))
-			]
-			button.pressed.connect(_on_world_selected.bind(world_id.to_int()))
-			
-		else:
-			button.hide()
-		i += 1
+	for child: Node in container.get_children():
+		child.queue_free()
+	for world_id: String in world_info:
+		add_world_card(world_info.get(world_id, {}).get("info", {}), world_id.to_int())
 
 
 func fill_connection_info(_account_name: String, _account_id: int) -> void:
@@ -372,3 +360,32 @@ func fill_connection_info(_account_name: String, _account_id: int) -> void:
 	$ConnectionInfo.text = "Account-name: %s\nAccount-ID: %s" % [
 		account_name, account_id
 	]
+
+
+func add_world_card(world_info: Dictionary, world_id: int) -> Button:
+	var container: HBoxContainer = $WorldSelection/VBoxContainer/HBoxContainer
+
+	var button: Button = Button.new()
+	button.custom_minimum_size = Vector2(150.0, 250.0)
+	button.pressed.connect(_on_world_selected.bind(world_id))
+
+	var text_label: RichTextLabel = RichTextLabel.new()
+	text_label.bbcode_enabled = true
+	text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	text_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+
+	text_label.append_text(
+		"[font_size=20][b]%s[/b][/font_size]\n" % world_info.get("name", "Unknown World")
+	)
+	text_label.append_text(
+		"\n[i][font_size=12]\"%s\"[/font_size][/i]\n" % world_info.get("motd", "")
+	)
+	text_label.append_text(
+		"\n[font_size=13][b]%s[/b][/font_size]\n" % "PvP" if world_info.get("pvp", true) else "No PvP"
+	)
+
+	button.add_child(text_label)
+
+	container.add_child(button)
+	return button
