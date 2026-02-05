@@ -39,4 +39,5 @@ func _on_guild_create_response(data: Dictionary) -> void:
 	if data.has("error"):
 		$MarginContainer/VBoxContainer/Label.text = data.get("message", "error")
 	if data.has("name"):
+		ClientState.active_guild_id = data.get("id", 0)
 		navigate_requested.emit(NavigationAction.REPLACE, guild_details_panel, data)

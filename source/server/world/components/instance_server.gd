@@ -95,7 +95,8 @@ func spawn_player(peer_id: int) -> void:
 	else:
 		player = instantiate_player(peer_id)
 		spawn_position = instance_map.get_spawn_position(spawn_index)
-		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
+		WorldServer.curr.chat_service.push_system_to_player(self, player.player_resource.player_id, get_motd())
+		#WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", {"text": get_motd(), "id": 1, "name": "Server"})
 
 	player.player_resource.current_instance = instance_resource.instance_name
 	player.mark_just_teleported()

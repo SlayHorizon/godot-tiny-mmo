@@ -7,7 +7,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		return {"error": 1, "ok": false, "message": "Player not registered."}
 
 	var other_id: int = int(args.get("other_id", 0))
-	if other_id <= 0:
+	if other_id <= 0 or other_id == player.player_id:
 		return {"error": 1, "ok": false, "message": "Invalid target."}
 
 	var limit: int = int(args.get("limit", 50))

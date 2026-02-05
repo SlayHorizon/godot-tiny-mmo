@@ -61,4 +61,10 @@ func data_request_handler(
 		"permissions": guild.get_member_rank(player.player_id).get("permissions", Guild.Permissions.NONE)
 	}
 
+	instance.world_server.chat_service.push_system_to_player(
+		instance,
+		player.player_id,
+		"Guild %s created!" % guild.guild_name
+	)
+
 	return guild_info

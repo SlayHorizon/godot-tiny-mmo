@@ -2,21 +2,13 @@ class_name ChatService
 extends Node
 
 
+#const ChatConstants: GDScript = preload("res://source/common/utils/chat_constants.gd")
+
 var store: ChatStoreSqlite
 
 
 func setup_with_db(db: SQLite) -> void:
 	store = ChatStoreSqlite.new(db)
-
-
-func _channel_conversation_id(channel: int) -> String:
-	return "global_%d" % channel
-
-
-func _dm_conversation_id(a: int, b: int) -> String:
-	var lo: int = mini(a, b)
-	var hi: int = maxi(a, b)
-	return "dm:%d:%d" % [lo, hi]
 
 
 func handle_send_channel_message(
@@ -25,38 +17,17 @@ func handle_send_channel_message(
 	channel: int,
 	text: String
 ) -> Dictionary:
-	if store == null:
-		return {"error": 3, "ok": false, "message": "Chat store not initialized."}
-
-	var convo_id: String = _channel_conversation_id(channel)
-	store.ensure_conversation(convo_id, "global", "{}")
-
-	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
-
-	var saved: Dictionary = store.insert_message(
-		convo_id,
-		now_ms,
-		player.player_id,
-		player.display_name,
-		text
-	)
-
-	var pushed: Dictionary = {
-		"conversation_id": convo_id,
-		"text": text,
-		"channel": channel,
-		"name": player.display_name,
-		"id": player.player_id,
-		"msg_id": int(saved.get("msg_id", 0)),
-		"time_ms": now_ms,
-	}
-
-	WorldServer.curr.propagate_rpc(
-		WorldServer.curr.data_push.bind(&"chat.message", pushed),
-		instance.name
-	)
-
-	return {}
+	match channel:
+		ChatConstants.CHANNEL_WORLD:
+			return _handle_send_world(instance, player, text)
+		ChatConstants.CHANNEL_GUILD:
+			return _handle_send_guild(instance, player, text)
+		ChatConstants.CHANNEL_TEAM:
+			return _handle_send_team(instance, player, text)
+		ChatConstants.CHANNEL_SYSTEM:
+			return {"error": 10, "ok": false, "message": "System is read-only."}
+		_:
+			return {"error": 11, "ok": false, "message": "Unknown channel."}
 
 
 func handle_send_dm(
@@ -71,7 +42,7 @@ func handle_send_dm(
 	if other_id <= 0 or other_id == sender.player_id:
 		return {"error": 4, "ok": false, "message": "Invalid target."}
 
-	var convo_id: String = _dm_conversation_id(sender.player_id, other_id)
+	var convo_id: String = ChatConstants.dm_conversation_id(sender.player_id, other_id)
 	store.ensure_conversation(convo_id, "dm", "{}")
 
 	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
@@ -90,7 +61,7 @@ func handle_send_dm(
 		"name": sender.display_name,
 		"id": sender.player_id,
 		"msg_id": int(saved.get("msg_id", 0)),
-		"time_ms": now_ms
+		"time_ms": now_ms,
 	}
 
 	# Push to sender + recipient if online
@@ -111,9 +82,8 @@ func get_channel_history(channel: int, limit: int) -> Array:
 	if store == null:
 		return []
 
-	var convo_id: String = _channel_conversation_id(channel)
+	var convo_id: String = ChatConstants.channel_conversation_id(channel)
 	var rows: Array = store.fetch_last(convo_id, limit)
-
 	return _rows_to_payload(rows, convo_id, {"channel": channel})
 
 
@@ -121,10 +91,117 @@ func get_dm_history(self_id: int, other_id: int, limit: int) -> Array:
 	if store == null:
 		return []
 
-	var convo_id: String = _dm_conversation_id(self_id, other_id)
+	var convo_id: String = ChatConstants.dm_conversation_id(self_id, other_id)
 	var rows: Array = store.fetch_last(convo_id, limit)
-
 	return _rows_to_payload(rows, convo_id, {})
+
+
+func get_guild_history(guild_id: int, limit: int) -> Array:
+	if store == null:
+		return []
+	if guild_id <= 0:
+		return []
+
+	var convo_id: String = ChatConstants.guild_conversation_id(guild_id)
+	var rows: Array = store.fetch_last(convo_id, limit)
+	return _rows_to_payload(rows, convo_id, {"channel": ChatConstants.CHANNEL_GUILD})
+
+
+func _handle_send_world(instance: ServerInstance, player: PlayerResource, text: String) -> Dictionary:
+	# Current behavior: broadcast to everyone in the same instance/map.
+	return _persist_and_broadcast_to_instance(
+		instance,
+		player,
+		ChatConstants.CHANNEL_WORLD,
+		ChatConstants.channel_conversation_id(ChatConstants.CHANNEL_WORLD),
+		"global",
+		"{}",
+		text
+	)
+
+
+func _handle_send_team(instance: ServerInstance, player: PlayerResource, text: String) -> Dictionary:
+	# Placeholder: until we have a team/party system.
+	# "team:<team_id>" later.
+	# For now: either reject or treat as instance-local.
+	return {"error": 30, "ok": false, "message": "Team chat not implemented yet."}
+
+
+func _handle_send_guild(instance: ServerInstance, player: PlayerResource, text: String) -> Dictionary:
+	if store == null:
+		return {"error": 3, "ok": false, "message": "Chat store not initialized."}
+
+	var guild_id: int = player.active_guild_id
+	if guild_id <= 0:
+		return {"error": 20, "ok": false, "message": "You are not in a guild."}
+
+	var convo_id: String = ChatConstants.guild_conversation_id(guild_id)
+	store.ensure_conversation(convo_id, "guild", "{\"guild_id\":%d}" % guild_id)
+
+	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
+	var saved: Dictionary = store.insert_message(
+		convo_id,
+		now_ms,
+		player.player_id,
+		player.display_name,
+		text
+	)
+
+	var pushed: Dictionary = {
+		"conversation_id": convo_id,
+		"text": text,
+		"channel": ChatConstants.CHANNEL_GUILD,
+		"name": player.display_name,
+		"id": player.player_id,
+		"msg_id": int(saved.get("msg_id", 0)),
+		"time_ms": now_ms,
+	}
+
+	var ws: WorldServer = instance.world_server
+	for peer_id: int in ws.connected_players.keys():
+		var p: PlayerResource = ws.connected_players[peer_id]
+		if p == null:
+			continue
+		if p.active_guild_id != guild_id:
+			continue
+		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", pushed)
+
+	return {}
+
+
+func _persist_and_broadcast_to_instance(
+	instance: ServerInstance,
+	player: PlayerResource,
+	channel: int,
+	convo_id: String,
+	convo_type: String,
+	meta_json: String,
+	text: String
+) -> Dictionary:
+	if store == null:
+		return {"error": 3, "ok": false, "message": "Chat store not initialized."}
+
+	store.ensure_conversation(convo_id, convo_type, meta_json)
+
+	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
+	var saved: Dictionary = store.insert_message(convo_id, now_ms, player.player_id, player.display_name, text)
+
+	var pushed: Dictionary = {
+		"conversation_id": convo_id,
+		"text": text,
+		"channel": channel,
+		"name": player.display_name,
+		"id": player.player_id,
+		"msg_id": int(saved.get("msg_id", 0)),
+		"time_ms": now_ms,
+	}
+
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"chat.message", pushed),
+		instance.name
+	)
+
+	return {}
 
 
 func _rows_to_payload(rows: Array, conversation_id: String, extra: Dictionary) -> Array:
@@ -146,3 +223,47 @@ func _rows_to_payload(rows: Array, conversation_id: String, extra: Dictionary) -
 		out.append(msg)
 
 	return out
+
+
+func get_system_history(player_id: int, limit: int) -> Array:
+	if store == null:
+		return []
+	if player_id <= 0:
+		return []
+
+	var convo_id: String = ChatConstants.system_conversation_id(player_id)
+	var rows: Array = store.fetch_last(convo_id, limit)
+
+	return _rows_to_payload(rows, convo_id, {"channel": ChatConstants.CHANNEL_SYSTEM})
+
+
+func push_system_to_player(instance: ServerInstance, player_id: int, text: String) -> void:
+	if store == null:
+		return
+
+	var convo_id: String = ChatConstants.system_conversation_id(player_id)
+	store.ensure_conversation(convo_id, "system", "{\"player_id\":%d}" % player_id)
+
+	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
+	var saved: Dictionary = store.insert_message(
+		convo_id,
+		now_ms,
+		ChatConstants.SYSTEM_SENDER_ID,
+		ChatConstants.SYSTEM_SENDER_NAME,
+		text
+	)
+
+	var pushed: Dictionary = {
+		"conversation_id": convo_id,
+		"channel": ChatConstants.CHANNEL_SYSTEM,
+		"text": text,
+		"name": ChatConstants.SYSTEM_SENDER_NAME,
+		"id": ChatConstants.SYSTEM_SENDER_ID,
+		"msg_id": int(saved.get("msg_id", 0)),
+		"time_ms": now_ms,
+	}
+
+	var ws: WorldServer = instance.world_server
+	var peer_id: int = int(ws.player_id_to_peer_id.get(player_id, 0))
+	if peer_id > 0:
+		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", pushed)

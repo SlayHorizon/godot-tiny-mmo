@@ -9,6 +9,7 @@ signal dm_requested(id: int)
 
 var local_player: LocalPlayer
 var player_id: int
+var active_guild_id: int
 var stats: DataDict = DataDict.new()
 var settings: DataDict = DataDict.new()
 var quick_slots: DataDict = DataDict.new()
@@ -20,6 +21,8 @@ func _ready() -> void:
 		queue_free()
 	Client.subscribe(&"player_id.set", func(payload: Dictionary):
 		player_id = payload.get("player_id", 0))
+	Client.subscribe(&"active_guild_id.set", func(payload: Dictionary):
+		active_guild_id = payload.get("active_guild_id", 0))
 	Client.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)

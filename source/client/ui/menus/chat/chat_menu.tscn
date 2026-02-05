@@ -23,7 +23,7 @@ shadow_size = 6
 shadow_offset = Vector2(0, 2)
 
 [sub_resource type="Gradient" id="Gradient_s6uxj"]
-colors = PackedColorArray(0, 0, 0, 0.678431, 0.137255, 0.137255, 0.137255, 0.529412)
+colors = PackedColorArray(0, 0, 0, 0.678431, 0.13725491, 0.13725491, 0.13725491, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_oenax"]
 gradient = SubResource("Gradient_s6uxj")
@@ -68,6 +68,7 @@ mouse_filter = 2
 script = ExtResource("1_hxcw4")
 
 [node name="PeekFeed" type="VBoxContainer" parent="." unique_id=2093161680]
+visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
@@ -131,10 +132,6 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_ary8x")
 [node name="VBoxContainer" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ContactPanel" unique_id=547936455]
 layout_mode = 2
 
-[node name="PublicLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=504457585]
-layout_mode = 2
-text = "Public"
-
 [node name="SystemChatButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1073712241]
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
@@ -179,6 +176,7 @@ theme_override_constants/separation = 5
 theme_override_styles/separator = SubResource("StyleBoxFlat_jlimx")
 
 [node name="AddButton" type="Button" parent="FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer" unique_id=1877479694]
+visible = false
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 size_flags_stretch_ratio = 4.0
@@ -206,13 +204,13 @@ size_flags_horizontal = 3
 [node name="HBoxContainer" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=114870669]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer" unique_id=1898954717]
+[node name="ChatTitleLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer" unique_id=1898954717]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "World"
 horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer" unique_id=642934236]
+[node name="SettingsButton" type="Button" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer" unique_id=642934236]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
