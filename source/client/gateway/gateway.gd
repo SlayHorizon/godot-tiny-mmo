@@ -1,7 +1,6 @@
-extends Control#can be refactor, 350 lines script too much?
+extends Control
 
 
-# Helper class
 const CredentialsUtils = preload("res://source/common/utils/credentials_utils.gd")
 const GatewayApi = preload("res://source/common/network/gateway_api.gd")
 
@@ -10,6 +9,7 @@ var account_name: String
 var token: int = randi()
 
 var current_world_id: int
+var current_character_id: int
 var selected_skin_id: int = 1
 
 var menu_stack: Array[Control]
@@ -97,7 +97,7 @@ func do_request(
 	var error: Error = http_request.request(
 		path,
 		custom_headers,
-		HTTPClient.METHOD_POST,
+		method,
 		JSON.stringify(payload)
 	)
 
@@ -115,7 +115,7 @@ func do_request(
 	var headers: PackedStringArray = args[2]
 	var body: PackedByteArray = args[3]
 	
-	var data = JSON.parse_string(body.get_string_from_ascii())
+	var data: Variant = JSON.parse_string(body.get_string_from_ascii())
 	if data is Dictionary:
 		return data
 	return {"error": 1}
@@ -374,6 +374,7 @@ func add_world_card(world_info: Dictionary, world_id: int) -> Button:
 	text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	text_label.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	text_label.append_text(
 		"[font_size=20][b]%s[/b][/font_size]\n" % world_info.get("name", "Unknown World")
@@ -389,3 +390,25 @@ func add_world_card(world_info: Dictionary, world_id: int) -> Button:
 
 	container.add_child(button)
 	return button
+
+
+func _on_continue_button_pressed() -> void:
+	$AlreadyConnectedPanel.hide()
+	popup_panel.display_waiting_popup()
+	var d: Dictionary = await do_request(
+		HTTPClient.Method.METHOD_POST,
+		GatewayApi.world_enter(),
+		{
+			GatewayApi.KEY_TOKEN_ID: token,
+			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
+			GatewayApi.KEY_WORLD_ID: current_world_id,
+			GatewayApi.KEY_CHAR_ID: current_world_id
+		}
+	)
+	if d.has("error"):
+		await popup_panel.confirm_message(str(d))
+		$AlreadyConnectedPanel.show()
+		return
+	
+	Client.connect_to_server(d["address"], d["port"], d["token"])
+	queue_free.call_deferred()

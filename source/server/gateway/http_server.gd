@@ -1,8 +1,8 @@
 extends "res://addons/httpserver/http_server.gd"
 
 
-const GatewayApi = preload("res://source/common/network/gateway_api.gd")
-const CredentialsUtils = preload("res://source/common/utils/credentials_utils.gd")
+const GatewayApi: GDScript = preload("res://source/common/network/gateway_api.gd")
+const CredentialsUtils: GDScript = preload("res://source/common/utils/credentials_utils.gd")
 
 var next_id: int
 
@@ -43,6 +43,7 @@ func _ready() -> void:
 		handle_account_creation
 	)
 	server.listen(8088, "127.0.0.1")
+
 
 func handle_login(payload: Dictionary) -> Dictionary:
 	gateway_manager_client.login_request.rpc_id(

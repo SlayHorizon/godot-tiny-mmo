@@ -5,6 +5,8 @@ extends Resource
 @export var id: int
 @export var username: String
 @export var password: String
+@export var last_world_id: int
+@export var last_character_id: int
 
 # peer_id = O if not connected
 var peer_id: int = 0

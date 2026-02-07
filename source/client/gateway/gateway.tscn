@@ -714,9 +714,176 @@ offset_right = 598.48145
 offset_bottom = 93.422356
 text = "Debug Account Available"
 
+[node name="AlreadyConnectedPanel" type="Control" parent="." unique_id=1467439334]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameTitleLabel" type="Label" parent="AlreadyConnectedPanel" unique_id=112352109]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -103.0
+offset_top = -90.0
+offset_right = 103.0
+offset_bottom = -56.99997
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("5_opc3y")
+theme_override_font_sizes/font_size = 24
+text = "TINY MMO"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="AlreadyConnectedPanel" unique_id=651861677]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -168.0
+offset_top = -40.184998
+offset_right = 168.0
+offset_bottom = -36.184998
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="ContinueButton" type="Button" parent="AlreadyConnectedPanel" unique_id=821749453]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -25.0
+offset_right = 160.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Continue
+Classic - Higamers"
+
+[node name="ChangeButton" type="Button" parent="AlreadyConnectedPanel" unique_id=1510010046]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = 39.304993
+offset_right = 80.0
+offset_bottom = 89.30505
+grow_horizontal = 2
+grow_vertical = 2
+text = "Change"
+
+[node name="MoreButton" type="Button" parent="AlreadyConnectedPanel" unique_id=1729056277]
+layout_mode = 0
+offset_left = 890.0
+offset_top = 8.0
+offset_right = 952.0
+offset_bottom = 51.0
+text = "More"
+
+[node name="PanelContainer" type="PanelContainer" parent="AlreadyConnectedPanel" unique_id=1043121351]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -161.0
+offset_top = -231.0
+offset_right = 227.0
+offset_bottom = 215.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer" unique_id=1031456788]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1616609707]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=885474027]
+layout_mode = 2
+text = "Account"
+
+[node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=1942694599]
+layout_mode = 2
+text = "Settings"
+
+[node name="HSeparator2" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1441440801]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=777967777]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1791518199]
+layout_mode = 2
+text = "Community"
+
+[node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=582441869]
+layout_mode = 2
+text = "Discord"
+
+[node name="Button5" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1150752682]
+layout_mode = 2
+text = "Website"
+
+[node name="Button6" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1945047176]
+layout_mode = 2
+text = "Patch notes"
+
+[node name="HSeparator3" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1497185232]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=94306566]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=1264677009]
+layout_mode = 2
+text = "Log out"
+
+[node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=464984533]
+layout_mode = 2
+text = "Close game"
+
+[node name="HSeparator4" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1173479855]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Button" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=2049791848]
+layout_mode = 2
+text = "Back"
+
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="." method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/GuestButton" to="." method="_on_guest_button_pressed"]
 [connection signal="pressed" from="LoginPanel/VBoxContainer/VBoxContainer/LoginButton" to="." method="_on_login_login_button_pressed"]
 [connection signal="pressed" from="CreateAccountPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="." method="create_account"]
 [connection signal="pressed" from="CharacterCreation/VBoxContainer/VBoxContainer/CreateButton" to="." method="_on_create_character_button_pressed"]
+[connection signal="pressed" from="AlreadyConnectedPanel/ContinueButton" to="." method="_on_continue_button_pressed"]

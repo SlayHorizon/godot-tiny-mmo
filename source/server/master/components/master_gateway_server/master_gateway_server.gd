@@ -105,7 +105,7 @@ func player_character_creation_result(_peer_id: int, result: Dictionary) -> void
 
 @rpc("any_peer")
 func request_player_characters(peer_id: int, username: String, world_id: int) -> void:
-	var gateway_id := multiplayer_api.get_remote_sender_id()
+	var gateway_id: int = multiplayer_api.get_remote_sender_id()
 	if (
 		world_manager.connected_worlds.has(world_id)
 		and authentication_manager.account_collection.collection.has(username)
@@ -127,7 +127,7 @@ func receive_player_characters(_player_characters: Dictionary) -> void:
 
 @rpc("any_peer")
 func request_login(peer_id: int, username: String, world_id: int, character_id: int) -> void:
-	var gateway_id := multiplayer_api.get_remote_sender_id()
+	var gateway_id: int = multiplayer_api.get_remote_sender_id()
 	if (
 		world_manager.connected_worlds.has(world_id)
 		and authentication_manager.account_collection.collection.has(username)
