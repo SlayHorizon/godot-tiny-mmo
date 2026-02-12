@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://v32667qwpj2l"]
+
+[ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/gameplay/characters/character.tscn" id="1_w5sp3"]
+[ext_resource type="Script" uid="uid://drq65rdns3own" path="res://source/common/gameplay/characters/npc/hostile_npc.gd" id="2_yivip"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_e1g67"]
+radius = 110.0
+
+[node name="NPC" unique_id=573307470 node_paths=PackedStringArray("detection_area") instance=ExtResource("1_w5sp3")]
+script = ExtResource("2_yivip")
+chase_on_area = true
+distance_to_attack = 20
+max_distance_from_spawn = 100
+min_distance_from_spawn = 20
+move_speed = 20
+detection_area = NodePath("DetectionArea")
+
+[node name="DetectionArea" type="Area2D" parent="." index="10" unique_id=48866372]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" index="0" unique_id=1210478326]
+shape = SubResource("CircleShape2D_e1g67")
+
+[node name="StateDisplay" type="Label" parent="." index="11" unique_id=1873427996]
+z_index = 1
+offset_left = -18.0
+offset_top = -22.0
+offset_right = 22.0
+offset_bottom = -1.0
+text = "IDLE"

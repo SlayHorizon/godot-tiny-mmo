@@ -1,15 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://v32667qwpj2l"]
+[gd_scene format=3 uid="uid://dbrernsyt26qh"]
 
 [ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/gameplay/characters/character.tscn" id="1_w5sp3"]
-[ext_resource type="Script" uid="uid://cqoy5bqvcyv5b" path="res://source/common/gameplay/characters/npc/npc.gd" id="2_yivip"]
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/npc.gd" id="2_yivip"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_e1g67"]
-radius = 230.0
-
-[node name="NPC" instance=ExtResource("1_w5sp3")]
+[node name="NPC" unique_id=1922057613 instance=ExtResource("1_w5sp3")]
 script = ExtResource("2_yivip")
-
-[node name="DetectionArea" type="Area2D" parent="." index="10"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" index="0"]
-shape = SubResource("CircleShape2D_e1g67")

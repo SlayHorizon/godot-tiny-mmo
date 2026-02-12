@@ -6,7 +6,6 @@ extends Node2D
 #Clean split cold props (container) vs hot actors (StateSynchronizer).
 #The tradeoffs are acceptable:
 #Props must be direct children.
-#Reordering children in the editor changes IDs unless we re-bake.
 
 ## Compact container for “cold” scene props (static & dynamic), independent from StateSynchronizer.
 ## Provides:
@@ -68,6 +67,12 @@ func _ready() -> void:
 		_bake_static_map()
 
 
+func _notification(what: int) -> void:
+	if Engine.is_editor_hint():
+		if what == NOTIFICATION_CHILD_ORDER_CHANGED:
+			_bake_static_map()
+
+
 ## Bake (editor): all immediate children become "static props"
 func _bake_static_map() -> void:
 	id_to_node.clear()
@@ -77,6 +82,7 @@ func _bake_static_map() -> void:
 		id_to_node[next_id] = node
 		node_to_id[node] = next_id
 		next_id += 1
+	notify_property_list_changed()
 
 
 ## Client side:
