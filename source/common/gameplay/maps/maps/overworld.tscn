@@ -195,7 +195,7 @@ position = Vector2(664, 904)
 activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/ActivableDoor2"), NodePath("../../Traps/ActivableDoor3"), NodePath("../../Traps/ActivableDoor8"), NodePath("../../Traps/ActivableDoor9"), NodePath("../../Traps/ActivableDoor4"), NodePath("../../Traps/ActivableDoor5"), NodePath("../../Traps/ActivableDoor7"), NodePath("../../Traps/ActivableDoor6")]
 
 [node name="NPC" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("24_uytus")]
-position = Vector2(259, 307)
+position = Vector2(145, 1356)
 
 [node name="Traps" type="Node2D" parent="." unique_id=571759958]
 

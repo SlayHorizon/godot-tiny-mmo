@@ -37,10 +37,6 @@ func _ready() -> void:
 	assert(get_parent() is ReplicatedPropsContainer, "HostileNPC must be a child of ReplicatedPropContainer.")
 	if not multiplayer.is_server():
 		set_physics_process(false)
-		### Debug only, should be removed later
-		if OS.has_feature("debug"):
-			set_physics_process(true)
-		###
 		return
 	
 	assert(detection_area != null, "HostileNPC must have a Area2D.")
@@ -57,12 +53,7 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if not multiplayer.is_server():
-		### Debug only, should be removed later 
-		if OS.has_feature("debug"):
-			$StateDisplay.text = EnemyState.keys()[enemy_state]
-		###
-		return
+	if not multiplayer.is_server(): return
 	
 	match enemy_state:
 		EnemyState.RETURNING:

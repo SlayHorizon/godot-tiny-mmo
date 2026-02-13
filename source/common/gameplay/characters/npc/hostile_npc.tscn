@@ -11,7 +11,6 @@ script = ExtResource("2_yivip")
 chase_on_area = true
 distance_to_attack = 20
 max_distance_from_spawn = 100
-min_distance_from_spawn = 20
 move_speed = 20
 detection_area = NodePath("DetectionArea")
 
@@ -19,11 +18,3 @@ detection_area = NodePath("DetectionArea")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" index="0" unique_id=1210478326]
 shape = SubResource("CircleShape2D_e1g67")
-
-[node name="StateDisplay" type="Label" parent="." index="11" unique_id=1873427996]
-z_index = 1
-offset_left = -18.0
-offset_top = -22.0
-offset_right = 22.0
-offset_bottom = -1.0
-text = "IDLE"
