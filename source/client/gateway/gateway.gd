@@ -64,23 +64,49 @@ func _ready() -> void:
 		
 	var debug_id: String = CmdlineUtils.get_parsed_args().get("dum", "")
 	if debug_id:
-		$Debugbutton.visible = true
-		$Debugbutton.pressed.connect(
-			func():
-				var debug_credentials: Dictionary = ConfigFileUtils.load_section_safe(debug_id, "res://data/config/client_config.cfg", ["username", "password"])
-				var d: Dictionary = await do_request(
+		$MainPanel.hide()
+		$PopupPanel.display_waiting_popup()
+		await get_tree().create_timer(2.0).timeout
+		var debug_credentials: Dictionary = ConfigFileUtils.load_section_safe(debug_id, "res://data/config/client_config.cfg", ["username", "password"])
+		var d: Dictionary = await do_request(
 					HTTPClient.Method.METHOD_POST,
 					GatewayApi.login(),
 					{"u": debug_credentials["username"], "p": debug_credentials["password"],
 					GatewayApi.KEY_TOKEN_ID: token}
 				)
-				if d.has("error"):
-					await popup_panel.confirm_message(str(d))
-				$Debugbutton.visible = false
-				fill_connection_info(d["a"]["name"], d["a"]["id"])
-				populate_worlds(d.get("w", {}))
-				_show($WorldSelection, false)
-		)
+		if d.has("error"):
+			await popup_panel.confirm_message(str(d))
+			$MainPanel.show()
+		else:
+			handle_success_login(d)
+
+
+func handle_success_login(d: Dictionary) -> void:
+	var account_info: Dictionary = d.get("a", {})
+	var worlds: Dictionary = d.get("w", {})
+
+	account_name = account_info.get("name", "")
+	account_id = account_info.get("id", 0)
+	current_character_id = account_info.get("character_id", 0)
+
+	var last_world_name: String = account_info.get("world_name", "")
+	var is_last_world_online: bool = false
+
+	for world_id: String in worlds:
+		if worlds[world_id].get("info", {}).get("name", "-1") == last_world_name:
+			current_world_id = world_id.to_int()
+			is_last_world_online = true
+
+	if is_last_world_online:
+		$AlreadyConnectedPanel/ContinueButton.text = "Continue\n%s - %s" % [last_world_name, account_name]
+		$PopupPanel.hide()
+		$AlreadyConnectedPanel.show()
+	else:
+		$PopupPanel.hide()
+		$MainPanel.show()
+		fill_connection_info(account_name, account_id)
+		populate_worlds(worlds)
+		_show($WorldSelection, false)
 
 
 func do_request(
@@ -108,8 +134,7 @@ func do_request(
 	var args: Array = await http_request.request_completed
 	var result: int = args[0]
 	if result != OK:
-		print("ERROR?, TIMEOUT?")
-		return {"error": 1, "ERROR?": "TIMEOUT?"}
+		return {"error": 1, "ERROR?": "TIMEOUT?", "code": result}
 	
 	var response_code: int = args[1]
 	var headers: PackedStringArray = args[2]
@@ -402,7 +427,7 @@ func _on_continue_button_pressed() -> void:
 			GatewayApi.KEY_TOKEN_ID: token,
 			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
 			GatewayApi.KEY_WORLD_ID: current_world_id,
-			GatewayApi.KEY_CHAR_ID: current_world_id
+			GatewayApi.KEY_CHAR_ID: current_character_id
 		}
 	)
 	if d.has("error"):

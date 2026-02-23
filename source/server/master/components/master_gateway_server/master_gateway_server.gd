@@ -52,9 +52,21 @@ func login_request(peer_id: int, username: String, password: String) -> void:
 		login_result.rpc_id(gateway_id, peer_id, {"error": 51})
 	else:
 		account.peer_id = peer_id
+		# Check if latest world is online (needs rework)
+		var last_connected_world_online: bool = false
+		for world_id: int in world_manager.connected_worlds:
+			if world_manager.connected_worlds.get(world_id, {}).get("info", {}).get("name", "") == account.last_world_name:
+				last_connected_world_online = true
+		if not last_connected_world_online:
+			account.last_world_name = ""
 		login_result.rpc_id(
 			gateway_id, peer_id,
-			{"name": account.username, "id": account.id}
+			{
+				"name": account.username,
+				"id": account.id,
+				"world_name": account.last_world_name,
+				"character_id": account.last_character_id
+			}
 		)
 
 
@@ -88,14 +100,14 @@ func account_creation_result(_peer_id: int, _result_code: int, _data: Dictionary
 @rpc("any_peer")
 func create_player_character_request(peer_id: int, username: String, character_data: Dictionary, world_id: int) -> void:
 	var gateway_id: int = multiplayer_api.get_remote_sender_id()
-	if authentication_manager.account_collection.collection.has(username):
-		var account := authentication_manager.account_collection.collection[username] as AccountResource
-		if account.peer_id == peer_id and world_manager.connected_worlds.has(world_id):
-			world_manager.create_player_character_request.rpc_id(
-				world_id, gateway_id, peer_id, account.username, character_data
-			)
-		#else:
-			#player_character_creation_result.rpc_id(gateway_id, peer_id, 80)
+	var account: AccountResource = authentication_manager.account_collection.collection.get(username)
+	if not account or account.peer_id != peer_id:
+		return
+	if not world_manager.connected_worlds.has(world_id):
+		return
+	world_manager.create_player_character_request.rpc_id(
+		world_id, gateway_id, peer_id, account.username, character_data
+	)
 
 
 @rpc("authority")
@@ -128,18 +140,24 @@ func receive_player_characters(_player_characters: Dictionary) -> void:
 @rpc("any_peer")
 func request_login(peer_id: int, username: String, world_id: int, character_id: int) -> void:
 	var gateway_id: int = multiplayer_api.get_remote_sender_id()
-	if (
-		world_manager.connected_worlds.has(world_id)
-		and authentication_manager.account_collection.collection.has(username)
-		and authentication_manager.account_collection.collection[username].peer_id == peer_id
-	):
-		world_manager.request_login.rpc_id(
-			world_id,
-			gateway_id,
-			peer_id,
-			username,
-			character_id
-		)
+	var account: AccountResource = authentication_manager.account_collection.collection.get(username)
+	if not account or account.peer_id != peer_id:
+		return
+
+	if not world_manager.connected_worlds.has(world_id):
+		return
+
+	account.last_world_name = world_manager.connected_worlds[world_id].get("info", {}).get("name", "")
+	account.last_character_id = character_id
+	if OS.has_feature("debug"):
+		authentication_manager.save_account_collection()
+	world_manager.request_login.rpc_id(
+		world_id,
+		gateway_id,
+		peer_id,
+		username,
+		character_id
+	)
 
 
 @rpc("any_peer")

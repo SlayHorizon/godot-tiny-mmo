@@ -705,15 +705,6 @@ volume_db = -12.0
 accept_gzip = false
 timeout = 7.0
 
-[node name="Debugbutton" type="Button" parent="." unique_id=1333002847]
-visible = false
-layout_mode = 0
-offset_left = 342.0
-offset_top = 19.0
-offset_right = 598.48145
-offset_bottom = 93.422356
-text = "Debug Account Available"
-
 [node name="AlreadyConnectedPanel" type="Control" parent="." unique_id=1467439334]
 visible = false
 layout_mode = 1

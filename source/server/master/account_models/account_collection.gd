@@ -2,10 +2,9 @@ class_name AccountResourceCollection
 extends Resource
 
 
-@export var collection: Dictionary = {}
+@export var collection: Dictionary[StringName, AccountResource]
 
-@export var next_account_id: int = 0
-#@export var next_player_id: int = 0
+@export var next_account_id: int = 1
 
 
 func get_new_account_id() -> int:

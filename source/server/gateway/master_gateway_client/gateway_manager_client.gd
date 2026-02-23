@@ -98,9 +98,6 @@ func player_character_creation_result(peer_id: int, result: Dictionary) -> void:
 	response_received.emit(
 		{"t-id": peer_id, "data": result}
 	)
-	#gateway.player_character_creation_result.rpc_id(
-		#peer_id, result_code
-	#)
 
 
 @rpc("any_peer")
