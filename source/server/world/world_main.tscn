@@ -27,6 +27,7 @@ instance_manager = NodePath("InstanceManager")
 
 [node name="WorldClock" type="Node" parent="WorldServer" unique_id=1360324802]
 script = ExtResource("4_ve2xu")
+day_speed = 1440
 enabled = true
 metadata/_custom_type_script = "uid://vetsypglioqo"
 
