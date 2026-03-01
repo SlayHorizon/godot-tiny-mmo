@@ -11,7 +11,11 @@ const HOURS_PER_DAY: float = 24.0
 @export var day_speed: int = 60 ## In-game day cycle in real-time seconds.
 @export var day_start_hour: int = 6
 @export var night_start_hour: int = 18
-@export var enabled: bool
+@export var enabled: bool:
+	set(value):
+		enabled = value
+		if is_inside_tree():
+			set_process(value)
 
 var is_day: bool:
 	get: return check_is_day(current_hour)
@@ -32,13 +36,13 @@ func _ready() -> void:
 		current_hour = int(get_game_time_hour())
 		_previous_hour = current_hour
 		_was_day = is_day
-		enabled = true
+		print(enabled)
 	elif OS.has_feature("client"):
 		Client.connection_changed.connect(_on_client_connected)
+	set_process(enabled)
 
 
 func _process(_delta: float) -> void:
-	if not enabled: return
 	current_hour = int(get_game_time_hour())
 	if current_hour != _previous_hour:
 		_previous_hour = current_hour
@@ -52,9 +56,7 @@ func _handle_time_change() -> void:
 		_was_day = is_day
 		if is_day:
 			day_started.emit()
-			print("day started, hour:", current_hour)
 		else:
-			print("Night started, hour:", current_hour)
 			night_started.emit()
 
 
