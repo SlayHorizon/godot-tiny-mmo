@@ -36,7 +36,6 @@ func _ready() -> void:
 		current_hour = int(get_game_time_hour())
 		_previous_hour = current_hour
 		_was_day = is_day
-		print(enabled)
 	elif OS.has_feature("client"):
 		Client.connection_changed.connect(_on_client_connected)
 	set_process(enabled)
