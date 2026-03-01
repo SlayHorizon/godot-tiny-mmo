@@ -112,6 +112,10 @@ func _input(event: InputEvent) -> void:
 			accept_event()
 			_open_peek_for_typing()
 
+	if (event is InputEventMouseButton and event.is_pressed()) and peek_feed_message_edit.has_focus():
+		if not peek_feed_message_edit.get_rect().has_point(event.global_position):
+			peek_feed_message_edit.release_focus()
+
 
 func _open_peek_for_typing() -> void:
 	peek_feed.show()
