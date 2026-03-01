@@ -7,12 +7,16 @@ extends CanvasModulate
 @export var enabled: bool:
 	set(value):
 		enabled = value
-		set_process(value)
+		if is_inside_tree():
+			set_process(value)
 
 
 func _enter_tree() -> void:
 	if multiplayer.is_server():
 		queue_free()
+
+
+func _ready() -> void:
 	set_process(enabled)
 
 
