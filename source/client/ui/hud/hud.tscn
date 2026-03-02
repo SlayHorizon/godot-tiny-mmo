@@ -89,6 +89,7 @@ theme_override_constants/separation = 10
 [node name="ItemSlotButton1" type="Button" parent="ItemSlots/VBoxContainer" unique_id=365109255]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"SlotButton"
 theme_override_constants/icon_max_width = 64
 text = "1"
@@ -97,6 +98,7 @@ icon_alignment = 1
 [node name="ItemSlotButton2" type="Button" parent="ItemSlots/VBoxContainer" unique_id=868745578]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"SlotButton"
 theme_override_constants/icon_max_width = 64
 text = "2

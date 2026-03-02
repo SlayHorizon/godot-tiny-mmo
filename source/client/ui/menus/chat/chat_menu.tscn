@@ -88,6 +88,7 @@ scroll_following = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.34902)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_14md2")
 placeholder_text = "Enter your message here"
 
@@ -100,6 +101,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -433.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -108,7 +110,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -445.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture1D_oenax")

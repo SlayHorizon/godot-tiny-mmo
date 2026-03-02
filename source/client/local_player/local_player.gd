@@ -46,6 +46,12 @@ func process_movement() -> void:
 
 
 func process_input() -> void:
+	var gui_focus: Control = get_viewport().gui_get_focus_owner()
+	if gui_focus is LineEdit or gui_focus is TextEdit:
+		input_direction = Vector2.ZERO
+		action_input = false
+		return
+
 	input_direction = Input.get_vector("left", "right", "up", "down")
 	action_input = Input.is_action_pressed("action")
 	equipment_component.process_input(self)

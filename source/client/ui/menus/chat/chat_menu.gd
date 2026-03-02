@@ -112,6 +112,18 @@ func _input(event: InputEvent) -> void:
 			accept_event()
 			_open_peek_for_typing()
 
+	if event is InputEventMouseButton and event.is_pressed():
+		var mouse_position: Vector2 = event.global_position
+
+		if peek_feed_message_edit.has_focus() and not peek_feed_message_edit.get_global_rect().has_point(mouse_position):
+			peek_feed_message_edit.release_focus()
+		
+		if full_feed_message_edit.has_focus() and not full_feed_message_edit.get_global_rect().has_point(mouse_position):
+			full_feed_message_edit.release_focus()
+
+		if full_feed.visible and not full_feed.get_global_rect().has_point(mouse_position):
+			_on_close_button_pressed()
+
 
 func _open_peek_for_typing() -> void:
 	peek_feed.show()
@@ -417,8 +429,8 @@ func _title_for_current() -> String:
 		var other_id: int = current_dm_other_id
 		if other_id <= 0:
 			other_id = _dm_other_id_from_conversation(current_conversation_id, int(ClientState.player_id))
-		var name: String = str(dm_name_by_player_id.get(other_id, ""))
-		return name if not name.is_empty() else "DM %d" % other_id
+		var title_text: String = str(dm_name_by_player_id.get(other_id, ""))
+		return title_text if not title_text.is_empty() else "DM %d" % other_id
 
 	if _is_system_conversation(current_conversation_id):
 		return "System"
@@ -573,12 +585,12 @@ func _update_dm_button_label(convo_id: String, other_id: int) -> void:
 	if button == null:
 		return
 
-	var name: String = str(dm_name_by_player_id.get(other_id, ""))
-	if name.is_empty():
-		name = "DM %d" % other_id
+	var button_text: String = str(dm_name_by_player_id.get(other_id, ""))
+	if button_text.is_empty():
+		button_text = "DM %d" % other_id
 
 	var unread: int = _get_unread(convo_id)
-	button.text = ("(%d) %s" % [unread, name]) if unread > 0 else name
+	button.text = ("(%d) %s" % [unread, button_text]) if unread > 0 else button_text
 
 
 func _request_player_name_if_needed(player_id: int) -> void:

@@ -3,8 +3,12 @@ extends CanvasModulate
 
 
 @export_group("Day Night Cycle")
-@export var enabled: bool = false
 @export var light_texture: GradientTexture1D
+@export var enabled: bool:
+	set(value):
+		enabled = value
+		if is_inside_tree():
+			set_process(value)
 
 
 func _enter_tree() -> void:
@@ -12,7 +16,10 @@ func _enter_tree() -> void:
 		queue_free()
 
 
-func _process(delta: float) -> void:
-	if not enabled: return
+func _ready() -> void:
+	set_process(enabled)
+
+
+func _process(_delta: float) -> void:
 	var gradient_pos: float = Client.world_clock.get_day_progress()
 	self.color = light_texture.gradient.sample(gradient_pos)

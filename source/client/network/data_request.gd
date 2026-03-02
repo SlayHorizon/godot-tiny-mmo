@@ -36,9 +36,7 @@ func finish(data: Dictionary) -> void:
 	if _completed: return
 	_completed = true
 	
-	if _timer and _timer.timeout.is_connected(_on_timer_timeout):
-		_timer.timeout.disconnect(_on_timer_timeout)
-
+	disconnect_timer()
 	finished.emit(data, Error.OK)
 
 
@@ -46,8 +44,13 @@ func cancel() -> void:
 	if _completed: return
 	_completed = true
 	
-	if _timer and _timer.timeout.is_connected(_on_timer_timeout):
-		_timer.timeout.disconnect(_on_timer_timeout)
-
+	disconnect_timer()
 	Client.cancel_request_data(request_id)
 	finished.emit({}, Error.CANCELLED)
+
+
+func disconnect_timer() -> void:
+	if not _timer: return
+	if _timer.timeout.is_connected(_on_timer_timeout):
+		_timer.timeout.disconnect(_on_timer_timeout)
+	
