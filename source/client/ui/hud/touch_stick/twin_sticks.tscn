@@ -1,11 +1,12 @@
 [gd_scene format=3 uid="uid://l5oto05m20wi"]
 
+[ext_resource type="Script" uid="uid://cwf2vgd3eef62" path="res://source/client/ui/hud/touch_stick/twin_sticks.gd" id="1_iguff"]
 [ext_resource type="Script" uid="uid://c0g2wg2nlsmvg" path="res://source/client/ui/shared/touch_stick.gd" id="1_tc8qe"]
 [ext_resource type="Texture2D" uid="uid://b0aq42rwojdse" path="res://assets/sprites/gui/joysticks/Joystick.png" id="2_ccom4"]
 [ext_resource type="Texture2D" uid="uid://7afnrb8yx23g" path="res://assets/sprites/gui/joysticks/SmallHandleFilledGrey.png" id="3_ccom4"]
 [ext_resource type="Texture2D" uid="uid://bde22w6tyhe02" path="res://assets/sprites/gui/joysticks/JoystickSplitted.png" id="4_7fqm7"]
 
-[node name="TwinSticks" type="Control" unique_id=2047762390]
+[node name="TwinSticks" type="Control" unique_id=2047762390 node_paths=PackedStringArray("move_stick", "shoot_stick")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,6 +14,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_behavior_recursive = 1
+script = ExtResource("1_iguff")
+move_stick = NodePath("HBoxContainer/LeftStickContainer/MoveStick")
+shoot_stick = NodePath("HBoxContainer/RightStickContainer/ShootStick")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=557758411]
 layout_mode = 1
@@ -92,6 +96,7 @@ script = ExtResource("1_tc8qe")
 enabled = true
 base = NodePath("Base")
 handle = NodePath("Base/Handle")
+use_input_actions = true
 metadata/_custom_type_script = "uid://c0g2wg2nlsmvg"
 
 [node name="Base" type="TextureRect" parent="HBoxContainer/RightStickContainer/ShootStick" unique_id=344123344]
