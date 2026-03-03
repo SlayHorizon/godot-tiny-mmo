@@ -63,6 +63,13 @@ func _ready() -> void:
 		assert(handle.get_parent() == base, "TouchStick: handle must be child of base.")
 		handle.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+	if use_input_actions:
+		for action_name: StringName in [action_up, action_down, action_left, action_right]:
+			if not InputMap.has_action(action_name):
+				use_input_actions = false
+				printerr("TouchStick: input action disabled. Couldn't find action: ", action_name)
+				break
+
 	self.resized.connect(func() -> void:
 		_base_default_pos = base.global_position
 		base.global_position = _base_default_pos	
