@@ -1,0 +1,125 @@
+[gd_scene format=3 uid="uid://l5oto05m20wi"]
+
+[ext_resource type="Script" uid="uid://c0g2wg2nlsmvg" path="res://source/client/ui/shared/touch_stick.gd" id="1_tc8qe"]
+[ext_resource type="Texture2D" uid="uid://b0aq42rwojdse" path="res://assets/sprites/gui/joysticks/Joystick.png" id="2_ccom4"]
+[ext_resource type="Texture2D" uid="uid://7afnrb8yx23g" path="res://assets/sprites/gui/joysticks/SmallHandleFilledGrey.png" id="3_ccom4"]
+[ext_resource type="Texture2D" uid="uid://bde22w6tyhe02" path="res://assets/sprites/gui/joysticks/JoystickSplitted.png" id="4_7fqm7"]
+
+[node name="TwinSticks" type="Control" unique_id=2047762390]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_behavior_recursive = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=557758411]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_behavior_recursive = 1
+mouse_filter = 2
+
+[node name="LeftStickContainer" type="MarginContainer" parent="HBoxContainer" unique_id=125176861]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_behavior_recursive = 1
+mouse_filter = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="MoveStick" type="Control" parent="HBoxContainer/LeftStickContainer" unique_id=103196360 node_paths=PackedStringArray("base", "handle")]
+layout_mode = 2
+focus_behavior_recursive = 1
+mouse_filter = 2
+script = ExtResource("1_tc8qe")
+base = NodePath("Base")
+handle = NodePath("Base/Handle")
+use_input_actions = true
+action_up = &"up"
+action_down = &"down"
+action_left = &"left"
+action_right = &"right"
+metadata/_custom_type_script = "uid://c0g2wg2nlsmvg"
+
+[node name="Base" type="TextureRect" parent="HBoxContainer/LeftStickContainer/MoveStick" unique_id=1332476378]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -150.0
+offset_right = 150.0
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("2_ccom4")
+expand_mode = 1
+
+[node name="Handle" type="TextureRect" parent="HBoxContainer/LeftStickContainer/MoveStick/Base" unique_id=2008321877]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_ccom4")
+expand_mode = 1
+
+[node name="RightStickContainer" type="MarginContainer" parent="HBoxContainer" unique_id=1299753173]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_behavior_recursive = 1
+mouse_filter = 2
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="ShootStick" type="Control" parent="HBoxContainer/RightStickContainer" unique_id=1081673719 node_paths=PackedStringArray("base", "handle")]
+layout_mode = 2
+script = ExtResource("1_tc8qe")
+base = NodePath("Base")
+handle = NodePath("Base/Handle")
+metadata/_custom_type_script = "uid://c0g2wg2nlsmvg"
+
+[node name="Base" type="TextureRect" parent="HBoxContainer/RightStickContainer/ShootStick" unique_id=344123344]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -150.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = ExtResource("4_7fqm7")
+expand_mode = 1
+
+[node name="Handle" type="TextureRect" parent="HBoxContainer/RightStickContainer/ShootStick/Base" unique_id=958451044]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_ccom4")
+expand_mode = 1
