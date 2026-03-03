@@ -37,6 +37,7 @@ layout_mode = 2
 focus_behavior_recursive = 1
 mouse_filter = 2
 script = ExtResource("1_tc8qe")
+enabled = true
 base = NodePath("Base")
 handle = NodePath("Base/Handle")
 use_input_actions = true
@@ -88,6 +89,7 @@ theme_override_constants/margin_bottom = 20
 [node name="ShootStick" type="Control" parent="HBoxContainer/RightStickContainer" unique_id=1081673719 node_paths=PackedStringArray("base", "handle")]
 layout_mode = 2
 script = ExtResource("1_tc8qe")
+enabled = true
 base = NodePath("Base")
 handle = NodePath("Base/Handle")
 metadata/_custom_type_script = "uid://c0g2wg2nlsmvg"
