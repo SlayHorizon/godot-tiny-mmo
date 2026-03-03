@@ -8,6 +8,12 @@ enum StickMode {
 	DYNAMIC
 }
 
+enum SnapMode {
+	NONE,
+	SNAP_4,
+	SNAP_8
+}
+
 
 signal stick_pressed
 signal stick_released
@@ -25,6 +31,8 @@ signal stick_changed(direction: Vector2)
 @export var handle: TextureRect
 @export_group("Joystick Settings")
 @export var stick_mode: StickMode
+@export var snap_mode: SnapMode
+@export var snap_handle: bool
 @export_range(0.0, 0.9) var dead_zone: float = 0.2
 @export_range(0, 200) var handle_radius: float = 75.0
 
@@ -92,7 +100,11 @@ func _update_joystick(touch_pos: Vector2) -> void:
 		direction = Vector2.ZERO
 		offset = Vector2.ZERO
 	else:
-		direction = offset.normalized()
+		var dir: Vector2 = offset.normalized()
+		direction = _snap_direction(dir) if snap_mode != SnapMode.NONE else dir
+	
+	if snap_handle:
+		offset = direction * handle_radius
 
 	match stick_mode:
 		StickMode.FIXED:
@@ -121,6 +133,22 @@ func _handle_input_actions() -> void:
 			Input.action_press(action_name, strength)
 		else:
 			Input.action_release(action_name)
+
+
+func _snap_direction(dir: Vector2) -> Vector2:
+	if dir == Vector2.ZERO: return Vector2.ZERO
+
+	var angle: float = dir.angle()
+	var desired_direction: Vector2 = dir
+	match snap_mode:
+		SnapMode.SNAP_4:
+			var snapped_angle = round(angle / (PI/2))  * (PI/2)
+			desired_direction = Vector2.RIGHT.rotated(snapped_angle)
+		SnapMode.SNAP_8:
+			var snapped_angle = round(angle / (PI/4))  * (PI/4)
+			desired_direction = Vector2.RIGHT.rotated(snapped_angle)
+	
+	return desired_direction
 
 
 func _is_touch_inside_area(touch_pos: Vector2) -> bool:
