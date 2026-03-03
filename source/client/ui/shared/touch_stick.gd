@@ -4,13 +4,18 @@ extends Control
 
 
 enum StickMode {
+	## Touch is detected only inside the base area.
 	FIXED,
+	## Touch is detected outside the base area. also move the base to the touch position.
 	DYNAMIC
 }
 
 enum SnapMode {
+	## No snapping. free direction.
 	NONE,
+	## Snaps the direction to 4 angles. (up, down, left, right)
 	SNAP_4,
+	## Snaps the direction to 8 angles. (includes diagonals)
 	SNAP_8
 }
 
@@ -27,23 +32,36 @@ signal stick_changed(direction: Vector2)
 
 
 @export_category("Joystick")
+## The joystick base. Must be a child of this node.
 @export var base: TextureRect
+## The joystick handle. Must be a child of the base.
 @export var handle: TextureRect
+
 @export_group("Joystick Settings")
+## Joystick behavior in relation to touch inputs.[br][br]
+## [b][color=yellow]IMPORTANT:[/color][/b][br]
+## The area of the base defines the touch area for [b]FIXED[/b] mode to work. [br]
+## The area of this TouchStick node defines the touch area for [b]DYNAMIC[/b] mode to work.
 @export var stick_mode: StickMode
+## Defines how the joystick direction behaves.
 @export var snap_mode: SnapMode
+## When enabled, snaps the handle to the maximum radius in the current direction.
 @export var snap_handle: bool
+## Maximum distance to trigger movement.
 @export_range(0.0, 0.9) var dead_zone: float = 0.2
+## The max distance the handle can move from the center of the base.
 @export_range(0, 200) var handle_radius: float = 75.0
 
 @export_category("Input Settings")
+## Trigger [b][color=yellow]InputMap[/color][/b] actions when enabled.
 @export var use_input_actions: bool
 @export_group("Actions Name")
-@export var action_up: StringName
-@export var action_down: StringName
-@export var action_left: StringName
-@export var action_right: StringName
+@export var action_up: StringName ## Negative_Y
+@export var action_down: StringName ## Positive_Y
+@export var action_left: StringName ## Negative_X
+@export var action_right: StringName ## Positive_X
 
+## Stick direction.
 var direction: Vector2:
 	set(value):
 		if direction == value: return
