@@ -96,7 +96,6 @@ script = ExtResource("1_tc8qe")
 enabled = true
 base = NodePath("Base")
 handle = NodePath("Base/Handle")
-use_input_actions = true
 metadata/_custom_type_script = "uid://c0g2wg2nlsmvg"
 
 [node name="Base" type="TextureRect" parent="HBoxContainer/RightStickContainer/ShootStick" unique_id=344123344]
