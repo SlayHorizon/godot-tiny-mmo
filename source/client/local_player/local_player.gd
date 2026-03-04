@@ -6,6 +6,7 @@ var speed: float = 75.0
 var hand_pivot_speed: float = 17.5
 
 var input_direction: Vector2 = Vector2.ZERO
+var look_direction: Vector2 = Vector2.ZERO # Preparation for multi input support.
 var action_input: bool = false
 
 var fid_position: int

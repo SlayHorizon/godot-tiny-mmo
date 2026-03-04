@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://pkprr0ll1y44" path="res://source/client/ui/hud/item_slots.gd" id="4_8qpw0"]
 [ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
 [ext_resource type="Script" uid="uid://claf178meo0f7" path="res://source/client/ui/hud/notification_popup.gd" id="6_yow4d"]
+[ext_resource type="PackedScene" uid="uid://l5oto05m20wi" path="res://source/client/ui/hud/touch_stick/twin_sticks.tscn" id="7_popxh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
 bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
@@ -52,6 +53,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_rchld")
+
+[node name="TwinSticks" parent="." unique_id=2047762390 instance=ExtResource("7_popxh")]
+layout_mode = 1
 
 [node name="Chat" parent="." unique_id=1820524604 instance=ExtResource("2_xs74v")]
 layout_mode = 1
