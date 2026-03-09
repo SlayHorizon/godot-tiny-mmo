@@ -17,7 +17,7 @@ var fid_pivot: int
 var synchronizer_manager: StateSynchronizerManagerClient
 
 @onready var camera_2d: Camera2D = $Camera2D
-@onready var input: InputComponent = $InputComponent
+@onready var controller: InputComponent = $InputComponent
 
 
 func _ready() -> void:
@@ -47,15 +47,12 @@ func process_movement() -> void:
 
 
 func process_input() -> void:
-	var gui_focus: Control = get_viewport().gui_get_focus_owner()
-	if gui_focus is LineEdit or gui_focus is TextEdit:
+	if _has_gui_focus():
 		input_direction = Vector2.ZERO
-		action_input = false
 		return
 
-	input_direction = input.get_move_direction()
-
-	var look_dir: Vector2 = input.get_look_direction()
+	input_direction = controller.get_move_direction()
+	var look_dir: Vector2 = controller.get_look_direction()
 	if look_dir != Vector2.ZERO:
 		look_direction = look_dir
 
@@ -67,8 +64,8 @@ func process_animation(delta: float) -> void:
 
 
 func update_hand_pivot(delta: float) -> void:
-	var hands_rot_pos: Vector2 = hand_pivot.global_position
-	var look_angle = PI - look_direction.angle() if flipped else look_direction.angle()
+	var to_flip: int = -1 if flipped else 1
+	var look_angle: float = atan2(look_direction.y, look_direction.x * to_flip)
 	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_angle, delta * hand_pivot_speed)
 
 
@@ -98,3 +95,8 @@ func _on_settings_changed(property: StringName, value: Variant) -> void:
 
 func set_camera_zoom(zoom: Vector2) -> void:
 	camera_2d.zoom = zoom
+
+
+func _has_gui_focus() -> bool:
+	var focus: Control = get_viewport().gui_get_focus_owner()
+	return focus is LineEdit or focus is TextEdit
