@@ -13,6 +13,8 @@ zoom = Vector2(3, 3)
 [node name="AnimatedSprite2D" parent="." index="4"]
 frame_progress = 0.0
 
-[node name="InputComponent" type="Node2D" parent="." index="12" unique_id=962044061]
+[node name="InputComponent" type="Node2D" parent="." index="12" unique_id=962044061 node_paths=PackedStringArray("node_owner")]
 script = ExtResource("3_yesbm")
+enabled = true
+node_owner = NodePath("..")
 metadata/_custom_type_script = "uid://bt74wxkb47dp0"
