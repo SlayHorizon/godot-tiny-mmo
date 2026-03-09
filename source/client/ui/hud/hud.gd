@@ -17,12 +17,23 @@ func _ready() -> void:
 	notification_button.disabled = true
 	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
-
 	for button: Button in $MenuOverlay/VBoxContainer.get_children():
 		if button.text.containsn("CLOSE"):
 			button.pressed.connect(_on_overlay_menu_close_button_pressed)
 		else:
 			button.pressed.connect(display_menu.bind(button.text.to_lower()))
+
+	ClientState.local_player_ready.connect(func(local_player: LocalPlayer) -> void: 
+		local_player.input.input_changed.connect(_on_input_changed)
+	, CONNECT_ONE_SHOT)
+
+
+func _on_input_changed(input_type) -> void:
+	## Debug
+	if input_type == InputComponent.InputType.TOUCH and not $TwinSticks.enabled:
+		$TwinSticks.enabled = true
+	else:
+		$TwinSticks.enabled = false
 
 
 func _on_overlay_menu_close_button_pressed() -> void:

@@ -17,7 +17,7 @@ var fid_pivot: int
 var synchronizer_manager: StateSynchronizerManagerClient
 
 @onready var camera_2d: Camera2D = $Camera2D
-@onready var mouse: Node2D = $MouseComponent
+@onready var input: InputComponent = $InputComponent
 
 
 func _ready() -> void:
@@ -53,30 +53,23 @@ func process_input() -> void:
 		action_input = false
 		return
 
-	input_direction = Input.get_vector("left", "right", "up", "down")
-	action_input = Input.is_action_pressed("action")
-	equipment_component.process_input(self)
-	if action_input and equipment_component.can_use(&"weapon", 0):
-		Client.request_data(&"action.perform", Callable(),
-		{"d": global_position.direction_to(mouse.position), "i": 0}, InstanceClient.current.name)
-		#Client.request_data(&"action.perform", Callable(),
-		#{"d": global_position.direction_to(mouse.position), "i": 0})
+	input_direction = input.get_move_direction()
+
+	var look_dir: Vector2 = input.get_look_direction()
+	if look_dir != Vector2.ZERO:
+		look_direction = look_dir
 
 
 func process_animation(delta: float) -> void:
-	flipped = (mouse.position.x < global_position.x)
+	flipped = look_direction.x < 0
 	update_hand_pivot(delta)
 	anim = Animations.RUN if input_direction else Animations.IDLE
 
 
 func update_hand_pivot(delta: float) -> void:
 	var hands_rot_pos: Vector2 = hand_pivot.global_position
-	var flips: int = -1 if flipped else 1
-	var look_at_mouse: float = atan2(
-		(mouse.position.y - hands_rot_pos.y),
-		(mouse.position.x - hands_rot_pos.x) * flips
-	)
-	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_at_mouse, delta * hand_pivot_speed)
+	var look_angle = PI - look_direction.angle() if flipped else look_direction.angle()
+	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_angle, delta * hand_pivot_speed)
 
 
 func process_synchronization() -> void:
