@@ -45,6 +45,9 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadButton and event.is_pressed():
 		set_input_type(InputType.GAMEPAD)
 
+	elif event is InputEventJoypadMotion:
+		set_input_type(InputType.GAMEPAD)
+	
 	elif event is InputEventScreenTouch and event.is_pressed():
 		set_input_type(InputType.TOUCH)
 
