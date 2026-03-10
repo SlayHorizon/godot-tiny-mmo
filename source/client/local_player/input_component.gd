@@ -11,7 +11,7 @@ enum InputType {
 
 signal input_changed(input_type: InputType)
 
-
+#region public variables
 @export var enabled: bool:
 	set(value):
 		enabled = value
@@ -21,8 +21,8 @@ signal input_changed(input_type: InputType)
 
 var input_type: InputType
 
-var is_keyboard_enabled: bool
-var is_mouse_enabled: bool
+var is_mouse_and_keyboard_enabled: bool:
+	get: return input_type == InputType.MOUSE_KEYBOARD
 
 var is_gamepad_enabled: bool:
 	get: return input_type == InputType.GAMEPAD
@@ -31,18 +31,24 @@ var is_touch_screen_enabled: bool:
 	get: return input_type == InputType.TOUCH
 
 var is_mouse_onscreen: bool:
-	get: return (is_mouse_enabled and _mouse_in_game and _windows_focus)
+	get: return (is_mouse_and_keyboard_enabled and _mouse_in_game and _windows_focus)
 
+#endregion
+
+#region private variables
 var _windows_focus: bool = true
 var _mouse_in_game: bool = true
+var _is_mouse_movemet: bool
 var _was_stick_active: bool
 
+#endregion
 
+#region Runtime
 func _ready() -> void:
 	if DisplayServer.is_touchscreen_available():
 		_set_input_type(InputType.TOUCH)
-	if not node_owner: 
-		node_owner = self
+
+	node_owner = self if not node_owner else node_owner
 	set_process_input(enabled)
 
 
@@ -50,17 +56,18 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if not _is_event_relevant(event): return
 
-	match event.get_class():
-		"InputEventKey", "InputEventMouseButton", "InputEventMouseMotion":
-			_set_input_type(InputType.MOUSE_KEYBOARD)
-			if event is InputEventKey: 
-				is_keyboard_enabled = true
-			if event is InputEventMouseButton or event is InputEventMouseMotion:
-				is_mouse_enabled = true
-		"InputEventJoypadButton", "InputEventJoypadMotion":
-			_set_input_type(InputType.GAMEPAD)
-		"InputEventScreenTouch":
-			_set_input_type(InputType.TOUCH)
+	if event is InputEventKey:
+		_set_input_type(InputType.MOUSE_KEYBOARD)
+		
+	elif event is InputEventMouseMotion or event is InputEventMouseButton:
+		_set_input_type(InputType.MOUSE_KEYBOARD)
+		_is_mouse_movemet = true
+	
+	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		_set_input_type(InputType.GAMEPAD)
+
+	elif event is InputEventScreenTouch:
+		_set_input_type(InputType.TOUCH)
 
 
 func _notification(what: int) -> void:
@@ -74,26 +81,39 @@ func _notification(what: int) -> void:
 		NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 			_windows_focus = false
 
+#endregion
 
+#region private helpers
 func _set_input_type(type: InputType) -> void:
 	if input_type == type: return
-	if type != InputType.MOUSE_KEYBOARD:
-		is_mouse_enabled = false
-		is_keyboard_enabled = false
+	if type == InputType.MOUSE_KEYBOARD:
+		_was_stick_active = false
+	else:
+		_is_mouse_movemet = false
 	input_type = type
 	input_changed.emit(type)
 
 
 func _is_event_relevant(event: InputEvent) -> bool:
-	if event is InputEventMouseMotion: return not is_mouse_enabled
+	if event is InputEventMouseMotion: return is_mouse_and_keyboard_enabled
 	if event is InputEventJoypadMotion: return abs(event.axis_value) > 0.5 # Hardcoded deadzone
 	return event.is_pressed()
 
 
-func _is_stick_active() -> bool:
-	return Input.get_vector("look_left", "look_right", "look_up", "look_down").length() > 0.5
+func _get_look_vector() -> Vector2:
+	return Input.get_vector("look_left", "look_right", "look_up", "look_down")
 
 
+func _get_move_vector() -> Vector2:
+	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
+
+
+func _is_right_stick_active() -> bool:
+	return _get_look_vector().length() > 0.5
+
+#endregion
+
+#region public methods
 ## Returns global mouse position relative to world. If mouse not enabled or mouse offscreen, returns [Vector2.ZERO]
 func get_mouse_world_position() -> Vector2:
 	if is_mouse_onscreen: 
@@ -107,7 +127,7 @@ func get_mouse_world_position() -> Vector2:
 ## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
 func get_move_direction() -> Vector2:
 	if not enabled: return Vector2.ZERO
-	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	return _get_move_vector().normalized()
 
 
 ## Returns normalized look direction. If no intentional direction, returns [Vector2.ZERO][br]
@@ -117,42 +137,47 @@ func get_move_direction() -> Vector2:
 ## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
 func get_look_direction() -> Vector2:
 	if not enabled: return Vector2.ZERO
-
-	var look_dir: Vector2 = Input.get_vector("look_left", "look_right", "look_up", "look_down")
-	if look_dir != Vector2.ZERO: 
-		is_mouse_enabled = false # Prevent using mouse pos on next direction getter
-		return look_dir
-	if is_mouse_onscreen and not _is_stick_active():
+	
+	var look_dir: Vector2 = _get_look_vector()
+	if look_dir != Vector2.ZERO:
+		_is_mouse_movemet = false
+		return look_dir.normalized()
+	
+	if _is_mouse_movemet:
 		return (get_mouse_world_position() - node_owner.global_position).normalized()
+	
 	return Vector2.ZERO
 
 
+## Returns [true] when the user is pressing the attack action event.
 func is_attack_pressed() -> bool:
 	if not enabled: return false
-	if not is_mouse_enabled:
-		return _is_stick_active()
+	if not _is_mouse_movemet:
+		return _is_right_stick_active()
 	return Input.is_action_pressed(&"action")
 
 
+## Returns [true] when the user started pressing the attack action event.
 func is_attack_just_pressed() -> bool:
 	if not enabled: return false
-	if not is_mouse_enabled:
-		var active: bool = _is_stick_active()
+	if not _is_mouse_movemet:
+		var active: bool = _is_right_stick_active()
 		var just_pressed: bool = active and not _was_stick_active
-		if just_pressed: 
-			_was_stick_active = active
+		if just_pressed: _was_stick_active = active
 		return just_pressed
 	
 	return Input.is_action_just_pressed(&"action")
 
 
+## Returns [true] when the user stops pressing the attack action event.
 func is_attack_just_released() -> bool:
 	if not enabled: return false
-	if not is_mouse_enabled:
-		var active: bool = _is_stick_active()
+	if not _is_mouse_movemet:
+		var active: bool = _is_right_stick_active()
 		var just_released: bool = not active and _was_stick_active
-		if just_released: 
-			_was_stick_active = active
+		if just_released: _was_stick_active = active
 		return just_released
 
 	return Input.is_action_just_released(&"action")
+
+#endregion
