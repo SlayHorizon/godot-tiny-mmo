@@ -64,7 +64,7 @@ func add_item(item_id: int, item_data: Dictionary) -> void:
 	
 	# Calcul the should be size of the icon
 	# If we don't want to have blrurry pixel art
-	var sb: StyleBox = BetterThemeDB.theme.get_stylebox(&"normal", &"Button")
+	var sb: StyleBox = Client.theme.get_stylebox(&"normal", &"Button")
 	var content_margin: Vector2i = Vector2i(
 		int(sb.get_content_margin(SIDE_LEFT)) + int(sb.get_content_margin(SIDE_RIGHT)),
 		int(sb.get_content_margin(SIDE_TOP)) +  int(sb.get_content_margin(SIDE_BOTTOM)),

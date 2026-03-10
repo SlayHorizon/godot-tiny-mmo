@@ -1,8 +1,8 @@
 extends Control
 
 
-const CredentialsUtils = preload("res://source/common/utils/credentials_utils.gd")
-const GatewayApi = preload("res://source/common/network/gateway_api.gd")
+const CredentialsUtils: GDScript = preload("res://source/common/utils/credentials_utils.gd")
+const GatewayApi: GDScript = preload("res://source/common/network/gateway_api.gd")
 
 var account_id: int
 var account_name: String
@@ -24,44 +24,25 @@ var menu_stack: Array[Control]
 
 
 func _ready() -> void:
-	$SwapButton.toggled.connect(func(toggled_on: bool):
-		if not $AudioStreamPlayer.playing:
-			$AudioStreamPlayer.play()
-		$Desert.visible = toggled_on == true
-		$FairyForest.visible = toggled_on == false
-		if toggled_on:
-			BetterThemeDB.theme = load("res://source/client/ui/themes/theme_desert.tres")
-		else:
-			BetterThemeDB.theme = preload("res://source/client/ui/themes/theme_navy.tres")
-		theme = BetterThemeDB.theme
-	)
 	menu_stack.append(main_panel)
 	back_button.hide()
-	back_button.pressed.connect(func():
-		if menu_stack.size():
-			menu_stack.pop_back().hide()
-			if menu_stack.size():
-				menu_stack.back().show()
-			if menu_stack.size() < 2:
-				back_button.hide()
-		)
-	
+
 	var animated_sprite_2d: AnimatedSprite2D = $CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control/AnimatedSprite2D
 	animated_sprite_2d.play(&"run")
 	var v_box_container: GridContainer = $CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer
 	for button: Button in v_box_container.get_children():
 		button.pressed.connect(
-		func():
-			var sprite: SpriteFrames = ContentRegistryHub.load_by_slug(&"sprites", button.text.to_lower()) as SpriteFrames
-			if not sprite:
-				return
-			selected_skin_id = ContentRegistryHub.id_from_slug(&"sprites", button.text.to_lower())
-			if selected_skin_id == 0:
-				selected_skin_id = 1
-			animated_sprite_2d.sprite_frames = sprite
-			animated_sprite_2d.play(&"run")
+			func():
+				var sprite: SpriteFrames = ContentRegistryHub.load_by_slug(&"sprites", button.text.to_lower()) as SpriteFrames
+				if not sprite:
+					return
+				selected_skin_id = ContentRegistryHub.id_from_slug(&"sprites", button.text.to_lower())
+				if selected_skin_id == 0:
+					selected_skin_id = 1
+				animated_sprite_2d.sprite_frames = sprite
+				animated_sprite_2d.play(&"run")
 		)
-		
+
 	var debug_id: String = CmdlineUtils.get_parsed_args().get("dum", "")
 	if debug_id:
 		$MainPanel.hide()
@@ -97,15 +78,16 @@ func handle_success_login(d: Dictionary) -> void:
 			current_world_id = world_id.to_int()
 			is_last_world_online = true
 
+	populate_worlds(worlds)
 	if is_last_world_online:
 		$AlreadyConnectedPanel/ContinueButton.text = "Continue\n%s - %s" % [last_world_name, account_name]
 		$PopupPanel.hide()
-		$AlreadyConnectedPanel.show()
+		_show($AlreadyConnectedPanel, false)
 	else:
 		$PopupPanel.hide()
 		$MainPanel.show()
 		fill_connection_info(account_name, account_id)
-		populate_worlds(worlds)
+		#populate_worlds(worlds)
 		_show($WorldSelection, false)
 
 
@@ -163,10 +145,10 @@ func _on_login_button_pressed() -> void:
 func _on_login_login_button_pressed() -> void:
 	var account_name_edit: LineEdit = $LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer/LineEdit
 	var password_edit: LineEdit = $LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2/LineEdit
-	
+
 	var username: String = account_name_edit.text
 	var password: String = password_edit.text
-	
+
 	var login_button: Button = $LoginPanel/VBoxContainer/VBoxContainer/LoginButton
 	login_button.disabled = true
 	if (
@@ -187,10 +169,10 @@ func _on_login_login_button_pressed() -> void:
 		await popup_panel.confirm_message(str(d))
 		login_button.disabled = false
 		return
-	
+
 	populate_worlds(d.get("w", {}))
 	fill_connection_info(d["a"]["name"], d["a"]["id"])
-	
+
 	popup_panel.hide()
 	_show($WorldSelection, false)
 
@@ -206,10 +188,10 @@ func _on_guest_button_pressed() -> void:
 	if d.has("error"):
 		await popup_panel.confirm_message(str(d))
 		return
-	
+
 	fill_connection_info(d["a"]["name"], d["a"]["id"])
 	populate_worlds(d.get("w", {}))
-	
+
 	popup_panel.hide()
 	_show($WorldSelection, false)
 
@@ -229,7 +211,7 @@ func _on_world_selected(world_id: int) -> void:
 		await popup_panel.confirm_message(str(d))
 		$WorldSelection.show()
 		return
-	
+
 	var container: HBoxContainer = $CharacterSelection/VBoxContainer/HBoxContainer
 	var i: int = 0
 	var character_id: String
@@ -257,11 +239,11 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 	if character_id == -1:
 		_show($CharacterCreation)
 		return
-	
+
 	$CharacterSelection.hide()
 	$BackButton.hide()
 	popup_panel.display_waiting_popup()
-	
+
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
 		GatewayApi.world_enter(),
@@ -277,7 +259,7 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 		$CharacterSelection.show()
 		$BackButton.show()
 		return
-	
+
 	Client.connect_to_server(d["address"], d["port"], d["token"])
 	queue_free.call_deferred()
 
@@ -289,7 +271,7 @@ func _on_create_character_button_pressed() -> void:
 	create_button.disabled = true
 	$BackButton.hide()
 	$CharacterCreation.hide()
-	
+
 	var result: Dictionary
 	result = CredentialsUtils.validate_username(username_edit.text)
 	if result.code != CredentialsUtils.UsernameError.OK:
@@ -318,7 +300,7 @@ func _on_create_character_button_pressed() -> void:
 		create_button.disabled = false
 		$CharacterCreation.show()
 		return
-	
+
 	Client.connect_to_server(
 		d["data"]["address"],
 		d["data"]["port"],
@@ -417,6 +399,7 @@ func add_world_card(world_info: Dictionary, world_id: int) -> Button:
 	return button
 
 
+# AlreadyConnectedPanel Buttons
 func _on_continue_button_pressed() -> void:
 	$AlreadyConnectedPanel.hide()
 	popup_panel.display_waiting_popup()
@@ -434,6 +417,31 @@ func _on_continue_button_pressed() -> void:
 		await popup_panel.confirm_message(str(d))
 		$AlreadyConnectedPanel.show()
 		return
-	
+
 	Client.connect_to_server(d["address"], d["port"], d["token"])
 	queue_free.call_deferred()
+
+
+func _on_change_button_pressed() -> void:
+	_show($WorldSelection, false)
+
+
+func _on_swap_theme_button_toggled(toggled_on: bool) -> void:
+	if not $AudioStreamPlayer.playing:
+		$AudioStreamPlayer.play()
+	if toggled_on:
+		$Background.texture = preload("uid://cfihbj71a4y35")
+		Client.theme = preload("uid://c2nr0o8v7vb75")
+	else:
+		$Background.texture = preload("uid://cn5blfyqokda6")
+		Client.theme = preload("uid://cf1ayo3dckj67")
+	theme = Client.theme
+
+
+func _on_back_button_pressed() -> void:
+	if menu_stack.size():
+		menu_stack.pop_back().hide()
+		if menu_stack.size():
+			menu_stack.back().show()
+		if menu_stack.size() < 2:
+			back_button.hide()

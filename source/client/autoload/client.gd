@@ -12,6 +12,12 @@ var is_connected_to_server: bool = false:
 
 var authentication_token: String
 
+var theme: Theme:
+	get:
+		if not theme:
+			theme = load(ProjectSettings.get_setting("gui/theme/custom", "res://source/client/ui/themes/theme_navy.tres"))
+		return theme
+
 @onready var world_clock: WorldClock = $WorldClock
 
 

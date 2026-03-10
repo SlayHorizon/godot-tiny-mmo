@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://5wv1gfwppcnf"]
 
 [ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="2_74q4y"]
-[ext_resource type="Texture2D" uid="uid://cfihbj71a4y35" path="res://assets/sprites/gui/backgrounds/desert.png" id="3_1c3kr"]
 [ext_resource type="Texture2D" uid="uid://cn5blfyqokda6" path="res://assets/sprites/gui/backgrounds/fairy_forest.png" id="4_uvr2v"]
 [ext_resource type="FontFile" uid="uid://cehc3gujked8x" path="res://assets/fonts/Cinzel/static/Cinzel-Bold.ttf" id="5_opc3y"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="6_g2eid"]
@@ -54,14 +53,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_74q4y")
 
-[node name="Desert" type="Sprite2D" parent="." unique_id=1202515985]
-visible = false
-position = Vector2(0, -300)
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("3_1c3kr")
-centered = false
-
-[node name="FairyForest" type="Sprite2D" parent="." unique_id=1217529567]
+[node name="Background" type="Sprite2D" parent="." unique_id=1217529567]
 position = Vector2(0, -300)
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("4_uvr2v")
@@ -77,6 +69,7 @@ grow_vertical = 2
 color = Color(0.129558, 0.129559, 0.129558, 0.35)
 
 [node name="MainPanel" type="PanelContainer" parent="." unique_id=862795661]
+visible = false
 custom_minimum_size = Vector2(560, 320)
 layout_mode = 1
 anchors_preset = 8
@@ -657,56 +650,7 @@ theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "OK"
 
-[node name="SwapButton" type="Button" parent="." unique_id=461701609]
-layout_mode = 0
-offset_left = 915.0
-offset_top = 492.0
-offset_right = 955.0
-offset_bottom = 532.0
-toggle_mode = true
-
-[node name="BackButton" type="Button" parent="." unique_id=1060070352]
-visible = false
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -104.0
-offset_top = -52.0
-offset_right = 104.0
-offset_bottom = -12.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_fonts/font = ExtResource("6_tnybn")
-text = "Back"
-
-[node name="ConnectionInfo" type="Label" parent="." unique_id=911295128]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -54.0
-offset_right = 140.0
-offset_bottom = -9.0
-grow_vertical = 0
-text = "Not connected yet
-"
-horizontal_alignment = 3
-vertical_alignment = 3
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=359148188]
-stream = ExtResource("10_q1aoo")
-volume_db = -12.0
-
-[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1237181825]
-accept_gzip = false
-timeout = 7.0
-
 [node name="AlreadyConnectedPanel" type="Control" parent="." unique_id=1467439334]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -871,6 +815,54 @@ size_flags_horizontal = 4
 layout_mode = 2
 text = "Back"
 
+[node name="SwapButton" type="Button" parent="." unique_id=461701609]
+layout_mode = 0
+offset_left = 915.0
+offset_top = 492.0
+offset_right = 955.0
+offset_bottom = 532.0
+toggle_mode = true
+
+[node name="BackButton" type="Button" parent="." unique_id=1060070352]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -104.0
+offset_top = -52.0
+offset_right = 104.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("6_tnybn")
+text = "Back"
+
+[node name="ConnectionInfo" type="Label" parent="." unique_id=911295128]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -54.0
+offset_right = 140.0
+offset_bottom = -9.0
+grow_vertical = 0
+text = "Not connected yet
+"
+horizontal_alignment = 3
+vertical_alignment = 3
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=359148188]
+stream = ExtResource("10_q1aoo")
+volume_db = -12.0
+
+[node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1237181825]
+accept_gzip = false
+timeout = 7.0
+
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="." method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/GuestButton" to="." method="_on_guest_button_pressed"]
@@ -878,3 +870,6 @@ text = "Back"
 [connection signal="pressed" from="CreateAccountPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="." method="create_account"]
 [connection signal="pressed" from="CharacterCreation/VBoxContainer/VBoxContainer/CreateButton" to="." method="_on_create_character_button_pressed"]
 [connection signal="pressed" from="AlreadyConnectedPanel/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="AlreadyConnectedPanel/ChangeButton" to="." method="_on_change_button_pressed"]
+[connection signal="toggled" from="SwapButton" to="." method="_on_swap_theme_button_toggled"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

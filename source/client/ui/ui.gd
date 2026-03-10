@@ -8,4 +8,4 @@ extends CanvasLayer
 func _ready() -> void:
 	for child: Node in get_children():
 		if child is Control:
-			child.theme = BetterThemeDB.theme
+			child.theme = Client.theme
