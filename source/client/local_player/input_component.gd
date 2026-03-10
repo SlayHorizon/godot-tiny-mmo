@@ -35,6 +35,7 @@ var is_mouse_onscreen: bool:
 
 var _windows_focus: bool = true
 var _mouse_in_game: bool = true
+var _was_stick_active: bool
 
 
 func _ready() -> void:
@@ -52,8 +53,10 @@ func _input(event: InputEvent) -> void:
 	match event.get_class():
 		"InputEventKey", "InputEventMouseButton", "InputEventMouseMotion":
 			_set_input_type(InputType.MOUSE_KEYBOARD)
-			if event is InputEventKey: is_keyboard_enabled = true
-			is_mouse_enabled = event is InputEventMouseButton or event is InputEventMouseMotion
+			if event is InputEventKey: 
+				is_keyboard_enabled = true
+			if event is InputEventMouseButton or event is InputEventMouseMotion:
+				is_mouse_enabled = true
 		"InputEventJoypadButton", "InputEventJoypadMotion":
 			_set_input_type(InputType.GAMEPAD)
 		"InputEventScreenTouch":
@@ -87,6 +90,10 @@ func _is_event_relevant(event: InputEvent) -> bool:
 	return event.is_pressed()
 
 
+func _is_stick_active() -> bool:
+	return Input.get_vector("look_left", "look_right", "look_up", "look_down").length() > 0.5
+
+
 ## Returns global mouse position relative to world. If mouse not enabled or mouse offscreen, returns [Vector2.ZERO]
 func get_mouse_world_position() -> Vector2:
 	if is_mouse_onscreen: 
@@ -94,7 +101,10 @@ func get_mouse_world_position() -> Vector2:
 	return Vector2.ZERO
 
 
-## Returns normalized move direction. If no intentional direction, returns [Vector2.ZERO]
+## Returns normalized move direction. If no intentional direction, returns [Vector2.ZERO][br]
+## - [b]KEYBOARD[/b] - Arrows key, via InputMap. [br]
+## - [b]GAMEPAD[/b] - Right stick, via InputMap.[br]
+## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
 func get_move_direction() -> Vector2:
 	if not enabled: return Vector2.ZERO
 	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -110,7 +120,39 @@ func get_look_direction() -> Vector2:
 
 	var look_dir: Vector2 = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look_dir != Vector2.ZERO: 
+		is_mouse_enabled = false # Prevent using mouse pos on next direction getter
 		return look_dir
-	if is_mouse_onscreen:
+	if is_mouse_onscreen and not _is_stick_active():
 		return (get_mouse_world_position() - node_owner.global_position).normalized()
 	return Vector2.ZERO
+
+
+func is_attack_pressed() -> bool:
+	if not enabled: return false
+	if not is_mouse_enabled:
+		return _is_stick_active()
+	return Input.is_action_pressed(&"action")
+
+
+func is_attack_just_pressed() -> bool:
+	if not enabled: return false
+	if not is_mouse_enabled:
+		var active: bool = _is_stick_active()
+		var just_pressed: bool = active and not _was_stick_active
+		if just_pressed: 
+			_was_stick_active = active
+		return just_pressed
+	
+	return Input.is_action_just_pressed(&"action")
+
+
+func is_attack_just_released() -> bool:
+	if not enabled: return false
+	if not is_mouse_enabled:
+		var active: bool = _is_stick_active()
+		var just_released: bool = not active and _was_stick_active
+		if just_released: 
+			_was_stick_active = active
+		return just_released
+
+	return Input.is_action_just_released(&"action")

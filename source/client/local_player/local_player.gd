@@ -56,6 +56,12 @@ func process_input() -> void:
 	if look_dir != Vector2.ZERO:
 		look_direction = look_dir
 
+	action_input = controller.is_attack_pressed()
+	equipment_component.process_input(self)
+	if action_input and equipment_component.can_use(&"weapon", 0):
+		Client.request_data(&"action.perform", Callable(),
+		{"d": look_direction, "i": 0}, InstanceClient.current.name)
+
 
 func process_animation(delta: float) -> void:
 	flipped = look_direction.x < 0

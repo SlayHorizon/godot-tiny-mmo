@@ -73,12 +73,13 @@ func perform_action(action_index: int, direction: Vector2) -> void:
 
 func process_input(local_player: LocalPlayer) -> void:
 	var now: float = Time.get_ticks_msec() / 1000.0
+	var controller: InputComponent = local_player.controller
 	# Check cooldown locally here too to avoid spamming server with requests.
-	if Input.is_action_just_pressed(&"action") and can_use_weapon(0):
+	if controller.is_attack_just_pressed() and can_use_weapon(0):
 		state = State.CHARGING
 
 		Client.request_data(&"action.perform", Callable(),
-		{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 0},
+		{"d": local_player.look_direction, "i": 0},
 		InstanceClient.current.name
 		)
 
@@ -86,11 +87,11 @@ func process_input(local_player: LocalPlayer) -> void:
 		#	&"action.perform", Callable(),
 		#	{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 0}
 		#)
-	elif Input.is_action_just_released(&"action") and can_use_weapon(1):
+	elif controller.is_attack_just_released() and can_use_weapon(1):
 		state = State.READY
 
 		Client.request_data(&"action.perform", Callable(),
-		{"d": local_player.global_position.direction_to(local_player.mouse.position), "i": 1},
+		{"d": local_player.look_direction, "i": 1},
 		InstanceClient.current.name
 		)
 
