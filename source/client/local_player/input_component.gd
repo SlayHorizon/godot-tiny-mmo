@@ -210,7 +210,7 @@ func get_look_direction() -> Vector2:
 		_mouse_aiming = false # Prevent using mouse direction on next getter.
 		_last_look_direction = _get_look_raw().normalized()
 
-	if _mouse_aiming:
+	if _mouse_aiming and is_mouse_onscreen:
 		_last_look_direction = (get_global_mouse_position() - node_owner.global_position).normalized()
 	
 	var use_snap: bool = (
@@ -225,18 +225,21 @@ func get_look_direction() -> Vector2:
 ## Returns [code]true[/code] while the attack action is held.
 func is_attack_pressed() -> bool:
 	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
 	return Input.is_action_pressed(&"action")
 
 
 ## Returns [code]true[/code] on the frame attack action was pressed.
 func is_attack_just_pressed() -> bool:
 	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
 	return Input.is_action_just_pressed(&"action")
 
 
 ## Returns [code]true[/code] on the frame attack action was released.
 func is_attack_just_released() -> bool:
 	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
 	return Input.is_action_just_released(&"action")
 
 #endregion
