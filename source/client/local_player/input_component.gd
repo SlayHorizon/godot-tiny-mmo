@@ -9,38 +9,58 @@ enum InputType {
 }
 
 
+## Emitted whenever the active input type changes. [br]
+## [b]Example[/b]: switching from keyboard to gamepad.
 signal input_changed(input_type: InputType)
 
 #region public variables
+## Enable or disable the input processing.
 @export var enabled: bool:
 	set(value):
 		enabled = value
 		set_process_input(value)
 
+## The node used as a origin for mouse look direction calculation. Default as self if not set.
 @export var node_owner: Node2D
 
 @export_category("Joystick Settings")
+## Maximum distance the stick need to exceed to be considered active. [br]
+## Must be greater than [member stick_deadzone_exit]
 @export_range(0, 1.0, 0.1) var stick_deadzone_enter: float = 0.5
+## Minimum distance the stick need to drop bellow to be considered inactive. [br]
+## Must be lower than [member stick_deadzone_enter]
 @export_range(0, 1.0, 0.1) var stick_deadzone_exit: float = 0.2
 
 @export_category("Snapping Settings")
+## Number of directions the input can snap to.
 @export_range(1, 32) var snap_directions: int = 8
+## How close to a snapped direction the input must be before snapping. [br]
+## Higher values make snapping more aggressive.
 @export_range(0.0, 16.0, 0.5) var snap_tolerance: float = 8.0
+## Enables direction snapping for mouse.
 @export var snap_for_mouse: bool = false
+## Enables direction snapping for gamepad.
 @export var snap_for_gamepad: bool = false
+## Enables direction snapping for touch.
 @export var snap_for_touch: bool = false
 
+## Current active input type. Changes automatically when user interact.
 var input_type: InputType
 
+## Returns [code]true[/code] when current input type is mouse and keyboard.
 var is_mouse_and_keyboard_enabled: bool:
 	get: return input_type == InputType.MOUSE_KEYBOARD
 
+## Returns [code]true[/code] when current input type is gamepad.
 var is_gamepad_enabled: bool:
 	get: return input_type == InputType.GAMEPAD
 
+## Returns [code]true[/code] when current input type is touch screen.
 var is_touch_screen_enabled: bool:
 	get: return input_type == InputType.TOUCH
 
+## Returns [code]true[/code] when mouse is active,
+## the window has focus and the cursor is inside the window.
 var is_mouse_onscreen: bool:
 	get: return (is_mouse_and_keyboard_enabled and _mouse_in_game and _windows_focus)
 
@@ -161,27 +181,28 @@ func _is_stick_aiming() -> bool:
 #endregion
 
 #region public
-## Returns global mouse position relative to world. If mouse not enabled or mouse offscreen, returns [Vector2.ZERO]
+## Returns global mouse position relative to world. [br]
+## Returns [code]Vector2.ZERO[/code] if mouse is not active or cursor is offscreen.
 func get_mouse_world_position() -> Vector2:
 	if is_mouse_onscreen: 
 		return get_global_mouse_position()
 	return Vector2.ZERO
 
 
-## Returns normalized move direction. If no intentional direction, returns [Vector2.ZERO][br]
-## - [b]KEYBOARD[/b] - Arrows key, via InputMap. [br]
-## - [b]GAMEPAD[/b] - Right stick, via InputMap.[br]
-## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
+## Returns normalized movement direction from player input. [br]
+## Returns [code]Vector2.ZERO[/code] if no directional input is detected or [member enabled] is [code]false[/code]. [br]
+## [b]GAMEPAD[/b] - Left stick, via InputMap. [br]
+## [b]TOUCH[/b] - Virtual joystick, via InputMap.
 func get_move_direction() -> Vector2:
 	if not enabled: return Vector2.ZERO
 	return _get_move_raw().normalized()
 
 
-## Returns normalized look direction. If no intentional direction, returns [Vector2.ZERO][br]
-## - [b]MOUSE[/b] - Cursor direction relative to owner.[br]
-## - [b]KEYBOARD[/b] - Arrows key, via InputMap. [br]
-## - [b]GAMEPAD[/b] - Right stick, via InputMap.[br]
-## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
+## Returns normalized look direction from player input. [br]
+## Caches the last valid direction, returns it when no active input is detected. [br]
+## [b]MOUSE[/b] - Cursor direction relative to [member node_owner]. [br]
+## [b]GAMEPAD[/b] - Right joystick direction, via InputMap. [br]
+## [b]TOUCH[/b] - Right virtual joystick direction, via InputMap.
 func get_look_direction() -> Vector2:
 	if not enabled: return _last_look_direction
 
@@ -201,19 +222,19 @@ func get_look_direction() -> Vector2:
 	return _snap_direction(_last_look_direction) if use_snap else _last_look_direction
 
 
-## Returns [true] when the user is pressing the attack action event.
+## Returns [code]true[/code] while the attack action is held.
 func is_attack_pressed() -> bool:
 	if not enabled: return false
 	return Input.is_action_pressed(&"action")
 
 
-## Returns [true] when the user started pressing the attack action event.
+## Returns [code]true[/code] on the frame attack action was pressed.
 func is_attack_just_pressed() -> bool:
 	if not enabled: return false
 	return Input.is_action_just_pressed(&"action")
 
 
-## Returns [true] when the user stops pressing the attack action event.
+## Returns [code]true[/code] on the frame attack action was released.
 func is_attack_just_released() -> bool:
 	if not enabled: return false
 	return Input.is_action_just_released(&"action")
