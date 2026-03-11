@@ -18,7 +18,16 @@ signal input_changed(input_type: InputType)
 		set_process_input(value)
 
 @export var node_owner: Node2D
+
+@export_category("Joystick Settings")
 @export var stick_deadzone: float = 0.5
+
+@export_category("Snapping Settings")
+@export_range(1, 32) var snap_directions: int = 8
+@export_range(0.0, 15.0, 0.5) var snap_tolerance: float = 0.0
+@export var snap_for_mouse: bool = false
+@export var snap_for_gamepad: bool = true
+@export var snap_for_touch: bool = false
 
 var input_type: InputType
 
@@ -123,6 +132,21 @@ func _get_move_raw() -> Vector2:
 	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
 
+func _snap_direction(dir: Vector2) -> Vector2:
+	if dir == Vector2.ZERO or snap_directions < 1: 
+		return dir
+
+	var angle: float = dir.angle()
+	var step: float = TAU / float(snap_directions)
+	var _snapped: float = round(angle / step) * step
+	var diff: float = abs(_snapped - angle)
+
+	if diff < deg_to_rad(snap_tolerance):
+		return Vector2.RIGHT.rotated(_snapped)
+
+	return dir
+
+
 func _is_stick_aiming() -> bool:
 	return _get_look_raw().length() > stick_deadzone
 
@@ -161,7 +185,13 @@ func get_look_direction() -> Vector2:
 	if _mouse_aiming:
 		_last_look_direction = (get_global_mouse_position() - node_owner.global_position).normalized()
 	
-	return _last_look_direction
+	var use_snap: bool = (
+		(_mouse_aiming and snap_for_mouse) or
+		(is_gamepad_enabled and snap_for_gamepad) or
+		(is_touch_screen_enabled and snap_for_touch)
+	)
+
+	return _snap_direction(_last_look_direction) if use_snap else _last_look_direction
 
 
 ## Returns [true] when the user is pressing the attack action event.
