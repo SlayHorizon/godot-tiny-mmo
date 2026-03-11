@@ -10,15 +10,6 @@ enum StickMode {
 	DYNAMIC
 }
 
-enum SnapMode {
-	## No snapping. free direction.
-	NONE,
-	## Snaps the direction to 4 angles. (up, down, left, right)
-	SNAP_4,
-	## Snaps the direction to 8 angles. (includes diagonals)
-	SNAP_8
-}
-
 
 signal stick_pressed
 signal stick_released
@@ -43,12 +34,14 @@ signal stick_changed(direction: Vector2)
 ## The area of the base defines the touch area for [b]FIXED[/b] mode to work. [br]
 ## The area of this TouchStick node defines the touch area for [b]DYNAMIC[/b] mode to work.
 @export var stick_mode: StickMode
-## Defines how the joystick direction behaves.
-@export var snap_mode: SnapMode
-## When enabled, snaps the handle to the maximum radius in the current direction.
+## Defines how the joystick handle direction is visually snapped. [br]
+## [b]Note:[/b] This affects visuals only and does not change the actual input direction.
+@export_range(0, 32, 1) var snap_directions: int = 0
+## When enabled, the handle snaps to the maximum radius in the current snapped direction. [br]
+## [b]Note:[/b] This affects visuals only.
 @export var snap_handle: bool
 ## Maximum distance to trigger movement.
-@export_range(0.0, 0.9) var dead_zone: float = 0.2
+@export_range(0.0, 0.9) var deadzone: float = 0.2
 ## The max distance the handle can move from the center of the base.
 @export_range(0, 200) var handle_radius: float = 75.0
 
@@ -121,15 +114,14 @@ func _update_joystick(touch_pos: Vector2) -> void:
 	var offset: Vector2 = (touch_pos - base_center).limit_length(handle_radius)
 	var strength: float = offset.length() / handle_radius
 
-	if strength < dead_zone:
+	if strength < deadzone:
 		direction = Vector2.ZERO
 		offset = Vector2.ZERO
 	else:
-		var dir: Vector2 = offset.normalized()
-		direction = _snap_direction(dir) if snap_mode != SnapMode.NONE else dir
-	
-	if snap_handle:
-		offset = direction * handle_radius
+		direction = offset.normalized()
+		var snap_dir: Vector2 = _snap_direction(direction)
+		var distance: float = handle_radius if snap_handle else handle_radius * strength
+		offset = snap_dir * distance
 
 	match stick_mode:
 		StickMode.FIXED:
@@ -161,19 +153,13 @@ func _handle_input_actions() -> void:
 
 
 func _snap_direction(dir: Vector2) -> Vector2:
-	if dir == Vector2.ZERO: return Vector2.ZERO
+	if dir == Vector2.ZERO or snap_directions < 1: 
+		return dir
 
-	var angle: float = dir.angle()
-	var desired_direction: Vector2 = dir
-	match snap_mode:
-		SnapMode.SNAP_4:
-			var snapped_angle = round(angle / (PI/2))  * (PI/2)
-			desired_direction = Vector2.RIGHT.rotated(snapped_angle)
-		SnapMode.SNAP_8:
-			var snapped_angle = round(angle / (PI/4))  * (PI/4)
-			desired_direction = Vector2.RIGHT.rotated(snapped_angle)
-	
-	return desired_direction
+	var step: float = TAU / float(snap_directions)
+	var snapped_angle: float = round(dir.angle() / step) * step
+
+	return Vector2.RIGHT.rotated(snapped_angle)
 
 
 func _is_touch_inside_area(touch_pos: Vector2) -> bool:

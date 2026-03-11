@@ -159,11 +159,11 @@ func _snap_direction(dir: Vector2) -> Vector2:
 
 	var angle: float = dir.angle()
 	var step: float = TAU / float(snap_directions)
-	var _snapped: float = round(angle / step) * step
-	var diff: float = abs(_snapped - angle)
+	var snapped_angle: float = round(angle / step) * step
+	var diff: float = abs(snapped_angle - angle)
 
 	if diff < deg_to_rad(snap_tolerance):
-		return Vector2.RIGHT.rotated(_snapped)
+		return Vector2.RIGHT.rotated(snapped_angle)
 
 	return dir
 
