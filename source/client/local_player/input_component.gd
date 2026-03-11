@@ -20,13 +20,14 @@ signal input_changed(input_type: InputType)
 @export var node_owner: Node2D
 
 @export_category("Joystick Settings")
-@export var stick_deadzone: float = 0.5
+@export_range(0, 1.0, 0.1) var stick_deadzone_enter: float = 0.5
+@export_range(0, 1.0, 0.1) var stick_deadzone_exit: float = 0.2
 
 @export_category("Snapping Settings")
 @export_range(1, 32) var snap_directions: int = 8
-@export_range(0.0, 15.0, 0.5) var snap_tolerance: float = 0.0
+@export_range(0.0, 16.0, 0.5) var snap_tolerance: float = 8.0
 @export var snap_for_mouse: bool = false
-@export var snap_for_gamepad: bool = true
+@export var snap_for_gamepad: bool = false
 @export var snap_for_touch: bool = false
 
 var input_type: InputType
@@ -148,7 +149,14 @@ func _snap_direction(dir: Vector2) -> Vector2:
 
 
 func _is_stick_aiming() -> bool:
-	return _get_look_raw().length() > stick_deadzone
+	var length: float = _get_look_raw().length()
+	var active: bool
+
+	if length >= stick_deadzone_enter:
+		active = true
+	elif length <= stick_deadzone_exit:
+		active = false
+	return active
 
 #endregion
 
@@ -175,12 +183,11 @@ func get_move_direction() -> Vector2:
 ## - [b]GAMEPAD[/b] - Right stick, via InputMap.[br]
 ## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
 func get_look_direction() -> Vector2:
-	if not enabled: return Vector2.ZERO
+	if not enabled: return _last_look_direction
 
-	var look_dir: Vector2 = _get_look_raw()
-	if look_dir.length() > stick_deadzone: 
+	if _is_stick_aiming(): 
 		_mouse_aiming = false # Prevent using mouse direction on next getter.
-		_last_look_direction = look_dir.normalized()
+		_last_look_direction = _get_look_raw().normalized()
 
 	if _mouse_aiming:
 		_last_look_direction = (get_global_mouse_position() - node_owner.global_position).normalized()
