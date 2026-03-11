@@ -6,7 +6,7 @@ var speed: float = 75.0
 var hand_pivot_speed: float = 17.5
 
 var input_direction: Vector2 = Vector2.ZERO
-var look_direction: Vector2 = Vector2.ZERO # Preparation for multi input support.
+var look_direction: Vector2 = Vector2.ZERO
 var action_input: bool = false
 
 var fid_position: int
@@ -52,11 +52,9 @@ func process_input() -> void:
 		return
 
 	input_direction = controller.get_move_direction()
-	var look_dir: Vector2 = controller.get_look_direction()
-	if look_dir != Vector2.ZERO:
-		look_direction = look_dir
-
+	look_direction = controller.get_look_direction()
 	action_input = controller.is_attack_pressed()
+	
 	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):
 		Client.request_data(&"action.perform", Callable(),

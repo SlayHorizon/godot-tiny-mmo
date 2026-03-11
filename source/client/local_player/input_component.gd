@@ -18,6 +18,7 @@ signal input_changed(input_type: InputType)
 		set_process_input(value)
 
 @export var node_owner: Node2D
+@export var stick_deadzone: float = 0.5
 
 var input_type: InputType
 
@@ -38,8 +39,10 @@ var is_mouse_onscreen: bool:
 #region private variables
 var _windows_focus: bool = true
 var _mouse_in_game: bool = true
-var _is_mouse_movemet: bool
-var _was_stick_active: bool
+var _mouse_aiming: bool
+var _was_stick_aim_active: bool
+
+var _last_look_direction: Vector2
 
 #endregion
 
@@ -52,22 +55,25 @@ func _ready() -> void:
 	set_process_input(enabled)
 
 
-# Deals with input changing for UI.
+# Deals with input detection and stick attack sync.
 func _input(event: InputEvent) -> void:
-	if not _is_event_relevant(event): return
+	if _is_event_relevant(event):
+		if event is InputEventKey:
+			_set_input_type(InputType.MOUSE_KEYBOARD)
 
-	if event is InputEventKey:
-		_set_input_type(InputType.MOUSE_KEYBOARD)
-		
-	elif event is InputEventMouseMotion or event is InputEventMouseButton:
-		_set_input_type(InputType.MOUSE_KEYBOARD)
-		_is_mouse_movemet = true
+		elif event is InputEventMouseMotion or event is InputEventMouseButton:
+			_set_input_type(InputType.MOUSE_KEYBOARD)
+			_mouse_aiming = true
 	
-	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
-		_set_input_type(InputType.GAMEPAD)
+		elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+			_set_input_type(InputType.GAMEPAD)
 
-	elif event is InputEventScreenTouch:
-		_set_input_type(InputType.TOUCH)
+		elif event is InputEventScreenTouch:
+			_set_input_type(InputType.TOUCH)
+	
+	# Gamepad and virtual joystick action event handler.
+	if event is InputEventJoypadMotion or event is InputEventScreenTouch or event is InputEventScreenDrag:
+		_sync_stick_event()
 
 
 func _notification(what: int) -> void:
@@ -83,37 +89,46 @@ func _notification(what: int) -> void:
 
 #endregion
 
-#region private helpers
+#region private
+func _sync_stick_event() -> void:
+	var active: bool = _is_stick_aiming()
+	if active == _was_stick_aim_active: return
+
+	_was_stick_aim_active = active
+	if active:
+		Input.action_press(&"action")
+	else:
+		Input.action_release(&"action")
+
+
 func _set_input_type(type: InputType) -> void:
 	if input_type == type: return
-	if type == InputType.MOUSE_KEYBOARD:
-		_was_stick_active = false
-	else:
-		_is_mouse_movemet = false
+	if type != InputType.MOUSE_KEYBOARD:
+		_mouse_aiming = false
 	input_type = type
 	input_changed.emit(type)
 
 
 func _is_event_relevant(event: InputEvent) -> bool:
-	if event is InputEventMouseMotion: return is_mouse_and_keyboard_enabled
-	if event is InputEventJoypadMotion: return abs(event.axis_value) > 0.5 # Hardcoded deadzone
+	if event is InputEventMouseMotion: return true
+	if event is InputEventJoypadMotion: return true
 	return event.is_pressed()
 
 
-func _get_look_vector() -> Vector2:
+func _get_look_raw() -> Vector2:
 	return Input.get_vector("look_left", "look_right", "look_up", "look_down")
 
 
-func _get_move_vector() -> Vector2:
+func _get_move_raw() -> Vector2:
 	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
 
-func _is_right_stick_active() -> bool:
-	return _get_look_vector().length() > 0.5
+func _is_stick_aiming() -> bool:
+	return _get_look_raw().length() > stick_deadzone
 
 #endregion
 
-#region public methods
+#region public
 ## Returns global mouse position relative to world. If mouse not enabled or mouse offscreen, returns [Vector2.ZERO]
 func get_mouse_world_position() -> Vector2:
 	if is_mouse_onscreen: 
@@ -127,7 +142,7 @@ func get_mouse_world_position() -> Vector2:
 ## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
 func get_move_direction() -> Vector2:
 	if not enabled: return Vector2.ZERO
-	return _get_move_vector().normalized()
+	return _get_move_raw().normalized()
 
 
 ## Returns normalized look direction. If no intentional direction, returns [Vector2.ZERO][br]
@@ -137,47 +152,33 @@ func get_move_direction() -> Vector2:
 ## - [b]TOUCH[/b] - Virtual joystick, via InputMap. [br]
 func get_look_direction() -> Vector2:
 	if not enabled: return Vector2.ZERO
+
+	var look_dir: Vector2 = _get_look_raw()
+	if look_dir.length() > stick_deadzone: 
+		_mouse_aiming = false # Prevent using mouse direction on next getter.
+		_last_look_direction = look_dir.normalized()
+
+	if _mouse_aiming:
+		_last_look_direction = (get_global_mouse_position() - node_owner.global_position).normalized()
 	
-	var look_dir: Vector2 = _get_look_vector()
-	if look_dir != Vector2.ZERO:
-		_is_mouse_movemet = false
-		return look_dir.normalized()
-	
-	if _is_mouse_movemet:
-		return (get_mouse_world_position() - node_owner.global_position).normalized()
-	
-	return Vector2.ZERO
+	return _last_look_direction
 
 
 ## Returns [true] when the user is pressing the attack action event.
 func is_attack_pressed() -> bool:
 	if not enabled: return false
-	if not _is_mouse_movemet:
-		return _is_right_stick_active()
 	return Input.is_action_pressed(&"action")
 
 
 ## Returns [true] when the user started pressing the attack action event.
 func is_attack_just_pressed() -> bool:
 	if not enabled: return false
-	if not _is_mouse_movemet:
-		var active: bool = _is_right_stick_active()
-		var just_pressed: bool = active and not _was_stick_active
-		if just_pressed: _was_stick_active = active
-		return just_pressed
-	
 	return Input.is_action_just_pressed(&"action")
 
 
 ## Returns [true] when the user stops pressing the attack action event.
 func is_attack_just_released() -> bool:
 	if not enabled: return false
-	if not _is_mouse_movemet:
-		var active: bool = _is_right_stick_active()
-		var just_released: bool = not active and _was_stick_active
-		if just_released: _was_stick_active = active
-		return just_released
-
 	return Input.is_action_just_released(&"action")
 
 #endregion
