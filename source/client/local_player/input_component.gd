@@ -126,9 +126,9 @@ func _sync_stick_event() -> void:
 
 	_was_stick_aim_active = active
 	if active:
-		Input.action_press(&"action")
+		Input.action_press(&"game.shoot")
 	else:
-		Input.action_release(&"action")
+		Input.action_release(&"game.shoot")
 
 
 func _set_input_type(type: InputType) -> void:
@@ -146,11 +146,11 @@ func _is_event_relevant(event: InputEvent) -> bool:
 
 
 func _get_look_raw() -> Vector2:
-	return Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	return Input.get_vector("game.look_left", "game.look_right", "game.look_up", "game.look_down")
 
 
 func _get_move_raw() -> Vector2:
-	return Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	return Input.get_vector("game.move_left", "game.move_right", "game.move_up", "game.move_down")
 
 
 func _snap_direction(dir: Vector2) -> Vector2:
@@ -226,20 +226,20 @@ func get_look_direction() -> Vector2:
 func is_attack_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
-	return Input.is_action_pressed(&"action")
+	return Input.is_action_pressed(&"game.shoot")
 
 
 ## Returns [code]true[/code] on the frame attack action was pressed.
 func is_attack_just_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
-	return Input.is_action_just_pressed(&"action")
+	return Input.is_action_just_pressed(&"game.shoot")
 
 
 ## Returns [code]true[/code] on the frame attack action was released.
 func is_attack_just_released() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
-	return Input.is_action_just_released(&"action")
+	return Input.is_action_just_released(&"game.shoot")
 
 #endregion

@@ -45,10 +45,10 @@ enabled = true
 base = NodePath("Base")
 handle = NodePath("Base/Handle")
 use_input_actions = true
-action_up = &"move_up"
-action_down = &"move_down"
-action_left = &"move_left"
-action_right = &"move_right"
+action_up = &"game.move_up"
+action_down = &"game.move_down"
+action_left = &"game.move_left"
+action_right = &"game.move_right"
 metadata/_custom_type_script = "uid://c0g2wg2nlsmvg"
 
 [node name="Base" type="TextureRect" parent="HBoxContainer/LeftStickContainer/MoveStick" unique_id=1332476378]
@@ -97,10 +97,10 @@ enabled = true
 base = NodePath("Base")
 handle = NodePath("Base/Handle")
 use_input_actions = true
-action_up = &"look_up"
-action_down = &"look_down"
-action_left = &"look_left"
-action_right = &"look_right"
+action_up = &"game.look_up"
+action_down = &"game.look_down"
+action_left = &"game.look_left"
+action_right = &"game.look_right"
 metadata/_custom_type_script = "uid://c0g2wg2nlsmvg"
 
 [node name="Base" type="TextureRect" parent="HBoxContainer/RightStickContainer/ShootStick" unique_id=344123344]
