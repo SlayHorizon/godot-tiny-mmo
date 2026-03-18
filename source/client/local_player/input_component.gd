@@ -9,10 +9,6 @@ enum InputType {
 }
 
 
-## Emitted whenever the active input type changes. [br]
-## [b]Example[/b]: switching from keyboard to gamepad.
-signal input_changed(input_type: InputType)
-
 #region public variables
 ## Enable or disable the input processing.
 @export var enabled: bool:
@@ -44,25 +40,27 @@ signal input_changed(input_type: InputType)
 ## Enables direction snapping for touch.
 @export var snap_for_touch: bool = false
 
-## Current active input type. Changes automatically when user interact.
-var input_type: InputType
 
 ## Returns [code]true[/code] when current input type is mouse and keyboard.
 var is_mouse_and_keyboard_enabled: bool:
-	get: return input_type == InputType.MOUSE_KEYBOARD
+	get: return ClientState.input_type == InputType.MOUSE_KEYBOARD
 
 ## Returns [code]true[/code] when current input type is gamepad.
 var is_gamepad_enabled: bool:
-	get: return input_type == InputType.GAMEPAD
+	get: return ClientState.input_type == InputType.GAMEPAD
 
 ## Returns [code]true[/code] when current input type is touch screen.
 var is_touch_screen_enabled: bool:
-	get: return input_type == InputType.TOUCH
+	get: return ClientState.input_type == InputType.TOUCH
 
 ## Returns [code]true[/code] when mouse is active,
 ## the window has focus and the cursor is inside the window.
 var is_mouse_onscreen: bool:
 	get: return (is_mouse_and_keyboard_enabled and _mouse_in_game and _windows_focus)
+
+
+static var right_touch_stick: TouchStick
+static var left_touch_stick: TouchStick
 
 #endregion
 
@@ -132,11 +130,10 @@ func _sync_stick_event() -> void:
 
 
 func _set_input_type(type: InputType) -> void:
-	if input_type == type: return
+	if ClientState.input_type == type: return
 	if type != InputType.MOUSE_KEYBOARD:
 		_mouse_aiming = false
-	input_type = type
-	input_changed.emit(type)
+	ClientState.input_type = type
 
 
 func _is_event_relevant(event: InputEvent) -> bool:
@@ -245,7 +242,7 @@ func is_attack_just_released() -> bool:
 
 ## Returns a [code]Array[/code] containing [code][bool, StringName][/code] where [code]StringName[/code] is the name of the action
 ## that the event is assigned to. If the key is available the [code]StringName[/code] will be empty.
-func is_event_available(event: InputEvent) -> Array:
+static func is_event_available(event: InputEvent) -> Array:
 	for action_name: StringName in get_game_actions_list():
 		if InputMap.action_has_event(action_name, event):
 			return [false, action_name]
@@ -254,7 +251,7 @@ func is_event_available(event: InputEvent) -> Array:
 
 
 ## Returns a list containing every game related input actions. Actions that start with "player_".
-func get_game_actions_list() -> Array[StringName]:
+static func get_game_actions_list() -> Array[StringName]:
 	var game_actions: Array[StringName]
 	for action_name: StringName in InputMap.get_actions():
 		if action_name.begins_with("player_"):

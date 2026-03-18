@@ -6,6 +6,9 @@ extends Node
 signal local_player_ready(local_player: LocalPlayer)
 signal player_profile_requested(id: int)
 signal dm_requested(id: int)
+## Emitted whenever the active input type changes. [br]
+## [b]Example[/b]: switching from keyboard to gamepad.
+signal input_changed(input_type: InputComponent.InputType)
 
 var local_player: LocalPlayer
 var player_id: int
@@ -14,6 +17,11 @@ var stats: DataDict = DataDict.new()
 var settings: DataDict = DataDict.new()
 var quick_slots: DataDict = DataDict.new()
 var guilds: DataDict = DataDict.new()
+
+var input_type: InputComponent.InputType:
+	set(value):
+		input_type = value
+		input_changed.emit(value)
 
 
 func _ready() -> void:
