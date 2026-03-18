@@ -126,9 +126,9 @@ func _sync_stick_event() -> void:
 
 	_was_stick_aim_active = active
 	if active:
-		Input.action_press(&"game.shoot")
+		Input.action_press(&"player_shoot")
 	else:
-		Input.action_release(&"game.shoot")
+		Input.action_release(&"player_shoot")
 
 
 func _set_input_type(type: InputType) -> void:
@@ -146,11 +146,11 @@ func _is_event_relevant(event: InputEvent) -> bool:
 
 
 func _get_look_raw() -> Vector2:
-	return Input.get_vector("game.look_left", "game.look_right", "game.look_up", "game.look_down")
+	return Input.get_vector("player_look_left", "player_look_right", "player_look_up", "player_look_down")
 
 
 func _get_move_raw() -> Vector2:
-	return Input.get_vector("game.move_left", "game.move_right", "game.move_up", "game.move_down")
+	return Input.get_vector("player_move_left", "player_move_right", "player_move_up", "player_move_down")
 
 
 func _snap_direction(dir: Vector2) -> Vector2:
@@ -226,21 +226,21 @@ func get_look_direction() -> Vector2:
 func is_attack_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
-	return Input.is_action_pressed(&"game.shoot")
+	return Input.is_action_pressed(&"player_shoot")
 
 
 ## Returns [code]true[/code] on the frame attack action was pressed.
 func is_attack_just_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
-	return Input.is_action_just_pressed(&"game.shoot")
+	return Input.is_action_just_pressed(&"player_shoot")
 
 
 ## Returns [code]true[/code] on the frame attack action was released.
 func is_attack_just_released() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
-	return Input.is_action_just_released(&"game.shoot")
+	return Input.is_action_just_released(&"player_shoot")
 
 
 ## Returns a [code]Array[/code] containing [code][bool, StringName][/code] where [code]StringName[/code] is the name of the action
@@ -253,11 +253,11 @@ func is_event_available(event: InputEvent) -> Array:
 	return [true, &""]
 
 
-## Returns a list containing every game related input actions. Actions that start with "game.".
+## Returns a list containing every game related input actions. Actions that start with "player_".
 func get_game_actions_list() -> Array[StringName]:
 	var game_actions: Array[StringName]
 	for action_name: StringName in InputMap.get_actions():
-		if action_name.begins_with("game."):
+		if action_name.begins_with("player_"):
 			game_actions.append(action_name)
 	
 	return game_actions
