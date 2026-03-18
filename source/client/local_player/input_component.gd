@@ -242,4 +242,25 @@ func is_attack_just_released() -> bool:
 	if _mouse_aiming and not is_mouse_onscreen: return false
 	return Input.is_action_just_released(&"game.shoot")
 
+
+## Returns a [code]Array[/code] containing [code][bool, StringName][/code] where [code]StringName[/code] is the name of the action
+## that the event is assigned to. If the key is available the [code]StringName[/code] will be empty.
+func is_event_available(event: InputEvent) -> Array:
+	for action_name: StringName in get_game_actions_list():
+		if InputMap.action_has_event(action_name, event):
+			return [false, action_name]
+
+	return [true, &""]
+
+
+## Returns a list containing every game related input actions. Actions that start with "game.".
+func get_game_actions_list() -> Array[StringName]:
+	var game_actions: Array[StringName]
+	for action_name: StringName in InputMap.get_actions():
+		if action_name.begins_with("game."):
+			game_actions.append(action_name)
+	
+	return game_actions
+
+
 #endregion
