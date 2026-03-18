@@ -10,6 +10,8 @@ extends Control
 
 
 func _ready() -> void:
+    InputComponent.left_touch_stick = move_stick
+    InputComponent.right_touch_stick = shoot_stick
     set_enabled(enabled)
 
 

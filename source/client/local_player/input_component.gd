@@ -260,4 +260,22 @@ static func get_game_actions_list() -> Array[StringName]:
 	return game_actions
 
 
+static func find_action_event(action_name: StringName, input_type: InputType) -> InputEvent:
+	for event: InputEvent in InputMap.action_get_events(action_name):
+		match input_type:
+			InputType.MOUSE_KEYBOARD:
+				if event is InputEventKey:
+					return event
+			InputType.GAMEPAD:
+				if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+					return event
+	return null
+
+
+static func replace_event(action_name: StringName, event: InputEvent, input_type: InputType) -> void:
+	var old_event: InputEvent = find_action_event(action_name, input_type)
+	if old_event:
+		InputMap.action_erase_event(action_name, old_event)
+	InputMap.action_add_event(action_name, event)
+
 #endregion

@@ -31,7 +31,8 @@ func _ready() -> void:
 	fid_anim = PathRegistry.id_of(":anim")
 	fid_pivot = PathRegistry.id_of(":pivot")
 	
-	apply_settings()
+	ClientState.settings.apply_all()
+	ClientState.settings.setting_changed.connect(ClientState.settings.apply)
 
 
 func _physics_process(delta: float) -> void:
@@ -84,17 +85,6 @@ func process_synchronization() -> void:
 	var collected_pairs: Array = state_synchronizer.collect_dirty_pairs()
 	if not collected_pairs.is_empty():
 		synchronizer_manager.send_my_delta(multiplayer.get_unique_id(), collected_pairs)
-
-
-func apply_settings() -> void:
-	set_camera_zoom(ClientState.settings.get_key(&"zoom", 2) * Vector2.ONE)
-	ClientState.settings.data_changed.connect(_on_settings_changed)
-
-
-func _on_settings_changed(property: StringName, value: Variant) -> void:
-	match property:
-		&"camera_zoom":
-			set_camera_zoom(clampi(value, 1, 4) * Vector2.ONE)
 
 
 func set_camera_zoom(zoom: Vector2) -> void:
