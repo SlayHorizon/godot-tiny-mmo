@@ -196,25 +196,29 @@ func get_move_direction() -> Vector2:
 
 
 ## Returns normalized look direction from player input. [br]
-## Caches the last valid direction, returns it when no active input is detected. [br]
+## Caches the last valid direction, returns it when no valid direction is detected. [br]
 ## [b]MOUSE[/b] - Cursor direction relative to [member node_owner]. [br]
 ## [b]GAMEPAD[/b] - Right joystick direction, via InputMap. [br]
 ## [b]TOUCH[/b] - Right virtual joystick direction, via InputMap.
 func get_look_direction() -> Vector2:
 	if not enabled: return _last_look_direction
-
+	
+	var desidered_direction: Vector2
 	if _is_stick_aiming(): 
 		_mouse_aiming = false # Prevent using mouse direction on next getter.
-		_last_look_direction = _get_look_raw().normalized()
+		desidered_direction = _get_look_raw().normalized()
 
 	if _mouse_aiming and is_mouse_onscreen:
-		_last_look_direction = (get_global_mouse_position() - node_owner.global_position).normalized()
+		desidered_direction = (get_global_mouse_position() - node_owner.global_position).normalized()
 	
 	var use_snap: bool = (
 		(_mouse_aiming and snap_for_mouse) or
 		(is_gamepad_enabled and snap_for_gamepad) or
 		(is_touch_screen_enabled and snap_for_touch)
 	)
+
+	if desidered_direction != Vector2.ZERO:
+		_last_look_direction = desidered_direction
 
 	return _snap_direction(_last_look_direction) if use_snap else _last_look_direction
 
