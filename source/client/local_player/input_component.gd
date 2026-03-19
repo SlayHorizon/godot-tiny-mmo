@@ -290,6 +290,8 @@ static func get_game_actions_list() -> Array[StringName]:
 	return game_actions
 
 
+## Returns the first [InputEvent] in [param action_name] that matchs [param input_type].
+## Returns [code]null[/code] if no [InputEvent] found.
 static func find_action_event(action_name: StringName, input_type: InputType) -> InputEvent:
 	for event: InputEvent in InputMap.action_get_events(action_name):
 		match input_type:
@@ -302,10 +304,12 @@ static func find_action_event(action_name: StringName, input_type: InputType) ->
 	return null
 
 
-static func replace_event(action_name: StringName, event: InputEvent, input_type: InputType) -> void:
+## Replaces the existing [InputEvent] for [param input_type] in [param action_name] with [param new_event]. [br]
+## If no existing [InputEvent], adds directly.
+static func replace_event(action_name: StringName, new_event: InputEvent, input_type: InputType) -> void:
 	var old_event: InputEvent = find_action_event(action_name, input_type)
 	if old_event:
 		InputMap.action_erase_event(action_name, old_event)
-	InputMap.action_add_event(action_name, event)
+	InputMap.action_add_event(action_name, new_event)
 
 #endregion
