@@ -84,11 +84,9 @@ class Settings:
 
 
 	func set_value(section: StringName, property: StringName, value: Variant) -> void:
-		var old_value: Variant = get_value(section, property)
-		if _is_same_type(old_value, value):
-			data[section][property] = value
-			setting_changed.emit(section, property, value)
-			save()
+		data[section][property] = value
+		setting_changed.emit(section, property, value)
+		save()
 
 
 	func apply_all() -> void:
@@ -101,7 +99,7 @@ class Settings:
 		match [section, property]:
 			## Gameplay
 			[&"gameplay", &"camera_zoom"]:
-				ClientState.local_player.set_camera_zoom(value * Vector2.ONE)
+				ClientState.local_player.set_camera_zoom(clamp(value, 1.0 , 4.0) * Vector2.ONE)
 			
 			## keyboard mouse
 			[&"mouse_keyboard", property]: # Inputs
@@ -127,14 +125,6 @@ class Settings:
 			[&"touch", &"stick_deadzone"]:
 				ClientState.local_player.controller.left_touch_stick.deadzone = value
 				ClientState.local_player.controller.right_touch_stick.deadzone = value
-	
-
-	func _is_same_type(value: Variant, other_value: Variant) -> bool:
-		if typeof(value) != typeof(other_value):
-			return false
-		if typeof(value) == TYPE_OBJECT:
-			return value.get_class() == other_value.get_class()
-		return true
 
 
 	func _to_stick_mode(value: bool) -> TouchStick.StickMode:

@@ -113,12 +113,12 @@ func _bind_controls() -> void:
 	section_switch_group.pressed.connect(_on_section_button_pressed)
 
 
-func _on_value_changed(node: Control) -> void:
+func _on_value_changed(value_changed: bool, node: Control) -> void:
 	if not node.has_meta(&"property_name"): return
 	var property_name: StringName = node.get_meta(&"property_name")
 	var value: Variant
 	
-	if node is Slider:
+	if node is Slider and value_changed:
 		value = node.value
 	elif node is CheckButton:
 		value = node.button_pressed
