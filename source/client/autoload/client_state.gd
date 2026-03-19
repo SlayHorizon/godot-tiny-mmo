@@ -106,12 +106,14 @@ class Settings:
 			## keyboard mouse
 			[&"mouse_keyboard", property]: # Inputs
 				if value is InputEventKey or value is InputEventMouseButton:
-					InputComponent.replace_event(property, value, InputComponent.InputType.MOUSE_KEYBOARD)
+					var input_type: InputComponent.InputType = InputComponent.InputType[section.to_upper()]
+					InputComponent.replace_event(property, value, input_type)
 			
 			## Gamepad
 			[&"gamepad", property]: # Inputs
 				if value is InputEventJoypadButton or value is InputEventJoypadMotion:
-					InputComponent.replace_event(property, value, InputComponent.InputType.GAMEPAD)
+					var input_type: InputComponent.InputType = InputComponent.InputType[section.to_upper()]
+					InputComponent.replace_event(property, value, input_type)
 			[&"gamepad", &"deadzone_enter"]:
 				ClientState.local_player.controller.stick_deadzone_enter = value
 			[&"gamepad", &"deadzone_exit"]:

@@ -64,6 +64,25 @@ shadow_color = Color(0, 0, 0, 0.219608)
 shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_klrjg"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_klrjg"]
+content_margin_left = 0.0
+bg_color = Color(0, 0, 0, 0.2627451)
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wuth7"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.2627451)
+corner_detail = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ux2xq"]
 bg_color = Color(0.0162851, 0.345923, 0.572004, 1)
 corner_radius_top_left = 4
@@ -269,6 +288,7 @@ expand_margin_bottom = 2.0
 [resource]
 default_font = ExtResource("1_pa11d")
 Button/colors/font_color = Color(0.936737, 0.959364, 0.98337, 1)
+Button/colors/font_pressed_color = Color(0.37510082, 0.5722988, 0.75793135, 1)
 Button/font_sizes/font_size = 16
 Button/styles/disabled = SubResource("StyleBoxFlat_c84ii")
 Button/styles/focus = SubResource("StyleBoxEmpty_ux2xq")
@@ -276,6 +296,14 @@ Button/styles/hover = SubResource("StyleBoxFlat_a2tkg")
 Button/styles/hover_pressed = SubResource("StyleBoxFlat_a2tkg")
 Button/styles/normal = SubResource("StyleBoxFlat_7rxr3")
 Button/styles/pressed = SubResource("StyleBoxFlat_7rxr3")
+FlatButton/colors/font_color = Color(0.9372549, 0.9607843, 0.9843137, 1)
+FlatButton/colors/font_hover_color = Color(0.9372549, 0.9607843, 0.9843137, 1)
+FlatButton/colors/font_pressed_color = Color(0.6643763, 0.788314, 0.91080713, 1)
+FlatButton/styles/disabled = SubResource("StyleBoxEmpty_klrjg")
+FlatButton/styles/hover = SubResource("StyleBoxFlat_klrjg")
+FlatButton/styles/hover_pressed = SubResource("StyleBoxFlat_wuth7")
+FlatButton/styles/normal = SubResource("StyleBoxEmpty_klrjg")
+FlatButton/styles/pressed = SubResource("StyleBoxFlat_wuth7")
 HScrollBar/styles/grabber = SubResource("StyleBoxFlat_ux2xq")
 HScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_24q0k")
 HScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_24q0k")
