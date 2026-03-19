@@ -10,6 +10,7 @@ var menus: Dictionary[StringName, Control]
 @onready var menu_overlay: Control = $MenuOverlay
 @onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
 @onready var notification_button: Button = $MenuButtons/HBoxContainer/NotificationButton
+@onready var twin_sticks: Control = $TwinSticks
 
 
 func _ready() -> void:
@@ -22,6 +23,12 @@ func _ready() -> void:
 			button.pressed.connect(_on_overlay_menu_close_button_pressed)
 		else:
 			button.pressed.connect(display_menu.bind(button.text.to_lower()))
+
+	ClientState.input_changed.connect(_on_input_type_changed)
+
+
+func _on_input_type_changed(input_type: InputComponent.InputType) -> void:
+	twin_sticks.enabled = input_type == InputComponent.InputType.TOUCH
 
 
 func _on_overlay_menu_close_button_pressed() -> void:
