@@ -59,9 +59,6 @@ var is_mouse_onscreen: bool:
 	get: return (is_mouse_and_keyboard_enabled and _mouse_in_game and _windows_focus)
 
 
-static var right_touch_stick: TouchStick
-static var left_touch_stick: TouchStick
-
 #endregion
 
 #region private variables
@@ -80,6 +77,9 @@ func _ready() -> void:
 		_set_input_type(InputType.TOUCH)
 
 	node_owner = self if not node_owner else node_owner
+
+	ClientState.settings.setting_changed.connect(_on_settings_changed)
+	_apply_settings()
 	set_process_input(enabled)
 
 
@@ -115,9 +115,35 @@ func _notification(what: int) -> void:
 		NOTIFICATION_WM_WINDOW_FOCUS_OUT:
 			_windows_focus = false
 
+
+func _on_settings_changed(section: StringName, property: StringName, value: Variant) -> void:
+	if value is InputEvent:
+		_apply_input_remap(section, property, value)
+		return
+	
+	match [section, property]:
+		[&"gamepad", &"deadzone_exit"]: stick_deadzone_exit = value
+		[&"gamepad", &"deadzone_enter"]: stick_deadzone_enter = value
+
+
 #endregion
 
 #region private
+
+func _apply_settings() -> void:
+	var settings: Dictionary = ClientState.settings.data
+	for section: StringName in [&"mouse_keyboard", &"gamepad"]:
+		if not settings.has(section): continue
+		for property_name: StringName in settings[section]:
+			_on_settings_changed(section, property_name, settings[section][property_name])
+
+
+func _apply_input_remap(section: StringName, property: StringName, value: Variant) -> void:
+	match section:
+		&"gamepad": replace_event(property, value, InputType.GAMEPAD)
+		&"mouse_keyboard": replace_event(property, value, InputType.MOUSE_KEYBOARD)
+
+
 func _sync_stick_event() -> void:
 	var active: bool = _is_stick_aiming()
 	if active == _was_stick_aim_active: return

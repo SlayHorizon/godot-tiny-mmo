@@ -31,8 +31,8 @@ func _ready() -> void:
 	fid_anim = PathRegistry.id_of(":anim")
 	fid_pivot = PathRegistry.id_of(":pivot")
 	
-	ClientState.settings.apply_all()
-	ClientState.settings.setting_changed.connect(ClientState.settings.apply)
+	_apply_settings()
+	ClientState.settings.setting_changed.connect(_on_settings_changed)
 
 
 func _physics_process(delta: float) -> void:
@@ -89,6 +89,18 @@ func process_synchronization() -> void:
 
 func set_camera_zoom(zoom: Vector2) -> void:
 	camera_2d.zoom = zoom
+
+
+func _apply_settings() -> void:
+	var settings: Dictionary = ClientState.settings.data.get(&"gameplay", {})
+	for property_name: StringName in settings:
+		_on_settings_changed(&"gameplay", property_name, settings[property_name]) 
+
+
+func _on_settings_changed(section: StringName, property: StringName, value: Variant) -> void:
+	match [section, property]:
+		[&"gameplay", &"camera_zoom"]:
+			set_camera_zoom(clamp(value, 1.0, 4.0) * Vector2.ONE)
 
 
 func _has_gui_focus() -> bool:
