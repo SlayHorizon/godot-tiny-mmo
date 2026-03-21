@@ -6,7 +6,7 @@ var speed: float = 75.0
 var hand_pivot_speed: float = 17.5
 
 var input_direction: Vector2 = Vector2.ZERO
-var look_direction: Vector2 = Vector2.ZERO # Preparation for multi input support.
+var look_direction: Vector2 = Vector2.ZERO
 var action_input: bool = false
 
 var fid_position: int
@@ -17,7 +17,7 @@ var fid_pivot: int
 var synchronizer_manager: StateSynchronizerManagerClient
 
 @onready var camera_2d: Camera2D = $Camera2D
-@onready var mouse: Node2D = $MouseComponent
+@onready var controller: InputComponent = $InputComponent
 
 
 func _ready() -> void:
@@ -31,7 +31,8 @@ func _ready() -> void:
 	fid_anim = PathRegistry.id_of(":anim")
 	fid_pivot = PathRegistry.id_of(":pivot")
 	
-	apply_settings()
+	_apply_settings()
+	ClientState.settings.setting_changed.connect(_on_settings_changed)
 
 
 func _physics_process(delta: float) -> void:
@@ -47,36 +48,30 @@ func process_movement() -> void:
 
 
 func process_input() -> void:
-	var gui_focus: Control = get_viewport().gui_get_focus_owner()
-	if gui_focus is LineEdit or gui_focus is TextEdit:
+	if _has_gui_focus():
 		input_direction = Vector2.ZERO
-		action_input = false
 		return
 
-	input_direction = Input.get_vector("left", "right", "up", "down")
-	action_input = Input.is_action_pressed("action")
+	input_direction = controller.get_move_direction()
+	look_direction = controller.get_look_direction()
+	action_input = controller.is_attack_pressed()
+	
 	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):
 		Client.request_data(&"action.perform", Callable(),
-		{"d": global_position.direction_to(mouse.position), "i": 0}, InstanceClient.current.name)
-		#Client.request_data(&"action.perform", Callable(),
-		#{"d": global_position.direction_to(mouse.position), "i": 0})
+		{"d": look_direction, "i": 0}, InstanceClient.current.name)
 
 
 func process_animation(delta: float) -> void:
-	flipped = (mouse.position.x < global_position.x)
+	flipped = look_direction.x < 0
 	update_hand_pivot(delta)
 	anim = Animations.RUN if input_direction else Animations.IDLE
 
 
 func update_hand_pivot(delta: float) -> void:
-	var hands_rot_pos: Vector2 = hand_pivot.global_position
-	var flips: int = -1 if flipped else 1
-	var look_at_mouse: float = atan2(
-		(mouse.position.y - hands_rot_pos.y),
-		(mouse.position.x - hands_rot_pos.x) * flips
-	)
-	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_at_mouse, delta * hand_pivot_speed)
+	var to_flip: int = -1 if flipped else 1
+	var look_angle: float = atan2(look_direction.y, look_direction.x * to_flip)
+	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_angle, delta * hand_pivot_speed)
 
 
 func process_synchronization() -> void:
@@ -92,16 +87,22 @@ func process_synchronization() -> void:
 		synchronizer_manager.send_my_delta(multiplayer.get_unique_id(), collected_pairs)
 
 
-func apply_settings() -> void:
-	set_camera_zoom(ClientState.settings.get_key(&"zoom", 2) * Vector2.ONE)
-	ClientState.settings.data_changed.connect(_on_settings_changed)
-
-
-func _on_settings_changed(property: StringName, value: Variant) -> void:
-	match property:
-		&"camera_zoom":
-			set_camera_zoom(clampi(value, 1, 4) * Vector2.ONE)
-
-
 func set_camera_zoom(zoom: Vector2) -> void:
 	camera_2d.zoom = zoom
+
+
+func _apply_settings() -> void:
+	var settings: Dictionary = ClientState.settings.data.get(&"gameplay", {})
+	for property_name: StringName in settings:
+		_on_settings_changed(&"gameplay", property_name, settings[property_name]) 
+
+
+func _on_settings_changed(section: StringName, property: StringName, value: Variant) -> void:
+	match [section, property]:
+		[&"gameplay", &"camera_zoom"]:
+			set_camera_zoom(clamp(value, 1.0, 4.0) * Vector2.ONE)
+
+
+func _has_gui_focus() -> bool:
+	var focus: Control = get_viewport().gui_get_focus_owner()
+	return focus is LineEdit or focus is TextEdit

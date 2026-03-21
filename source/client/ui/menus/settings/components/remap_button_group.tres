@@ -1,0 +1,6 @@
+[gd_resource type="ButtonGroup" format=3 uid="uid://ckhvd518vkmxk"]
+
+[resource]
+resource_local_to_scene = false
+resource_name = "RemapButtonGroup"
+allow_unpress = true

@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://bga8ndeih1lxt"]
+
+[ext_resource type="Script" uid="uid://s6ive88moh6q" path="res://source/client/ui/menus/settings/components/remap_container.gd" id="1_rc673"]
+[ext_resource type="ButtonGroup" uid="uid://ckhvd518vkmxk" path="res://source/client/ui/menus/settings/components/remap_button_group.tres" id="2_q6ujg"]
+
+[node name="RemapContainer" type="HBoxContainer" unique_id=1702750502]
+custom_minimum_size = Vector2(0, 30)
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_rc673")
+
+[node name="Label" type="Control" parent="." unique_id=1069436853]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="Label" unique_id=209506371]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(255, 255, 255, 0.08)
+
+[node name="SettingName" type="RichTextLabel" parent="Label" unique_id=941823279]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "ActionName"
+scroll_active = false
+autowrap_mode = 0
+vertical_alignment = 1
+
+[node name="Controller" type="Control" parent="." unique_id=1424484612]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="Controller" unique_id=359793044]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(255, 255, 255, 0.15)
+
+[node name="InputRemapButton" type="Button" parent="Controller" unique_id=43586039]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"FlatButton"
+toggle_mode = true
+button_group = ExtResource("2_q6ujg")
+clip_text = true

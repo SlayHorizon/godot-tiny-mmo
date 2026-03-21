@@ -106,7 +106,7 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"chat"):
+	if event.is_action_pressed(&"player_chat"):
 		if not full_feed.visible and not peek_feed_message_edit.has_focus():
 			get_viewport().set_input_as_handled()
 			accept_event()

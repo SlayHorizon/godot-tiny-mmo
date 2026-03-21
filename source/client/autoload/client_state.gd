@@ -6,14 +6,22 @@ extends Node
 signal local_player_ready(local_player: LocalPlayer)
 signal player_profile_requested(id: int)
 signal dm_requested(id: int)
+## Emitted whenever the active input type changes. [br]
+## [b]Example[/b]: switching from keyboard to gamepad.
+signal input_changed(input_type: InputComponent.InputType)
 
 var local_player: LocalPlayer
 var player_id: int
 var active_guild_id: int
 var stats: DataDict = DataDict.new()
-var settings: DataDict = DataDict.new()
+var settings: Settings = Settings.new()
 var quick_slots: DataDict = DataDict.new()
 var guilds: DataDict = DataDict.new()
+
+var input_type: InputComponent.InputType:
+	set(value):
+		input_type = value
+		input_changed.emit(value)
 
 
 func _ready() -> void:
@@ -26,6 +34,8 @@ func _ready() -> void:
 	Client.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)
+
+	settings.load_file()
 
 
 class DataDict:
@@ -49,3 +59,32 @@ class DataDict:
 	
 	func get_key(property: Variant, default: Variant = null) -> Variant:
 		return data.get(property, default)
+
+
+class Settings:
+	const SETTINGS_PATH: String = "user://client_settings.cfg"
+	const DEFAULTS_PATH: String = "res://data/config/client_default_settings.cfg"
+
+	signal setting_changed(section: StringName, property: StringName, new_value: Variant)
+
+	var data: Dictionary
+
+
+	func load_file() -> void:
+		var defaults: Dictionary = ConfigFileUtils.load_file_with_defaults(DEFAULTS_PATH, {})
+		data = ConfigFileUtils.load_file_with_defaults(SETTINGS_PATH, defaults)
+
+
+	func save() -> void:
+		ConfigFileUtils.save_sections(data, SETTINGS_PATH)
+	
+
+	func get_value(section: StringName, property: StringName) -> Variant:
+		return data.get(section, {}).get(property)
+
+
+	func set_value(section: StringName, property: StringName, value: Variant) -> void:
+		data[section][property] = value
+		setting_changed.emit(section, property, value)
+		save()
+
