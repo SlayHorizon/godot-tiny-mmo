@@ -114,7 +114,6 @@ func request_login(
 
 	if player.account_name != username:
 		return
-
 	result_login.rpc_id(
 		1,
 		OK,

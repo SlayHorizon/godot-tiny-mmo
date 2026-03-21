@@ -4,6 +4,7 @@ extends Node
 
 var account_collection: AccountResourceCollection
 var account_collection_path: String = "res://source/server/master/account_collection.tres"
+var active_accounts: Dictionary[StringName, AccountResource]
 
 
 func _ready() -> void:

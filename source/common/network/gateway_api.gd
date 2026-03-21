@@ -1,11 +1,20 @@
-#class_name GatewayAPI
+class_name GatewayAPI
 
 ## Shared keys (client + gateway)
+const KEY_REQUEST_ID: String = "r-id"
 const KEY_TOKEN_ID: String = "t-id"
 const KEY_ACCOUNT_ID: String = "a-id"
 const KEY_ACCOUNT_USERNAME: String = "a-u"
+const KEY_ACCOUNT_PASSWORD: String  = "a-p"
 const KEY_WORLD_ID: String = "w-id"
 const KEY_CHAR_ID: String = "c-id"
+
+const ACTION_LOGIN := "login"
+const ACTION_CREATE_ACCOUNT := "create_account"
+const ACTION_CREATE_CHARACTER := "create_character"
+const ACTION_LIST_CHARACTERS := "list_characters"
+const ACTION_ENTER_WORLD := "enter_world"
+const ACTION_DISCONNECT := "disconnect"
 
 
 static func base_url() -> String:

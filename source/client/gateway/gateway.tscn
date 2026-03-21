@@ -69,7 +69,6 @@ grow_vertical = 2
 color = Color(0.129558, 0.129559, 0.129558, 0.35)
 
 [node name="MainPanel" type="PanelContainer" parent="." unique_id=862795661]
-visible = false
 custom_minimum_size = Vector2(560, 320)
 layout_mode = 1
 anchors_preset = 8
@@ -337,6 +336,13 @@ size_flags_horizontal = 4
 layout_mode = 2
 theme_override_constants/separation = 30
 alignment = 1
+
+[node name="Button" type="Button" parent="WorldSelection/VBoxContainer" unique_id=66090702]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+disabled = true
+text = "Update"
 
 [node name="CharacterSelection" type="PanelContainer" parent="." unique_id=1308493296]
 visible = false
@@ -651,6 +657,7 @@ theme_override_font_sizes/font_size = 18
 text = "OK"
 
 [node name="AlreadyConnectedPanel" type="Control" parent="." unique_id=1467439334]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

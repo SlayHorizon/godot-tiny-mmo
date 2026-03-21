@@ -2,7 +2,7 @@ extends Node
 #class_name HTTPServer
 
 
-const HttpRouter = preload("res://addons/httpserver/http_router.gd")
+const HttpRouter: GDScript = preload("res://addons/httpserver/http_router.gd")
 
 const DEFAULT_BIND_ADDRESS: String = "127.0.0.1"
 const MAX_REQUEST_BYTES: int = 1024 * 1024 # 1 MiB safety cap

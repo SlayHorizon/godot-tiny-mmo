@@ -2,11 +2,10 @@ extends Control
 
 
 const CredentialsUtils: GDScript = preload("res://source/common/utils/credentials_utils.gd")
-const GatewayApi: GDScript = preload("res://source/common/network/gateway_api.gd")
 
 var account_id: int
 var account_name: String
-var token: int = randi()
+var session_id: String
 
 var current_world_id: int
 var current_character_id: int
@@ -51,9 +50,11 @@ func _ready() -> void:
 		var debug_credentials: Dictionary = ConfigFileUtils.load_section_safe(debug_id, "res://data/config/client_config.cfg", ["username", "password"])
 		var d: Dictionary = await do_request(
 					HTTPClient.Method.METHOD_POST,
-					GatewayApi.login(),
-					{"u": debug_credentials["username"], "p": debug_credentials["password"],
-					GatewayApi.KEY_TOKEN_ID: token}
+					GatewayAPI.login(),
+					{
+						GatewayAPI.KEY_ACCOUNT_USERNAME: debug_credentials["username"],
+						GatewayAPI.KEY_ACCOUNT_PASSWORD: debug_credentials["password"],
+					}
 				)
 		if d.has("error"):
 			await popup_panel.confirm_message(str(d))
@@ -63,14 +64,15 @@ func _ready() -> void:
 
 
 func handle_success_login(d: Dictionary) -> void:
-	var account_info: Dictionary = d.get("a", {})
 	var worlds: Dictionary = d.get("w", {})
 
-	account_name = account_info.get("name", "")
-	account_id = account_info.get("id", 0)
-	current_character_id = account_info.get("character_id", 0)
+	session_id = d.get("session_id", 0)
 
-	var last_world_name: String = account_info.get("world_name", "")
+	account_name = d.get("name", "")
+	account_id = d.get("id", 0)
+	current_character_id = d.get("character_id", 0)
+
+	var last_world_name: String = d.get("world_name", "")
 	var is_last_world_online: bool = false
 
 	for world_id: String in worlds:
@@ -79,6 +81,7 @@ func handle_success_login(d: Dictionary) -> void:
 			is_last_world_online = true
 
 	populate_worlds(worlds)
+
 	if is_last_world_online:
 		$AlreadyConnectedPanel/ContinueButton.text = "Continue\n%s - %s" % [last_world_name, account_name]
 		$PopupPanel.hide()
@@ -87,7 +90,6 @@ func handle_success_login(d: Dictionary) -> void:
 		$PopupPanel.hide()
 		$MainPanel.show()
 		fill_connection_info(account_name, account_id)
-		#populate_worlds(worlds)
 		_show($WorldSelection, false)
 
 
@@ -116,7 +118,7 @@ func do_request(
 	var args: Array = await http_request.request_completed
 	var result: int = args[0]
 	if result != OK:
-		return {"error": 1, "ERROR?": "TIMEOUT?", "code": result}
+		return {"error": 1, "msg": "TIMEOUT?", "code": result}
 	
 	var response_code: int = args[1]
 	var headers: PackedStringArray = args[2]
@@ -125,7 +127,7 @@ func do_request(
 	var data: Variant = JSON.parse_string(body.get_string_from_ascii())
 	if data is Dictionary:
 		return data
-	return {"error": 1}
+	return {"error": 1, "msg": "Wrong data format received."}
 
 
 func _show(next: Control, can_back: bool = true) -> void:
@@ -161,14 +163,18 @@ func _on_login_login_button_pressed() -> void:
 	popup_panel.display_waiting_popup()
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		GatewayApi.login(),
-		{"u": username, "p": password,
-		GatewayApi.KEY_TOKEN_ID: token}
+		GatewayAPI.login(),
+			{
+				GatewayAPI.KEY_ACCOUNT_USERNAME: username,
+				GatewayAPI.KEY_ACCOUNT_PASSWORD: password,
+			}
 	)
 	if d.has("error"):
 		await popup_panel.confirm_message(str(d))
 		login_button.disabled = false
 		return
+
+	session_id = d.get("session_id")
 
 	populate_worlds(d.get("w", {}))
 	fill_connection_info(d["a"]["name"], d["a"]["id"])
@@ -182,14 +188,16 @@ func _on_guest_button_pressed() -> void:
 
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		GatewayApi.guest(),
-		{GatewayApi.KEY_TOKEN_ID: token}
+		GatewayAPI.guest(),
+		{}
 	)
 	if d.has("error"):
 		await popup_panel.confirm_message(str(d))
 		return
 
-	fill_connection_info(d["a"]["name"], d["a"]["id"])
+	session_id = d.get("session_id", 0)
+
+	fill_connection_info(d.get("name", ""), d.get("id", 0))
 	populate_worlds(d.get("w", {}))
 
 	popup_panel.hide()
@@ -201,11 +209,13 @@ func _on_world_selected(world_id: int) -> void:
 	popup_panel.display_waiting_popup()
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		GatewayApi.world_characters(),
-		{GatewayApi.KEY_WORLD_ID: world_id,
-		GatewayApi.KEY_ACCOUNT_ID: account_id,
-		GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
-		GatewayApi.KEY_TOKEN_ID: token}
+		GatewayAPI.world_characters(),
+		{
+			GatewayAPI.KEY_WORLD_ID: world_id,
+			GatewayAPI.KEY_ACCOUNT_ID: account_id,
+			GatewayAPI.KEY_ACCOUNT_USERNAME: account_name,
+			GatewayAPI.KEY_TOKEN_ID: session_id
+		}
 	)
 	if d.has("error"):
 		await popup_panel.confirm_message(str(d))
@@ -218,12 +228,14 @@ func _on_world_selected(world_id: int) -> void:
 	for button: Button in container.get_children():
 		if button.pressed.is_connected(_on_character_selected):
 			button.pressed.disconnect(_on_character_selected)
-		if d["data"].size() > i:
-			character_id = d["data"].keys()[i]
+		if d.size() > i:
+			character_id = d.keys()[i]
+			if not d.get(d.keys()[i], {}).has_all(["name","class", "level"]):
+				continue
 			button.text = "%s\nClass: %s\nLevel: %d" % [
-				d["data"][character_id]["name"],
-				d["data"][character_id]["class"],
-				d["data"][character_id]["level"],
+				d[character_id]["name"],
+				d[character_id]["class"],
+				d[character_id]["level"],
 			]
 			button.pressed.connect(_on_character_selected.bind(world_id, character_id.to_int()))
 		else:
@@ -246,12 +258,12 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		GatewayApi.world_enter(),
+		GatewayAPI.world_enter(),
 		{
-			GatewayApi.KEY_TOKEN_ID: token,
-			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
-			GatewayApi.KEY_WORLD_ID: world_id,
-			GatewayApi.KEY_CHAR_ID: character_id
+			GatewayAPI.KEY_TOKEN_ID: session_id,
+			GatewayAPI.KEY_ACCOUNT_USERNAME: account_name,
+			GatewayAPI.KEY_WORLD_ID: world_id,
+			GatewayAPI.KEY_CHAR_ID: character_id
 		}
 	)
 	if d.has("error"):
@@ -260,7 +272,7 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 		$BackButton.show()
 		return
 
-	Client.connect_to_server(d["address"], d["port"], d["token"])
+	Client.connect_to_server(d["address"], d["port"], d["auth-token"])
 	queue_free.call_deferred()
 
 
@@ -284,15 +296,15 @@ func _on_create_character_button_pressed() -> void:
 	popup_panel.display_waiting_popup()
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		GatewayApi.world_create_char(),
+		GatewayAPI.world_create_char(),
 		{
-			GatewayApi.KEY_TOKEN_ID: token,
+			GatewayAPI.KEY_TOKEN_ID: session_id,
 			"data": {
 				"name": username_edit.text,
 				"skin": selected_skin_id,
 			},
-			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
-			GatewayApi.KEY_WORLD_ID: current_world_id
+			GatewayAPI.KEY_ACCOUNT_USERNAME: account_name,
+			GatewayAPI.KEY_WORLD_ID: current_world_id
 		}
 	)
 	if d.has("error"):
@@ -302,9 +314,9 @@ func _on_create_character_button_pressed() -> void:
 		return
 
 	Client.connect_to_server(
-		d["data"]["address"],
-		d["data"]["port"],
-		d["data"]["auth-token"]
+		d["address"],
+		d["port"],
+		d["auth-token"]
 	)
 	queue_free.call_deferred()
 
@@ -333,9 +345,11 @@ func create_account() -> void:
 
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		GatewayApi.account_create(),
-		{"u": name_edit.text, "p": password_edit.text,
-		GatewayApi.KEY_TOKEN_ID: token}
+		GatewayAPI.account_create(),
+		{
+			GatewayAPI.KEY_ACCOUNT_USERNAME: name_edit.text,
+			GatewayAPI.KEY_ACCOUNT_PASSWORD: password_edit.text,
+		}
 	)
 	if d.has("error"):
 		await popup_panel.confirm_message(str(d))
@@ -359,6 +373,9 @@ func populate_worlds(world_info: Dictionary) -> void:
 		child.queue_free()
 	for world_id: String in world_info:
 		add_world_card(world_info.get(world_id, {}).get("info", {}), world_id.to_int())
+	
+	if world_info.is_empty():
+		$PopupPanel.show_reconnect_popup()
 
 
 func fill_connection_info(_account_name: String, _account_id: int) -> void:
@@ -399,18 +416,17 @@ func add_world_card(world_info: Dictionary, world_id: int) -> Button:
 	return button
 
 
-# AlreadyConnectedPanel Buttons
 func _on_continue_button_pressed() -> void:
 	$AlreadyConnectedPanel.hide()
 	popup_panel.display_waiting_popup()
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
-		GatewayApi.world_enter(),
+		GatewayAPI.world_enter(),
 		{
-			GatewayApi.KEY_TOKEN_ID: token,
-			GatewayApi.KEY_ACCOUNT_USERNAME: account_name,
-			GatewayApi.KEY_WORLD_ID: current_world_id,
-			GatewayApi.KEY_CHAR_ID: current_character_id
+			GatewayAPI.KEY_TOKEN_ID: session_id,
+			GatewayAPI.KEY_ACCOUNT_USERNAME: account_name,
+			GatewayAPI.KEY_WORLD_ID: current_world_id,
+			GatewayAPI.KEY_CHAR_ID: current_character_id
 		}
 	)
 	if d.has("error"):
@@ -418,7 +434,7 @@ func _on_continue_button_pressed() -> void:
 		$AlreadyConnectedPanel.show()
 		return
 
-	Client.connect_to_server(d["address"], d["port"], d["token"])
+	Client.connect_to_server(d["address"], d["port"], d["auth-token"])
 	queue_free.call_deferred()
 
 

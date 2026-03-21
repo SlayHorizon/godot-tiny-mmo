@@ -65,8 +65,11 @@ func player_character_creation_result(gateway_id: int, peer_id: int, username: S
 			authentication_manager.save_account_collection()
 		var auth_token: String = authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, auth_token, username, result_code)
-		gateway_manager.player_character_creation_result.rpc_id(
-			gateway_id, peer_id, {
+		
+		gateway_manager.gateway_response.rpc_id(
+			gateway_id,
+			peer_id,
+			{
 				"auth-token": auth_token,
 				"address": connected_worlds[world_id]["address"],
 				"port": connected_worlds[world_id]["port"]
@@ -95,15 +98,21 @@ func result_login(result_code: int, gateway_id: int, peer_id: int, username: Str
 		var auth_token: String = authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, auth_token, username, character_id)
 		await get_tree().create_timer(0.5).timeout
-		gateway_manager.fetch_auth_token.rpc_id(
-			gateway_id, peer_id, auth_token,
-			connected_worlds[world_id]["address"],
-			connected_worlds[world_id]["port"]
+		gateway_manager.gateway_response.rpc_id(
+			gateway_id,
+			peer_id,
+			{
+				"auth-token": auth_token,
+				"address": connected_worlds[world_id]["address"],
+				"port": connected_worlds[world_id]["port"]
+			}
 		)
 
 
 @rpc("any_peer")
 func receive_player_characters(player_characters: Dictionary, gateway_id: int, peer_id: int) -> void:
-	gateway_manager.receive_player_characters.rpc_id(
-		gateway_id, peer_id, player_characters
+	gateway_manager.gateway_response.rpc_id(
+		gateway_id,
+		peer_id,
+		player_characters
 	)
