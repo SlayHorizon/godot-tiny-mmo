@@ -26,41 +26,22 @@ func _ready() -> void:
 	menu_stack.append(main_panel)
 	back_button.hide()
 
-	var animated_sprite_2d: AnimatedSprite2D = $CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control/AnimatedSprite2D
-	animated_sprite_2d.play(&"run")
-	var v_box_container: GridContainer = $CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer
-	for button: Button in v_box_container.get_children():
-		button.pressed.connect(
-			func():
-				var sprite: SpriteFrames = ContentRegistryHub.load_by_slug(&"sprites", button.text.to_lower()) as SpriteFrames
-				if not sprite:
-					return
-				selected_skin_id = ContentRegistryHub.id_from_slug(&"sprites", button.text.to_lower())
-				if selected_skin_id == 0:
-					selected_skin_id = 1
-				animated_sprite_2d.sprite_frames = sprite
-				animated_sprite_2d.play(&"run")
-		)
+	prepare_character_creation_menu()
 
 	var debug_id: String = CmdlineUtils.get_parsed_args().get("dum", "")
 	if debug_id:
 		$MainPanel.hide()
-		$PopupPanel.display_waiting_popup()
+		popup_panel.display_waiting_popup()
 		await get_tree().create_timer(2.0).timeout
 		var debug_credentials: Dictionary = ConfigFileUtils.load_section_safe(debug_id, "res://data/config/client_config.cfg", ["username", "password"])
-		var d: Dictionary = await do_request(
-					HTTPClient.Method.METHOD_POST,
-					GatewayAPI.login(),
-					{
-						GatewayAPI.KEY_ACCOUNT_USERNAME: debug_credentials["username"],
-						GatewayAPI.KEY_ACCOUNT_PASSWORD: debug_credentials["password"],
-					}
-				)
-		if d.has("error"):
-			await popup_panel.confirm_message(str(d))
+		var response: Dictionary = await request_login(debug_credentials["username"], debug_credentials["password"]) 
+		if response.has("error"):
+			await popup_panel.confirm_message(str(response))
 			$MainPanel.show()
 		else:
-			handle_success_login(d)
+			handle_success_login(response)
+	else:
+		$MainPanel/VBoxContainer/VBoxContainer/LoginButton.grab_focus()
 
 
 func handle_success_login(d: Dictionary) -> void:
@@ -84,10 +65,10 @@ func handle_success_login(d: Dictionary) -> void:
 
 	if is_last_world_online:
 		$AlreadyConnectedPanel/ContinueButton.text = "Continue\n%s - %s" % [last_world_name, account_name]
-		$PopupPanel.hide()
+		popup_panel.hide()
 		_show($AlreadyConnectedPanel, false)
 	else:
-		$PopupPanel.hide()
+		popup_panel.hide()
 		$MainPanel.show()
 		fill_connection_info(account_name, account_id)
 		_show($WorldSelection, false)
@@ -157,27 +138,21 @@ func _on_login_login_button_pressed() -> void:
 		CredentialsUtils.validate_username(username).code != CredentialsUtils.UsernameError.OK
 		or CredentialsUtils.validate_password(password).code != CredentialsUtils.UsernameError.OK
 	):
+		#await popup_panel.confirm_message(str(response))
 		login_button.disabled = false
 		return
 
 	popup_panel.display_waiting_popup()
-	var d: Dictionary = await do_request(
-		HTTPClient.Method.METHOD_POST,
-		GatewayAPI.login(),
-			{
-				GatewayAPI.KEY_ACCOUNT_USERNAME: username,
-				GatewayAPI.KEY_ACCOUNT_PASSWORD: password,
-			}
-	)
-	if d.has("error"):
-		await popup_panel.confirm_message(str(d))
+	var response: Dictionary = await request_login(username, password)
+	if response.has("error"):
+		await popup_panel.confirm_message(str(response))
 		login_button.disabled = false
 		return
 
-	session_id = d.get("session_id")
+	session_id = response.get("session_id")
 
-	populate_worlds(d.get("w", {}))
-	fill_connection_info(d["a"]["name"], d["a"]["id"])
+	populate_worlds(response.get("w", {}))
+	fill_connection_info(response["name"], response["id"])
 
 	popup_panel.hide()
 	_show($WorldSelection, false)
@@ -356,7 +331,7 @@ func create_account() -> void:
 		$CreateAccountPanel.show()
 		return
 	
-	fill_connection_info(d["a"]["name"], d["a"]["id"])
+	fill_connection_info(d["name"], d["id"])
 	populate_worlds(d.get("w", {}))
 	
 	popup_panel.hide()
@@ -375,7 +350,7 @@ func populate_worlds(world_info: Dictionary) -> void:
 		add_world_card(world_info.get(world_id, {}).get("info", {}), world_id.to_int())
 	
 	if world_info.is_empty():
-		$PopupPanel.show_reconnect_popup()
+		popup_panel.show_reconnect_popup()
 
 
 func fill_connection_info(_account_name: String, _account_id: int) -> void:
@@ -461,3 +436,45 @@ func _on_back_button_pressed() -> void:
 			menu_stack.back().show()
 		if menu_stack.size() < 2:
 			back_button.hide()
+
+
+# Helpers
+func request_login(username: String, password: String) -> Dictionary:
+	return await do_request(
+		HTTPClient.Method.METHOD_POST,
+		GatewayAPI.login(),
+		{
+			GatewayAPI.KEY_ACCOUNT_USERNAME: username,
+			GatewayAPI.KEY_ACCOUNT_PASSWORD: password,
+		}
+	)
+
+func request_enter_world() -> Dictionary:
+	return await do_request(
+			HTTPClient.Method.METHOD_POST,
+			GatewayAPI.world_enter(),
+			{
+				GatewayAPI.KEY_TOKEN_ID: session_id,
+				GatewayAPI.KEY_ACCOUNT_USERNAME: account_name,
+				GatewayAPI.KEY_WORLD_ID: current_world_id,
+				GatewayAPI.KEY_CHAR_ID: current_character_id
+			}
+		)
+
+
+func prepare_character_creation_menu() -> void:
+	var animated_sprite_2d: AnimatedSprite2D = $CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control/AnimatedSprite2D
+	animated_sprite_2d.play(&"run")
+	var v_box_container: GridContainer = $CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer
+	for button: Button in v_box_container.get_children():
+		button.pressed.connect(
+			func() -> void:
+				var sprite: SpriteFrames = ContentRegistryHub.load_by_slug(&"sprites", button.text.to_lower()) as SpriteFrames
+				if not sprite:
+					return
+				selected_skin_id = ContentRegistryHub.id_from_slug(&"sprites", button.text.to_lower())
+				if selected_skin_id == 0:
+					selected_skin_id = 1
+				animated_sprite_2d.sprite_frames = sprite
+				animated_sprite_2d.play(&"run")
+		)

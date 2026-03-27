@@ -87,4 +87,3 @@ class Settings:
 		data[section][property] = value
 		setting_changed.emit(section, property, value)
 		save()
-

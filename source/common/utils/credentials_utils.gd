@@ -32,8 +32,8 @@ static func validate_username(username: String) -> Dictionary:
 		return _fail(UsernameError.TOO_SHORT, "Min %d characters." % USERNAME_MIN_LEN)
 	if username.length() > USERNAME_MAX_LEN:
 		return _fail(UsernameError.TOO_LONG, "Max %d characters." % USERNAME_MAX_LEN)
-	if not username.is_valid_ascii_identifier():
-		return _fail(UsernameError.INVALID_CHARS, "Use letters, digits, underscore.")
+	#if not username.is_valid_ascii_identifier():
+		#return _fail(UsernameError.INVALID_CHARS, "Use letters, digits, underscore.")
 	if USERNAME_RESERVED.has(username.to_lower()):
 		return _fail(UsernameError.RESERVED, "This name is reserved.")
 	return {"code": UsernameError.OK, "message": ""}
@@ -46,8 +46,8 @@ static func validate_password(password: String) -> Dictionary:
 		return _fail(UsernameError.TOO_SHORT, "Min %d characters." % PASSWORD_MIN_LEN)
 	if password.length() > PASSWORD_MAX_LEN:
 		return _fail(UsernameError.TOO_LONG, "Max %d characters." % PASSWORD_MAX_LEN)
-	if not password.is_valid_ascii_identifier():
-		return _fail(UsernameError.INVALID_CHARS, "Use letters, digits, underscore.")
+	#if not password.is_valid_ascii_identifier():
+		#return _fail(UsernameError.INVALID_CHARS, "Use letters, digits, underscore.")
 	return {"code": UsernameError.OK, "message": ""}
 
 

@@ -16,18 +16,13 @@ script = ExtResource("1_wgikn")
 id = 2
 username = "guest2"
 password = "2sbpoe7jb+"
-
-[sub_resource type="Resource" id="Resource_e6eac"]
-script = ExtResource("1_wgikn")
-id = 9
-username = "guest9"
-password = "rve2#vn7v2"
+last_world_name = "Classic"
+last_character_id = 16
 
 [resource]
 script = ExtResource("2_e6eac")
 collection = Dictionary[StringName, ExtResource("1_wgikn")]({
 &"guest1": SubResource("Resource_lbkgn"),
-&"guest2": SubResource("Resource_wgikn"),
-&"guest9": SubResource("Resource_e6eac")
+&"guest2": SubResource("Resource_wgikn")
 })
-next_account_id = 10
+next_account_id = 3
