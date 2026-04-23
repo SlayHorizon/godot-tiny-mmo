@@ -17,6 +17,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Tiny MMO"
 config/version="0.0.8"
 run/main_scene="res://source/common/main.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="slayhorizon"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://assets/project_icon/icon_svg.svg"
 

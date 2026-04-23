@@ -6,6 +6,7 @@ const CredentialsUtils: GDScript = preload("res://source/common/utils/credential
 var account_id: int
 var account_name: String
 var session_id: String
+var local_id: String
 
 var current_world_id: int
 var current_character_id: int
@@ -28,19 +29,11 @@ func _ready() -> void:
 
 	prepare_character_creation_menu()
 
-	var debug_id: String = CmdlineUtils.get_parsed_args().get("dum", "")
-	if debug_id:
-		$MainPanel.hide()
-		popup_panel.display_waiting_popup()
-		await get_tree().create_timer(2.0).timeout
-		var debug_credentials: Dictionary = ConfigFileUtils.load_section_safe(debug_id, "res://data/config/client_config.cfg", ["username", "password"])
-		var response: Dictionary = await request_login(debug_credentials["username"], debug_credentials["password"]) 
-		if response.has("error"):
-			await popup_panel.confirm_message(str(response))
-			$MainPanel.show()
-		else:
-			handle_success_login(response)
-	else:
+	local_id = CmdlineUtils.get_parsed_args().get("id", "")
+
+	if not await try_auto_login():
+		popup_panel.hide()
+		$MainPanel.show()
 		$MainPanel/VBoxContainer/VBoxContainer/LoginButton.grab_focus()
 
 
@@ -81,7 +74,7 @@ func do_request(
 ) -> Dictionary:
 	if http_request.get_http_client_status() == HTTPClient.Status.STATUS_CONNECTED:
 		return {"error": "request_error"}
-	
+
 	var custom_headers: PackedStringArray
 	custom_headers.append("Content-Type: application/json")
 	
@@ -95,16 +88,16 @@ func do_request(
 	if error != OK:
 		push_error("An error occurred in the HTTP request.")
 		return {ok=false, error="request_error", code=error}
-	
+
 	var args: Array = await http_request.request_completed
 	var result: int = args[0]
 	if result != OK:
 		return {"error": 1, "msg": "TIMEOUT?", "code": result}
-	
+
 	var response_code: int = args[1]
 	var headers: PackedStringArray = args[2]
 	var body: PackedByteArray = args[3]
-	
+
 	var data: Variant = JSON.parse_string(body.get_string_from_ascii())
 	if data is Dictionary:
 		return data
@@ -151,6 +144,9 @@ func _on_login_login_button_pressed() -> void:
 
 	session_id = response.get("session_id")
 
+	save_refresh_token("%s\n%s" % [username, password], "user://%ssession.dat" % local_id)
+
+	
 	populate_worlds(response.get("w", {}))
 	fill_connection_info(response["name"], response["id"])
 
@@ -331,6 +327,9 @@ func create_account() -> void:
 		$CreateAccountPanel.show()
 		return
 	
+	save_refresh_token(name_edit.text + "\n" + password_edit.text, "user://%ssession.dat" % local_id)
+
+
 	fill_connection_info(d["name"], d["id"])
 	populate_worlds(d.get("w", {}))
 	
@@ -478,3 +477,59 @@ func prepare_character_creation_menu() -> void:
 				animated_sprite_2d.sprite_frames = sprite
 				animated_sprite_2d.play(&"run")
 		)
+
+
+# Ideally we must not save credentials locally even if crypted,
+# saving a temporary token given by the server is the way. 
+func try_auto_login() -> bool:
+	var refresh_token: String
+	var file_path: String = "user://session.dat"
+
+	$MainPanel.hide()
+	popup_panel.display_waiting_popup()
+
+	# Await timer to let the gateway server boot up. 
+	await get_tree().create_timer(2.0).timeout
+
+	file_path  = "user://%ssession.dat" % local_id
+	refresh_token = load_refresh_token(file_path)
+	if refresh_token.is_empty():
+		return false
+
+	# Old way
+	#var debug_credentials: Dictionary = ConfigFileUtils.load_section_safe(debug_id, "res://data/config/client_config.cfg", ["username", "password"])
+	#var response: Dictionary = await request_login(debug_credentials["username"], debug_credentials["password"]) 
+
+	var response: Dictionary = await request_login(
+		refresh_token.get_slice("\n", 0), #Username
+		refresh_token.get_slice("\n", 1) #Password
+	)
+	if response.has("error"):
+		await popup_panel.confirm_message(str(response))
+		return false
+	else:
+		handle_success_login(response)
+	return true
+
+
+# Can be changed / randomized each build
+const LOCAL_PASS: String = "LOCAL_PASSWORD"
+func save_refresh_token(token: String, file_path: String) -> void:
+	var file: FileAccess = FileAccess.open_encrypted_with_pass(file_path, FileAccess.WRITE, LOCAL_PASS)
+	if file:
+		file.store_string(token)
+		file.close()
+	else:
+		printerr(error_string(FileAccess.get_open_error()))
+
+
+func load_refresh_token(file_path: String) -> String:
+	if not FileAccess.file_exists(file_path):
+		return ""
+	var file: FileAccess = FileAccess.open_encrypted_with_pass(file_path, FileAccess.READ, LOCAL_PASS)
+	if not file:
+		printerr(error_string(FileAccess.get_open_error()))
+		return ""
+	var token: String = file.get_as_text()
+	file.close()
+	return token
