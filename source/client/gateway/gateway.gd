@@ -378,7 +378,7 @@ func add_world_card(world_info: Dictionary, world_id: int) -> Button:
 		"[font_size=20][b]%s[/b][/font_size]\n" % world_info.get("name", "Unknown World")
 	)
 	text_label.append_text(
-		"\n[i][font_size=12]\"%s\"[/font_size][/i]\n" % world_info.get("motd", "")
+		"\n[i][font_size=12]\"%s\"[/font_size][/i]\n" % tr(world_info.get("motd", ""))
 	)
 	text_label.append_text(
 		"\n[font_size=13][b]%s[/b][/font_size]\n" % "PvP" if world_info.get("pvp", true) else "No PvP"
