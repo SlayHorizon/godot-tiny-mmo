@@ -85,6 +85,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
 
 [node name="PanelRect" type="TextureRect" parent="MainPanel" unique_id=2129319634]
+visible = false
 material = SubResource("CanvasItemMaterial_q35d6")
 layout_mode = 2
 texture = SubResource("GradientTexture2D_rk5g7")
