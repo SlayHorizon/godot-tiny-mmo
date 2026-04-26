@@ -27,7 +27,9 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	pass
+	var language = OS.get_locale()
+	TranslationServer.set_locale(language)
+	# TranslationServer.set_locale("en_ES") # leaving this commented for now just to remember how to force language to test
 
 
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
