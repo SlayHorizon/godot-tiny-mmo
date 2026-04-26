@@ -280,7 +280,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3" unique_id=173721393]
 layout_mode = 2
-text = "Password Repeat"
+text = "PASSWORD_CONFIRM"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3" unique_id=1285641241]
@@ -288,7 +288,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "PASSWORD_CONFIRM"
+placeholder_text = "ENTER_PASSWORD_CONFIRM"
 
 [node name="CreateAccountButton" type="Button" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=1234407790]
 custom_minimum_size = Vector2(420, 56)
