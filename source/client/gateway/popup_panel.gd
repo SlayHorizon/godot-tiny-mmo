@@ -6,15 +6,15 @@ extends PanelContainer
 @onready var confirm_button: Button = $VBoxContainer/VBoxContainer/ConfirmButton
 
 
-func display_waiting_popup(text: String = "Waiting ...") -> void:
-	title_label.text = "Waiting"
+func display_waiting_popup(text: String = "WAITING") -> void:
+	title_label.text = tr("WAITING")
 	confirm_button.hide()
-	rich_text_label.text = text
+	rich_text_label.text = tr(text) + " ..."
 	show()
 
 
 func confirm_message(message: String) -> void:
-	title_label.text = "Please Confirm"
+	title_label.text = tr("PLEASE_CONFIRM")
 	rich_text_label.text = message
 	confirm_button.show()
 	show()

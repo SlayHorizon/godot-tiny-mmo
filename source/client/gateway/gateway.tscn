@@ -232,7 +232,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Create Account"
+text = "CREATE_ACC"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CreateAccountPanel/VBoxContainer" unique_id=353400196]
@@ -250,7 +250,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=201484594]
 layout_mode = 2
-text = "Account name"
+text = "ACC_NAME"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=1669515998]
@@ -258,14 +258,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your account name here"
+placeholder_text = "ENTER_ACC_NAME"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=1171113857]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=956749995]
 layout_mode = 2
-text = "Password"
+text = "PASSWORD"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=331063020]
@@ -273,7 +273,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your password here"
+placeholder_text = "ENTER_PASSWORD"
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=327902638]
 layout_mode = 2
@@ -288,7 +288,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your password again here"
+placeholder_text = "PASSWORD_CONFIRM"
 
 [node name="CreateAccountButton" type="Button" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=1234407790]
 custom_minimum_size = Vector2(420, 56)
@@ -296,7 +296,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Create Account"
+text = "CREATE_ACC"
 
 [node name="WorldSelection" type="PanelContainer" parent="." unique_id=306961090]
 visible = false
@@ -323,7 +323,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "World Selection"
+text = "WORLD_SELECTION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="WorldSelection/VBoxContainer" unique_id=1022584007]
@@ -341,7 +341,7 @@ custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 disabled = true
-text = "Update"
+text = "UPDATE"
 
 [node name="CharacterSelection" type="PanelContainer" parent="." unique_id=1308493296]
 visible = false
@@ -625,7 +625,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Waiting"
+text = "WAITING"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="PopupPanel/VBoxContainer" unique_id=1791779995]
@@ -642,7 +642,7 @@ alignment = 2
 [node name="RichTextLabel" type="RichTextLabel" parent="PopupPanel/VBoxContainer/VBoxContainer" unique_id=1695698164]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Waiting ..."
+text = "WAITING ..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -711,7 +711,7 @@ offset_right = 160.0
 offset_bottom = 25.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Continue
+text = "CONTINUE
 Classic - Higamers"
 
 [node name="ChangeButton" type="Button" parent="AlreadyConnectedPanel" unique_id=1510010046]
@@ -727,7 +727,7 @@ offset_right = 80.0
 offset_bottom = 89.30505
 grow_horizontal = 2
 grow_vertical = 2
-text = "Change"
+text = "CHANGE"
 
 [node name="MoreButton" type="Button" parent="AlreadyConnectedPanel" unique_id=1729056277]
 layout_mode = 0
@@ -735,10 +735,9 @@ offset_left = 890.0
 offset_top = 8.0
 offset_right = 952.0
 offset_bottom = 51.0
-text = "More"
+text = "MORE"
 
 [node name="PanelContainer" type="PanelContainer" parent="AlreadyConnectedPanel" unique_id=1043121351]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -762,11 +761,11 @@ theme_override_constants/separation = 10
 
 [node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=885474027]
 layout_mode = 2
-text = "Account"
+text = "ACCOUNT"
 
 [node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=1942694599]
 layout_mode = 2
-text = "Settings"
+text = "SETTINGS"
 
 [node name="HSeparator2" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1441440801]
 custom_minimum_size = Vector2(336, 0)
@@ -779,7 +778,7 @@ size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1791518199]
 layout_mode = 2
-text = "Community"
+text = "COMMUNITY"
 
 [node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=582441869]
 layout_mode = 2
@@ -791,7 +790,7 @@ text = "Website"
 
 [node name="Button6" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1945047176]
 layout_mode = 2
-text = "Patch notes"
+text = "PATCH_NOTES"
 
 [node name="HSeparator3" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1497185232]
 custom_minimum_size = Vector2(336, 0)
@@ -806,11 +805,11 @@ alignment = 2
 
 [node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=1264677009]
 layout_mode = 2
-text = "Log out"
+text = "LOGOUT"
 
 [node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=464984533]
 layout_mode = 2
-text = "Close game"
+text = "CLOSE_GAME"
 
 [node name="HSeparator4" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1173479855]
 custom_minimum_size = Vector2(336, 0)
@@ -819,7 +818,7 @@ size_flags_horizontal = 4
 
 [node name="Button" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=2049791848]
 layout_mode = 2
-text = "Back"
+text = "BACK"
 
 [node name="SwapButton" type="Button" parent="." unique_id=461701609]
 layout_mode = 0

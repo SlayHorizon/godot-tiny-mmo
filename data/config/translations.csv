@@ -3,9 +3,22 @@ WELCOME,Welcome,Bem vindo!,Bienvenido
 LOGIN,Login,Entrar,Entrar
 CREATE_ACC,Create Account,Criar conta,Crear una cuenta
 PLAY_AS_GUEST,Play as Guest,Jogar como convidado,Jugar como visitante
-NO_CON_YET,Not connected yet,Ainda n�o conectado,A�n no conectado
+NO_CON_YET,Not connected yet,Ainda não conectado,Aún no conectado
 ACC_NAME,Account name,Nome da conta,Nombre de la cuenta
-ENTER_ACC_NAME,Enter your account name here,Digite aqui o nome da sua conta,Introduzca el nombre de su cuenta aqu�.
-PASSWORD,Password,Senha,Contrase�a
-ENTER_PASSWORD,Enter your password here,Digite aqui sua senha,Introduzca su contrase�a aqu�.
+ENTER_ACC_NAME,Enter your account name here,Digite aqui o nome da sua conta,Introduzca el nombre de su cuenta aquí
+PASSWORD,Password,Senha,Contraseña
+ENTER_PASSWORD,Enter your password here,Digite aqui sua senha,Introduzca su contraseña aquí
 BACK,Back,Voltar,Volver
+ENTER_PASSWORD_CONFIRM,Enter your password again here,Digite sua senha novamente aqui,Vuelva a introducir su contraseña
+PASSWORD_CONFIRM,Password Repeat,Confirmação de senha,Confirmación de contraseña
+WORLD_SELECTION,World Selection,Seleção de mundos,Selección de Mundos
+UPDATE,Update,Atualizar,Actualizar
+WAITING,Waiting,Esperando,Espera
+PLEASE_CONFIRM,Please Confirm,"Por favor, confirme","Por favor, confirme"
+CHANGE,Change,Mudar,Cambiar
+CONTINUE,Continue,Continuar,Continuar
+MORE,More,Mais,Más
+ACCOUNT,Account,Conta,Cuenta
+SETTINGS,Settings,Configurações,Configuración
+COMMUNITY,Community,Comunidade,Comunidad
+PATCH_NOTES,Patch notes,Notas de atualização,Notas de actualización
