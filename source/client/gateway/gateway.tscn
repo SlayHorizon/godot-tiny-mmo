@@ -85,7 +85,6 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
 
 [node name="PanelRect" type="TextureRect" parent="MainPanel" unique_id=2129319634]
-visible = false
 material = SubResource("CanvasItemMaterial_q35d6")
 layout_mode = 2
 texture = SubResource("GradientTexture2D_rk5g7")
@@ -98,7 +97,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Welcome"
+text = "WELCOME"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer" unique_id=281198905]
@@ -116,7 +115,7 @@ custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Login"
+text = "LOGIN"
 
 [node name="CreateAccountButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer" unique_id=1337747159]
 custom_minimum_size = Vector2(420, 56)
@@ -124,7 +123,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Create Account"
+text = "CREATE_ACC"
 
 [node name="GuestButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer" unique_id=720776451]
 custom_minimum_size = Vector2(420, 56)
@@ -132,7 +131,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Play as Guest"
+text = "PLAY_AS_GUEST"
 
 [node name="LoginPanel" type="PanelContainer" parent="." unique_id=1270181654]
 visible = false
@@ -158,7 +157,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Login"
+text = "LOGIN"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="LoginPanel/VBoxContainer" unique_id=855095155]
@@ -176,7 +175,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=853022325]
 layout_mode = 2
-text = "Account name"
+text = "ACC_NAME"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=195149855]
@@ -184,14 +183,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.631373)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your account name here"
+placeholder_text = "ENTER_ACC_NAME"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="LoginPanel/VBoxContainer/VBoxContainer" unique_id=2068810630]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=1312898346]
 layout_mode = 2
-text = "Password"
+text = "PASSWORD"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=821843118]
@@ -199,7 +198,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.631373)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your password here"
+placeholder_text = "ENTER_PASSWORD"
 
 [node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer/VBoxContainer" unique_id=2113345034]
 custom_minimum_size = Vector2(420, 56)
@@ -207,7 +206,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Login"
+text = "LOGIN"
 
 [node name="CreateAccountPanel" type="PanelContainer" parent="." unique_id=590883483]
 visible = false
@@ -845,7 +844,7 @@ offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_fonts/font = ExtResource("6_tnybn")
-text = "Back"
+text = "BACK"
 
 [node name="ConnectionInfo" type="Label" parent="." unique_id=911295128]
 layout_mode = 1
@@ -857,8 +856,7 @@ offset_top = -54.0
 offset_right = 140.0
 offset_bottom = -9.0
 grow_vertical = 0
-text = "Not connected yet
-"
+text = "NO_CON_YET"
 horizontal_alignment = 3
 vertical_alignment = 3
 
