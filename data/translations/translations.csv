@@ -25,3 +25,4 @@ PATCH_NOTES,Patch notes,Notas de atualização,Notas de actualización
 LOGOUT,Log out,Sair,Salir
 CLOSE_GAME,Close game,Fechar jogo,Cerrar el juego
 WELCOME_TINY_MMO,Welcome to Tiny MMO!,Bem vindo ao Tiny MMO!,¡Bienvenido a Tiny MMO!
+RECONNECT_POPUP,No world available.\nTrying again in \n%d\n%s,Nenhum mundo disponível.\nTentando novamente em \n%d\n%s,No hay mundos disponibles. Reintentando en \n%d\n%s

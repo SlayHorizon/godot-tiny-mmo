@@ -26,7 +26,7 @@ func show_reconnect_popup(seconds: int = 10) -> void:
 	for remaining: int in range(seconds, 0, -1):
 		var dots: String = ".".repeat(((seconds - remaining) % 3) + 1)
 		display_waiting_popup(
-			"No world available.\nTrying again in \n%d\n%s" % [
+			tr("RECONNECT_POPUP") % [
 				remaining,
 				dots
 			]
