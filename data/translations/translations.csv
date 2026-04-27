@@ -32,3 +32,14 @@ CREATE_NEW_CHAR,Create New Character,Criar um novo personagem,Crear un nuevo per
 USERNAME,Username:\n,Nome de usuário:\n,Nombre de usuario:\n
 PASSWORDS_DONT_MATCH,Passwords don't match,Senhas não combinam,Las contraseñas no coinciden.
 ACC_NAME_ACC_ID,Account-name: %s\nAccount-ID: %s,Nome da conta: %s\nID da conta: %s,Nombre de la cuenta: %s\nID de la cuenta: %s
+CHARACTER_SELECTION,Character Selection,Seleção de personagens,Selección de personaje
+CHARACTER_CREATION,Character Creation,Criação de personagem,Creación de personaje
+STARTING_SKIN,Starting Skin,Skin Inicial,Skin Inicial
+KNIGHT,Knight,Caveleiro,Caballero
+ROGUE,Rogue,Bandido,Bandido
+WIZARD,Wizard,Mago,Mago
+PREVIEW,Preview,Prever,Prever
+DESCRIPTION,Description,Descrição,Descripción
+CHARACTER_NAME,Character name,Nome do personagem,Nombrel del personaje
+RANDOM,Random,Aleatório,Aleatorio
+CREATE,Create,Criar,Crear

@@ -375,7 +375,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Character Selection"
+text = "CHARACTER_SELECTION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterSelection/VBoxContainer" unique_id=694094335]
@@ -445,7 +445,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Character Creation"
+text = "CHARACTER_CREATION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer" unique_id=573902709]
@@ -472,7 +472,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 18
-text = "Starting Skin"
+text = "STARTING_SKIN"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1444564948]
@@ -491,7 +491,7 @@ size_flags_vertical = 0
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-text = "Knight"
+text = "KNIGHT"
 
 [node name="CreateButton2" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer" unique_id=657908895]
 custom_minimum_size = Vector2(64, 64)
@@ -501,7 +501,7 @@ size_flags_vertical = 0
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-text = "Rogue"
+text = "ROGUE"
 
 [node name="CreateButton3" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer" unique_id=443363676]
 custom_minimum_size = Vector2(64, 64)
@@ -511,7 +511,7 @@ size_flags_vertical = 0
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-text = "Wizard"
+text = "WIZARD"
 
 [node name="CreateButton4" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer" unique_id=2126970449]
 custom_minimum_size = Vector2(64, 64)
@@ -533,7 +533,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 18
-text = "Preview"
+text = "PREVIEW"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=466875220]
@@ -564,7 +564,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 18
-text = "Description"
+text = "DESCRIPTION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3" unique_id=1433206766]
@@ -585,12 +585,12 @@ size_flags_horizontal = 4
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Character name"
+placeholder_text = "CHARACTER_NAME"
 
 [node name="Button" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1387397406]
 visible = false
 layout_mode = 2
-text = "Random"
+text = "RANDOM"
 
 [node name="CreateButton" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer" unique_id=834019351]
 custom_minimum_size = Vector2(210, 56)
@@ -599,7 +599,7 @@ size_flags_horizontal = 4
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Create"
+text = "CREATE"
 
 [node name="PopupPanel" type="PanelContainer" parent="." unique_id=1187456157]
 visible = false
