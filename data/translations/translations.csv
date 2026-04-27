@@ -26,3 +26,9 @@ LOGOUT,Log out,Sair,Salir
 CLOSE_GAME,Close game,Fechar jogo,Cerrar el juego
 WELCOME_TINY_MMO,Welcome to Tiny MMO!,Bem vindo ao Tiny MMO!,¡Bienvenido a Tiny MMO!
 RECONNECT_POPUP,No world available.\nTrying again in \n%d\n%s,Nenhum mundo disponível.\nTentando novamente em \n%d\n%s,No hay mundos disponibles. Reintentando en \n%d\n%s
+CONTINUE_WORLD_ACC,Continue\n%s - %s,Continue\n%s - %s,Continúa\n%s - %s
+NAME_CLASS_LEVEL,%s\nClass: %s\nLevel: %d,%s\nClasse: %s\nNível: %d,%s\nClase: %s\nNivel: %d
+CREATE_NEW_CHAR,Create New Character,Criar um novo personagem,Crear un nuevo personaje
+USERNAME,Username:\n,Nome de usuário:\n,Nombre de usuario:\n
+PASSWORDS_DONT_MATCH,Passwords don't match,Senhas não combinam,Las contraseñas no coinciden.
+ACC_NAME_ACC_ID,Account-name: %s\nAccount-ID: %s,Nome da conta: %s\nID da conta: %s,Nombre de la cuenta: %s\nID de la cuenta: %s

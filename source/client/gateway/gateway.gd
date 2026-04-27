@@ -57,7 +57,7 @@ func handle_success_login(d: Dictionary) -> void:
 	populate_worlds(worlds)
 
 	if is_last_world_online:
-		$AlreadyConnectedPanel/ContinueButton.text = "Continue\n%s - %s" % [last_world_name, account_name]
+		$AlreadyConnectedPanel/ContinueButton.text = tr("CONTINUE_WORLD_ACC") % [last_world_name, account_name]
 		popup_panel.hide()
 		_show($AlreadyConnectedPanel, false)
 	else:
@@ -203,14 +203,14 @@ func _on_world_selected(world_id: int) -> void:
 			character_id = d.keys()[i]
 			if not d.get(d.keys()[i], {}).has_all(["name","class", "level"]):
 				continue
-			button.text = "%s\nClass: %s\nLevel: %d" % [
+			button.text = tr("NAME_CLASS_LEVEL") % [
 				d[character_id]["name"],
 				d[character_id]["class"],
 				d[character_id]["level"],
 			]
 			button.pressed.connect(_on_character_selected.bind(world_id, character_id.to_int()))
 		else:
-			button.text = "Create New Character"
+			button.text = tr("CREATE_NEW_CHAR")
 			button.pressed.connect(_on_character_selected.bind(world_id, -1))
 		i += 1
 	popup_panel.hide()
@@ -258,7 +258,7 @@ func _on_create_character_button_pressed() -> void:
 	var result: Dictionary
 	result = CredentialsUtils.validate_username(username_edit.text)
 	if result.code != CredentialsUtils.UsernameError.OK:
-		await popup_panel.confirm_message("Username:\n" + result.message)
+		await popup_panel.confirm_message(tr("USERNAME") + result.message)
 		create_button.disabled = false
 		$BackButton.show()
 		$CharacterCreation.show()
@@ -298,17 +298,17 @@ func create_account() -> void:
 	var password_repeat_edit: LineEdit = $CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3/LineEdit
 
 	if password_edit.text != password_repeat_edit.text:
-		await popup_panel.confirm_message("Passwords don't match")
+		await popup_panel.confirm_message(tr("PASSWORDS_DONT_MATCH"))
 		return
 	
 	var result: Dictionary
 	result = CredentialsUtils.validate_username(name_edit.text)
 	if result.code != CredentialsUtils.UsernameError.OK:
-		await popup_panel.confirm_message("Username:\n" + result.message)
+		await popup_panel.confirm_message(tr("USERNAME") + result.message)
 		return
 	result = CredentialsUtils.validate_password(password_edit.text)
 	if result.code != CredentialsUtils.UsernameError.OK:
-		await popup_panel.confirm_message("Password:\n" + result.message)
+		await popup_panel.confirm_message(tr("PASSWORD") + ":\n" + result.message)
 		return
 	
 	$CreateAccountPanel.hide()
@@ -355,7 +355,7 @@ func populate_worlds(world_info: Dictionary) -> void:
 func fill_connection_info(_account_name: String, _account_id: int) -> void:
 	account_name = _account_name
 	account_id = _account_id
-	$ConnectionInfo.text = "Account-name: %s\nAccount-ID: %s" % [
+	$ConnectionInfo.text = tr("ACC_NAME_ACC_ID") % [
 		account_name, account_id
 	]
 
