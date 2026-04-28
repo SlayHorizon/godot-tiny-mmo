@@ -9,7 +9,7 @@ extends PanelContainer
 func display_waiting_popup(text: String = "WAITING") -> void:
 	title_label.text = tr("WAITING")
 	confirm_button.hide()
-	rich_text_label.text = tr(text) + " ..."
+	rich_text_label.text = tr(text)
 	show()
 
 
