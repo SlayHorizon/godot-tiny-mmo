@@ -1,0 +1,45 @@
+key,en_US,pt_BR,es_ES
+WELCOME,Welcome,Bem vindo!,Bienvenido
+LOGIN,Login,Entrar,Entrar
+CREATE_ACC,Create Account,Criar conta,Crear una cuenta
+PLAY_AS_GUEST,Play as Guest,Jogar como convidado,Jugar como visitante
+NO_CON_YET,Not connected yet,Ainda não conectado,Aún no conectado
+ACC_NAME,Account name,Nome da conta,Nombre de la cuenta
+ENTER_ACC_NAME,Enter your account name here,Digite aqui o nome da sua conta,Introduzca el nombre de su cuenta aquí
+PASSWORD,Password,Senha,Contraseña
+ENTER_PASSWORD,Enter your password here,Digite aqui sua senha,Introduzca su contraseña aquí
+BACK,Back,Voltar,Volver
+ENTER_PASSWORD_CONFIRM,Enter your password again here,Digite sua senha novamente aqui,Vuelva a introducir su contraseña
+PASSWORD_CONFIRM,Password Repeat,Confirmação de senha,Confirmación de contraseña
+WORLD_SELECTION,World Selection,Seleção de mundos,Selección de Mundos
+UPDATE,Update,Atualizar,Actualizar
+WAITING,Waiting,Esperando,Espera
+PLEASE_CONFIRM,Please Confirm,"Por favor, confirme","Por favor, confirme"
+CHANGE,Change,Mudar,Cambiar
+CONTINUE,Continue,Continuar,Continuar
+MORE,More,Mais,Más
+ACCOUNT,Account,Conta,Cuenta
+SETTINGS,Settings,Configurações,Configuración
+COMMUNITY,Community,Comunidade,Comunidad
+PATCH_NOTES,Patch notes,Notas de atualização,Notas de actualización
+LOGOUT,Log out,Sair,Salir
+CLOSE_GAME,Close game,Fechar jogo,Cerrar el juego
+WELCOME_TINY_MMO,Welcome to Tiny MMO!,Bem vindo ao Tiny MMO!,¡Bienvenido a Tiny MMO!
+RECONNECT_POPUP,No world available.\nTrying again in \n%d\n%s,Nenhum mundo disponível.\nTentando novamente em \n%d\n%s,No hay mundos disponibles. Reintentando en \n%d\n%s
+CONTINUE_WORLD_ACC,Continue\n%s - %s,Continue\n%s - %s,Continúa\n%s - %s
+NAME_CLASS_LEVEL,%s\nClass: %s\nLevel: %d,%s\nClasse: %s\nNível: %d,%s\nClase: %s\nNivel: %d
+CREATE_NEW_CHAR,Create New Character,Criar um novo personagem,Crear un nuevo personaje
+USERNAME,Username:\n,Nome de usuário:\n,Nombre de usuario:\n
+PASSWORDS_DONT_MATCH,Passwords don't match,Senhas não combinam,Las contraseñas no coinciden.
+ACC_NAME_ACC_ID,Account-name: %s\nAccount-ID: %s,Nome da conta: %s\nID da conta: %s,Nombre de la cuenta: %s\nID de la cuenta: %s
+CHARACTER_SELECTION,Character Selection,Seleção de personagens,Selección de personaje
+CHARACTER_CREATION,Character Creation,Criação de personagem,Creación de personaje
+STARTING_SKIN,Starting Skin,Skin Inicial,Skin Inicial
+KNIGHT,Knight,Caveleiro,Caballero
+ROGUE,Rogue,Bandido,Bandido
+WIZARD,Wizard,Mago,Mago
+PREVIEW,Preview,Prever,Prever
+DESCRIPTION,Description,Descrição,Descripción
+CHARACTER_NAME,Character name,Nome do personagem,Nombrel del personaje
+RANDOM,Random,Aleatório,Aleatorio
+CREATE,Create,Criar,Crear

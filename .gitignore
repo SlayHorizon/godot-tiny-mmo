@@ -25,3 +25,6 @@ addons/godot-sqlite/bin/*
 *.db-journal
 *.db-wal
 *.db-shm
+
+# lock file for excel/libreoffice CSV editting
+.~lock.translations.csv#

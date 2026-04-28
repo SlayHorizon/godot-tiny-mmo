@@ -27,7 +27,15 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	pass
+	if not OS.has_feature("client"):
+		return
+	var language: String = OS.get_locale()
+	# Hardcoded supported languages
+	if language not in ["en_US", "pt_BR", "es_ES"]:
+		language = "en_US"
+	TranslationServer.set_locale(language)
+	# leaving this commented for now just to remember how to force language to test
+	#TranslationServer.set_locale("es_ES")
 
 
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:

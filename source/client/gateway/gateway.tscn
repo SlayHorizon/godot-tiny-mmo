@@ -98,7 +98,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Welcome"
+text = "WELCOME"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer" unique_id=281198905]
@@ -116,7 +116,7 @@ custom_minimum_size = Vector2(420, 56)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Login"
+text = "LOGIN"
 
 [node name="CreateAccountButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer" unique_id=1337747159]
 custom_minimum_size = Vector2(420, 56)
@@ -124,7 +124,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Create Account"
+text = "CREATE_ACC"
 
 [node name="GuestButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer" unique_id=720776451]
 custom_minimum_size = Vector2(420, 56)
@@ -132,7 +132,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Play as Guest"
+text = "PLAY_AS_GUEST"
 
 [node name="LoginPanel" type="PanelContainer" parent="." unique_id=1270181654]
 visible = false
@@ -158,7 +158,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Login"
+text = "LOGIN"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="LoginPanel/VBoxContainer" unique_id=855095155]
@@ -176,7 +176,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=853022325]
 layout_mode = 2
-text = "Account name"
+text = "ACC_NAME"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=195149855]
@@ -184,14 +184,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.631373)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your account name here"
+placeholder_text = "ENTER_ACC_NAME"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="LoginPanel/VBoxContainer/VBoxContainer" unique_id=2068810630]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=1312898346]
 layout_mode = 2
-text = "Password"
+text = "PASSWORD"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="LoginPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=821843118]
@@ -199,7 +199,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.631373)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your password here"
+placeholder_text = "ENTER_PASSWORD"
 
 [node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer/VBoxContainer" unique_id=2113345034]
 custom_minimum_size = Vector2(420, 56)
@@ -207,7 +207,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Login"
+text = "LOGIN"
 
 [node name="CreateAccountPanel" type="PanelContainer" parent="." unique_id=590883483]
 visible = false
@@ -233,7 +233,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Create Account"
+text = "CREATE_ACC"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CreateAccountPanel/VBoxContainer" unique_id=353400196]
@@ -251,7 +251,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=201484594]
 layout_mode = 2
-text = "Account name"
+text = "ACC_NAME"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer" unique_id=1669515998]
@@ -259,14 +259,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your account name here"
+placeholder_text = "ENTER_ACC_NAME"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=1171113857]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=956749995]
 layout_mode = 2
-text = "Password"
+text = "PASSWORD"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer2" unique_id=331063020]
@@ -274,14 +274,14 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your password here"
+placeholder_text = "ENTER_PASSWORD"
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=327902638]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3" unique_id=173721393]
 layout_mode = 2
-text = "Password Repeat"
+text = "PASSWORD_CONFIRM"
 label_settings = SubResource("LabelSettings_rky0m")
 
 [node name="LineEdit" type="LineEdit" parent="CreateAccountPanel/VBoxContainer/VBoxContainer/VBoxContainer3" unique_id=1285641241]
@@ -289,7 +289,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_placeholder_color = Color(1, 1, 1, 0.454902)
 theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
-placeholder_text = "Enter your password again here"
+placeholder_text = "ENTER_PASSWORD_CONFIRM"
 
 [node name="CreateAccountButton" type="Button" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=1234407790]
 custom_minimum_size = Vector2(420, 56)
@@ -297,7 +297,7 @@ layout_mode = 2
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Create Account"
+text = "CREATE_ACC"
 
 [node name="WorldSelection" type="PanelContainer" parent="." unique_id=306961090]
 visible = false
@@ -324,7 +324,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "World Selection"
+text = "WORLD_SELECTION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="WorldSelection/VBoxContainer" unique_id=1022584007]
@@ -342,7 +342,7 @@ custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 disabled = true
-text = "Update"
+text = "UPDATE"
 
 [node name="CharacterSelection" type="PanelContainer" parent="." unique_id=1308493296]
 visible = false
@@ -375,7 +375,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Character Selection"
+text = "CHARACTER_SELECTION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterSelection/VBoxContainer" unique_id=694094335]
@@ -445,7 +445,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Character Creation"
+text = "CHARACTER_CREATION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer" unique_id=573902709]
@@ -472,7 +472,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 18
-text = "Starting Skin"
+text = "STARTING_SKIN"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1444564948]
@@ -491,7 +491,7 @@ size_flags_vertical = 0
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-text = "Knight"
+text = "KNIGHT"
 
 [node name="CreateButton2" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer" unique_id=657908895]
 custom_minimum_size = Vector2(64, 64)
@@ -501,7 +501,7 @@ size_flags_vertical = 0
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-text = "Rogue"
+text = "ROGUE"
 
 [node name="CreateButton3" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer" unique_id=443363676]
 custom_minimum_size = Vector2(64, 64)
@@ -511,7 +511,7 @@ size_flags_vertical = 0
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 16
-text = "Wizard"
+text = "WIZARD"
 
 [node name="CreateButton4" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/VBoxContainer" unique_id=2126970449]
 custom_minimum_size = Vector2(64, 64)
@@ -533,7 +533,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 18
-text = "Preview"
+text = "PREVIEW"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=466875220]
@@ -564,7 +564,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 18
-text = "Description"
+text = "DESCRIPTION"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3" unique_id=1433206766]
@@ -585,12 +585,12 @@ size_flags_horizontal = 4
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Character name"
+placeholder_text = "CHARACTER_NAME"
 
 [node name="Button" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1387397406]
 visible = false
 layout_mode = 2
-text = "Random"
+text = "RANDOM"
 
 [node name="CreateButton" type="Button" parent="CharacterCreation/VBoxContainer/VBoxContainer" unique_id=834019351]
 custom_minimum_size = Vector2(210, 56)
@@ -599,7 +599,7 @@ size_flags_horizontal = 4
 theme_type_variation = &"GradientButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
-text = "Create"
+text = "CREATE"
 
 [node name="PopupPanel" type="PanelContainer" parent="." unique_id=1187456157]
 visible = false
@@ -626,7 +626,7 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "Waiting"
+text = "WAITING"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="PopupPanel/VBoxContainer" unique_id=1791779995]
@@ -643,7 +643,7 @@ alignment = 2
 [node name="RichTextLabel" type="RichTextLabel" parent="PopupPanel/VBoxContainer/VBoxContainer" unique_id=1695698164]
 layout_mode = 2
 size_flags_vertical = 3
-text = "Waiting ..."
+text = "WAITING ..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -712,7 +712,7 @@ offset_right = 160.0
 offset_bottom = 25.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Continue
+text = "CONTINUE
 Classic - Higamers"
 
 [node name="ChangeButton" type="Button" parent="AlreadyConnectedPanel" unique_id=1510010046]
@@ -728,7 +728,7 @@ offset_right = 80.0
 offset_bottom = 89.30505
 grow_horizontal = 2
 grow_vertical = 2
-text = "Change"
+text = "CHANGE"
 
 [node name="MoreButton" type="Button" parent="AlreadyConnectedPanel" unique_id=1729056277]
 layout_mode = 0
@@ -736,7 +736,7 @@ offset_left = 890.0
 offset_top = 8.0
 offset_right = 952.0
 offset_bottom = 51.0
-text = "More"
+text = "MORE"
 
 [node name="PanelContainer" type="PanelContainer" parent="AlreadyConnectedPanel" unique_id=1043121351]
 visible = false
@@ -763,11 +763,11 @@ theme_override_constants/separation = 10
 
 [node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=885474027]
 layout_mode = 2
-text = "Account"
+text = "ACCOUNT"
 
 [node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=1942694599]
 layout_mode = 2
-text = "Settings"
+text = "SETTINGS"
 
 [node name="HSeparator2" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1441440801]
 custom_minimum_size = Vector2(336, 0)
@@ -780,7 +780,7 @@ size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1791518199]
 layout_mode = 2
-text = "Community"
+text = "COMMUNITY"
 
 [node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=582441869]
 layout_mode = 2
@@ -792,7 +792,7 @@ text = "Website"
 
 [node name="Button6" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1945047176]
 layout_mode = 2
-text = "Patch notes"
+text = "PATCH_NOTES"
 
 [node name="HSeparator3" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1497185232]
 custom_minimum_size = Vector2(336, 0)
@@ -807,11 +807,11 @@ alignment = 2
 
 [node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=1264677009]
 layout_mode = 2
-text = "Log out"
+text = "LOGOUT"
 
 [node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=464984533]
 layout_mode = 2
-text = "Close game"
+text = "CLOSE_GAME"
 
 [node name="HSeparator4" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1173479855]
 custom_minimum_size = Vector2(336, 0)
@@ -820,7 +820,7 @@ size_flags_horizontal = 4
 
 [node name="Button" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=2049791848]
 layout_mode = 2
-text = "Back"
+text = "BACK"
 
 [node name="SwapButton" type="Button" parent="." unique_id=461701609]
 layout_mode = 0
@@ -845,7 +845,7 @@ offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_fonts/font = ExtResource("6_tnybn")
-text = "Back"
+text = "BACK"
 
 [node name="ConnectionInfo" type="Label" parent="." unique_id=911295128]
 layout_mode = 1
@@ -857,8 +857,7 @@ offset_top = -54.0
 offset_right = 140.0
 offset_bottom = -9.0
 grow_vertical = 0
-text = "Not connected yet
-"
+text = "NO_CON_YET"
 horizontal_alignment = 3
 vertical_alignment = 3
 
