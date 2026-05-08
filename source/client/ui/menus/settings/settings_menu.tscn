@@ -1,28 +1,33 @@
 [gd_scene format=3 uid="uid://dgpsxb4qq1hex"]
 
-[ext_resource type="Script" uid="uid://bbkmu4fwfxs4p" path="res://source/client/ui/shared/navigator.gd" id="1_o5sat"]
-[ext_resource type="Script" uid="uid://duog5a204362f" path="res://source/client/ui/menus/settings/menu_buttons.gd" id="2_b8kg5"]
-[ext_resource type="ButtonGroup" uid="uid://dtb5xe2032r17" path="res://source/client/ui/menus/settings/components/menu_button_group.tres" id="3_x8gi7"]
-[ext_resource type="Script" uid="uid://cwsustdiuvv7o" path="res://source/client/ui/menus/settings/gameplay_settings.gd" id="4_b8kg5"]
-[ext_resource type="Script" uid="uid://ciom2x4q8p6ql" path="res://source/client/ui/menus/settings/controls_settings.gd" id="4_pt8k0"]
-[ext_resource type="ButtonGroup" uid="uid://dtslib26cwipj" path="res://source/client/ui/menus/settings/components/section_switch_group.tres" id="5_ds323"]
-[ext_resource type="ButtonGroup" uid="uid://ckhvd518vkmxk" path="res://source/client/ui/menus/settings/components/remap_button_group.tres" id="6_b8kg5"]
-[ext_resource type="PackedScene" uid="uid://bga8ndeih1lxt" path="res://source/client/ui/menus/settings/components/remap_container.tscn" id="6_e5kiw"]
+[ext_resource type="Script" uid="uid://bbkmu4fwfxs4p" path="res://source/client/ui/shared/navigator.gd" id="1_e5kiw"]
+[ext_resource type="Script" uid="uid://duog5a204362f" path="res://source/client/ui/menus/settings/menu_buttons.gd" id="2_e5kiw"]
+[ext_resource type="Script" uid="uid://c437u84bullo2" path="res://source/client/ui/shared/nav_panel.gd" id="3_8ix7g"]
+[ext_resource type="ButtonGroup" uid="uid://dtb5xe2032r17" path="res://source/client/ui/menus/settings/components/menu_button_group.tres" id="3_ds323"]
+[ext_resource type="PackedScene" uid="uid://ciwh5s6sslroq" path="res://source/client/ui/menus/settings/components/setting_slider.tscn" id="3_pt8k0"]
+[ext_resource type="PackedScene" uid="uid://bga8ndeih1lxt" path="res://source/client/ui/menus/settings/components/setting_remap.tscn" id="4_pt8k0"]
+[ext_resource type="Script" uid="uid://cfikf4aye66lo" path="res://source/client/ui/menus/settings/components/setting_language.gd" id="6_552vb"]
+[ext_resource type="Script" uid="uid://b78yh1c3uto0o" path="res://source/client/ui/menus/settings/components/setting_container.gd" id="6_b8kg5"]
+[ext_resource type="Script" uid="uid://ciom2x4q8p6ql" path="res://source/client/ui/menus/settings/controls_settings.gd" id="6_x8gi7"]
+[ext_resource type="Script" uid="uid://dlp5twd0pw868" path="res://source/client/ui/menus/settings/components/settings_widget.gd" id="8_x8gi7"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pt8k0"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8ix7g"]
+content_margin_top = 12.0
 
-[node name="Settings" type="Control" unique_id=1092964895 node_paths=PackedStringArray("initial_panel", "nav_panels")]
+[node name="Settings" type="Control" unique_id=453466263 node_paths=PackedStringArray("initial_panel", "nav_panels")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_o5sat")
-initial_panel = NodePath("MainContainer/HBoxContainer/Panels/Gameplay")
-nav_panels = [NodePath("MainContainer/HBoxContainer/Panels/Gameplay"), NodePath("MainContainer/HBoxContainer/Panels/Controls")]
+script = ExtResource("1_e5kiw")
+initial_panel = NodePath("MainContainer/HBoxContainer/General")
+nav_panels = [NodePath("MainContainer/HBoxContainer/General"), NodePath("MainContainer/HBoxContainer/ControlsSettings")]
+metadata/_custom_type_script = "uid://bbkmu4fwfxs4p"
+metadata/_edit_vertical_guides_ = [-66.0]
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=2068828301]
+[node name="Background" type="ColorRect" parent="." unique_id=2068828301]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,576 +55,304 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="MainContainer" unique_id=338758405]
 layout_mode = 2
 
-[node name="Buttons" type="Control" parent="MainContainer/HBoxContainer" unique_id=1057832328 node_paths=PackedStringArray("navigator", "close_button")]
+[node name="Sidebar" type="Control" parent="MainContainer/HBoxContainer" unique_id=866616009 node_paths=PackedStringArray("navigator", "close_button", "gameplay_panel", "gameplay_button", "controls_panel", "controls_button")]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-script = ExtResource("2_b8kg5")
+script = ExtResource("2_e5kiw")
 navigator = NodePath("../../..")
-close_button = NodePath("CloseButton")
-button_group = ExtResource("3_x8gi7")
+close_button = NodePath("ButtonsContainer/CloseButton")
+gameplay_panel = NodePath("../General")
+gameplay_button = NodePath("ButtonsContainer/VBoxContainer/General")
+controls_panel = NodePath("../ControlsSettings")
+controls_button = NodePath("ButtonsContainer/VBoxContainer/Controls")
 
-[node name="Background" type="Panel" parent="MainContainer/HBoxContainer/Buttons" unique_id=807767233]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Background" type="Panel" parent="MainContainer/HBoxContainer/Sidebar" unique_id=807767233]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 440.0
 
-[node name="ButtonsContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Buttons" unique_id=376977973]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 33.0
-offset_bottom = -51.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="ButtonsContainer" type="MarginContainer" parent="MainContainer/HBoxContainer/Sidebar" unique_id=1012254893]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 440.0
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_bottom = 10
 
-[node name="Gameplay" type="Button" parent="MainContainer/HBoxContainer/Buttons/ButtonsContainer" unique_id=1639445031]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer" unique_id=325891073]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="General" type="Button" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer/VBoxContainer" unique_id=1639445031]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
 theme_override_font_sizes/font_size = 20
 toggle_mode = true
-button_group = ExtResource("3_x8gi7")
-text = "  Gameplay"
+button_group = ExtResource("3_ds323")
+text = "General"
 alignment = 0
-metadata/target_panel = &"Gameplay"
 
-[node name="Controls" type="Button" parent="MainContainer/HBoxContainer/Buttons/ButtonsContainer" unique_id=487442324]
+[node name="Controls" type="OptionButton" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer/VBoxContainer" unique_id=1636196681]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
 theme_override_font_sizes/font_size = 20
-toggle_mode = true
-button_group = ExtResource("3_x8gi7")
-text = "  Controls"
-alignment = 0
-metadata/target_panel = &"Controls"
+button_group = ExtResource("3_ds323")
+selected = 0
+item_count = 1
+popup/item_0/text = "Controls"
+popup/item_0/id = 0
+popup/item_0/separator = true
 
-[node name="Messages" type="Button" parent="MainContainer/HBoxContainer/Buttons/ButtonsContainer" unique_id=1925072509]
-layout_mode = 2
-theme_type_variation = &"FlatButton"
-theme_override_font_sizes/font_size = 20
-disabled = true
-toggle_mode = true
-button_group = ExtResource("3_x8gi7")
-text = "  Messages"
-alignment = 0
-metadata/target_panel = &"Messages"
-
-[node name="Profile" type="Button" parent="MainContainer/HBoxContainer/Buttons/ButtonsContainer" unique_id=1218933024]
+[node name="Messages" type="Button" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer/VBoxContainer" unique_id=1925072509]
 layout_mode = 2
 theme_type_variation = &"FlatButton"
 theme_override_font_sizes/font_size = 20
 disabled = true
 toggle_mode = true
-button_group = ExtResource("3_x8gi7")
-text = "  Profile"
+button_group = ExtResource("3_ds323")
+text = "Messages"
 alignment = 0
-metadata/target_panel = &"Profile"
 
-[node name="CloseButton" type="Button" parent="MainContainer/HBoxContainer/Buttons" unique_id=25572720]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -46.0
-offset_bottom = -13.0
-grow_horizontal = 2
-grow_vertical = 0
+[node name="Profile" type="Button" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer/VBoxContainer" unique_id=1218933024]
+layout_mode = 2
+theme_type_variation = &"FlatButton"
+theme_override_font_sizes/font_size = 20
+disabled = true
+toggle_mode = true
+button_group = ExtResource("3_ds323")
+text = "Profile"
+alignment = 0
+
+[node name="CloseButton" type="Button" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer" unique_id=25572720]
+layout_mode = 2
+size_flags_vertical = 8
 theme_type_variation = &"FlatButton"
 theme_override_font_sizes/font_size = 20
 text = " Close"
 alignment = 0
 
-[node name="Panels" type="MarginContainer" parent="MainContainer/HBoxContainer" unique_id=1852367027]
+[node name="General" type="PanelContainer" parent="MainContainer/HBoxContainer" unique_id=1539608868]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 30
-theme_override_constants/margin_right = 10
-
-[node name="Gameplay" type="PanelContainer" parent="MainContainer/HBoxContainer/Panels" unique_id=1202200725 node_paths=PackedStringArray("hsliders")]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_pt8k0")
-script = ExtResource("4_b8kg5")
-hsliders = [NodePath("ScrollContainer/SettingsContainer/GeneralContainer/CameraZoom/Controller/Slider")]
+theme_override_styles/panel = SubResource("StyleBoxEmpty_8ix7g")
+script = ExtResource("3_8ix7g")
 metadata/_custom_type_script = "uid://c437u84bullo2"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/HBoxContainer/Panels/Gameplay" unique_id=230869523]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/HBoxContainer/General" unique_id=146530411]
 layout_mode = 2
+follow_focus = true
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
+scroll_hint_mode = 1
+tile_scroll_hint = true
 
-[node name="SettingsContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer" unique_id=1354191493]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 4
-
-[node name="GeneralContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer" unique_id=2095503914]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer" unique_id=1559316381]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Camera"
-
-[node name="CameraZoom" type="HBoxContainer" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer" unique_id=1868892356]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-
-[node name="Label" type="Control" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer/CameraZoom" unique_id=1815758594]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer/CameraZoom/Label" unique_id=1356260635]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.08)
-
-[node name="SettingName" type="Label" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer/CameraZoom/Label" unique_id=204634570]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Camera zoom"
-vertical_alignment = 1
-
-[node name="Controller" type="Control" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer/CameraZoom" unique_id=1823149336]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer/CameraZoom/Controller" unique_id=1831954224]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.15)
-
-[node name="Slider" type="HSlider" parent="MainContainer/HBoxContainer/Panels/Gameplay/ScrollContainer/SettingsContainer/GeneralContainer/CameraZoom/Controller" unique_id=1243533446]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-min_value = 1.0
-max_value = 4.0
-value = 1.0
-tick_count = 4
-metadata/property_name = &"camera_zoom"
-
-[node name="Controls" type="PanelContainer" parent="MainContainer/HBoxContainer/Panels" unique_id=438268812 node_paths=PackedStringArray("kb_mouse_container", "gamepad_container", "touch_container", "movement_container", "aim_container", "actions_container", "check_buttons", "hsliders")]
-visible = false
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_pt8k0")
-script = ExtResource("4_pt8k0")
-kb_mouse_container = NodePath("ScrollContainer/SettingsContainer/KeyboardContainer")
-gamepad_container = NodePath("ScrollContainer/SettingsContainer/GamepadContainer")
-touch_container = NodePath("ScrollContainer/SettingsContainer/TouchContainer")
-movement_container = NodePath("ScrollContainer/SettingsContainer/MovementsContainer")
-aim_container = NodePath("ScrollContainer/SettingsContainer/AimContainer")
-actions_container = NodePath("ScrollContainer/SettingsContainer/ActionContainer")
-check_buttons = [NodePath("ScrollContainer/SettingsContainer/TouchContainer/DynamicSticks/Controller/dynamic_right_stick"), NodePath("ScrollContainer/SettingsContainer/TouchContainer/DynamicSticks/Controller2/dynamic_left_stick"), NodePath("ScrollContainer/SettingsContainer/ActionContainer/CheckLegacy/Controller/use_legacy")]
-hsliders = [NodePath("ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneExit/Controller/deadzone_exit"), NodePath("ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneEnter/Controller/deadzone_enter"), NodePath("ScrollContainer/SettingsContainer/TouchContainer/StickDeadzone/Controller/stick_deadzone")]
-section_switch_group = ExtResource("5_ds323")
-remap_button_group = ExtResource("6_b8kg5")
-metadata/_custom_type_script = "uid://c437u84bullo2"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/HBoxContainer/Panels/Controls" unique_id=501080454]
-layout_mode = 2
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 3
-
-[node name="SettingsContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer" unique_id=767321196]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer" unique_id=528919132]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="SectionButtons" type="HBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer" unique_id=437511705]
-custom_minimum_size = Vector2(0, 40)
+[node name="General" type="VBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=1820249858]
 layout_mode = 2
-alignment = 1
 
-[node name="mouse_keyboard" type="Button" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/SectionButtons" unique_id=1363739864]
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/General" unique_id=1773074452]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-toggle_mode = true
-button_group = ExtResource("5_ds323")
-text = "Keyboard"
-metadata/section_name = &"mouse_keyboard"
+text = "General"
 
-[node name="gamepad" type="Button" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/SectionButtons" unique_id=803677955]
+[node name="CameraZoom" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/General" unique_id=1203277285 instance=ExtResource("3_pt8k0")]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-toggle_mode = true
-button_group = ExtResource("5_ds323")
-text = "Gamepad"
-metadata/section_name = &"gamepad"
+setting_section = &"general"
+setting_property = &"camera_zoom"
+slider_min_value = 1.0
+slider_max_value = 4.0
+steps = 1.0
+tick_count = 4
 
-[node name="touch" type="Button" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/SectionButtons" unique_id=781272539]
-custom_minimum_size = Vector2(100, 0)
+[node name="Language" type="VBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=2027093307]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-toggle_mode = true
-button_group = ExtResource("5_ds323")
-text = "Touch"
-metadata/section_name = &"touch"
 
-[node name="KeyboardContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer" unique_id=485296775]
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Language" unique_id=557324117]
+layout_mode = 2
+text = "Language"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Language" unique_id=1041195118]
+layout_mode = 2
+
+[node name="Language" type="OptionButton" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Language/HBoxContainer" unique_id=876066577 node_paths=PackedStringArray("controller")]
+layout_mode = 2
+script = ExtResource("6_552vb")
+setting_section = &"general"
+setting_property = &"language"
+controller = NodePath(".")
+
+[node name="ControlsSettings" type="PanelContainer" parent="MainContainer/HBoxContainer" unique_id=394050120 node_paths=PackedStringArray("input_type_title", "settings_containers")]
 visible = false
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/KeyboardContainer" unique_id=2127163547]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Keyboard & Mouse"
-
-[node name="GamepadContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer" unique_id=1384027008]
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Label" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer" unique_id=1695245506]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Gamepad Settings"
-
-[node name="DeadzoneExit" type="HBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer" unique_id=1488268145]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-
-[node name="Label" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneExit" unique_id=461775602]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_8ix7g")
+script = ExtResource("6_x8gi7")
+input_type_title = NodePath("ScrollContainer/VBoxContainer/InputTypeTitle")
+settings_containers = [NodePath("ScrollContainer/VBoxContainer/TouchSettings"), NodePath("ScrollContainer/VBoxContainer/JoystickSettings"), NodePath("ScrollContainer/VBoxContainer/MovementKeybind"), NodePath("ScrollContainer/VBoxContainer/AimKeybind"), NodePath("ScrollContainer/VBoxContainer/Actions")]
+metadata/_custom_type_script = "uid://c437u84bullo2"
 
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneExit/Label" unique_id=60467770]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.08)
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/HBoxContainer/ControlsSettings" unique_id=2140378042]
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+scroll_hint_mode = 1
+tile_scroll_hint = true
 
-[node name="SettingName" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneExit/Label" unique_id=1255909325]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Exit deadzone"
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer" unique_id=1079618115]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="InputTypeTitle" type="Label" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=2059165975]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "InputName"
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Controller" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneExit" unique_id=1799541179]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneExit/Controller" unique_id=2137171777]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.15)
-
-[node name="deadzone_exit" type="HSlider" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneExit/Controller" unique_id=323858153]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-min_value = 0.1
-max_value = 1.0
-step = 0.1
-value = 0.1
-tick_count = 10
-metadata/property_name = &"deadzone_exit"
-
-[node name="DeadzoneEnter" type="HBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer" unique_id=696758185]
-custom_minimum_size = Vector2(0, 30)
-layout_mode = 2
-
-[node name="Label" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneEnter" unique_id=1755640617]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneEnter/Label" unique_id=1145418967]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.08)
-
-[node name="SettingName" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneEnter/Label" unique_id=773867712]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Enter deadzone"
-vertical_alignment = 1
-
-[node name="Controller" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneEnter" unique_id=653200062]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneEnter/Controller" unique_id=689813616]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.15)
-
-[node name="deadzone_enter" type="HSlider" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/GamepadContainer/DeadzoneEnter/Controller" unique_id=1186769003]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-min_value = 0.1
-max_value = 1.0
-step = 0.1
-value = 0.1
-tick_count = 10
-metadata/property_name = &"deadzone_enter"
-
-[node name="TouchContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer" unique_id=1116026460]
+[node name="TouchSettings" type="VBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=716593243 node_paths=PackedStringArray("widgets")]
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
+script = ExtResource("6_b8kg5")
+show_on = Array[StringName]([&"TOUCH"])
+widgets = [null, null, NodePath("StickDeadzone")]
 
-[node name="Label" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer" unique_id=1095549039]
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" unique_id=517536482]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
 text = "Touch Settings"
 
-[node name="DynamicSticks" type="HBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer" unique_id=2067718642]
-custom_minimum_size = Vector2(0, 30)
+[node name="DynamicSticks" type="HBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" unique_id=980036744]
 layout_mode = 2
 
-[node name="Controller" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/DynamicSticks" unique_id=1079571270]
+[node name="DynamicLeftStick" type="CheckButton" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings/DynamicSticks" unique_id=200868261 node_paths=PackedStringArray("controller")]
 layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
+text = "SettingName"
+script = ExtResource("8_x8gi7")
+setting_section = &"touch"
+setting_property = &"dynamic_left_stick"
+controller = NodePath(".")
 
-[node name="dynamic_right_stick" type="CheckButton" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/DynamicSticks/Controller" unique_id=1363232174]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -14.5
-offset_right = 180.0
-offset_bottom = 14.5
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Dynamic right stick"
-metadata/property_name = &"dynamic_right_stick"
-
-[node name="Controller2" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/DynamicSticks" unique_id=2144898598]
+[node name="DynamicRightStick" type="CheckButton" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings/DynamicSticks" unique_id=2142249420 node_paths=PackedStringArray("controller")]
 layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
+text = "SettingName"
+script = ExtResource("8_x8gi7")
+setting_section = &"touch"
+setting_property = &"dynamic_right_stick"
+controller = NodePath(".")
 
-[node name="dynamic_left_stick" type="CheckButton" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/DynamicSticks/Controller2" unique_id=806475408]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -14.5
-offset_right = 170.0
-offset_bottom = 14.5
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Dynamic left stick"
-metadata/property_name = &"dynamic_left_stick"
-
-[node name="StickDeadzone" type="HBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer" unique_id=1060707099]
-custom_minimum_size = Vector2(0, 30)
+[node name="StickDeadzone" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" unique_id=1645432580 instance=ExtResource("3_pt8k0")]
 layout_mode = 2
+setting_section = &"touch"
+setting_property = &"stick_deadzone"
+slider_max_value = 1.0
+steps = 0.1
+tick_count = 11
 
-[node name="Label" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/StickDeadzone" unique_id=1653171173]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/StickDeadzone/Label" unique_id=2040434454]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.08)
-
-[node name="SettingName" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/StickDeadzone/Label" unique_id=2013860957]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Stick deadzone"
-vertical_alignment = 1
-
-[node name="Controller" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/StickDeadzone" unique_id=2115367449]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/StickDeadzone/Controller" unique_id=886028514]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.15)
-
-[node name="stick_deadzone" type="HSlider" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/TouchContainer/StickDeadzone/Controller" unique_id=1805777931]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-min_value = 0.1
-max_value = 1.0
-step = 0.1
-value = 0.1
-tick_count = 10
-metadata/property_name = &"stick_deadzone"
-
-[node name="MovementsContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer" unique_id=1005846590]
+[node name="JoystickSettings" type="VBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=1709700692 node_paths=PackedStringArray("widgets")]
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
+script = ExtResource("6_b8kg5")
+show_on = Array[StringName]([&"GAMEPAD"])
+widgets = [NodePath("DeadZoneEnter"), NodePath("DeadZoneExit")]
 
-[node name="Label" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/MovementsContainer" unique_id=43463997]
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/JoystickSettings" unique_id=544281765]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 18
+text = "Joystick Settings"
+
+[node name="DeadZoneEnter" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/JoystickSettings" unique_id=2013695517 instance=ExtResource("3_pt8k0")]
+layout_mode = 2
+setting_section = &"gamepad"
+setting_property = &"deadzone_enter"
+slider_max_value = 1.0
+steps = 0.1
+tick_count = 11
+
+[node name="DeadZoneExit" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/JoystickSettings" unique_id=1468654848 instance=ExtResource("3_pt8k0")]
+layout_mode = 2
+setting_section = &"gamepad"
+setting_property = &"deadzone_exit"
+slider_max_value = 1.0
+steps = 0.1
+tick_count = 11
+
+[node name="MovementKeybind" type="VBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=2084890973 node_paths=PackedStringArray("widgets")]
+visible = false
+layout_mode = 2
+script = ExtResource("6_b8kg5")
+show_on = Array[StringName]([&"MOUSE_KEYBOARD", &"GAMEPAD"])
+widgets = [NodePath("MoveUp"), NodePath("MoveDown"), NodePath("MoveLeft"), NodePath("MoveRight")]
+
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=717195447]
+layout_mode = 2
 text = "Movement"
 
-[node name="move_up" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/MovementsContainer" unique_id=1702750502 instance=ExtResource("6_e5kiw")]
+[node name="MoveUp" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1702750502 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_move_up"
+setting_property = &"player_move_up"
 
-[node name="move_down" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/MovementsContainer" unique_id=1931322684 instance=ExtResource("6_e5kiw")]
+[node name="MoveDown" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1248323535 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_move_down"
+setting_property = &"player_move_down"
 
-[node name="move_left" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/MovementsContainer" unique_id=1727744747 instance=ExtResource("6_e5kiw")]
+[node name="MoveLeft" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1645392840 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_move_left"
+setting_property = &"player_move_left"
 
-[node name="move_right" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/MovementsContainer" unique_id=410023080 instance=ExtResource("6_e5kiw")]
+[node name="MoveRight" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1756755237 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_move_right"
+setting_property = &"player_move_right"
 
-[node name="AimContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer" unique_id=1731743234]
+[node name="AimKeybind" type="VBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=55498292 node_paths=PackedStringArray("widgets")]
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
+script = ExtResource("6_b8kg5")
+show_on = Array[StringName]([&"GAMEPAD"])
+widgets = [NodePath("ShootUp"), NodePath("ShootDown"), NodePath("ShootLeft"), NodePath("ShootRight")]
 
-[node name="Label" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/AimContainer" unique_id=787555195]
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=411516989]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
 text = "Aim"
 
-[node name="look_up" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/AimContainer" unique_id=2044093277 instance=ExtResource("6_e5kiw")]
+[node name="ShootUp" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=1346357426 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_look_up"
+setting_property = &"player_look_up"
 
-[node name="look_down" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/AimContainer" unique_id=585885650 instance=ExtResource("6_e5kiw")]
+[node name="ShootDown" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=2140246662 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_look_down"
+setting_property = &"player_look_down"
 
-[node name="look_left" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/AimContainer" unique_id=943096244 instance=ExtResource("6_e5kiw")]
+[node name="ShootLeft" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=1995444501 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_look_left"
+setting_property = &"player_look_left"
 
-[node name="look_right" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/AimContainer" unique_id=1624774737 instance=ExtResource("6_e5kiw")]
+[node name="ShootRight" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=1216705756 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_look_right"
+setting_property = &"player_look_right"
 
-[node name="ActionContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer" unique_id=413761149]
+[node name="Actions" type="VBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=498058803 node_paths=PackedStringArray("widgets")]
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
+script = ExtResource("6_b8kg5")
+show_on = Array[StringName]([&"MOUSE_KEYBOARD", &"GAMEPAD"])
+widgets = [NodePath("ChatKeybind"), NodePath("InteractKeybind")]
 
-[node name="Label" type="Label" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/ActionContainer" unique_id=186655741]
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=1172552691]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
 text = "Actions"
 
-[node name="CheckLegacy" type="HBoxContainer" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/ActionContainer" unique_id=1913779226]
-visible = false
-custom_minimum_size = Vector2(0, 30)
+[node name="CheckButtons" type="HBoxContainer" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=258318642]
 layout_mode = 2
 
-[node name="Controller" type="Control" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/ActionContainer/CheckLegacy" unique_id=1454271017]
+[node name="ChatKeybind" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=365204463 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
+setting_property = &"player_chat"
 
-[node name="use_legacy" type="CheckButton" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/ActionContainer/CheckLegacy/Controller" unique_id=1933182121]
-layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_right = 186.0
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-disabled = true
-text = "Use legacy shooting"
-metadata/property_name = &"use_legacy"
-
-[node name="chat" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/ActionContainer" unique_id=2079085045 instance=ExtResource("6_e5kiw")]
+[node name="InteractKeybind" parent="MainContainer/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=436113520 instance=ExtResource("4_pt8k0")]
 layout_mode = 2
-action_name = &"player_chat"
-
-[node name="interact" parent="MainContainer/HBoxContainer/Panels/Controls/ScrollContainer/SettingsContainer/ActionContainer" unique_id=58435287 instance=ExtResource("6_e5kiw")]
-layout_mode = 2
-action_name = &"player_interact"
+setting_property = &"player_interact"

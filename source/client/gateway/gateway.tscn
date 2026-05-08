@@ -5,6 +5,7 @@
 [ext_resource type="FontFile" uid="uid://cehc3gujked8x" path="res://assets/fonts/Cinzel/static/Cinzel-Bold.ttf" id="5_opc3y"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="6_g2eid"]
 [ext_resource type="FontFile" uid="uid://cr1d4ugttxggp" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" id="6_tnybn"]
+[ext_resource type="PackedScene" uid="uid://dgpsxb4qq1hex" path="res://source/client/ui/menus/settings/settings_menu.tscn" id="7_g2eid"]
 [ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/popup_panel.gd" id="9_4rdug"]
 [ext_resource type="AudioStream" uid="uid://xxr4otrq1cg0" path="res://assets/audio/music/ekonia-main-theme.wav" id="10_q1aoo"]
 
@@ -822,13 +823,20 @@ size_flags_horizontal = 4
 layout_mode = 2
 text = "BACK"
 
-[node name="SwapButton" type="Button" parent="." unique_id=461701609]
-layout_mode = 0
-offset_left = 915.0
-offset_top = 492.0
-offset_right = 955.0
-offset_bottom = 532.0
-toggle_mode = true
+[node name="SettingsButton" type="Button" parent="." unique_id=461701609]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -55.0
+offset_top = -56.0
+offset_right = -15.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "SETTINGS"
 
 [node name="BackButton" type="Button" parent="." unique_id=1060070352]
 visible = false
@@ -869,6 +877,10 @@ volume_db = -12.0
 accept_gzip = false
 timeout = 7.0
 
+[node name="Settings" parent="." unique_id=453466263 instance=ExtResource("7_g2eid")]
+visible = false
+layout_mode = 1
+
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/LoginButton" to="." method="_on_login_button_pressed"]
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/CreateAccountButton" to="." method="_on_create_account_button_pressed"]
 [connection signal="pressed" from="MainPanel/VBoxContainer/VBoxContainer/GuestButton" to="." method="_on_guest_button_pressed"]
@@ -877,5 +889,5 @@ timeout = 7.0
 [connection signal="pressed" from="CharacterCreation/VBoxContainer/VBoxContainer/CreateButton" to="." method="_on_create_character_button_pressed"]
 [connection signal="pressed" from="AlreadyConnectedPanel/ContinueButton" to="." method="_on_continue_button_pressed"]
 [connection signal="pressed" from="AlreadyConnectedPanel/ChangeButton" to="." method="_on_change_button_pressed"]
-[connection signal="toggled" from="SwapButton" to="." method="_on_swap_theme_button_toggled"]
+[connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

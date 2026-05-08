@@ -416,16 +416,20 @@ func _on_change_button_pressed() -> void:
 	_show($WorldSelection, false)
 
 
-func _on_swap_theme_button_toggled(toggled_on: bool) -> void:
-	if not $AudioStreamPlayer.playing:
-		$AudioStreamPlayer.play()
-	if toggled_on:
-		$Background.texture = preload("uid://cfihbj71a4y35")
-		Client.theme = preload("uid://c2nr0o8v7vb75")
-	else:
-		$Background.texture = preload("uid://cn5blfyqokda6")
-		Client.theme = preload("uid://cf1ayo3dckj67")
-	theme = Client.theme
+func _on_settings_button_pressed() -> void:
+	$Settings.visible = not $Settings.visible
+
+
+#func _on_swap_theme_button_toggled(toggled_on: bool) -> void:
+	#if not $AudioStreamPlayer.playing:
+	#	$AudioStreamPlayer.play()
+	#if toggled_on:
+	#	$Background.texture = preload("uid://cfihbj71a4y35")
+	#	Client.theme = preload("uid://c2nr0o8v7vb75")
+	#else:
+	#	$Background.texture = preload("uid://cn5blfyqokda6")
+	#	Client.theme = preload("uid://cf1ayo3dckj67")
+	#theme = Client.theme
 
 
 func _on_back_button_pressed() -> void:

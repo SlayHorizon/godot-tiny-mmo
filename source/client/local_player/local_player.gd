@@ -92,14 +92,14 @@ func set_camera_zoom(zoom: Vector2) -> void:
 
 
 func _apply_settings() -> void:
-	var settings: Dictionary = ClientState.settings.data.get(&"gameplay", {})
+	var settings: Dictionary = ClientState.settings.data.get(&"general", {})
 	for property_name: StringName in settings:
-		_on_settings_changed(&"gameplay", property_name, settings[property_name]) 
+		_on_settings_changed(&"general", property_name, settings[property_name]) 
 
 
 func _on_settings_changed(section: StringName, property: StringName, value: Variant) -> void:
 	match [section, property]:
-		[&"gameplay", &"camera_zoom"]:
+		[&"general", &"camera_zoom"]:
 			set_camera_zoom(clamp(value, 1.0, 4.0) * Vector2.ONE)
 
 

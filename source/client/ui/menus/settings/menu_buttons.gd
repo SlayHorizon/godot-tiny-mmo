@@ -3,31 +3,37 @@ extends Control
 
 @export var navigator: Navigator
 @export var close_button: Button
-@export var button_group: ButtonGroup
 
-var panels: Dictionary[StringName, NavPanel] = {}
+@export_category("Gameplay")
+@export var gameplay_panel: NavPanel
+@export var gameplay_button: Button
+
+@export_category("Controls")
+@export var controls_panel: NavPanel
+@export var controls_button: OptionButton
 
 
 func _ready() -> void:
-    for button: Button in button_group.get_buttons():
-        var target_panel: StringName = button.get_meta(&"target_panel", &"none")
-        if target_panel == navigator.initial_panel.name:
-            button.set_pressed_no_signal(true)
-            break
-    
-    for panel: NavPanel in navigator.nav_panels:
-        panels[panel.name] = panel
+	for input_type: String in InputComponent.InputType.keys():
+		var item_id: int = (controls_button.item_count - 1) + 1
+		var text: String = input_type.replace("_", " & ").capitalize()
+		controls_button.add_item(text, item_id)
+		controls_button.set_item_metadata(item_id, input_type)
 
-    close_button.pressed.connect(_on_close_button_pressed)
-    button_group.pressed.connect(_on_button_pressed)
+	controls_button.select(0)
 
-
-func _on_button_pressed(button: Button) -> void:
-    if not button.has_meta(&"target_panel"): return
-    var target_panel: StringName = button.get_meta(&"target_panel")
-    if target_panel in panels:
-        navigator.replace(panels[target_panel], {})
+	gameplay_button.pressed.connect(_on_gameplay_button_pressed)
+	controls_button.item_selected.connect(_on_controls_item_selected)
+	close_button.pressed.connect(navigator.back)
 
 
-func _on_close_button_pressed() -> void:
-    navigator.back()
+func _on_gameplay_button_pressed() -> void:
+	navigator.replace(gameplay_panel, {})
+
+
+func _on_controls_item_selected(index: int) -> void:
+	var option: String = controls_button.get_item_metadata(index)
+	controls_button.select(0)
+	controls_button.set_pressed_no_signal(true)
+	if not option: return
+	navigator.replace(controls_panel, {"input_type": option})

@@ -18,6 +18,13 @@ var settings: Settings = Settings.new()
 var quick_slots: DataDict = DataDict.new()
 var guilds: DataDict = DataDict.new()
 
+var language: String:
+	set(value):
+		var loaded_locales: PackedStringArray = TranslationServer.get_loaded_locales()
+		if loaded_locales.is_empty() or value not in loaded_locales: value = "en_US"
+		language = value
+		TranslationServer.set_locale(value)
+
 var input_type: InputComponent.InputType:
 	set(value):
 		input_type = value
@@ -36,6 +43,14 @@ func _ready() -> void:
 	)
 
 	settings.load_file()
+	settings.setting_changed.connect(_on_setting_changed)
+	language = settings.data.get(&"general", {}).get(&"language")
+
+
+func _on_setting_changed(section: StringName, property: StringName, new_value: Variant) -> void:
+	match property:
+		"language":
+			language = new_value
 
 
 class DataDict:

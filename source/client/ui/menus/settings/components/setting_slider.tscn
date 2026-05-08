@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://ciwh5s6sslroq"]
+
+[ext_resource type="Script" uid="uid://dlp5twd0pw868" path="res://source/client/ui/menus/settings/components/settings_widget.gd" id="1_kgrad"]
+
+[node name="SettingSlider" type="HBoxContainer" unique_id=1203277285 node_paths=PackedStringArray("setting_label", "controller")]
+clip_contents = true
+custom_minimum_size = Vector2(0, 30)
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_kgrad")
+setting_label = NodePath("Label/SettingName")
+controller = NodePath("Controller/Slider")
+
+[node name="Label" type="Control" parent="." unique_id=1813340037]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="Label" unique_id=1505672749]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(255, 255, 255, 0.08)
+
+[node name="SettingName" type="Label" parent="Label" unique_id=183565188]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 16
+text = "SettingName"
+vertical_alignment = 1
+
+[node name="Controller" type="Control" parent="." unique_id=581383475]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+
+[node name="ColorRect" type="ColorRect" parent="Controller" unique_id=1227607502]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(255, 255, 255, 0.15)
+
+[node name="Slider" type="HSlider" parent="Controller" unique_id=1947798155]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/property_name = &"camera_zoom"
