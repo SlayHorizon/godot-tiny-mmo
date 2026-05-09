@@ -28,7 +28,8 @@ func _input(event: InputEvent) -> void:
 		controller.button_pressed = false
 		return
 	
-	ClientState.settings.set_value(setting_section, setting_property, event)
+	var value: String = InputComponent.event_to_keycode(event)
+	ClientState.settings.set_value(setting_section, setting_property, value)
 	controller.button_pressed = false
 
 
@@ -45,10 +46,8 @@ func _on_controller_value_changed(toggled_on: bool = false) -> void:
 
 func _load_defaults() -> void:
 	if not is_instance_valid(controller): return
-	var input_type: InputComponent.InputType = InputComponent.InputType[setting_section.to_upper()]
-	var current_event: InputEvent = InputComponent.find_action_event(setting_property, input_type)
-	# Todo: display icons instead of input key text.
-	controller.text = current_event.as_text() if current_event else "Unbound"
+	var event: Variant = ClientState.settings.get_value(setting_section, setting_property)
+	controller.text = event if event else "Unbound"
 
 
 func _is_event_valid(event: InputEvent) -> bool:

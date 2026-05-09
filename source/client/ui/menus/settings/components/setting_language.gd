@@ -15,6 +15,7 @@ func _ready() -> void:
 		_items[locale] = item_idx
 
 	controller.item_selected.connect(_on_language_item_selected)
+	_load_defaults()
 
 
 func _on_language_item_selected(index: int) -> void:

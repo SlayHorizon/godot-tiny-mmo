@@ -117,9 +117,11 @@ func _notification(what: int) -> void:
 
 
 func _on_settings_changed(section: StringName, property: StringName, value: Variant) -> void:
-	if value is InputEvent:
-		_apply_input_remap(section, property, value)
-		return
+	if value is String:
+		var event: InputEvent = keycode_to_event(value)
+		if event != null:
+			_apply_input_remap(section, property, event)
+			return
 	
 	match [section, property]:
 		[&"gamepad", &"deadzone_exit"]: stick_deadzone_exit = value
@@ -311,5 +313,46 @@ static func replace_event(action_name: StringName, new_event: InputEvent, input_
 	if old_event:
 		InputMap.action_erase_event(action_name, old_event)
 	InputMap.action_add_event(action_name, new_event)
+
+
+## Convert a [InputEvent] into a string for config storage.
+## Returns a empty string if unsupported. [br]
+## Example: [code]physical:W[/code], [code]button:A[/code], [code]axis:1:-[/code]
+static func event_to_keycode(event: InputEvent) -> String:
+	if event is InputEventKey:
+		return "physical:%s" % OS.get_keycode_string(event.physical_keycode)
+
+	if event is InputEventJoypadButton:
+		return "button:%d" % event.button_index
+
+	if event is InputEventJoypadMotion:
+		var direction: String = "+" if event.axis_value > 0 else "-"
+		return "axis:%d:%s" % [event.axis, direction]
+
+	return ""
+
+
+## Converts a string produced by [method event_to_keycode] back into a [InputEvent].
+## Returns [code]null[/code] if unsupported. 
+static func keycode_to_event(keycode: String) -> InputEvent:
+	var parts: Array = keycode.split(":")
+	var event: InputEvent = null
+	match parts[0]:
+		"physical":
+			event = InputEventKey.new()
+			event.physical_keycode = OS.find_keycode_from_string(parts[1])
+			event.device = -1
+		"button":
+			event = InputEventJoypadButton.new()
+			event.button_index = int(parts[1])
+			event.device = -1
+		"axis":
+			event = InputEventJoypadMotion.new()
+			event.axis = int(parts[1])
+			event.axis_value = 1.0 if parts[2] == "+" else -1.0
+			event.device = -1
+
+	return event
+
 
 #endregion
