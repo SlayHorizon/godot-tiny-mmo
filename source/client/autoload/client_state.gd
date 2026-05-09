@@ -44,7 +44,7 @@ func _ready() -> void:
 
 	settings.load_file()
 	settings.setting_changed.connect(_on_setting_changed)
-	language = settings.data.get(&"general", {}).get(&"language")
+	language = settings.data.get(&"general", {}).get(&"language", "en_US")
 
 
 func _on_setting_changed(section: StringName, property: StringName, new_value: Variant) -> void:
