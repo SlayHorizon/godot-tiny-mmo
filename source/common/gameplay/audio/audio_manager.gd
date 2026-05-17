@@ -13,7 +13,7 @@ extends Node
 	set(value): set_sfx_volume(value)
 
 var _tweens: Dictionary[AudioStreamPlayer, Tween]
-var _sound_cache: Dictionary[StringName, AudioStream]
+var _cached_sounds: Dictionary[String, AudioStream]
 var _pending_music: PendingMusic
 
 
@@ -42,8 +42,8 @@ func set_music_volume(volume_linear: float) -> void:
 	AudioServer.set_bus_volume_linear(bus_index, clampf(volume_linear, 0.0, 1.0))
 
 
-func play_music(music_name: StringName, volume: float = 0.0, at_position: float = 0.0, fade_duration: float = 1.0) -> bool:
-	return play_music_stream(_get_sound_from_slug(music_name, &"musics"), volume, at_position, fade_duration)
+func play_music(music_path: String, volume: float = 0.0, at_position: float = 0.0, fade_duration: float = 1.0) -> bool:
+	return play_music_stream(_get_sound(music_path), volume, at_position, fade_duration)
 
 
 func play_music_stream(music: AudioStream, volume: float = 0.0, at_position: float = 0.0, fade_duration: float = 1.0) -> bool:
@@ -72,8 +72,8 @@ func stop_music(fade_out_duration: float = 1.0) -> void:
 
 #region UI Sound
 
-func play_ui_sound(sound_name: StringName, pitch: float = 1.0) -> bool:
-	return play_ui_sound_stream(_get_sound_from_slug(sound_name, &"sfxs"))
+func play_ui_sound(sound_path: String, pitch: float = 1.0) -> bool:
+	return play_ui_sound_stream(_get_sound(sound_path))
 
 
 func play_ui_sound_stream(sound: AudioStream, pitch: float = 1.0) -> bool:
@@ -91,8 +91,8 @@ func set_sfx_volume(volume_linear: float) -> void:
 	AudioServer.set_bus_volume_linear(bus_index, clampf(volume_linear, 0.0, 1.0))
 
 
-func play_sfx(sound_name: StringName, position: Vector2, override_max_distance: int = 0, pitch: float = 1.0) -> bool:
-	var sound: AudioStream = _get_sound_from_slug(sound_name, &"sfxs")
+func play_sfx(sound_path: String, position: Vector2, override_max_distance: int = 0, pitch: float = 1.0) -> bool:
+	var sound: AudioStream = _get_sound(sound_path)
 	return sfx_player.play_stream(sound, position, override_max_distance, pitch)
 
 
@@ -100,7 +100,6 @@ func play_sfx_stream(sound: AudioStream, position: Vector2, override_max_distanc
 	return sfx_player.play_stream(sound, position, override_max_distance, pitch)
 
 #endregion
-
 
 #region Helpers
 
@@ -146,17 +145,17 @@ func _on_fade_finished(player: AudioStreamPlayer, was_fading_out: bool) -> void:
 		_start_music()
 
 
-## from_content = &"sfxs", &"musics"
-func _get_sound_from_slug(sound_name: StringName, from_content: StringName = &"musics") -> AudioStream:
-	if _sound_cache.has(sound_name):
-		return _sound_cache.get(sound_name)
+func _get_sound(sound_path: String) -> AudioStream:
+	if _cached_sounds.has(sound_path):
+		return _cached_sounds[sound_path]
 	
-	if not ContentRegistryHub.registry_of(from_content): return null
-	var audio: Resource = ContentRegistryHub.load_by_slug(from_content, sound_name)
-	if (not audio) or (not audio is AudioStream): return null
-	
-	_sound_cache[sound_name] = audio
-	return audio
+	if not ResourceLoader.exists(sound_path): return null
+
+	var sound: Resource = ResourceLoader.load(sound_path, "AudioStream")
+	if not sound is AudioStream: return null
+
+	_cached_sounds[sound_path] = sound
+	return sound
 
 
 func _apply_default_settings() -> void:

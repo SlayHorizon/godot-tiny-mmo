@@ -28,7 +28,7 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	audio_manager.call_deferred("play_music", &"default_theme", 0.0, 0.0, 5.0)
+	audio_manager.call_deferred("play_music", "res://assets/audio/music/ekonia-main-theme.wav", 0.0, 0.0, 5.0)
 
 
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
