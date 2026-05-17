@@ -1,6 +1,6 @@
 class_name AudioManager
 extends Node
-
+## Handles music, UI sounds and spatial sound effects playback.
 
 @export var music_player: AudioStreamPlayer
 @export var ui_player: AudioStreamPlayer
@@ -37,15 +37,25 @@ func _on_setting_changed(section: StringName, property: StringName, value: Varia
 
 #region Music
 
+## Sets music volume.
 func set_music_volume(volume_linear: float) -> void:
 	var bus_index: int = AudioServer.get_bus_index(&"Music")
 	AudioServer.set_bus_volume_linear(bus_index, clampf(volume_linear, 0.0, 1.0))
 
 
+## Load and play music from the given path.
+## If the resource was previously loaded, it will be retrieved from cache. [br]
+## [volume] - Override the bus volume. leave at 0.0 to use the audio bus volume.[br]
+## [at_position] - Play music at the given time.[br]
+## [fade_duration] - Fade in/out duration.
 func play_music(music_path: String, volume: float = 0.0, at_position: float = 0.0, fade_duration: float = 1.0) -> bool:
 	return play_music_stream(_get_sound(music_path), volume, at_position, fade_duration)
 
 
+## Play music using the given [AudioStream].[br]
+## [volume] - Override the bus volume. leave at 0.0 to use the audio bus volume.[br]
+## [at_position] - Play music at the given time.[br]
+## [fade_duration] - Fade in/out duration.
 func play_music_stream(music: AudioStream, volume: float = 0.0, at_position: float = 0.0, fade_duration: float = 1.0) -> bool:
 	if not music: return false
 	if music_player.playing and music_player.stream == music: return true
@@ -64,6 +74,7 @@ func play_music_stream(music: AudioStream, volume: float = 0.0, at_position: flo
 	return true
 
 
+## Stop the current playing music.
 func stop_music(fade_out_duration: float = 1.0) -> void:
 	if music_player.playing:
 		fade_volume(music_player, -80, clampf(fade_out_duration, 0.0, 10.0))
@@ -72,10 +83,13 @@ func stop_music(fade_out_duration: float = 1.0) -> void:
 
 #region UI Sound
 
+## Load and play sound from the given path.
+## If the resource was previously loaded, it will be retrieved from cache.
 func play_ui_sound(sound_path: String, pitch: float = 1.0) -> bool:
 	return play_ui_sound_stream(_get_sound(sound_path))
 
 
+## Play sound using the given [AudioStream].
 func play_ui_sound_stream(sound: AudioStream, pitch: float = 1.0) -> bool:
 	if not sound: return false
 	var playback: AudioStreamPlaybackPolyphonic = ui_player.get_stream_playback()
@@ -86,16 +100,24 @@ func play_ui_sound_stream(sound: AudioStream, pitch: float = 1.0) -> bool:
 
 #region Sound Effect
 
+## Sets all sound effects volume. UI and spatial sound effects.
 func set_sfx_volume(volume_linear: float) -> void:
 	var bus_index: int = AudioServer.get_bus_index(&"Sound")
 	AudioServer.set_bus_volume_linear(bus_index, clampf(volume_linear, 0.0, 1.0))
 
 
+## Load and play a spatial sound from the given path.
+## If the resource was previously loaded, it will be retrieved from cache. [br]
+## [position] - The 2D world position that the sound will play from.[br]
+## [override_max_distance] - Overrides the default max distance. leave at 0.0 to use default distance.
 func play_sfx(sound_path: String, position: Vector2, override_max_distance: int = 0, pitch: float = 1.0) -> bool:
 	var sound: AudioStream = _get_sound(sound_path)
 	return sfx_player.play_stream(sound, position, override_max_distance, pitch)
 
 
+## Play a spatial sound using the given [AudioStream].[br]
+## [position] - The 2D world position that the sound will play from.[br]
+## [override_max_distance] - Overrides the default max distance. leave at 0.0 to use default distance.
 func play_sfx_stream(sound: AudioStream, position: Vector2, override_max_distance: int = 0, pitch: float = 1.0) -> bool:
 	return sfx_player.play_stream(sound, position, override_max_distance, pitch)
 
@@ -103,6 +125,7 @@ func play_sfx_stream(sound: AudioStream, position: Vector2, override_max_distanc
 
 #region Helpers
 
+## Fade the given [AudioStreamPlayer] volume.
 func fade_volume(player: AudioStreamPlayer, to_volume: float, duration: float = 1.0) -> void:
 	_remove_tween(player)
 
