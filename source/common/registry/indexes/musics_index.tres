@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ContentIndex" format=3 uid="uid://duq0gychf7vim"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_f1lau"]
+
+[resource]
+script = ExtResource("1_f1lau")
+content_name = &"musics"
+entries = Array[Dictionary]([{
+&"id": 0,
+&"path": "res://assets/audio/music/ekonia-main-theme.wav",
+&"slug": &"default_theme"
+}, {
+&"id": 1,
+&"path": &"res://assets/audio/music/Sketchbook 2024-04-24_02.ogg",
+&"slug": &"test"
+}])
+metadata/_custom_type_script = "uid://0wmtcxri41vp"
