@@ -9,9 +9,5 @@ entries = Array[Dictionary]([{
 &"id": 0,
 &"path": "res://assets/audio/music/ekonia-main-theme.wav",
 &"slug": &"default_theme"
-}, {
-&"id": 1,
-&"path": &"res://assets/audio/music/Sketchbook 2024-04-24_02.ogg",
-&"slug": &"test"
 }])
 metadata/_custom_type_script = "uid://0wmtcxri41vp"
