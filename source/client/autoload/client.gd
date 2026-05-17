@@ -19,6 +19,7 @@ var theme: Theme:
 		return theme
 
 @onready var world_clock: WorldClock = $WorldClock
+@onready var audio_manager: AudioManager = $AudioManager
 
 
 func _enter_tree() -> void:
@@ -27,7 +28,7 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	pass
+	audio_manager.call_deferred("play_music", "res://assets/audio/music/ekonia-main-theme.wav", 0.0, 0.0, 5.0)
 
 
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
@@ -59,6 +60,8 @@ func _on_connection_succeeded() -> void:
 	print("Successfully connected to the server as %d!" % multiplayer.get_unique_id())
 	peer_id = multiplayer.get_unique_id()
 	is_connected_to_server = true
+
+	audio_manager.stop_music(5.0) ## Just for example might remove later.
 
 	if OS.has_feature("debug"):
 		DisplayServer.window_set_title("Client - %d" % peer_id)

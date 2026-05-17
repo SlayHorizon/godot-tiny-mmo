@@ -10,10 +10,13 @@ script = ExtResource("2_qfdgo")
 [node name="Camera2D" type="Camera2D" parent="." index="3" unique_id=314699066]
 zoom = Vector2(3, 3)
 
-[node name="AnimatedSprite2D" parent="." index="4"]
+[node name="AudioListener2D" type="AudioListener2D" parent="." index="4" unique_id=1825807552]
+current = true
+
+[node name="AnimatedSprite2D" parent="." index="5" unique_id=1675562039]
 frame_progress = 0.0
 
-[node name="InputComponent" type="Node2D" parent="." index="12" unique_id=962044061 node_paths=PackedStringArray("node_owner")]
+[node name="InputComponent" type="Node2D" parent="." index="13" unique_id=962044061 node_paths=PackedStringArray("node_owner")]
 script = ExtResource("3_yesbm")
 enabled = true
 node_owner = NodePath("..")

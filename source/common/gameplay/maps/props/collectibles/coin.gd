@@ -60,6 +60,7 @@ func rp_collect(delete: bool) -> void:
 		queue_free if delete else rp_pause,
 		CONNECT_ONE_SHOT
 	)
+	Client.audio_manager.play_sfx("res://assets/audio/sfx/coin_collect.wav", self.position)
 
 
 func rp_pause() -> void:

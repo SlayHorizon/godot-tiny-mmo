@@ -167,6 +167,27 @@ slider_max_value = 4.0
 steps = 1.0
 tick_count = 4
 
+[node name="Volume" type="VBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=1896211060]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Volume" unique_id=1670126475]
+layout_mode = 2
+text = "Volume"
+
+[node name="MusicVolume" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Volume" unique_id=949314808 instance=ExtResource("3_pt8k0")]
+layout_mode = 2
+setting_section = &"general"
+setting_property = &"music_volume"
+slider_max_value = 1.0
+steps = 0.001
+
+[node name="SoundVolume" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Volume" unique_id=643926730 instance=ExtResource("3_pt8k0")]
+layout_mode = 2
+setting_section = &"general"
+setting_property = &"sound_volume"
+slider_max_value = 1.0
+steps = 0.001
+
 [node name="Language" type="VBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=2027093307]
 layout_mode = 2
 
