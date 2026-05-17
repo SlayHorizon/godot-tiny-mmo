@@ -7,6 +7,17 @@ extends Node
 @export var max_sfx_pool_size: int = 16
 @export var max_sfx_distance: float = 500.0
 
+@export_range(0.0, 1.0, 0.001) var music_volume: float = 1.0:
+	set(value):
+		var bus_index: int = AudioServer.get_bus_index(&"Music")
+		AudioServer.set_bus_volume_linear(bus_index, value)
+
+@export_range(0.0, 1.0, 0.001) var sound_volume: float = 1.0:
+	set(value):
+		var bus_index: int = AudioServer.get_bus_index(&"Sound")
+		AudioServer.set_bus_volume_linear(bus_index, value)
+
+
 var _tweens: Dictionary[AudioStreamPlayer, Tween]
 var _sound_cache: Dictionary[StringName, AudioStream]
 
@@ -22,6 +33,14 @@ func _ready() -> void:
 	assert(is_instance_valid(ui_player), "No valid ui player.")
 
 	ui_player.play()
+	ClientState.settings.setting_changed.connect(_on_setting_changed)
+	_apply_default_settings()
+
+
+func _on_setting_changed(section: StringName, property: StringName, value: Variant) -> void:
+	match property:
+		&"music_volume": music_volume = clampf(value, 0.0, 1.0)
+		&"sound_volume": sound_volume = clampf(value, 0.0, 1.0)
 
 
 func play_music(music_name: StringName, volume: float = 0.0, at_position: float = 0.0, fade_duration: float = 1.0) -> bool:
@@ -118,7 +137,7 @@ func _allocate_players() -> void:
 			return
 	
 	var player: AudioStreamPlayer2D = AudioStreamPlayer2D.new()
-	player.bus = &"Sfx"
+	player.bus = &"Sound"
 	player.max_distance = max_sfx_distance
 	add_child(player, true)
 	_avaible_sfx_players.append(player)
@@ -149,3 +168,10 @@ func _get_sound_from_slug(sound_name: StringName, from_content: StringName = &"m
 	
 	_sound_cache[sound_name] = audio
 	return audio
+
+
+func _apply_default_settings() -> void:
+	var settings: Dictionary = ClientState.settings.data
+	for property in settings[&"general"]:
+		var value: Variant = settings[&"general"][property]
+		_on_setting_changed(&"general", property, value)
