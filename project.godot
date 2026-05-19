@@ -22,6 +22,10 @@ config/custom_user_dir_name="slayhorizon"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://assets/project_icon/icon_svg.svg"
 
+[audio]
+
+buses/default_bus_layout="uid://6a8ehqx05sqs"
+
 [autoload]
 
 ClientState="*res://source/client/autoload/client_state.gd"

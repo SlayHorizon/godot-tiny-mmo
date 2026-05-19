@@ -3,6 +3,11 @@
 [ext_resource type="Script" uid="uid://jbqm8d114o0u" path="res://source/client/autoload/client.gd" id="1_dp78e"]
 [ext_resource type="Script" uid="uid://df8q30x0onbwg" path="res://source/client/network/instance_manager.gd" id="2_pk5uk"]
 [ext_resource type="Script" uid="uid://vetsypglioqo" path="res://source/common/gameplay/time/world_clock.gd" id="3_pk5uk"]
+[ext_resource type="Script" uid="uid://u2rmkwrsykw3" path="res://source/common/gameplay/audio/audio_manager.gd" id="4_amtef"]
+[ext_resource type="Script" uid="uid://b1eyhr1lfmmel" path="res://source/common/gameplay/audio/sfx_pool.gd" id="5_fmoa6"]
+
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_amtef"]
+polyphony = 6
 
 [node name="Client" type="Node" unique_id=1458854616]
 script = ExtResource("1_dp78e")
@@ -13,3 +18,21 @@ metadata/_custom_type_script = "uid://vetsypglioqo"
 
 [node name="InstanceManager" type="Node" parent="." unique_id=683323300]
 script = ExtResource("2_pk5uk")
+
+[node name="AudioManager" type="Node" parent="." unique_id=18416128 node_paths=PackedStringArray("music_player", "ui_player", "sfx_player")]
+script = ExtResource("4_amtef")
+music_player = NodePath("MusicPlayer")
+ui_player = NodePath("UiPlayer")
+sfx_player = NodePath("SfxPool")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="AudioManager" unique_id=1642956535]
+bus = &"Music"
+
+[node name="UiPlayer" type="AudioStreamPlayer" parent="AudioManager" unique_id=1426921026]
+stream = SubResource("AudioStreamPolyphonic_amtef")
+autoplay = true
+bus = &"Ui"
+
+[node name="SfxPool" type="Node" parent="AudioManager" unique_id=200148794]
+script = ExtResource("5_fmoa6")
+metadata/_custom_type_script = "uid://b1eyhr1lfmmel"
