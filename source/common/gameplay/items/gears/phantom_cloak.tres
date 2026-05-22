@@ -25,3 +25,5 @@ item_name = &"PhantomCloak"
 description = "Phantom Cloak
 Increases 5 move speed and 10 health"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"phantom_cloak"
+metadata/id = 25

@@ -18,6 +18,7 @@ func _ready() -> void:
 	notification_button.disabled = true
 	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
+	ClientState.open_menu_requested.connect(_on_menu_requested)
 	for button: Button in $MenuOverlay/VBoxContainer.get_children():
 		if button.text.containsn("CLOSE"):
 			button.pressed.connect(_on_overlay_menu_close_button_pressed)
@@ -35,6 +36,10 @@ func _on_overlay_menu_close_button_pressed() -> void:
 	menu_overlay.hide()
 
 
+func _on_menu_requested(menu_name: StringName, arg: Variant) -> void:
+	display_menu(menu_name, arg)
+
+
 func open_player_profile(player_id: int) -> void:
 	display_menu(&"player_profile")
 	menus[&"player_profile"].open_player_profile(player_id)
@@ -47,7 +52,7 @@ func _on_submenu_visiblity_changed(menu: Control) -> void:
 		show()
 
 
-func display_menu(menu_name: StringName) -> void:
+func display_menu(menu_name: StringName, arg: Variant = null) -> void:
 	if not menus.has(menu_name):
 		var path: String = "res://source/client/ui/menus/" + menu_name + "/" + menu_name + "_menu.tscn"
 		if not ResourceLoader.exists(path):
@@ -57,6 +62,8 @@ func display_menu(menu_name: StringName) -> void:
 		sub_menu.add_child(new_menu)
 		menus[menu_name] = new_menu
 	menus[menu_name].show()
+	if arg != null and menus[menu_name].has_method(&"open"):
+		menus[menu_name].open(arg)
 
 
 func _on_overlay_menu_button_pressed() -> void:

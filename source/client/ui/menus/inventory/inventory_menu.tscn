@@ -13,7 +13,7 @@
 [ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="8_as6qe"]
 [ext_resource type="Texture2D" uid="uid://w14y1o4gi3l2" path="res://assets/sprites/items/icons/Icon325.png" id="9_0wccm"]
 [ext_resource type="Resource" uid="uid://wi13k03tseev" path="res://source/common/gameplay/items/item_slot/slots/torso.tres" id="10_xkgtg"]
-[ext_resource type="Resource" uid="uid://dn7q51odqrqp5" path="res://source/common/gameplay/items/item_slot/slots/boot.tres" id="11_nwyl0"]
+[ext_resource type="Resource" uid="uid://c2yhkcqngo32q" path="res://source/common/gameplay/items/item_slot/slots/boot.tres" id="11_nwyl0"]
 [ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/menus/inventory/attributes_panel.gd" id="14_hc0xo"]
 [ext_resource type="Script" uid="uid://dm4es1smo6nxw" path="res://source/client/ui/menus/inventory/stats_panel.gd" id="14_xkgtg"]
 [ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="15_svewr"]

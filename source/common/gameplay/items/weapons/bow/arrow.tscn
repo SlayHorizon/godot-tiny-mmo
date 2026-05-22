@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cckkklpa17vo"]
+[gd_scene format=3 uid="uid://cckkklpa17vo"]
 
 [ext_resource type="Script" uid="uid://c2f126nxuonb3" path="res://source/common/gameplay/items/weapons/bow/arrow.gd" id="1_ko7y3"]
 [ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_v0cpe"]

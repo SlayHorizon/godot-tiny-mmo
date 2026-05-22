@@ -26,3 +26,5 @@ item_name = &"EnchantedHood"
 description = "Enchanted Hood
 Increases 2 magic res and 2 mana"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"enchanted_hood"
+metadata/id = 13

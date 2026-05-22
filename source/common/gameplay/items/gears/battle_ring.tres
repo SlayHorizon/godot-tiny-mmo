@@ -25,3 +25,5 @@ item_name = &"BattleRing"
 description = "Battle ring
 increases 12 health and reduces -2 move speed"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"battle_ring"
+metadata/id = 10

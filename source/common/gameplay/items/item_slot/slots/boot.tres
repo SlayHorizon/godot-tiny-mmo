@@ -13,3 +13,5 @@ key = &"boot"
 display_name = "Boot"
 unlock_rule = SubResource("Resource_kulax")
 metadata/_custom_type_script = "uid://e40odrowquc8"
+metadata/slug = &"boot"
+metadata/id = 35

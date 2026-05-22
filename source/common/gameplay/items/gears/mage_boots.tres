@@ -26,3 +26,5 @@ item_name = &"MageBoots"
 description = "Mage Boots
 Increase 2 magic res and 2 move speed"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"mage_boots"
+metadata/id = 22

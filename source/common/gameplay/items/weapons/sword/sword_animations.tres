@@ -196,4 +196,4 @@ _data = {
 &"sword.swing": SubResource("Animation_SWING")
 }
 metadata/slug = &"sword_animations"
-metadata/id = 13
+metadata/id = 48

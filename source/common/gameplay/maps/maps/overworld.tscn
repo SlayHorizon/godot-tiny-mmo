@@ -27,6 +27,9 @@
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="24_slgwh"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="24_uytus"]
 [ext_resource type="Script" uid="uid://bvwcr61l1deso" path="res://source/common/gameplay/time/world_clock_display.gd" id="25_gimy5"]
+[ext_resource type="Script" uid="uid://xduf2fcr0g83" path="res://source/common/gameplay/maps/components/shop_button.gd" id="28_mvj6e"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mvj6e"]
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -256,3 +259,19 @@ offset_right = 864.0
 offset_bottom = 938.0
 text = "World Time:"
 script = ExtResource("25_gimy5")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=411929430]
+layer = 20
+follow_viewport_enabled = true
+
+[node name="ShopButton" type="Button" parent="CanvasLayer" unique_id=953784759]
+top_level = true
+z_index = 10
+offset_left = 792.0
+offset_top = 880.0
+offset_right = 842.0
+offset_bottom = 909.0
+mouse_behavior_recursive = 2
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_mvj6e")
+text = "SHOP"
+script = ExtResource("28_mvj6e")

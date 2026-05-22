@@ -20,3 +20,5 @@ item_name = &"LeatherArmor"
 description = "Leather armor
 increases 3 armor"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"leaher_armor"
+metadata/id = 20

@@ -25,3 +25,5 @@ item_name = &"IronChestplate"
 description = "Iron chestplate
 Increases 5 armor and 5 health"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"iron_chest"
+metadata/id = 18

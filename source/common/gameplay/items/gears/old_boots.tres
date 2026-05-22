@@ -20,3 +20,5 @@ item_icon = ExtResource("2_2058t")
 description = "Old Boots
 Increases 1 move speed"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"old_boots"
+metadata/id = 24

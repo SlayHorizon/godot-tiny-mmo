@@ -26,3 +26,5 @@ item_name = &"AncientHood"
 description = "Ancient hood
 Increases 4 magic res and 2 mana"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"ancient_hood"
+metadata/id = 7

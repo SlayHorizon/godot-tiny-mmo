@@ -25,3 +25,5 @@ item_name = &"PhantomRing"
 description = "Phantom ring
 increases 3 move speed and 5 health"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"phantom_ring"
+metadata/id = 26

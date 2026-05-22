@@ -17,3 +17,5 @@ slot = ExtResource("4_dr0vm")
 required_level = 15
 base_modifiers = Array[ExtResource("1_svoh3")]([SubResource("Resource_8hg1e")])
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"war_boots"
+metadata/id = 41

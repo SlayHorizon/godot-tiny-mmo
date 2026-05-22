@@ -26,3 +26,5 @@ item_name = &"HeavyBoots"
 description = "Heavy boots
 Increases 2 move speed and 2 armor"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"heavy_boots"
+metadata/id = 16

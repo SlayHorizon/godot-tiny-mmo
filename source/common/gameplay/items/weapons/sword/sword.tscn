@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cq4pqfg3tnqxh"]
+[gd_scene format=3 uid="uid://cq4pqfg3tnqxh"]
 
 [ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_6bj2e"]
 [ext_resource type="Script" uid="uid://ct0u1fvddy3aa" path="res://source/common/gameplay/items/weapons/sword/sword.gd" id="2_gih3n"]

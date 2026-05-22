@@ -19,3 +19,5 @@ item_name = &"VitalRing"
 description = "Vital ring
 Increases 10 health"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"vital_ring"
+metadata/id = 33

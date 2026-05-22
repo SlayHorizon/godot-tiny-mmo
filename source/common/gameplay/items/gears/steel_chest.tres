@@ -25,3 +25,5 @@ item_name = &"SteelChestplate"
 description = "Steel Chestplate
 Increases 7 armor and 10 health"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"steel_chest"
+metadata/id = 32

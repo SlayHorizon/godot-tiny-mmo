@@ -14,4 +14,4 @@ display_name = "Torso"
 unlock_rule = SubResource("Resource_jrgqs")
 metadata/_custom_type_script = "uid://e40odrowquc8"
 metadata/slug = &"torso"
-metadata/id = 7
+metadata/id = 39

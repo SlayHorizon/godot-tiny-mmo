@@ -25,3 +25,5 @@ item_name = &"PhantomSandals"
 description = "Phantom sandals
 Increases 2 move speed and 10 health"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"phantom_sandals"
+metadata/id = 27

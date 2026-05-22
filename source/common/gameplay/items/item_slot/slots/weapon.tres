@@ -14,4 +14,4 @@ display_name = "Weapon"
 unlock_rule = SubResource("Resource_r4nvk")
 metadata/_custom_type_script = "uid://e40odrowquc8"
 metadata/slug = &"weapon"
-metadata/id = 8
+metadata/id = 40

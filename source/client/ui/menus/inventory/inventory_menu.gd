@@ -32,6 +32,7 @@ func _ready() -> void:
 			equipment_slot.icon = null
 			equipment_slot.text = "Lock"
 	fill_inventory()
+	visibility_changed.connect(fill_inventory)
 
 
 func fill_inventory() -> void:
@@ -194,7 +195,7 @@ func _on_hotkey_button_pressed() -> void:
 
 func _on_hotkey_index_pressed(hotkey_index: int) -> void:
 	ClientState.quick_slots.set_key(hotkey_index, selected_item)
-	
+
 	var button: Button = quick_slots_container.get_child(hotkey_index)
 	button.icon = selected_item.item_icon
 	$ItemInfo/HotkeyPanel.hide()

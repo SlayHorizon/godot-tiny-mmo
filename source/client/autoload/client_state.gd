@@ -5,6 +5,7 @@ extends Node
 
 signal local_player_ready(local_player: LocalPlayer)
 signal player_profile_requested(id: int)
+signal open_menu_requested(menu: StringName, arg: Variant)
 signal dm_requested(id: int)
 ## Emitted whenever the active input type changes. [br]
 ## [b]Example[/b]: switching from keyboard to gamepad.

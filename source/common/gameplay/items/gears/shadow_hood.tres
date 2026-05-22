@@ -26,3 +26,5 @@ item_name = &"ShadowHood"
 description = "Shadow hood
 Increases 1 magic res and 4 armor"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"shadow_hood"
+metadata/id = 30

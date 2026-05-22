@@ -26,3 +26,5 @@ item_name = &"FocusRing"
 description = "Focus ring
 Increases 12 mana and 2 magic res"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"focus_ring"
+metadata/id = 15
