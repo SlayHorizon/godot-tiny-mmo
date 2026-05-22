@@ -28,6 +28,8 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+	if OS.has_feature("editor"):
+		audio_manager.set_music_volume(0.0)
 	audio_manager.call_deferred("play_music", "res://assets/audio/music/ekonia-main-theme.wav", 0.0, 0.0, 5.0)
 
 
