@@ -133,7 +133,9 @@ func instantiate_player(peer_id: int) -> Player:
 		syn.set_by_path(^":skin_id", new_player.player_resource.skin_id)
 		syn.set_by_path(^":display_name", new_player.player_resource.display_name)
 
-		var player_stats: Dictionary[StringName, float] = player_resource.BASE_STATS
+		# BASE_STATS is a const (read-only); copy it into a fresh dict before mutating.
+		var player_stats: Dictionary[StringName, float]
+		player_stats.assign(player_resource.BASE_STATS)
 
 		var stats_from_attributes: Dictionary[StringName, float]
 		stats_from_attributes.assign(AttributeMap.attr_to_stats(player_resource.attributes))

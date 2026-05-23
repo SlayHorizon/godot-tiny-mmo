@@ -42,11 +42,11 @@ func save_player(player: PlayerResource) -> void:
 
 	db.query_with_bindings(
 		"INSERT OR REPLACE INTO players("
-		+ "player_id, account_name, display_name, skin_id, level, golds, "
+		+ "player_id, account_name, display_name, skin_id, level, golds, available_attributes_points, "
 		+ "profile_status, profile_animation, "
 		+ "attributes_json, inventory_json, friends_json, server_roles_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -54,6 +54,7 @@ func save_player(player: PlayerResource) -> void:
 			player.skin_id,
 			player.level,
 			player.golds,
+			player.available_attributes_points,
 
 			player.profile_status,
 			player.profile_animation,
@@ -85,10 +86,16 @@ func create_player_character(account_name: String, character_data: Dictionary) -
 		int(character_data.get("skin", 1))
 	)
 
-	# Hardcode default items
-	player.inventory = {1: {}, 2: {}, 3: {}, 4: {}, 5: {}}
+	# Hardcode default items (instance-based slots).
+	player.inventory = {}
+	Inventory.add_item(player.inventory, 1, 1) # health_potion
+	Inventory.add_item(player.inventory, 2, 1) # copper_ring
+	Inventory.add_item(player.inventory, 4, 1) # bone
+	Inventory.add_item(player.inventory, 5, 1) # wooden_bow
 	# Starting golds for a fresh character. Persists and reflects spending afterwards.
 	player.golds = 100
+	# Starting attribute points so a new character has something to spend.
+	player.available_attributes_points = PlayerResource.ATTRIBUTE_POINTS_PER_LEVEL
 	# Leave defaults to PlayerResource where possible.
 	save_player(player)
 	return next_id
@@ -142,9 +149,8 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 	player.profile_animation = str(row.get("profile_animation", ""))
 
 	player.attributes.assign(JSON.parse_string(str(row.get("attributes_json", "{}"))) as Dictionary)
-	player.inventory.assign(JSON.parse_string(str(row.get("inventory_json", "{}"))) as Dictionary)
-	player.inventory.merge({1: {"a": 1}, 2: {}, 3: {}, 4: {}, 5: {}})
-	player.available_attributes_points = 3
+	player.inventory = Inventory.normalize(JSON.parse_string(str(row.get("inventory_json", "{}"))) as Dictionary)
+	player.available_attributes_points = int(row.get("available_attributes_points", 0))
 
 	var friends_v: Variant = JSON.parse_string(str(row.get("friends_json", "[]")))
 	player.friends = PackedInt64Array(friends_v if friends_v is Array else [])

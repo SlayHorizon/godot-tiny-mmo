@@ -10,7 +10,7 @@ func data_request_handler(
 	
 	# Check if player has the weapon
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
-	if player and player.player_resource.inventory.has(item_id):
+	if player and Inventory.has_item(player.player_resource.inventory, item_id):
 		var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
 		if item:
 			if item is GearItem and item.can_equip(player):

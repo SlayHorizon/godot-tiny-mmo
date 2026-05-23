@@ -23,5 +23,5 @@ func data_request_handler(
 		return {"ok": false}
 
 	player.player_resource.golds -= price
-	player.player_resource.inventory[item_id] = {"a": 1}
+	Inventory.add_item(player.player_resource.inventory, item_id, 1)
 	return {"ok": true, "golds": player.player_resource.golds}

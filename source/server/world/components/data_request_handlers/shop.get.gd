@@ -10,7 +10,13 @@ func data_request_handler(
 	var catalog: Dictionary = ShopCatalog.get_items(shop_id)
 	if catalog.is_empty():
 		return {}
-	var items: Array = []
+	var items: Array
 	for item_id: int in catalog:
 		items.append({"id": item_id, "price": catalog[item_id]})
-	return {"items": items}
+
+	var golds: int
+	var player_resource: PlayerResource = instance.world_server.connected_players.get(peer_id)
+	if player_resource:
+		golds = player_resource.golds
+
+	return {"items": items, "golds": golds}

@@ -1,7 +1,7 @@
 extends Control
 
 
-## ALl items of the player inventory.
+## All items of the player inventory, keyed by slot_uid.
 var inventory: Dictionary[int, InventorySlot]
 ## Filtered inventory showing equipment only.
 var equipment_inventory: Dictionary
@@ -11,6 +11,7 @@ var materials_inventory: Dictionary
 var latest_items: Dictionary
 var gear_slots_cache: Dictionary[Button, Item]
 var selected_item: Item
+var selected_slot: InventorySlot
 
 @onready var inventory_grid: GridContainer = $MarginContainer/VBoxContainer/MainContainer/InventoryPanel/VBoxContainer/ScrollContainer/InventoryGrid
 @onready var equipment_slots: GridContainer = $MarginContainer/VBoxContainer/MainContainer/CharacterPanel/VBoxContainer2/EquipmentSlots
@@ -42,19 +43,20 @@ func fill_inventory() -> void:
 		return
 
 	var inventory_data: Dictionary = request_result[0]
-	
-	# sqlite stringify dictionary so key becomes string instead of int
-	#for item_id: int in inventory_data:
-	for item_id in inventory_data:
-		item_id = int(item_id)
-		var item_data: Dictionary = inventory_data[item_id]
-		if not inventory.has(item_id):
-			add_item(item_id, item_data)
+
+	# Inventory is keyed by slot_uid; each slot holds {"id": item_id, "a": amount}.
+	# Keys/numbers may arrive as strings/floats after JSON, so normalize with int().
+	for slot_uid_key in inventory_data:
+		var slot_uid: int = int(slot_uid_key)
+		var slot_data: Dictionary = inventory_data[slot_uid_key]
+		if not inventory.has(slot_uid):
+			add_item(slot_uid, slot_data)
 			continue
-		inventory[item_id].update_slot(item_data)
+		inventory[slot_uid].update_slot(slot_data)
 
 
-func add_item(item_id: int, item_data: Dictionary) -> void:
+func add_item(slot_uid: int, slot_data: Dictionary) -> void:
+	var item_id: int = int(slot_data.get("id", 0))
 	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
 	if not item:
 		return
@@ -86,7 +88,7 @@ func add_item(item_id: int, item_data: Dictionary) -> void:
 	)
 
 	var quantity_label: Label = Label.new()
-	quantity_label.text = str(item_data.get("a", 1))
+	quantity_label.text = "x%d" % int(slot_data.get("a", 1))
 	quantity_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
 
 	new_button.add_child(quantity_label)
@@ -100,12 +102,12 @@ func add_item(item_id: int, item_data: Dictionary) -> void:
 
 	inventory_slot.button = new_button
 	inventory_slot.item_id = item_id
-	inventory_slot.quantity = item_data.get("a", 1)
-	inventory_slot.item_data = item_data
+	inventory_slot.quantity = int(slot_data.get("a", 1))
+	inventory_slot.item_data = slot_data
 	inventory_slot.item = item
 	inventory_slot.quantity_label = quantity_label
 
-	inventory[item_id] = inventory_slot
+	inventory[slot_uid] = inventory_slot
 
 
 func _on_close_button_pressed() -> void:
@@ -125,7 +127,8 @@ func _on_item_slot_button_pressed(inventory_slot: InventorySlot) -> void:
 		item_action_button.text = "Close"
 	
 	selected_item = inventory_slot.item
-	
+	selected_slot = inventory_slot
+
 	item_info.gui_input.connect(_on_item_info_gui_input)
 	
 	if selected_item is WeaponItem or selected_item is ConsumableItem:
@@ -144,8 +147,8 @@ func _on_item_info_gui_input(event: InputEvent) -> void:
 
 func _on_item_action_button_pressed() -> void:
 	if selected_item is GearItem or selected_item is WeaponItem:
-		var item_id: int = selected_item.get_meta(&"id", -1)
-		if item_id != -1:
+		var item_id: int = selected_slot.item_id if selected_slot else 0
+		if item_id > 0:
 			Client.request_data(
 				&"item.equip",
 				Callable(),
@@ -169,7 +172,7 @@ class InventorySlot:
 
 
 	func update_slot(data: Dictionary) -> void:
-		quantity += data.get("add", 0)
+		quantity = int(data.get("a", quantity))
 		item_data.merge(data, true)
 		if quantity_label:
 			quantity_label.text = "x%d" % quantity

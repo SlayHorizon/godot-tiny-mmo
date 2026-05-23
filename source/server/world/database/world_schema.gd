@@ -26,6 +26,7 @@ static func _migration_v1(db: SQLite) -> void:
 		"skin_id": {"data_type": "int", "not_null": true},
 		"level": {"data_type": "int", "not_null": true},
 		"golds": {"data_type": "int", "not_null": true},
+		"available_attributes_points": {"data_type": "int", "not_null": true},
 
 		"profile_status": {"data_type": "text", "not_null": true},
 		"profile_animation": {"data_type": "text", "not_null": true},
