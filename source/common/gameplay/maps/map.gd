@@ -45,17 +45,23 @@ enum ZoneModifiers {
 @export var map_background_color: Color = Color(0,0,0)
 
 var warpers: Dictionary[int, Warper]
+## shop registry id -> ShopResource, gathered from the merchant nodes placed in this
+## map (mirrors how warpers are collected). The server uses this to resolve/verify a
+## shop the player is actually at, rather than trusting a client-sent id.
+var shops: Dictionary[int, ShopResource]
 
 
 func _ready() -> void:
 	set_process(Engine.is_editor_hint())
 	if Engine.is_editor_hint():
 		return
-	
+
 	for child: Node in get_children():
 		if child is Warper:
 			var warper_id: int = child.warper_id
 			warpers[warper_id] = child
+		elif child is ShopInteractable and child.shop:
+			shops[int(child.shop.get_meta(&"id", 0))] = child.shop
 
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
@@ -65,6 +71,11 @@ func get_spawn_position(warper_id: int = 0) -> Vector2:
 	if warpers.has(warper_id):
 		return warpers[warper_id].global_position
 	return Vector2.ZERO
+
+
+## The shop sold by a merchant in this map, or null.
+func get_shop(shop_id: int) -> ShopResource:
+	return shops.get(shop_id)
 
 
 func override_map_rules(instance_resource: InstanceResource) -> void:

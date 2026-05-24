@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ContentIndex" format=3 uid="uid://cyl15efhwj1ss"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_714ml"]
+
+[resource]
+script = ExtResource("1_714ml")
+content_name = &"shops"
+version = 1779644231
+next_id = 2
+entries = Array[Dictionary]([{
+&"hash": "f26ec9314d72f876ce62af053bbb59e237c73267aeeba1067791240662c1f470",
+&"id": 1,
+&"path": "res://source/common/gameplay/shops/resources/general_store.tres",
+&"slug": &"general_store"
+}])
+scan_path = "res://source/common/gameplay/shops"
+filters = PackedStringArray("*.tres", "*.tscn")

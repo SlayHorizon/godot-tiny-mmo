@@ -28,8 +28,13 @@
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="24_uytus"]
 [ext_resource type="Script" uid="uid://bvwcr61l1deso" path="res://source/common/gameplay/time/world_clock_display.gd" id="25_gimy5"]
 [ext_resource type="Script" uid="uid://xduf2fcr0g83" path="res://source/common/gameplay/maps/components/shop_button.gd" id="28_mvj6e"]
+[ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="29_sbo1b"]
+[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/general_store.tres" id="30_5vi16"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mvj6e"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uw01f"]
+radius = 55.38041
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -262,6 +267,7 @@ script = ExtResource("25_gimy5")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=411929430]
 layer = 20
+visible = false
 follow_viewport_enabled = true
 
 [node name="ShopButton" type="Button" parent="CanvasLayer" unique_id=953784759]
@@ -275,3 +281,18 @@ mouse_behavior_recursive = 2
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_mvj6e")
 text = "SHOP"
 script = ExtResource("28_mvj6e")
+
+[node name="ShopInteractable" type="Area2D" parent="." unique_id=1408130728]
+position = Vector2(810.65173, 868.843)
+script = ExtResource("29_sbo1b")
+shop = ExtResource("30_5vi16")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=1524019920]
+shape = SubResource("CircleShape2D_uw01f")
+
+[node name="Label" type="Label" parent="ShopInteractable/CollisionShape2D" unique_id=85637529]
+offset_left = -18.651733
+offset_top = -20.843018
+offset_right = 23.348267
+offset_bottom = 0.15698242
+text = "SHOP"

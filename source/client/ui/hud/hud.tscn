@@ -51,6 +51,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_rchld")
 
 [node name="TwinSticks" parent="." unique_id=2047762390 instance=ExtResource("7_popxh")]

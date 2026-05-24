@@ -1,13 +1,13 @@
 extends Control
 
 
-var _shop_id: StringName
+var _shop_id: int
 var _selected_slot: ShopSlot
 var _golds: int
 var _slots: Array[ShopSlot]
-var _golds_label: Label
 
 @onready var grid_container: GridContainer = $Panel/ScrollContainer/GridContainer
+@onready var golds_label: Label = $GoldsLabel
 @onready var item_info: ColorRect = $ItemInfo
 @onready var item_preview_icon: TextureRect = $ItemInfo/PanelContainer/VBoxContainer/ItemPreviewIcon
 @onready var item_amount_label: Label = $ItemInfo/PanelContainer/VBoxContainer/ItemAmountLabel
@@ -16,49 +16,32 @@ var _golds_label: Label
 @onready var buy_button: Button = $ItemInfo/PanelContainer/VBoxContainer/HBoxContainer/BuyButton
 
 
-func _ready() -> void:
-	# Golds readout, centered just above the shop panel.
-	_golds_label = Label.new()
-	_golds_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	add_child(_golds_label)
-	_golds_label.anchor_left = 0.5
-	_golds_label.anchor_right = 0.5
-	_golds_label.anchor_top = 0.5
-	_golds_label.anchor_bottom = 0.5
-	_golds_label.offset_left = -252.0
-	_golds_label.offset_right = 252.0
-	_golds_label.offset_top = -184.0
-	_golds_label.offset_bottom = -158.0
-	_set_golds(0)
-
-
-func open(shop_id: StringName) -> void:
-	# Re-fetch every open so golds and affordability reflect the latest state.
+func open(shop_id: int) -> void:
 	_shop_id = shop_id
-	_fetch_shop()
+	# Shop contents are static data the client already ships — render straight from
+	# the local ShopResource instead of fetching the catalog over the network.
+	var shop: ShopResource = ShopResource.load_shop(shop_id)
+	if not shop:
+		return
+	_build_grid(shop)
+	# Only the dynamic/authoritative bits come from the server: whether the player
+	# may open this shop, and their current golds (for affordability).
+	_request_open()
 
 
-func _fetch_shop() -> void:
+## Build the item grid synchronously from local data. With no await here, a
+## duplicate open (physics picking can deliver a click twice) just rebuilds the
+## grid in place — it can't interleave into duplicated rows.
+func _build_grid(shop: ShopResource) -> void:
 	for child in grid_container.get_children():
 		child.queue_free()
 	_slots.clear()
 
-	var result: Array = await Client.request_data_await(&"shop.get", {"shop_id": _shop_id})
-	if result[1] != OK:
-		return
-
-	var data: Dictionary = result[0]
-	_set_golds(int(data.get("golds", 0)))
-
-	var items: Array = data.get("items", [])
-	for entry: Dictionary in items:
-		var item_id: int = int(entry.get("id", 0))
-		var price: int = int(entry.get("price", 0))
-		if item_id <= 0:
+	for entry: ShopEntry in shop.entries:
+		if entry == null or entry.item == null:
 			continue
-		var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
-		if not item:
-			continue
+		var item: Item = entry.item
+		var price: int = entry.price
 
 		var item_button: Button = Button.new()
 		item_button.custom_minimum_size = Vector2(80, 96)
@@ -73,12 +56,26 @@ func _fetch_shop() -> void:
 
 		var slot: ShopSlot = ShopSlot.new()
 		slot.button = item_button
-		slot.item_id = item_id
+		slot.item_id = int(item.get_meta(&"id", 0))
 		slot.item = item
 		slot.price = price
 		_slots.append(slot)
 		item_button.pressed.connect(_on_item_slot_pressed.bind(slot))
 
+	_refresh_affordability()
+
+
+## Ask the server to authorize opening this shop and report the player's golds.
+func _request_open() -> void:
+	var result: Array = await Client.request_data_await(&"shop.open", {"shop_id": _shop_id})
+	if result[1] != OK:
+		return
+	var data: Dictionary = result[0]
+	if not data.get("ok", false):
+		# Denied (unknown shop today; later: proximity / faction / quest gating).
+		hide()
+		return
+	_set_golds(int(data.get("golds", 0)))
 	_refresh_affordability()
 
 
@@ -90,8 +87,7 @@ func _refresh_affordability() -> void:
 
 func _set_golds(value: int) -> void:
 	_golds = value
-	if _golds_label:
-		_golds_label.text = "Golds: %d" % _golds
+	golds_label.text = "Golds: %d" % _golds
 
 
 func _on_close_button_pressed() -> void:

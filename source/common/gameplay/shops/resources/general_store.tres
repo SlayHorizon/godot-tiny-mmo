@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://dgk6yl280gmyd"]
+
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_k7ids"]
+[ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="2_te6tu"]
+[ext_resource type="Resource" uid="uid://c7y0m821gjf6s" path="res://source/common/gameplay/items/gears/copper_ring.tres" id="3_u5m1q"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="4_mxk1d"]
+
+[sub_resource type="Resource" id="Resource_h6k7f"]
+script = ExtResource("1_k7ids")
+item = ExtResource("2_te6tu")
+price = 50
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_frbp0"]
+script = ExtResource("1_k7ids")
+item = ExtResource("3_u5m1q")
+price = 60
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[resource]
+script = ExtResource("4_mxk1d")
+shop_name = "general store"
+entries = Array[ExtResource("1_k7ids")]([SubResource("Resource_h6k7f"), SubResource("Resource_frbp0")])
+metadata/_custom_type_script = "uid://bsed5oxrf1q15"
+metadata/slug = &"general_store"
+metadata/id = 1
