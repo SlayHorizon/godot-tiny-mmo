@@ -25,6 +25,7 @@ base_modifiers = Array[ExtResource("1_ilcse")]([SubResource("Resource_404ct"), S
 item_name = &"AncientHood"
 description = "Ancient hood
 Increases 4 magic res and 2 mana"
+vendor_value = 5
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"ancient_hood"
 metadata/id = 7

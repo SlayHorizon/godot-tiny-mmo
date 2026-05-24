@@ -24,6 +24,7 @@ base_modifiers = Array[ExtResource("1_6abd4")]([SubResource("Resource_t7116"), S
 item_name = &"BattleRing"
 description = "Battle ring
 increases 12 health and reduces -2 move speed"
+vendor_value = 5
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"battle_ring"
 metadata/id = 10

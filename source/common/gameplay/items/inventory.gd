@@ -44,6 +44,21 @@ static func add_item(inventory: Dictionary, item_id: int, amount: int = 1) -> vo
 	inventory[next_uid(inventory)] = {"id": item_id, "a": amount}
 
 
+## Remove up to `amount` from a slot, erasing the slot when it empties.
+## Returns the amount actually removed (0 if the slot is missing).
+static func remove_from_slot(inventory: Dictionary, slot_uid: int, amount: int = 1) -> int:
+	if amount <= 0 or not inventory.has(slot_uid):
+		return 0
+	var have: int = int(inventory[slot_uid].get("a", 0))
+	var removed: int = min(have, amount)
+	var left: int = have - removed
+	if left > 0:
+		inventory[slot_uid]["a"] = left
+	else:
+		inventory.erase(slot_uid)
+	return removed
+
+
 ## True if any slot holds the given item id.
 static func has_item(inventory: Dictionary, item_id: int) -> bool:
 	for slot_uid in inventory:

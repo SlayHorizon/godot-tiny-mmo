@@ -10,6 +10,9 @@ extends Resource
 
 @export var shop_name: String
 @export var entries: Array[ShopEntry]
+## Whether this vendor buys items from players (the Sell tab). Default true = any
+## vendor buys (convention). Set false for sell-only shops / specialized buyers later.
+@export var buys_from_players: bool = true
 
 
 ## Loads a shop by its registry id, or null if the shops content type hasn't been

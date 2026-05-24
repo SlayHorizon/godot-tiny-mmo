@@ -8,6 +8,7 @@ script = ExtResource("2_oie41")
 item_name = &"Health Potion"
 item_icon = ExtResource("3_35wr3")
 description = "A simple potion healing a bit."
+vendor_value = 5
 metadata/_custom_type_script = "uid://bprsise4rcsak"
 metadata/slug = &"health_potion"
 metadata/id = 1

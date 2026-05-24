@@ -24,6 +24,7 @@ base_modifiers = Array[ExtResource("1_df0pt")]([SubResource("Resource_stohu"), S
 item_name = &"AgileRing"
 description = "Agile ring
 increases 2 health and 2 move speed"
+vendor_value = 5
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"agile_ring"
 metadata/id = 6

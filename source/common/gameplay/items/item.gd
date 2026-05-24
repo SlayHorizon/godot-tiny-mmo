@@ -16,6 +16,10 @@ extends Resource
 ## If 0 any price can be choosen.
 ## This is not shop price. If an item is sold at a shop, the price is defined in shop logic.
 @export var market_minimum_price: int = 0
+## Price an NPC vendor pays for this item when the player sells it.
+## 0 = NPC vendors won't buy it (quest/bound/junk-safe default).
+## Distinct from the consignment house fields above (player-to-player market).
+@export var vendor_value: int
 
 
 # Inventory
