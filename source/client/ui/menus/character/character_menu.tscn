@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://4k5246c3w18u" path="res://source/client/ui/menus/character/character_menu.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://dm4es1smo6nxw" path="res://source/client/ui/menus/inventory/stats_panel.gd" id="2_stats"]
 [ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/menus/inventory/attributes_panel.gd" id="3_attr"]
+[ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="4_jobs"]
 
 [node name="Character" type="Control" unique_id=1468206702]
 layout_mode = 3
@@ -194,13 +195,19 @@ text = "+"
 [node name="Jobs" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer" unique_id=948487405]
 visible = false
 layout_mode = 2
+theme_override_constants/separation = 8
+script = ExtResource("4_jobs")
 metadata/_tab_index = 1
 
-[node name="Placeholder" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Jobs" unique_id=1113625962]
+[node name="TitleLabel" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Jobs" unique_id=1120876173]
+layout_mode = 2
+text = "Professions"
+horizontal_alignment = 1
+
+[node name="SkillList" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Jobs" unique_id=588007850]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-text = "Jobs / Professions — coming soon"
-horizontal_alignment = 1
-vertical_alignment = 1
+theme_override_constants/separation = 10
 
 [connection signal="pressed" from="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar/CloseButton" to="." method="_on_close_button_pressed"]

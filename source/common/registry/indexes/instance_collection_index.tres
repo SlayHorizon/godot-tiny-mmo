@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://b2smdkhqrfxad"]
+[gd_resource type="Resource" script_class="ContentIndex" format=3 uid="uid://b2smdkhqrfxad"]
 
 [ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_qy3gh"]
 

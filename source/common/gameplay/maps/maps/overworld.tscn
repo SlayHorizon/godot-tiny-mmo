@@ -31,11 +31,21 @@
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="29_sbo1b"]
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/general_store.tres" id="30_5vi16"]
 [ext_resource type="Resource" uid="uid://dpg3yne7adekr" path="res://source/common/gameplay/shops/resources/sell_shop.tres" id="31_lc833"]
+[ext_resource type="Script" uid="uid://cg6wer5if2oyf" path="res://source/common/gameplay/crafting/crafting_station.gd" id="32_2aujs"]
+[ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="32_sbo1b"]
+[ext_resource type="Resource" uid="uid://cwojdmtkr5xwl" path="res://source/common/gameplay/crafting/resources/forge.tres" id="33_7nycf"]
+[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="33_112bs"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mvj6e"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uw01f"]
 radius = 55.38041
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bd110"]
+size = Vector2(121.3302, 28.720032)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2aujs"]
+size = Vector2(36.136353, 27.279724)
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -314,3 +324,36 @@ offset_right = 45.127075
 offset_bottom = 26.827942
 text = "SELL SHOP
 ONLY"
+
+[node name="CraftingStation" type="Area2D" parent="." unique_id=92353300]
+position = Vector2(648.6698, 933.27997)
+script = ExtResource("32_2aujs")
+station = ExtResource("33_7nycf")
+metadata/_custom_type_script = "uid://cg6wer5if2oyf"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingStation" unique_id=422668942]
+position = Vector2(50.6651, 4.3600464)
+shape = SubResource("RectangleShape2D_bd110")
+
+[node name="Label" type="Label" parent="CraftingStation" unique_id=1151018594]
+offset_right = 107.0
+offset_bottom = 21.0
+text = "CraftingStation"
+
+[node name="MineableNode" type="Area2D" parent="." unique_id=1446852200]
+position = Vector2(818.13635, 1014.7203)
+script = ExtResource("32_sbo1b")
+node_id = 1
+ore = ExtResource("33_112bs")
+xp_reward = 400
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MineableNode" unique_id=697598298]
+position = Vector2(-8.068176, 3.6398315)
+shape = SubResource("RectangleShape2D_2aujs")
+
+[node name="Label" type="Label" parent="MineableNode" unique_id=1051639428]
+offset_left = -26.136353
+offset_top = -6.720276
+offset_right = 13.863647
+offset_bottom = 14.279724
+text = "Ore"

@@ -7,6 +7,21 @@ var available_points: int:
 
 @onready var available_points_label: Label = $AvailablePointsLabel
 
+## Human-readable stat names for the per-point attribute descriptions.
+const STAT_LABELS: Dictionary = {
+	&"health_max": "Max HP",
+	&"health": "HP",
+	&"ad": "Attack",
+	&"ap": "Magic",
+	&"armor": "Armor",
+	&"mr": "Magic Res",
+	&"mana_max": "Mana",
+	&"energy": "Energy",
+	&"move_speed": "Move Speed",
+	&"attack_speed": "Atk Speed",
+	&"tenacity": "Tenacity",
+}
+
 
 func _ready() -> void:
 	Client.request_data(
@@ -17,9 +32,39 @@ func _ready() -> void:
 	)
 	for child: Node in get_children():
 		if child is HBoxContainer:
-			var label: Label = child.get_child(0)
-			var button: Button = child.get_child(1)
-			button.pressed.connect(_on_attribute_pressed.bind(label, button))
+			_setup_attribute_row(child)
+
+
+## Wires a [Label, +Button] attribute row and adds an inline "what a point grants" note.
+func _setup_attribute_row(row: HBoxContainer) -> void:
+	var name_label: Label = row.get_child(0)
+	var attribute_name: String = name_label.text.get_slice(" ", 0).to_lower()
+
+	var description: String = _describe_attribute(attribute_name)
+	if not description.is_empty():
+		var desc_label: Label = Label.new()
+		desc_label.text = description
+		desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		desc_label.add_theme_color_override(&"font_color", Color(0.7, 0.7, 0.75))
+		row.add_child(desc_label)
+		row.move_child(desc_label, 1)
+
+	# Find the + button by type (robust to the inserted description label).
+	for node: Node in row.get_children():
+		if node is Button:
+			node.pressed.connect(_on_attribute_pressed.bind(name_label, node))
+			break
+
+
+## "+1 Max HP", "+0.7 Mana, +0.53 Energy", ... — what one point in this attribute grants.
+func _describe_attribute(attribute_name: String) -> String:
+	var stats: Dictionary = AttributeMap.attr_to_stats({attribute_name: 1})
+	var parts: PackedStringArray = []
+	for stat_name: StringName in stats:
+		var stat_label: String = str(STAT_LABELS.get(stat_name, String(stat_name).capitalize()))
+		parts.append("+%s %s" % [("%s" % stats[stat_name]), stat_label])
+	return ", ".join(parts)
 
 
 func _on_attribute_pressed(label: Label, button: Button) -> void:
@@ -36,7 +81,7 @@ func _on_attribute_pressed(label: Label, button: Button) -> void:
 		
 	var attribute_points: int = attributes[attribute_name]
 	
-	label.text = "%s %d" % [attribute_name, attribute_points]
+	label.text = "%s %d" % [attribute_name.capitalize(), attribute_points]
 	
 	var stats: Dictionary = AttributeMap.attr_to_stats({attribute_name: 1})
 	for stat_name: StringName in stats:
@@ -62,10 +107,7 @@ func _on_attribute_received(data: Dictionary) -> void:
 			var label: Label = child.get_child(0)
 			var label_attribute: String = label.text.get_slice(" ", 0).to_lower()
 			if attributes.has(label_attribute):
-				label.text.replace(
-					label.text.get_slice(" ", 1),
-					str(attributes[label_attribute])
-				)
+				label.text = "%s %d" % [label_attribute.capitalize(), int(attributes[label_attribute])]
 
 
 func _set_available_points(value: int) -> void:

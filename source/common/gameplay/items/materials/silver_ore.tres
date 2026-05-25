@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://ljjy35qnjuxf"]
+
+[ext_resource type="Texture2D" uid="uid://w14y1o4gi3l2" path="res://assets/sprites/items/icons/Icon325.png" id="1_lkimo"]
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_nke2b"]
+
+[resource]
+script = ExtResource("2_nke2b")
+item_name = &"Silver Ore"
+item_icon = ExtResource("1_lkimo")
+vendor_value = 3
+metadata/_custom_type_script = "uid://nsr1timk430j"
+metadata/slug = &"silver_ore"
+metadata/id = 56

@@ -49,6 +49,13 @@ var warpers: Dictionary[int, Warper]
 ## map (mirrors how warpers are collected). The server uses this to resolve/verify a
 ## shop the player is actually at, rather than trusting a client-sent id.
 var shops: Dictionary[int, ShopResource]
+## node_id -> MineableNode, gathered from the gathering nodes placed in this map
+## (same pattern as warpers/shops). The server resolves the node a player mines.
+var mineables: Dictionary[int, MineableNode]
+## crafting-station registry id -> CraftingStationResource, gathered from the station
+## nodes placed in this map (mirrors shops). The server resolves/verifies the station
+## a player crafts at, rather than trusting a client-sent id.
+var crafting_stations: Dictionary[int, CraftingStationResource]
 
 
 func _ready() -> void:
@@ -62,6 +69,10 @@ func _ready() -> void:
 			warpers[warper_id] = child
 		elif child is ShopInteractable and child.shop:
 			shops[int(child.shop.get_meta(&"id", 0))] = child.shop
+		elif child is MineableNode:
+			mineables[child.node_id] = child
+		elif child is CraftingStation and child.station:
+			crafting_stations[int(child.station.get_meta(&"id", 0))] = child.station
 
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
@@ -76,6 +87,16 @@ func get_spawn_position(warper_id: int = 0) -> Vector2:
 ## The shop sold by a merchant in this map, or null.
 func get_shop(shop_id: int) -> ShopResource:
 	return shops.get(shop_id)
+
+
+## The gathering node with this id in this map, or null.
+func get_mineable(node_id: int) -> MineableNode:
+	return mineables.get(node_id)
+
+
+## The crafting station with this registry id in this map, or null.
+func get_crafting_station(station_id: int) -> CraftingStationResource:
+	return crafting_stations.get(station_id)
 
 
 func override_map_rules(instance_resource: InstanceResource) -> void:

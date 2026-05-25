@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ContentIndex" format=3 uid="uid://bova2sp622vhs"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_x3a1s"]
+
+[resource]
+script = ExtResource("1_x3a1s")
+content_name = &"crafting_stations"
+version = 1779749475
+next_id = 2
+entries = Array[Dictionary]([{
+&"hash": "7d4a0cda52da1ee96bcdd175209f45abce79ad383bf3dc508e9c1b4ab62281ae",
+&"id": 1,
+&"path": "res://source/common/gameplay/crafting/resources/forge.tres",
+&"slug": &"forge"
+}])
+scan_path = "res://source/common/gameplay/crafting/resources"
+filters = PackedStringArray("*.tres", "*.tscn")

@@ -5,6 +5,7 @@
 
 [resource]
 script = ExtResource("2_oie41")
+heal_amount = 25
 item_name = &"Health Potion"
 item_icon = ExtResource("3_35wr3")
 description = "A simple potion healing a bit."

@@ -54,6 +54,10 @@ func _ready() -> void:
 	_clear_detail()
 	fill_inventory()
 	visibility_changed.connect(fill_inventory)
+	# Refresh the bag live when ore is gathered while the menu is open.
+	ClientState.gather_succeeded.connect(func(_result: Dictionary):
+		if visible:
+			fill_inventory())
 
 
 func fill_inventory() -> void:

@@ -5,15 +5,15 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1779714611
-next_id = 51
+version = 1779749187
+next_id = 57
 entries = Array[Dictionary]([{
-&"hash": "579d9aabcd54a1226f9e2ae18815369917e1a49e4a2db8c4cb725043175911f0",
+&"hash": "0958b9dd9e3ba3112daa61005b77b31bda5385ab1ccd0c192c089362464a428d",
 &"id": 1,
 &"path": "res://source/common/gameplay/items/consumables/health_potion.tres",
 &"slug": &"health_potion"
 }, {
-&"hash": "5a08d3974dcab2c9d6513f790d765d1eef933bb269a7dba952f33a29c2b577d3",
+&"hash": "31f1810cfdf2a0792df42b0ec001af4f38714114d044863d3440c97d85ec722b",
 &"id": 50,
 &"path": "res://source/common/gameplay/items/currencies/gold.tres",
 &"slug": &"gold"
@@ -203,6 +203,31 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/materials/bone.tres",
 &"slug": &"bone"
 }, {
+&"hash": "5eba9113e1d5bf398b02e8ea32703b23ed80be9cee155717b852ec58ebc78083",
+&"id": 53,
+&"path": "res://source/common/gameplay/items/materials/coal_ore.tres",
+&"slug": &"coal_ore"
+}, {
+&"hash": "6a51c090e99ab8a1b2bc626c3cca7c7c38ebd68ec1b222f913d0571cd7b1f2c0",
+&"id": 54,
+&"path": "res://source/common/gameplay/items/materials/copper_bar.tres",
+&"slug": &"copper_bar"
+}, {
+&"hash": "b910a25d849b6001600760f91dd5835533f7a936d88b00988c045962147193bf",
+&"id": 51,
+&"path": "res://source/common/gameplay/items/materials/copper_ore.tres",
+&"slug": &"copper_ore"
+}, {
+&"hash": "f4867f740cb042f40fd0db4f231a3bb0d3716d6cb4681e629b4267a1488b0304",
+&"id": 55,
+&"path": "res://source/common/gameplay/items/materials/gold_ore.tres",
+&"slug": &"gold_ore"
+}, {
+&"hash": "4c133113103adddeff75bf98419e1d8fb8094def9181fddbea9459b2b6bdbb04",
+&"id": 56,
+&"path": "res://source/common/gameplay/items/materials/silver_ore.tres",
+&"slug": &"silver_ore"
+}, {
 &"hash": "d3a564e7252f58c56f16520a3a1dc16c663d962434aa8ddf14ead12d75ce765c",
 &"id": 42,
 &"path": "res://source/common/gameplay/items/weapons/bow/arrow.tscn",
@@ -242,6 +267,11 @@ entries = Array[Dictionary]([{
 &"id": 48,
 &"path": "res://source/common/gameplay/items/weapons/sword/sword_animations.tres",
 &"slug": &"sword_animations"
+}, {
+&"hash": "dc246b7247f7225191dd9075454ecbcccc8982f19767d0e49ba65780b87daa5d",
+&"id": 52,
+&"path": "res://source/common/gameplay/items/weapons/tools/pickaxe.tres",
+&"slug": &"pickaxe"
 }, {
 &"hash": "d86eb683076ca5537ae006279dc44ac880da2706688ce3d90583a72c2e28a9c5",
 &"id": 40,

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://bvgijymuxvkai"]
+
+[ext_resource type="Texture2D" uid="uid://w14y1o4gi3l2" path="res://assets/sprites/items/icons/Icon325.png" id="1_sp4wx"]
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_pmki1"]
+
+[resource]
+script = ExtResource("2_pmki1")
+item_name = &"Copper Ore"
+item_icon = ExtResource("1_sp4wx")
+vendor_value = 3
+metadata/_custom_type_script = "uid://nsr1timk430j"
+metadata/slug = &"copper_bar"
+metadata/id = 54

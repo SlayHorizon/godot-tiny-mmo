@@ -35,6 +35,7 @@ func save_player(player: PlayerResource) -> void:
 	var attributes_json: String = JSON.stringify(player.attributes)
 	var inventory_json: String = JSON.stringify(player.inventory)
 	var equipment_json: String = JSON.stringify(player.equipment)
+	var skills_json: String = JSON.stringify(player.skills)
 
 	var friends_json: String = JSON.stringify(player.friends)
 	var server_roles_json: String = JSON.stringify(player.server_roles)
@@ -45,9 +46,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, friends_json, server_roles_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, friends_json, server_roles_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -62,6 +63,7 @@ func save_player(player: PlayerResource) -> void:
 			attributes_json,
 			inventory_json,
 			equipment_json,
+			skills_json,
 			friends_json,
 			server_roles_json,
 
@@ -156,6 +158,23 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 	for slot_key in equipment_raw:
 		player.equipment[StringName(slot_key)] = int(equipment_raw[slot_key])
 	player.available_attributes_points = int(row.get("available_attributes_points", 0))
+
+	# Skills: { skill_name (StringName) -> {"level": int, "xp": int} }; JSON gives string
+	# keys and float numbers, so normalize back to StringName keys / int values.
+	var skills_raw: Dictionary = JSON.parse_string(str(row.get("skills_json", "{}"))) as Dictionary
+	player.skills = {}
+	for skill_name in skills_raw:
+		var entry: Dictionary = skills_raw[skill_name]
+		# Chosen perks: { perk_id (StringName) -> ranks (int) }.
+		var perks_raw: Dictionary = entry.get("perks", {}) as Dictionary
+		var perks: Dictionary = {}
+		for perk_id in perks_raw:
+			perks[StringName(perk_id)] = int(perks_raw[perk_id])
+		player.skills[StringName(skill_name)] = {
+			"level": int(entry.get("level", 1)),
+			"xp": int(entry.get("xp", 0)),
+			"perks": perks,
+		}
 
 	var friends_v: Variant = JSON.parse_string(str(row.get("friends_json", "[]")))
 	player.friends = PackedInt64Array(friends_v if friends_v is Array else [])

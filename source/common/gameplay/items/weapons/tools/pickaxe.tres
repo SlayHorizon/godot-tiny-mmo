@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ToolItem" format=3 uid="uid://clvjdo7an4ctq"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_m58sl"]
+[ext_resource type="Texture2D" uid="uid://cf0y64q72i32l" path="res://assets/sprites/items/icons/Icon2.png" id="2_kh8wi"]
+[ext_resource type="Script" uid="uid://b5hsnu4140fky" path="res://source/common/gameplay/items/weapons/tool_item.gd" id="3_f5crd"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="4_f5crd"]
+
+[resource]
+script = ExtResource("3_f5crd")
+tool_type = &"pickaxe"
+slot = ExtResource("4_f5crd")
+item_icon = ExtResource("2_kh8wi")
+metadata/_custom_type_script = "uid://b5hsnu4140fky"
+metadata/slug = &"pickaxe"
+metadata/id = 52

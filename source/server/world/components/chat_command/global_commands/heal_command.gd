@@ -9,15 +9,17 @@ func _init():
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
 	if args.size() != 3:
 		return "Invalid command format: /heal <target> <amount>"
-	
+
 	var target: int = peer_id if args[1] == "self" else args[1].to_int()
 	var amount: int = args[2].to_int()
-	
-	if server_instance.get_player(target) == null:
+
+	var player: Player = server_instance.get_player(target)
+	if player == null:
 		return "Target not found."
-	var p: Player = server_instance.get_player(peer_id)
 
-	#TODO
-
-	var error: bool = server_instance.set_player_attr_current(target, &"health", amount)
-	return ("/heal %s %s" % [str(target), str(amount)]) + (" successful" if error else " failed")
+	# Sets current health to the given amount (clamped to max).
+	# Doubles as a quick damage tool for testing: /heal self 1
+	var stats_component: StatsComponent = player.stats_component
+	var new_health: float = clampf(amount, 0.0, stats_component.get_stat(Stat.HEALTH_MAX))
+	stats_component.set_stat(Stat.HEALTH, new_health)
+	return "/heal %s %d successful" % [str(target), int(new_health)]
