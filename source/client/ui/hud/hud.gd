@@ -23,7 +23,7 @@ func _ready() -> void:
 		if button.text.containsn("CLOSE"):
 			button.pressed.connect(_on_overlay_menu_close_button_pressed)
 		else:
-			button.pressed.connect(display_menu.bind(button.text.to_lower()))
+			button.pressed.connect(display_menu.bind(button.text.strip_edges().to_lower()))
 
 	ClientState.input_changed.connect(_on_input_type_changed)
 

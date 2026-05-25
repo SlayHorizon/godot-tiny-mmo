@@ -30,6 +30,6 @@ func data_request_handler(
 		if previous_id > 0:
 			Inventory.add_item(inventory, previous_id, 1)
 		player.player_resource.equipment[slot_key] = item_id
-	elif item is ConsumableItem:
+	elif item is ConsumableItem and item.can_use(player):
 		item.on_use(player)
 	return {}

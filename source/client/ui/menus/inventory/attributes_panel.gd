@@ -20,13 +20,8 @@ func _ready() -> void:
 			var label: Label = child.get_child(0)
 			var button: Button = child.get_child(1)
 			button.pressed.connect(_on_attribute_pressed.bind(label, button))
-	
-	#for child: Node in find_children("*Button", "Button"):
-		#if child is Button:
-			#child.pressed.connect(_on_attribute_pressed.bind(child.text.to_lower()))
 
 
-#func _on_attribute_pressed(attribute_name: String) -> void:
 func _on_attribute_pressed(label: Label, button: Button) -> void:
 	# Checked on server too.
 	if not available_points > 0:
@@ -53,21 +48,15 @@ func _on_attribute_pressed(label: Label, button: Button) -> void:
 	
 	Client.request_data(
 		&"attribute.spend",
-		Callable(), #_on_attribute_result_received
+		Callable(),
 		{"attr": attribute_name},
 		InstanceClient.current.name
 	)
 
 
-# If we want to check for error
-#func _on_attribute_result_received(data: Dictionary) -> void:
-	#if attributes
-#	
-
 func _on_attribute_received(data: Dictionary) -> void:
 	attributes = data.get("attr", {})
 	available_points = data.get("points", 0)
-	print_debug("Debug:\n" + str(data))
 	for child: Node in get_children():
 		if child is HBoxContainer:
 			var label: Label = child.get_child(0)

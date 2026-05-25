@@ -18,5 +18,4 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 
 	# Gold is a currency item; add it to the inventory.
 	Inventory.add_item(player.inventory, Economy.gold_id(), amount)
-	print(player.inventory)
 	return "Added %d gold. New balance: %d." % [amount, Inventory.count(player.inventory, Economy.gold_id())]

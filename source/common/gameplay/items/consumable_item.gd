@@ -2,37 +2,32 @@ class_name ConsumableItem
 extends Item
 
 
-#@export var effects: Array[GameplayEffect]
+## Flat health restored on use. 0 = this consumable doesn't heal.
+## Prototype-simple effect; can later move to a data-driven GameplayEffect list.
+@export var heal_amount: int
 @export var shared_cooldown_ms: int = 1500
 @export var cooldown_category: StringName = &"potion"
 ## initial charges per single copy if 1 can use the potion one time, if 2 can use the potion 2 times for example.
 @export var default_charges: int = 1
 
 
-func can_use(player: Player) -> bool:
+func can_use(character: Character) -> bool:
+	if character == null:
+		return false
+	if heal_amount > 0:
+		return character.stats_component.get_stat(Stat.HEALTH) < character.stats_component.get_stat(Stat.HEALTH_MAX)
 	return false
-	#var charges := stack.get_int(&"charges", default_charges)
-	#if charges <= 0:
-		#return false
-	#if asc.has_method("cooldown_ready"):
-		#return asc.cooldown_ready(cooldown_category)
-	#return true
 
 
+## Applies the consumable's effect. Returns true if something actually happened
+## (so the caller knows whether to spend a charge / remove it from the bag).
 func on_use(character: Character) -> void:
-	pass
-	#for effect: GameplayEffect in effects:
-		#effect.on_added(character.ability_system_component)
-#func on_use(asc: Node, stack: ItemStack) -> bool:
-	#if not can_use(asc, stack):
-		#return false
-	#for e in effects:
-		#asc.add_effect(e)
-	#if asc.has_method("trigger_cooldown"):
-		#asc.trigger_cooldown(cooldown_category, shared_cooldown_ms)
-	## decrement charges (per-copy state lives in stack.data)
-	#var charges := stack.get_int(&"charges", default_charges)
-	#charges -= 1
-	#stack.set_int(&"charges", max(0, charges))
-	# If stackable, the inventory system can also reduce stack.count
-	#return true
+	if heal_amount > 0:
+		var stats_component: StatsComponent = character.stats_component
+		var healed: float = minf(
+			stats_component.get_stat(Stat.HEALTH) + heal_amount,
+			stats_component.get_stat(Stat.HEALTH_MAX)
+		)
+		stats_component.set_stat(Stat.HEALTH, healed)
+	if character is Player:
+		Inventory.remove_one_by_id(character.player_resource.inventory, get_meta(&"id"))

@@ -284,8 +284,7 @@ text = "FRIENDS"
 
 [node name="InventoryButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=422464795]
 layout_mode = 2
-text = "INVENTORY_V2
-"
+text = "INVENTORY"
 
 [node name="InventoryButton3" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=1879051142]
 layout_mode = 2
