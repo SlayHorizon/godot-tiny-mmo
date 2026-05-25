@@ -21,12 +21,17 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	#Step 2: if online, overlay some fields from memory (optional)
 	var target_peer_id: int = ws.player_id_to_peer_id.get(target_id, 0)
 	var target_player: PlayerResource = ws.connected_players.get(target_peer_id) if target_peer_id != 0 else null
+	# Gold is a currency item: balance = amount held in inventory (RAM if online, else DB json).
+	var money: int = Inventory.count(
+		JSON.parse_string(str(row.get("inventory_json", "{}"))) as Dictionary,
+		Economy.gold_id()
+	)
 	if target_player != null:
 		# Keep DB row as base, but override fields that might be more upto date in RAM
 		row["display_name"] = target_player.display_name
 		row["skin_id"] = target_player.skin_id
 		row["level"] = target_player.level
-		row["golds"] = target_player.golds
+		money = Inventory.count(target_player.inventory, Economy.gold_id())
 		row["profile_status"] = target_player.profile_status
 		row["profile_animation"] = target_player.profile_animation
 		row["active_guild_id"] = target_player.active_guild_id
@@ -39,7 +44,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		"name": str(row.get("display_name", "Unknown")),
 		"skin_id": int(row.get("skin_id", 1)),
 		"stats": {
-			"money": int(row.get("golds", 0)),
+			"money": money,
 			"character_class": "???",
 			"level": int(row.get("level", 1)),
 		},

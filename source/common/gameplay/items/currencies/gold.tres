@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://wj3mr4iqepu7"]
+
+[ext_resource type="Texture2D" uid="uid://cslc64xbpxpsd" path="res://assets/sprites/items/icons/Icon321.png" id="1_1byyn"]
+[ext_resource type="Script" uid="uid://bkat7yo0vssli" path="res://source/common/gameplay/items/item.gd" id="2_m8hih"]
+
+[resource]
+script = ExtResource("2_m8hih")
+item_name = &"gold"
+item_icon = ExtResource("1_1byyn")
+is_currency = true
+metadata/_custom_type_script = "uid://bkat7yo0vssli"
+metadata/slug = &"gold"
+metadata/id = 50

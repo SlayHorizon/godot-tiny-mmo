@@ -140,6 +140,8 @@ func add_item(slot_uid: int, slot_data: Dictionary) -> void:
 	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
 	if not item:
 		return
+	if item.is_currency:
+		return # currency lives in the wallet, not the bag grid
 	
 	var inventory_slot: InventorySlot = InventorySlot.new()
 	

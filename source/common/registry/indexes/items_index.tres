@@ -5,20 +5,25 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1779399018
-next_id = 50
+version = 1779714611
+next_id = 51
 entries = Array[Dictionary]([{
-&"hash": "b5f7b23d5e058f94e7e42ffd4a166370b8fd7418da14a102236cc539a9161853",
+&"hash": "579d9aabcd54a1226f9e2ae18815369917e1a49e4a2db8c4cb725043175911f0",
 &"id": 1,
 &"path": "res://source/common/gameplay/items/consumables/health_potion.tres",
 &"slug": &"health_potion"
 }, {
-&"hash": "ac02d0c02180bdb7d09d7abe29f213dd97adc7101d6ef2d24a26db84cdd6f5e1",
+&"hash": "5a08d3974dcab2c9d6513f790d765d1eef933bb269a7dba952f33a29c2b577d3",
+&"id": 50,
+&"path": "res://source/common/gameplay/items/currencies/gold.tres",
+&"slug": &"gold"
+}, {
+&"hash": "c3df031ce6ca64af0cbfd5c5dab6a65a291f503e04b98b817b3db327c42b0d42",
 &"id": 6,
 &"path": "res://source/common/gameplay/items/gears/agile_ring.tres",
 &"slug": &"agile_ring"
 }, {
-&"hash": "aa22927b3ac1b4c6dc8c1710c1099e7a29e8d333e5bdd9b64b4cf051b985ebf0",
+&"hash": "75616b8d13701efce50d2b6f72f2f23e45177376ac7898c8e20d653267b3096b",
 &"id": 7,
 &"path": "res://source/common/gameplay/items/gears/ancient_hood.tres",
 &"slug": &"ancient_hood"
@@ -33,7 +38,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/gears/apprentice_robe.tres",
 &"slug": &"apprentice_robe"
 }, {
-&"hash": "ae579feea3ba4a23281705e1b01156e18c046f6f39de59460cb82a576af78e59",
+&"hash": "d76aaeaea242b64c8b01af6208d13ad7429ac87effd54c54295763b5c6cd0f75",
 &"id": 10,
 &"path": "res://source/common/gameplay/items/gears/battle_ring.tres",
 &"slug": &"battle_ring"
@@ -48,7 +53,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/gears/cloth_vest.tres",
 &"slug": &"cloth_vest"
 }, {
-&"hash": "74ce8ce974aaa793666519e52757048cfe35cb050db3da32e56d613ad9147177",
+&"hash": "6fd3287ad00101a53ebd2d086f090a73cefd667d1618093dc0cb65efcbbcff69",
 &"id": 2,
 &"path": "res://source/common/gameplay/items/gears/copper_ring.tres",
 &"slug": &"copper_ring"
@@ -198,11 +203,6 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/materials/bone.tres",
 &"slug": &"bone"
 }, {
-&"hash": "7c4b0d763d4e52861bcb8c908e04ff612c2c739b13df158451891dfd1ad7832a",
-&"id": 41,
-&"path": "res://source/common/gameplay/items/war_boots.tres",
-&"slug": &"war_boots"
-}, {
 &"hash": "d3a564e7252f58c56f16520a3a1dc16c663d962434aa8ddf14ead12d75ce765c",
 &"id": 42,
 &"path": "res://source/common/gameplay/items/weapons/bow/arrow.tscn",
@@ -244,7 +244,7 @@ entries = Array[Dictionary]([{
 &"slug": &"sword_animations"
 }, {
 &"hash": "d86eb683076ca5537ae006279dc44ac880da2706688ce3d90583a72c2e28a9c5",
-&"id": 49,
+&"id": 40,
 &"path": "res://source/common/gameplay/items/weapons/weapon.tscn",
 &"slug": &"weapon"
 }])

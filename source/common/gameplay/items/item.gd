@@ -8,6 +8,9 @@ extends Resource
 @export_multiline var description: String
 
 # Trading / Economy
+## Marks this item as a currency (gold, event tokens, ...). Currency items are paid
+## with / received in transactions, shown in the wallet, and hidden from the bag grid.
+@export var is_currency: bool = false
 ## Can trade for goods between players.
 @export var can_trade: bool = false
 ## Can sell to the consigment house.

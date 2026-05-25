@@ -43,18 +43,17 @@ func save_player(player: PlayerResource) -> void:
 
 	db.query_with_bindings(
 		"INSERT OR REPLACE INTO players("
-		+ "player_id, account_name, display_name, skin_id, level, golds, available_attributes_points, "
+		+ "player_id, account_name, display_name, skin_id, level, available_attributes_points, "
 		+ "profile_status, profile_animation, "
 		+ "attributes_json, inventory_json, equipment_json, friends_json, server_roles_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
 			player.display_name,
 			player.skin_id,
 			player.level,
-			player.golds,
 			player.available_attributes_points,
 
 			player.profile_status,
@@ -94,8 +93,8 @@ func create_player_character(account_name: String, character_data: Dictionary) -
 	Inventory.add_item(player.inventory, 2, 1) # copper_ring
 	Inventory.add_item(player.inventory, 4, 1) # bone
 	Inventory.add_item(player.inventory, 5, 1) # wooden_bow
-	# Starting golds for a fresh character. Persists and reflects spending afterwards.
-	player.golds = 100
+	# Starting gold (gold is a currency item; balance = amount held in inventory).
+	Inventory.add_item(player.inventory, Economy.gold_id(), 100)
 	# Starting attribute points so a new character has something to spend.
 	player.available_attributes_points = PlayerResource.ATTRIBUTE_POINTS_PER_LEVEL
 	# Leave defaults to PlayerResource where possible.
@@ -124,7 +123,7 @@ func get_account_characters(account_name: String) -> Dictionary:
 
 func get_player_profile_row(player_id: int) -> Dictionary:
 	db.query_with_bindings(
-		"SELECT player_id, display_name, skin_id, level, golds, profile_status, profile_animation, active_guild_id "
+		"SELECT player_id, display_name, skin_id, level, inventory_json, profile_status, profile_animation, active_guild_id "
 		+ "FROM players WHERE player_id=?;",
 		[player_id]
 	)
@@ -145,7 +144,6 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 	player.skin_id = int(row.get("skin_id", 1))
 
 	player.level = int(row.get("level", 1))
-	player.golds = int(row.get("golds", 0))
 
 	player.profile_status = str(row.get("profile_status", ""))
 	player.profile_animation = str(row.get("profile_animation", ""))

@@ -44,5 +44,6 @@ func data_request_handler(
 	if removed <= 0:
 		return {"ok": false}
 
-	player.player_resource.golds += item.vendor_value * removed
-	return {"ok": true, "golds": player.player_resource.golds, "removed": removed}
+	# Pay the player in gold (a currency item).
+	Inventory.add_item(inventory, Economy.gold_id(), item.vendor_value * removed)
+	return {"ok": true, "removed": removed}

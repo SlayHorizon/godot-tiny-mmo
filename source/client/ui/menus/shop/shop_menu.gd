@@ -9,6 +9,8 @@ var _shop: ShopResource
 var _shop_id: int
 var _mode: Mode
 var _golds: int
+## Registry id of the gold currency item (the player's balance is its inventory count).
+var _gold_id: int
 var _slots: Array[ShopSlot]
 var _selected_slot: ShopSlot
 ## Raw inventory (slot_uid -> {"id", "a"}), fetched on open and after each transaction.
@@ -36,6 +38,7 @@ var _equipped_ids: Array
 
 
 func _ready() -> void:
+	_gold_id = Economy.gold_id()
 	# Active tab is the disabled one; clicking the other switches mode.
 	buy_tab.pressed.connect(_set_mode.bind(Mode.BUY))
 	sell_tab.pressed.connect(_set_mode.bind(Mode.SELL))
@@ -105,7 +108,7 @@ func _build_sell_rows() -> void:
 	for slot_uid in _inventory:
 		var data: Dictionary = _inventory[slot_uid]
 		var item: Item = ContentRegistryHub.load_by_id(&"items", int(data.get("id", 0)))
-		if item == null or item.vendor_value <= 0:
+		if item == null or item.is_currency or item.vendor_value <= 0:
 			continue # not sellable to vendors
 		var slot: ShopSlot = ShopSlot.new()
 		slot.item = item
@@ -261,31 +264,31 @@ func _set_golds(value: int) -> void:
 	golds_label.text = "Golds: %d" % _golds
 
 
-## Authorize opening + fetch current golds.
+## Authorize opening the shop (gold + contents come from elsewhere).
 func _request_open() -> void:
 	var result: Array = await Client.request_data_await(&"shop.open", {"shop_id": _shop_id})
 	if result[1] != OK:
 		return
 	if not result[0].get("ok", false):
 		hide()
-		return
-	_set_golds(int(result[0].get("golds", 0)))
-	_refresh_affordability()
-	if _selected_slot and _mode == Mode.BUY:
-		_update_quantity_bounds()
-		_refresh_buy_action()
 
 
-## Refresh the player's inventory (owned counts + the Sell list).
+## Refresh the player's inventory (gold balance, owned counts, the Sell list).
 func _request_inventory() -> void:
 	var result: Array = await Client.request_data_await(&"inventory.get", {}, InstanceClient.current.name)
 	if result[1] != OK:
 		return
 	_inventory = result[0]
 	_recompute_owned()
+	# Gold is a currency item; the balance is its amount in inventory.
+	_set_golds(_owned.get(_gold_id, 0))
 	if _mode == Mode.SELL:
 		_build_list()
+	_refresh_affordability()
 	_update_owned_label()
+	if _selected_slot and _mode == Mode.BUY:
+		_update_quantity_bounds()
+		_refresh_buy_action()
 
 
 func _recompute_owned() -> void:
@@ -320,8 +323,7 @@ func _buy() -> void:
 	if result[1] != OK or not result[0].get("ok", false):
 		_refresh_buy_action()
 		return
-	_set_golds(int(result[0].get("golds", _golds)))
-	_refresh_affordability()
+	# Gold + counts refresh from the inventory fetch.
 	await _request_inventory()
 	if _selected_slot:
 		_update_quantity_bounds()
@@ -340,7 +342,7 @@ func _sell() -> void:
 	if result[1] != OK or not result[0].get("ok", false):
 		action_button.disabled = false
 		return
-	_set_golds(int(result[0].get("golds", _golds)))
+	# Gold + counts refresh from the inventory fetch.
 	await _request_inventory() # rebuilds the Sell list with updated quantities
 	# Keep the same item selected if its stack still exists.
 	for slot in _slots:

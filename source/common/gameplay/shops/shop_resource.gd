@@ -36,9 +36,11 @@ func allows_selling() -> bool:
 	return trades != Trades.BUY_ONLY
 
 
-## { "price": int, "currency": int } for one item, or {} if not sold here.
+## { "price": int, "currency_id": int } for one item, or {} if not sold here.
+## currency_id is the entry's currency item (or gold by default).
 func entry_for(item_id: int) -> Dictionary:
 	for entry: ShopEntry in entries:
 		if entry and entry.item and int(entry.item.get_meta(&"id", 0)) == item_id:
-			return {"price": entry.price, "currency": entry.currency}
+			var currency_id: int = int(entry.currency_item.get_meta(&"id", 0)) if entry.currency_item else Economy.gold_id()
+			return {"price": entry.price, "currency_id": currency_id}
 	return {}

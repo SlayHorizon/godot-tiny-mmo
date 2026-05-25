@@ -1,8 +1,7 @@
 extends DataRequestHandler
-## Authorizes opening a shop and returns the dynamic data the client can't know on
-## its own (current golds). The catalog itself is static and rendered client-side
-## from the local ShopResource; the purchase is validated separately in
-## shop.buy.item, so nothing here needs to send item/price data.
+## Authorizes opening a shop. The catalog is static and rendered client-side from the
+## local ShopResource; gold (a currency item) is read by the client from its inventory;
+## purchases are validated in shop.buy.item. So this only needs to gate access.
 
 
 func data_request_handler(
@@ -18,9 +17,4 @@ func data_request_handler(
 	if instance.instance_map.get_shop(shop_id) == null:
 		return {"ok": false}
 
-	var golds: int
-	var player_resource: PlayerResource = instance.world_server.connected_players.get(peer_id)
-	if player_resource:
-		golds = player_resource.golds
-
-	return {"ok": true, "golds": golds}
+	return {"ok": true}

@@ -3,10 +3,16 @@ extends PanelContainer
 
 var observed_stats: StatsComponent.Stats
 
-@onready var stats_display: RichTextLabel = $VBoxContainer/RichTextLabel
+@export var stats_display: RichTextLabel
 
 
 func _ready() -> void:
+	_try_watch()
+	# Re-watch if the local player wasn't ready yet when this panel loaded.
+	ClientState.local_player_ready.connect(func(_lp: LocalPlayer): _try_watch())
+
+
+func _try_watch() -> void:
 	if ClientState.local_player:
 		watch_stats(ClientState.local_player.stats_component.stats)
 

@@ -26,16 +26,14 @@ func data_request_handler(
 	if entry.is_empty():
 		return {"ok": false}
 
-	# Only golds are implemented; other currencies are reserved for future events.
-	if int(entry.get("currency", ShopEntry.Currency.GOLDS)) != ShopEntry.Currency.GOLDS:
-		return {"ok": false, "reason": "currency_not_supported"}
-
+	var inventory: Dictionary = player.player_resource.inventory
+	var currency_id: int = int(entry.get("currency_id", 0))
 	var total: int = int(entry.get("price", 0)) * amount
-	if player.player_resource.golds < total:
+	# Pay with the currency item (gold by default).
+	if currency_id <= 0 or not Inventory.remove_amount_by_id(inventory, currency_id, total):
 		return {"ok": false}
 
-	player.player_resource.golds -= total
 	# Add one at a time so stackable items merge and non-stackable get separate slots.
 	for i: int in amount:
-		Inventory.add_item(player.player_resource.inventory, item_id, 1)
-	return {"ok": true, "golds": player.player_resource.golds}
+		Inventory.add_item(inventory, item_id, 1)
+	return {"ok": true}

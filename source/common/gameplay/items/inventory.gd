@@ -67,6 +67,28 @@ static func remove_one_by_id(inventory: Dictionary, item_id: int) -> bool:
 	return false
 
 
+## Total amount of an item across all slots (used for currency / stack totals).
+static func count(inventory: Dictionary, item_id: int) -> int:
+	var total: int = 0
+	for slot_uid in inventory:
+		if int(inventory[slot_uid].get("id", 0)) == item_id:
+			total += int(inventory[slot_uid].get("a", 0))
+	return total
+
+
+## Remove `amount` of an item across slots. No-op + false if not enough is held.
+static func remove_amount_by_id(inventory: Dictionary, item_id: int, amount: int) -> bool:
+	if amount <= 0 or count(inventory, item_id) < amount:
+		return false
+	var remaining: int = amount
+	for slot_uid in inventory.keys():
+		if int(inventory[slot_uid].get("id", 0)) == item_id:
+			remaining -= remove_from_slot(inventory, slot_uid, remaining)
+			if remaining <= 0:
+				break
+	return true
+
+
 ## True if any slot holds the given item id.
 static func has_item(inventory: Dictionary, item_id: int) -> bool:
 	for slot_uid in inventory:

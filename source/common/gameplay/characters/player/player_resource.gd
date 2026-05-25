@@ -19,7 +19,6 @@ const BASE_STATS: Dictionary[StringName, float] = {
 @export var display_name: String = "Player"
 @export var skin_id: int = 1 # Default skin
 
-@export var golds: int
 @export var inventory: Dictionary
 ## Equipped gear: gear-slot key (&"weapon", &"torso", ...) -> item_id. Equipped items
 ## live here, NOT in inventory (they're moved out on equip, back on unequip).
