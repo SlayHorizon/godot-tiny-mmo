@@ -8,11 +8,16 @@ extends Resource
 ## metadata) and builds shops_index.tres, so shops resolve through
 ## ContentRegistryHub like items and maps — sent over the network as a small id.
 
+## Which trades this shop offers the player (controls which tabs the shop UI shows).
+enum Trades {
+	BUY_ONLY,  ## Player can only buy from this shop (only the Buy tab is shown).
+	SELL_ONLY, ## Player can only sell to this shop (only the Sell tab is shown).
+	BOTH,      ## Player can buy and sell (both tabs shown).
+}
+
 @export var shop_name: String
 @export var entries: Array[ShopEntry]
-## Whether this vendor buys items from players (the Sell tab). Default true = any
-## vendor buys (convention). Set false for sell-only shops / specialized buyers later.
-@export var buys_from_players: bool = true
+@export var trades: Trades = Trades.BOTH
 
 
 ## Loads a shop by its registry id, or null if the shops content type hasn't been
@@ -21,6 +26,14 @@ static func load_shop(shop_id: int) -> ShopResource:
 	if ContentRegistryHub.registry_of(&"shops") == null:
 		return null
 	return ContentRegistryHub.load_by_id(&"shops", shop_id) as ShopResource
+
+
+func allows_buying() -> bool:
+	return trades != Trades.SELL_ONLY
+
+
+func allows_selling() -> bool:
+	return trades != Trades.BUY_ONLY
 
 
 ## { "price": int, "currency": int } for one item, or {} if not sold here.

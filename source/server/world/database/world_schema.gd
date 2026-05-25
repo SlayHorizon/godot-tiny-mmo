@@ -33,6 +33,7 @@ static func _migration_v1(db: SQLite) -> void:
 
 		"attributes_json": {"data_type": "text", "not_null": true},
 		"inventory_json": {"data_type": "text", "not_null": true},
+		"equipment_json": {"data_type": "text", "not_null": true},
 
 		"friends_json": {"data_type": "text", "not_null": true},
 		"server_roles_json": {"data_type": "text", "not_null": true},

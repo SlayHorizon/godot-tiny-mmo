@@ -21,6 +21,9 @@ const BASE_STATS: Dictionary[StringName, float] = {
 
 @export var golds: int
 @export var inventory: Dictionary
+## Equipped gear: gear-slot key (&"weapon", &"torso", ...) -> item_id. Equipped items
+## live here, NOT in inventory (they're moved out on equip, back on unequip).
+@export var equipment: Dictionary
 
 @export var attributes: Dictionary[StringName, int]
 @export var available_attributes_points: int

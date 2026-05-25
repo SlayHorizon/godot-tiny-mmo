@@ -14,10 +14,10 @@ func data_request_handler(
 		return {"ok": false}
 
 	# Authorization: player must be at a real merchant in their map (same as buying),
-	# and that merchant must buy from players.
+	# and that merchant must accept sells.
 	var shop_id: int = int(args.get("shop_id", 0))
 	var shop: ShopResource = instance.instance_map.get_shop(shop_id)
-	if shop == null or not shop.buys_from_players:
+	if shop == null or not shop.allows_selling():
 		return {"ok": false}
 
 	var slot_uid: int = int(args.get("slot_uid", 0))
@@ -34,6 +34,11 @@ func data_request_handler(
 	if item == null or item.vendor_value <= 0:
 		# Not sellable to vendors (quest/bound/junk-safe).
 		return {"ok": false}
+
+	# Refuse to sell an equipped item (equip is item_id-based; selling would leave
+	# the equipment referencing gear the player no longer owns). Unequip first.
+	if item_id in player.equipment_component.slots.values.values():
+		return {"ok": false, "reason": "equipped"}
 
 	var removed: int = Inventory.remove_from_slot(inventory, slot_uid, amount)
 	if removed <= 0:

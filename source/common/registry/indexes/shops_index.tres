@@ -5,13 +5,18 @@
 [resource]
 script = ExtResource("1_714ml")
 content_name = &"shops"
-version = 1779644231
-next_id = 2
+version = 1779696195
+next_id = 3
 entries = Array[Dictionary]([{
 &"hash": "f26ec9314d72f876ce62af053bbb59e237c73267aeeba1067791240662c1f470",
 &"id": 1,
 &"path": "res://source/common/gameplay/shops/resources/general_store.tres",
 &"slug": &"general_store"
+}, {
+&"hash": "205e0e5f30db7cca776a9398eec152c1d2a7deb1ca3fa746427282cf7b7976bd",
+&"id": 2,
+&"path": "res://source/common/gameplay/shops/resources/sell_shop.tres",
+&"slug": &"sell_shop"
 }])
 scan_path = "res://source/common/gameplay/shops"
 filters = PackedStringArray("*.tres", "*.tscn")

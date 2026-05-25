@@ -152,6 +152,18 @@ func instantiate_player(peer_id: int) -> Player:
 		for stat_name: StringName in player_stats:
 			var value: float = player_stats[stat_name]
 			new_player.stats_component.set_stat(stat_name, value)
+
+		# Re-equip persisted gear (adds its stat modifiers on top of base + attributes).
+		var saved_equipment: Dictionary = player_resource.equipment.duplicate()
+		player_resource.equipment.clear()
+		for slot_key: StringName in saved_equipment:
+			var equip_id: int = int(saved_equipment[slot_key])
+			if new_player.equipment_component.equip_item(equip_id):
+				player_resource.equipment[slot_key] = equip_id
+			else:
+				# Rule changed (level/slot) -> return it to inventory rather than lose it.
+				Inventory.add_item(player_resource.inventory, equip_id, 1)
+
 		# Set health to max health (heal player to full HP)
 		new_player.stats_component.set_stat(
 			Stat.HEALTH,

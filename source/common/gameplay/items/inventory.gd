@@ -59,6 +59,14 @@ static func remove_from_slot(inventory: Dictionary, slot_uid: int, amount: int =
 	return removed
 
 
+## Remove one of the first slot holding the given item id. Returns true if removed.
+static func remove_one_by_id(inventory: Dictionary, item_id: int) -> bool:
+	for slot_uid in inventory:
+		if int(inventory[slot_uid].get("id", 0)) == item_id:
+			return remove_from_slot(inventory, slot_uid, 1) > 0
+	return false
+
+
 ## True if any slot holds the given item id.
 static func has_item(inventory: Dictionary, item_id: int) -> bool:
 	for slot_uid in inventory:

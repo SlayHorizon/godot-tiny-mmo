@@ -66,6 +66,7 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="ModeTabs" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer" unique_id=898507807]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
@@ -160,6 +161,30 @@ layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = true
+
+[node name="QuantityRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="QuantityLabel" type="Label" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Quantity"
+vertical_alignment = 1
+
+[node name="QuantitySpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+rounded = true
+
+[node name="MaxButton" type="Button" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Max"
 
 [node name="ActionButton" type="Button" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer" unique_id=2051739338]
 unique_name_in_owner = true

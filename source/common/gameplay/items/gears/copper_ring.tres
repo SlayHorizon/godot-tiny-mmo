@@ -18,6 +18,7 @@ item_name = &"CopperRing"
 item_icon = ExtResource("4_mji2t")
 description = "Copper ring.
 Increases 5 health"
+vendor_value = 5
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"copper_ring"
 metadata/id = 2

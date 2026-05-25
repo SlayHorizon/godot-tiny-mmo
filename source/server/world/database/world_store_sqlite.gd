@@ -34,6 +34,7 @@ func get_player(player_id: int) -> PlayerResource:
 func save_player(player: PlayerResource) -> void:
 	var attributes_json: String = JSON.stringify(player.attributes)
 	var inventory_json: String = JSON.stringify(player.inventory)
+	var equipment_json: String = JSON.stringify(player.equipment)
 
 	var friends_json: String = JSON.stringify(player.friends)
 	var server_roles_json: String = JSON.stringify(player.server_roles)
@@ -44,9 +45,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, golds, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, friends_json, server_roles_json, "
+		+ "attributes_json, inventory_json, equipment_json, friends_json, server_roles_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -61,6 +62,7 @@ func save_player(player: PlayerResource) -> void:
 
 			attributes_json,
 			inventory_json,
+			equipment_json,
 			friends_json,
 			server_roles_json,
 
@@ -150,6 +152,11 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 
 	player.attributes.assign(JSON.parse_string(str(row.get("attributes_json", "{}"))) as Dictionary)
 	player.inventory = Inventory.normalize(JSON.parse_string(str(row.get("inventory_json", "{}"))) as Dictionary)
+	# Equipment: { slot_key (StringName) -> item_id (int) }; JSON gives string keys/float values.
+	var equipment_raw: Dictionary = JSON.parse_string(str(row.get("equipment_json", "{}"))) as Dictionary
+	player.equipment = {}
+	for slot_key in equipment_raw:
+		player.equipment[StringName(slot_key)] = int(equipment_raw[slot_key])
 	player.available_attributes_points = int(row.get("available_attributes_points", 0))
 
 	var friends_v: Variant = JSON.parse_string(str(row.get("friends_json", "[]")))

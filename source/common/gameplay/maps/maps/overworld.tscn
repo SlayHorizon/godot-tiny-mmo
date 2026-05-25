@@ -30,6 +30,7 @@
 [ext_resource type="Script" uid="uid://xduf2fcr0g83" path="res://source/common/gameplay/maps/components/shop_button.gd" id="28_mvj6e"]
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="29_sbo1b"]
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/general_store.tres" id="30_5vi16"]
+[ext_resource type="Resource" uid="uid://dpg3yne7adekr" path="res://source/common/gameplay/shops/resources/sell_shop.tres" id="31_lc833"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mvj6e"]
 
@@ -291,8 +292,25 @@ shop = ExtResource("30_5vi16")
 shape = SubResource("CircleShape2D_uw01f")
 
 [node name="Label" type="Label" parent="ShopInteractable/CollisionShape2D" unique_id=85637529]
-offset_left = -18.651733
-offset_top = -20.843018
-offset_right = 23.348267
-offset_bottom = 0.15698242
-text = "SHOP"
+offset_left = -26.651733
+offset_top = -36.843018
+offset_right = 96.34827
+offset_bottom = 8.156982
+text = "BUY SHOP
+GENERAL STORE"
+
+[node name="ShopInteractable2" type="Area2D" parent="." unique_id=593426351]
+position = Vector2(957.8729, 834.17206)
+script = ExtResource("29_sbo1b")
+shop = ExtResource("31_lc833")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable2" unique_id=1302669879]
+shape = SubResource("CircleShape2D_uw01f")
+
+[node name="Label" type="Label" parent="ShopInteractable2/CollisionShape2D" unique_id=1480764746]
+offset_left = -37.872925
+offset_top = -18.172058
+offset_right = 45.127075
+offset_bottom = 26.827942
+text = "SELL SHOP
+ONLY"
