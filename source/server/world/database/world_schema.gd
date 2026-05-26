@@ -25,6 +25,7 @@ static func _migration_v1(db: SQLite) -> void:
 		"display_name": {"data_type": "text", "not_null": true},
 		"skin_id": {"data_type": "int", "not_null": true},
 		"level": {"data_type": "int", "not_null": true},
+		"experience": {"data_type": "int", "not_null": true},
 		"available_attributes_points": {"data_type": "int", "not_null": true},
 
 		"profile_status": {"data_type": "text", "not_null": true},
@@ -34,6 +35,7 @@ static func _migration_v1(db: SQLite) -> void:
 		"inventory_json": {"data_type": "text", "not_null": true},
 		"equipment_json": {"data_type": "text", "not_null": true},
 		"skills_json": {"data_type": "text", "not_null": true},
+		"quests_json": {"data_type": "text", "not_null": true},
 
 		"friends_json": {"data_type": "text", "not_null": true},
 		"server_roles_json": {"data_type": "text", "not_null": true},

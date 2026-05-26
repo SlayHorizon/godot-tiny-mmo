@@ -28,3 +28,6 @@ addons/godot-sqlite/bin/*
 
 # lock file for excel/libreoffice CSV editting
 .~lock.translations.csv#
+
+.claude
+source/server/master/account_collection.tres

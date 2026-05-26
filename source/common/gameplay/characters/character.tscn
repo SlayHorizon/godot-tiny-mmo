@@ -104,6 +104,13 @@ animation = &"locomotion/idle"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wq2ob"]
 animation = &"locomotion/run"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_death"]
+animation = &"locomotion/death"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_death_in"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_death_out"]
+
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_pypn5"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wq2ob"]
@@ -118,7 +125,9 @@ states/locomotion_idle/node = SubResource("AnimationNodeAnimation_pypn5")
 states/locomotion_idle/position = Vector2(458, -29)
 states/locomotion_run/node = SubResource("AnimationNodeAnimation_wq2ob")
 states/locomotion_run/position = Vector2(458, 116)
-transitions = ["locomotion_idle", "locomotion_run", SubResource("AnimationNodeStateMachineTransition_pypn5"), "locomotion_run", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_wq2ob"), "Start", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_k3wew")]
+states/locomotion_death/node = SubResource("AnimationNodeAnimation_death")
+states/locomotion_death/position = Vector2(458, 260)
+transitions = ["locomotion_idle", "locomotion_run", SubResource("AnimationNodeStateMachineTransition_pypn5"), "locomotion_run", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_wq2ob"), "Start", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_k3wew"), "locomotion_idle", "locomotion_death", SubResource("AnimationNodeStateMachineTransition_death_in"), "locomotion_run", "locomotion_death", SubResource("AnimationNodeStateMachineTransition_death_in"), "locomotion_death", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_death_out")]
 graph_offset = Vector2(8, -148.941)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k3wew"]

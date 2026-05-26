@@ -54,6 +54,38 @@ func _on_stat_changed(stat_name: StringName, value: float) -> void:
 		$ProgressBar.max_value = value
 
 
+# --- Combat (server-authoritative) ---
+
+## True once health has hit zero, until the subclass revives/respawns.
+var is_dead: bool = false
+## The character that dealt the most recent damage (for kill attribution).
+var last_attacker: Character
+
+
+## Server-only. Applies [param amount] raw damage from [param attacker], mitigated by
+## the target's ARMOR, then triggers death at zero health. Every attack (projectiles,
+## melee, NPC hits) routes through here so damage/death/attribution live in one place.
+func take_damage(amount: float, attacker: Character = null) -> void:
+	if not multiplayer.is_server() or is_dead or amount <= 0.0:
+		return
+	if attacker:
+		last_attacker = attacker
+
+	var armor: float = stats_component.get_stat(Stat.ARMOR)
+	var mitigated: float = amount * (100.0 / (100.0 + maxf(0.0, armor)))
+	var new_health: float = maxf(0.0, stats_component.get_stat(Stat.HEALTH) - mitigated)
+	stats_component.set_stat(Stat.HEALTH, new_health)
+
+	if new_health <= 0.0:
+		is_dead = true
+		die(attacker)
+
+
+## Overridden by Player (respawn) and HostileNpc (reward + respawn). Base does nothing.
+func die(_killer: Character) -> void:
+	pass
+
+
 func update_weapon_animation(state: String) -> void:
 	pass
 	#$AnimationTree.set("parameters/OnFoot/Blend2/blend_amount", 1.0)
@@ -78,7 +110,7 @@ func _set_anim(new_anim: Animations) -> void:
 		Animations.RUN:
 			locomotion_state_machine.travel(&"locomotion_run")
 		Animations.DEATH:
-			locomotion_state_machine[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
+			locomotion_state_machine.travel(&"locomotion_death")
 	anim = new_anim
 
 

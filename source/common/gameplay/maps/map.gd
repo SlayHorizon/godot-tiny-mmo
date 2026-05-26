@@ -56,6 +56,9 @@ var mineables: Dictionary[int, MineableNode]
 ## nodes placed in this map (mirrors shops). The server resolves/verifies the station
 ## a player crafts at, rather than trusting a client-sent id.
 var crafting_stations: Dictionary[int, CraftingStationResource]
+## giver_id -> QuestGiver node, gathered from the quest-giver NPCs placed in this map.
+## The server resolves which quests a giver offers (never trusts a client-sent list).
+var quest_givers: Dictionary[int, QuestGiver]
 
 
 func _ready() -> void:
@@ -73,6 +76,8 @@ func _ready() -> void:
 			mineables[child.node_id] = child
 		elif child is CraftingStation and child.station:
 			crafting_stations[int(child.station.get_meta(&"id", 0))] = child.station
+		elif child is QuestGiver:
+			quest_givers[child.giver_id] = child
 
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
@@ -97,6 +102,11 @@ func get_mineable(node_id: int) -> MineableNode:
 ## The crafting station with this registry id in this map, or null.
 func get_crafting_station(station_id: int) -> CraftingStationResource:
 	return crafting_stations.get(station_id)
+
+
+## The quest-giver NPC with this id in this map, or null.
+func get_quest_giver(giver_id: int) -> QuestGiver:
+	return quest_givers.get(giver_id)
 
 
 func override_map_rules(instance_resource: InstanceResource) -> void:

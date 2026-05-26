@@ -36,13 +36,23 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body == source or not body.has_node(^"StatsComponent"):
+	if body == source or body is not Character:
 		return
 
-	if body is Player and not body.is_pvp():
+	# No NPC-vs-NPC friendly fire (until proper teams exist).
+	if source is not Player and body is not Player:
 		return
 
-	body.stats_component.modify_stat(&"health", -10)
+	# Player-vs-player only lands in PvP zones; NPC->player (PvE) damage always lands.
+	if body is Player and source is Player and not body.is_pvp():
+		return
+
+	# Damage scales with the shooter's Attack (falls back to a small base), and is
+	# mitigated by the target's armor inside take_damage.
+	var damage: float = 10.0
+	if source is Character:
+		damage = maxf(damage, source.stats_component.get_stat(Stat.AD))
+	body.take_damage(damage, source if source is Character else null)
 
 	if not piercing or pierce_left <= 0:
 		queue_free()

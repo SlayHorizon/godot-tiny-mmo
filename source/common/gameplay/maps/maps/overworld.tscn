@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.tscn" id="22_na1pl"]
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="24_slgwh"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="24_uytus"]
+[ext_resource type="Resource" uid="uid://b64q6sv46brpr" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres" id="25_7nycf"]
 [ext_resource type="Script" uid="uid://bvwcr61l1deso" path="res://source/common/gameplay/time/world_clock_display.gd" id="25_gimy5"]
 [ext_resource type="Script" uid="uid://xduf2fcr0g83" path="res://source/common/gameplay/maps/components/shop_button.gd" id="28_mvj6e"]
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="29_sbo1b"]
@@ -35,6 +36,13 @@
 [ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="32_sbo1b"]
 [ext_resource type="Resource" uid="uid://cwojdmtkr5xwl" path="res://source/common/gameplay/crafting/resources/forge.tres" id="33_7nycf"]
 [ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="33_112bs"]
+[ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="37_frbp0"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="38_dk1bj"]
+[ext_resource type="Resource" uid="uid://b0xp3rulvro2u" path="res://source/common/gameplay/quests/resources/slay_quest_1.tres" id="39_uw01f"]
+[ext_resource type="Resource" uid="uid://cn0th484mts73" path="res://source/common/gameplay/quests/resources/forge_quest_1.tres" id="40_dk1bj"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ovmn0"]
+radius = 51.48361
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mvj6e"]
 
@@ -46,6 +54,9 @@ size = Vector2(121.3302, 28.720032)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2aujs"]
 size = Vector2(36.136353, 27.279724)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ovmn0"]
+size = Vector2(48.993896, 43.498413)
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -173,7 +184,9 @@ id_to_node = {
 5: NodePath("Coin6"),
 6: NodePath("Coin7"),
 7: NodePath("GroundButton"),
-8: NodePath("NPC")
+8: NodePath("NPC"),
+9: NodePath("Mob"),
+10: NodePath("Mob2")
 }
 node_to_id = {
 NodePath("Coin"): 0,
@@ -184,7 +197,9 @@ NodePath("Coin5"): 4,
 NodePath("Coin6"): 5,
 NodePath("Coin7"): 6,
 NodePath("GroundButton"): 7,
-NodePath("NPC"): 8
+NodePath("NPC"): 8,
+NodePath("Mob"): 9,
+NodePath("Mob2"): 10
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 
@@ -215,6 +230,36 @@ activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/A
 
 [node name="NPC" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("24_uytus")]
 position = Vector2(145, 1356)
+enemy_type = &""
+attack_cooldown = 1.5
+weapon = null
+
+[node name="Mob" parent="ReplicatedPropsContainer" unique_id=1087386232 instance=ExtResource("24_uytus")]
+position = Vector2(655.3556, 1198.6508)
+distance_to_attack = 200
+enemy_type = &"mobs"
+attack_cooldown = 1.5
+weapon = ExtResource("25_7nycf")
+xp_reward = 200
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Mob" unique_id=2105278488]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Mob/Area2D" unique_id=1769735645]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Mob2" parent="ReplicatedPropsContainer" unique_id=267862471 instance=ExtResource("24_uytus")]
+position = Vector2(922.79205, 1260.473)
+distance_to_attack = 25
+enemy_type = &"mobs"
+attack_damage = 20.0
+attack_cooldown = 1.5
+weapon = null
+xp_reward = 200
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Mob2" unique_id=1495250126]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Mob2/Area2D" unique_id=383434929]
+shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Traps" type="Node2D" parent="." unique_id=571759958]
 
@@ -357,3 +402,20 @@ offset_top = -6.720276
 offset_right = 13.863647
 offset_bottom = 14.279724
 text = "Ore"
+
+[node name="QuestGiver" type="Area2D" parent="." unique_id=2123546769]
+position = Vector2(665.0061, 790.5016)
+script = ExtResource("37_frbp0")
+giver_id = 1
+quests = Array[ExtResource("38_dk1bj")]([ExtResource("39_uw01f"), ExtResource("40_dk1bj")])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="QuestGiver" unique_id=1780750788]
+position = Vector2(-1.0061035, 1.4984131)
+shape = SubResource("RectangleShape2D_ovmn0")
+
+[node name="Label" type="Label" parent="QuestGiver" unique_id=784852290]
+offset_left = -41.006104
+offset_top = -6.501587
+offset_right = 39.993896
+offset_bottom = 14.498413
+text = "Quest giver"

@@ -50,5 +50,12 @@ func perform_action(action_index: int, direction: Vector2) -> void:
 	abilities[action_index].use_ability(character, direction)
 
 
+## A complete one-shot attack for AI / auto use. Players may drive multi-step inputs
+## (e.g. bow charge/release) directly; this gives NPCs a single "just attack" entry point.
+## Default fires action 0; weapons with a charge step (bow) override this.
+func auto_attack(direction: Vector2) -> void:
+	perform_action(0, direction)
+
+
 func process_input(local_player: LocalPlayer) -> void:
 	pass

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ContentIndex" format=3 uid="uid://bidhdjjqde5nn"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_7gygy"]
+
+[resource]
+script = ExtResource("1_7gygy")
+content_name = &"quests"
+version = 1779814024
+next_id = 3
+entries = Array[Dictionary]([{
+&"hash": "192f232adc74aba518fa929802c813a4463069cb0c732a0069c24b79bbf07e3a",
+&"id": 2,
+&"path": "res://source/common/gameplay/quests/resources/forge_quest_1.tres",
+&"slug": &"forge_quest_1"
+}, {
+&"hash": "b5af9e50c8d7c2bd12f2418698eff124f6fce91bd45843e4d5450897a50f255f",
+&"id": 1,
+&"path": "res://source/common/gameplay/quests/resources/slay_quest_1.tres",
+&"slug": &"slay_quest_1"
+}])
+scan_path = "res://source/common/gameplay/quests/resources"
+filters = PackedStringArray("*.tres", "*.tscn")

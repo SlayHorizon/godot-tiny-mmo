@@ -36,6 +36,7 @@ func save_player(player: PlayerResource) -> void:
 	var inventory_json: String = JSON.stringify(player.inventory)
 	var equipment_json: String = JSON.stringify(player.equipment)
 	var skills_json: String = JSON.stringify(player.skills)
+	var quests_json: String = JSON.stringify(player.quests)
 
 	var friends_json: String = JSON.stringify(player.friends)
 	var server_roles_json: String = JSON.stringify(player.server_roles)
@@ -44,17 +45,18 @@ func save_player(player: PlayerResource) -> void:
 
 	db.query_with_bindings(
 		"INSERT OR REPLACE INTO players("
-		+ "player_id, account_name, display_name, skin_id, level, available_attributes_points, "
+		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, friends_json, server_roles_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, server_roles_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
 			player.display_name,
 			player.skin_id,
 			player.level,
+			player.experience,
 			player.available_attributes_points,
 
 			player.profile_status,
@@ -64,6 +66,7 @@ func save_player(player: PlayerResource) -> void:
 			inventory_json,
 			equipment_json,
 			skills_json,
+			quests_json,
 			friends_json,
 			server_roles_json,
 
@@ -146,6 +149,7 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 	player.skin_id = int(row.get("skin_id", 1))
 
 	player.level = int(row.get("level", 1))
+	player.experience = int(row.get("experience", 0))
 
 	player.profile_status = str(row.get("profile_status", ""))
 	player.profile_animation = str(row.get("profile_animation", ""))
@@ -174,6 +178,20 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 			"level": int(entry.get("level", 1)),
 			"xp": int(entry.get("xp", 0)),
 			"perks": perks,
+		}
+
+	# Quests: { quest_id (int) -> {"state": StringName, "progress": {obj_index(int) -> count(int)}} }.
+	var quests_raw: Dictionary = JSON.parse_string(str(row.get("quests_json", "{}"))) as Dictionary
+	player.quests = {}
+	for quest_id in quests_raw:
+		var quest_entry: Dictionary = quests_raw[quest_id]
+		var progress_raw: Dictionary = quest_entry.get("progress", {}) as Dictionary
+		var progress: Dictionary = {}
+		for obj_index in progress_raw:
+			progress[int(obj_index)] = int(progress_raw[obj_index])
+		player.quests[int(quest_id)] = {
+			"state": StringName(str(quest_entry.get("state", "active"))),
+			"progress": progress,
 		}
 
 	var friends_v: Variant = JSON.parse_string(str(row.get("friends_json", "[]")))

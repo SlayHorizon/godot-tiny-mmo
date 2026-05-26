@@ -20,7 +20,10 @@ func set_stat(
 	value: float
 ) -> void:
 	stats.set(stat_name, value)
-	synchronizer.mark_dirty_by_path(stat_path(stat_name), value,  false)
+	# NPCs replicate stats through their ReplicatedPropsContainer instead of a per-entity
+	# synchronizer, so this can legitimately be unset.
+	if synchronizer:
+		synchronizer.mark_dirty_by_path(stat_path(stat_name), value, false)
 
 
 ## Additive modification.

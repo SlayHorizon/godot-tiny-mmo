@@ -27,11 +27,18 @@ const BASE_STATS: Dictionary[StringName, float] = {
 @export var attributes: Dictionary[StringName, int]
 @export var available_attributes_points: int
 
-@export var level: int
+@export var level: int = 1
+## Character experience toward the next level (resets to the overflow on level-up).
+@export var experience: int
 
 ## Profession skills: skill_name (&"mining", &"woodcutting", ...) -> {"level": int, "xp": int}.
 ## Generalizes to any gathering/crafting profession; persisted as JSON.
 @export var skills: Dictionary
+
+## Quests: quest_id (int) -> {"state": StringName, "progress": Dictionary(obj_index:int -> count:int)}.
+## state is &"active" or &"turned_in". COLLECT objectives are derived from inventory live,
+## so only KILL/CRAFT counts live in "progress". Persisted as JSON.
+@export var quests: Dictionary
 
 ## The guild currently selected as the player's active guild.
 @export var active_guild_id: int
@@ -76,6 +83,64 @@ func init(
 func level_up() -> void:
 	available_attributes_points += ATTRIBUTE_POINTS_PER_LEVEL
 	level += 1
+
+
+## Baseline character xp needed to advance a level (scales with current level).
+const LEVEL_XP_BASE: int = 100
+
+
+func level_xp_to_next() -> int:
+	return LEVEL_XP_BASE * maxi(1, level)
+
+
+## Adds character experience, applying any level-ups (each grants attribute points via
+## level_up). Returns {"level", "experience", "levels_gained", "points_gained"} so the
+## caller can report progress to the client.
+# --- Quests ---
+
+func quest_state(quest_id: int) -> StringName:
+	return (quests.get(quest_id, {}) as Dictionary).get("state", &"")
+
+
+func accept_quest(quest_id: int) -> void:
+	if not quests.has(quest_id):
+		quests[quest_id] = {"state": &"active", "progress": {}}
+
+
+func quest_progress(quest_id: int, objective_index: int) -> int:
+	var entry: Dictionary = quests.get(quest_id, {})
+	return int((entry.get("progress", {}) as Dictionary).get(objective_index, 0))
+
+
+## Increments a KILL/CRAFT objective's counter (only while the quest is active).
+func advance_quest(quest_id: int, objective_index: int, amount: int = 1) -> void:
+	var entry: Dictionary = quests.get(quest_id, {})
+	if entry.get("state", &"") != &"active":
+		return
+	var progress: Dictionary = entry["progress"]
+	progress[objective_index] = int(progress.get(objective_index, 0)) + amount
+
+
+func set_quest_turned_in(quest_id: int) -> void:
+	if quests.has(quest_id):
+		quests[quest_id]["state"] = &"turned_in"
+
+
+func add_experience(amount: int) -> Dictionary:
+	if amount <= 0:
+		return {"level": level, "experience": experience, "levels_gained": 0, "points_gained": 0}
+	experience += amount
+	var levels_gained: int = 0
+	while experience >= level_xp_to_next():
+		experience -= level_xp_to_next()
+		level_up()
+		levels_gained += 1
+	return {
+		"level": level,
+		"experience": experience,
+		"levels_gained": levels_gained,
+		"points_gained": levels_gained * ATTRIBUTE_POINTS_PER_LEVEL,
+	}
 
 
 ## Baseline xp needed to advance a profession skill (scales with current level).

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://cn0th484mts73"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_i8iun"]
+[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="2_i8iun"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_rc6wo"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="4_got5j"]
+
+[sub_resource type="Resource" id="Resource_87qqu"]
+script = ExtResource("1_i8iun")
+type = 2
+item = ExtResource("2_i8iun")
+metadata/_custom_type_script = "uid://dqadrvvwt3ig2"
+
+[resource]
+script = ExtResource("4_got5j")
+quest_name = "ForgeCopper"
+description = "Slay some mobs!"
+objectives = Array[ExtResource("1_i8iun")]([SubResource("Resource_87qqu")])
+reward_xp = 200
+reward_gold = 50
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"forge_quest_1"
+metadata/id = 2

@@ -10,6 +10,11 @@ signal dm_requested(id: int)
 ## Emitted on the client after a successful gather (mining, ...). Carries the
 ## gather result so UI can refresh xp/inventory.
 signal gather_succeeded(result: Dictionary)
+## The quest currently shown on the HUD tracker changed (0 = none).
+signal tracked_quest_changed(quest_id: int)
+
+## Quest id pinned to the HUD tracker (manually via the log, or the latest accepted).
+var tracked_quest_id: int
 ## Emitted whenever the active input type changes. [br]
 ## [b]Example[/b]: switching from keyboard to gamepad.
 signal input_changed(input_type: InputComponent.InputType)
@@ -45,10 +50,32 @@ func _ready() -> void:
 	Client.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)
+	Client.subscribe(&"combat.reward", _on_combat_reward)
+	Client.subscribe(&"quest.update", func(data: Dictionary):
+		for message: String in data.get("messages", []):
+			Toaster.toast(message)
+	)
 
 	settings.load_file()
 	settings.setting_changed.connect(_on_setting_changed)
 	language = settings.data.get(&"general", {}).get(&"language", "en_US")
+
+
+## Server-pushed kill rewards: surface them as toasts.
+func _on_combat_reward(data: Dictionary) -> void:
+	var xp: int = int(data.get("xp", 0))
+	if xp > 0:
+		Toaster.toast("+%d XP" % xp)
+	for entry: Dictionary in data.get("loot", []):
+		Toaster.toast("Looted %d %s" % [int(entry.get("amount", 1)), str(entry.get("name", "item"))])
+	if int(data.get("levels_gained", 0)) > 0:
+		Toaster.toast("Level %d! +%d attribute points" % [int(data.get("level", 1)), int(data.get("points_gained", 0))])
+
+
+## Pin a quest to the HUD tracker (from the quest log, or auto on accept).
+func set_tracked_quest(quest_id: int) -> void:
+	tracked_quest_id = quest_id
+	tracked_quest_changed.emit(quest_id)
 
 
 func _on_setting_changed(section: StringName, property: StringName, new_value: Variant) -> void:

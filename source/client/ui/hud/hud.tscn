@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://brq8mxox5bclj" path="res://source/client/ui/hud/menu_overlay.gd" id="4_cx7qp"]
 [ext_resource type="Script" uid="uid://claf178meo0f7" path="res://source/client/ui/hud/notification_popup.gd" id="6_yow4d"]
 [ext_resource type="PackedScene" uid="uid://l5oto05m20wi" path="res://source/client/ui/hud/touch_stick/twin_sticks.tscn" id="7_popxh"]
+[ext_resource type="Script" uid="uid://clicvxchvi5an" path="res://source/client/ui/hud/quest_tracker.gd" id="8_qtrack"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
 bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
@@ -150,6 +151,19 @@ value = 66.0
 allow_greater = true
 show_percentage = false
 metadata/_edit_group_ = true
+
+[node name="LevelLabel" type="Label" parent="Resources/ExperienceBar" unique_id=1453923556]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -44.0
+offset_top = -10.0
+offset_right = -6.0
+offset_bottom = 10.0
+grow_vertical = 2
+text = "Lv 1"
+vertical_alignment = 1
 
 [node name="ResourceBar" type="ProgressBar" parent="Resources" unique_id=1668640601]
 custom_minimum_size = Vector2(200, 5)
@@ -360,6 +374,40 @@ text = "Cancel"
 custom_minimum_size = Vector2(95, 40)
 layout_mode = 2
 text = "Confirm"
+
+[node name="DeathScreen" type="ColorRect" parent="." unique_id=102476699]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12156863, 0.015686275, 0.015686275, 0.5019608)
+
+[node name="Label" type="Label" parent="DeathScreen" unique_id=291690374]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "You died"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuestTracker" type="PanelContainer" parent="." unique_id=1289632756]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 1
+offset_left = 603.0
+offset_top = 10.0
+offset_right = 783.0
+offset_bottom = 38.0
+mouse_filter = 2
+script = ExtResource("8_qtrack")
 
 [connection signal="pressed" from="MenuButtons/HBoxContainer/NotificationButton" to="." method="_on_notification_button_pressed"]
 [connection signal="pressed" from="MenuButtons/HBoxContainer/MenuButton" to="." method="_on_overlay_menu_button_pressed"]

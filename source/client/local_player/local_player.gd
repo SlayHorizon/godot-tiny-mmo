@@ -9,6 +9,11 @@ var input_direction: Vector2 = Vector2.ZERO
 var look_direction: Vector2 = Vector2.ZERO
 var action_input: bool = false
 
+## While dead, input/movement are locked so the player can't act or drift; the respawn
+## teleport is applied locally (position is client-authoritative).
+var _dead: bool = false
+var _respawn_position: Vector2
+
 var fid_position: int
 var fid_flipped: int
 var fid_anim: int
@@ -33,6 +38,19 @@ func _ready() -> void:
 	
 	_apply_settings()
 	ClientState.settings.setting_changed.connect(_on_settings_changed)
+	Client.subscribe(&"player.died", _on_player_died)
+
+
+## Lock control while dead, then teleport ourselves to the spawn point (the server owns
+## HP + the dead flag; position is ours to set).
+func _on_player_died(data: Dictionary) -> void:
+	_dead = true
+	_respawn_position = data.get("spawn", global_position)
+	await get_tree().create_timer(float(data.get("respawn_in", 3.0))).timeout
+	if not is_instance_valid(self):
+		return
+	global_position = _respawn_position
+	_dead = false
 
 
 func _physics_process(delta: float) -> void:
@@ -43,13 +61,17 @@ func _physics_process(delta: float) -> void:
 
 
 func process_movement() -> void:
+	if _dead:
+		velocity = Vector2.ZERO
+		return
 	velocity = input_direction * speed
 	move_and_slide()
 
 
 func process_input() -> void:
-	if _has_gui_focus():
+	if _dead or _has_gui_focus():
 		input_direction = Vector2.ZERO
+		action_input = false
 		return
 
 	input_direction = controller.get_move_direction()
@@ -63,6 +85,12 @@ func process_input() -> void:
 
 
 func process_animation(delta: float) -> void:
+	if _dead:
+		# Play (and hold) the death pose instead of input-driven locomotion. Synced to
+		# other clients via the :anim field like any other animation.
+		if anim != Animations.DEATH:
+			anim = Animations.DEATH
+		return
 	flipped = look_direction.x < 0
 	update_hand_pivot(delta)
 	anim = Animations.RUN if input_direction else Animations.IDLE

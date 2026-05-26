@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dm4es1smo6nxw" path="res://source/client/ui/menus/inventory/stats_panel.gd" id="2_stats"]
 [ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/menus/inventory/attributes_panel.gd" id="3_attr"]
 [ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="4_jobs"]
+[ext_resource type="Script" path="res://source/client/ui/menus/character/quest_log_panel.gd" id="5_questlog"]
 
 [node name="Character" type="Control" unique_id=1468206702]
 layout_mode = 3
@@ -33,7 +34,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Card" type="PanelContainer" parent="CenterContainer" unique_id=917800863]
-custom_minimum_size = Vector2(890, 340)
+custom_minimum_size = Vector2(890, 500)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Card" unique_id=1978927567]
@@ -65,6 +66,7 @@ text = "Close"
 [node name="TabContainer" type="TabContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer" unique_id=1836666072]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
 current_tab = 0
 
 [node name="Stats" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer" unique_id=1986628126]
@@ -209,5 +211,27 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 10
+
+[node name="Quests" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+script = ExtResource("5_questlog")
+metadata/_tab_index = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Quests"]
+layout_mode = 2
+text = "Quests"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Quests"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="QuestLogList" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Quests/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
 
 [connection signal="pressed" from="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar/CloseButton" to="." method="_on_close_button_pressed"]

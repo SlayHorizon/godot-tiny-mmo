@@ -71,6 +71,12 @@ func perform_action(action_index: int, direction: Vector2) -> void:
 				character.weapon_state_machine.travel(&"weapon_idle")
 
 
+## NPC / auto use: fire one uncharged arrow immediately (skips the charge/release
+## sequence players go through).
+func auto_attack(direction: Vector2) -> void:
+	shoot_arrow(character, direction)
+
+
 func process_input(local_player: LocalPlayer) -> void:
 	var now: float = Time.get_ticks_msec() / 1000.0
 	var controller: InputComponent = local_player.controller
