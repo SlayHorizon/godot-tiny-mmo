@@ -40,6 +40,7 @@
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="38_dk1bj"]
 [ext_resource type="Resource" uid="uid://b0xp3rulvro2u" path="res://source/common/gameplay/quests/resources/slay_quest_1.tres" id="39_uw01f"]
 [ext_resource type="Resource" uid="uid://cn0th484mts73" path="res://source/common/gameplay/quests/resources/forge_quest_1.tres" id="40_dk1bj"]
+[ext_resource type="Script" uid="uid://b2j8gyjph35qx" path="res://source/common/gameplay/trade/trade_table.gd" id="41_uw01f"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ovmn0"]
 radius = 51.48361
@@ -57,6 +58,9 @@ size = Vector2(36.136353, 27.279724)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ovmn0"]
 size = Vector2(48.993896, 43.498413)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gn54b"]
+size = Vector2(63.99997, 48)
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -419,3 +423,20 @@ offset_top = -6.501587
 offset_right = 39.993896
 offset_bottom = 14.498413
 text = "Quest giver"
+
+[node name="TradeTable" type="Area2D" parent="." unique_id=2068431475]
+position = Vector2(539.59576, 938.9707)
+script = ExtResource("41_uw01f")
+table_id = 1
+metadata/_custom_type_script = "uid://b2j8gyjph35qx"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TradeTable" unique_id=1308336910]
+position = Vector2(4.404236, -2.9707031)
+shape = SubResource("RectangleShape2D_gn54b")
+
+[node name="Label" type="Label" parent="TradeTable" unique_id=134483740]
+offset_left = -35.595764
+offset_top = -18.970703
+offset_right = 48.404236
+offset_bottom = 2.0292969
+text = "Trade table "

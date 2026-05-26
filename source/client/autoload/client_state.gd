@@ -15,6 +15,11 @@ signal tracked_quest_changed(quest_id: int)
 
 ## Quest id pinned to the HUD tracker (manually via the log, or the latest accepted).
 var tracked_quest_id: int
+
+## The trade table whose panel is open (0 = closed). Independent of being seated: you can
+## open a table's panel to view/join it, and closing the panel does NOT leave your seat.
+signal viewed_trade_changed(table_id: int)
+var viewed_trade_table: int
 ## Emitted whenever the active input type changes. [br]
 ## [b]Example[/b]: switching from keyboard to gamepad.
 signal input_changed(input_type: InputComponent.InputType)
@@ -76,6 +81,12 @@ func _on_combat_reward(data: Dictionary) -> void:
 func set_tracked_quest(quest_id: int) -> void:
 	tracked_quest_id = quest_id
 	tracked_quest_changed.emit(quest_id)
+
+
+## Open/close the trade panel for a table (0 = close). Does not join or leave a seat.
+func set_viewed_trade(table_id: int) -> void:
+	viewed_trade_table = table_id
+	viewed_trade_changed.emit(table_id)
 
 
 func _on_setting_changed(section: StringName, property: StringName, new_value: Variant) -> void:

@@ -59,6 +59,8 @@ var crafting_stations: Dictionary[int, CraftingStationResource]
 ## giver_id -> QuestGiver node, gathered from the quest-giver NPCs placed in this map.
 ## The server resolves which quests a giver offers (never trusts a client-sent list).
 var quest_givers: Dictionary[int, QuestGiver]
+## table_id -> TradeTable node. The server holds each table's trade session.
+var trade_tables: Dictionary[int, TradeTable]
 
 
 func _ready() -> void:
@@ -78,6 +80,8 @@ func _ready() -> void:
 			crafting_stations[int(child.station.get_meta(&"id", 0))] = child.station
 		elif child is QuestGiver:
 			quest_givers[child.giver_id] = child
+		elif child is TradeTable:
+			trade_tables[child.table_id] = child
 
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
@@ -107,6 +111,11 @@ func get_crafting_station(station_id: int) -> CraftingStationResource:
 ## The quest-giver NPC with this id in this map, or null.
 func get_quest_giver(giver_id: int) -> QuestGiver:
 	return quest_givers.get(giver_id)
+
+
+## The trade table with this id in this map, or null.
+func get_trade_table(table_id: int) -> TradeTable:
+	return trade_tables.get(table_id)
 
 
 func override_map_rules(instance_resource: InstanceResource) -> void:

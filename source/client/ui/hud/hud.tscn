@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://claf178meo0f7" path="res://source/client/ui/hud/notification_popup.gd" id="6_yow4d"]
 [ext_resource type="PackedScene" uid="uid://l5oto05m20wi" path="res://source/client/ui/hud/touch_stick/twin_sticks.tscn" id="7_popxh"]
 [ext_resource type="Script" uid="uid://clicvxchvi5an" path="res://source/client/ui/hud/quest_tracker.gd" id="8_qtrack"]
+[ext_resource type="Script" path="res://source/client/ui/hud/trade_panel.gd" id="9_trade"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
 bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
@@ -408,6 +409,16 @@ offset_right = 783.0
 offset_bottom = 38.0
 mouse_filter = 2
 script = ExtResource("8_qtrack")
+
+[node name="TradePanel" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("9_trade")
 
 [connection signal="pressed" from="MenuButtons/HBoxContainer/NotificationButton" to="." method="_on_notification_button_pressed"]
 [connection signal="pressed" from="MenuButtons/HBoxContainer/MenuButton" to="." method="_on_overlay_menu_button_pressed"]
