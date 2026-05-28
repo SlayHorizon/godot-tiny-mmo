@@ -26,15 +26,68 @@ func _on_peer_connected(peer_id: int) -> void:
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
+	var dropped: Dictionary = connected_worlds.get(peer_id, {})
 	connected_worlds.erase(peer_id)
 	print("World: %d is disconnected from WorldManager." % peer_id)
+	var world_name: String = str(dropped.get("info", {}).get("name", "world#%d" % peer_id))
+	DiscordNotifier.notify_world_disconnected(world_name)
 
 
 @rpc("any_peer")
 func fetch_server_info(info: Dictionary) -> void:
 	var game_server_id: int = multiplayer_api.get_remote_sender_id()
 	connected_worlds[game_server_id] = info
+	# Stamp connect time so the dashboard can show "connected for X minutes".
+	connected_worlds[game_server_id]["connected_at"] = int(Time.get_unix_time_from_system())
 	gateway_manager.update_worlds_info.rpc(connected_worlds)
+	var world_name: String = str(info.get("info", {}).get("name", "world#%d" % game_server_id))
+	DiscordNotifier.notify_world_connected(
+		world_name, str(info.get("address", "?")), int(info.get("port", 0))
+	)
+
+
+## Periodic snapshot push from each world. Replaces the live numbers on the
+## fetched info so the dashboard always reflects what the world is reporting.
+@rpc("any_peer")
+func heartbeat(snapshot: Dictionary) -> void:
+	var world_peer_id: int = multiplayer_api.get_remote_sender_id()
+	if not connected_worlds.has(world_peer_id):
+		return
+	connected_worlds[world_peer_id]["heartbeat"] = snapshot
+	connected_worlds[world_peer_id]["last_heartbeat_at"] = int(Time.get_unix_time_from_system())
+
+
+# --- Dashboard-driven outbound RPCs (master → world) ---
+
+## Tell the world with this peer_id to flush all players to DB + backup.
+func tell_world_to_save(world_peer_id: int) -> bool:
+	if not connected_worlds.has(world_peer_id):
+		return false
+	master_save.rpc_id(world_peer_id)
+	return true
+
+
+## Tell the world to shut down gracefully (save then quit).
+func tell_world_to_shutdown(world_peer_id: int) -> bool:
+	if not connected_worlds.has(world_peer_id):
+		return false
+	master_shutdown.rpc_id(world_peer_id)
+	return true
+
+
+## Push a system message to every connected player on this world.
+func tell_world_to_broadcast(world_peer_id: int, message: String) -> bool:
+	if not connected_worlds.has(world_peer_id):
+		return false
+	master_broadcast.rpc_id(world_peer_id, message)
+	return true
+
+
+# Stubs declared so Godot's RPC table accepts the outbound calls. World side
+# implements the actual behavior in WorldManagerClient.
+@rpc("authority") func master_save() -> void: pass
+@rpc("authority") func master_shutdown() -> void: pass
+@rpc("authority") func master_broadcast(_message: String) -> void: pass
 
 
 @rpc("authority")

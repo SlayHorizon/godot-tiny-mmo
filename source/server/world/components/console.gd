@@ -102,8 +102,9 @@ func clear_console() -> void:
 
 
 func save() -> void:
-	database.save_world_database()
-	print("Saved!")
+	var saved: int = database.save_all_connected(world_server.connected_players)
+	var backed_up: bool = database.backup_database()
+	print("Saved %d player(s). Backup: %s." % [saved, "ok" if backed_up else "FAILED"])
 
 
 func shutdown() -> void:

@@ -2,6 +2,11 @@ extends DataRequestHandler
 
 
 func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictionary) -> Dictionary:
+	# Anti-spam: 5 messages per 10s per peer. Generous for normal chat, blocks
+	# bot-style flooding. Tune in one place if it turns out to be too tight.
+	if not RateLimiter.check(peer_id, &"chat.send", 5, 10_000):
+		return {"error": 4, "ok": false, "message": "Slow down."}
+
 	var player: PlayerResource = instance.world_server.connected_players.get(peer_id)
 	if player == null:
 		return {"error": 1, "ok": false, "message": "Player not registered."}

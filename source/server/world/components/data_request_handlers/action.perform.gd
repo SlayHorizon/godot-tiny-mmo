@@ -6,6 +6,12 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
+	# Anti-DoS: 20 attack RPCs per second per peer. Weapon cooldowns inside
+	# perform_action already drop excess calls, but this short-circuits before
+	# the broadcast so a flooder can't even reach propagate_rpc.
+	if not RateLimiter.check(peer_id, &"action.perform", 20, 1_000):
+		return {}
+
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
 	if not player:
 		return {}

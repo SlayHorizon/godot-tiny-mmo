@@ -24,6 +24,12 @@ extends Area2D
 
 
 func _ready() -> void:
+	# Loud warning for a common setup miss: master_id left at the default 0
+	# means the server's get_duel_master(0) lookup fails on every click. We
+	# could clamp it server-side, but a warning here points to the actual
+	# misconfigured node by name.
+	if master_id <= 0:
+		push_warning("DuelMaster '%s' has master_id=%d. Set a unique positive id in the inspector or it'll fail every lookup." % [name, master_id])
 	if multiplayer.is_server():
 		input_pickable = false
 		return

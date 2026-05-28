@@ -37,6 +37,90 @@ func _on_connection_succeeded() -> void:
 			"population": world_server.connected_players.size()
 		}
 	)
+	# Start the heartbeat once we're attached. Master uses it to drive the
+	# dashboard's live "online players / instances" columns and to know whether
+	# a world is still responsive.
+	_start_heartbeat()
+
+
+## Push a fresh snapshot to the master every HEARTBEAT_SECONDS so the dashboard
+## shows live numbers without each request hitting every world directly.
+const HEARTBEAT_SECONDS: float = 10.0
+
+func _start_heartbeat() -> void:
+	if has_node(^"HeartbeatTimer"):
+		return
+	var t: Timer = Timer.new()
+	t.name = "HeartbeatTimer"
+	t.wait_time = HEARTBEAT_SECONDS
+	t.autostart = true
+	t.timeout.connect(_send_heartbeat)
+	add_child(t)
+	# Send one immediately so the master has data before the first tick.
+	_send_heartbeat()
+
+
+func _send_heartbeat() -> void:
+	if multiplayer == null or not multiplayer.has_multiplayer_peer():
+		return
+	heartbeat.rpc_id(1, _build_snapshot())
+
+
+func _build_snapshot() -> Dictionary:
+	var instance_count: int = 0
+	if world_server.instance_manager != null:
+		for res: InstanceResource in world_server.instance_manager.instance_collection.values():
+			instance_count += res.charged_instances.size()
+	return {
+		"name": str(world_info.get("name", "world")),
+		"population": world_server.connected_players.size(),
+		"instances": instance_count,
+		"uptime_s": int(Time.get_ticks_msec() / 1000.0),
+		"ts": int(Time.get_unix_time_from_system()),
+	}
+
+
+# --- RPC: world receives from master ---
+
+@rpc("any_peer")
+func heartbeat(_snapshot: Dictionary) -> void:
+	# Server-bound payload — declared so Godot's RPC table accepts the call;
+	# the master side overrides this with its own implementation.
+	pass
+
+
+## Master tells this world to flush all connected players + snapshot the DB.
+@rpc("authority")
+func master_save() -> void:
+	if world_server == null or database == null:
+		return
+	var saved: int = database.save_all_connected(world_server.connected_players)
+	var ok: bool = database.backup_database()
+	Logger.info("Dashboard 'save' triggered: %d player(s), backup %s." % [saved, "ok" if ok else "FAILED"])
+
+
+## Master tells this world to shut down gracefully. Final save runs first.
+@rpc("authority")
+func master_shutdown() -> void:
+	if world_server == null or database == null:
+		return
+	Logger.info("Dashboard 'shutdown' triggered — saving + quitting.")
+	database.save_all_connected(world_server.connected_players)
+	database.backup_database()
+	get_tree().quit.call_deferred()
+
+
+## Master pushes a system message to every connected player in this world.
+@rpc("authority")
+func master_broadcast(message: String) -> void:
+	if world_server == null or world_server.chat_service == null:
+		return
+	for peer_id: int in world_server.connected_players:
+		var player: PlayerResource = world_server.connected_players[peer_id]
+		if player == null:
+			continue
+		world_server.chat_service.push_system_to_player(null, player.player_id, "[Broadcast] " + message)
+	Logger.info("Dashboard broadcast sent: %s" % message)
 
 
 func _on_connection_failed() -> void:

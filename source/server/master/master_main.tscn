@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dx6y8xcifn6f8" path="res://source/server/master/components/master_gateway_server/master_gateway_server.gd" id="2_hsh87"]
 [ext_resource type="Script" uid="uid://bcbl4b333f5l5" path="res://source/server/master/components/master_world_server/master_world_server.gd" id="3_qbesc"]
 [ext_resource type="Script" uid="uid://d2cmewfb6gey3" path="res://source/server/master/components/authentication_manager.gd" id="4_1tf2k"]
-[ext_resource type="Script" uid="uid://bl6x46qvpl35i" path="res://source/server/master/dashboard/admin_http_server.gd" id="5_4vnpi"]
+[ext_resource type="Script" path="res://source/server/master/dashboard/dashboard_server.gd" id="5_4vnpi"]
 
 [node name="MasterMain" type="Node" unique_id=31798444]
 script = ExtResource("1_6d3fm")

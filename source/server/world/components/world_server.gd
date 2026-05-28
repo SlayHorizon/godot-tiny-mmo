@@ -38,6 +38,22 @@ func start_world_server() -> void:
 	chat_service.setup_with_db(database.db)
 	$InstanceManager.start_instance_manager()
 
+	# Periodic save + backup. 5 minutes balances "low data loss on crash"
+	# against "no churning the disk every second." backup_database keeps the
+	# last 10 snapshots, so we get ~50 minutes of recoverable history.
+	var save_timer: Timer = Timer.new()
+	save_timer.name = "PeriodicSaveTimer"
+	save_timer.wait_time = 5.0 * 60.0
+	save_timer.autostart = true
+	save_timer.timeout.connect(_on_periodic_save)
+	add_child(save_timer)
+
+
+func _on_periodic_save() -> void:
+	var saved: int = database.save_all_connected(connected_players)
+	var ok: bool = database.backup_database()
+	Logger.info("Periodic save: %d player(s) flushed, backup %s." % [saved, "ok" if ok else "FAILED"])
+
 
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 	api.peer_connected.connect(_on_peer_connected)
@@ -49,14 +65,16 @@ func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 
 
 func _on_peer_connected(peer_id: int) -> void:
-	print("Peer: %d is connected." % peer_id)
+	Logger.info("Peer %d connected." % peer_id)
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
-	print("Peer: %d is disconnected." % peer_id)
+	Logger.info("Peer %d disconnected." % peer_id)
 	# Sparring: if mid-match, end it before we tear down so the survivor gets
 	# the win + teleport instead of being stranded in the arena.
 	SparringService.on_peer_disconnected(peer_id)
+	# Drop rate-limit counters so a reconnect starts with a clean window.
+	RateLimiter.forget(peer_id)
 
 	world_manager.player_disconnected.rpc_id(1, connected_players[peer_id].account_name)
 	var player: PlayerResource = connected_players.get(peer_id)
