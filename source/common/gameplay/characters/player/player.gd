@@ -28,10 +28,24 @@ const RESPAWN_DELAY: float = 3.0
 ## Staying dead during the delay also makes nearby enemies drop aggro (they ignore dead
 ## targets) instead of trailing the corpse.
 func die(_killer: Character) -> void:
+	# Leaderboard: credit the killer if this was a player-vs-player kill. NPC
+	# killers are filtered out inside record_pvp_kill.
+	LeaderboardService.record_pvp_kill(_killer)
+
+	# Default spawn = map's spawn point.
 	var spawn_position: Vector2 = Vector2.ZERO
 	var map: Map = get_parent() as Map
 	if map:
 		spawn_position = map.get_spawn_position()
+
+	# Sparring: override to the duel master's position BEFORE ending the match
+	# (on_player_died_in_match clears in_match and would un-resolve us otherwise).
+	# Then end the match so wins/losses are tallied and the opponent is healed.
+	if player_resource != null and player_resource.in_match:
+		var sparring_pos: Vector2 = SparringService.return_position_for(self)
+		if sparring_pos != Vector2.ZERO:
+			spawn_position = sparring_pos
+		SparringService.on_player_died_in_match(self, _killer)
 
 	var peer_id: int = int(player_resource.current_peer_id)
 	if peer_id > 0:

@@ -283,13 +283,22 @@ func on_client_delta(bytes: PackedByteArray) -> void:
 	if eid != sender:
 		return
 
-	# TODO (important): validate pairs against a whitelist of writable fields.
-	# For now, apply then re-mark to echo back in next tick (prediction-friendly).
+	# Whitelist: a client may only write its own movement/animation fields. Everything
+	# else (health, stats, zone_flags, equipment slots, ...) is server-authoritative, so
+	# drop any non-owned field a crafted client tries to push.
+	var allowed: Array = []
+	for pair: Array in pairs:
+		if pair.size() >= 2 and _is_client_owned(int(pair[0])):
+			allowed.append(pair)
+	if allowed.is_empty():
+		return
+
+	# Apply then re-mark to echo back next tick (prediction-friendly).
 	var syn: StateSynchronizer = entities.get(eid, null)
-	if syn != null and pairs.size() > 0:
-		syn.apply_delta(pairs)
-		syn.mark_many_by_id(pairs, false)
-		_track_client_pairs(eid, pairs)
+	if syn != null:
+		syn.apply_delta(allowed)
+		syn.mark_many_by_id(allowed, false)
+		_track_client_pairs(eid, allowed)
 
 
 

@@ -40,7 +40,15 @@ func apply_profile(profile: Dictionary) -> void:
 
 	add_stats(stats)
 	set_player_character(player_skin, animation)
+
+	# Character name (nickname) + public account handle, e.g. "John  @guest1".
+	# The permanent player_id (#id) is only sent to staff viewers.
 	name_label.text = player_name
+	var account_name: String = profile.get("account_name", "")
+	if not account_name.is_empty():
+		name_label.text += "  @%s" % account_name
+	if profile.get("staff_view", false):
+		name_label.text += "  #%d" % int(profile.get("id", 0))
 	if profile.get("guild_name", ""):
 		name_label.text += " (%s)" % profile.get("guild_name", "")
 

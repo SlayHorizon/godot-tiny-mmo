@@ -330,6 +330,14 @@ func _reward_killer(killer: Player) -> void:
 	if peer_id > 0 and not quest_updates.is_empty():
 		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
 
+	# Basing: if the kill happened inside a territory the killer's guild owns,
+	# credit the 200-kill Glory counter. No-op for solo or out-of-territory kills.
+	BasingService.on_pve_kill(killer)
+
+	# Leaderboard: every PvE kill counts toward the killer's daily/weekly/total
+	# PvE rankings (independent from the basing kill counter).
+	LeaderboardService.record_pve_kill(killer)
+
 
 ## Rolls each loot entry; returns [{ "id", "amount", "name" }, ...].
 func _roll_loot() -> Array:

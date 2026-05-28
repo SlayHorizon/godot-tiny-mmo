@@ -40,6 +40,7 @@ func save_player(player: PlayerResource) -> void:
 
 	var friends_json: String = JSON.stringify(player.friends)
 	var server_roles_json: String = JSON.stringify(player.server_roles)
+	var stats_json: String = JSON.stringify(player.lb_stats)
 
 	var joined_guild_ids_json: String = JSON.stringify(player.joined_guild_ids)
 
@@ -47,9 +48,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, server_roles_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, server_roles_json, stats_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -69,6 +70,7 @@ func save_player(player: PlayerResource) -> void:
 			quests_json,
 			friends_json,
 			server_roles_json,
+			stats_json,
 
 			player.active_guild_id,
 			joined_guild_ids_json,
@@ -126,9 +128,30 @@ func get_account_characters(account_name: String) -> Dictionary:
 	return out
 
 
+## Returns the persisted ownership of a flag, or {} if no row exists (flag never
+## captured — treat as unowned, full HP, no grace period).
+func get_flag_state(flag_id: int) -> Dictionary:
+	db.query_with_bindings(
+		"SELECT flag_id, owner_guild_id, last_capture_ms FROM flags WHERE flag_id=?;",
+		[flag_id]
+	)
+	if db.query_result.is_empty():
+		return {}
+	return db.query_result[0]
+
+
+## Upsert flag ownership. Called on every capture so the territory survives a
+## restart. Writes are rare (capture events) so no batching needed.
+func save_flag_state(flag_id: int, owner_guild_id: int, last_capture_ms: int) -> void:
+	db.query_with_bindings(
+		"INSERT OR REPLACE INTO flags(flag_id, owner_guild_id, last_capture_ms) VALUES(?, ?, ?);",
+		[flag_id, owner_guild_id, last_capture_ms]
+	)
+
+
 func get_player_profile_row(player_id: int) -> Dictionary:
 	db.query_with_bindings(
-		"SELECT player_id, display_name, skin_id, level, inventory_json, profile_status, profile_animation, active_guild_id "
+		"SELECT player_id, account_name, display_name, skin_id, level, inventory_json, profile_status, profile_animation, active_guild_id "
 		+ "FROM players WHERE player_id=?;",
 		[player_id]
 	)
@@ -199,6 +222,9 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 
 	player.server_roles = JSON.parse_string(str(row.get("server_roles_json", "{}"))) as Dictionary
 
+	var lb_stats_v: Variant = JSON.parse_string(str(row.get("stats_json", "{}")))
+	player.lb_stats = lb_stats_v if lb_stats_v is Dictionary else {}
+
 	player.active_guild_id = int(row.get("active_guild_id", 0))
 
 	var joined_v: Variant = JSON.parse_string(str(row.get("joined_guild_ids_json", "[]")))
@@ -244,6 +270,12 @@ func get_guild(guild_id: int) -> Guild:
 		var ranks: Array = data.get("ranks", Guild.DEFAULT_RANKS)
 		guild.ranks.assign(ranks)
 
+		# Glory state — defaults to 0 for guilds that pre-dated this column.
+		guild.seasonal_glory = int(data.get("seasonal_glory", 0))
+		guild.eternal_glory = int(data.get("eternal_glory", 0))
+		guild.total_sg_ever = int(data.get("total_sg_ever", 0))
+		guild.kill_counter_for_glory = int(data.get("kill_counter_for_glory", 0))
+
 	# members
 	db.query_with_bindings("SELECT player_id, rank FROM guild_members WHERE guild_id=?;", [guild_id])
 	guild.members = {}
@@ -258,7 +290,11 @@ func save_guild(guild: Guild) -> void:
 		"motd": guild.motd,
 		"description": guild.description,
 		"logo_id": guild.logo_id,
-		"ranks": guild.ranks
+		"ranks": guild.ranks,
+		"seasonal_glory": guild.seasonal_glory,
+		"eternal_glory": guild.eternal_glory,
+		"total_sg_ever": guild.total_sg_ever,
+		"kill_counter_for_glory": guild.kill_counter_for_glory,
 	})
 
 	db.query_with_bindings(

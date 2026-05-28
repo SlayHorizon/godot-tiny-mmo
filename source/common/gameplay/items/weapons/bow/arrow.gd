@@ -36,7 +36,24 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body == source or body is not Character:
+	if body == source:
+		return
+
+	# Flags are damageable by any player projectile — bypass character-vs-character
+	# rules (PvP zones, NPC friendly-fire) since a flag isn't a combatant.
+	if body is TerritoryFlag:
+		if source is not Player:
+			return
+		var flag_damage: float = 10.0
+		if source is Character:
+			flag_damage = maxf(flag_damage, source.stats_component.get_stat(Stat.AD))
+		body.take_damage(flag_damage, source if source is Character else null)
+		if not piercing or pierce_left <= 0:
+			queue_free()
+		pierce_left -= 1
+		return
+
+	if body is not Character:
 		return
 
 	# No NPC-vs-NPC friendly fire (until proper teams exist).
@@ -44,8 +61,11 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 
 	# Player-vs-player only lands in PvP zones; NPC->player (PvE) damage always lands.
+	# Sparring is the explicit exception: if both fighters are in a live match
+	# (countdown over), zone rules don't matter — the arena hosts the fight.
 	if body is Player and source is Player and not body.is_pvp():
-		return
+		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
+			return
 
 	# Damage scales with the shooter's Attack (falls back to a small base), and is
 	# mitigated by the target's armor inside take_damage.

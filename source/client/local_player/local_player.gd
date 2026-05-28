@@ -39,6 +39,12 @@ func _ready() -> void:
 	_apply_settings()
 	ClientState.settings.setting_changed.connect(_on_settings_changed)
 	Client.subscribe(&"player.died", _on_player_died)
+	# Sparring: explicit teleport push at match start (to spawn) and end (back
+	# to the duel master). State-sync deltas alone can't move the LocalPlayer
+	# because process_movement overwrites with current input each frame; we
+	# need to actually set the position here AND freeze input briefly so the
+	# player doesn't run off the spot they were teleported to.
+	Client.subscribe(&"sparring.match.state", _on_sparring_match_state)
 
 
 ## Lock control while dead, then teleport ourselves to the spawn point (the server owns
@@ -53,6 +59,18 @@ func _on_player_died(data: Dictionary) -> void:
 	_dead = false
 
 
+## Server-driven teleport for the start/end of a sparring match. Pushes carry
+## the new position; we apply it and freeze input briefly so the player
+## doesn't immediately walk off the spot.
+var _teleport_lock_until_ms: int = 0
+
+func _on_sparring_match_state(payload: Dictionary) -> void:
+	var pos: Variant = payload.get("position", null)
+	if pos is Vector2 and pos != Vector2.ZERO:
+		global_position = pos
+		_teleport_lock_until_ms = Time.get_ticks_msec() + 500
+
+
 func _physics_process(delta: float) -> void:
 	process_input()
 	process_movement()
@@ -61,7 +79,7 @@ func _physics_process(delta: float) -> void:
 
 
 func process_movement() -> void:
-	if _dead:
+	if _dead or Time.get_ticks_msec() < _teleport_lock_until_ms:
 		velocity = Vector2.ZERO
 		return
 	velocity = input_direction * speed
@@ -69,7 +87,7 @@ func process_movement() -> void:
 
 
 func process_input() -> void:
-	if _dead or _has_gui_focus():
+	if _dead or _has_gui_focus() or Time.get_ticks_msec() < _teleport_lock_until_ms:
 		input_direction = Vector2.ZERO
 		action_input = false
 		return

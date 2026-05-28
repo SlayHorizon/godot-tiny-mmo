@@ -48,6 +48,18 @@ const DEFAULT_RANKS: Array[Dictionary] = [
 ## Each element: {"id": int, "name": String, "permissions": int, "grade": int}
 @export var ranks: Array[Dictionary] = DEFAULT_RANKS
 
+# --- Basing / Glory ---
+## Current-season Glory. Resets to 0 on each season rollover.
+@export var seasonal_glory: int = 0
+## Permanent Glory. Never reset.
+@export var eternal_glory: int = 0
+## Cumulative SG ever earned across all seasons — used only to compute EG so the
+## 10:3 conversion is stateless and can't drift after season resets.
+@export var total_sg_ever: int = 0
+## Rolling count of kills-in-owned-territory contributed by guild members.
+## Every KILLS_PER_GLORY hits grants +1 SG and the counter rolls over.
+@export var kill_counter_for_glory: int = 0
+
 
 func add_member(player_id: int) -> void:
 	members[player_id] = 2

@@ -3,7 +3,10 @@ extends ChatCommand
 
 func _init():
 	command_name = 'selfadmin'
-	command_priority = 2
+	# Debug-only convenience. In a release build the priority is set ABOVE the
+	# highest role (senior_admin = 100) so it is unreachable — otherwise an admin
+	# (priority 2) could use it to escalate themselves to senior_admin (100).
+	command_priority = 101
 
 	# For debugging
 	if OS.has_feature("debug") or OS.has_feature("editor"):

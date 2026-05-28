@@ -263,7 +263,12 @@ func push_system_to_player(instance: ServerInstance, player_id: int, text: Strin
 		"time_ms": now_ms,
 	}
 
-	var ws: WorldServer = instance.world_server
+	# instance is just a handle to the WorldServer for peer-id lookup; some
+	# callers (e.g. BasingService scheduled ticks) don't have a per-instance
+	# context, so fall back to WorldServer.curr when null.
+	var ws: WorldServer = instance.world_server if instance != null else WorldServer.curr
+	if ws == null:
+		return
 	var peer_id: int = int(ws.player_id_to_peer_id.get(player_id, 0))
 	if peer_id > 0:
 		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", pushed)

@@ -3,8 +3,7 @@ extends ChatCommand
 
 func _init() -> void:
 	command_name = "gold"
-	# TODO: raise to admin-only (priority) before release. 0 = anyone, for prototyping.
-	command_priority = 0
+	command_priority = 100 # senior_admin
 
 
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:

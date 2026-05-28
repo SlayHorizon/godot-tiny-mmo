@@ -16,6 +16,12 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	if chat_service == null:
 		return {"error": 2, "ok": false, "message": "Chat service not available."}
 
+	# Muted players can't send to any channel or DM. We push a system message
+	# back so they know it's blocked (not a network bug).
+	if MuteList.is_muted(player.player_id):
+		chat_service.push_system_to_player(instance, player.player_id, "You are muted and cannot send messages.")
+		return {"error": 3, "ok": false, "message": "muted"}
+
 	# DM path
 	var dm_target_id: int = int(args.get("dm_target_id", 0))
 	if dm_target_id > 0:

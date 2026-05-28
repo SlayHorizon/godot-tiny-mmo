@@ -47,17 +47,4 @@ func has_command_permission(
 	instance: ServerInstance
 ) -> bool:
 	var player: PlayerResource = instance.world_server.connected_players.get(peer_id)
-	if not player:
-		return false
-
-	# Check if command is possible by default.
-	if command.command_priority <= 0:
-		return true
-	
-	var player_roles: Dictionary = player.server_roles
-	for role in player_roles:
-		var role_data = instance.global_role_definitions[role]
-		if command.command_priority <= role_data.get('priority', 0):
-			return true
-
-	return false
+	return CommandPermissions.can_run(command, player, instance)

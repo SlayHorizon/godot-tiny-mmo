@@ -52,6 +52,11 @@ const BASE_STATS: Dictionary[StringName, float] = {
 
 @export var friends: PackedInt64Array
 
+## Leaderboard counters with rolling day/week buckets. Keys:
+## pvp_kills_day/week/total, pve_kills_day/week/total, lb_bucket_day_ms, lb_bucket_week_ms.
+## Owned and rolled over by LeaderboardService.
+@export var lb_stats: Dictionary
+
 # Profile
 @export var profile_status: String = "Hello I'am new!"
 @export var profile_animation: String = "idle"
@@ -61,6 +66,12 @@ const BASE_STATS: Dictionary[StringName, float] = {
 
 ## Current Network ID
 var current_peer_id: int
+
+## True while the player is in a sparring match. Bypasses the zone PvP check
+## in projectile/melee damage. Server-side runtime only — not persisted; if a
+## player disconnects mid-match, SparringService ends the match cleanly so
+## this never lingers across sessions.
+var in_match: bool = false
 
 var stats: Dictionary
 

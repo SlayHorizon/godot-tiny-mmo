@@ -29,6 +29,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	if target_player != null:
 		# Keep DB row as base, but override fields that might be more upto date in RAM
 		row["display_name"] = target_player.display_name
+		row["account_name"] = target_player.account_name
 		row["skin_id"] = target_player.skin_id
 		row["level"] = target_player.level
 		money = Inventory.count(target_player.inventory, Economy.gold_id())
@@ -40,8 +41,15 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	var guild_id: int = int(row.get("active_guild_id", 0))
 	var guild_name: String = ws.database.store.get_guild_name(guild_id)if guild_id > 0 else ""
 
+	# Account name is the public "main" handle (like a Discord username); the
+	# character display name is just a nickname and may not be unique. The
+	# permanent player_id is shown only to staff (moderator and up).
+	var mod_priority: int = int(instance.global_role_definitions.get("moderator", {}).get("priority", 1))
+	var staff_view: bool = CommandPermissions.effective_priority(from_player, instance) >= mod_priority
+
 	var profile: Dictionary = {
 		"name": str(row.get("display_name", "Unknown")),
+		"account_name": str(row.get("account_name", "")),
 		"skin_id": int(row.get("skin_id", 1)),
 		"stats": {
 			"money": money,
@@ -52,6 +60,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		"description": str(row.get("profile_status", "")),
 		"self": is_self,
 		"id": target_id,
+		"staff_view": staff_view,
 		"friend": (not is_self) and from_player.friends.has(target_id),
 	}
 

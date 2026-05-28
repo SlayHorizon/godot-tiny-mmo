@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=4]
+
+[ext_resource type="Script" path="res://source/client/ui/menus/leaderboard/leaderboard_menu.gd" id="1_lbmenu"]
+
+[node name="LeaderboardMenu" type="Control" node_paths=PackedStringArray("domain_buttons_box", "period_buttons_box", "period_row", "refresh_button", "close_button", "status_label", "entries_box")]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_lbmenu")
+domain_buttons_box = NodePath("CenterContainer/Card/Margin/VBox/DomainRow")
+period_buttons_box = NodePath("CenterContainer/Card/Margin/VBox/PeriodRow")
+period_row = NodePath("CenterContainer/Card/Margin/VBox/PeriodRow")
+refresh_button = NodePath("CenterContainer/Card/Margin/VBox/Header/RefreshButton")
+close_button = NodePath("CenterContainer/Card/Margin/VBox/Header/CloseButton")
+status_label = NodePath("CenterContainer/Card/Margin/VBox/StatusLabel")
+entries_box = NodePath("CenterContainer/Card/Margin/VBox/EntriesScroll/EntriesBox")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Card" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(640, 0)
+mouse_filter = 0
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/Card"]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Card/Margin"]
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/Card/Margin/VBox"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="CenterContainer/Card/Margin/VBox/Header"]
+size_flags_horizontal = 3
+text = "Leaderboard"
+
+[node name="RefreshButton" type="Button" parent="CenterContainer/Card/Margin/VBox/Header"]
+text = "↻"
+tooltip_text = "Refresh"
+
+[node name="CloseButton" type="Button" parent="CenterContainer/Card/Margin/VBox/Header"]
+text = "✕"
+
+[node name="DomainRow" type="HBoxContainer" parent="CenterContainer/Card/Margin/VBox"]
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="PeriodRow" type="HBoxContainer" parent="CenterContainer/Card/Margin/VBox"]
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/Card/Margin/VBox"]
+horizontal_alignment = 1
+modulate = Color(1, 1, 1, 0.6)
+text = "Loading..."
+
+[node name="EntriesScroll" type="ScrollContainer" parent="CenterContainer/Card/Margin/VBox"]
+custom_minimum_size = Vector2(0, 280)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EntriesBox" type="VBoxContainer" parent="CenterContainer/Card/Margin/VBox/EntriesScroll"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 2

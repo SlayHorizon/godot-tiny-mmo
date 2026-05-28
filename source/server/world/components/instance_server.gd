@@ -76,6 +76,9 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 @rpc("any_peer", "call_remote", "reliable", 0)
 func ready_to_enter_instance() -> void:
 	var peer_id: int = multiplayer.get_remote_sender_id()
+	# Ignore duplicate/spam requests so a client can't spawn ghost copies of itself.
+	if players_by_peer_id.has(peer_id):
+		return
 	spawn_player(peer_id)
 
 

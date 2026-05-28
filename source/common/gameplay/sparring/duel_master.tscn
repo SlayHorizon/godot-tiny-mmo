@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=4]
+
+[ext_resource type="Script" path="res://source/common/gameplay/sparring/duel_master.gd" id="1_duelm"]
+
+[node name="DuelMaster" type="Area2D" node_paths=PackedStringArray("spawn_a", "spawn_b")]
+script = ExtResource("1_duelm")
+spawn_a = NodePath("")
+spawn_b = NodePath("")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]

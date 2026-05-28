@@ -4,6 +4,9 @@ extends SubViewportContainer
 
 const INSTANCE_COLLECTION_PATH: String = "res://source/common/gameplay/maps/instance/instance_collection/"
 const GLOBAL_COMMANDS_PATH: String = "res://source/server/world/components/chat_command/global_commands/"
+## Name of the InstanceResource used as the jail. Create a .tres with
+## instance_name = "jail" to enable the jail system.
+const JAIL_INSTANCE_NAME: String = "jail"
 
 var loading_instances: Dictionary[InstanceResource, ServerInstance]
 var instance_collection: Dictionary[String, InstanceResource]
@@ -23,10 +26,18 @@ func start_instance_manager() -> void:
 	# Timer which will call unload_unused_instances
 	var timer: Timer = Timer.new()
 	timer.wait_time = 20.0 # 20.0 is for testing, consider increasing it
-	
+
 	timer.autostart = true
 	timer.timeout.connect(unload_unused_instances)
 	add_sibling(timer)
+
+	# Basing: territory tick — every owning guild earns +1 SG per held flag.
+	# Lower this constant temporarily if you want to watch ticks land during testing.
+	var territory_tick_timer: Timer = Timer.new()
+	territory_tick_timer.wait_time = BasingService.TERRITORY_TICK_SECONDS
+	territory_tick_timer.autostart = true
+	territory_tick_timer.timeout.connect(func(): BasingService.tick_all_territories(world_server))
+	add_sibling(territory_tick_timer)
 
 
 func setup_global_commands_and_roles() -> void:
@@ -60,6 +71,23 @@ func charge_new_instance(_map_path: String, _instance_id: String) -> void:
 ## Deal with player respawn on login. Should replace this with proper map respawn logic later?
 func _on_peer_connected(peer_id: int) -> void:
 	var player_resource: PlayerResource = world_server.connected_players[peer_id]
+
+	# Jailed players go straight to the jail instance, regardless of where they
+	# logged out. If the jail map is missing (not authored yet), fall through
+	# to normal spawn so we don't strand them in a black void.
+	if JailList.is_jailed(player_resource.player_id):
+		var jail_res: InstanceResource = instance_collection.get(JAIL_INSTANCE_NAME, null)
+		if jail_res != null:
+			var jail_inst: ServerInstance
+			if jail_res.charged_instances.is_empty():
+				jail_inst = charge_instance(jail_res)
+			else:
+				jail_inst = jail_res.get_instance(0)
+			if jail_inst != null:
+				charge_new_instance.rpc_id(peer_id, jail_res.map_path, jail_inst.name)
+				jail_inst.awaiting_peers[peer_id] = {}
+				return
+
 	var last_instance: InstanceResource = instance_collection.get(player_resource.current_instance, null)
 
 	if not last_instance or last_instance.spawn_override == InstanceResource.SpawnOverride.WORLD:
@@ -81,6 +109,15 @@ func _on_peer_connected(peer_id: int) -> void:
 
 
 func _on_player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper) -> void:
+	# Jailed players can't traverse warpers — that's the whole point of jail.
+	# We notify them once per attempt so they know it's intentional.
+	if JailList.is_jailed(player.player_resource.player_id):
+		world_server.chat_service.push_system_to_player(
+			current_instance, player.player_resource.player_id,
+			"You are jailed and cannot leave this area."
+		)
+		return
+
 	var instance_index: int = -1 # Will be useful later
 	var target_instance: ServerInstance
 	var instance_resource: InstanceResource = warper.target_instance
@@ -179,6 +216,48 @@ func unload_unused_instances() -> void:
 
 
 func get_instance_server_by_id(id: String) -> ServerInstance:
-	if self.has_node(id): 
+	if self.has_node(id):
 		return self.get_node(id)
 	return null
+
+
+## Look up which ServerInstance a peer is currently in. O(instances) but
+## instance counts are small (a few dozen at most), so this is fine for
+## staff commands.
+func find_instance_for_peer(peer_id: int) -> ServerInstance:
+	for res: InstanceResource in instance_collection.values():
+		for inst: ServerInstance in res.charged_instances:
+			if inst.connected_peers.has(peer_id):
+				return inst
+	return null
+
+
+## Move an online player straight to the jail instance. Mirrors the warper
+## handler: synchronous switch if jail is already charged, else queue until
+## the instance is ready. Silently no-ops if the jail map isn't authored yet.
+## Returns true if a teleport was scheduled.
+func send_player_to_jail(peer_id: int) -> bool:
+	var jail_res: InstanceResource = instance_collection.get(JAIL_INSTANCE_NAME, null)
+	if jail_res == null:
+		push_warning("send_player_to_jail: no '%s' instance in collection." % JAIL_INSTANCE_NAME)
+		return false
+
+	var current_inst: ServerInstance = find_instance_for_peer(peer_id)
+	if current_inst == null:
+		return false
+	var player: Player = current_inst.get_player(peer_id)
+	if player == null:
+		return false
+
+	# Already in jail — nothing to do.
+	if current_inst.instance_resource == jail_res:
+		return false
+
+	if jail_res.charged_instances.is_empty():
+		queue_charge_instance(
+			jail_res,
+			player_switch_instance.bind(0, player, current_inst)
+		)
+	else:
+		player_switch_instance(jail_res.get_instance(), 0, player, current_inst)
+	return true

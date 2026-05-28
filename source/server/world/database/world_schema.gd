@@ -39,6 +39,10 @@ static func _migration_v1(db: SQLite) -> void:
 
 		"friends_json": {"data_type": "text", "not_null": true},
 		"server_roles_json": {"data_type": "text", "not_null": true},
+		# Free-form per-player stats — currently holds leaderboard counters
+		# (pvp/pve kills × day/week/total + bucket timestamps). JSON so adding
+		# new metrics later is data-only, no schema migration.
+		"stats_json": {"data_type": "text", "not_null": true},
 
 		# Guild IDs (nullable for players without a guild)
 		"active_guild_id": {"data_type": "int", "not_null": false},
@@ -60,6 +64,15 @@ static func _migration_v1(db: SQLite) -> void:
 		"rank": {"data_type": "int", "not_null": true}
 	})
 	db.query("CREATE UNIQUE INDEX IF NOT EXISTS idx_guild_members_pk ON guild_members(guild_id, player_id);")
+
+	# Territory flags. owner_guild_id = 0 means unowned. last_capture_ms is the
+	# unix timestamp (ms) of the last capture, used to enforce the post-capture
+	# grace period. flag_id is a designer-assigned stable id on the placed node.
+	_create_table_if_missing(db, "flags", {
+		"flag_id": {"data_type": "int", "primary_key": true, "not_null": true},
+		"owner_guild_id": {"data_type": "int", "not_null": true},
+		"last_capture_ms": {"data_type": "int", "not_null": true}
+	})
 
 	_create_table_if_missing(db, "conversations", {
 		"conversation_id": {"data_type": "text", "primary_key": true, "not_null": true},

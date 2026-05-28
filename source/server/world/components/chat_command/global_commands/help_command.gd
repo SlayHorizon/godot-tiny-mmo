@@ -8,21 +8,21 @@ func _init():
 
 
 func execute(_args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
-	var player_roles: PackedStringArray
-	var possible_commands: PackedStringArray
+	var player: PlayerResource = server_instance.world_server.connected_players.get(peer_id)
 
-	player_roles = server_instance.local_role_assignments.get(peer_id, [])
-	player_roles.append("default")
-	for role: String in player_roles:
-		var role_data: Dictionary = server_instance.local_role_definitions.get(role, {})
-		if role_data:
-			possible_commands.append_array(role_data.get("commands", []))
-	
-	player_roles = server_instance.world_server.connected_players[peer_id].server_roles.keys() as PackedStringArray
-	player_roles.append("default")
-	for role: String in player_roles:
-		var role_data: Dictionary = server_instance.global_role_definitions.get(role)
-		if role_data:
-			possible_commands.append_array(role_data.get("commands", []))
+	# List every command the player is actually allowed to run, sorted by name.
+	var names: Array = server_instance.global_chat_commands.keys()
+	names.sort()
 
-	return "\n".join(possible_commands)
+	var lines: PackedStringArray = []
+	for command_name: String in names:
+		var command: ChatCommand = server_instance.global_chat_commands[command_name]
+		if CommandPermissions.can_run(command, player, server_instance):
+			var entry: String = "/" + command_name
+			if not command.command_alias.is_empty():
+				entry += " (" + ", ".join(command.command_alias) + ")"
+			lines.append(entry)
+
+	if lines.is_empty():
+		return "No commands available."
+	return "Available commands:\n" + "\n".join(lines)

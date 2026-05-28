@@ -41,6 +41,9 @@
 [ext_resource type="Resource" uid="uid://b0xp3rulvro2u" path="res://source/common/gameplay/quests/resources/slay_quest_1.tres" id="39_uw01f"]
 [ext_resource type="Resource" uid="uid://cn0th484mts73" path="res://source/common/gameplay/quests/resources/forge_quest_1.tres" id="40_dk1bj"]
 [ext_resource type="Script" uid="uid://b2j8gyjph35qx" path="res://source/common/gameplay/trade/trade_table.gd" id="41_uw01f"]
+[ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="42_gn54b"]
+[ext_resource type="Texture2D" uid="uid://don6jdlt3vpia" path="res://icon.svg" id="43_vkg56"]
+[ext_resource type="Script" uid="uid://crn8mflgu0qvy" path="res://source/common/gameplay/sparring/duel_master.gd" id="44_vkg56"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ovmn0"]
 radius = 51.48361
@@ -61,6 +64,14 @@ size = Vector2(48.993896, 43.498413)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gn54b"]
 size = Vector2(63.99997, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a6vyc"]
+size = Vector2(64, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4o7o8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vkg56"]
+size = Vector2(192, 120.00006)
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -440,3 +451,64 @@ offset_top = -18.970703
 offset_right = 48.404236
 offset_bottom = 2.0292969
 text = "Trade table "
+
+[node name="TerritoryFlag" type="StaticBody2D" parent="." unique_id=2132489171 node_paths=PackedStringArray("banner", "health_bar", "grace_label")]
+position = Vector2(417.90564, 976.7565)
+script = ExtResource("42_gn54b")
+flag_id = 1
+banner = NodePath("Banner")
+health_bar = NodePath("HealthBar")
+grace_label = NodePath("Label")
+metadata/_custom_type_script = "uid://bydt2tg3ki33r"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TerritoryFlag" unique_id=1491446629]
+position = Vector2(-1.9056396, -0.7564697)
+shape = SubResource("RectangleShape2D_a6vyc")
+
+[node name="Banner" type="Sprite2D" parent="TerritoryFlag" unique_id=1440985512]
+position = Vector2(2.09437, -0.7564392)
+scale = Vector2(0.31250015, 0.12500046)
+texture = ExtResource("43_vkg56")
+
+[node name="HealthBar" type="ProgressBar" parent="TerritoryFlag" unique_id=1724280068]
+offset_left = -33.90564
+offset_top = -32.75647
+offset_right = 38.09436
+offset_bottom = -7.7564697
+
+[node name="Label" type="Label" parent="TerritoryFlag" unique_id=1987269910]
+offset_left = -41.90564
+offset_top = 7.2435303
+offset_right = 43.397217
+offset_bottom = 28.24353
+
+[node name="DuelMaster" type="Area2D" parent="." unique_id=650273918 node_paths=PackedStringArray("spawn_a", "spawn_b", "fight_zone")]
+position = Vector2(311.89536, 1064.7109)
+script = ExtResource("44_vkg56")
+spawn_a = NodePath("Marker2D")
+spawn_b = NodePath("Marker2D2")
+fight_zone = NodePath("../FightingArea")
+metadata/_custom_type_script = "uid://crn8mflgu0qvy"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DuelMaster" unique_id=1509862831]
+shape = SubResource("RectangleShape2D_4o7o8")
+
+[node name="Label" type="Label" parent="DuelMaster" unique_id=1814341454]
+offset_left = -39.895355
+offset_top = -8.7109375
+offset_right = 41.104645
+offset_bottom = 12.2890625
+text = "DuelMaster"
+
+[node name="Marker2D" type="Marker2D" parent="DuelMaster" unique_id=1014342012]
+position = Vector2(20.920929, 105.273926)
+
+[node name="Marker2D2" type="Marker2D" parent="DuelMaster" unique_id=1806278735]
+position = Vector2(131.3265, 98.964966)
+
+[node name="FightingArea" type="Area2D" parent="." unique_id=36762985]
+position = Vector2(394.24542, 1117.879)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FightingArea" unique_id=697726663]
+position = Vector2(5.7545776, 46.12097)
+shape = SubResource("RectangleShape2D_vkg56")

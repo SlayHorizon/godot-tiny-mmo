@@ -61,6 +61,11 @@ var crafting_stations: Dictionary[int, CraftingStationResource]
 var quest_givers: Dictionary[int, QuestGiver]
 ## table_id -> TradeTable node. The server holds each table's trade session.
 var trade_tables: Dictionary[int, TradeTable]
+## flag_id -> TerritoryFlag node, gathered from the basing flags placed in this
+## map. The server resolves which flag is being damaged/captured.
+var territory_flags: Dictionary[int, TerritoryFlag]
+## master_id -> DuelMaster NPC. The server queues sparring through these.
+var duel_masters: Dictionary[int, DuelMaster]
 
 
 func _ready() -> void:
@@ -82,6 +87,10 @@ func _ready() -> void:
 			quest_givers[child.giver_id] = child
 		elif child is TradeTable:
 			trade_tables[child.table_id] = child
+		elif child is TerritoryFlag:
+			territory_flags[child.flag_id] = child
+		elif child is DuelMaster:
+			duel_masters[child.master_id] = child
 
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
@@ -116,6 +125,16 @@ func get_quest_giver(giver_id: int) -> QuestGiver:
 ## The trade table with this id in this map, or null.
 func get_trade_table(table_id: int) -> TradeTable:
 	return trade_tables.get(table_id)
+
+
+## The territory flag with this id in this map, or null.
+func get_territory_flag(flag_id: int) -> TerritoryFlag:
+	return territory_flags.get(flag_id)
+
+
+## The duel master with this id in this map, or null.
+func get_duel_master(master_id: int) -> DuelMaster:
+	return duel_masters.get(master_id)
 
 
 func override_map_rules(instance_resource: InstanceResource) -> void:
