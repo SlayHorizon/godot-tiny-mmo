@@ -1,4 +1,4 @@
-class_name Logger
+class_name ServerLog
 ## Structured server log. Lines look like:
 ##   [2026-05-28 14:32:01 UTC] [INFO] Periodic save: 4 player(s) flushed, backup ok.
 ##
@@ -7,18 +7,24 @@ class_name Logger
 ## existing server console output is unchanged) and forwards warn/error through
 ## Godot's push_warning / push_error for editor-time visibility.
 ##
+## Named ServerLog because Godot 4 already exposes a `Logger` builtin.
+##
 ## Usage:
-##   Logger.info("Peer %d authenticated as %s." % [peer_id, name])
-##   Logger.warn("Player without resource: %d" % peer_id)
-##   Logger.error("Database open failed at %s" % path)
+##   ServerLog.info("Peer %d authenticated as %s." % [peer_id, name])
+##   ServerLog.warn("Player without resource: %d" % peer_id)
+##   ServerLog.error("Database open failed at %s" % path)
 ##
 ## All methods are static; the file handle is held in a static var and rotated
 ## on day-change.
 
 const DIR: String = "user://logs"
+## In-memory ring buffer so the dashboard can fetch the recent tail without
+## reopening a file on every poll.
+const RECENT_MAX: int = 500
 
 static var _file: FileAccess
 static var _current_day: String = ""
+static var _recent: PackedStringArray = []
 
 
 static func info(msg: String) -> void:
@@ -45,9 +51,21 @@ static func _write(level: String, msg: String) -> void:
 	var ts: String = "%s %02d:%02d:%02d UTC" % [day, int(now.hour), int(now.minute), int(now.second)]
 	var line: String = "[%s] [%s] %s" % [ts, level, msg]
 	print(line)
+	_recent.append(line)
+	if _recent.size() > RECENT_MAX:
+		_recent.remove_at(0)
 	if _file != null:
 		_file.store_line(line)
 		_file.flush() # Make sure crashes don't lose the most recent lines.
+
+
+## Returns the last [param n] lines from the in-memory ring. Cheap — used by
+## the dashboard's /v1/logs poll and by the heartbeat snapshot.
+static func recent(n: int = 200) -> PackedStringArray:
+	if n <= 0 or _recent.is_empty():
+		return PackedStringArray()
+	var start: int = maxi(0, _recent.size() - n)
+	return _recent.slice(start)
 
 
 static func _rotate(day: String) -> void:

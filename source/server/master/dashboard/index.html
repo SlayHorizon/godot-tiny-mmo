@@ -29,35 +29,124 @@
       </div>
       <div class="topbar-actions">
         <span class="muted small">Master uptime: <span id="masterUptime">—</span></span>
+        <button id="masterLogsBtn" class="btn ghost">Master logs</button>
         <button id="refreshBtn" class="btn">Refresh</button>
         <button id="logoutBtn" class="btn ghost">Sign out</button>
       </div>
     </header>
 
     <main>
-      <section class="card">
-        <div class="card-head">
-          <h2>Connected worlds</h2>
-          <span class="muted small" id="worldsMeta">—</span>
+      <!-- HOME view: realm picker -->
+      <section id="homeView">
+        <div class="card">
+          <div class="card-head">
+            <h2>Connected worlds</h2>
+            <span class="muted small" id="worldsMeta">—</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th><th>Host</th><th>Players</th><th>Instances</th>
+                  <th>Uptime</th><th>Heartbeat</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="worldsBody">
+                <tr><td colspan="7" class="muted center">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="table-wrap">
-          <table class="worlds">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Host</th>
-                <th>Players</th>
-                <th>Instances</th>
-                <th>World uptime</th>
-                <th>Last heartbeat</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="worldsBody">
-              <tr><td colspan="7" class="muted center">Loading…</td></tr>
-            </tbody>
-          </table>
+      </section>
+
+      <!-- WORLD DETAIL view: scoped to one world -->
+      <section id="worldView" class="hidden">
+        <div class="card world-header">
+          <div class="card-head">
+            <div class="row" style="align-items: baseline; gap: 12px;">
+              <button id="backBtn" class="btn ghost">← Back</button>
+              <h2 id="worldName" style="margin: 0;">—</h2>
+              <span class="muted small" id="worldSubtitle">—</span>
+            </div>
+            <div class="row">
+              <button id="worldSaveBtn" class="btn small">Save</button>
+              <button id="worldBroadcastBtn" class="btn small">Broadcast</button>
+              <button id="worldShutdownBtn" class="btn small danger">Shutdown</button>
+            </div>
+          </div>
+          <div class="world-stats" id="worldStats">
+            <div class="kpi"><div class="k">Players</div><div class="v" id="kpiPlayers">—</div></div>
+            <div class="kpi"><div class="k">Instances</div><div class="v" id="kpiInstances">—</div></div>
+            <div class="kpi"><div class="k">Uptime</div><div class="v" id="kpiUptime">—</div></div>
+            <div class="kpi"><div class="k">Heartbeat</div><div class="v" id="kpiHeartbeat">—</div></div>
+          </div>
         </div>
+
+        <nav class="tabs">
+          <button class="tab active" data-tab="players">Players</button>
+          <button class="tab" data-tab="chat">Chat</button>
+          <button class="tab" data-tab="logs">Logs</button>
+        </nav>
+
+        <!-- Players sub-tab -->
+        <section class="tab-pane active" id="tab-players">
+          <div class="card">
+            <div class="card-head">
+              <h2>Online players</h2>
+              <span class="muted small" id="playersMeta">—</span>
+            </div>
+            <div class="row" style="margin-bottom: 10px;">
+              <input id="playerFilter" class="input" placeholder="Filter by name or account…" />
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th><th>Account</th><th>Instance</th>
+                    <th>Lv</th><th>Roles</th><th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="playersBody">
+                  <tr><td colspan="6" class="muted center">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chat sub-tab -->
+        <section class="tab-pane" id="tab-chat">
+          <div class="card">
+            <div class="card-head">
+              <h2>Channel chat</h2>
+              <span class="muted small" id="chatMeta">—</span>
+            </div>
+            <div class="row" style="margin-bottom: 10px; flex-wrap: wrap;">
+              <select id="chatChannelFilter" class="input" style="flex: 0 0 140px; min-width: 0;">
+                <option value="">All channels</option>
+                <option value="World">World</option>
+                <option value="Guild">Guild</option>
+                <option value="Team">Team</option>
+              </select>
+              <input id="chatTextFilter" class="input" placeholder="Filter by sender, account, instance, or text…" />
+            </div>
+            <div id="chatFeed" class="chat-feed">
+              <div class="muted center">Loading…</div>
+            </div>
+            <p class="muted small" style="margin-top: 10px;">DMs are intentionally excluded — for moderating a specific player's private chat, drill in via the Players tab (coming next).</p>
+          </div>
+        </section>
+
+        <!-- Logs sub-tab -->
+        <section class="tab-pane" id="tab-logs">
+          <div class="card">
+            <div class="card-head">
+              <h2>World logs</h2>
+              <span class="muted small" id="logsMeta">—</span>
+            </div>
+            <pre id="logsFeed" class="logs-feed">Loading…</pre>
+          </div>
+        </section>
       </section>
     </main>
 
@@ -67,10 +156,46 @@
         <h3>Broadcast to <span id="broadcastTarget">world</span></h3>
         <textarea id="broadcastText" maxlength="280" placeholder="System message to send to every connected player…"></textarea>
         <div class="row">
-          <button id="broadcastSend" class="btn">Send</button>
+          <button id="broadcastSend" class="btn primary">Send</button>
           <button id="broadcastCancel" class="btn ghost">Cancel</button>
         </div>
         <p id="broadcastErr" class="err"></p>
+      </div>
+    </div>
+
+    <!-- Player action modal -->
+    <div id="actionModal" class="modal hidden">
+      <div class="modal-card">
+        <h3 id="actionTitle">Action</h3>
+        <div id="actionFields"></div>
+        <div class="row">
+          <button id="actionConfirm" class="btn primary">Confirm</button>
+          <button id="actionCancel" class="btn ghost">Cancel</button>
+        </div>
+        <p id="actionErr" class="err"></p>
+      </div>
+    </div>
+
+    <!-- Per-player chat history modal -->
+    <div id="chatHistoryModal" class="modal hidden">
+      <div class="modal-card modal-wide">
+        <h3 id="chatHistoryTitle">Recent chat</h3>
+        <div id="chatHistoryFeed" class="chat-feed" style="max-height: 460px;"></div>
+        <p class="muted small" style="margin-top: 10px;">Channel chat only. DM moderation will come from a dedicated flow.</p>
+        <div class="row">
+          <button id="chatHistoryClose" class="btn ghost">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Master logs modal -->
+    <div id="masterLogsModal" class="modal hidden">
+      <div class="modal-card modal-wide">
+        <h3>Master log tail</h3>
+        <pre id="masterLogsFeed" class="logs-feed">Loading…</pre>
+        <div class="row">
+          <button id="masterLogsClose" class="btn ghost">Close</button>
+        </div>
       </div>
     </div>
   </section>

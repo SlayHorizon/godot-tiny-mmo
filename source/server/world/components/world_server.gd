@@ -52,7 +52,7 @@ func start_world_server() -> void:
 func _on_periodic_save() -> void:
 	var saved: int = database.save_all_connected(connected_players)
 	var ok: bool = database.backup_database()
-	Logger.info("Periodic save: %d player(s) flushed, backup %s." % [saved, "ok" if ok else "FAILED"])
+	ServerLog.info("Periodic save: %d player(s) flushed, backup %s." % [saved, "ok" if ok else "FAILED"])
 
 
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
@@ -65,11 +65,11 @@ func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 
 
 func _on_peer_connected(peer_id: int) -> void:
-	Logger.info("Peer %d connected." % peer_id)
+	ServerLog.info("Peer %d connected." % peer_id)
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
-	Logger.info("Peer %d disconnected." % peer_id)
+	ServerLog.info("Peer %d disconnected." % peer_id)
 	# Sparring: if mid-match, end it before we tear down so the survivor gets
 	# the win + teleport instead of being stranded in the arena.
 	SparringService.on_peer_disconnected(peer_id)

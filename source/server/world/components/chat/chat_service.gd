@@ -169,6 +169,13 @@ func _handle_send_guild(instance: ServerInstance, player: PlayerResource, text: 
 	return {}
 
 
+## Ring of recently-broadcast channel messages so the admin dashboard can
+## fetch a live tail without scanning the SQLite history every poll. DMs are
+## deliberately excluded for privacy.
+const RECENT_MAX: int = 100
+var recent_channel_messages: Array = []
+
+
 func _persist_and_broadcast_to_instance(
 	instance: ServerInstance,
 	player: PlayerResource,
@@ -196,12 +203,48 @@ func _persist_and_broadcast_to_instance(
 		"time_ms": now_ms,
 	}
 
+	# Record an enriched copy for the admin dashboard — pulls fields the
+	# clients don't need (account name, instance name) so a moderator can
+	# disambiguate two players with the same display name.
+	var enriched: Dictionary = pushed.duplicate()
+	enriched["account"] = player.account_name
+	enriched["channel_name"] = _channel_name(channel)
+	enriched["instance"] = ""
+	if instance != null and instance.instance_resource != null:
+		enriched["instance"] = instance.instance_resource.instance_name
+	_record_recent(enriched)
+
 	WorldServer.curr.propagate_rpc(
 		WorldServer.curr.data_push.bind(&"chat.message", pushed),
 		instance.name
 	)
 
 	return {}
+
+
+func _record_recent(payload: Dictionary) -> void:
+	recent_channel_messages.append(payload)
+	if recent_channel_messages.size() > RECENT_MAX:
+		recent_channel_messages.pop_front()
+
+
+## Returns the latest [param limit] broadcast channel messages, newest last.
+func recent(limit: int = 30) -> Array:
+	if limit <= 0 or recent_channel_messages.is_empty():
+		return []
+	var start: int = maxi(0, recent_channel_messages.size() - limit)
+	return recent_channel_messages.slice(start)
+
+
+## Friendly channel label for the dashboard. Plays nice with future channels
+## (custom guild rooms, party voice, etc.) — anything unknown falls through.
+static func _channel_name(channel: int) -> String:
+	match channel:
+		ChatConstants.CHANNEL_WORLD:  return "World"
+		ChatConstants.CHANNEL_GUILD:  return "Guild"
+		ChatConstants.CHANNEL_TEAM:   return "Team"
+		ChatConstants.CHANNEL_SYSTEM: return "System"
+		_: return "Ch.%d" % channel
 
 
 func _rows_to_payload(rows: Array, conversation_id: String, extra: Dictionary) -> Array:

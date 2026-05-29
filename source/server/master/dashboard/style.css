@@ -41,6 +41,16 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 .dot.ok { background: var(--ok); }
 .dot.bad { background: var(--bad); }
 
+/* --- Tabs --- */
+.tabs { display: flex; gap: 0; padding: 0 16px; background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 49px; z-index: 4; overflow-x: auto; }
+.tab { padding: 12px 16px; border: 0; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* --- Buttons --- */
 .btn { padding: 7px 12px; border-radius: 7px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); cursor: pointer; font-size: 13px; }
 .btn:hover { border-color: var(--accent); }
 .btn.ghost { background: transparent; }
@@ -48,6 +58,7 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); f
 .btn.danger:hover { background: rgba(237, 66, 69, 0.1); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
 .btn.primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.btn.small { padding: 4px 8px; font-size: 12px; }
 
 /* --- Cards --- */
 main { padding: 16px; max-width: 1200px; margin: 0 auto; }
@@ -55,29 +66,83 @@ main { padding: 16px; max-width: 1200px; margin: 0 auto; }
 .card-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
 .card-head h2 { margin: 0; font-size: 16px; }
 
-/* --- Worlds table --- */
+/* --- Inputs --- */
+.input { flex: 1; min-width: 200px; padding: 8px 12px; border-radius: 7px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); font-size: 13px; }
+.input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+/* --- Data tables --- */
 .table-wrap { overflow-x: auto; }
-table.worlds { width: 100%; border-collapse: collapse; }
-table.worlds th, table.worlds td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
-table.worlds th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 600; }
-table.worlds tr:last-child td { border-bottom: 0; }
-table.worlds td.actions { white-space: nowrap; }
-table.worlds td.actions .btn { margin-right: 4px; }
-table.worlds .heartbeat-stale { color: var(--warn); }
+table.data-table { width: 100%; border-collapse: collapse; }
+table.data-table th, table.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+table.data-table th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 600; }
+table.data-table tr:last-child td { border-bottom: 0; }
+table.data-table td.actions { white-space: nowrap; }
+table.data-table td.actions .btn { margin-right: 4px; }
+table.data-table .heartbeat-stale { color: var(--warn); }
+table.data-table .role-pill { display: inline-block; padding: 2px 6px; border-radius: 4px; background: var(--panel-2); border: 1px solid var(--border); font-size: 11px; margin-right: 4px; }
+.role-pill { display: inline-block; padding: 2px 8px; border-radius: 4px; background: var(--panel-2); border: 1px solid var(--border); font-size: 12px; margin-right: 4px; }
+.role-pill.senior_admin { border-color: var(--bad); color: var(--bad); }
+.role-pill.admin { border-color: var(--accent); color: var(--accent); }
+.role-pill.moderator { border-color: var(--ok); color: var(--ok); }
+.role-pill .role-x { border: 0; background: transparent; color: inherit; cursor: pointer; margin-left: 4px; font-weight: 700; opacity: 0.7; }
+.role-pill .role-x:hover { opacity: 1; }
+
+/* Inline state badges next to a player's name in the players table. */
+.badge { display: inline-block; font-size: 11px; margin-left: 4px; vertical-align: middle; }
+.badge.mute { color: var(--warn); }
+.badge.jail { color: var(--bad); }
+table.data-table .role-pill.senior_admin { border-color: var(--bad); color: var(--bad); }
+table.data-table .role-pill.admin { border-color: var(--accent); color: var(--accent); }
+table.data-table .role-pill.moderator { border-color: var(--ok); color: var(--ok); }
+
+/* --- Chat feed --- */
+.chat-feed { max-height: 600px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.chat-feed .msg { padding: 6px 10px; border-radius: 6px; background: var(--panel-2); }
+.chat-feed .msg .meta { color: var(--muted); font-size: 11px; }
+.chat-feed .msg .sender { font-weight: 600; }
+.chat-feed .msg .world { color: var(--accent); }
+.chat-feed .empty { padding: 20px; text-align: center; color: var(--muted); }
+
+/* --- Logs feed --- */
+.logs-feed { background: var(--panel-2); padding: 12px; border-radius: 8px; max-height: 600px; overflow-y: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12px; white-space: pre-wrap; word-break: break-word; margin: 0; }
 
 /* --- Modal --- */
 .modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: grid; place-items: center; z-index: 10; }
 .modal-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; width: 100%; max-width: 460px; margin: 16px; }
 .modal-card h3 { margin: 0 0 12px; font-size: 15px; }
-.modal-card textarea { width: 100%; min-height: 100px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); resize: vertical; font-family: inherit; font-size: 14px; }
-.modal-card textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.modal-card textarea, .modal-card input, .modal-card select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); margin-bottom: 8px; font-family: inherit; font-size: 14px; }
+.modal-card textarea { min-height: 100px; resize: vertical; }
+.modal-card textarea:focus, .modal-card input:focus, .modal-card select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.modal-card .field-label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
 .modal-card .row { margin-top: 12px; }
+
+/* --- World detail header --- */
+.world-header .card-head { align-items: center; margin-bottom: 16px; }
+.world-header h2 { font-size: 18px; }
+.world-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.world-stats .kpi { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.world-stats .kpi .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.world-stats .kpi .v { font-size: 18px; font-weight: 600; margin-top: 4px; }
+
+/* --- Clickable world rows in the home table --- */
+tr.world-row { cursor: pointer; }
+tr.world-row:hover td { background: rgba(88, 101, 242, 0.06); }
+tr.world-row .open-hint { color: var(--accent); text-align: right; padding-right: 14px; }
+
+/* --- Wide modal for log viewers --- */
+.modal-card.modal-wide { max-width: 720px; }
+.modal-card.modal-wide .logs-feed { max-height: 460px; }
 
 /* --- Mobile tweaks --- */
 @media (max-width: 600px) {
   .topbar { flex-direction: column; align-items: stretch; gap: 8px; }
   .topbar-actions { justify-content: space-between; flex-wrap: wrap; }
+  .tabs { top: auto; }
   main { padding: 8px; }
   .card { padding: 12px; }
-  table.worlds th, table.worlds td { padding: 8px 6px; font-size: 13px; }
+  table.data-table th, table.data-table td { padding: 8px 6px; font-size: 13px; }
+  .tab { padding: 10px 12px; }
+  /* On phones drop the 4-up KPI grid to 2-up so they don't get squished. */
+  .world-stats { grid-template-columns: repeat(2, 1fr); }
+  .world-header .card-head { flex-direction: column; align-items: stretch; gap: 8px; }
 }

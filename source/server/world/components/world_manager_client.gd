@@ -71,12 +71,44 @@ func _build_snapshot() -> Dictionary:
 	if world_server.instance_manager != null:
 		for res: InstanceResource in world_server.instance_manager.instance_collection.values():
 			instance_count += res.charged_instances.size()
+
+	# Lightweight player roster — fields the dashboard needs to render the
+	# Players table + drive per-player actions.
+	var players: Array = []
+	for peer_id: int in world_server.connected_players:
+		var p: PlayerResource = world_server.connected_players[peer_id]
+		if p == null:
+			continue
+		players.append({
+			"peer_id":      peer_id,
+			"player_id":    p.player_id,
+			"name":         p.display_name,
+			"account":      p.account_name,
+			"instance":     p.current_instance,
+			"level":        p.level,
+			"roles":        p.server_roles.keys(),
+			# Surface punishment state so the dashboard can render "Unmute"/
+			# "Unjail" instead of duplicating buttons that no-op or fail.
+			"is_muted":     MuteList.is_muted(p.player_id),
+			"is_jailed":    JailList.is_jailed(p.player_id),
+		})
+
+	# Recent channel chat (excludes DMs) and the in-memory log tail. Both are
+	# size-capped on the producer side, so the heartbeat stays small even on
+	# a busy server.
+	var recent_chat: Array = []
+	if world_server.chat_service != null:
+		recent_chat = world_server.chat_service.recent(20)
+
 	return {
 		"name": str(world_info.get("name", "world")),
 		"population": world_server.connected_players.size(),
 		"instances": instance_count,
 		"uptime_s": int(Time.get_ticks_msec() / 1000.0),
 		"ts": int(Time.get_unix_time_from_system()),
+		"players": players,
+		"recent_chat": recent_chat,
+		"recent_log": Array(ServerLog.recent(40)),
 	}
 
 
@@ -96,7 +128,7 @@ func master_save() -> void:
 		return
 	var saved: int = database.save_all_connected(world_server.connected_players)
 	var ok: bool = database.backup_database()
-	Logger.info("Dashboard 'save' triggered: %d player(s), backup %s." % [saved, "ok" if ok else "FAILED"])
+	ServerLog.info("Dashboard 'save' triggered: %d player(s), backup %s." % [saved, "ok" if ok else "FAILED"])
 
 
 ## Master tells this world to shut down gracefully. Final save runs first.
@@ -104,7 +136,7 @@ func master_save() -> void:
 func master_shutdown() -> void:
 	if world_server == null or database == null:
 		return
-	Logger.info("Dashboard 'shutdown' triggered — saving + quitting.")
+	ServerLog.info("Dashboard 'shutdown' triggered — saving + quitting.")
 	database.save_all_connected(world_server.connected_players)
 	database.backup_database()
 	get_tree().quit.call_deferred()
@@ -120,7 +152,104 @@ func master_broadcast(message: String) -> void:
 		if player == null:
 			continue
 		world_server.chat_service.push_system_to_player(null, player.player_id, "[Broadcast] " + message)
-	Logger.info("Dashboard broadcast sent: %s" % message)
+	ServerLog.info("Dashboard broadcast sent: %s" % message)
+
+
+# --- Per-player moderation actions (master → world) ---
+#
+# All target a specific player_id. The world looks up the matching online
+# PlayerResource (or no-ops if the player went offline between dashboard
+# click and RPC arrival) and delegates to the existing service so behavior
+# matches the equivalent chat command.
+
+@rpc("authority")
+func master_mute(player_id: int, reason: String, duration_ms: int) -> void:
+	MuteList.mute(player_id, reason, 0, duration_ms)
+	ServerLog.info("Dashboard mute: player #%d (reason=%s, dur=%dms)" % [player_id, reason, duration_ms])
+	_notify_player(player_id, "You have been muted by a moderator.%s" % (
+		"\nReason: " + reason if not reason.is_empty() else ""
+	))
+
+
+@rpc("authority")
+func master_unmute(player_id: int) -> void:
+	if MuteList.unmute(player_id):
+		ServerLog.info("Dashboard unmute: player #%d" % player_id)
+		_notify_player(player_id, "You have been unmuted.")
+
+
+@rpc("authority")
+func master_jail(player_id: int, reason: String, duration_ms: int) -> void:
+	JailList.jail(player_id, reason, 0, duration_ms)
+	# If they're online, send them to jail right now via the existing helper.
+	var peer_id: int = world_server.player_id_to_peer_id.get(player_id, 0)
+	if peer_id != 0:
+		world_server.instance_manager.send_player_to_jail(peer_id)
+	ServerLog.info("Dashboard jail: player #%d (reason=%s, dur=%dms)" % [player_id, reason, duration_ms])
+	_notify_player(player_id, "You have been jailed by an admin.%s" % (
+		"\nReason: " + reason if not reason.is_empty() else ""
+	))
+
+
+@rpc("authority")
+func master_unjail(player_id: int) -> void:
+	if JailList.release(player_id):
+		ServerLog.info("Dashboard unjail: player #%d" % player_id)
+		_notify_player(player_id, "You have been released from jail.")
+
+
+@rpc("authority")
+func master_kick(player_id: int) -> void:
+	var peer_id: int = world_server.player_id_to_peer_id.get(player_id, 0)
+	if peer_id == 0:
+		return
+	ServerLog.info("Dashboard kick: player #%d (peer %d)" % [player_id, peer_id])
+	# Critical: there are TWO multiplayer instances on the world process —
+	#   * `multiplayer` here = the master connection (this script is a client
+	#     of the master server). The peer_id 1042 from the game-client
+	#     connection doesn't exist in this peer table.
+	#   * world_server.multiplayer_api = the world's player connections,
+	#     which is where peer_id lives.
+	# Using the wrong one throws "!peers_map.has(p_peer_id)" — exactly the
+	# error you hit. The right peer table is the game world's.
+	var game_mp: MultiplayerAPI = world_server.multiplayer_api
+	if game_mp != null and game_mp.multiplayer_peer != null:
+		game_mp.multiplayer_peer.disconnect_peer(peer_id)
+
+
+@rpc("authority")
+func master_grant_role(player_id: int, role: String) -> void:
+	var peer_id: int = world_server.player_id_to_peer_id.get(player_id, 0)
+	if peer_id == 0:
+		return
+	var target: PlayerResource = world_server.connected_players.get(peer_id)
+	if target == null:
+		return
+	target.server_roles[role] = {}
+	database.save_player(target)
+	ServerLog.info("Dashboard grant: player #%d ← role '%s'" % [player_id, role])
+	_notify_player(player_id, "You have been granted the role '%s'." % role)
+
+
+@rpc("authority")
+func master_revoke_role(player_id: int, role: String) -> void:
+	var peer_id: int = world_server.player_id_to_peer_id.get(player_id, 0)
+	if peer_id == 0:
+		return
+	var target: PlayerResource = world_server.connected_players.get(peer_id)
+	if target == null or not target.server_roles.has(role):
+		return
+	target.server_roles.erase(role)
+	database.save_player(target)
+	ServerLog.info("Dashboard revoke: player #%d ← role '%s'" % [player_id, role])
+	_notify_player(player_id, "Your role '%s' has been revoked." % role)
+
+
+## Push a system-channel message to the given player_id if they're online.
+func _notify_player(player_id: int, message: String) -> void:
+	if world_server == null or world_server.chat_service == null:
+		return
+	world_server.chat_service.push_system_to_player(null, player_id, message)
 
 
 func _on_connection_failed() -> void:

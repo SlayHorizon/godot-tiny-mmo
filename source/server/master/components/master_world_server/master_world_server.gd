@@ -88,6 +88,56 @@ func tell_world_to_broadcast(world_peer_id: int, message: String) -> bool:
 @rpc("authority") func master_save() -> void: pass
 @rpc("authority") func master_shutdown() -> void: pass
 @rpc("authority") func master_broadcast(_message: String) -> void: pass
+@rpc("authority") func master_mute(_player_id: int, _reason: String, _duration_ms: int) -> void: pass
+@rpc("authority") func master_unmute(_player_id: int) -> void: pass
+@rpc("authority") func master_jail(_player_id: int, _reason: String, _duration_ms: int) -> void: pass
+@rpc("authority") func master_unjail(_player_id: int) -> void: pass
+@rpc("authority") func master_kick(_player_id: int) -> void: pass
+@rpc("authority") func master_grant_role(_player_id: int, _role: String) -> void: pass
+@rpc("authority") func master_revoke_role(_player_id: int, _role: String) -> void: pass
+
+
+## Dashboard helpers — each returns true if the targeted world is known.
+func tell_world_to_mute(world_id: int, player_id: int, reason: String, duration_ms: int) -> bool:
+	if not connected_worlds.has(world_id): return false
+	master_mute.rpc_id(world_id, player_id, reason, duration_ms)
+	return true
+
+
+func tell_world_to_unmute(world_id: int, player_id: int) -> bool:
+	if not connected_worlds.has(world_id): return false
+	master_unmute.rpc_id(world_id, player_id)
+	return true
+
+
+func tell_world_to_jail(world_id: int, player_id: int, reason: String, duration_ms: int) -> bool:
+	if not connected_worlds.has(world_id): return false
+	master_jail.rpc_id(world_id, player_id, reason, duration_ms)
+	return true
+
+
+func tell_world_to_unjail(world_id: int, player_id: int) -> bool:
+	if not connected_worlds.has(world_id): return false
+	master_unjail.rpc_id(world_id, player_id)
+	return true
+
+
+func tell_world_to_kick(world_id: int, player_id: int) -> bool:
+	if not connected_worlds.has(world_id): return false
+	master_kick.rpc_id(world_id, player_id)
+	return true
+
+
+func tell_world_to_grant_role(world_id: int, player_id: int, role: String) -> bool:
+	if not connected_worlds.has(world_id): return false
+	master_grant_role.rpc_id(world_id, player_id, role)
+	return true
+
+
+func tell_world_to_revoke_role(world_id: int, player_id: int, role: String) -> bool:
+	if not connected_worlds.has(world_id): return false
+	master_revoke_role.rpc_id(world_id, player_id, role)
+	return true
 
 
 @rpc("authority")
