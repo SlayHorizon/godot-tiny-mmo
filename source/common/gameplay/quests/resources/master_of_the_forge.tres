@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://pm3j1lgi0vig"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Resource" uid="uid://bqd4ajt5kmlcr" path="res://source/common/gameplay/items/gears/iron_helmet.tres" id="2_helm"]
+[ext_resource type="Resource" uid="uid://cb6x01k6mbv2x" path="res://source/common/gameplay/items/gears/iron_chest.tres" id="3_chest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_eqmk4"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="4_quest"]
+
+[sub_resource type="Resource" id="Obj_craft_helm"]
+script = ExtResource("1_obj")
+type = 2
+item = ExtResource("2_helm")
+
+[sub_resource type="Resource" id="Obj_craft_chest"]
+script = ExtResource("1_obj")
+type = 2
+item = ExtResource("3_chest")
+
+[resource]
+script = ExtResource("4_quest")
+quest_name = "Master of the Forge"
+description = "Forge one iron helmet and one iron chest piece. The smith doesn't keep the work — that's yours. He just wants the satisfaction of watching you do it."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_craft_helm"), SubResource("Obj_craft_chest")])
+min_level = 16
+reward_xp = 100
+reward_gold = 20
+grant_title = "Forgemaster"
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"master_of_the_forge"
+metadata/id = 15

@@ -43,6 +43,14 @@ static func _migration_v1(db: SQLite) -> void:
 		# (pvp/pve kills × day/week/total + bucket timestamps). JSON so adding
 		# new metrics later is data-only, no schema migration.
 		"stats_json": {"data_type": "text", "not_null": true},
+		# Vanity titles: {"unlocked": ["Master Duelist", ...], "display": "..."}.
+		# Persisted separately from lb_stats so titles can grow without bloating
+		# the leaderboard-counter blob.
+		"titles_json": {"data_type": "text", "not_null": true},
+		# Daily quest board state: {"quests": [{template_id, count_so_far,
+		# claimed}, ...], "refresh_at_ms": unix-ms of next UTC midnight}.
+		# Reroll happens lazily on board interaction.
+		"dailies_json": {"data_type": "text", "not_null": true},
 
 		# Guild IDs (nullable for players without a guild)
 		"active_guild_id": {"data_type": "int", "not_null": false},

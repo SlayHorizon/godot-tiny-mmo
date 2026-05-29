@@ -105,6 +105,7 @@ func _regen() -> void:
 	var regen_ms: int = int(charge_regen_seconds * 1000.0)
 	if regen_ms <= 0:
 		return
+	@warning_ignore("integer_division")
 	var gained: int = (Time.get_ticks_msec() - _last_update_ms) / regen_ms
 	if gained > 0:
 		_charges = mini(max_charges, _charges + gained)

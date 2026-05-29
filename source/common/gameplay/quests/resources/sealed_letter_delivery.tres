@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://bdcspvh4obu24"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/sealed_letter.tres" id="2_letter"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="3_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_x8rpj"]
+
+[sub_resource type="Resource" id="Obj_have_letter"]
+script = ExtResource("1_obj")
+type = 1
+item = ExtResource("2_letter")
+
+[resource]
+script = ExtResource("3_quest")
+quest_name = "A Sealed Letter"
+description = "The tailor hands you a wax-sealed letter. \"Take this to the cartographer in the next town, would you? Be quick — and don't open it.\""
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_have_letter")])
+min_level = 3
+turn_in_giver_id = 2
+grant_on_accept = ExtResource("2_letter")
+reward_xp = 12
+reward_gold = 3
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"sealed_letter_delivery"
+metadata/id = 17

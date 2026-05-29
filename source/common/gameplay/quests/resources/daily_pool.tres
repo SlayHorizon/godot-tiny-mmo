@@ -1,0 +1,119 @@
+[gd_resource type="Resource" script_class="DailyQuestPool" format=3 uid="uid://fx672d20b1k6"]
+
+[ext_resource type="Script" uid="uid://i7nsd3x5cb8r" path="res://source/common/gameplay/quests/daily_quest_template.gd" id="1_tmpl"]
+[ext_resource type="Script" uid="uid://ds2efp5tkwf6n" path="res://source/common/gameplay/quests/daily_quest_pool.gd" id="2_pool"]
+[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="3_coal"]
+[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="4_cop_ore"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="5_iron_ore"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/linen.tres" id="6_linen"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/hide.tres" id="7_hide"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="8_herb"]
+
+[sub_resource type="Resource" id="T_kill_slime"]
+script = ExtResource("1_tmpl")
+template_id = 1
+enemy_type = &"slime"
+required_amount = 3
+max_level = 10
+
+[sub_resource type="Resource" id="T_kill_goblin"]
+script = ExtResource("1_tmpl")
+template_id = 2
+enemy_type = &"goblin"
+required_amount = 5
+min_level = 2
+max_level = 12
+reward_xp = 15
+reward_gold = 4
+
+[sub_resource type="Resource" id="T_kill_wolf"]
+script = ExtResource("1_tmpl")
+template_id = 3
+enemy_type = &"wolf"
+required_amount = 5
+min_level = 4
+max_level = 14
+reward_xp = 20
+reward_gold = 5
+
+[sub_resource type="Resource" id="T_kill_bandit"]
+script = ExtResource("1_tmpl")
+template_id = 4
+enemy_type = &"bandit"
+required_amount = 3
+min_level = 10
+max_level = 18
+reward_xp = 30
+reward_gold = 6
+
+[sub_resource type="Resource" id="T_kill_iron_golem"]
+script = ExtResource("1_tmpl")
+template_id = 5
+enemy_type = &"iron_golem"
+min_level = 16
+reward_xp = 40
+reward_gold = 8
+
+[sub_resource type="Resource" id="T_col_coal"]
+script = ExtResource("1_tmpl")
+template_id = 6
+kind = 1
+item = ExtResource("3_coal")
+required_amount = 5
+max_level = 10
+reward_xp = 12
+
+[sub_resource type="Resource" id="T_col_copper"]
+script = ExtResource("1_tmpl")
+template_id = 7
+kind = 1
+item = ExtResource("4_cop_ore")
+required_amount = 5
+min_level = 6
+max_level = 14
+reward_xp = 18
+reward_gold = 4
+
+[sub_resource type="Resource" id="T_col_iron"]
+script = ExtResource("1_tmpl")
+template_id = 8
+kind = 1
+item = ExtResource("5_iron_ore")
+required_amount = 3
+min_level = 14
+reward_xp = 30
+reward_gold = 6
+
+[sub_resource type="Resource" id="T_col_linen"]
+script = ExtResource("1_tmpl")
+template_id = 9
+kind = 1
+item = ExtResource("6_linen")
+required_amount = 5
+max_level = 8
+
+[sub_resource type="Resource" id="T_col_hide"]
+script = ExtResource("1_tmpl")
+template_id = 10
+kind = 1
+item = ExtResource("7_hide")
+required_amount = 5
+min_level = 4
+max_level = 12
+reward_xp = 15
+reward_gold = 4
+
+[sub_resource type="Resource" id="T_col_herb"]
+script = ExtResource("1_tmpl")
+template_id = 11
+kind = 1
+item = ExtResource("8_herb")
+required_amount = 5
+max_level = 10
+reward_xp = 12
+
+[resource]
+script = ExtResource("2_pool")
+templates = Array[ExtResource("1_tmpl")]([SubResource("T_kill_slime"), SubResource("T_kill_goblin"), SubResource("T_kill_wolf"), SubResource("T_kill_bandit"), SubResource("T_kill_iron_golem"), SubResource("T_col_coal"), SubResource("T_col_copper"), SubResource("T_col_iron"), SubResource("T_col_linen"), SubResource("T_col_hide"), SubResource("T_col_herb")])
+metadata/slug = &"daily_pool"
+metadata/id = 8

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"slime"
+display_name = "Forest Slime"
+max_health = 15.0
+attack_damage = 3.0
+attack_cooldown = 2.0
+armor = 0.0
+move_speed = 18
+distance_to_attack = 14
+max_distance_from_spawn = 70
+chase_on_area = true
+xp_reward = 3
+respawn_delay = 5.0
+loot = Array[ExtResource("2_loot")]([])

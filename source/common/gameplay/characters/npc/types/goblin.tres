@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/linen.tres" id="3_linen"]
+
+[sub_resource type="Resource" id="Drop_linen"]
+script = ExtResource("2_loot")
+item = ExtResource("3_linen")
+min_amount = 1
+max_amount = 2
+chance = 1.0
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"goblin"
+display_name = "Goblin Raider"
+max_health = 30.0
+attack_damage = 5.0
+attack_cooldown = 1.5
+armor = 0.0
+move_speed = 25
+distance_to_attack = 18
+max_distance_from_spawn = 90
+chase_on_area = true
+xp_reward = 5
+respawn_delay = 10.0
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_linen")])

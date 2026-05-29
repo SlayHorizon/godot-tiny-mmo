@@ -90,13 +90,27 @@ func _make_quest_entry(quest: Dictionary) -> PanelContainer:
 	reward_label.add_theme_color_override(&"font_color", Color(0.85, 0.8, 0.4))
 	vbox.add_child(reward_label)
 
-	vbox.add_child(_make_action(int(quest.get("id", 0)), state, complete))
+	vbox.add_child(_make_action(
+		int(quest.get("id", 0)),
+		state,
+		complete,
+		bool(quest.get("meets_level", true)),
+		int(quest.get("min_level", 0)),
+	))
 	return panel
 
 
-func _make_action(quest_id: int, state: String, complete: bool) -> Control:
+func _make_action(quest_id: int, state: String, complete: bool, meets_level: bool, min_level: int) -> Control:
 	match state:
 		"":
+			# Level gate — show requirement instead of an Accept button the
+			# server would just reject anyway.
+			if not meets_level:
+				var locked: Label = Label.new()
+				locked.text = "Requires level %d" % min_level
+				locked.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				locked.add_theme_color_override(&"font_color", Color(0.7, 0.5, 0.5))
+				return locked
 			var accept: Button = Button.new()
 			accept.text = "Accept"
 			accept.custom_minimum_size = Vector2(0, 40)

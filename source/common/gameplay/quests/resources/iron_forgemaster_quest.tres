@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://bavev3rfv7gct"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="2_iron_bar"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="3_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_wfxxq"]
+
+[sub_resource type="Resource" id="Obj_craft_iron_bar_5"]
+script = ExtResource("1_obj")
+type = 2
+item = ExtResource("2_iron_bar")
+required_amount = 5
+metadata/_custom_type_script = "uid://dqadrvvwt3ig2"
+
+[resource]
+script = ExtResource("3_quest")
+quest_name = "Iron Forgemaster"
+description = "Prove your craft. Smelt five iron bars at the forge. With this many bars you'll have enough for a full helm or chest piece — your call."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_craft_iron_bar_5")])
+reward_xp = 120
+reward_gold = 12
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"iron_forgemaster_quest"
+metadata/id = 12

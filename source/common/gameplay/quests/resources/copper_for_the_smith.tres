@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://doy47vraqsb02"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="2_cop_bar"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="3_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_u1hpp"]
+
+[sub_resource type="Resource" id="Obj_copper_5"]
+script = ExtResource("1_obj")
+type = 1
+item = ExtResource("2_cop_bar")
+required_amount = 5
+
+[resource]
+script = ExtResource("3_quest")
+quest_name = "Copper for the Smith"
+description = "The smith is filling a contract for the city guard. Bring him five copper bars — mine the ore and smelt it yourself, or buy them off another player. Doesn't matter how, just deliver."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_copper_5")])
+min_level = 14
+reward_xp = 60
+reward_gold = 9
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"copper_for_the_smith"
+metadata/id = 7

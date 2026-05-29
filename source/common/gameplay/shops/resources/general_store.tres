@@ -1,26 +1,61 @@
 [gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://dgk6yl280gmyd"]
 
-[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_k7ids"]
-[ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="2_te6tu"]
-[ext_resource type="Resource" uid="uid://c7y0m821gjf6s" path="res://source/common/gameplay/items/gears/copper_ring.tres" id="3_u5m1q"]
-[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="4_mxk1d"]
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_entry"]
+[ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="2_potion"]
+[ext_resource type="Resource" uid="uid://cusgrq4sr1y0e" path="res://source/common/gameplay/items/gears/cloth_vest.tres" id="3_cv"]
+[ext_resource type="Resource" uid="uid://osgbreqq1srf" path="res://source/common/gameplay/items/gears/cloth_hood.tres" id="4_ch"]
+[ext_resource type="Resource" uid="uid://c3nblwxqa8jxn" path="res://source/common/gameplay/items/gears/old_boots.tres" id="5_ob"]
+[ext_resource type="Resource" uid="uid://b2lsx2w3peg6e" path="res://source/common/gameplay/items/gears/leather_jacket.tres" id="6_lj"]
+[ext_resource type="Resource" uid="uid://c7y0m821gjf6s" path="res://source/common/gameplay/items/gears/copper_ring.tres" id="7_cr"]
+[ext_resource type="Resource" uid="uid://clvjdo7an4ctq" path="res://source/common/gameplay/items/weapons/tools/pickaxe.tres" id="8_pick"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="9_shop"]
 
-[sub_resource type="Resource" id="Resource_h6k7f"]
-script = ExtResource("1_k7ids")
-item = ExtResource("2_te6tu")
-price = 50
+[sub_resource type="Resource" id="Entry_cloth_hood"]
+script = ExtResource("1_entry")
+item = ExtResource("4_ch")
+price = 2
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
-[sub_resource type="Resource" id="Resource_frbp0"]
-script = ExtResource("1_k7ids")
-item = ExtResource("3_u5m1q")
-price = 60
+[sub_resource type="Resource" id="Entry_cloth_vest"]
+script = ExtResource("1_entry")
+item = ExtResource("3_cv")
+price = 3
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Entry_old_boots"]
+script = ExtResource("1_entry")
+item = ExtResource("5_ob")
+price = 2
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Entry_leather_jacket"]
+script = ExtResource("1_entry")
+item = ExtResource("6_lj")
+price = 8
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Entry_copper_ring"]
+script = ExtResource("1_entry")
+item = ExtResource("7_cr")
+price = 6
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Entry_pickaxe"]
+script = ExtResource("1_entry")
+item = ExtResource("8_pick")
+price = 5
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Entry_potion"]
+script = ExtResource("1_entry")
+item = ExtResource("2_potion")
+price = 10
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
 [resource]
-script = ExtResource("4_mxk1d")
-shop_name = "general store"
-entries = Array[ExtResource("1_k7ids")]([SubResource("Resource_h6k7f"), SubResource("Resource_frbp0")])
+script = ExtResource("9_shop")
+shop_name = "General Store"
+entries = Array[ExtResource("1_entry")]([SubResource("Entry_cloth_hood"), SubResource("Entry_cloth_vest"), SubResource("Entry_old_boots"), SubResource("Entry_leather_jacket"), SubResource("Entry_copper_ring"), SubResource("Entry_pickaxe"), SubResource("Entry_potion")])
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"general_store"
 metadata/id = 1

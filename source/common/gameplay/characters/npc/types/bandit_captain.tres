@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://jo7v7jfc54kp"]
+
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/captain_tag.tres" id="3_tag"]
+[ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="4_cop_bar"]
+
+[sub_resource type="Resource" id="Drop_tag"]
+script = ExtResource("2_loot")
+item = ExtResource("3_tag")
+
+[sub_resource type="Resource" id="Drop_copper_bar"]
+script = ExtResource("2_loot")
+item = ExtResource("4_cop_bar")
+max_amount = 2
+chance = 0.6
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"bandit_captain"
+display_name = "Bandit Captain"
+max_health = 180.0
+attack_damage = 18.0
+attack_cooldown = 1.6
+armor = 8.0
+move_speed = 22
+distance_to_attack = 22
+max_distance_from_spawn = 120
+chase_on_area = true
+xp_reward = 50
+respawn_delay = 120.0
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_tag"), SubResource("Drop_copper_bar")])

@@ -57,6 +57,23 @@ const BASE_STATS: Dictionary[StringName, float] = {
 ## Owned and rolled over by LeaderboardService.
 @export var lb_stats: Dictionary
 
+## Vanity titles ever earned by this character. Quest turn-ins can add to this
+## list via QuestResource.grant_title. Player chooses which one is displayed via
+## display_title.
+@export var titles_unlocked: PackedStringArray
+## Currently active title (shown on profile under display_name). Empty = no
+## title displayed. Auto-set to a newly-granted title only if no title is
+## currently active — so players don't lose their chosen banner.
+@export var display_title: String
+
+## Daily quest board state: the 3 rolled quests for today and when they expire.
+## Each entry is a Dictionary {template_id, count_so_far, claimed}.
+## dailies_refresh_at_ms is the unix-ms of the next UTC midnight;
+## DailyQuestService rerolls when now crosses it. Empty array = never rolled
+## (first board click generates).
+@export var daily_quests: Array
+@export var dailies_refresh_at_ms: int
+
 # Profile
 @export var profile_status: String = "Hello I'am new!"
 @export var profile_animation: String = "idle"

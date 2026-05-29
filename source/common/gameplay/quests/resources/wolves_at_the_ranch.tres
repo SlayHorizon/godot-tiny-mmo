@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://bj4t6nwwxtmh6"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="2_564d5"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+
+[sub_resource type="Resource" id="Obj_kill_wolf"]
+script = ExtResource("1_obj")
+enemy_type = &"wolf"
+required_amount = 5
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Wolves at the Ranch"
+description = "The rancher's losing sheep. Five wolves' worth of pelts on his doorstep should send the rest of the pack looking elsewhere."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_wolf")])
+min_level = 4
+reward_xp = 18
+reward_gold = 4
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"wolves_at_the_ranch"
+metadata/id = 26

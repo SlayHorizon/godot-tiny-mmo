@@ -29,6 +29,7 @@ static func grant_sg(guild: Guild, amount: int) -> void:
 	guild.seasonal_glory += amount
 	guild.total_sg_ever += amount
 	# Recompute EG target from scratch so we can never under- or over-grant.
+	@warning_ignore("integer_division")
 	var eg_target: int = (guild.total_sg_ever / 10) * EG_PER_10_SG
 	if eg_target > guild.eternal_glory:
 		guild.eternal_glory = eg_target
@@ -105,6 +106,7 @@ static func _credit_kill(guild_id: int) -> void:
 	guild.kill_counter_for_glory += 1
 	# Multiple grants in a single call would be unusual (one kill = one credit)
 	# but the math handles it: integer division, then roll the counter down.
+	@warning_ignore("integer_division")
 	var grants: int = guild.kill_counter_for_glory / KILLS_PER_GLORY
 	if grants > 0:
 		guild.kill_counter_for_glory -= grants * KILLS_PER_GLORY

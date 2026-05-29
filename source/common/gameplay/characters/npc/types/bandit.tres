@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://dlwfkoirmhmse"]
+
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="3_cop"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/leather.tres" id="4_leather"]
+[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="5_852w6"]
+
+[sub_resource type="Resource" id="Drop_leather"]
+script = ExtResource("2_loot")
+item = ExtResource("4_leather")
+chance = 0.5
+
+[sub_resource type="Resource" id="Drop_copper"]
+script = ExtResource("2_loot")
+item = ExtResource("3_cop")
+max_amount = 2
+chance = 0.4
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"bandit"
+display_name = "Highway Bandit"
+skin = ExtResource("5_852w6")
+max_health = 100.0
+attack_damage = 12.0
+armor = 5.0
+move_speed = 22
+max_distance_from_spawn = 110
+chase_on_area = true
+respawn_delay = 30.0
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_leather"), SubResource("Drop_copper")])

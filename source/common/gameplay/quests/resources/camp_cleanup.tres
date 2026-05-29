@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://dd7tu8yrec3ie"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="2_lckyk"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+
+[sub_resource type="Resource" id="Obj_kill_bandits"]
+script = ExtResource("1_obj")
+enemy_type = &"bandit"
+required_amount = 8
+metadata/_custom_type_script = "uid://dqadrvvwt3ig2"
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Camp Cleanup"
+description = "With the captain dead, his lieutenants scattered to the bandit camp. Clear eight of them out — the city watch is paying per head."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_bandits")])
+min_level = 12
+reward_xp = 54
+reward_gold = 8
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"camp_cleanup"
+metadata/id = 5

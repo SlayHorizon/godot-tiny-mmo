@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://ca6hdigffs5j3"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="2_1o5y8"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+
+[sub_resource type="Resource" id="Obj_kill_slime"]
+script = ExtResource("1_obj")
+enemy_type = &"slime"
+required_amount = 3
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Slime Trouble"
+description = "Slimes have been crawling out of the meadow again. Thin them out — three of them should do."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_slime")])
+reward_xp = 8
+reward_gold = 2
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"slime_trouble"
+metadata/id = 18

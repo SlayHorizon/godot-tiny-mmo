@@ -82,6 +82,10 @@ func data_request_handler(
 
 
 func _has_required_tool(player: Player, tool_type: StringName) -> bool:
+	# Empty required_tool = hand-gathering (herbs, flowers, etc.). Anyone can
+	# pick those regardless of what's equipped — including bare-handed.
+	if tool_type == &"":
+		return true
 	var equipped_id: int = int(player.equipment_component.slots.values.get(&"weapon", 0))
 	if equipped_id <= 0:
 		return false

@@ -81,12 +81,14 @@ static func _roll_buckets(stats: Dictionary, now_ms: int) -> void:
 
 static func _day_start_ms(now_ms: int) -> int:
 	# UTC day boundary.
+	@warning_ignore("integer_division")
 	return (now_ms / DAY_MS) * DAY_MS
 
 
 static func _week_start_ms(now_ms: int) -> int:
 	# UTC Monday boundary. Godot's WEEKDAY enum starts at SUNDAY=0.
 	var day_start: int = _day_start_ms(now_ms)
+	@warning_ignore("integer_division")
 	var dow: int = Time.get_datetime_dict_from_unix_time(day_start / 1000).weekday
 	var days_since_monday: int = (dow + 6) % 7
 	return day_start - days_since_monday * DAY_MS

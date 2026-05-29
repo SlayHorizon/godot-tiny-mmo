@@ -43,6 +43,8 @@ func apply_profile(profile: Dictionary) -> void:
 
 	# Character name (nickname) + public account handle, e.g. "John  @guest1".
 	# The permanent player_id (#id) is only sent to staff viewers.
+	# Vanity title (if any) renders on its own line below as part of the same
+	# label, so we don't need an extra scene node.
 	name_label.text = player_name
 	var account_name: String = profile.get("account_name", "")
 	if not account_name.is_empty():
@@ -51,6 +53,10 @@ func apply_profile(profile: Dictionary) -> void:
 		name_label.text += "  #%d" % int(profile.get("id", 0))
 	if profile.get("guild_name", ""):
 		name_label.text += " (%s)" % profile.get("guild_name", "")
+	var title: String = profile.get("title", "")
+	if not title.is_empty():
+		# Plain Label can't render BBCode, so use a clean separator instead.
+		name_label.text += "\n— %s —" % title
 
 	message_button.visible = not is_self
 	friend_button.visible = not is_self

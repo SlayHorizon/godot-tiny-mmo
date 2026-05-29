@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://b6uxg0oa1tanh"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_pal0i"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="2_w6g8d"]
+
+[resource]
+script = ExtResource("1_quest")
+quest_name = "The Duel Master Calls"
+description = "Word has reached the Duel Master that you're a fighter. He's at the arena in town. Come show him what you've got."
+min_level = 5
+unlock_message = "[Duel Master] I hear you've been swinging steel out there. Find me at the arena when you think you're ready — first lesson is free."
+turn_in_giver_id = 8
+grant_title = "Promising Brawler"
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"visit_duel_master"
+metadata/id = 23

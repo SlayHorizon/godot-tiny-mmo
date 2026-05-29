@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=13 format=3 uid="uid://v5y6komavnpb"]
+[gd_resource type="SpriteFrames" format=3 uid="uid://v5y6komavnpb"]
 
 [ext_resource type="Texture2D" uid="uid://clh1sced2xnyq" path="res://assets/sprites/characters/wizard/wizard_idle.png" id="1_31uvx"]
 [ext_resource type="Texture2D" uid="uid://c14m3v210kxi6" path="res://assets/sprites/characters/wizard/wizard_run.png" id="2_6x4qy"]
@@ -45,6 +45,11 @@ region = Rect2(320, 0, 64, 64)
 
 [resource]
 animations = [{
+"frames": [],
+"loop": true,
+"name": &"death",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ncaqt")

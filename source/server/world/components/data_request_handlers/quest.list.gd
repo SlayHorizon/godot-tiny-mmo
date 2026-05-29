@@ -15,7 +15,13 @@ func data_request_handler(
 	var resource: PlayerResource = player.player_resource
 	var inventory: Dictionary = resource.inventory
 
+	# Build {quest_id -> QuestResource} from the giver directly. This bypasses
+	# the content registry, so newly-authored quests render correctly at their
+	# giver even before the TinyMMO plugin's content index has been
+	# regenerated. (Regeneration is still needed for the player's quest log
+	# view, which only has IDs to work with.)
 	var quest_ids: Array = []
+	var resources_by_id: Dictionary = {}
 	var giver_id: int = int(args.get("giver", 0))
 	var giver_name: String = ""
 	if giver_id > 0:
@@ -24,18 +30,33 @@ func data_request_handler(
 			giver_name = giver.giver_name
 			for quest: QuestResource in giver.quests:
 				if quest:
-					quest_ids.append(int(quest.get_meta(&"id", 0)))
+					var qid: int = int(quest.get_meta(&"id", 0))
+					resources_by_id[qid] = quest
+					quest_ids.append(qid)
+			# Pending turn-ins: active quests whose turn_in_giver_id points at
+			# this giver (delivery quests).
+			for active_quest_id: int in resource.quests.keys():
+				if quest_ids.has(active_quest_id):
+					continue
+				if resource.quest_state(active_quest_id) != &"active":
+					continue
+				var quest: QuestResource = QuestResource.load_quest(active_quest_id)
+				if quest and quest.turn_in_giver_id == giver_id:
+					resources_by_id[active_quest_id] = quest
+					quest_ids.append(active_quest_id)
 	else:
 		quest_ids = resource.quests.keys()
 
 	var out: Array = []
 	for quest_id: int in quest_ids:
-		out.append(_quest_view(resource, int(quest_id), inventory))
+		out.append(_quest_view(resource, int(quest_id), resources_by_id.get(quest_id), inventory))
 	return {"giver": giver_id, "giver_name": giver_name, "quests": out}
 
 
-func _quest_view(resource: PlayerResource, quest_id: int, inventory: Dictionary) -> Dictionary:
-	var quest: QuestResource = QuestResource.load_quest(quest_id)
+func _quest_view(resource: PlayerResource, quest_id: int, quest_ref: QuestResource, inventory: Dictionary) -> Dictionary:
+	# Prefer the direct reference (from the giver) over the registry lookup —
+	# avoids "?" names when the content index is stale.
+	var quest: QuestResource = quest_ref if quest_ref != null else QuestResource.load_quest(quest_id)
 	if quest == null:
 		return {"id": quest_id, "name": "?", "objectives": []}
 
@@ -57,4 +78,8 @@ func _quest_view(resource: PlayerResource, quest_id: int, inventory: Dictionary)
 		"objectives": objectives,
 		"reward_xp": quest.reward_xp,
 		"reward_gold": quest.reward_gold,
+		# Level-gate info so the client can swap the Accept button for a
+		# "Requires level N" label on quests the player isn't ready for.
+		"min_level": quest.min_level,
+		"meets_level": resource.level >= quest.min_level,
 	}

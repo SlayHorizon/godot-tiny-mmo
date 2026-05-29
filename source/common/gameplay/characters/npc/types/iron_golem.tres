@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://bgpqjxdyxwtv2"]
+
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="3_iron_ore"]
+
+[sub_resource type="Resource" id="Drop_iron_ore"]
+script = ExtResource("2_loot")
+item = ExtResource("3_iron_ore")
+max_amount = 2
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"iron_golem"
+display_name = "Iron Golem"
+max_health = 200.0
+attack_damage = 20.0
+attack_cooldown = 2.0
+armor = 15.0
+move_speed = 15
+distance_to_attack = 25
+max_distance_from_spawn = 80
+chase_on_area = true
+xp_reward = 40
+respawn_delay = 60.0
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_iron_ore")])

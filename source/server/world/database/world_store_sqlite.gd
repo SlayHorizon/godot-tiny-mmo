@@ -41,6 +41,14 @@ func save_player(player: PlayerResource) -> void:
 	var friends_json: String = JSON.stringify(player.friends)
 	var server_roles_json: String = JSON.stringify(player.server_roles)
 	var stats_json: String = JSON.stringify(player.lb_stats)
+	var titles_json: String = JSON.stringify({
+		"unlocked": player.titles_unlocked,
+		"display": player.display_title,
+	})
+	var dailies_json: String = JSON.stringify({
+		"quests": player.daily_quests,
+		"refresh_at_ms": player.dailies_refresh_at_ms,
+	})
 
 	var joined_guild_ids_json: String = JSON.stringify(player.joined_guild_ids)
 
@@ -48,9 +56,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, server_roles_json, stats_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, server_roles_json, stats_json, titles_json, dailies_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -71,6 +79,8 @@ func save_player(player: PlayerResource) -> void:
 			friends_json,
 			server_roles_json,
 			stats_json,
+			titles_json,
+			dailies_json,
 
 			player.active_guild_id,
 			joined_guild_ids_json,
@@ -151,7 +161,7 @@ func save_flag_state(flag_id: int, owner_guild_id: int, last_capture_ms: int) ->
 
 func get_player_profile_row(player_id: int) -> Dictionary:
 	db.query_with_bindings(
-		"SELECT player_id, account_name, display_name, skin_id, level, inventory_json, profile_status, profile_animation, active_guild_id "
+		"SELECT player_id, account_name, display_name, skin_id, level, inventory_json, profile_status, profile_animation, active_guild_id, titles_json "
 		+ "FROM players WHERE player_id=?;",
 		[player_id]
 	)
@@ -159,7 +169,13 @@ func get_player_profile_row(player_id: int) -> Dictionary:
 	if db.query_result.is_empty():
 		return {}
 
-	return db.query_result[0]
+	# Flatten the title display field for the profile handler so it doesn't have
+	# to parse JSON. Other fields stay in their raw form.
+	var row: Dictionary = db.query_result[0]
+	var titles_v: Variant = JSON.parse_string(str(row.get("titles_json", "{}")))
+	if titles_v is Dictionary:
+		row["display_title"] = str((titles_v as Dictionary).get("display", ""))
+	return row
 
 
 func _row_to_player(row: Dictionary) -> PlayerResource:
@@ -224,6 +240,18 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 
 	var lb_stats_v: Variant = JSON.parse_string(str(row.get("stats_json", "{}")))
 	player.lb_stats = lb_stats_v if lb_stats_v is Dictionary else {}
+
+	var titles_v: Variant = JSON.parse_string(str(row.get("titles_json", "{}")))
+	if titles_v is Dictionary:
+		var unlocked_v: Variant = (titles_v as Dictionary).get("unlocked", [])
+		player.titles_unlocked = PackedStringArray(unlocked_v if unlocked_v is Array else [])
+		player.display_title = str((titles_v as Dictionary).get("display", ""))
+
+	var dailies_v: Variant = JSON.parse_string(str(row.get("dailies_json", "{}")))
+	if dailies_v is Dictionary:
+		var quests_v: Variant = (dailies_v as Dictionary).get("quests", [])
+		player.daily_quests = quests_v if quests_v is Array else []
+		player.dailies_refresh_at_ms = int((dailies_v as Dictionary).get("refresh_at_ms", 0))
 
 	player.active_guild_id = int(row.get("active_guild_id", 0))
 

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://b7f4m4sicoieb"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="2_coal"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_2jv12"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="3_quest"]
+
+[sub_resource type="Resource" id="Obj_coal_10"]
+script = ExtResource("1_obj")
+type = 1
+item = ExtResource("2_coal")
+required_amount = 10
+
+[resource]
+script = ExtResource("3_quest")
+quest_name = "Apprentice Miner"
+description = "The foreman wants to see if you can swing a pickaxe. Bring him ten lumps of coal — he doesn't care where from."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_coal_10")])
+min_level = 3
+reward_xp = 15
+reward_gold = 4
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"apprentice_miner"
+metadata/id = 3

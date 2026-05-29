@@ -1,25 +1,116 @@
-[gd_resource type="Resource" script_class="CraftingStationResource" format=3 uid="uid://cwojdmtkr5xwl"]
+[gd_resource type="Resource" script_class="CraftingStationResource" load_steps=35 format=3 uid="uid://cwojdmtkr5xwl"]
 
-[ext_resource type="Script" uid="uid://btm2w18d3d327" path="res://source/common/gameplay/crafting/crafting_recipe.gd" id="1_drspt"]
-[ext_resource type="Script" uid="uid://dou76lfuf6clf" path="res://source/common/gameplay/crafting/crafting_station_resource.gd" id="2_d0y2e"]
-[ext_resource type="Script" uid="uid://cgkqi5dwtob32" path="res://source/common/gameplay/crafting/craft_ingredient.gd" id="2_qhq2i"]
-[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="3_jpxcm"]
+[ext_resource type="Script" path="res://source/common/gameplay/crafting/crafting_recipe.gd" id="1_recipe"]
+[ext_resource type="Script" path="res://source/common/gameplay/crafting/crafting_station_resource.gd" id="2_station"]
+[ext_resource type="Script" path="res://source/common/gameplay/crafting/craft_ingredient.gd" id="3_ingred"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="4_cop_ore"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="5_cop_bar"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="6_iron_ore"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="7_iron_bar"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="8_coal"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/bone.tres" id="9_bone"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/linen.tres" id="10_linen"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/hide.tres" id="11_hide"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/leather.tres" id="12_leather"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/iron_helmet.tres" id="13_iron_helm"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/iron_chest.tres" id="14_iron_chest"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/cloth_hood.tres" id="15_cl_hood"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/cloth_vest.tres" id="16_cl_vest"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/leather_jacket.tres" id="17_lj"]
 
-[sub_resource type="Resource" id="Resource_k25uf"]
-script = ExtResource("2_qhq2i")
-item = ExtResource("3_jpxcm")
+[sub_resource type="Resource" id="Ingr_cop_ore_2"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_cop_ore")
 amount = 2
-metadata/_custom_type_script = "uid://cgkqi5dwtob32"
 
-[sub_resource type="Resource" id="Resource_hs4mo"]
-script = ExtResource("1_drspt")
-output_item = ExtResource("3_jpxcm")
-ingredients = Array[ExtResource("2_qhq2i")]([SubResource("Resource_k25uf")])
-metadata/_custom_type_script = "uid://btm2w18d3d327"
+[sub_resource type="Resource" id="Recipe_cop_smelt"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("5_cop_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_cop_ore_2")])
+
+[sub_resource type="Resource" id="Ingr_iron_ore_3"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_iron_ore")
+amount = 3
+
+[sub_resource type="Resource" id="Ingr_coal_1"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_coal")
+amount = 1
+
+[sub_resource type="Resource" id="Recipe_iron_smelt"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("7_iron_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_iron_ore_3"), SubResource("Ingr_coal_1")])
+
+[sub_resource type="Resource" id="Ingr_iron_bar_1"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_iron_bar")
+amount = 1
+
+[sub_resource type="Resource" id="Ingr_bone_1"]
+script = ExtResource("3_ingred")
+item = ExtResource("9_bone")
+amount = 1
+
+[sub_resource type="Resource" id="Recipe_iron_helm"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("13_iron_helm")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_iron_bar_1"), SubResource("Ingr_bone_1")])
+
+[sub_resource type="Resource" id="Ingr_iron_bar_2"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_iron_bar")
+amount = 2
+
+[sub_resource type="Resource" id="Recipe_iron_chest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("14_iron_chest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_iron_bar_2")])
+
+[sub_resource type="Resource" id="Ingr_hide_2"]
+script = ExtResource("3_ingred")
+item = ExtResource("11_hide")
+amount = 2
+
+[sub_resource type="Resource" id="Recipe_tan_leather"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("12_leather")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_hide_2")])
+
+[sub_resource type="Resource" id="Ingr_linen_1"]
+script = ExtResource("3_ingred")
+item = ExtResource("10_linen")
+amount = 1
+
+[sub_resource type="Resource" id="Recipe_cloth_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("15_cl_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_linen_1")])
+
+[sub_resource type="Resource" id="Ingr_linen_2"]
+script = ExtResource("3_ingred")
+item = ExtResource("10_linen")
+amount = 2
+
+[sub_resource type="Resource" id="Recipe_cloth_vest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("16_cl_vest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_linen_2")])
+
+[sub_resource type="Resource" id="Ingr_leather_2"]
+script = ExtResource("3_ingred")
+item = ExtResource("12_leather")
+amount = 2
+
+[sub_resource type="Resource" id="Recipe_leather_jacket"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("17_lj")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ingr_leather_2")])
 
 [resource]
-script = ExtResource("2_d0y2e")
-recipes = Array[ExtResource("1_drspt")]([SubResource("Resource_hs4mo")])
+script = ExtResource("2_station")
+recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_cloth_hood"), SubResource("Recipe_cloth_vest"), SubResource("Recipe_tan_leather"), SubResource("Recipe_leather_jacket"), SubResource("Recipe_cop_smelt"), SubResource("Recipe_iron_smelt"), SubResource("Recipe_iron_helm"), SubResource("Recipe_iron_chest")])
 metadata/_custom_type_script = "uid://dou76lfuf6clf"
 metadata/slug = &"forge"
 metadata/id = 1

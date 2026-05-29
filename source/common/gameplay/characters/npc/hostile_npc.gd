@@ -10,6 +10,11 @@ enum EnemyState {
 	DEAD
 }
 
+## Data-driven definition. If assigned, fields below get overwritten from this
+## resource at _ready (one .tres = one archetype, drop into many instances).
+## Leave null for the legacy "tune everything on this specific instance" path.
+@export var enemy_data: EnemyTypeResource
+
 ## Start chasing the player once he steps in the area.
 @export var chase_on_area: bool = false
 ## The distance between the player and NPC to start attacking.
@@ -39,6 +44,30 @@ enum EnemyState {
 @export var loot: Array[LootDrop]
 @export_group("")
 
+
+## Copy archetype fields onto this instance. Called once at startup so the
+## rest of HostileNpc can keep reading its own @exports unchanged.
+func _apply_enemy_data() -> void:
+	if enemy_data == null:
+		return
+	enemy_type = enemy_data.enemy_type
+	max_health = enemy_data.max_health
+	attack_damage = enemy_data.attack_damage
+	attack_cooldown = enemy_data.attack_cooldown
+	armor = enemy_data.armor
+	weapon = enemy_data.weapon
+	xp_reward = enemy_data.xp_reward
+	respawn_delay = enemy_data.respawn_delay
+	loot = enemy_data.loot
+	move_speed = enemy_data.move_speed
+	distance_to_attack = enemy_data.distance_to_attack
+	max_distance_from_spawn = enemy_data.max_distance_from_spawn
+	chase_on_area = enemy_data.chase_on_area
+	if enemy_data.skin != null:
+		skin_id = 0 # disable id-based skin; we're driving it directly
+		if has_node(^"AnimatedSprite2D"):
+			($AnimatedSprite2D as AnimatedSprite2D).sprite_frames = enemy_data.skin
+
 var container: ReplicatedPropsContainer
 var enemy_state: EnemyState = EnemyState.IDLE
 
@@ -59,6 +88,9 @@ var _next_attack_ms: int
 
 
 func _ready() -> void:
+	# Pull archetype values from enemy_data BEFORE Character._ready reads any
+	# stats — so a data-driven NPC's @exports already reflect the resource.
+	_apply_enemy_data()
 	# Character._ready wires the client-side health bar (stat_changed -> ProgressBar);
 	# without this the NPC's bar is never initialised or connected. On the server it
 	# returns immediately.
@@ -308,6 +340,7 @@ func _reward_killer(killer: Player) -> void:
 	if resource == null:
 		return
 
+	var level_before: int = resource.level
 	var progress: Dictionary = resource.add_experience(xp_reward)
 	var loot_gained: Array = _roll_loot()
 	for entry: Dictionary in loot_gained:
@@ -330,6 +363,9 @@ func _reward_killer(killer: Player) -> void:
 	if peer_id > 0 and not quest_updates.is_empty():
 		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
 
+	# Daily quest KILL progress. Silent counter — no per-kill toast (would spam).
+	DailyQuestService.on_kill(resource, enemy_type)
+
 	# Basing: if the kill happened inside a territory the killer's guild owns,
 	# credit the 200-kill Glory counter. No-op for solo or out-of-territory kills.
 	BasingService.on_pve_kill(killer)
@@ -337,6 +373,12 @@ func _reward_killer(killer: Player) -> void:
 	# Leaderboard: every PvE kill counts toward the killer's daily/weekly/total
 	# PvE rankings (independent from the basing kill counter).
 	LeaderboardService.record_pve_kill(killer)
+
+	# Level-milestone unlock messages — fire any per-level quest notifications
+	# that crossed in this XP grant.
+	if int(progress.get("levels_gained", 0)) > 0:
+		var inst: ServerInstance = WorldServer.curr.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
+		LevelMilestoneService.on_levels_gained(resource, level_before, int(progress.get("level", 1)), inst)
 
 
 ## Rolls each loot entry; returns [{ "id", "amount", "name" }, ...].

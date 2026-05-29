@@ -27,28 +27,29 @@
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="24_slgwh"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="24_uytus"]
 [ext_resource type="Resource" uid="uid://b64q6sv46brpr" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres" id="25_7nycf"]
+[ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="25_g3eyd"]
 [ext_resource type="Script" uid="uid://bvwcr61l1deso" path="res://source/common/gameplay/time/world_clock_display.gd" id="25_gimy5"]
-[ext_resource type="Script" uid="uid://xduf2fcr0g83" path="res://source/common/gameplay/maps/components/shop_button.gd" id="28_mvj6e"]
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="29_sbo1b"]
-[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/general_store.tres" id="30_5vi16"]
-[ext_resource type="Resource" uid="uid://dpg3yne7adekr" path="res://source/common/gameplay/shops/resources/sell_shop.tres" id="31_lc833"]
 [ext_resource type="Script" uid="uid://cg6wer5if2oyf" path="res://source/common/gameplay/crafting/crafting_station.gd" id="32_2aujs"]
 [ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="32_sbo1b"]
-[ext_resource type="Resource" uid="uid://cwojdmtkr5xwl" path="res://source/common/gameplay/crafting/resources/forge.tres" id="33_7nycf"]
 [ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="33_112bs"]
 [ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="37_frbp0"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="38_dk1bj"]
-[ext_resource type="Resource" uid="uid://b0xp3rulvro2u" path="res://source/common/gameplay/quests/resources/slay_quest_1.tres" id="39_uw01f"]
-[ext_resource type="Resource" uid="uid://cn0th484mts73" path="res://source/common/gameplay/quests/resources/forge_quest_1.tres" id="40_dk1bj"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="39_frbp0"]
+[ext_resource type="Script" uid="uid://dp7km3l8yaot3" path="res://source/common/gameplay/quests/quest_board.gd" id="40_g3eyd"]
 [ext_resource type="Script" uid="uid://b2j8gyjph35qx" path="res://source/common/gameplay/trade/trade_table.gd" id="41_uw01f"]
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="42_gn54b"]
+[ext_resource type="Resource" uid="uid://b7f4m4sicoieb" path="res://source/common/gameplay/quests/resources/apprentice_miner.tres" id="42_or0xh"]
+[ext_resource type="Resource" uid="uid://dhvcbtyb5eppi" path="res://source/common/gameplay/quests/resources/the_iron_vein.tres" id="43_88r8o"]
 [ext_resource type="Texture2D" uid="uid://don6jdlt3vpia" path="res://icon.svg" id="43_vkg56"]
+[ext_resource type="Resource" uid="uid://djykaddq0rjuw" path="res://source/common/gameplay/quests/resources/smelters_trial.tres" id="44_2htmb"]
 [ext_resource type="Script" uid="uid://crn8mflgu0qvy" path="res://source/common/gameplay/sparring/duel_master.gd" id="44_vkg56"]
+[ext_resource type="Resource" uid="uid://b3qk27fw0k2ko" path="res://source/common/gameplay/quests/resources/a_tailored_hood.tres" id="45_ammjv"]
+[ext_resource type="Resource" uid="uid://pm3j1lgi0vig" path="res://source/common/gameplay/quests/resources/master_of_the_forge.tres" id="46_70yxu"]
+[ext_resource type="Resource" uid="uid://cenoj3b4ix3kk" path="res://source/common/gameplay/quests/resources/first_harvest.tres" id="47_kj3yx"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ovmn0"]
 radius = 51.48361
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mvj6e"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uw01f"]
 radius = 55.38041
@@ -72,6 +73,15 @@ size = Vector2(64, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vkg56"]
 size = Vector2(192, 120.00006)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dk1bj"]
+size = Vector2(56.00003, 27.078186)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ygx5n"]
+size = Vector2(80, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pb3ma"]
+size = Vector2(64, 32.00003)
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -245,12 +255,14 @@ activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/A
 
 [node name="NPC" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("24_uytus")]
 position = Vector2(145, 1356)
+enemy_data = null
 enemy_type = &""
 attack_cooldown = 1.5
 weapon = null
 
 [node name="Mob" parent="ReplicatedPropsContainer" unique_id=1087386232 instance=ExtResource("24_uytus")]
 position = Vector2(655.3556, 1198.6508)
+enemy_data = ExtResource("25_g3eyd")
 distance_to_attack = 200
 enemy_type = &"mobs"
 attack_cooldown = 1.5
@@ -264,6 +276,7 @@ shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Mob2" parent="ReplicatedPropsContainer" unique_id=267862471 instance=ExtResource("24_uytus")]
 position = Vector2(922.79205, 1260.473)
+enemy_data = ExtResource("25_g3eyd")
 distance_to_attack = 25
 enemy_type = &"mobs"
 attack_damage = 20.0
@@ -326,7 +339,7 @@ polygon = PackedVector2Array(320, 960, 512, 960, 512, 1088, 320, 1088, 320, 1024
 color = Color(1, 0.25, 0.25, 0.16)
 polygon = PackedVector2Array(384, 1024, 512, 1024, 512, 1088, 320, 1088, 320, 1024)
 
-[node name="Label2" type="Label" parent="." unique_id=1339427002]
+[node name="WorldTimeLabelDebug" type="Label" parent="." unique_id=1339427002]
 z_index = 10
 z_as_relative = false
 offset_left = 748.0
@@ -336,27 +349,9 @@ offset_bottom = 938.0
 text = "World Time:"
 script = ExtResource("25_gimy5")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=411929430]
-layer = 20
-visible = false
-follow_viewport_enabled = true
-
-[node name="ShopButton" type="Button" parent="CanvasLayer" unique_id=953784759]
-top_level = true
-z_index = 10
-offset_left = 792.0
-offset_top = 880.0
-offset_right = 842.0
-offset_bottom = 909.0
-mouse_behavior_recursive = 2
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_mvj6e")
-text = "SHOP"
-script = ExtResource("28_mvj6e")
-
 [node name="ShopInteractable" type="Area2D" parent="." unique_id=1408130728]
 position = Vector2(810.65173, 868.843)
 script = ExtResource("29_sbo1b")
-shop = ExtResource("30_5vi16")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=1524019920]
 shape = SubResource("CircleShape2D_uw01f")
@@ -372,7 +367,6 @@ GENERAL STORE"
 [node name="ShopInteractable2" type="Area2D" parent="." unique_id=593426351]
 position = Vector2(957.8729, 834.17206)
 script = ExtResource("29_sbo1b")
-shop = ExtResource("31_lc833")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable2" unique_id=1302669879]
 shape = SubResource("CircleShape2D_uw01f")
@@ -388,7 +382,6 @@ ONLY"
 [node name="CraftingStation" type="Area2D" parent="." unique_id=92353300]
 position = Vector2(648.6698, 933.27997)
 script = ExtResource("32_2aujs")
-station = ExtResource("33_7nycf")
 metadata/_custom_type_script = "uid://cg6wer5if2oyf"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingStation" unique_id=422668942]
@@ -422,7 +415,6 @@ text = "Ore"
 position = Vector2(665.0061, 790.5016)
 script = ExtResource("37_frbp0")
 giver_id = 1
-quests = Array[ExtResource("38_dk1bj")]([ExtResource("39_uw01f"), ExtResource("40_dk1bj")])
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="QuestGiver" unique_id=1780750788]
 position = Vector2(-1.0061035, 1.4984131)
@@ -512,3 +504,99 @@ position = Vector2(394.24542, 1117.879)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FightingArea" unique_id=697726663]
 position = Vector2(5.7545776, 46.12097)
 shape = SubResource("RectangleShape2D_vkg56")
+
+[node name="HealingHerbNode" type="Area2D" parent="." unique_id=1144861485]
+position = Vector2(736.8288, 766.9218)
+script = ExtResource("32_sbo1b")
+ore = ExtResource("39_frbp0")
+required_tool = &""
+metadata/_custom_type_script = "uid://cci5f3gf106ha"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode" unique_id=495120305]
+position = Vector2(3.1712036, 3.5391235)
+shape = SubResource("RectangleShape2D_dk1bj")
+
+[node name="Label" type="Label" parent="HealingHerbNode" unique_id=2112392580]
+offset_left = -40.828796
+offset_top = -6.921814
+offset_right = 52.171204
+offset_bottom = 14.078186
+text = "Healing Herb"
+
+[node name="QuestBoard" type="Area2D" parent="." unique_id=2124179738]
+position = Vector2(958.2897, 763.9043)
+script = ExtResource("40_g3eyd")
+metadata/_custom_type_script = "uid://dp7km3l8yaot3"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="QuestBoard" unique_id=645061467]
+position = Vector2(1.7103271, 0)
+shape = SubResource("RectangleShape2D_ygx5n")
+
+[node name="Label" type="Label" parent="QuestBoard" unique_id=1556280703]
+offset_left = -38.289673
+offset_top = -19.904297
+offset_right = 45.710327
+offset_bottom = 1.0957031
+text = "QuestBoard"
+
+[node name="Foreman" type="Area2D" parent="." unique_id=1215197090]
+position = Vector2(487.32556, -340.26025)
+script = ExtResource("37_frbp0")
+giver_id = 10
+giver_name = "Foreman"
+quests = Array[ExtResource("38_dk1bj")]([ExtResource("42_or0xh"), ExtResource("43_88r8o")])
+metadata/_custom_type_script = "uid://cm4dod11fv3fj"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Foreman" unique_id=378079636]
+position = Vector2(6.756714, 3.3986206)
+shape = SubResource("RectangleShape2D_pb3ma")
+
+[node name="Label" type="Label" parent="Foreman" unique_id=425836284]
+offset_left = -25.243286
+offset_top = -20.60138
+offset_right = 38.756714
+offset_bottom = 24.39862
+text = "Foreman
+(quests)"
+
+[node name="MasterSmith" type="Area2D" parent="." unique_id=1164213037]
+position = Vector2(474.18835, 641.58215)
+script = ExtResource("37_frbp0")
+giver_id = 6
+giver_name = "Master Smith"
+quests = Array[ExtResource("38_dk1bj")]([ExtResource("44_2htmb"), ExtResource("45_ammjv"), ExtResource("46_70yxu")])
+metadata/_custom_type_script = "uid://cm4dod11fv3fj"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MasterSmith" unique_id=1264025918]
+position = Vector2(6.756714, 3.3986206)
+shape = SubResource("RectangleShape2D_pb3ma")
+
+[node name="Label" type="Label" parent="MasterSmith" unique_id=1401731994]
+offset_left = -42.188354
+offset_top = -17.582153
+offset_right = 52.811646
+offset_bottom = 27.417847
+text = "Master Smith
+(quests)"
+horizontal_alignment = 1
+
+[node name="MiraTheHerbalist" type="Area2D" parent="." unique_id=1935245170]
+position = Vector2(1061.7823, 1069.762)
+script = ExtResource("37_frbp0")
+giver_id = 4
+giver_name = "Mira the Herbalist"
+quests = Array[ExtResource("38_dk1bj")]([ExtResource("47_kj3yx")])
+metadata/_custom_type_script = "uid://cm4dod11fv3fj"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MiraTheHerbalist" unique_id=485090142]
+position = Vector2(6.756714, 3.3986206)
+shape = SubResource("RectangleShape2D_pb3ma")
+
+[node name="Label" type="Label" parent="MiraTheHerbalist" unique_id=1005847772]
+offset_left = -37.78235
+offset_top = -21.762024
+offset_right = 89.21765
+offset_bottom = 23.237976
+text = "Mira the Herbalist
+(quests)"
+horizontal_alignment = 1

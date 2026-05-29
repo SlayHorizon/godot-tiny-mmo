@@ -36,6 +36,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		row["profile_status"] = target_player.profile_status
 		row["profile_animation"] = target_player.profile_animation
 		row["active_guild_id"] = target_player.active_guild_id
+		row["display_title"] = target_player.display_title
 
 	# Step 3 build final response once
 	var guild_id: int = int(row.get("active_guild_id", 0))
@@ -49,6 +50,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 
 	var profile: Dictionary = {
 		"name": str(row.get("display_name", "Unknown")),
+		"title": str(row.get("display_title", "")),
 		"account_name": str(row.get("account_name", "")),
 		"skin_id": int(row.get("skin_id", 1)),
 		"stats": {

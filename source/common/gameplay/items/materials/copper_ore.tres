@@ -7,7 +7,7 @@
 script = ExtResource("2_0hvsk")
 item_name = &"Copper Ore"
 item_icon = ExtResource("1_3akc5")
-vendor_value = 3
+vendor_value = 2
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"copper_ore"
 metadata/id = 51

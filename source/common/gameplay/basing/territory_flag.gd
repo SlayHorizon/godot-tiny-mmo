@@ -77,7 +77,9 @@ func _process(_delta: float) -> void:
 		return
 	var remaining_ms: int = grace_until_ms - Time.get_ticks_msec()
 	if remaining_ms > 0:
+		@warning_ignore("integer_division")
 		var seconds: int = remaining_ms / 1000
+		@warning_ignore("integer_division")
 		grace_label.text = "🛡 Immune %d:%02d" % [seconds / 60, seconds % 60]
 		grace_label.visible = true
 	elif grace_label.visible:

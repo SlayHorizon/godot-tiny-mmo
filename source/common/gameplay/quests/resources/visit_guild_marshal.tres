@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://dxyo1l1jo07kv"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_fubq5"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="2_g56sf"]
+
+[resource]
+script = ExtResource("1_quest")
+quest_name = "The Marshal's Invitation"
+description = "The Guild Marshal would like a word. She's in the guild hall, opposite the smith's. Bring your wits."
+min_level = 8
+unlock_message = "[Guild Marshal Veska] You've earned a name for yourself out there. Come find me at the guild hall — there are people you should meet."
+turn_in_giver_id = 9
+grant_title = "Hopeful Recruit"
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"visit_guild_marshal"
+metadata/id = 24

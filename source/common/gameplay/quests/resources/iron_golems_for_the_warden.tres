@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://bb7hk61qxgm3s"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="2_yjge8"]
+
+[sub_resource type="Resource" id="Obj_kill_golems"]
+script = ExtResource("1_obj")
+enemy_type = &"iron_golem"
+required_amount = 3
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Iron at the Gate"
+description = "Iron golems have wandered out of the old fort. The warden wants three of them dropped before they reach the road. Bring proof of the kills — the ore they leak."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_golems")])
+min_level = 16
+reward_xp = 90
+reward_gold = 10
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"iron_golems_for_the_warden"
+metadata/id = 13

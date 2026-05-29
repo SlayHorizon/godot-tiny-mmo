@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://k8pq0k6w85to"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_mebwu"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="1_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="2_2cmi5"]
+
+[resource]
+script = ExtResource("1_quest")
+quest_name = "Maps and Flags"
+description = "A scout in the warden's camp wants to teach you how territory flags work. Pay her a visit — your guild will thank you."
+min_level = 16
+unlock_message = "[Scout Aelin] So you can hold your own at the front. Come up to the warden's camp — I'll show you how the real game gets played."
+turn_in_giver_id = 10
+grant_title = "Scout's Pupil"
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"visit_territory_scout"
+metadata/id = 25

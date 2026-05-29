@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://cawy8c6jytb28"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/hide.tres" id="2_hide"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="3_herb"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_b0amy"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="4_quest"]
+
+[sub_resource type="Resource" id="Obj_hide_4"]
+script = ExtResource("1_obj")
+type = 1
+item = ExtResource("2_hide")
+required_amount = 4
+
+[sub_resource type="Resource" id="Obj_herb_3"]
+script = ExtResource("1_obj")
+type = 1
+item = ExtResource("3_herb")
+required_amount = 3
+
+[resource]
+script = ExtResource("4_quest")
+quest_name = "Mira's Supplies"
+description = "Mira's brewing a tonic for the city watch — four wolf hides and three more herbs. Bring them all in one trip if you can."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_hide_4"), SubResource("Obj_herb_3")])
+min_level = 6
+reward_xp = 24
+reward_gold = 5
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"miras_supplies"
+metadata/id = 16

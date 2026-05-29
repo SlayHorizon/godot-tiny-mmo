@@ -332,10 +332,12 @@ func _on_trade_result(data: Dictionary) -> void:
 # --- Formatting ---
 
 func _format_offer(seat: Dictionary, prefix: String) -> String:
-	var name: String = str(seat.get("name", ""))
-	if name.is_empty():
+	# Local was named `name` which shadowed Node.name — renamed so future
+	# refactors can't accidentally reach for `self.name` and get the wrong thing.
+	var seat_name: String = str(seat.get("name", ""))
+	if seat_name.is_empty():
 		return "Waiting for another player…"
-	var text: String = "%s — %s%s:" % [name, prefix, " ✓" if seat.get("accepted", false) else ""]
+	var text: String = "%s — %s%s:" % [seat_name, prefix, " ✓" if seat.get("accepted", false) else ""]
 	for item: Dictionary in seat.get("items", []):
 		text += "\n  %dx %s" % [int(item.get("amount", 1)), str(item.get("name", ""))]
 	var gold: int = int(seat.get("gold", 0))

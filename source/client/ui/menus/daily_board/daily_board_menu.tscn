@@ -1,0 +1,53 @@
+[gd_scene load_steps=2 format=4]
+
+[ext_resource type="Script" path="res://source/client/ui/menus/daily_board/daily_board_menu.gd" id="1_board"]
+
+[node name="DailyBoardMenu" type="Control" node_paths=PackedStringArray("title_label", "refresh_label", "entries_box", "close_button", "status_label")]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_board")
+title_label = NodePath("CenterContainer/Card/Margin/VBox/Header/Title")
+refresh_label = NodePath("CenterContainer/Card/Margin/VBox/Header/Refresh")
+entries_box = NodePath("CenterContainer/Card/Margin/VBox/EntriesBox")
+close_button = NodePath("CenterContainer/Card/Margin/VBox/Header/CloseButton")
+status_label = NodePath("CenterContainer/Card/Margin/VBox/StatusLabel")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Card" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(520, 0)
+mouse_filter = 0
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/Card"]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Card/Margin"]
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="CenterContainer/Card/Margin/VBox"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="CenterContainer/Card/Margin/VBox/Header"]
+size_flags_horizontal = 3
+text = "Daily Quest Board"
+
+[node name="Refresh" type="Label" parent="CenterContainer/Card/Margin/VBox/Header"]
+modulate = Color(1, 1, 1, 0.7)
+text = "—"
+
+[node name="CloseButton" type="Button" parent="CenterContainer/Card/Margin/VBox/Header"]
+text = "✕"
+
+[node name="StatusLabel" type="Label" parent="CenterContainer/Card/Margin/VBox"]
+modulate = Color(1, 1, 1, 0.7)
+text = "Loading..."
+
+[node name="EntriesBox" type="VBoxContainer" parent="CenterContainer/Card/Margin/VBox"]
+theme_override_constants/separation = 8

@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("2_mytch")
-item_name = &"Silver Ore"
+item_name = &"Gold Ore"
 item_icon = ExtResource("1_irca4")
 vendor_value = 3
 metadata/_custom_type_script = "uid://nsr1timk430j"
