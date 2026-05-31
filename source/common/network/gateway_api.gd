@@ -18,7 +18,8 @@ const ACTION_DISCONNECT := "disconnect"
 
 
 static func base_url() -> String:
-	# Hardcoded default one.
+	if OS.has_feature("ekonia") or OS.has_feature("release"):
+		return "https://ws.ekoniaonline.com"
 	return "http://127.0.0.1:8088"
 
 	# var command_line_arg: String = CmdlineUtils.get_parsed_args().get("api", "")

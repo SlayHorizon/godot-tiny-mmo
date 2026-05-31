@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/captain_tag.tres" id="3_tag"]
+[ext_resource type="Resource" uid="uid://yknmxceq6mdh" path="res://source/common/gameplay/items/materials/captain_tag.tres" id="3_tag"]
 [ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="4_cop_bar"]
 
 [sub_resource type="Resource" id="Drop_tag"]
@@ -27,6 +27,6 @@ move_speed = 22
 distance_to_attack = 22
 max_distance_from_spawn = 120
 chase_on_area = true
-xp_reward = 50
+xp_reward = 125
 respawn_delay = 120.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_tag"), SubResource("Drop_copper_bar")])

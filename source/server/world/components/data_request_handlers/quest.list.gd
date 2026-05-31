@@ -29,7 +29,7 @@ func data_request_handler(
 		# VISIT objectives BEFORE building the view so the player sees the
 		# just-advanced count in the same response. Also push quest.update so
 		# the HUD tracker refreshes immediately (same pattern as kill/craft).
-		var visit_updates: Array = QuestService.on_visit(resource, giver_id)
+		var visit_updates: Array = QuestService.on_visit(resource, giver_id, peer_id, instance)
 		if not visit_updates.is_empty():
 			WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": visit_updates})
 		var giver: QuestGiver = instance.instance_map.get_quest_giver(giver_id)

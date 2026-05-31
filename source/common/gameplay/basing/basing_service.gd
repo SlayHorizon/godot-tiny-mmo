@@ -23,7 +23,7 @@ const EG_PER_10_SG: int = 3
 ## Grant [param amount] Seasonal Glory to [param guild] and emit any Eternal
 ## Glory the new total earns through the 10:3 conversion. Caller is responsible
 ## for persisting the Guild afterward (we batch saves where possible).
-static func grant_sg(guild: Guild, amount: int) -> void:
+static func grant_sg(guild: Resource, amount: int) -> void:
 	if guild == null or amount <= 0:
 		return
 	guild.seasonal_glory += amount
@@ -57,14 +57,14 @@ static func on_pve_kill(killer: Player) -> void:
 ## to each owning guild per held flag. Guilds are loaded once per tick and
 ## saved once at the end, so DB cost is O(unique-owning-guilds) per tick — at
 ## the alpha scale this is essentially free.
-static func tick_all_territories(world_server: WorldServer) -> void:
+static func tick_all_territories(world_server: Node) -> void:
 	if world_server == null or world_server.instance_manager == null:
 		return
-	var guilds_to_save: Dictionary = {} # guild_id -> Guild
+	var guilds_to_save: Dictionary = {} # guild_id -> Resource
 	var ticks_by_guild: Dictionary = {} # guild_id -> int (for the chat announce)
 
 	for inst_res: InstanceResource in world_server.instance_manager.instance_collection.values():
-		for inst: ServerInstance in inst_res.charged_instances:
+		for inst: Node in inst_res.charged_instances:
 			if inst.instance_map == null:
 				continue
 			for flag: TerritoryFlag in inst.instance_map.territory_flags.values():
@@ -73,14 +73,14 @@ static func tick_all_territories(world_server: WorldServer) -> void:
 					continue
 				if not guilds_to_save.has(gid):
 					guilds_to_save[gid] = world_server.database.get_guild(gid)
-				var guild: Guild = guilds_to_save[gid]
+				var guild: Resource = guilds_to_save[gid]
 				if guild == null:
 					continue
 				grant_sg(guild, TERRITORY_TICK_SG)
 				ticks_by_guild[gid] = int(ticks_by_guild.get(gid, 0)) + TERRITORY_TICK_SG
 
 	for gid in guilds_to_save:
-		var guild: Guild = guilds_to_save[gid]
+		var guild: Resource = guilds_to_save[gid]
 		if guild == null:
 			continue
 		world_server.database.save_guild(guild)
@@ -97,10 +97,10 @@ static func _find_owned_territory_containing(instance_map: Map, guild_id: int, b
 
 
 static func _credit_kill(guild_id: int) -> void:
-	var ws: WorldServer = WorldServer.curr
+	var ws: Node = ServerHub.current
 	if ws == null:
 		return
-	var guild: Guild = ws.database.get_guild(guild_id)
+	var guild: Resource = ws.database.get_guild(guild_id)
 	if guild == null:
 		return
 	guild.kill_counter_for_glory += 1
@@ -115,14 +115,14 @@ static func _credit_kill(guild_id: int) -> void:
 	ws.database.save_guild(guild)
 
 
-static func _announce_tick(ws: WorldServer, guild: Guild, sg_gained: int) -> void:
+static func _announce_tick(ws: Node, guild: Resource, sg_gained: int) -> void:
 	if ws.chat_service == null or sg_gained <= 0:
 		return
 	var msg: String = "🏛 Your guild earned %d Seasonal Glory from held territory." % sg_gained
 	_push_to_guild_members(ws, guild.guild_id, msg)
 
 
-static func _announce_milestone(ws: WorldServer, guild: Guild, sg_gained: int) -> void:
+static func _announce_milestone(ws: Node, guild: Resource, sg_gained: int) -> void:
 	if ws.chat_service == null or sg_gained <= 0:
 		return
 	var kills: int = sg_gained * KILLS_PER_GLORY
@@ -130,7 +130,7 @@ static func _announce_milestone(ws: WorldServer, guild: Guild, sg_gained: int) -
 	_push_to_guild_members(ws, guild.guild_id, msg)
 
 
-static func _push_to_guild_members(ws: WorldServer, guild_id: int, msg: String) -> void:
+static func _push_to_guild_members(ws: Node, guild_id: int, msg: String) -> void:
 	for peer_id: int in ws.connected_players:
 		var player: PlayerResource = ws.connected_players[peer_id]
 		if player != null and player.active_guild_id == guild_id:

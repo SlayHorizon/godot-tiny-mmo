@@ -136,10 +136,10 @@ func _capture(killer: Character) -> void:
 	var previous_id: int = owner_guild_id
 	var previous_name: String = owner_guild_name
 	owner_guild_id = new_owner_id
-	owner_guild_name = WorldServer.curr.database.store.get_guild_name(new_owner_id)
+	owner_guild_name = ServerHub.current.database.store.get_guild_name(new_owner_id)
 	grace_until_ms = Time.get_ticks_msec() + GRACE_MS
 
-	WorldServer.curr.database.store.save_flag_state(
+	ServerHub.current.database.store.save_flag_state(
 		flag_id, owner_guild_id, int(Time.get_unix_time_from_system() * 1000.0)
 	)
 	_announce_capture(killer as Player, previous_id, previous_name)
@@ -149,12 +149,12 @@ func _capture(killer: Character) -> void:
 # --- Server-side: helpers ---
 
 func _load_state_from_db() -> void:
-	var row: Dictionary = WorldServer.curr.database.store.get_flag_state(flag_id)
+	var row: Dictionary = ServerHub.current.database.store.get_flag_state(flag_id)
 	if row.is_empty():
 		return
 	owner_guild_id = int(row.get("owner_guild_id", 0))
 	if owner_guild_id > 0:
-		owner_guild_name = WorldServer.curr.database.store.get_guild_name(owner_guild_id)
+		owner_guild_name = ServerHub.current.database.store.get_guild_name(owner_guild_id)
 	# Grace from the persisted last_capture_ms — so a restart doesn't reset the
 	# defender's protection window. last_capture_ms is unix-ms; grace_until_ms
 	# is ticks-ms (uptime). Convert via the current offset.
@@ -166,12 +166,12 @@ func _load_state_from_db() -> void:
 
 
 func _broadcast_state() -> void:
-	var instance: ServerInstance = _server_instance()
+	var instance: Node = _server_instance()
 	if instance == null:
 		return
 	var payload: Dictionary = _state_payload()
-	WorldServer.curr.propagate_rpc(
-		WorldServer.curr.data_push.bind(&"flag.update", payload),
+	ServerHub.current.propagate_rpc(
+		ServerHub.current.data_push.bind(&"flag.update", payload),
 		instance.name
 	)
 
@@ -191,7 +191,7 @@ func _state_payload() -> Dictionary:
 func _notify_under_attack() -> void:
 	if owner_guild_id <= 0:
 		return # Nothing to defend if it's unowned.
-	var ws: WorldServer = WorldServer.curr
+	var ws: Node = ServerHub.current
 	if ws == null or ws.chat_service == null:
 		return
 	# Notify every online member of the holding guild, wherever they are.
@@ -213,7 +213,7 @@ func _notify_under_attack() -> void:
 
 
 func _announce_capture(killer: Player, previous_id: int, previous_name: String) -> void:
-	var ws: WorldServer = WorldServer.curr
+	var ws: Node = ServerHub.current
 	if ws == null or ws.chat_service == null:
 		return
 	var killer_name: String = killer.player_resource.display_name if killer else "Someone"
@@ -229,10 +229,10 @@ func _announce_capture(killer: Player, previous_id: int, previous_name: String) 
 		ws.chat_service.push_system_to_player(_server_instance(), player.player_id, msg)
 
 
-func _server_instance() -> ServerInstance:
+func _server_instance() -> Node:
 	var n: Node = get_parent()
 	while n:
-		if n is ServerInstance:
+		if n is SubViewport:
 			return n
 		n = n.get_parent()
 	return null

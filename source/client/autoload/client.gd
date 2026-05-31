@@ -48,6 +48,7 @@ func connect_to_server(
 	_port: int,
 	_authentication_token: String
 ) -> void:
+	print(_address, _port, _authentication_token)
 	authentication_token = _authentication_token
 	create(Role.CLIENT, _address, _port)
 
@@ -70,7 +71,7 @@ func _on_connection_succeeded() -> void:
 
 
 func _on_connection_failed() -> void:
-	print("Failed to connect to the server.")
+	print("Failed to connect to the world server.")
 	close_connection()
 
 

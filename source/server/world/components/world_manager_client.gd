@@ -27,12 +27,19 @@ func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 
 
 func _on_connection_succeeded() -> void:
-	print("Successfully connected to the Gateway as %d!" % multiplayer.get_unique_id())
+	print("Successfully connected to the MasterServer as WorldServer - Peer ID:%d!" % multiplayer.get_unique_id())
+	# Address reported to clients. Two forms supported:
+	#   • bare host like "127.0.0.1" — paired with `port` to build ws://host:port
+	#   • full URL like "wss://ws.example.com/world/1" — used as-is, port ignored
+	# The latter is the production path when Caddy/nginx proxies WSS by path.
+	# Set `public_url` in [world-server] of world.cfg to override the localhost
+	# default; leave unset for local-dev where address+port is enough.
+	var reported_address: String = str(world_info.get("public_url", "127.0.0.1"))
 	fetch_server_info.rpc_id(
 		1,
 		{
 			"port": world_info.port,
-			"address": "127.0.0.1",
+			"address": reported_address,
 			"info": world_info,
 			"population": world_server.connected_players.size()
 		}

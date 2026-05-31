@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_x3a1s")
 content_name = &"crafting_stations"
-version = 1780230174
+version = 1780249191
 next_id = 4
 entries = Array[Dictionary]([{
 &"hash": "dc8c10a9577a68a119655dcd8e15d6d038fbb2c4920570c9c940cf925aed6cea",

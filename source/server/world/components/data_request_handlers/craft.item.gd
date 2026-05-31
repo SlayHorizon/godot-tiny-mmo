@@ -57,7 +57,7 @@ func data_request_handler(
 		progress = resource.add_skill_xp(station.profession, recipe.xp_reward)
 
 	# Quest CRAFT progress for this output item.
-	var quest_updates: Array = QuestService.on_craft(resource, output_id)
+	var quest_updates: Array = QuestService.on_craft(resource, output_id, peer_id, instance)
 	if not quest_updates.is_empty():
 		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
 

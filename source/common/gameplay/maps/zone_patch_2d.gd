@@ -62,7 +62,14 @@ func _draw() -> void:
 	
 	var outline: Color = tint.darkened(0.35)
 
-	var zoom_scale: float = EditorInterface.get_editor_viewport_2d().global_canvas_transform.get_scale().x
+	# EditorInterface is editor-only — the identifier doesn't exist in exports
+	# and would parse-fail. Look it up dynamically so the parser sees only
+	# Engine.get_singleton(), which is always available. _draw only fires in
+	# the editor anyway (this is a @tool script), so the singleton is there.
+	var zoom_scale: float = 1.0
+	if Engine.has_singleton("EditorInterface"):
+		var editor: Object = Engine.get_singleton("EditorInterface")
+		zoom_scale = editor.get_editor_viewport_2d().global_canvas_transform.get_scale().x
 	var pixel_scale: float = 3.0 / zoom_scale
 	var outline_width: float = clamp(2.0 * pixel_scale, 1.0, 12.0)
 	for poly: PackedVector2Array in polygons:

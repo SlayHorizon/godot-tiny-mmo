@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="3_iron_bar"]
+[ext_resource type="Resource" uid="uid://bkwfaojguoklp" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="3_iron_bar"]
 
 [sub_resource type="Resource" id="Drop_iron_bars"]
 script = ExtResource("2_loot")
@@ -22,6 +22,6 @@ move_speed = 14
 distance_to_attack = 30
 max_distance_from_spawn = 60
 chase_on_area = true
-xp_reward = 120
+xp_reward = 300
 respawn_delay = 600.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_iron_bars")])

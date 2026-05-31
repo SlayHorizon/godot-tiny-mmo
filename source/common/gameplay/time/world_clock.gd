@@ -30,13 +30,15 @@ var _was_day: bool
 
 
 func _ready() -> void:
-	if OS.has_feature("world-server"):
+	# Role-gated init via GameMode so the same binary works whether the world
+	# role is baked in (feature flag) or selected at launch (--mode=world-server).
+	if GameMode.is_world_server():
 		_game_time_anchor = (day_start_hour / HOURS_PER_DAY) * day_speed
 		_real_time_anchor = Time.get_ticks_msec() / 1000.0
 		current_hour = int(get_game_time_hour())
 		_previous_hour = current_hour
 		_was_day = is_day
-	elif OS.has_feature("client"):
+	elif GameMode.is_client():
 		Client.connection_changed.connect(_on_client_connected)
 	set_process(enabled)
 
@@ -111,8 +113,8 @@ func server_propagate_time() -> void:
 		"night_start_hour": night_start_hour,
 	}
 	
-	WorldServer.curr.propagate_rpc(
-		WorldServer.curr.data_push.bind(&"get.server_time", data)
+	ServerHub.current.propagate_rpc(
+		ServerHub.current.data_push.bind(&"get.server_time", data)
 	)
 
 func check_is_day(hour: int = current_hour) -> bool:

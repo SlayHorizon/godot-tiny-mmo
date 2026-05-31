@@ -6,7 +6,10 @@ static var _versions: Dictionary[StringName, int]
 
 
 static func _static_init() -> void:
-	if OS.has_feature("master-server") or OS.has_feature("gateway-server"):
+	# Master + gateway are data-only servers — they don't render anything, so
+	# loading the sprite/skin registries is pure waste. GameMode reads the
+	# --mode= cmdline arg first so this works in a unified server binary too.
+	if GameMode.is_master_server() or GameMode.is_gateway_server():
 		return
 	const INDEXES_DIR: String = "res://source/common/registry/indexes/"
 	for index_path: String in ResourceLoader.list_directory(INDEXES_DIR):

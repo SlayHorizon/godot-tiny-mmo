@@ -81,6 +81,14 @@ func _on_peer_disconnected(peer_id: int) -> void:
 	if not player:
 		return
 
+	# Bank the elapsed session time before persisting. Stored as a flat key on
+	# lb_stats so it rides existing stats_json serialization (no schema change).
+	if player.session_start_ms > 0:
+		@warning_ignore("integer_division")
+		var session_seconds: int = (Time.get_ticks_msec() - player.session_start_ms) / 1000
+		if session_seconds > 0:
+			player.lb_stats["played_seconds"] = int(player.lb_stats.get("played_seconds", 0)) + session_seconds
+
 	database.save_player(player)
 
 	player_id_to_peer_id.erase(player.player_id)
@@ -106,6 +114,9 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 		multiplayer.complete_auth(peer_id)
 		connected_players[peer_id] = token_list[auth_token]
 		connected_players[peer_id].current_peer_id = peer_id
+		# Stamp the session start so the played_seconds counter can advance on
+		# disconnect. Reset on every fresh login.
+		connected_players[peer_id].session_start_ms = Time.get_ticks_msec()
 		player_id_to_peer_id[connected_players[peer_id].player_id] = peer_id
 		token_list.erase(auth_token)
 		data_push.rpc_id.call_deferred(peer_id, &"player_id.set", {"player_id": connected_players[peer_id].player_id})
@@ -127,6 +138,10 @@ var data_handlers: Dictionary[StringName, DataRequestHandler]
 
 func _ready() -> void:
 	curr = self
+	# Publish ourselves into the common-side indirection slot so common scripts
+	# (player.gd, world_clock.gd, *_service.gd, ...) can call server methods
+	# without importing this class. Keeps client/web exports free of server/.
+	ServerHub.current = self
 
 
 ## If no instance_id is provided, will use all peers connected in the world.

@@ -26,6 +26,9 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		JSON.parse_string(str(row.get("inventory_json", "{}"))) as Dictionary,
 		Economy.gold_id()
 	)
+	# Resolve the leaderboard counters: live dict in RAM for online, parsed from
+	# stats_json on disk for offline. Defaults to empty so missing keys read as 0.
+	var lb: Dictionary = {}
 	if target_player != null:
 		# Keep DB row as base, but override fields that might be more upto date in RAM
 		row["display_name"] = target_player.display_name
@@ -37,6 +40,11 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		row["profile_animation"] = target_player.profile_animation
 		row["active_guild_id"] = target_player.active_guild_id
 		row["display_title"] = target_player.display_title
+		lb = target_player.lb_stats
+	else:
+		var lb_parsed: Variant = JSON.parse_string(str(row.get("stats_json", "{}")))
+		if lb_parsed is Dictionary:
+			lb = lb_parsed
 
 	# Step 3 build final response once
 	var guild_id: int = int(row.get("active_guild_id", 0))
@@ -57,6 +65,16 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 			"money": money,
 			"character_class": "???",
 			"level": int(row.get("level", 1)),
+			# Live played-time for the target. Banked seconds in lb_stats + the
+			# current session's elapsed (so an online player's hours count up
+			# while you watch).
+			"hours": _hours_for(target_player, lb),
+			# Leaderboard counters surfaced on the public profile. Defaults to 0
+			# when the key has never been written for this player.
+			"pve_kills": int(lb.get("pve_kills_total", 0)),
+			"pvp_kills": int(lb.get("pvp_kills_total", 0)),
+			"arena_wins": int(lb.get("arena_wins", 0)),
+			"arena_losses": int(lb.get("arena_losses", 0)),
 		},
 		"animation": str(row.get("profile_animation", "idle")),
 		"description": str(row.get("profile_status", "")),
@@ -72,14 +90,43 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	#Step 4: can_guild_invite (uses inviter's active guild)
 	profile["can_guild_invite"] = _can_invite(ws, from_player, target_id, is_self)
 
-	# Self-view extras: titles + animation list so the edit form can pre-populate
-	# without a second round-trip. Only shipped to the owner, never leaks to others.
+	# Public trophy strip — the up-to-3 titles the target pinned to their
+	# profile. Shipped to everyone so any viewer sees the same picks.
+	profile["displayed_trophies"] = (
+		Array(target_player.displayed_trophies) if target_player != null
+		else _parse_trophies(row)
+	)
+
+	# Self-view extras: full title list + animation list so the edit form can
+	# pre-populate without a second round-trip. Only shipped to the owner,
+	# never leaks to others.
 	if is_self:
 		profile["titles_unlocked"] = Array(from_player.titles_unlocked)
+		profile["max_displayed_trophies"] = PlayerResource.MAX_DISPLAYED_TROPHIES
 		profile["allowed_animations"] = Array(PlayerResource.ALLOWED_PROFILE_ANIMATIONS)
 		profile["max_status_len"] = PlayerResource.MAX_PROFILE_STATUS_LEN
 
 	return profile
+
+
+## Parse displayed_trophies out of an offline player's titles_json row.
+static func _parse_trophies(row: Dictionary) -> Array:
+	var titles_v: Variant = JSON.parse_string(str(row.get("titles_json", "{}")))
+	if titles_v is Dictionary:
+		var trophies_v: Variant = (titles_v as Dictionary).get("trophies", [])
+		if trophies_v is Array:
+			return trophies_v
+	return []
+
+
+## Total played hours, banked seconds + the current session's live elapsed for
+## online targets. Returns an int (rounded down) so the UI just renders "67h".
+func _hours_for(target_player: PlayerResource, lb: Dictionary) -> int:
+	var banked: int = int(lb.get("played_seconds", 0))
+	var live: int = 0
+	if target_player != null and target_player.session_start_ms > 0:
+		live = (Time.get_ticks_msec() - target_player.session_start_ms) / 1000
+	return (banked + live) / 3600
 
 
 func _can_invite(ws: WorldServer, from_player: PlayerResource, target_id: int, is_self: bool) -> bool:

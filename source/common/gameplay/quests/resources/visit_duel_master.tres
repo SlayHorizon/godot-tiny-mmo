@@ -11,6 +11,7 @@ description = "Word has reached the Duel Master that you're a fighter. He's at t
 min_level = 5
 unlock_message = "[Duel Master] I hear you've been swinging steel out there. Find me at the arena when you think you're ready — first lesson is free."
 turn_in_giver_id = 8
+reward_xp = 40
 grant_title = "Promising Brawler"
 metadata/_custom_type_script = "uid://c5p53get4ikl6"
 metadata/slug = &"visit_duel_master"

@@ -44,6 +44,7 @@ func save_player(player: PlayerResource) -> void:
 	var titles_json: String = JSON.stringify({
 		"unlocked": player.titles_unlocked,
 		"display": player.display_title,
+		"trophies": player.displayed_trophies,
 	})
 	var dailies_json: String = JSON.stringify({
 		"quests": player.daily_quests,
@@ -161,7 +162,7 @@ func save_flag_state(flag_id: int, owner_guild_id: int, last_capture_ms: int) ->
 
 func get_player_profile_row(player_id: int) -> Dictionary:
 	db.query_with_bindings(
-		"SELECT player_id, account_name, display_name, skin_id, level, inventory_json, profile_status, profile_animation, active_guild_id, titles_json "
+		"SELECT player_id, account_name, display_name, skin_id, level, inventory_json, profile_status, profile_animation, active_guild_id, titles_json, stats_json "
 		+ "FROM players WHERE player_id=?;",
 		[player_id]
 	)
@@ -246,6 +247,8 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 		var unlocked_v: Variant = (titles_v as Dictionary).get("unlocked", [])
 		player.titles_unlocked = PackedStringArray(unlocked_v if unlocked_v is Array else [])
 		player.display_title = str((titles_v as Dictionary).get("display", ""))
+		var trophies_v: Variant = (titles_v as Dictionary).get("trophies", [])
+		player.displayed_trophies = PackedStringArray(trophies_v if trophies_v is Array else [])
 
 	var dailies_v: Variant = JSON.parse_string(str(row.get("dailies_json", "{}")))
 	if dailies_v is Dictionary:

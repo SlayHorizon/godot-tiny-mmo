@@ -44,6 +44,27 @@ func data_request_handler(
 			return {"ok": false, "reason": "bad_animation"}
 		new_animation = anim
 
+	# Trophy strip: an Array of strings, capped at MAX_DISPLAYED_TROPHIES, each
+	# entry validated against titles_unlocked (no "showing a title you haven't
+	# earned"). Order matters — preserved client-side as the chip order.
+	var new_trophies: Variant = null
+	if args.has("displayed_trophies"):
+		var raw_v: Variant = args["displayed_trophies"]
+		var raw_arr: Array = raw_v if raw_v is Array else []
+		var cleaned: PackedStringArray = []
+		for entry: Variant in raw_arr:
+			var t: String = str(entry)
+			if t.is_empty():
+				continue
+			if not player.titles_unlocked.has(t):
+				return {"ok": false, "reason": "trophy_locked"}
+			if cleaned.has(t):
+				continue # de-dupe silently
+			cleaned.append(t)
+			if cleaned.size() >= PlayerResource.MAX_DISPLAYED_TROPHIES:
+				break
+		new_trophies = cleaned
+
 	# All validated — commit.
 	if new_title != null:
 		player.display_title = new_title
@@ -51,10 +72,13 @@ func data_request_handler(
 		player.profile_status = new_status
 	if new_animation != null:
 		player.profile_animation = new_animation
+	if new_trophies != null:
+		player.displayed_trophies = new_trophies
 
 	return {
 		"ok": true,
 		"display_title": player.display_title,
 		"profile_status": player.profile_status,
 		"profile_animation": player.profile_animation,
+		"displayed_trophies": Array(player.displayed_trophies),
 	}

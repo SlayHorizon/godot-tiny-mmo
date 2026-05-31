@@ -11,11 +11,11 @@ type = 3
 target_giver_id = 4
 target_giver_name = "Mira the Herbalist"
 
-[sub_resource type="Resource" id="Obj_visit_smith"]
+[sub_resource type="Resource" id="Obj_visit_foreman"]
 script = ExtResource("1_obj")
 type = 3
-target_giver_id = 6
-target_giver_name = "the Master Smith"
+target_giver_id = 10
+target_giver_name = "the Foreman"
 
 [sub_resource type="Resource" id="Reward_potion"]
 script = ExtResource("3_reward")
@@ -24,10 +24,11 @@ item = ExtResource("4_potion")
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Find Your Footing"
-description = "New to these parts? Then take a walk. Mira keeps the apothecary on the east side, the Master Smith works the forge to the south. Introduce yourself — they'll point you at honest work."
-objectives = Array[ExtResource("1_obj")]([SubResource("Obj_visit_mira"), SubResource("Obj_visit_smith")])
+description = "New to these parts? Pick a trade and go. Mira tends herbs at the apothecary, the Foreman runs the quarry. Introduce yourself to either — they'll have honest work for a newcomer."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_visit_mira"), SubResource("Obj_visit_foreman")])
 completion = 1
-reward_xp = 25
+auto_complete = true
+reward_xp = 80
 reward_gold = 5
 reward_items = Array[ExtResource("3_reward")]([SubResource("Reward_potion")])
 grant_title = "Newcomer"

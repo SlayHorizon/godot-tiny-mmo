@@ -19,6 +19,6 @@ move_speed = 25
 distance_to_attack = 18
 max_distance_from_spawn = 90
 chase_on_area = true
-xp_reward = 5
+xp_reward = 12
 respawn_delay = 10.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_linen")])

@@ -16,7 +16,7 @@ enum SpawnOverride {
 @export var spawn_override: SpawnOverride = SpawnOverride.DEFAULT
 
 var loading_instances: Array
-var charged_instances: Array[ServerInstance]
+var charged_instances: Array[Node]
 
 
 @warning_ignore("unused_parameter")
@@ -24,7 +24,7 @@ func can_join_instance(player: Player, index: int = -1) -> bool:
 	return true
 
 
-func get_instance(index: int = -1) -> ServerInstance:
+func get_instance(index: int = -1) -> Node:
 	if charged_instances.is_empty() or charged_instances.size() <= index:
 		return null
 	return charged_instances[index]

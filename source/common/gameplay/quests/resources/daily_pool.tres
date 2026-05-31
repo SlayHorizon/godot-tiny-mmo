@@ -23,7 +23,7 @@ enemy_type = &"goblin"
 required_amount = 5
 min_level = 2
 max_level = 12
-reward_xp = 15
+reward_xp = 38
 reward_gold = 4
 
 [sub_resource type="Resource" id="T_kill_wolf"]
@@ -33,7 +33,7 @@ enemy_type = &"wolf"
 required_amount = 5
 min_level = 4
 max_level = 14
-reward_xp = 20
+reward_xp = 50
 reward_gold = 5
 
 [sub_resource type="Resource" id="T_kill_bandit"]
@@ -43,7 +43,7 @@ enemy_type = &"bandit"
 required_amount = 3
 min_level = 10
 max_level = 18
-reward_xp = 30
+reward_xp = 75
 reward_gold = 6
 
 [sub_resource type="Resource" id="T_kill_iron_golem"]
@@ -51,7 +51,7 @@ script = ExtResource("1_tmpl")
 template_id = 5
 enemy_type = &"iron_golem"
 min_level = 16
-reward_xp = 40
+reward_xp = 100
 reward_gold = 8
 
 [sub_resource type="Resource" id="T_col_coal"]
@@ -61,7 +61,7 @@ kind = 1
 item = ExtResource("3_coal")
 required_amount = 5
 max_level = 10
-reward_xp = 12
+reward_xp = 30
 
 [sub_resource type="Resource" id="T_col_copper"]
 script = ExtResource("1_tmpl")
@@ -71,7 +71,7 @@ item = ExtResource("4_cop_ore")
 required_amount = 5
 min_level = 6
 max_level = 14
-reward_xp = 18
+reward_xp = 45
 reward_gold = 4
 
 [sub_resource type="Resource" id="T_col_iron"]
@@ -81,7 +81,7 @@ kind = 1
 item = ExtResource("5_iron_ore")
 required_amount = 3
 min_level = 14
-reward_xp = 30
+reward_xp = 75
 reward_gold = 6
 
 [sub_resource type="Resource" id="T_col_linen"]
@@ -100,7 +100,7 @@ item = ExtResource("7_hide")
 required_amount = 5
 min_level = 4
 max_level = 12
-reward_xp = 15
+reward_xp = 38
 reward_gold = 4
 
 [sub_resource type="Resource" id="T_col_herb"]
@@ -110,7 +110,7 @@ kind = 1
 item = ExtResource("8_herb")
 required_amount = 5
 max_level = 10
-reward_xp = 12
+reward_xp = 30
 
 [resource]
 script = ExtResource("2_pool")

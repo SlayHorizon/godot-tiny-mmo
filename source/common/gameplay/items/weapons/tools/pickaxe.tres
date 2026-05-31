@@ -9,7 +9,10 @@
 script = ExtResource("3_f5crd")
 tool_type = &"pickaxe"
 slot = ExtResource("4_f5crd")
+item_name = &"Pickaxe"
 item_icon = ExtResource("2_kh8wi")
+description = "A solid iron-tipped pickaxe. Equip it to mine ore veins. Sold at the village starter shop and the Quarry Counter at the mine."
+vendor_value = 1
 metadata/_custom_type_script = "uid://b5hsnu4140fky"
 metadata/slug = &"pickaxe"
 metadata/id = 52

@@ -355,7 +355,7 @@ func _reward_killer(killer: Player) -> void:
 
 	var peer_id: int = int(resource.current_peer_id)
 	if peer_id > 0:
-		WorldServer.curr.data_push.rpc_id(peer_id, &"combat.reward", {
+		ServerHub.current.data_push.rpc_id(peer_id, &"combat.reward", {
 			"xp": xp_reward,
 			"level": int(progress.get("level", 1)),
 			"levels_gained": int(progress.get("levels_gained", 0)),
@@ -366,9 +366,10 @@ func _reward_killer(killer: Player) -> void:
 		})
 
 	# Quest KILL progress for this enemy type.
-	var quest_updates: Array = QuestService.on_kill(resource, enemy_type)
+	var instance: Node = ServerHub.current.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
+	var quest_updates: Array = QuestService.on_kill(resource, enemy_type, peer_id, instance)
 	if peer_id > 0 and not quest_updates.is_empty():
-		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
+		ServerHub.current.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
 
 	# Daily quest KILL progress. Silent counter — no per-kill toast (would spam).
 	DailyQuestService.on_kill(resource, enemy_type)
@@ -384,7 +385,7 @@ func _reward_killer(killer: Player) -> void:
 	# Level-milestone unlock messages — fire any per-level quest notifications
 	# that crossed in this XP grant.
 	if int(progress.get("levels_gained", 0)) > 0:
-		var inst: ServerInstance = WorldServer.curr.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
+		var inst: Node = ServerHub.current.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
 		LevelMilestoneService.on_levels_gained(resource, level_before, int(progress.get("level", 1)), inst)
 
 

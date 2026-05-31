@@ -161,7 +161,14 @@ func _draw_aoi_preview() -> void:
 	var visible_border: Color = Color(0.15, 0.85, 1.0, 0.95)
 	var margin_border: Color = Color(0.15, 0.75, 1.0, 0.70)
 
-	var zoom_scale: float = EditorInterface.get_editor_viewport_2d().global_canvas_transform.get_scale().x
+	# EditorInterface is editor-only — the identifier doesn't exist in exports
+	# and would parse-fail. Look it up dynamically so the parser sees only
+	# Engine.get_singleton(), which is always available. _draw only fires in
+	# the editor anyway (this is a @tool script), so the singleton is there.
+	var zoom_scale: float = 1.0
+	if Engine.has_singleton("EditorInterface"):
+		var editor: Object = Engine.get_singleton("EditorInterface")
+		zoom_scale = editor.get_editor_viewport_2d().global_canvas_transform.get_scale().x
 	var px: float = 2.0 / zoom_scale
 	var w_grid: float = clamp(1.25 * px, 0.75, 8.0)
 	var w_border: float = clamp(2.25 * px, 1.0, 14.0)

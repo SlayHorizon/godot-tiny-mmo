@@ -8,6 +8,11 @@ extends CanvasLayer
 ## How many toasts can be on screen at once (oldest is dropped past this).
 const MAX_TOASTS: int = 5
 
+## Extra dwell time (seconds) granted per additional toast on screen, so
+## bursts (e.g. a quest turn-in: title + XP + gold + level-up at once) stay
+## readable instead of flashing past in one shared 2s window.
+const EXTRA_DWELL_PER_STACKED: float = 0.8
+
 var _container: VBoxContainer
 
 
@@ -40,11 +45,32 @@ func toast(text: String, duration: float = 2.0) -> void:
 	var panel: PanelContainer = _make_toast(text)
 	_container.add_child(panel)
 
+	# Scale dwell with the stack so a burst (quest reward = title + XP + gold +
+	# level-up all in one frame) stays readable. Then reset every visible
+	# toast's tween to this new dwell — older ones get extended too, so the
+	# whole stack disappears together once the burst ends.
+	var stack_size: int = _container.get_child_count()
+	var dwell: float = duration + maxf(0.0, (stack_size - 1) * EXTRA_DWELL_PER_STACKED)
+	for sibling: Node in _container.get_children():
+		_restart_dwell(sibling as Control, dwell)
+
+
+## Cancel any in-flight tween on this panel and start a fresh fade-in / dwell /
+## fade-out sequence. Idempotent — calling repeatedly just keeps shifting the
+## dismissal forward, which is exactly the "burst keeps the stack alive" behaviour.
+func _restart_dwell(panel: Control, dwell: float) -> void:
+	if panel == null:
+		return
+	if panel.has_meta(&"tween"):
+		var old: Tween = panel.get_meta(&"tween")
+		if old and old.is_valid():
+			old.kill()
 	var tween: Tween = create_tween()
 	tween.tween_property(panel, ^"modulate:a", 1.0, 0.15)
-	tween.tween_interval(duration)
+	tween.tween_interval(dwell)
 	tween.tween_property(panel, ^"modulate:a", 0.0, 0.4)
 	tween.tween_callback(panel.queue_free)
+	panel.set_meta(&"tween", tween)
 
 
 func _make_toast(text: String) -> PanelContainer:

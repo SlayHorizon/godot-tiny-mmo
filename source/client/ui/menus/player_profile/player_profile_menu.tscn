@@ -1,97 +1,212 @@
 [gd_scene format=3 uid="uid://beypr510eoqml"]
 
-[ext_resource type="Script" uid="uid://2dnwg3gkbaeg" path="res://source/client/ui/menus/player_profile/player_profile.gd" id="1_fnhhi"]
-[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_21o1w"]
+[ext_resource type="Script" uid="uid://2dnwg3gkbaeg" path="res://source/client/ui/menus/player_profile/player_profile.gd" id="1_script"]
+[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_default_skin"]
 
-[node name="PlayerProfile" type="Control" unique_id=1646742402 node_paths=PackedStringArray("name_label")]
+[node name="PlayerProfile" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_fnhhi")
-name_label = NodePath("PanelContainer/HBoxContainer/VBoxContainer2/Label")
+script = ExtResource("1_script")
 
-[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1683708645]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 59.0
-offset_top = 25.0
-offset_right = -38.0
-offset_bottom = -33.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.06, 0.1, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer" unique_id=546283124]
+[node name="Card" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(780, 480)
 layout_mode = 2
 
-[node name="StatsContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=648757526]
+[node name="CardMargin" type="MarginContainer" parent="CenterContainer/Card"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.4
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/StatsContainer" unique_id=709298523]
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Card/CardMargin"]
 layout_mode = 2
-size_flags_vertical = 3
-bbcode_enabled = true
-text = "money: 0
-character_class: knight
-level: 0"
-horizontal_alignment = 3
-vertical_alignment = 1
+theme_override_constants/separation = 10
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=519648178]
-layout_mode = 2
-size_flags_horizontal = 3
+; --- Body: 3 columns (stats / character / description+titles) ---
 
-[node name="Label" type="Label" parent="PanelContainer/HBoxContainer/VBoxContainer2" unique_id=920759532]
-layout_mode = 2
-text = "hori"
-
-[node name="Control" type="CenterContainer" parent="PanelContainer/HBoxContainer/VBoxContainer2" unique_id=562965845]
+[node name="Body" type="HBoxContainer" parent="CenterContainer/Card/CardMargin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 16
 
-[node name="Control" type="Control" parent="PanelContainer/HBoxContainer/VBoxContainer2/Control" unique_id=316819221]
-layout_mode = 2
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="PanelContainer/HBoxContainer/VBoxContainer2/Control/Control" unique_id=625580620]
-scale = Vector2(4, 4)
-sprite_frames = ExtResource("2_21o1w")
-animation = &"death"
-
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/VBoxContainer2" unique_id=429410590]
-layout_mode = 2
-size_flags_vertical = 3
-bbcode_enabled = true
-text = "Hello I'am new!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=1856833360]
+[node name="LeftPanel" type="PanelContainer" parent="CenterContainer/Card/CardMargin/VBox/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
+size_flags_stretch_ratio = 0.28
+
+[node name="StatsMargin" type="MarginContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="StatsList" type="VBoxContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/LeftPanel/StatsMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CenterColumn" type="VBoxContainer" parent="CenterContainer/Card/CardMargin/VBox/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.34
+theme_override_constants/separation = 6
+
+[node name="SpriteSlot" type="CenterContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SpriteAnchor" type="Control" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn/SpriteSlot"]
+layout_mode = 2
+
+[node name="PlayerCharacter" type="AnimatedSprite2D" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn/SpriteSlot/SpriteAnchor"]
+unique_name_in_owner = true
+scale = Vector2(3.5, 3.5)
+sprite_frames = ExtResource("2_default_skin")
+animation = &"idle"
+
+[node name="NameRow" type="HBoxContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn"]
+layout_mode = 2
+size_flags_horizontal = 4
 alignment = 1
+theme_override_constants/separation = 6
 
-[node name="MessageButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=670915641]
+[node name="NameLabel" type="Label" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn/NameRow"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Message"
+text = "Name"
 
-[node name="FriendButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=1488828607]
+[node name="GuildLabel" type="Label" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn/NameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+self_modulate = Color(0.55, 0.85, 0.95, 1)
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+self_modulate = Color(1, 0.85, 0.45, 1)
+
+[node name="AccountLabel" type="Label" parent="CenterContainer/Card/CardMargin/VBox/Body/CenterColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+self_modulate = Color(0.7, 0.7, 0.75, 1)
+
+[node name="RightPanel" type="PanelContainer" parent="CenterContainer/Card/CardMargin/VBox/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.38
+
+[node name="RightMargin" type="MarginContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="RightVBox" type="VBoxContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/RightPanel/RightMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="DescriptionScroll" type="ScrollContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/RightPanel/RightMargin/RightVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DescriptionText" type="RichTextLabel" parent="CenterContainer/Card/CardMargin/VBox/Body/RightPanel/RightMargin/RightVBox/DescriptionScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+text = ""
+
+[node name="TitleStripLabel" type="Label" parent="CenterContainer/Card/CardMargin/VBox/Body/RightPanel/RightMargin/RightVBox"]
+layout_mode = 2
+text = "Trophies"
+self_modulate = Color(0.7, 0.7, 0.75, 1)
+
+[node name="TitleStripScroll" type="ScrollContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/RightPanel/RightMargin/RightVBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="TitleStrip" type="HFlowContainer" parent="CenterContainer/Card/CardMargin/VBox/Body/RightPanel/RightMargin/RightVBox/TitleStripScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+; --- Action bar ---
+
+[node name="ActionBar" type="HBoxContainer" parent="CenterContainer/Card/CardMargin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BackButton" type="Button" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+text = "BACK"
+
+[node name="ActionSpacer" type="Control" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InviteGuildButton" type="Button" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 40)
+layout_mode = 2
+text = "Invite guild"
+
+[node name="FriendButton" type="Button" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 40)
 layout_mode = 2
 text = "Add friend"
 
-[node name="InviteGuildButton" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=1083767612]
+[node name="MessageButton" type="Button" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 40)
 layout_mode = 2
-text = "Invite in guild"
+text = "Message"
 
-[node name="Close" type="Button" parent="PanelContainer/HBoxContainer/VBoxContainer" unique_id=827641519]
+[node name="MoreButton" type="Button" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 40)
 layout_mode = 2
-size_flags_vertical = 10
-text = "Close"
+tooltip_text = "More"
+text = "⋯"
 
-[connection signal="pressed" from="PanelContainer/HBoxContainer/VBoxContainer/Close" to="." method="_on_close_pressed"]
+[node name="MorePopup" type="PopupMenu" parent="CenterContainer/Card/CardMargin/VBox/ActionBar/MoreButton"]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="CenterContainer/Card/CardMargin/VBox/ActionBar/BackButton" to="." method="_on_close_pressed"]

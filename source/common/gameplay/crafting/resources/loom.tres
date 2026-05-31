@@ -34,6 +34,8 @@ metadata/_custom_type_script = "uid://btm2w18d3d327"
 
 [resource]
 script = ExtResource("2_station")
+station_name = "Loom"
+profession = &"tailoring"
 recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_cloth_hood"), SubResource("Recipe_cloth_vest")])
 metadata/_custom_type_script = "uid://dou76lfuf6clf"
 metadata/slug = &"loom"

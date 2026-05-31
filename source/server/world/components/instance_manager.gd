@@ -196,7 +196,16 @@ func prepare_instance(instance_resource: InstanceResource) -> ServerInstance:
 
 func set_instance_collection() -> void:
 	for file_path: String in FileUtils.get_all_file_at(INSTANCE_COLLECTION_PATH, "*.tres"):
-		var instance_resource: InstanceResource = ResourceLoader.load(file_path, "InstanceResource")
+		if not file_path.ends_with(".tres"):
+			continue
+		# No type hint: in exports the custom-class loader isn't guaranteed
+		# registered by the time this scan runs, so the hint "InstanceResource"
+		# trips the resource loader. Load as untyped Resource and let the
+		# embedded script class be resolved at assignment.
+		var loaded: Resource = ResourceLoader.load(file_path)
+		if loaded == null or not (loaded is InstanceResource):
+			continue
+		var instance_resource: InstanceResource = loaded
 		if instance_resource.load_at_startup:
 			charge_instance(instance_resource)
 		if instance_resource.instance_name == "Overworld":

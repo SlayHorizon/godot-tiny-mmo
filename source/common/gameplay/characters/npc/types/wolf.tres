@@ -23,6 +23,6 @@ attack_cooldown = 1.3
 move_speed = 30
 distance_to_attack = 16
 chase_on_area = true
-xp_reward = 8
+xp_reward = 20
 respawn_delay = 8.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_hide"), SubResource("Drop_bone")])

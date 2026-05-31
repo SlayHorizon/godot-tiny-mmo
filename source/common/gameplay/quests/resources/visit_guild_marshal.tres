@@ -11,6 +11,7 @@ description = "The Guild Marshal would like a word. She's in the guild hall, opp
 min_level = 8
 unlock_message = "[Guild Marshal Veska] You've earned a name for yourself out there. Come find me at the guild hall — there are people you should meet."
 turn_in_giver_id = 9
+reward_xp = 40
 grant_title = "Hopeful Recruit"
 metadata/_custom_type_script = "uid://c5p53get4ikl6"
 metadata/slug = &"visit_guild_marshal"

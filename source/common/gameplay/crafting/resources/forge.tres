@@ -5,30 +5,80 @@
 [ext_resource type="Script" uid="uid://cgkqi5dwtob32" path="res://source/common/gameplay/crafting/craft_ingredient.gd" id="3_ingred"]
 [ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="4_cop_ore"]
 [ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="5_cop_bar"]
-[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="8_coal"]
+[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="6_coal"]
+[ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="7_iron_ore"]
+[ext_resource type="Resource" uid="uid://bkwfaojguoklp" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="8_iron_bar"]
+[ext_resource type="Resource" uid="uid://bqd4ajt5kmlcr" path="res://source/common/gameplay/items/gears/iron_helmet.tres" id="9_iron_helm"]
+[ext_resource type="Resource" uid="uid://cb6x01k6mbv2x" path="res://source/common/gameplay/items/gears/iron_chest.tres" id="10_iron_chest"]
 
-[sub_resource type="Resource" id="Resource_k25uf"]
+[sub_resource type="Resource" id="Ing_copper_coal"]
 script = ExtResource("3_ingred")
-item = ExtResource("8_coal")
+item = ExtResource("6_coal")
 amount = 2
 metadata/_custom_type_script = "uid://cgkqi5dwtob32"
 
-[sub_resource type="Resource" id="Resource_hs4mo"]
+[sub_resource type="Resource" id="Ing_copper_ore"]
 script = ExtResource("3_ingred")
 item = ExtResource("4_cop_ore")
 amount = 4
 metadata/_custom_type_script = "uid://cgkqi5dwtob32"
 
-[sub_resource type="Resource" id="Resource_vtkiu"]
+[sub_resource type="Resource" id="Recipe_copper_bar"]
 script = ExtResource("1_recipe")
 output_item = ExtResource("5_cop_bar")
-ingredients = Array[ExtResource("3_ingred")]([SubResource("Resource_k25uf"), SubResource("Resource_hs4mo")])
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_copper_coal"), SubResource("Ing_copper_ore")])
 xp_reward = 4
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_iron_coal"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_coal")
+amount = 2
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Ing_iron_ore"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_iron_ore")
+amount = 4
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_iron_bar"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("8_iron_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_iron_coal"), SubResource("Ing_iron_ore")])
+xp_reward = 8
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_iron_helm_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_iron_bar")
+amount = 3
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_iron_helm"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("9_iron_helm")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_iron_helm_bar")])
+xp_reward = 18
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_iron_chest_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_iron_bar")
+amount = 5
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_iron_chest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("10_iron_chest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_iron_chest_bar")])
+xp_reward = 30
 metadata/_custom_type_script = "uid://btm2w18d3d327"
 
 [resource]
 script = ExtResource("2_station")
-recipes = Array[ExtResource("1_recipe")]([SubResource("Resource_vtkiu"), null, null])
+station_name = "Forge"
+recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_copper_bar"), SubResource("Recipe_iron_bar"), SubResource("Recipe_iron_helm"), SubResource("Recipe_iron_chest")])
 metadata/_custom_type_script = "uid://dou76lfuf6clf"
 metadata/slug = &"forge"
 metadata/id = 1

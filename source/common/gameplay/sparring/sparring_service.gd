@@ -30,7 +30,7 @@ static var _peer_to_match: Dictionary = {}
 
 ## Returns a status dict describing the queue after the action. ok=false with
 ## a reason on validation failures (out of range, master not found, etc.).
-static func handle_queue_request(instance: ServerInstance, peer_id: int, master_id: int, action: String) -> Dictionary:
+static func handle_queue_request(instance: Node, peer_id: int, master_id: int, action: String) -> Dictionary:
 	if instance == null or instance.instance_map == null:
 		return {"ok": false, "reason": "no_map"}
 	var master: DuelMaster = instance.instance_map.get_duel_master(master_id)
@@ -76,7 +76,7 @@ static func handle_queue_request(instance: ServerInstance, peer_id: int, master_
 
 
 ## Snapshot of a duel master's queue. Used by sparring.info.
-static func queue_status(instance: ServerInstance, peer_id: int, master_id: int) -> Dictionary:
+static func queue_status(instance: Node, peer_id: int, master_id: int) -> Dictionary:
 	var key: String = _key(instance.name, master_id)
 	var queue: Array = _queues.get(key, [])
 	return _queue_status(instance, master_id, queue, "queued" if queue.has(peer_id) else "idle")
@@ -84,7 +84,7 @@ static func queue_status(instance: ServerInstance, peer_id: int, master_id: int)
 
 # --- match flow ---
 
-static func _start_match(instance: ServerInstance, master: DuelMaster, peer_a: int, peer_b: int) -> void:
+static func _start_match(instance: Node, master: DuelMaster, peer_a: int, peer_b: int) -> void:
 	var player_a: Player = instance.get_player(peer_a)
 	var player_b: Player = instance.get_player(peer_b)
 	if player_a == null or player_b == null:
@@ -136,7 +136,7 @@ static func _start_match(instance: ServerInstance, master: DuelMaster, peer_a: i
 	# The state-sync set_by_path above gets overwritten on the LocalPlayer by
 	# its own input each frame, so we also push the position explicitly here
 	# and let LocalPlayer apply it + lock its input briefly.
-	var ws: WorldServer = WorldServer.curr
+	var ws: Node = ServerHub.current
 	if ws != null:
 		ws.data_push.rpc_id(peer_a, &"sparring.match.state", {
 			"in_match": true,
@@ -152,8 +152,8 @@ static func _start_match(instance: ServerInstance, master: DuelMaster, peer_a: i
 
 ## Walks the countdown by emitting a push every second. Each tick we re-check
 ## that the match still exists (could have been ended by disconnect mid-count).
-static func _push_countdown(instance: ServerInstance, peer_a: int, peer_b: int, seconds_left: int) -> void:
-	var ws: WorldServer = WorldServer.curr
+static func _push_countdown(instance: Node, peer_a: int, peer_b: int, seconds_left: int) -> void:
+	var ws: Node = ServerHub.current
 	if ws == null:
 		return
 	if seconds_left <= 0:
@@ -198,7 +198,7 @@ static func on_player_died_in_match(loser: Player, killer: Character) -> void:
 static func on_peer_disconnected(peer_id: int) -> void:
 	# Sweep queue entries first — a player can be queued without being in an
 	# active match.
-	var ws: WorldServer = WorldServer.curr
+	var ws: Node = ServerHub.current
 	for key: String in _queues.keys():
 		var queue: Array = _queues[key]
 		if queue.has(peer_id):
@@ -209,7 +209,7 @@ static func on_peer_disconnected(peer_id: int) -> void:
 			if ws != null:
 				var parts: PackedStringArray = key.split("::")
 				if parts.size() == 2:
-					var instance: ServerInstance = ws.instance_manager.get_instance_server_by_id(parts[0])
+					var instance: Node = ws.instance_manager.get_instance_server_by_id(parts[0])
 					_broadcast_queue(instance, parts[1].to_int(), queue.size())
 
 	var key: String = str(_peer_to_match.get(peer_id, ""))
@@ -240,12 +240,12 @@ static func _end_match(key: String, loser_peer: int, winner_peer: int) -> void:
 	_peer_to_match.erase(int(match["peer_a"]))
 	_peer_to_match.erase(int(match["peer_b"]))
 
-	var ws: WorldServer = WorldServer.curr
+	var ws: Node = ServerHub.current
 	if ws == null:
 		return
 
 	# Locate the instance + master so we can teleport back.
-	var instance: ServerInstance = ws.instance_manager.get_instance_server_by_id(str(match["instance_name"]))
+	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match["instance_name"]))
 	var master: DuelMaster = null
 	if instance != null and instance.instance_map != null:
 		master = instance.instance_map.get_duel_master(int(match["master_id"]))
@@ -278,7 +278,7 @@ static func _end_match(key: String, loser_peer: int, winner_peer: int) -> void:
 			ws.chat_service.push_system_to_player(instance, p.player_id, msg)
 
 
-static func _finalize_fighter(ws: WorldServer, instance: ServerInstance, peer_id: int, return_pos: Vector2, won: bool) -> void:
+static func _finalize_fighter(ws: Node, instance: Node, peer_id: int, return_pos: Vector2, won: bool) -> void:
 	var player_res: PlayerResource = ws.connected_players.get(peer_id)
 	if player_res == null:
 		return
@@ -308,7 +308,7 @@ static func _finalize_fighter(ws: WorldServer, instance: ServerInstance, peer_id
 		player.stats_component.set_stat(Stat.HEALTH, player.stats_component.get_stat(Stat.HEALTH_MAX))
 
 
-static func _queue_status(instance: ServerInstance, master_id: int, queue: Array, status: String) -> Dictionary:
+static func _queue_status(instance: Node, master_id: int, queue: Array, status: String) -> Dictionary:
 	return {
 		"ok": true,
 		"master_id": master_id,
@@ -319,8 +319,8 @@ static func _queue_status(instance: ServerInstance, master_id: int, queue: Array
 
 ## Broadcast the new queue size to every peer in the instance so any open
 ## sparring menu updates live without polling.
-static func _broadcast_queue(instance: ServerInstance, master_id: int, size: int) -> void:
-	var ws: WorldServer = WorldServer.curr
+static func _broadcast_queue(instance: Node, master_id: int, size: int) -> void:
+	var ws: Node = ServerHub.current
 	if ws == null or instance == null:
 		return
 	ws.propagate_rpc(
@@ -366,10 +366,10 @@ static func return_position_for(player: Player) -> Vector2:
 	if key.is_empty() or not _matches.has(key):
 		return Vector2.ZERO
 	var match: Dictionary = _matches[key]
-	var ws: WorldServer = WorldServer.curr
+	var ws: Node = ServerHub.current
 	if ws == null or ws.instance_manager == null:
 		return Vector2.ZERO
-	var instance: ServerInstance = ws.instance_manager.get_instance_server_by_id(str(match["instance_name"]))
+	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match["instance_name"]))
 	if instance == null or instance.instance_map == null:
 		return Vector2.ZERO
 	var master: DuelMaster = instance.instance_map.get_duel_master(int(match["master_id"]))

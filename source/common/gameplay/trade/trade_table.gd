@@ -67,7 +67,7 @@ func _physics_process(_delta: float) -> void:
 		changed = true
 
 	if changed:
-		var instance: ServerInstance = _server_instance()
+		var instance: Node = _server_instance()
 		if instance:
 			TradeService.broadcast(instance, self)
 
@@ -125,7 +125,7 @@ func _complete_trade() -> void:
 		if is_instance_valid(participant):
 			var peer_id: int = int(participant.player_resource.current_peer_id)
 			if peer_id > 0:
-				WorldServer.curr.data_push.rpc_id(peer_id, &"trade.result", {"ok": ok})
+				ServerHub.current.data_push.rpc_id(peer_id, &"trade.result", {"ok": ok})
 
 
 ## Validates both offers against current inventories, then swaps atomically.
@@ -162,9 +162,9 @@ func _give(from_inventory: Dictionary, to_inventory: Dictionary, offer: Dictiona
 			Inventory.add_item(to_inventory, int(item_id), 1)
 
 
-func _server_instance() -> ServerInstance:
+func _server_instance() -> Node:
 	var node: Node = get_parent()
-	while node and not (node is ServerInstance):
+	while node and not (node is SubViewport):
 		node = node.get_parent()
 	return node
 

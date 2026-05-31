@@ -7,6 +7,8 @@ const ATTRIBUTE_POINTS_PER_LEVEL: int = 3
 ## Profile customization limits, shared by the client edit UI and server validator.
 const MAX_PROFILE_STATUS_LEN: int = 200
 const ALLOWED_PROFILE_ANIMATIONS: PackedStringArray = ["idle", "run", "death"]
+## Hard cap on how many achievement chips show on the profile trophy strip.
+const MAX_DISPLAYED_TROPHIES: int = 3
 
 const BASE_STATS: Dictionary[StringName, float] = {
 	Stat.HEALTH_MAX: 100.0,
@@ -69,6 +71,10 @@ const BASE_STATS: Dictionary[StringName, float] = {
 ## title displayed. Auto-set to a newly-granted title only if no title is
 ## currently active — so players don't lose their chosen banner.
 @export var display_title: String
+## Up to 3 trophies the player pins to their profile's right-side chip strip.
+## Each entry must also be in titles_unlocked. Separate from display_title (the
+## one shown under their name) — these are the "achievement flex" picks.
+@export var displayed_trophies: PackedStringArray
 
 ## Daily quest board state: the 3 rolled quests for today and when they expire.
 ## Each entry is a Dictionary {template_id, count_so_far, claimed}.
@@ -87,6 +93,11 @@ const BASE_STATS: Dictionary[StringName, float] = {
 
 ## Current Network ID
 var current_peer_id: int
+
+## Server-side runtime stamp of when the current session began (Time.get_ticks_msec).
+## Set on auth, consumed at disconnect to bump lb_stats["played_seconds"]. Not
+## persisted — each session starts fresh.
+var session_start_ms: int = 0
 
 ## True while the player is in a sparring match. Bypasses the zone PvP check
 ## in projectile/melee damage. Server-side runtime only — not persisted; if a

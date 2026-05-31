@@ -42,7 +42,7 @@ static func record_pvp_kill(killer: Character) -> void:
 ##   glory_seasonal, glory_eternal
 ##
 ## Returns an Array of {id, name, score, [bonus_field]} entries, ranked.
-static func top_n(world_server: WorldServer, board: String, limit: int) -> Array:
+static func top_n(world_server: Node, board: String, limit: int) -> Array:
 	if world_server == null or world_server.database == null:
 		return []
 	limit = clampi(limit, 1, 100)
@@ -94,7 +94,7 @@ static func _week_start_ms(now_ms: int) -> int:
 	return day_start - days_since_monday * DAY_MS
 
 
-static func _top_n_player(world_server: WorldServer, board: String, limit: int) -> Array:
+static func _top_n_player(world_server: Node, board: String, limit: int) -> Array:
 	var db = world_server.database.store.db
 	db.query("SELECT player_id, display_name, level, experience, stats_json FROM players;")
 	var rows: Array = db.query_result.duplicate()
@@ -176,7 +176,7 @@ static func _top_n_player(world_server: WorldServer, board: String, limit: int) 
 	return scored.slice(0, limit)
 
 
-static func _top_n_guild(world_server: WorldServer, board: String, limit: int) -> Array:
+static func _top_n_guild(world_server: Node, board: String, limit: int) -> Array:
 	var db = world_server.database.store.db
 	db.query("SELECT guild_id, guild_name, data_json FROM guilds;")
 	var rows: Array = db.query_result.duplicate()

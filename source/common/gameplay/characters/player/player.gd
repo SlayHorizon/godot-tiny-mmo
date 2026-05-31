@@ -49,7 +49,7 @@ func die(_killer: Character) -> void:
 
 	var peer_id: int = int(player_resource.current_peer_id)
 	if peer_id > 0:
-		WorldServer.curr.data_push.rpc_id(peer_id, &"player.died", {
+		ServerHub.current.data_push.rpc_id(peer_id, &"player.died", {
 			"respawn_in": RESPAWN_DELAY,
 			"spawn": spawn_position,
 		})

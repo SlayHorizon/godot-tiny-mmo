@@ -3,7 +3,16 @@ extends Node
 
 
 var account_collection: AccountResourceCollection
-var account_collection_path: String = "res://source/server/master/account_collection.tres"
+## Production path (writable). In an exported build res:// is read-only, so
+## ResourceSaver.save() against res:// silently fails and accounts can't
+## persist. Mirrors the world-db split: editor reads/writes res://, exports
+## live under user://. NO seed fallback — production starts blank by design,
+## dev/debug accounts never leak into the live environment.
+var account_collection_path: String:
+	get:
+		if OS.has_feature("editor"):
+			return "res://source/server/master/account_collection.tres"
+		return "user://master/account_collection.tres"
 var active_accounts: Dictionary[StringName, AccountResource]
 
 
@@ -45,6 +54,13 @@ func load_account_collection() -> void:
 		account_collection = AccountResourceCollection.new()
 
 
+func save_account_collection() -> void:
+	# Ensure user://master/ exists before the first save in an export build.
+	if not OS.has_feature("editor"):
+		DirAccess.make_dir_recursive_absolute("user://master")
+	ResourceSaver.save(account_collection, account_collection_path)
+
+
 func username_exists(username: String) -> bool:
 	if account_collection.collection.has(username):
 		return true
@@ -58,7 +74,3 @@ func validate_credentials(username: String, password: String) -> AccountResource
 		if account.password == password:
 			return account
 	return null
-
-
-func save_account_collection() -> void:
-	ResourceSaver.save(account_collection, account_collection_path)

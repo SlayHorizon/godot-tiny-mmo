@@ -88,36 +88,59 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 		close_connection(connection)
 		return
 
-	# If browser sends "/v1/foo?bar=baz", keep only path for routing.
-	var path: String = header[1].get_slice("?", 0)
-	if _try_serve_static(connection, method, path):
-		close_connection(connection)
-		return
+	# Split URL into path + query string. The browser sends ?token=...&other=...
+	# on GETs; we feed both query string and JSON body into the same payload so
+	# handlers don't have to care which transport carried each field.
+	var raw_url: String = header[1]
+	var path: String = raw_url.get_slice("?", 0)
+	var query_string: String = raw_url.get_slice("?", 1) if raw_url.contains("?") else ""
 
-	var payload: Dictionary
+	var payload: Dictionary = {}
+
+	# Body (JSON) first — typical for POST/PUT.
 	var body: String = as_string.get_slice("\r\n\r\n", 1)
 	if body.strip_edges() != "":
 		var parsed: Variant = JSON.parse_string(body)
 		if typeof(parsed) == TYPE_DICTIONARY:
 			payload = parsed
 
+	# Query string layered on top so ?token=abc reaches the handler. Body
+	# values win on collision because body is the more explicit channel.
+	if not query_string.is_empty():
+		for pair: String in query_string.split("&"):
+			var kv: PackedStringArray = pair.split("=", true, 1)
+			if kv.is_empty() or kv[0].is_empty():
+				continue
+			var k: String = kv[0].uri_decode()
+			var v: String = kv[1].uri_decode() if kv.size() == 2 else ""
+			if not payload.has(k):
+				payload[k] = v
+
 	payload["__path__"] = path
+
+	# Try a registered route first. Static fallback only fires when no route
+	# matched, so API paths can use any prefix without colliding with the
+	# static handler (the old hard-coded "/v1/" carve-out is gone).
 	var handler: Callable = router.find_route_handler(method, path)
-	var result: Dictionary
 	if handler.is_valid():
-		result = await handler.call(payload)
-	else:
-		result = {"ok": false, "error":"not_found"}
+		var result: Dictionary = await handler.call(payload)
+		if result.get("__raw__", false):
+			var code: int = result.get("code", 200)
+			var ct: String = result.get("content_type", "text/plain; charset=utf-8")
+			var _body: PackedByteArray = result.get("body", PackedByteArray())
+			http_send_bytes(connection, _body, code, ct)
+		else:
+			http_send(connection, result, HTTPClient.ResponseCode.RESPONSE_OK)
+		close_connection(connection)
+		return
 
+	# No route matched — try static (GET only).
+	if _try_serve_static(connection, method, path):
+		close_connection(connection)
+		return
 
-	if result.get("__raw__", false):
-		var code: int = result.get("code", 200)
-		var ct: String = result.get("content_type", "text/plain; charset=utf-8")
-		var _body: PackedByteArray = result.get("body", PackedByteArray())
-		http_send_bytes(connection, _body, code, ct)
-	else:
-		http_send(connection, result, HTTPClient.ResponseCode.RESPONSE_OK)
-
+	# Nothing matched.
+	http_send(connection, {"ok": false, "error": "not_found"}, HTTPClient.ResponseCode.RESPONSE_NOT_FOUND)
 	close_connection(connection)
 
 
@@ -201,8 +224,9 @@ func _try_serve_static(connection: StreamPeerTCP, method: HTTPClient.Method, pat
 	if method != HTTPClient.Method.METHOD_GET:
 		return false
 
-	if path.begins_with("/v1/"):
-		return false
+	# Static is now a true fallback — routes are tried first in handle_connection,
+	# so API paths under any prefix coexist with static-mounted directories
+	# without an addon-level path carve-out.
 
 	var best_prefix: String
 	var best_mount: Dictionary

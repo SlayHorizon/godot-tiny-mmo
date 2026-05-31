@@ -63,8 +63,19 @@ func create(role: Role, address: String, port: int, tls_options: TLSOptions = nu
 
 	match role:
 		Role.CLIENT:
-			var scheme: String = "ws" if tls_options == null or tls_options.is_unsafe_client() else "wss"
-			error = peer.create_client("%s://%s:%d" % [scheme, address, port], tls_options)
+			# `address` may be either:
+			#   (a) a bare host like "127.0.0.1" — build a URL from scheme + port
+			#   (b) a full URL like "wss://ws.example.com/world/1" — use as-is
+			# (b) is what production deploys behind a reverse proxy (Caddy/nginx)
+			# send, because the path discriminates which world and the port is
+			# part of the proxy's public binding.
+			var url: String
+			if address.contains("://"):
+				url = address
+			else:
+				var scheme: String = "ws" if tls_options == null or tls_options.is_unsafe_client() else "wss"
+				url = "%s://%s:%d" % [scheme, address, port]
+			error = peer.create_client(url, tls_options)
 		Role.SERVER:
 			var bind_address: String = "*" if address.is_empty() else address
 			error = peer.create_server(port, bind_address, tls_options)
