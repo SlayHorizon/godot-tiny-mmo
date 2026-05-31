@@ -10,46 +10,53 @@ enum EnemyState {
 	DEAD
 }
 
-## Data-driven definition. If assigned, fields below get overwritten from this
-## resource at _ready (one .tres = one archetype, drop into many instances).
-## Leave null for the legacy "tune everything on this specific instance" path.
+## Data-driven definition. REQUIRED: every HostileNpc instance must point at an
+## EnemyTypeResource. All combat/AI fields below are populated from it at
+## _ready, so per-instance inspector tweaks are deliberately not supported —
+## edit the .tres if you want to change behaviour, and every spawn of that
+## archetype picks up the change. Per-instance overrides invite the exact
+## "enemy_type says 'mobs' but the kill registers as 'bandit'" confusion we
+## just cleaned up.
 @export var enemy_data: EnemyTypeResource
 
-## Start chasing the player once he steps in the area.
-@export var chase_on_area: bool = false
-## The distance between the player and NPC to start attacking.
-@export var distance_to_attack: int = 20
-## The max distance from spawn. If NPC pass the limit, trigger the returning.
-@export var max_distance_from_spawn: int = 100
-@export var move_speed: int = 20
-
+## Per-instance scene wiring (not data-driven — each spawn has its own
+## detection area collider).
 @export var detection_area: Area2D
 
-@export_group("Combat")
-## Identifier used by quest KILL objectives (e.g. &"slime"). Enemies sharing a type
-## count toward the same objective.
-@export var enemy_type: StringName
-@export var max_health: float = 50.0
-@export var attack_damage: float = 8.0
+# --- Driven by enemy_data (do NOT @export, see class docstring above) ---
+# Their defaults below act only as fallbacks if enemy_data is somehow missing
+# (we assert against that in _apply_enemy_data), so authoring lives entirely
+# in the .tres files under characters/npc/types/.
+
+## Identifier used by quest KILL objectives (e.g. &"slime"). Enemies sharing a
+## type count toward the same objective.
+var enemy_type: StringName
+var max_health: float = 50.0
+var attack_damage: float = 8.0
 ## Seconds between auto-attacks while in range.
-@export var attack_cooldown: float = 1.5
-@export var armor: float = 0.0
-## Optional weapon. If set, the enemy equips it and fires its ability at the target
-## (reusing the same projectiles players use, so they're dodgeable). Set distance_to_attack
-## to the desired firing range. If null, the enemy is a melee AoE attacker.
-@export var weapon: WeaponItem
-@export var xp_reward: int = 25
+var attack_cooldown: float = 1.5
+var armor: float = 0.0
+## Optional weapon. If set, the enemy equips it and fires its ability at the
+## target (reusing the same projectiles players use). If null, the enemy is a
+## melee AoE attacker.
+var weapon: WeaponItem
+var xp_reward: int = 25
 ## Seconds before a killed enemy respawns at its spawn point.
-@export var respawn_delay: float = 5.0
-@export var loot: Array[LootDrop]
-@export_group("")
+var respawn_delay: float = 5.0
+var loot: Array[LootDrop]
+var move_speed: int = 20
+## Distance to the player at which the NPC switches from CHASE to ATTACK.
+var distance_to_attack: int = 20
+## If the NPC strays this far from its spawn, it disengages and returns.
+var max_distance_from_spawn: int = 100
+## Start chasing as soon as a player steps inside detection_area.
+var chase_on_area: bool = false
 
 
-## Copy archetype fields onto this instance. Called once at startup so the
-## rest of HostileNpc can keep reading its own @exports unchanged.
+## Copy archetype fields onto this instance. Called once at _ready so the rest
+## of HostileNpc can keep reading its local fields unchanged.
 func _apply_enemy_data() -> void:
-	if enemy_data == null:
-		return
+	assert(enemy_data != null, "HostileNpc requires an enemy_data resource — see characters/npc/types/.")
 	enemy_type = enemy_data.enemy_type
 	max_health = enemy_data.max_health
 	attack_damage = enemy_data.attack_damage

@@ -14,9 +14,9 @@ required_amount = 10
 [resource]
 script = ExtResource("3_quest")
 quest_name = "Apprentice Miner"
-description = "The foreman wants to see if you can swing a pickaxe. Bring him ten lumps of coal — he doesn't care where from."
+description = "The foreman wants to see if you can swing a pickaxe. Bring him ten lumps of coal — he doesn't care where from. (The Smith pays well for the leftovers.)"
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_coal_10")])
-min_level = 3
+min_level = 1
 reward_xp = 15
 reward_gold = 4
 metadata/_custom_type_script = "uid://c5p53get4ikl6"

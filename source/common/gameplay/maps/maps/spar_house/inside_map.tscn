@@ -5,11 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/gameplay/maps/components/interaction_areas/teleporter/teleporter.tscn" id="3_q62f4"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="4_nfh6w"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="5_10bed"]
-[ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="6_q62f4"]
-[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="7_nfh6w"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_10bed"]
-size = Vector2(64, 32.00003)
 
 [node name="Spar_house_inside" type="Node2D" unique_id=1368643614]
 y_sort_enabled = true
@@ -70,22 +65,3 @@ warper_id = 3
 position = Vector2(1496, 362)
 scale = Vector2(2.36, 1)
 warper_id = 4
-
-[node name="QuestGiver" type="Area2D" parent="." unique_id=1167795233]
-position = Vector2(449.2433, 644.6014)
-script = ExtResource("6_q62f4")
-giver_id = 10
-quests = Array[ExtResource("7_nfh6w")]([null])
-metadata/_custom_type_script = "uid://cm4dod11fv3fj"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="QuestGiver" unique_id=338415002]
-position = Vector2(6.756714, 3.3986206)
-shape = SubResource("RectangleShape2D_10bed")
-
-[node name="Label" type="Label" parent="QuestGiver" unique_id=629708543]
-offset_left = -25.243286
-offset_top = -20.60138
-offset_right = 38.756714
-offset_bottom = 24.39862
-text = "Foreman
-(quests)"

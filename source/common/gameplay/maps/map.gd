@@ -49,9 +49,10 @@ var warpers: Dictionary[int, Warper]
 ## map (mirrors how warpers are collected). The server uses this to resolve/verify a
 ## shop the player is actually at, rather than trusting a client-sent id.
 var shops: Dictionary[int, ShopResource]
-## node_id -> MineableNode, gathered from the gathering nodes placed in this map
-## (same pattern as warpers/shops). The server resolves the node a player mines.
-var mineables: Dictionary[int, MineableNode]
+## node-name -> MineableNode, gathered from the gathering nodes placed in this
+## map (same pattern as warpers/shops). The server resolves the node a player
+## mines by name (Godot guarantees uniqueness within a parent).
+var mineables: Dictionary[StringName, MineableNode]
 ## crafting-station registry id -> CraftingStationResource, gathered from the station
 ## nodes placed in this map (mirrors shops). The server resolves/verifies the station
 ## a player crafts at, rather than trusting a client-sent id.
@@ -80,7 +81,7 @@ func _ready() -> void:
 		elif child is ShopInteractable and child.shop:
 			shops[int(child.shop.get_meta(&"id", 0))] = child.shop
 		elif child is MineableNode:
-			mineables[child.node_id] = child
+			mineables[child.name] = child
 		elif child is CraftingStation and child.station:
 			crafting_stations[int(child.station.get_meta(&"id", 0))] = child.station
 		elif child is QuestGiver:
@@ -107,9 +108,9 @@ func get_shop(shop_id: int) -> ShopResource:
 	return shops.get(shop_id)
 
 
-## The gathering node with this id in this map, or null.
-func get_mineable(node_id: int) -> MineableNode:
-	return mineables.get(node_id)
+## The gathering node with this name in this map, or null.
+func get_mineable(node_name: StringName) -> MineableNode:
+	return mineables.get(node_name)
 
 
 ## The crafting station with this registry id in this map, or null.

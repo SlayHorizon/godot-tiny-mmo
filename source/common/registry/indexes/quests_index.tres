@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_7gygy")
 content_name = &"quests"
-version = 1780088182
-next_id = 27
+version = 1780174825
+next_id = 28
 entries = Array[Dictionary]([{
 &"hash": "c3401e3774f1f5b0c59ade967826724a31175441a65be332b7232de735ca3f13",
 &"id": 3,
@@ -23,7 +23,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/camp_cleanup.tres",
 &"slug": &"camp_cleanup"
 }, {
-&"hash": "5b9ac558e96b657482a02bf3164a33f0e5bc053f33d42c14494824d76c463389",
+&"hash": "2fbbbbc930cc73305acdad276106a299813ede490175a988439550b8f3955966",
 &"id": 6,
 &"path": "res://source/common/gameplay/quests/resources/captains_tag_delivery.tres",
 &"slug": &"captains_tag_delivery"
@@ -33,27 +33,27 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/copper_for_the_smith.tres",
 &"slug": &"copper_for_the_smith"
 }, {
-&"hash": "72ca9168c55937dbee5d09951f5df3311dc039cc5b9455f0978146b71f7eefc0",
+&"hash": "5dce4e959e08cd3dc4e496ea22cbdbd87eee494c61b4f9825bf1d049186d6c35",
 &"id": 8,
 &"path": "res://source/common/gameplay/quests/resources/daily_pool.tres",
 &"slug": &"daily_pool"
 }, {
-&"hash": "a41c60af9362e2c641aca576cd9854416c9d522af8b521ea0665f57752643b58",
+&"hash": "cfc8e002b7d4c6358aa93233df3dd65776075d226a60f0eae735e3e7832ddd8f",
 &"id": 9,
 &"path": "res://source/common/gameplay/quests/resources/first_harvest.tres",
 &"slug": &"first_harvest"
 }, {
-&"hash": "bda9ae5d20e0915f67da65ac07fd32640162e3138c47870859ee9706b087a4bd",
+&"hash": "8d70c3fbf988db4c64319426cf3b63ee72de1a89ae612f36db5fbf4c30632987",
 &"id": 10,
 &"path": "res://source/common/gameplay/quests/resources/herbs_for_mira.tres",
 &"slug": &"herbs_for_mira"
 }, {
-&"hash": "2064c0c333319a242d70a27553e077acd08b8e4e30e22b3a4ef21e61c86d3544",
+&"hash": "b4cb826f12da96366982832ead52f3ee87d8498f1e9a06fcb43232a39b3f6786",
 &"id": 11,
 &"path": "res://source/common/gameplay/quests/resources/iron_apprentice_quest.tres",
 &"slug": &"iron_apprentice_quest"
 }, {
-&"hash": "da7b73b978ff2513ec239300fb6e7609f17af77f3d5bdc37df4ce9a8bd197b84",
+&"hash": "da4770abff118cdc1c7e2ab50f3ba8b162064da6b9bdd73c2d3b3811abfc7496",
 &"id": 12,
 &"path": "res://source/common/gameplay/quests/resources/iron_forgemaster_quest.tres",
 &"slug": &"iron_forgemaster_quest"
@@ -63,7 +63,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/iron_golems_for_the_warden.tres",
 &"slug": &"iron_golems_for_the_warden"
 }, {
-&"hash": "7d47a8b2fd255428c438445d54aecc9faeabbe5a475d9a8bf51c22d103c34dc5",
+&"hash": "aba128f99a3cfd0ca36ba4c709cabff4b3638866318cbaf78a31d1c8fe832dd1",
 &"id": 14,
 &"path": "res://source/common/gameplay/quests/resources/linen_for_the_tailor.tres",
 &"slug": &"linen_for_the_tailor"
@@ -73,12 +73,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/master_of_the_forge.tres",
 &"slug": &"master_of_the_forge"
 }, {
-&"hash": "059e54096325863210ad8a40b6c1a29cb98128ddc79193a5797c244c8978b619",
+&"hash": "efa5a1df9b2fa92aa8c9472e6f9dd5203a261204f4933bd923d5f2e7c6436ed8",
 &"id": 16,
 &"path": "res://source/common/gameplay/quests/resources/miras_supplies.tres",
 &"slug": &"miras_supplies"
 }, {
-&"hash": "8d38297ab26f8a5eea806be1b44c64fef1f2b880bd4fee937a35ba4a682f7964",
+&"hash": "201316e78dc616f97f93e7f8bf708bc4785dfc838e2f39fc20cb7a9f0454f7b8",
 &"id": 17,
 &"path": "res://source/common/gameplay/quests/resources/sealed_letter_delivery.tres",
 &"slug": &"sealed_letter_delivery"
@@ -93,12 +93,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/smelters_trial.tres",
 &"slug": &"smelters_trial"
 }, {
-&"hash": "97de1262d0b16fb20291ffb2df73bf730929a680875d6d499cc1c7b9367f8f41",
+&"hash": "b7d611229bf926e3677657568b532f007f7bfe666d9e22f970da0141a79fbca1",
 &"id": 20,
 &"path": "res://source/common/gameplay/quests/resources/the_bandit_captain.tres",
 &"slug": &"the_bandit_captain"
 }, {
-&"hash": "68041491933572894bcbe8c8c6ff3564030d0494c65606224e00f5c64cb766bf",
+&"hash": "7f0d1de5f50a8db3409066159ecb7c7fedd2b485605e9b5ebf6182736e6cc7dc",
 &"id": 21,
 &"path": "res://source/common/gameplay/quests/resources/the_iron_vein.tres",
 &"slug": &"the_iron_vein"
@@ -122,6 +122,11 @@ entries = Array[Dictionary]([{
 &"id": 25,
 &"path": "res://source/common/gameplay/quests/resources/visit_territory_scout.tres",
 &"slug": &"visit_territory_scout"
+}, {
+&"hash": "7b3fc91ef71f5963d7cf83def9aeb6234b6340e88d947b81d9ca91393a0634a5",
+&"id": 27,
+&"path": "res://source/common/gameplay/quests/resources/welcome.tres",
+&"slug": &"welcome"
 }, {
 &"hash": "15a9537da316dd67194397d406efbf8d9deaead8741be17a3dc5c22821f5d620",
 &"id": 26,

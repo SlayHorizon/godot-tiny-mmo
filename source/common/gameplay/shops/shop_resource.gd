@@ -18,6 +18,9 @@ enum Trades {
 @export var shop_name: String
 @export var entries: Array[ShopEntry]
 @export var trades: Trades = Trades.BOTH
+## Specialty recurring exchanges this vendor offers (e.g. Mira always accepts
+## 5 Healing Herbs for 4 gold). Empty for generic vendors.
+@export var accepted_trades: Array[ShopTrade]
 
 
 ## Loads a shop by its registry id, or null if the shops content type hasn't been
@@ -34,6 +37,14 @@ func allows_buying() -> bool:
 
 func allows_selling() -> bool:
 	return trades != Trades.BUY_ONLY
+
+
+## True if this vendor offers any specialty trades. Specialty trades can be made
+## even at a vendor that doesn't allow generic selling (e.g. an herbalist who
+## accepts only herbs). Defensive against shops authored before the
+## accepted_trades field existed (where it can deserialize as null).
+func has_trades() -> bool:
+	return accepted_trades != null and not accepted_trades.is_empty()
 
 
 ## { "price": int, "currency_id": int } for one item, or {} if not sold here.

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
 [ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="3_cop"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/leather.tres" id="4_leather"]
+[ext_resource type="Resource" uid="uid://b7vknj4kmauhs" path="res://source/common/gameplay/items/materials/leather.tres" id="4_leather"]
 [ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="5_852w6"]
 
 [sub_resource type="Resource" id="Drop_leather"]

@@ -1,14 +1,12 @@
-[gd_resource type="Resource" script_class="MaterialItem" format=3]
+[gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://bvm7tfr3rpw1i"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/Icon271.png" id="1_icon"]
-[ext_resource type="Script" path="res://source/common/gameplay/items/material_item.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="1_icon"]
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_script"]
 
 [resource]
 script = ExtResource("2_script")
 item_name = &"Sealed Letter"
-item_icon = ExtResource("1_icon")
-vendor_value = 0
 description = "A wax-sealed letter, addressed to the cartographer in the next town. Don't open it."
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"sealed_letter"
-metadata/id = 62
+metadata/id = 64

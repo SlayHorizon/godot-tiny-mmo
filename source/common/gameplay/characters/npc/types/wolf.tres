@@ -1,35 +1,27 @@
-[gd_resource type="Resource" script_class="EnemyTypeResource" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://c43oawxmbygiq"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
-[ext_resource type="Script" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/hide.tres" id="3_hide"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/bone.tres" id="4_bone"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" uid="uid://ck4shwy2jwqk6" path="res://source/common/gameplay/items/materials/hide.tres" id="3_hide"]
+[ext_resource type="Resource" uid="uid://bme5xgselkbng" path="res://source/common/gameplay/items/materials/bone.tres" id="4_bone"]
 
 [sub_resource type="Resource" id="Drop_hide"]
 script = ExtResource("2_loot")
 item = ExtResource("3_hide")
-min_amount = 1
 max_amount = 2
-chance = 1.0
 
 [sub_resource type="Resource" id="Drop_bone"]
 script = ExtResource("2_loot")
 item = ExtResource("4_bone")
-min_amount = 1
-max_amount = 1
 chance = 0.3
 
 [resource]
 script = ExtResource("1_script")
 enemy_type = &"wolf"
 display_name = "Wild Wolf"
-max_health = 50.0
-attack_damage = 8.0
 attack_cooldown = 1.3
-armor = 0.0
 move_speed = 30
 distance_to_attack = 16
-max_distance_from_spawn = 100
 chase_on_area = true
 xp_reward = 8
 respawn_delay = 8.0

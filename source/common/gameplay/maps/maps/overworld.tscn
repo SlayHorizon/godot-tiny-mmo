@@ -26,16 +26,25 @@
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.tscn" id="22_na1pl"]
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="24_slgwh"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="24_uytus"]
-[ext_resource type="Resource" uid="uid://b64q6sv46brpr" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres" id="25_7nycf"]
 [ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="25_g3eyd"]
 [ext_resource type="Script" uid="uid://bvwcr61l1deso" path="res://source/common/gameplay/time/world_clock_display.gd" id="25_gimy5"]
+[ext_resource type="Resource" uid="uid://jo7v7jfc54kp" path="res://source/common/gameplay/characters/npc/types/bandit_captain.tres" id="26_0lv0g"]
+[ext_resource type="Resource" uid="uid://djj2vxg3nbswn" path="res://source/common/gameplay/characters/npc/types/slime.tres" id="27_0a7m6"]
+[ext_resource type="Resource" uid="uid://b30ybcv0ulinq" path="res://source/common/gameplay/characters/npc/types/goblin.tres" id="28_huaqk"]
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="29_sbo1b"]
+[ext_resource type="Resource" uid="uid://c43oawxmbygiq" path="res://source/common/gameplay/characters/npc/types/wolf.tres" id="29_xkeub"]
+[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="31_ammjv"]
 [ext_resource type="Script" uid="uid://cg6wer5if2oyf" path="res://source/common/gameplay/crafting/crafting_station.gd" id="32_2aujs"]
+[ext_resource type="Resource" uid="uid://cmd78ic0if6sq" path="res://source/common/gameplay/shops/resources/miras_apothecary.tres" id="32_kj3yx"]
 [ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="32_sbo1b"]
-[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="33_112bs"]
+[ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="32_ygx5n"]
+[ext_resource type="Resource" uid="uid://cwojdmtkr5xwl" path="res://source/common/gameplay/crafting/resources/forge.tres" id="33_7nycf"]
 [ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="37_frbp0"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="38_dk1bj"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="39_frbp0"]
+[ext_resource type="Resource" uid="uid://d3wr3s50a41mu" path="res://source/common/gameplay/crafting/resources/loom.tres" id="38_huaqk"]
+[ext_resource type="Resource" uid="uid://ca6hdigffs5j3" path="res://source/common/gameplay/quests/resources/slime_trouble.tres" id="38_md37v"]
+[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="39_frbp0"]
+[ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="39_pb3ma"]
 [ext_resource type="Script" uid="uid://dp7km3l8yaot3" path="res://source/common/gameplay/quests/quest_board.gd" id="40_g3eyd"]
 [ext_resource type="Script" uid="uid://b2j8gyjph35qx" path="res://source/common/gameplay/trade/trade_table.gd" id="41_uw01f"]
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="42_gn54b"]
@@ -47,6 +56,9 @@
 [ext_resource type="Resource" uid="uid://b3qk27fw0k2ko" path="res://source/common/gameplay/quests/resources/a_tailored_hood.tres" id="45_ammjv"]
 [ext_resource type="Resource" uid="uid://pm3j1lgi0vig" path="res://source/common/gameplay/quests/resources/master_of_the_forge.tres" id="46_70yxu"]
 [ext_resource type="Resource" uid="uid://cenoj3b4ix3kk" path="res://source/common/gameplay/quests/resources/first_harvest.tres" id="47_kj3yx"]
+[ext_resource type="Resource" uid="uid://cawy8c6jytb28" path="res://source/common/gameplay/quests/resources/miras_supplies.tres" id="57_0a7m6"]
+[ext_resource type="Texture2D" uid="uid://bmi6y1awf4id8" path="res://assets/sprites/environment/structures/stations/furnace/furnace.png" id="57_eiayv"]
+[ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="58_ofiq8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ovmn0"]
 radius = 51.48361
@@ -55,10 +67,7 @@ radius = 51.48361
 radius = 55.38041
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bd110"]
-size = Vector2(121.3302, 28.720032)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2aujs"]
-size = Vector2(36.136353, 27.279724)
+size = Vector2(31.99997, 28.720032)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ovmn0"]
 size = Vector2(48.993896, 43.498413)
@@ -82,6 +91,9 @@ size = Vector2(80, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pb3ma"]
 size = Vector2(64, 32.00003)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_md37v"]
+size = Vector2(40, 32)
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -156,7 +168,7 @@ position = Vector2(923, 1047)
 position = Vector2(552, 588)
 
 [node name="Spawn" parent="." unique_id=850568300 instance=ExtResource("9_vhwke")]
-position = Vector2(797, 966)
+position = Vector2(1384, 968)
 
 [node name="Trade_entrance" parent="." unique_id=1049912251 instance=ExtResource("9_vhwke")]
 position = Vector2(1283, 902)
@@ -209,22 +221,48 @@ id_to_node = {
 5: NodePath("Coin6"),
 6: NodePath("Coin7"),
 7: NodePath("GroundButton"),
-8: NodePath("NPC"),
-9: NodePath("Mob"),
-10: NodePath("Mob2")
+8: NodePath("Bandit"),
+9: NodePath("BanditCaptain"),
+10: NodePath("Bandit2"),
+11: NodePath("Bandit3"),
+12: NodePath("Slime"),
+13: NodePath("Slime2"),
+14: NodePath("Slime4"),
+15: NodePath("Slime3"),
+16: NodePath("Goblin"),
+17: NodePath("Goblin2"),
+18: NodePath("Wolf"),
+19: NodePath("Wolf2"),
+20: NodePath("Wolf3"),
+21: NodePath("Goblin3"),
+22: NodePath("Goblin4"),
+23: NodePath("Goblin5")
 }
 node_to_id = {
-NodePath("Coin"): 0,
-NodePath("Coin2"): 1,
-NodePath("Coin3"): 2,
-NodePath("Coin4"): 3,
-NodePath("Coin5"): 4,
-NodePath("Coin6"): 5,
-NodePath("Coin7"): 6,
+NodePath("Goblin5"): 23,
+NodePath("Goblin4"): 22,
+NodePath("Goblin3"): 21,
+NodePath("Wolf3"): 20,
+NodePath("Wolf2"): 19,
+NodePath("Wolf"): 18,
+NodePath("Goblin2"): 17,
+NodePath("Goblin"): 16,
+NodePath("Slime3"): 15,
+NodePath("Slime4"): 14,
+NodePath("Slime2"): 13,
+NodePath("Slime"): 12,
+NodePath("Bandit3"): 11,
+NodePath("Bandit2"): 10,
+NodePath("BanditCaptain"): 9,
+NodePath("Bandit"): 8,
 NodePath("GroundButton"): 7,
-NodePath("NPC"): 8,
-NodePath("Mob"): 9,
-NodePath("Mob2"): 10
+NodePath("Coin7"): 6,
+NodePath("Coin6"): 5,
+NodePath("Coin5"): 4,
+NodePath("Coin4"): 3,
+NodePath("Coin3"): 2,
+NodePath("Coin2"): 1,
+NodePath("Coin"): 0
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 
@@ -253,40 +291,166 @@ position = Vector2(736, 1076)
 position = Vector2(664, 904)
 activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/ActivableDoor2"), NodePath("../../Traps/ActivableDoor3"), NodePath("../../Traps/ActivableDoor8"), NodePath("../../Traps/ActivableDoor9"), NodePath("../../Traps/ActivableDoor4"), NodePath("../../Traps/ActivableDoor5"), NodePath("../../Traps/ActivableDoor7"), NodePath("../../Traps/ActivableDoor6")]
 
-[node name="NPC" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("24_uytus")]
-position = Vector2(145, 1356)
-enemy_data = null
-enemy_type = &""
-attack_cooldown = 1.5
-weapon = null
-
-[node name="Mob" parent="ReplicatedPropsContainer" unique_id=1087386232 instance=ExtResource("24_uytus")]
-position = Vector2(655.3556, 1198.6508)
+[node name="Bandit" parent="ReplicatedPropsContainer" unique_id=1087386232 instance=ExtResource("24_uytus")]
+position = Vector2(8, -184)
 enemy_data = ExtResource("25_g3eyd")
-distance_to_attack = 200
-enemy_type = &"mobs"
-attack_cooldown = 1.5
-weapon = ExtResource("25_7nycf")
-xp_reward = 200
+metadata/_edit_group_ = true
 
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Mob" unique_id=2105278488]
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Bandit" unique_id=2105278488]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Mob/Area2D" unique_id=1769735645]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Bandit/Area2D" unique_id=1769735645]
 shape = SubResource("CircleShape2D_ovmn0")
 
-[node name="Mob2" parent="ReplicatedPropsContainer" unique_id=267862471 instance=ExtResource("24_uytus")]
-position = Vector2(922.79205, 1260.473)
+[node name="BanditCaptain" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("24_uytus")]
+position = Vector2(-200, -152)
+enemy_data = ExtResource("26_0lv0g")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/BanditCaptain" unique_id=1669106109]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/BanditCaptain/Area2D" unique_id=1806707416]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Bandit2" parent="ReplicatedPropsContainer" unique_id=267862471 instance=ExtResource("24_uytus")]
+position = Vector2(80, -112)
 enemy_data = ExtResource("25_g3eyd")
-distance_to_attack = 25
-enemy_type = &"mobs"
-attack_damage = 20.0
-attack_cooldown = 1.5
-weapon = null
-xp_reward = 200
+metadata/_edit_group_ = true
 
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Mob2" unique_id=1495250126]
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Bandit2" unique_id=1495250126]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Mob2/Area2D" unique_id=383434929]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Bandit2/Area2D" unique_id=383434929]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Bandit3" parent="ReplicatedPropsContainer" unique_id=1915614100 instance=ExtResource("24_uytus")]
+position = Vector2(0, -32)
+enemy_data = ExtResource("25_g3eyd")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Bandit3" unique_id=1032239389]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Bandit3/Area2D" unique_id=1344285317]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Slime" parent="ReplicatedPropsContainer" unique_id=763372527 instance=ExtResource("24_uytus")]
+position = Vector2(154.67554, 1360)
+enemy_data = ExtResource("27_0a7m6")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime" unique_id=1647096972]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime/Area2D" unique_id=957109286]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Slime2" parent="ReplicatedPropsContainer" unique_id=205969184 instance=ExtResource("24_uytus")]
+position = Vector2(0, 1420.0715)
+enemy_data = ExtResource("27_0a7m6")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime2" unique_id=1198491685]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime2/Area2D" unique_id=1502785779]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Slime4" parent="ReplicatedPropsContainer" unique_id=1977822441 instance=ExtResource("24_uytus")]
+position = Vector2(352, 1388.0715)
+enemy_data = ExtResource("27_0a7m6")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime4" unique_id=1571732984]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime4/Area2D" unique_id=377938431]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Slime3" parent="ReplicatedPropsContainer" unique_id=871497672 instance=ExtResource("24_uytus")]
+position = Vector2(208, 1500.0715)
+enemy_data = ExtResource("27_0a7m6")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime3" unique_id=157014534]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime3/Area2D" unique_id=1635068905]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Goblin" parent="ReplicatedPropsContainer" unique_id=1886432537 instance=ExtResource("24_uytus")]
+position = Vector2(-986.10785, 1473.8162)
+enemy_data = ExtResource("28_huaqk")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin" unique_id=1898273245]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin/Area2D" unique_id=1887506509]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Goblin2" parent="ReplicatedPropsContainer" unique_id=452078205 instance=ExtResource("24_uytus")]
+position = Vector2(-1208, 1456)
+enemy_data = ExtResource("28_huaqk")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin2" unique_id=1246345856]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin2/Area2D" unique_id=627085406]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Wolf" parent="ReplicatedPropsContainer" unique_id=949477659 instance=ExtResource("24_uytus")]
+position = Vector2(-2148, 1248)
+enemy_data = ExtResource("29_xkeub")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Wolf" unique_id=682580380]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Wolf/Area2D" unique_id=1291541389]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Wolf2" parent="ReplicatedPropsContainer" unique_id=1963564594 instance=ExtResource("24_uytus")]
+position = Vector2(-2088, 1272)
+enemy_data = ExtResource("29_xkeub")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Wolf2" unique_id=1266599188]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Wolf2/Area2D" unique_id=2047992596]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Wolf3" parent="ReplicatedPropsContainer" unique_id=738741219 instance=ExtResource("24_uytus")]
+position = Vector2(-2104, 1224)
+enemy_data = ExtResource("29_xkeub")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Wolf3" unique_id=915729887]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Wolf3/Area2D" unique_id=1089004593]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Goblin3" parent="ReplicatedPropsContainer" unique_id=1558014776 instance=ExtResource("24_uytus")]
+position = Vector2(-1096, 1288)
+enemy_data = ExtResource("28_huaqk")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin3" unique_id=1537919356]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin3/Area2D" unique_id=1626249605]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Goblin4" parent="ReplicatedPropsContainer" unique_id=435030798 instance=ExtResource("24_uytus")]
+position = Vector2(-928, 1480.0001)
+rotation = 0.01588766
+enemy_data = ExtResource("28_huaqk")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin4" unique_id=1491893043]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin4/Area2D" unique_id=45702685]
+shape = SubResource("CircleShape2D_ovmn0")
+
+[node name="Goblin5" parent="ReplicatedPropsContainer" unique_id=893235474 instance=ExtResource("24_uytus")]
+position = Vector2(-1064, 1320.0001)
+rotation = 0.01588766
+enemy_data = ExtResource("28_huaqk")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin5" unique_id=1100738746]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin5/Area2D" unique_id=129822190]
 shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Traps" type="Node2D" parent="." unique_id=571759958]
@@ -352,80 +516,113 @@ script = ExtResource("25_gimy5")
 [node name="ShopInteractable" type="Area2D" parent="." unique_id=1408130728]
 position = Vector2(810.65173, 868.843)
 script = ExtResource("29_sbo1b")
+shop = ExtResource("31_ammjv")
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=1524019920]
 shape = SubResource("CircleShape2D_uw01f")
 
 [node name="Label" type="Label" parent="ShopInteractable/CollisionShape2D" unique_id=85637529]
 offset_left = -26.651733
-offset_top = -36.843018
-offset_right = 96.34827
-offset_bottom = 8.156982
-text = "BUY SHOP
-GENERAL STORE"
+offset_top = -20.843018
+offset_right = 39.348267
+offset_bottom = 24.156982
+text = "STARTER
+SHOP"
+horizontal_alignment = 1
 
-[node name="ShopInteractable2" type="Area2D" parent="." unique_id=593426351]
-position = Vector2(957.8729, 834.17206)
+[node name="InteractableMarker" parent="ShopInteractable" unique_id=988706689 instance=ExtResource("32_ygx5n")]
+kind = 2
+
+[node name="MireSHop" type="Area2D" parent="." unique_id=593426351]
+position = Vector2(934.1901, 1082.7368)
 script = ExtResource("29_sbo1b")
+shop = ExtResource("32_kj3yx")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable2" unique_id=1302669879]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MireSHop" unique_id=1302669879]
 shape = SubResource("CircleShape2D_uw01f")
 
-[node name="Label" type="Label" parent="ShopInteractable2/CollisionShape2D" unique_id=1480764746]
+[node name="Label" type="Label" parent="MireSHop/CollisionShape2D" unique_id=1480764746]
 offset_left = -37.872925
 offset_top = -18.172058
 offset_right = 45.127075
 offset_bottom = 26.827942
-text = "SELL SHOP
-ONLY"
+text = "Mira Shop"
 
-[node name="CraftingStation" type="Area2D" parent="." unique_id=92353300]
-position = Vector2(648.6698, 933.27997)
+[node name="Loom" type="Area2D" parent="." unique_id=1542591941]
+position = Vector2(395.47778, 729.97754)
 script = ExtResource("32_2aujs")
+station = ExtResource("38_huaqk")
 metadata/_custom_type_script = "uid://cg6wer5if2oyf"
+metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CraftingStation" unique_id=422668942]
-position = Vector2(50.6651, 4.3600464)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Loom" unique_id=1982635424]
 shape = SubResource("RectangleShape2D_bd110")
 
-[node name="Label" type="Label" parent="CraftingStation" unique_id=1151018594]
-offset_right = 107.0
-offset_bottom = 21.0
-text = "CraftingStation"
+[node name="Label" type="Label" parent="Loom" unique_id=777480511]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -53.5
+offset_top = 9.5
+offset_right = 53.5
+offset_bottom = 30.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Loom"
+horizontal_alignment = 1
 
-[node name="MineableNode" type="Area2D" parent="." unique_id=1446852200]
-position = Vector2(818.13635, 1014.7203)
-script = ExtResource("32_sbo1b")
-node_id = 1
-ore = ExtResource("33_112bs")
-xp_reward = 400
+[node name="InteractableMarker" parent="Loom" unique_id=1116914763 instance=ExtResource("32_ygx5n")]
+kind = 3
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MineableNode" unique_id=697598298]
-position = Vector2(-8.068176, 3.6398315)
-shape = SubResource("RectangleShape2D_2aujs")
+[node name="Forge" type="Area2D" parent="." unique_id=92353300]
+position = Vector2(568, -336)
+script = ExtResource("32_2aujs")
+station = ExtResource("33_7nycf")
+metadata/_custom_type_script = "uid://cg6wer5if2oyf"
+metadata/_edit_group_ = true
 
-[node name="Label" type="Label" parent="MineableNode" unique_id=1051639428]
-offset_left = -26.136353
-offset_top = -6.720276
-offset_right = 13.863647
-offset_bottom = 14.279724
-text = "Ore"
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Forge" unique_id=422668942]
+shape = SubResource("RectangleShape2D_bd110")
 
-[node name="QuestGiver" type="Area2D" parent="." unique_id=2123546769]
-position = Vector2(665.0061, 790.5016)
+[node name="Label" type="Label" parent="Forge" unique_id=1151018594]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -53.5
+offset_top = 9.5
+offset_right = 53.5
+offset_bottom = 30.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Forge"
+horizontal_alignment = 1
+
+[node name="InteractableMarker" parent="Forge" unique_id=1077521907 instance=ExtResource("32_ygx5n")]
+kind = 3
+
+[node name="VillageElder" type="Area2D" parent="." unique_id=674056110]
+position = Vector2(1493.4995, 967.4042)
 script = ExtResource("37_frbp0")
-giver_id = 1
+giver_id = 100
+giver_name = "Village Elder"
+quests = Array[ExtResource("38_dk1bj")]([ExtResource("39_pb3ma"), ExtResource("38_md37v")])
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="QuestGiver" unique_id=1780750788]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VillageElder" unique_id=2106640688]
 position = Vector2(-1.0061035, 1.4984131)
 shape = SubResource("RectangleShape2D_ovmn0")
 
-[node name="Label" type="Label" parent="QuestGiver" unique_id=784852290]
+[node name="Label" type="Label" parent="VillageElder" unique_id=311242385]
 offset_left = -41.006104
 offset_top = -6.501587
 offset_right = 39.993896
 offset_bottom = 14.498413
-text = "Quest giver"
+text = "Village Elder
+Quest giver"
+horizontal_alignment = 1
+
+[node name="InteractableMarker" parent="VillageElder" unique_id=1929588063 instance=ExtResource("32_ygx5n")]
+kind = 0
 
 [node name="TradeTable" type="Area2D" parent="." unique_id=2068431475]
 position = Vector2(539.59576, 938.9707)
@@ -506,17 +703,99 @@ position = Vector2(5.7545776, 46.12097)
 shape = SubResource("RectangleShape2D_vkg56")
 
 [node name="HealingHerbNode" type="Area2D" parent="." unique_id=1144861485]
-position = Vector2(736.8288, 766.9218)
+position = Vector2(938.83295, 1416.6067)
 script = ExtResource("32_sbo1b")
 ore = ExtResource("39_frbp0")
 required_tool = &""
 metadata/_custom_type_script = "uid://cci5f3gf106ha"
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode" unique_id=495120305]
 position = Vector2(3.1712036, 3.5391235)
 shape = SubResource("RectangleShape2D_dk1bj")
 
 [node name="Label" type="Label" parent="HealingHerbNode" unique_id=2112392580]
+z_index = 1
+offset_left = -40.828796
+offset_top = -6.921814
+offset_right = 52.171204
+offset_bottom = 14.078186
+text = "Healing Herb"
+
+[node name="HealingHerbNode2" type="Area2D" parent="." unique_id=24907006]
+position = Vector2(816, 1368)
+script = ExtResource("32_sbo1b")
+ore = ExtResource("39_frbp0")
+required_tool = &""
+metadata/_custom_type_script = "uid://cci5f3gf106ha"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode2" unique_id=834668811]
+position = Vector2(3.1712036, 3.5391235)
+shape = SubResource("RectangleShape2D_dk1bj")
+
+[node name="Label" type="Label" parent="HealingHerbNode2" unique_id=1184358537]
+z_index = 1
+offset_left = -40.828796
+offset_top = -6.921814
+offset_right = 52.171204
+offset_bottom = 14.078186
+text = "Healing Herb"
+
+[node name="HealingHerbNode3" type="Area2D" parent="." unique_id=1437561025]
+position = Vector2(1272, 1256)
+script = ExtResource("32_sbo1b")
+ore = ExtResource("39_frbp0")
+required_tool = &""
+metadata/_custom_type_script = "uid://cci5f3gf106ha"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode3" unique_id=1804171507]
+position = Vector2(3.1712036, 3.5391235)
+shape = SubResource("RectangleShape2D_dk1bj")
+
+[node name="Label" type="Label" parent="HealingHerbNode3" unique_id=520595749]
+z_index = 1
+offset_left = -40.828796
+offset_top = -6.921814
+offset_right = 52.171204
+offset_bottom = 14.078186
+text = "Healing Herb"
+
+[node name="HealingHerbNode4" type="Area2D" parent="." unique_id=1025116045]
+position = Vector2(560, 1512)
+script = ExtResource("32_sbo1b")
+ore = ExtResource("39_frbp0")
+required_tool = &""
+metadata/_custom_type_script = "uid://cci5f3gf106ha"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode4" unique_id=1268605147]
+position = Vector2(3.1712036, 3.5391235)
+shape = SubResource("RectangleShape2D_dk1bj")
+
+[node name="Label" type="Label" parent="HealingHerbNode4" unique_id=365354757]
+z_index = 1
+offset_left = -40.828796
+offset_top = -6.921814
+offset_right = 52.171204
+offset_bottom = 14.078186
+text = "Healing Herb"
+
+[node name="HealingHerbNode5" type="Area2D" parent="." unique_id=1918613170]
+position = Vector2(80, 1592)
+script = ExtResource("32_sbo1b")
+ore = ExtResource("39_frbp0")
+required_tool = &""
+metadata/_custom_type_script = "uid://cci5f3gf106ha"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode5" unique_id=1948088945]
+position = Vector2(3.1712036, 3.5391235)
+shape = SubResource("RectangleShape2D_dk1bj")
+
+[node name="Label" type="Label" parent="HealingHerbNode5" unique_id=629208901]
+z_index = 1
 offset_left = -40.828796
 offset_top = -6.921814
 offset_right = 52.171204
@@ -533,6 +812,7 @@ position = Vector2(1.7103271, 0)
 shape = SubResource("RectangleShape2D_ygx5n")
 
 [node name="Label" type="Label" parent="QuestBoard" unique_id=1556280703]
+z_index = 1
 offset_left = -38.289673
 offset_top = -19.904297
 offset_right = 45.710327
@@ -540,12 +820,13 @@ offset_bottom = 1.0957031
 text = "QuestBoard"
 
 [node name="Foreman" type="Area2D" parent="." unique_id=1215197090]
-position = Vector2(487.32556, -340.26025)
+position = Vector2(972.11145, -295.33862)
 script = ExtResource("37_frbp0")
 giver_id = 10
 giver_name = "Foreman"
 quests = Array[ExtResource("38_dk1bj")]([ExtResource("42_or0xh"), ExtResource("43_88r8o")])
 metadata/_custom_type_script = "uid://cm4dod11fv3fj"
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Foreman" unique_id=378079636]
 position = Vector2(6.756714, 3.3986206)
@@ -559,13 +840,17 @@ offset_bottom = 24.39862
 text = "Foreman
 (quests)"
 
+[node name="InteractableMarker" parent="Foreman" unique_id=2109455603 instance=ExtResource("32_ygx5n")]
+kind = 0
+
 [node name="MasterSmith" type="Area2D" parent="." unique_id=1164213037]
-position = Vector2(474.18835, 641.58215)
+position = Vector2(480, -336)
 script = ExtResource("37_frbp0")
 giver_id = 6
 giver_name = "Master Smith"
 quests = Array[ExtResource("38_dk1bj")]([ExtResource("44_2htmb"), ExtResource("45_ammjv"), ExtResource("46_70yxu")])
 metadata/_custom_type_script = "uid://cm4dod11fv3fj"
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MasterSmith" unique_id=1264025918]
 position = Vector2(6.756714, 3.3986206)
@@ -585,7 +870,7 @@ position = Vector2(1061.7823, 1069.762)
 script = ExtResource("37_frbp0")
 giver_id = 4
 giver_name = "Mira the Herbalist"
-quests = Array[ExtResource("38_dk1bj")]([ExtResource("47_kj3yx")])
+quests = Array[ExtResource("38_dk1bj")]([ExtResource("47_kj3yx"), ExtResource("57_0a7m6")])
 metadata/_custom_type_script = "uid://cm4dod11fv3fj"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MiraTheHerbalist" unique_id=485090142]
@@ -593,10 +878,44 @@ position = Vector2(6.756714, 3.3986206)
 shape = SubResource("RectangleShape2D_pb3ma")
 
 [node name="Label" type="Label" parent="MiraTheHerbalist" unique_id=1005847772]
-offset_left = -37.78235
-offset_top = -21.762024
-offset_right = 89.21765
-offset_bottom = 23.237976
+z_index = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 text = "Mira the Herbalist
 (quests)"
 horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InteractableMarker" parent="MiraTheHerbalist" unique_id=999559936 instance=ExtResource("32_ygx5n")]
+kind = 0
+
+[node name="QuarryCounter" type="Area2D" parent="." unique_id=171529630]
+position = Vector2(780.2655, -343.35303)
+script = ExtResource("29_sbo1b")
+shop = ExtResource("58_ofiq8")
+metadata/_custom_type_script = "uid://bd3mum0wbv2c0"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="QuarryCounter" unique_id=187238685]
+position = Vector2(-0.26550293, -0.64697266)
+shape = SubResource("RectangleShape2D_md37v")
+
+[node name="Label" type="Label" parent="QuarryCounter" unique_id=2074443779]
+offset_left = -20.265503
+offset_top = -8.646973
+offset_right = 19.734497
+offset_bottom = 12.353027
+text = "QuarryCounter"
+
+[node name="InteractableMarker" parent="QuarryCounter" unique_id=289177630 instance=ExtResource("32_ygx5n")]
+kind = 2
+
+[node name="Furnace" type="Sprite2D" parent="." unique_id=1330393966]
+position = Vector2(568, -352)
+texture = ExtResource("57_eiayv")
+region_enabled = true
+region_rect = Rect2(53, 133, 38, 59)
+metadata/_edit_lock_ = true

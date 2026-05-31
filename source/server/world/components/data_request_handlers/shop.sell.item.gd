@@ -14,10 +14,11 @@ func data_request_handler(
 		return {"ok": false}
 
 	# Authorization: player must be at a real merchant in their map (same as buying),
-	# and that merchant must accept sells.
+	# and that merchant must accept generic sells. Specialty vendors (those with
+	# any accepted_trades) refuse junk — the player must use shop.trade.item.
 	var shop_id: int = int(args.get("shop_id", 0))
 	var shop: ShopResource = instance.instance_map.get_shop(shop_id)
-	if shop == null or not shop.allows_selling():
+	if shop == null or not shop.allows_selling() or shop.has_trades():
 		return {"ok": false}
 
 	var slot_uid: int = int(args.get("slot_uid", 0))

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://bi2jj0kxe7md8"]
+
+[ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="1_0v3vb"]
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_entry"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="2_shop"]
+[ext_resource type="Resource" uid="uid://clvjdo7an4ctq" path="res://source/common/gameplay/items/weapons/tools/pickaxe.tres" id="3_pickaxe"]
+
+[sub_resource type="Resource" id="Entry_pickaxe"]
+script = ExtResource("1_entry")
+item = ExtResource("3_pickaxe")
+price = 3
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[resource]
+script = ExtResource("2_shop")
+shop_name = "Quarry Counter"
+entries = Array[ExtResource("1_entry")]([SubResource("Entry_pickaxe")])
+metadata/_custom_type_script = "uid://bsed5oxrf1q15"
+metadata/slug = &"quarry_counter"
+metadata/id = 5

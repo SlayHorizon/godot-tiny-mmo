@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1779749187
-next_id = 57
+version = 1780157540
+next_id = 65
 entries = Array[Dictionary]([{
 &"hash": "0958b9dd9e3ba3112daa61005b77b31bda5385ab1ccd0c192c089362464a428d",
 &"id": 1,
@@ -198,30 +198,70 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/item_slot/slots/weapon.tres",
 &"slug": &"weapon"
 }, {
-&"hash": "512f711689967e3cbbfef41eae881771b39bde1f998c967377bc2f73cf5279eb",
+&"hash": "929fdf6001d47bad0980f296cfb774b8d38a420691026b670083f66fa6f4b730",
 &"id": 4,
 &"path": "res://source/common/gameplay/items/materials/bone.tres",
 &"slug": &"bone"
 }, {
-&"hash": "5eba9113e1d5bf398b02e8ea32703b23ed80be9cee155717b852ec58ebc78083",
+&"hash": "ebc78245b23be1e5f08755aad75396e5e9c5bdc2e2b410d953791e26cb37cda9",
+&"id": 57,
+&"path": "res://source/common/gameplay/items/materials/captain_tag.tres",
+&"slug": &"captain_tag"
+}, {
+&"hash": "68181f091a17aa50910d3b2612b598e3b550d89ed09af7c7eba134d18b2565ac",
 &"id": 53,
 &"path": "res://source/common/gameplay/items/materials/coal_ore.tres",
 &"slug": &"coal_ore"
 }, {
-&"hash": "6a51c090e99ab8a1b2bc626c3cca7c7c38ebd68ec1b222f913d0571cd7b1f2c0",
+&"hash": "b85d8374abbafdb4fc90a9155b674e1dcb676d99a7fa5c1ddfee21b33f0149aa",
 &"id": 54,
 &"path": "res://source/common/gameplay/items/materials/copper_bar.tres",
 &"slug": &"copper_bar"
 }, {
-&"hash": "b910a25d849b6001600760f91dd5835533f7a936d88b00988c045962147193bf",
+&"hash": "d8cf63e320fad9664859e79b25b824a35240fc801151e7c78c42754dd2649d9f",
 &"id": 51,
 &"path": "res://source/common/gameplay/items/materials/copper_ore.tres",
 &"slug": &"copper_ore"
 }, {
-&"hash": "f4867f740cb042f40fd0db4f231a3bb0d3716d6cb4681e629b4267a1488b0304",
+&"hash": "7223e8ec98fbc5f35bf8545c8bd8e147999a1c04706986aacf8eb98242b0b34c",
 &"id": 55,
 &"path": "res://source/common/gameplay/items/materials/gold_ore.tres",
 &"slug": &"gold_ore"
+}, {
+&"hash": "79f29d5548cde45cdb8572123f8fcc7d30b35583692295453987e903709b694f",
+&"id": 58,
+&"path": "res://source/common/gameplay/items/materials/healing_herb.tres",
+&"slug": &"healing_herb"
+}, {
+&"hash": "f5305d13dbbf3da10a9e549f1b87c1c2854bc5c0604fe85ad9ad24fabd3ebd42",
+&"id": 59,
+&"path": "res://source/common/gameplay/items/materials/hide.tres",
+&"slug": &"hide"
+}, {
+&"hash": "92cd81c910f69967fb07b0c55644b67b7225233f798359b52ea831ab7f6cbf7e",
+&"id": 60,
+&"path": "res://source/common/gameplay/items/materials/iron_bar.tres",
+&"slug": &"iron_bar"
+}, {
+&"hash": "580f0839e96eae483efcab6e9b3d2a56c49e143724ca543f7e4d4514103f3076",
+&"id": 61,
+&"path": "res://source/common/gameplay/items/materials/iron_ore.tres",
+&"slug": &"iron_ore"
+}, {
+&"hash": "980a96a856d76805925418a133957629fd3135e93a330dfe8a7051836e95a19b",
+&"id": 62,
+&"path": "res://source/common/gameplay/items/materials/leather.tres",
+&"slug": &"leather"
+}, {
+&"hash": "3fe8ee8d9c48d30205f4864ce89413d859017e14f9398f127f8ff0daddfab281",
+&"id": 63,
+&"path": "res://source/common/gameplay/items/materials/linen.tres",
+&"slug": &"linen"
+}, {
+&"hash": "29e5ee2e401ceb8ef0cd04e250ffac1734e6fd5f631db4e1720efadfd353cd26",
+&"id": 64,
+&"path": "res://source/common/gameplay/items/materials/sealed_letter.tres",
+&"slug": &"sealed_letter"
 }, {
 &"hash": "4c133113103adddeff75bf98419e1d8fb8094def9181fddbea9459b2b6bdbb04",
 &"id": 56,

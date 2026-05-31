@@ -9,12 +9,12 @@ extends Area2D
 ##   in the mining.gather handler), so no one can vacuum every charge in one burst.
 ## - Charges regenerate lazily (computed on access), so there are no per-node timers.
 ##
-## Setup: add this script to an Area2D, give it a CollisionShape2D over the vein,
-## assign an ore Item (a MaterialItem with vendor_value so it sells), set node_id
-## unique within the map, and make it a direct child of the Map (like Warper/shop nodes).
+## Setup: instance mineable_node.tscn as a direct child of the Map, assign an
+## ore Item (a MaterialItem with vendor_value so it sells), position it.
+## Identity is the node's own `name` — Godot guarantees uniqueness within a
+## parent, so duplicating the prefab auto-yields "MineableNode2", etc. No
+## manual id wrangling needed; the server resolves by name.
 
-## Unique id within the map; the server resolves the node by this (never trusts coords).
-@export var node_id: int = 0
 ## The item granted per gather. Use a MaterialItem with vendor_value set.
 @export var ore: Item
 @export var yield_amount: int = 1
@@ -55,7 +55,9 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> voi
 		or (event is InputEventScreenTouch and event.pressed)
 	)
 	if clicked:
-		Client.request_data(&"mining.gather", _on_gather_result, {"id": node_id}, InstanceClient.current.name)
+		# `name` is the node's identity within its parent (the Map). Godot
+		# enforces uniqueness, so we don't need a hand-assigned id.
+		Client.request_data(&"mining.gather", _on_gather_result, {"name": String(name)}, InstanceClient.current.name)
 
 
 func _on_gather_result(data: Dictionary) -> void:

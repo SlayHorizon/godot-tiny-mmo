@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="CraftingStationResource" format=3 uid="uid://d3wr3s50a41mu"]
+
+[ext_resource type="Script" uid="uid://btm2w18d3d327" path="res://source/common/gameplay/crafting/crafting_recipe.gd" id="1_recipe"]
+[ext_resource type="Script" uid="uid://dou76lfuf6clf" path="res://source/common/gameplay/crafting/crafting_station_resource.gd" id="2_station"]
+[ext_resource type="Script" uid="uid://cgkqi5dwtob32" path="res://source/common/gameplay/crafting/craft_ingredient.gd" id="3_ingred"]
+[ext_resource type="Resource" uid="uid://j7bqyla76n5q" path="res://source/common/gameplay/items/materials/linen.tres" id="4_linen"]
+[ext_resource type="Resource" uid="uid://osgbreqq1srf" path="res://source/common/gameplay/items/gears/cloth_hood.tres" id="5_cloth_hood"]
+[ext_resource type="Resource" uid="uid://cusgrq4sr1y0e" path="res://source/common/gameplay/items/gears/cloth_vest.tres" id="6_cloth_vest"]
+
+[sub_resource type="Resource" id="Ing_cloth_hood_linen"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_linen")
+amount = 3
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_cloth_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("5_cloth_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_cloth_hood_linen")])
+xp_reward = 6
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_cloth_vest_linen"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_linen")
+amount = 5
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_cloth_vest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("6_cloth_vest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_cloth_vest_linen")])
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[resource]
+script = ExtResource("2_station")
+recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_cloth_hood"), SubResource("Recipe_cloth_vest")])
+metadata/_custom_type_script = "uid://dou76lfuf6clf"
+metadata/slug = &"loom"
+metadata/id = 2

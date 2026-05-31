@@ -11,14 +11,17 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	var node_id: int = int(args.get("id", 0))
+	var node_name: StringName = StringName(args.get("name", ""))
+	if node_name == &"":
+		return {"ok": false}
 
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
 	if not player:
 		return {"ok": false}
 
-	# Resolve the node from the player's map (authoritative; verifies it exists here).
-	var node: MineableNode = instance.instance_map.get_mineable(node_id)
+	# Resolve the node from the player's map (authoritative; verifies it exists
+	# here). Identity is the node's Godot-unique name within the Map root.
+	var node: MineableNode = instance.instance_map.get_mineable(node_name)
 	if node == null or node.ore == null:
 		return {"ok": false}
 
@@ -40,10 +43,13 @@ func data_request_handler(
 	if mining_level < node.required_level:
 		return {"ok": false, "reason": "level", "required_level": node.required_level}
 
-	# Per-player cooldown on this specific node.
+	# Per-player cooldown on this specific node. Key is "<map>/<node_name>" so
+	# cooldowns are scoped to map — gathering node "MineableNode2" in Map A
+	# doesn't block the same-named node in Map B.
+	var cooldown_key: StringName = StringName("%s/%s" % [instance.instance_map.scene_file_path, node_name])
 	var now: int = Time.get_ticks_msec()
 	var cooldowns: Dictionary = player.player_resource.gather_cooldowns
-	if int(cooldowns.get(node_id, 0)) > now:
+	if int(cooldowns.get(cooldown_key, 0)) > now:
 		return {"ok": false, "reason": "cooldown"}
 
 	# Shared node charges (lazy regen handled inside the node).
@@ -62,7 +68,7 @@ func data_request_handler(
 	var progress: Dictionary = player.player_resource.add_skill_xp(MiningPerks.SKILL_NAME, xp_gain)
 
 	# Cooldown shortened by baseline level + the Efficient Mining perk.
-	cooldowns[node_id] = now + int(
+	cooldowns[cooldown_key] = now + int(
 		node.player_cooldown_seconds * 1000.0 * MiningPerks.effective_cooldown_factor(mining_level, mining_perks)
 	)
 

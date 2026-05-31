@@ -5,10 +5,17 @@ extends Resource
 ## for content_name "quests", and each quest gets a registry id/slug baked into metadata
 ## so it resolves through ContentRegistryHub and travels over the network as a small id.
 
+## How many objectives must be completed for the quest to be turnable.
+## ALL = every objective; ANY = a single objective is enough (used for "pick one
+## NPC to introduce yourself to"-style quests where the player chooses a path).
+enum Completion { ALL, ANY }
+
 @export var quest_name: String
 @export_multiline var description: String
-## Steps to complete, in order of display (all must be met to turn in).
+## Steps to complete, in display order.
 @export var objectives: Array[QuestObjective]
+## How many objectives need to be done. Defaults to ALL (classic AND behavior).
+@export var completion: Completion = Completion.ALL
 
 @export_group("Availability")
 ## Player level required to see this quest at the giver. 0 = no level requirement.

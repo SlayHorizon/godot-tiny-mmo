@@ -29,7 +29,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Card" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(480, 380)
+custom_minimum_size = Vector2(720, 460)
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Card"]
@@ -59,11 +59,41 @@ custom_minimum_size = Vector2(88, 44)
 layout_mode = 2
 text = "Close"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer"]
+[node name="Body" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 12
 
-[node name="QuestList" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/ScrollContainer"]
+[node name="LeftPanel" type="PanelContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.38
+
+[node name="LeftScroll" type="ScrollContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/Body/LeftPanel"]
+layout_mode = 2
+
+[node name="TitleList" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/Body/LeftPanel/LeftScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="RightPanel" type="PanelContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.62
+
+[node name="RightMargin" type="MarginContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/Body/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="DetailsScroll" type="ScrollContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/Body/RightPanel/RightMargin"]
+layout_mode = 2
+
+[node name="DetailsContainer" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/Body/RightPanel/RightMargin/DetailsScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

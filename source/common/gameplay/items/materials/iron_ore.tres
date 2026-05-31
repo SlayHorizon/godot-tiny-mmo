@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="MaterialItem" format=3]
+[gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://ddjaybrt21lpq"]
 
 [ext_resource type="Texture2D" uid="uid://w14y1o4gi3l2" path="res://assets/sprites/items/icons/Icon325.png" id="1_iron_o"]
 [ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_iron_o"]
@@ -7,8 +7,8 @@
 script = ExtResource("2_iron_o")
 item_name = &"Iron Ore"
 item_icon = ExtResource("1_iron_o")
-vendor_value = 4
 description = "Raw iron, mined from veins deep in the rock. Smelt it at a forge with coal to make iron bars."
+vendor_value = 4
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"iron_ore"
-metadata/id = 57
+metadata/id = 61

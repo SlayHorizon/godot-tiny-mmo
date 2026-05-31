@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://dyclnj6rv8bnh"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_reward"]
+[ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="4_potion"]
+
+[sub_resource type="Resource" id="Obj_visit_mira"]
+script = ExtResource("1_obj")
+type = 3
+target_giver_id = 4
+target_giver_name = "Mira the Herbalist"
+
+[sub_resource type="Resource" id="Obj_visit_smith"]
+script = ExtResource("1_obj")
+type = 3
+target_giver_id = 6
+target_giver_name = "the Master Smith"
+
+[sub_resource type="Resource" id="Reward_potion"]
+script = ExtResource("3_reward")
+item = ExtResource("4_potion")
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Find Your Footing"
+description = "New to these parts? Then take a walk. Mira keeps the apothecary on the east side, the Master Smith works the forge to the south. Introduce yourself — they'll point you at honest work."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_visit_mira"), SubResource("Obj_visit_smith")])
+completion = 1
+reward_xp = 25
+reward_gold = 5
+reward_items = Array[ExtResource("3_reward")]([SubResource("Reward_potion")])
+grant_title = "Newcomer"
+metadata/_custom_type_script = "uid://c5p53get4ikl6"
+metadata/slug = &"welcome"
+metadata/id = 27

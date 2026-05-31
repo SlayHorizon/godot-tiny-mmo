@@ -72,6 +72,13 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	#Step 4: can_guild_invite (uses inviter's active guild)
 	profile["can_guild_invite"] = _can_invite(ws, from_player, target_id, is_self)
 
+	# Self-view extras: titles + animation list so the edit form can pre-populate
+	# without a second round-trip. Only shipped to the owner, never leaks to others.
+	if is_self:
+		profile["titles_unlocked"] = Array(from_player.titles_unlocked)
+		profile["allowed_animations"] = Array(PlayerResource.ALLOWED_PROFILE_ANIMATIONS)
+		profile["max_status_len"] = PlayerResource.MAX_PROFILE_STATUS_LEN
+
 	return profile
 
 

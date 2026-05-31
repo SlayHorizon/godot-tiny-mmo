@@ -4,6 +4,10 @@ extends Resource
 
 const ATTRIBUTE_POINTS_PER_LEVEL: int = 3
 
+## Profile customization limits, shared by the client edit UI and server validator.
+const MAX_PROFILE_STATUS_LEN: int = 200
+const ALLOWED_PROFILE_ANIMATIONS: PackedStringArray = ["idle", "run", "death"]
+
 const BASE_STATS: Dictionary[StringName, float] = {
 	Stat.HEALTH_MAX: 100.0,
 	Stat.AD: 20.0,

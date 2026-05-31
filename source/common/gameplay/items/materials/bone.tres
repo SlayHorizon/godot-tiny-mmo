@@ -6,9 +6,8 @@
 [resource]
 script = ExtResource("1_38lmc")
 item_name = &"Bone"
-item_icon = ExtResource("1_t2ilm")
-vendor_value = 1
 description = "A dark magical bone collected from evil skeletons."
+vendor_value = 1
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"bone"
 metadata/id = 4

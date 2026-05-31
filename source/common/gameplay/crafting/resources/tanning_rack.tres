@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="CraftingStationResource" format=3 uid="uid://8tf8hri302i"]
+
+[ext_resource type="Script" uid="uid://btm2w18d3d327" path="res://source/common/gameplay/crafting/crafting_recipe.gd" id="1_recipe"]
+[ext_resource type="Script" uid="uid://dou76lfuf6clf" path="res://source/common/gameplay/crafting/crafting_station_resource.gd" id="2_station"]
+[ext_resource type="Script" uid="uid://cgkqi5dwtob32" path="res://source/common/gameplay/crafting/craft_ingredient.gd" id="3_ingred"]
+[ext_resource type="Resource" uid="uid://ck4shwy2jwqk6" path="res://source/common/gameplay/items/materials/hide.tres" id="4_hide"]
+[ext_resource type="Resource" uid="uid://b7vknj4kmauhs" path="res://source/common/gameplay/items/materials/leather.tres" id="5_leather"]
+[ext_resource type="Resource" uid="uid://b2lsx2w3peg6e" path="res://source/common/gameplay/items/gears/leather_jacket.tres" id="6_leather_jacket"]
+
+[sub_resource type="Resource" id="Ing_leather_hide"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_hide")
+amount = 2
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_leather"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("5_leather")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_leather_hide")])
+xp_reward = 4
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_leather_jacket_leather"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_leather")
+amount = 4
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_leather_jacket"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("6_leather_jacket")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_leather_jacket_leather")])
+xp_reward = 15
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[resource]
+script = ExtResource("2_station")
+recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_leather"), SubResource("Recipe_leather_jacket")])
+metadata/_custom_type_script = "uid://dou76lfuf6clf"
+metadata/slug = &"tanning_rack"
+metadata/id = 3

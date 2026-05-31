@@ -54,10 +54,14 @@ func open(shop_id: int) -> void:
 		return
 	if not _shop.shop_name.is_empty():
 		shop_name_label.text = _shop.shop_name
-	# Only show the tab bar when the shop offers both; otherwise go straight to the
-	# single relevant interface.
-	mode_tabs.visible = _shop.trades == ShopResource.Trades.BOTH
-	_set_mode(Mode.SELL if _shop.trades == ShopResource.Trades.SELL_ONLY else Mode.BUY)
+	# Tab bar shown if the shop offers both flavors of interaction. Specialty trades
+	# live inside the Sell tab and force it open even when generic sells are off.
+	var has_sell_side: bool = _shop.allows_selling() or _shop.has_trades()
+	mode_tabs.visible = _shop.allows_buying() and has_sell_side
+	# Hide the unused tab so the available one is obviously the active one.
+	sell_tab.visible = has_sell_side
+	buy_tab.visible = _shop.allows_buying()
+	_set_mode(Mode.SELL if not _shop.allows_buying() else Mode.BUY)
 	# Dynamic/authoritative bits from the server.
 	_request_open()
 	_request_inventory()
@@ -73,6 +77,12 @@ func _set_mode(mode: Mode) -> void:
 
 ## Build the row list synchronously (no await -> double-emit can't duplicate rows).
 func _build_list() -> void:
+	# Guard against an in-flight inventory request firing back after a second
+	# open() has cleared _shop (e.g. when the player clicks a shop whose id
+	# doesn't resolve in the registry — open() bails, but the async fetch from
+	# the previous shop can still try to rebuild).
+	if _shop == null:
+		return
 	for child in item_list.get_children():
 		child.queue_free()
 	_slots.clear()
@@ -81,6 +91,7 @@ func _build_list() -> void:
 		_build_buy_rows()
 	else:
 		_equipped_ids = _get_equipped_ids()
+		_build_trade_rows()
 		_build_sell_rows()
 
 	_refresh_affordability()
@@ -105,6 +116,10 @@ func _build_buy_rows() -> void:
 
 
 func _build_sell_rows() -> void:
+	# Specialty vendors (those with declared trades) refuse generic junk —
+	# the only sell-side affordance is the trade rows.
+	if not _shop.allows_selling() or _shop.has_trades():
+		return
 	for slot_uid in _inventory:
 		var data: Dictionary = _inventory[slot_uid]
 		var item: Item = ContentRegistryHub.load_by_id(&"items", int(data.get("id", 0)))
@@ -117,6 +132,32 @@ func _build_sell_rows() -> void:
 		slot.slot_uid = int(slot_uid)
 		slot.quantity = int(data.get("a", 0))
 		_add_row(slot, str(slot.quantity))
+
+
+## Specialty vendor trades — fixed item/amount/payout bundles, listed before
+## generic sell rows so the player sees them first.
+func _build_trade_rows() -> void:
+	if _shop.accepted_trades.is_empty():
+		return
+	for i in _shop.accepted_trades.size():
+		var trade: ShopTrade = _shop.accepted_trades[i]
+		if trade == null or trade.item == null or trade.amount <= 0:
+			continue
+		var item_id: int = int(trade.item.get_meta(&"id", 0))
+		var owned: int = _owned.get(item_id, 0)
+		var bundles_available: int = owned / trade.amount
+		var slot: ShopSlot = ShopSlot.new()
+		slot.item = trade.item
+		slot.item_id = item_id
+		slot.price = trade.payout
+		slot.quantity = owned
+		slot.is_trade = true
+		slot.trade_index = i
+		slot.trade_amount = trade.amount
+		slot.trade_payout = trade.payout
+		slot.trade_bundles_available = bundles_available
+		var middle: String = "x%d → %d g" % [trade.amount, trade.payout]
+		_add_row(slot, middle)
 
 
 func _add_row(slot: ShopSlot, middle_text: String) -> void:
@@ -177,7 +218,10 @@ func _on_row_pressed(slot: ShopSlot) -> void:
 	_update_price_label()
 	_update_owned_label()
 	if _mode == Mode.SELL:
-		if slot.item_id in _equipped_ids:
+		if slot.is_trade:
+			action_button.text = "Trade"
+			action_button.disabled = slot.trade_bundles_available <= 0
+		elif slot.item_id in _equipped_ids:
 			action_button.text = "Equipped"
 			action_button.disabled = true
 		else:
@@ -200,14 +244,19 @@ func _clear_detail() -> void:
 	action_button.disabled = true
 
 
-## Cap the quantity spinbox at what's affordable (buy) / owned (sell).
+## Cap the quantity spinbox at what's affordable (buy) / owned (sell) /
+## bundles available (trade).
 func _update_quantity_bounds() -> void:
 	if _selected_slot == null:
 		return
-	var max_qty: int = (
-		maxi(1, _selected_slot.quantity) if _mode == Mode.SELL
-		else maxi(1, _affordable_count(_selected_slot.price))
-	)
+	var max_qty: int
+	if _mode == Mode.SELL:
+		if _selected_slot.is_trade:
+			max_qty = maxi(1, _selected_slot.trade_bundles_available)
+		else:
+			max_qty = maxi(1, _selected_slot.quantity)
+	else:
+		max_qty = maxi(1, _affordable_count(_selected_slot.price))
 	quantity_spinbox.max_value = max_qty
 	if int(quantity_spinbox.value) > max_qty:
 		quantity_spinbox.set_value_no_signal(max_qty)
@@ -223,7 +272,15 @@ func _update_price_label() -> void:
 	if _selected_slot == null:
 		detail_price_label.text = ""
 		return
-	var total: int = _selected_slot.price * int(quantity_spinbox.value)
+	var bundles: int = int(quantity_spinbox.value)
+	if _mode == Mode.SELL and _selected_slot.is_trade:
+		detail_price_label.text = "Trade: %d %s → %d golds" % [
+			_selected_slot.trade_amount * bundles,
+			_selected_slot.item.item_name,
+			_selected_slot.trade_payout * bundles,
+		]
+		return
+	var total: int = _selected_slot.price * bundles
 	detail_price_label.text = (
 		"Sells for: %d golds" % total if _mode == Mode.SELL
 		else "Price: %d golds" % total
@@ -255,8 +312,13 @@ func _refresh_affordability() -> void:
 		if _mode == Mode.BUY:
 			slot.button.modulate = Color.WHITE if slot.price <= _golds else Color(1.0, 1.0, 1.0, 0.45)
 		else:
-			# Dim equipped items in the Sell list (can't be sold while worn).
-			slot.button.modulate = Color(1.0, 1.0, 1.0, 0.45) if slot.item_id in _equipped_ids else Color.WHITE
+			# Trade rows dim when the player can't complete even one bundle.
+			# Generic-sell rows dim when the item is currently equipped (can't sell).
+			var dim: bool = (
+				slot.trade_bundles_available <= 0 if slot.is_trade
+				else slot.item_id in _equipped_ids
+			)
+			slot.button.modulate = Color(1.0, 1.0, 1.0, 0.45) if dim else Color.WHITE
 
 
 func _set_golds(value: int) -> void:
@@ -309,6 +371,8 @@ func _on_action_button_pressed() -> void:
 		return
 	if _mode == Mode.BUY:
 		_buy()
+	elif _selected_slot.is_trade:
+		_trade()
 	else:
 		_sell()
 
@@ -352,6 +416,27 @@ func _sell() -> void:
 	_clear_detail()
 
 
+## Specialty vendor trade: hand over N bundles of trade.item for trade.payout * N gold.
+func _trade() -> void:
+	var trade_index: int = _selected_slot.trade_index
+	var bundles: int = int(quantity_spinbox.value)
+	action_button.disabled = true
+	var result: Array = await Client.request_data_await(
+		&"shop.trade.item",
+		{"shop_id": _shop_id, "trade_index": trade_index, "bundles": bundles}
+	)
+	if result[1] != OK or not result[0].get("ok", false):
+		action_button.disabled = false
+		return
+	# Gold + counts refresh, then keep the same trade selected so the player can repeat.
+	await _request_inventory()
+	for slot in _slots:
+		if slot.is_trade and slot.trade_index == trade_index:
+			_on_row_pressed(slot)
+			return
+	_clear_detail()
+
+
 class ShopSlot:
 	var button: Button
 	var item: Item
@@ -360,3 +445,9 @@ class ShopSlot:
 	## Sell mode only:
 	var slot_uid: int
 	var quantity: int
+	## Specialty trade mode (a row that exchanges N items for M gold):
+	var is_trade: bool = false
+	var trade_index: int = -1
+	var trade_amount: int = 0
+	var trade_payout: int = 0
+	var trade_bundles_available: int = 0

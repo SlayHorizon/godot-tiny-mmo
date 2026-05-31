@@ -14,7 +14,7 @@ required_amount = 5
 [resource]
 script = ExtResource("3_quest")
 quest_name = "The Smelter's Trial"
-description = "Smelt five copper bars at the forge. The smith wants to know you can hold a steady temperature — not just hit metal with a hammer."
+description = "Smelt five copper bars at the forge. The smith wants to know you can hold a steady temperature — not just hit metal with a hammer. (Need ore? The Foreman runs the quarry.)"
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_craft_copper_5")])
 min_level = 8
 reward_xp = 30

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://byp1hhtmmyi8e"]
 
 [ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/linen.tres" id="2_linen"]
+[ext_resource type="Resource" uid="uid://j7bqyla76n5q" path="res://source/common/gameplay/items/materials/linen.tres" id="2_linen"]
 [ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_57msu"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="3_quest"]
 
@@ -16,7 +16,7 @@ script = ExtResource("3_quest")
 quest_name = "Linen for the Tailor"
 description = "The tailor's running low on cloth. Goblins drop bolts of linen when they're knocked out — bring back five."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_linen_5")])
-min_level = 2
+min_level = 1
 reward_xp = 12
 reward_gold = 3
 metadata/_custom_type_script = "uid://c5p53get4ikl6"

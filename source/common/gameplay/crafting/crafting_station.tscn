@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/crafting/crafting_station.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="2_marker"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_default"]
+size = Vector2(32, 32)
+
+[node name="CraftingStation" type="Area2D"]
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_default")
+
+[node name="InteractableMarker" parent="." instance=ExtResource("2_marker")]
+kind = 3

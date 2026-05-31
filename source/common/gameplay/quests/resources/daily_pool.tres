@@ -4,10 +4,10 @@
 [ext_resource type="Script" uid="uid://ds2efp5tkwf6n" path="res://source/common/gameplay/quests/daily_quest_pool.gd" id="2_pool"]
 [ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="3_coal"]
 [ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="4_cop_ore"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="5_iron_ore"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/linen.tres" id="6_linen"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/hide.tres" id="7_hide"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="8_herb"]
+[ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="5_iron_ore"]
+[ext_resource type="Resource" uid="uid://j7bqyla76n5q" path="res://source/common/gameplay/items/materials/linen.tres" id="6_linen"]
+[ext_resource type="Resource" uid="uid://ck4shwy2jwqk6" path="res://source/common/gameplay/items/materials/hide.tres" id="7_hide"]
+[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="8_herb"]
 
 [sub_resource type="Resource" id="T_kill_slime"]
 script = ExtResource("1_tmpl")

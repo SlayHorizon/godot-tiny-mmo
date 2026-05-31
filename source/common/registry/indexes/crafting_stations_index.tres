@@ -5,13 +5,23 @@
 [resource]
 script = ExtResource("1_x3a1s")
 content_name = &"crafting_stations"
-version = 1779749475
-next_id = 2
+version = 1780230174
+next_id = 4
 entries = Array[Dictionary]([{
-&"hash": "7d4a0cda52da1ee96bcdd175209f45abce79ad383bf3dc508e9c1b4ab62281ae",
+&"hash": "dc8c10a9577a68a119655dcd8e15d6d038fbb2c4920570c9c940cf925aed6cea",
 &"id": 1,
 &"path": "res://source/common/gameplay/crafting/resources/forge.tres",
 &"slug": &"forge"
+}, {
+&"hash": "e9d8cbfeb2f85abd1904bcc797ade0b30c0201d07a123ec71ec30b2e3c9be89c",
+&"id": 2,
+&"path": "res://source/common/gameplay/crafting/resources/loom.tres",
+&"slug": &"loom"
+}, {
+&"hash": "8fecaefc109c32cf67b50a55b83eeeffb878477aeab6657f2c90b0f3a5c42322",
+&"id": 3,
+&"path": "res://source/common/gameplay/crafting/resources/tanning_rack.tres",
+&"slug": &"tanning_rack"
 }])
 scan_path = "res://source/common/gameplay/crafting/resources"
 filters = PackedStringArray("*.tres", "*.tscn")

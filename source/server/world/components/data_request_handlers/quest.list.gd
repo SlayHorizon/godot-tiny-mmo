@@ -25,6 +25,13 @@ func data_request_handler(
 	var giver_id: int = int(args.get("giver", 0))
 	var giver_name: String = ""
 	if giver_id > 0:
+		# Opening the menu at a giver is "visiting" them — advance any matching
+		# VISIT objectives BEFORE building the view so the player sees the
+		# just-advanced count in the same response. Also push quest.update so
+		# the HUD tracker refreshes immediately (same pattern as kill/craft).
+		var visit_updates: Array = QuestService.on_visit(resource, giver_id)
+		if not visit_updates.is_empty():
+			WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": visit_updates})
 		var giver: QuestGiver = instance.instance_map.get_quest_giver(giver_id)
 		if giver:
 			giver_name = giver.giver_name
@@ -82,4 +89,7 @@ func _quest_view(resource: PlayerResource, quest_id: int, quest_ref: QuestResour
 		# "Requires level N" label on quests the player isn't ready for.
 		"min_level": quest.min_level,
 		"meets_level": resource.level >= quest.min_level,
+		# 0 = ALL objectives required, 1 = ANY single objective is enough. Lets
+		# the client tweak the objective list label ("Speak with any of these…").
+		"completion": int(quest.completion),
 	}

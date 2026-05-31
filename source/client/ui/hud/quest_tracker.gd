@@ -68,18 +68,55 @@ func _display(quest: Dictionary) -> void:
 	for child in _content.get_children():
 		child.queue_free()
 
+	var complete: bool = bool(quest.get("complete", false))
+	var any_mode: bool = int(quest.get("completion", 0)) == 1
+
+	# Name: yellow while in progress, bright green with a ✓ prefix once ready.
+	# The shift in color is the player's primary "I'm done!" cue.
 	var name_label: Label = Label.new()
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	name_label.text = str(quest.get("name", "?"))
-	name_label.add_theme_color_override(&"font_color", Color(0.85, 0.8, 0.4))
+	var prefix: String = "✓ " if complete else ""
+	name_label.text = prefix + str(quest.get("name", "?"))
+	name_label.add_theme_color_override(
+		&"font_color",
+		Color(0.5, 0.95, 0.5) if complete else Color(0.85, 0.8, 0.4)
+	)
 	_content.add_child(name_label)
 
-	for objective: Dictionary in quest.get("objectives", []):
+	var objectives: Array = quest.get("objectives", [])
+	# Track whether we've already pushed at least one objective into the tracker;
+	# the OR separator only goes between visible objectives, so an early continue
+	# (ANY-mode complete hiding unmet paths) doesn't leave a leading "OR" line.
+	var any_shown: bool = false
+	for objective: Dictionary in objectives:
 		var count: int = int(objective.get("count", 0))
 		var required: int = int(objective.get("required", 1))
+		var met: bool = count >= required
+		# ANY-mode complete: only show the satisfied objective so the tracker
+		# isn't cluttered with paths the player chose not to take.
+		if any_mode and complete and not met:
+			continue
+		# In-progress ANY mode: drop an "— OR —" between alternatives so the
+		# player reads them as a choice rather than a checklist.
+		if any_mode and not complete and any_shown:
+			var or_label: Label = Label.new()
+			or_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			or_label.text = "— OR —"
+			or_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			or_label.add_theme_color_override(&"font_color", Color(0.65, 0.75, 0.9))
+			_content.add_child(or_label)
 		var objective_label: Label = Label.new()
 		objective_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
-		if count >= required:
+		if met:
 			objective_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
 		_content.add_child(objective_label)
+		any_shown = true
+
+	# Ready-to-turn-in nudge. Same line every game uses, instantly readable.
+	if complete:
+		var ready_label: Label = Label.new()
+		ready_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		ready_label.text = "↩ Return to the quest giver"
+		ready_label.add_theme_color_override(&"font_color", Color(0.55, 0.9, 0.55))
+		_content.add_child(ready_label)
