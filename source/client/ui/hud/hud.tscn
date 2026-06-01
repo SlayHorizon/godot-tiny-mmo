@@ -405,6 +405,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="QuestTracker" type="PanelContainer" parent="." unique_id=1289632756]
+visible = false
 custom_minimum_size = Vector2(180, 0)
 layout_mode = 1
 offset_left = 603.0

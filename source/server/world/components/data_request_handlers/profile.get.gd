@@ -82,6 +82,9 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		"id": target_id,
 		"staff_view": staff_view,
 		"friend": (not is_self) and from_player.friends.has(target_id),
+		# Whether the viewer has the target blocked — the profile panel uses
+		# this to flip the "Block" item to "Unblock" without an extra fetch.
+		"blocked": (not is_self) and BlockList.is_blocked(from_player.player_id, target_id),
 	}
 
 	if not guild_name.is_empty():

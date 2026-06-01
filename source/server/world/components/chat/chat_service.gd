@@ -42,6 +42,13 @@ func handle_send_dm(
 	if other_id <= 0 or other_id == sender.player_id:
 		return {"error": 4, "ok": false, "message": "Invalid target."}
 
+	# You can't DM someone you've blocked. Block is asymmetric on the receive
+	# side (blocker silently drops blocker's messages), but on the send side
+	# we surface a real error — typing into a void with no failure feedback
+	# would feel broken, and the user explicitly opted out of contact.
+	if BlockList.is_blocked(sender.player_id, other_id):
+		return {"error": 5, "ok": false, "message": "You have this player blocked. Unblock to message them."}
+
 	var convo_id: String = ChatConstants.dm_conversation_id(sender.player_id, other_id)
 	store.ensure_conversation(convo_id, "dm", "{}")
 
@@ -55,24 +62,33 @@ func handle_send_dm(
 		text
 	)
 
+	var world_server: WorldServer = instance.world_server
+	var sender_guild_name: String = ""
+	if sender.active_guild_id > 0:
+		sender_guild_name = world_server.database.store.get_guild_name(sender.active_guild_id)
+
 	var pushed: Dictionary = {
 		"conversation_id": convo_id,
 		"text": text,
 		"name": sender.display_name,
 		"id": sender.player_id,
+		"peer_id": sender.current_peer_id,
+		"title": sender.display_title,
+		"guild_name": sender_guild_name,
 		"msg_id": int(saved.get("msg_id", 0)),
 		"time_ms": now_ms,
 	}
 
-	# Push to sender + recipient if online
-	var world_server: WorldServer = instance.world_server
+	# Push to sender + recipient if online. Sender always sees their own send
+	# (block is asymmetric — they don't know they've been ghosted), but the
+	# recipient's push is suppressed if they have the sender blocked.
 
 	var sender_peer_id: int = int(world_server.player_id_to_peer_id.get(sender.player_id, 0))
 	if sender_peer_id > 0:
 		WorldServer.curr.data_push.rpc_id(sender_peer_id, &"chat.message", pushed)
 
 	var other_peer_id: int = int(world_server.player_id_to_peer_id.get(other_id, 0))
-	if other_peer_id > 0:
+	if other_peer_id > 0 and not BlockList.is_blocked(other_id, sender.player_id):
 		WorldServer.curr.data_push.rpc_id(other_peer_id, &"chat.message", pushed)
 
 	return {}
@@ -147,22 +163,31 @@ func _handle_send_guild(instance: ServerInstance, player: PlayerResource, text: 
 		text
 	)
 
+	var ws: WorldServer = instance.world_server
+	var guild_name: String = ws.database.store.get_guild_name(guild_id)
+
 	var pushed: Dictionary = {
 		"conversation_id": convo_id,
 		"text": text,
 		"channel": ChatConstants.CHANNEL_GUILD,
 		"name": player.display_name,
 		"id": player.player_id,
+		"peer_id": player.current_peer_id,
+		"title": player.display_title,
+		"guild_name": guild_name,
 		"msg_id": int(saved.get("msg_id", 0)),
 		"time_ms": now_ms,
 	}
 
-	var ws: WorldServer = instance.world_server
 	for peer_id: int in ws.connected_players.keys():
 		var p: PlayerResource = ws.connected_players[peer_id]
 		if p == null:
 			continue
 		if p.active_guild_id != guild_id:
+			continue
+		# Skip recipients who have the sender blocked. Block applies on every
+		# channel, not just DM.
+		if BlockList.is_blocked(p.player_id, player.player_id):
 			continue
 		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", pushed)
 
@@ -193,12 +218,20 @@ func _persist_and_broadcast_to_instance(
 	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
 	var saved: Dictionary = store.insert_message(convo_id, now_ms, player.player_id, player.display_name, text)
 
+	var ws_world: WorldServer = instance.world_server
+	var world_guild_name: String = ""
+	if player.active_guild_id > 0:
+		world_guild_name = ws_world.database.store.get_guild_name(player.active_guild_id)
+
 	var pushed: Dictionary = {
 		"conversation_id": convo_id,
 		"text": text,
 		"channel": channel,
 		"name": player.display_name,
 		"id": player.player_id,
+		"peer_id": player.current_peer_id,
+		"title": player.display_title,
+		"guild_name": world_guild_name,
 		"msg_id": int(saved.get("msg_id", 0)),
 		"time_ms": now_ms,
 	}
@@ -214,10 +247,16 @@ func _persist_and_broadcast_to_instance(
 		enriched["instance"] = instance.instance_resource.instance_name
 	_record_recent(enriched)
 
-	WorldServer.curr.propagate_rpc(
-		WorldServer.curr.data_push.bind(&"chat.message", pushed),
-		instance.name
-	)
+	# Manual peer loop instead of propagate_rpc — we need to skip recipients
+	# who have the sender blocked, and propagate_rpc has no filter hook.
+	var ws_broadcast: WorldServer = instance.world_server
+	for peer_id: int in instance.connected_peers:
+		var recipient: PlayerResource = ws_broadcast.connected_players.get(peer_id)
+		if recipient == null:
+			continue
+		if BlockList.is_blocked(recipient.player_id, player.player_id):
+			continue
+		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", pushed)
 
 	return {}
 

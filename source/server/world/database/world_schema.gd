@@ -12,6 +12,9 @@ static func ensure_schema(db: SQLite) -> void:
 	if version < 1:
 		_migration_v1(db)
 		_set_schema_version(db, 1)
+	if version < 2:
+		_migration_v2(db)
+		_set_schema_version(db, 2)
 
 
 static func _migration_v1(db: SQLite) -> void:
@@ -99,6 +102,22 @@ static func _migration_v1(db: SQLite) -> void:
 	db.query("CREATE UNIQUE INDEX IF NOT EXISTS idx_messages_pk ON messages(conversation_id, msg_id);")
 	db.query("CREATE INDEX IF NOT EXISTS idx_messages_sender_time ON messages(sender_id, time_ms);")
 	db.query("CREATE INDEX IF NOT EXISTS idx_messages_conv_time ON messages(conversation_id, time_ms);")
+
+
+## v2: per-player block list. Stored as a JSON-encoded PackedInt64Array in
+## the players row, mirroring how friends_json works. Idempotent so it's safe
+## if a fresh DB already created the column via a future migration_v1 edit.
+static func _migration_v2(db: SQLite) -> void:
+	if not _column_exists(db, "players", "blocked_ids_json"):
+		db.query("ALTER TABLE players ADD COLUMN blocked_ids_json TEXT NOT NULL DEFAULT '[]';")
+
+
+static func _column_exists(db: SQLite, table: String, column: String) -> bool:
+	db.query("PRAGMA table_info(%s);" % table)
+	for row: Dictionary in db.query_result:
+		if str(row.get("name", "")) == column:
+			return true
+	return false
 
 
 static func _create_table_if_missing(db: SQLite, table: String, dict: Dictionary) -> void:

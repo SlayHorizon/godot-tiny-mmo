@@ -18,7 +18,7 @@ var _pending_music: PendingMusic
 
 
 func _ready() -> void:
-	if not OS.has_feature("client"):
+	if not GameMode.is_client():
 		queue_free()
 		return
 	assert(is_instance_valid(music_player), "No valid music player.")

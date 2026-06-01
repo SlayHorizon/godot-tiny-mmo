@@ -92,6 +92,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 	database.save_player(player)
 
 	player_id_to_peer_id.erase(player.player_id)
+	BlockList.clear_player(player.player_id)
 
 	player.current_peer_id = 0
 	connected_players.erase(peer_id)
@@ -118,6 +119,9 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 		# disconnect. Reset on every fresh login.
 		connected_players[peer_id].session_start_ms = Time.get_ticks_msec()
 		player_id_to_peer_id[connected_players[peer_id].player_id] = peer_id
+		# Hydrate the per-player block-list cache so chat filtering is a
+		# dictionary lookup, not a JSON parse per message.
+		BlockList.set_for(connected_players[peer_id].player_id, connected_players[peer_id].blocked_ids)
 		token_list.erase(auth_token)
 		data_push.rpc_id.call_deferred(peer_id, &"player_id.set", {"player_id": connected_players[peer_id].player_id})
 		data_push.rpc_id.call_deferred(peer_id, &"active_guild_id.set", {"active_guild_id": connected_players[peer_id].active_guild_id})

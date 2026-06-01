@@ -246,9 +246,13 @@ func _show_more_popup() -> void:
 		more_popup.add_item("Edit profile", MORE_ITEM_EDIT)
 	else:
 		more_popup.add_item("Report player", MORE_ITEM_REPORT)
-		more_popup.add_item("Block player", MORE_ITEM_BLOCK)
+		# Authoritative state comes from the profile payload (server checks
+		# BlockList) but ClientState.blocked_ids may have updated since this
+		# profile was fetched — prefer the live set.
+		var target_id: int = int(_current_profile.get("id", 0))
+		var is_blocked: bool = ClientState.blocked_ids.has(target_id) or bool(_current_profile.get("blocked", false))
+		more_popup.add_item("Unblock player" if is_blocked else "Block player", MORE_ITEM_BLOCK)
 		more_popup.set_item_disabled(more_popup.get_item_index(MORE_ITEM_REPORT), true)
-		more_popup.set_item_disabled(more_popup.get_item_index(MORE_ITEM_BLOCK), true)
 	# "Show Guild" surfaces whenever the target has one (regardless of self).
 	if not str(_current_profile.get("guild_name", "")).is_empty():
 		more_popup.add_item("Show Guild", MORE_ITEM_SHOW_GUILD)
@@ -267,6 +271,8 @@ func _on_more_item_pressed(id: int) -> void:
 	match id:
 		MORE_ITEM_EDIT:
 			_open_edit_panel()
+		MORE_ITEM_BLOCK:
+			_on_block_toggle_pressed()
 		MORE_ITEM_SHOW_GUILD:
 			# Route to the guild panel via the same open_menu_requested signal
 			# the rest of the world uses. Guild id isn't currently shipped on
@@ -274,7 +280,46 @@ func _on_more_item_pressed(id: int) -> void:
 			# the active guild for the target if a future change adds it.
 			ClientState.open_menu_requested.emit(&"guild", 0)
 			hide()
-		# REPORT / BLOCK are deliberately disabled stubs for now.
+		# REPORT is deliberately a disabled stub for now.
+
+
+func _on_block_toggle_pressed() -> void:
+	var target_id: int = int(_current_profile.get("id", 0))
+	if target_id <= 0:
+		return
+	var target_name: String = str(_current_profile.get("name", ""))
+	var is_blocked: bool = ClientState.blocked_ids.has(target_id)
+
+	if is_blocked:
+		Client.request_data(
+			&"social.block.remove",
+			_on_block_changed.bind(false, target_id, target_name),
+			{"id": target_id},
+			InstanceClient.current.name
+		)
+	else:
+		Client.request_data(
+			&"social.block.add",
+			_on_block_changed.bind(true, target_id, target_name),
+			{"id": target_id},
+			InstanceClient.current.name
+		)
+
+
+func _on_block_changed(result: Dictionary, expected_blocked: bool, target_id: int, target_name: String) -> void:
+	if not result.get("ok", false):
+		Toaster.toast(str(result.get("msg", "Action failed.")))
+		return
+
+	if expected_blocked:
+		ClientState.add_blocked(target_id)
+		Toaster.toast("Blocked %s." % target_name)
+	else:
+		ClientState.remove_blocked(target_id)
+		Toaster.toast("Unblocked %s." % target_name)
+
+	_current_profile["blocked"] = expected_blocked
+	hide()
 
 
 # ---------------------------------------------------------------------------

@@ -18,7 +18,7 @@ var _container: VBoxContainer
 
 func _ready() -> void:
 	# Mirrors ClientState/Client: this is client-only UI.
-	if not OS.has_feature("client"):
+	if not GameMode.is_client():
 		queue_free()
 		return
 

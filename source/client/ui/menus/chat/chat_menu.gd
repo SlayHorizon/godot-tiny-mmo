@@ -9,12 +9,32 @@ const CHANNEL_WORLD: int = ChatConstants.CHANNEL_WORLD
 const CHANNEL_TEAM: int = ChatConstants.CHANNEL_TEAM
 const CHANNEL_GUILD: int = ChatConstants.CHANNEL_GUILD
 const CHANNEL_SYSTEM: int = ChatConstants.CHANNEL_SYSTEM
+## Synthetic channel — local-only aggregate view across every conversation.
+const CHANNEL_ALL: int = -1
+const ALL_CONVERSATION_ID: String = "all"
 
 const TAG_COLOR_DM: String = "#d56bff"
 const TAG_COLOR_WORLD: String = "#66d9ff"
 const TAG_COLOR_TEAM: String = "#7dff9a"
 const TAG_COLOR_GUILD: String = "#ffd36b"
 const TAG_COLOR_SYSTEM: String = "#ff6b6b"
+const TAG_COLOR_ALL: String = "#cccccc"
+
+## Color used for our own name in two-line layout (kept neutral so the
+## hash-coloured names of other people pop and our own messages read as
+## "me" at a glance).
+const SELF_NAME_COLOR: String = "#bdbdbd"
+const SYSTEM_NAME_COLOR: String = "#ff6b6b"
+## Subtle grey used for the (Guild) / « Title » suffixes and timestamps.
+const SUBTLE_COLOR: String = "#7a7a7a"
+const TITLE_COLOR: String = "#c8b977"
+
+## If the previous message in the same conversation is from the same sender
+## and within this window, suppress the duplicated name header (Discord-style).
+const COLLAPSE_WINDOW_MS: int = 5 * 60 * 1000
+## Insert a centered grey timestamp divider when more than this much time has
+## passed since the previous message in the conversation.
+const TIMESTAMP_DIVIDER_GAP_MS: int = 10 * 60 * 1000
 
 const BOOTSTRAP_LIMIT: int = 50
 const HISTORY_LIMIT: int = 50
@@ -22,7 +42,12 @@ const HISTORY_LIMIT: int = 50
 
 
 #region State
-var messages_by_conversation: Dictionary[String, PackedStringArray] = {}
+## Raw per-conversation message log. Each entry is a Dictionary with the
+## same shape as the chat.message push (id, name, title, guild_name, text,
+## time_ms, channel) plus a few derived booleans. We re-format on render
+## instead of caching strings so the same-sender collapse + timestamp
+## dividers stay consistent even after history backfills.
+var raw_messages_by_conversation: Dictionary[String, Array] = {}
 var conversation_buttons: Dictionary[String, Button] = {}
 
 var dm_name_by_player_id: Dictionary[int, String] = {}
@@ -37,10 +62,19 @@ var current_channel: int = CHANNEL_WORLD
 var current_conversation_id: String = ""
 var current_dm_other_id: int = 0
 
-var mute_peek_all: bool = false
 var mute_peek_system: bool = false
 var mute_peek_dm: bool = false
 var mute_peek_world: bool = false
+
+## How long the peek feed stays fully visible before the fade animation
+## starts. 0 = "never fade" (peek stays until dismissed). Persisted to
+## ClientState.settings under chat / peek_fade_seconds.
+var peek_fade_seconds: int = 3
+## Client-only override for the local player's name color in chat (peek +
+## full feed). Empty string = use the default hashed color. Pure vanity, not
+## shipped to other clients. Persisted to ClientState.settings under
+## chat / self_name_color (hex with leading "#").
+var self_name_color_override: String = ""
 
 var _public_label_world: String = "World"
 var _public_label_team: String = "Team"
@@ -53,6 +87,10 @@ var fade_out_tween: Tween
 #region Nodes
 @onready var peek_feed: VBoxContainer = $PeekFeed
 @onready var full_feed: Control = $FullFeed
+## The visible chat block (sidebar + chat panel). FullFeed itself spans most
+## of the screen with an offset, so we check this tighter rect for the
+## click-outside-to-close behaviour.
+@onready var full_feed_content: Control = $FullFeed/Control
 
 @onready var peek_feed_text_display: RichTextLabel = $PeekFeed/MessageDisplay
 @onready var peek_feed_message_edit: LineEdit = $PeekFeed/MessageEdit
@@ -64,12 +102,27 @@ var fade_out_tween: Tween
 @onready var dm_container: VBoxContainer = $FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/ScrollContainer/VBoxContainer
 
 @onready var system_chat_button: Button = $FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/SystemChatButton
+@onready var all_chat_button: Button = $FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/AllChatButton
 @onready var world_chat_button: Button = $FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/WorldChatButton
 @onready var team_chat_button: Button = $FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/TeamChatButton
 @onready var guild_chat_button: Button = $FullFeed/Control/HBoxContainer/ContactPanel/VBoxContainer/GuildChatButton
+@onready var send_button: Button = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2/Button
 
 @onready var chat_title_label: Label = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer/ChatTitleLabel
 @onready var settings_button: Button = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer/SettingsButton
+
+# Settings panel nodes — laid out in chat_menu.tscn under ChatPanel/VBoxContainer2/SettingsPanel.
+@onready var settings_panel: VBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel
+@onready var settings_blocked_list: VBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/BlockedScroll/BlockedList
+@onready var settings_blocked_empty: Label = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/BlockedScroll/BlockedList/EmptyLabel
+@onready var settings_peek_show_world: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekShowWorld
+@onready var settings_peek_show_dm: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekShowDM
+@onready var settings_peek_show_system: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekShowSystem
+@onready var settings_peek_fade_option: OptionButton = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekFadeRow/PeekFadeOption
+@onready var settings_name_color_row: HBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/NameColorRow
+
+@onready var full_feed_input_row: HBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2
+@onready var full_feed_sep_above_input: HSeparator = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HSeparator2
 #endregion
 
 
@@ -77,10 +130,24 @@ func _ready() -> void:
 	ClientState.dm_requested.connect(open_dm)
 
 	Client.subscribe(&"chat.message", _on_chat_message)
+	Client.subscribe(&"chat.typing", _on_chat_typing)
 	Client.request_data(&"chat.bootstrap", Callable(), {"limit": BOOTSTRAP_LIMIT}, InstanceClient.current.name)
+	# Hydrate the local block list. Server is authoritative (it already drops
+	# blocked senders before the push), but the client copy lets us catch
+	# the brief race between a Block click and any messages the server may
+	# have already in flight.
+	Client.request_data(&"social.block.list", _on_block_list_received, {}, InstanceClient.current.name)
 
 	peek_feed_message_edit.text_submitted.connect(_on_text_submitted.bind(peek_feed_message_edit))
 	full_feed_message_edit.text_submitted.connect(_on_text_submitted.bind(full_feed_message_edit))
+
+	# Typing indicator: notify the server when the local user starts/stops
+	# composing. Idempotent server-side; we also de-dupe locally via
+	# _typing_state so flipping focus quickly doesn't spam packets.
+	peek_feed_message_edit.focus_entered.connect(_on_chat_input_focus_changed.bind(true))
+	peek_feed_message_edit.focus_exited.connect(_on_chat_input_focus_changed.bind(false))
+	full_feed_message_edit.focus_entered.connect(_on_chat_input_focus_changed.bind(true))
+	full_feed_message_edit.focus_exited.connect(_on_chat_input_focus_changed.bind(false))
 
 	_public_label_world = world_chat_button.text
 	_public_label_team = team_chat_button.text
@@ -90,6 +157,13 @@ func _ready() -> void:
 	team_chat_button.pressed.connect(func() -> void: open_channel(CHANNEL_TEAM))
 	guild_chat_button.pressed.connect(func() -> void: open_channel(CHANNEL_GUILD))
 	system_chat_button.pressed.connect(func() -> void: open_channel(CHANNEL_SYSTEM))
+	all_chat_button.pressed.connect(func() -> void: open_channel(CHANNEL_ALL))
+
+	send_button.pressed.connect(_on_send_button_pressed)
+	settings_button.pressed.connect(_toggle_settings_panel)
+	# Keep the in-panel block list in sync with profile-driven (un)blocks.
+	ClientState.blocked_ids_changed.connect(_on_blocked_ids_changed_for_settings)
+	_init_settings_panel()
 
 	current_conversation_id = ChatConstants.channel_conversation_id(CHANNEL_WORLD)
 	_ensure_conversation_exists(current_conversation_id)
@@ -121,7 +195,7 @@ func _input(event: InputEvent) -> void:
 		if full_feed_message_edit.has_focus() and not full_feed_message_edit.get_global_rect().has_point(mouse_position):
 			full_feed_message_edit.release_focus()
 
-		if full_feed.visible and not full_feed.get_global_rect().has_point(mouse_position):
+		if full_feed.visible and not full_feed_content.get_global_rect().has_point(mouse_position):
 			_on_close_button_pressed()
 
 
@@ -133,6 +207,14 @@ func _open_peek_for_typing() -> void:
 
 
 #region Incoming
+func _on_block_list_received(payload: Dictionary) -> void:
+	if not payload.get("ok", false):
+		return
+	var entries_v: Variant = payload.get("entries", [])
+	if entries_v is Array:
+		ClientState.set_blocked_ids(entries_v)
+
+
 func _on_chat_message(message: Dictionary) -> void:
 	if message.is_empty():
 		return
@@ -140,8 +222,21 @@ func _on_chat_message(message: Dictionary) -> void:
 	var text: String = str(message.get("text", ""))
 	var sender_name: String = str(message.get("name", ""))
 	var sender_id: int = int(message.get("id", 0))
+	var sender_peer_id: int = int(message.get("peer_id", 0))
+
+	# Block filter: silently drop messages from anyone the local user has
+	# blocked. Server already filters at broadcast time; this is the safety
+	# net for messages that slipped through before the block hit.
+	if sender_id > 0 and ClientState.blocked_ids.has(sender_id):
+		return
+	var sender_title: String = str(message.get("title", ""))
+	var sender_guild: String = str(message.get("guild_name", ""))
 	var msg_id: int = int(message.get("msg_id", 0))
+	var time_ms: int = int(message.get("time_ms", 0))
 	var is_history: bool = bool(message.get("is_history", false))
+
+	if time_ms <= 0:
+		time_ms = int(Time.get_unix_time_from_system() * 1000.0)
 
 	var convo_id: String = str(message.get("conversation_id", ""))
 	if convo_id.is_empty():
@@ -154,21 +249,45 @@ func _on_chat_message(message: Dictionary) -> void:
 		return
 
 	if convo_id.begins_with("dm:"):
-		var self_id: int = int(ClientState.player_id)
-		var other_id: int = _dm_other_id_from_conversation(convo_id, self_id)
-		if other_id > 0:
-			if sender_id == other_id and not sender_name.is_empty():
-				dm_name_by_player_id[other_id] = sender_name
-			_ensure_dm_button(convo_id, other_id)
-
-	var full_line: String = _format_message_full(convo_id, sender_id, sender_name, text)
-	messages_by_conversation[convo_id].append(full_line)
+		var self_id_dm: int = int(ClientState.player_id)
+		var other_id_dm: int = _dm_other_id_from_conversation(convo_id, self_id_dm)
+		if other_id_dm > 0:
+			if sender_id == other_id_dm and not sender_name.is_empty():
+				dm_name_by_player_id[other_id_dm] = sender_name
+			_ensure_dm_button(convo_id, other_id_dm)
 
 	var self_player_id: int = int(ClientState.player_id)
 	var is_self: bool = sender_id == self_player_id
-	var is_viewing: bool = full_feed.visible and current_conversation_id == convo_id
+	var is_system: bool = sender_id == ChatConstants.SYSTEM_SENDER_ID
 
-	if not is_history and not is_self and not is_viewing:
+	var record: Dictionary = {
+		"id": sender_id,
+		"name": sender_name,
+		"title": sender_title,
+		"guild_name": sender_guild,
+		"text": text,
+		"time_ms": time_ms,
+		"msg_id": msg_id,
+		"is_self": is_self,
+		"is_system": is_system,
+		"convo_id": convo_id,
+	}
+
+	var convo_records: Array = raw_messages_by_conversation[convo_id]
+	convo_records.append(record)
+	# Keep history ordered by time so backfilled messages land in the right
+	# place. The common case (steady-state pushes) is already sorted, so
+	# insertion-sort cost stays near-zero.
+	if convo_records.size() >= 2:
+		var i: int = convo_records.size() - 1
+		while i > 0 and int(convo_records[i - 1]["time_ms"]) > time_ms:
+			convo_records[i] = convo_records[i - 1]
+			i -= 1
+		convo_records[i] = record
+
+	var is_viewing: bool = full_feed.visible and (current_conversation_id == convo_id or current_conversation_id == ALL_CONVERSATION_ID)
+
+	if not is_history and not is_self and current_conversation_id != convo_id:
 		_inc_unread(convo_id)
 
 	if not is_history and _should_show_in_peek(convo_id):
@@ -176,14 +295,29 @@ func _on_chat_message(message: Dictionary) -> void:
 		peek_feed_text_display.append_text(peek_line)
 		peek_feed_text_display.newline()
 
+	# Overhead chat bubble: only on live WORLD messages (proximity chat).
+	# DMs/guild/system stay UI-only so they don't leak through the world.
+	var is_world_channel: bool = convo_id == ChatConstants.channel_conversation_id(CHANNEL_WORLD)
+	if not is_history and is_world_channel and sender_peer_id > 0 and InstanceClient.current != null:
+		var sender_player: Player = InstanceClient.current.players_by_peer_id.get(sender_peer_id, null)
+		if sender_player != null and is_instance_valid(sender_player):
+			sender_player.show_overhead(text)
+
 	if is_viewing:
-		full_feed_text_display.append_text(full_line)
-		full_feed_text_display.newline()
+		# Re-render the whole view: collapse + dividers depend on neighbours
+		# and the cheapest correct way to handle out-of-order history + the
+		# ALL aggregate view is to rebuild.
+		_refresh_full_feed()
+		if is_self:
+			# Discord-style: when the local player sends a message, jump the
+			# scroll to the bottom so they always see what they just typed,
+			# even if they had scrolled up to read history.
+			full_feed_text_display.scroll_to_line.call_deferred(full_feed_text_display.get_line_count())
 	else:
 		if not is_history and not full_feed.visible:
 			_reset_peek_view()
 			peek_feed_text_display.show()
-			fade_out_timer.start()
+			_start_peek_fade()
 
 	_update_public_button_labels()
 #endregion
@@ -192,7 +326,7 @@ func _on_chat_message(message: Dictionary) -> void:
 #region Peek fade
 func _on_fade_out_timer_timeout() -> void:
 	if peek_feed_message_edit.has_focus():
-		fade_out_timer.start()
+		_start_peek_fade()
 		return
 
 	if fade_out_tween != null:
@@ -205,7 +339,7 @@ func _on_fade_out_timer_timeout() -> void:
 func _on_peek_feed_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and peek_feed.modulate.a < 1.0:
 		_reset_peek_view()
-		fade_out_timer.start()
+		_start_peek_fade()
 		return
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -230,6 +364,17 @@ func _reset_peek_view() -> void:
 	if fade_out_tween != null and fade_out_tween.is_running():
 		fade_out_tween.kill()
 	peek_feed.modulate.a = 1.0
+
+
+## Kick off the peek fade-out countdown, honouring the user-chosen duration.
+## When peek_fade_seconds == 0 the peek is "never fade" — we just skip
+## starting the timer, so the feed stays visible until explicitly dismissed.
+func _start_peek_fade() -> void:
+	if peek_fade_seconds <= 0:
+		fade_out_timer.stop()
+		return
+	fade_out_timer.wait_time = float(peek_fade_seconds)
+	fade_out_timer.start()
 #endregion
 
 
@@ -244,7 +389,7 @@ func _on_text_submitted(new_text: String, line_edit: LineEdit) -> void:
 
 	var is_peek: bool = (line_edit == peek_feed_message_edit)
 	if is_peek:
-		fade_out_timer.start()
+		_start_peek_fade()
 
 	new_text = new_text.strip_edges(true, true)
 	if new_text.is_empty():
@@ -267,6 +412,13 @@ func _on_text_submitted(new_text: String, line_edit: LineEdit) -> void:
 	if _is_system_conversation(current_conversation_id):
 		return
 
+	if current_conversation_id == ALL_CONVERSATION_ID:
+		# Composing from the aggregate ALL view doesn't have an obvious
+		# target — default to WORLD (the public broadcast). The user can
+		# switch tabs for guild / DM.
+		_send_channel_message(CHANNEL_WORLD, new_text)
+		return
+
 	if current_conversation_id.begins_with("guild:") and _get_active_guild_id() <= 0:
 		_show_full_notice("You are not in a guild.")
 		return
@@ -276,6 +428,15 @@ func _on_text_submitted(new_text: String, line_edit: LineEdit) -> void:
 		return
 
 	_send_channel_message(current_channel, new_text)
+
+
+func _on_send_button_pressed() -> void:
+	var text: String = full_feed_message_edit.text
+	if text.strip_edges().is_empty():
+		return
+	# Re-use the normal submit pipeline so behaviour stays identical to
+	# pressing Enter.
+	_on_text_submitted(text, full_feed_message_edit)
 
 
 func _handle_command(raw: String) -> void:
@@ -336,6 +497,9 @@ func open_channel(channel: int) -> void:
 
 	elif channel == CHANNEL_SYSTEM:
 		current_conversation_id = ChatConstants.system_conversation_id(ClientState.player_id)
+
+	elif channel == CHANNEL_ALL:
+		current_conversation_id = ALL_CONVERSATION_ID
 
 	else:
 		current_conversation_id = ChatConstants.channel_conversation_id(CHANNEL_WORLD)
@@ -413,10 +577,36 @@ func _refresh_full_feed() -> void:
 	full_feed_text_display.clear()
 	full_feed_text_display.text = ""
 
-	var arr: PackedStringArray = messages_by_conversation.get(current_conversation_id, PackedStringArray())
-	for line: String in arr:
-		full_feed_text_display.append_text(line)
-		full_feed_text_display.newline()
+	var records: Array = _records_for_current_view()
+	var prev: Dictionary = {}
+	var show_channel_prefix: bool = current_conversation_id == ALL_CONVERSATION_ID
+
+	for record: Dictionary in records:
+		var block: String = _format_message_block(record, prev, show_channel_prefix)
+		if not block.is_empty():
+			full_feed_text_display.append_text(block)
+			full_feed_text_display.newline()
+		prev = record
+
+
+## Returns the records to draw for the active conversation. For the ALL
+## synthetic view we merge every real conversation in time order; otherwise
+## we just hand back the per-conversation log.
+func _records_for_current_view() -> Array:
+	if current_conversation_id != ALL_CONVERSATION_ID:
+		return raw_messages_by_conversation.get(current_conversation_id, [])
+
+	var merged: Array = []
+	for convo_id: String in raw_messages_by_conversation.keys():
+		if convo_id == ALL_CONVERSATION_ID:
+			continue
+		for r: Dictionary in raw_messages_by_conversation[convo_id]:
+			merged.append(r)
+
+	merged.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(a.get("time_ms", 0)) < int(b.get("time_ms", 0))
+	)
+	return merged
 
 
 func _refresh_title_and_input() -> void:
@@ -425,6 +615,9 @@ func _refresh_title_and_input() -> void:
 
 
 func _title_for_current() -> String:
+	if current_conversation_id == ALL_CONVERSATION_ID:
+		return "All"
+
 	if current_conversation_id.begins_with("dm:"):
 		var other_id: int = current_dm_other_id
 		if other_id <= 0:
@@ -458,46 +651,157 @@ func _show_full_notice(text: String) -> void:
 
 
 #region Formatting
-func _format_message_full(convo_id: String, sender_id: int, sender_name: String, text: String) -> String:
-	var color_name: String = "#33caff"
-	var name_to_display: String = ""
+## Builds the full per-message block:
+## - optional centered grey timestamp divider (Discord-style separator)
+## - optional name/title/guild header (suppressed on same-sender collapse)
+## - body line
+## Self messages right-align both header and body.
+func _format_message_block(record: Dictionary, prev: Dictionary, show_channel_prefix: bool) -> String:
+	var parts: PackedStringArray = PackedStringArray()
 
-	if sender_id == ChatConstants.SYSTEM_SENDER_ID:
-		color_name = "#b6200f"
-		name_to_display = sender_name
+	var time_ms: int = int(record.get("time_ms", 0))
+	var prev_time_ms: int = int(prev.get("time_ms", 0)) if not prev.is_empty() else 0
+	var prev_sender_id: int = int(prev.get("id", 0)) if not prev.is_empty() else 0
+	var prev_convo_id: String = str(prev.get("convo_id", ""))
+
+	var should_show_divider: bool = prev.is_empty() or (time_ms - prev_time_ms) >= TIMESTAMP_DIVIDER_GAP_MS
+	if should_show_divider:
+		parts.append("[center][color=%s]%s[/color][/center]" % [SUBTLE_COLOR, _format_timestamp(time_ms)])
+
+	var sender_id: int = int(record.get("id", 0))
+	var same_sender: bool = (not prev.is_empty()
+		and prev_sender_id == sender_id
+		and prev_convo_id == str(record.get("convo_id", ""))
+		and (time_ms - prev_time_ms) < COLLAPSE_WINDOW_MS
+	)
+	# A new divider visually resets the "thread" — always show the header
+	# again after one so the reader knows who is speaking.
+	var should_show_header: bool = should_show_divider or not same_sender
+
+	var is_self: bool = bool(record.get("is_self", false))
+	var body_text: String = str(record.get("text", ""))
+
+	if should_show_header:
+		var header: String = _format_header(record, show_channel_prefix)
+		if is_self:
+			header = "[right]%s[/right]" % header
+		parts.append(header)
+
+	var body_line: String = body_text
+	if is_self:
+		body_line = "[right]%s[/right]" % body_text
+	parts.append(body_line)
+
+	return "\n".join(parts)
+
+
+func _format_header(record: Dictionary, show_channel_prefix: bool) -> String:
+	var sender_id: int = int(record.get("id", 0))
+	var sender_name: String = str(record.get("name", ""))
+	var title: String = str(record.get("title", ""))
+	var guild_name: String = str(record.get("guild_name", ""))
+	var is_self: bool = bool(record.get("is_self", false))
+	var is_system: bool = bool(record.get("is_system", false))
+
+	var name_color: String
+	if is_system:
+		name_color = SYSTEM_NAME_COLOR
+	elif is_self:
+		# Client-only override picked in chat settings. Empty string falls
+		# back to the default neutral self-tone so own messages don't compete
+		# with the hashed colour palette used for everyone else.
+		name_color = self_name_color_override if not self_name_color_override.is_empty() else SELF_NAME_COLOR
 	else:
-		name_to_display = "[url=%d]%s[/url]" % [sender_id, sender_name]
+		name_color = _hashed_name_color(sender_id, sender_name)
 
-	var line: String = "[color=%s]%s:[/color] %s" % [color_name, name_to_display, text]
-
-	if sender_id == int(ClientState.player_id):
-		return "[right]%s[/right]" % line
-
-	return line
-
-
-func _format_message_full_no_right(sender_id: int, sender_name: String, text: String) -> String:
-	var color_name: String = "#33caff"
-	var name_to_display: String = ""
-
-	if sender_id == ChatConstants.SYSTEM_SENDER_ID:
-		color_name = "#b6200f"
-		name_to_display = sender_name
+	var name_chunk: String
+	if is_system:
+		name_chunk = "[color=%s]%s[/color]" % [name_color, sender_name]
 	else:
-		name_to_display = "[url=%d]%s[/url]" % [sender_id, sender_name]
+		name_chunk = "[color=%s][url=%d]%s[/url][/color]" % [name_color, sender_id, sender_name]
 
-	return "[color=%s]%s:[/color] %s" % [color_name, name_to_display, text]
+	var pieces: PackedStringArray = PackedStringArray()
+
+	if show_channel_prefix:
+		var convo_id: String = str(record.get("convo_id", ""))
+		var prefix: String = _channel_prefix_for_conversation(convo_id)
+		if not prefix.is_empty():
+			var pc: String = _tag_color_for_conversation(convo_id)
+			pieces.append("[color=%s][%s][/color]" % [pc, prefix])
+
+	pieces.append(name_chunk)
+
+	if not guild_name.is_empty():
+		pieces.append("[color=%s](%s)[/color]" % [SUBTLE_COLOR, guild_name])
+
+	if not title.is_empty():
+		pieces.append("[color=%s]« %s »[/color]" % [TITLE_COLOR, title])
+
+	return " ".join(pieces)
+
+
+## HSV → hex using a stable hash of the sender so the same person always
+## colours the same. Keeps S and V high so the name reads cleanly against
+## the dark chat background.
+func _hashed_name_color(sender_id: int, sender_name: String) -> String:
+	var seed_value: int = sender_id if sender_id != 0 else hash(sender_name)
+	var hue: float = float(absi(seed_value) % 360) / 360.0
+	var color: Color = Color.from_hsv(hue, 0.55, 1.0)
+	return "#" + color.to_html(false)
+
+
+func _format_timestamp(time_ms: int) -> String:
+	if time_ms <= 0:
+		return ""
+	@warning_ignore("integer_division")
+	var unix_sec: int = time_ms / 1000
+	var t: Dictionary = Time.get_time_dict_from_unix_time(unix_sec)
+	return "%02d:%02d" % [int(t.get("hour", 0)), int(t.get("minute", 0))]
 
 
 func _format_message_peek(convo_id: String, sender_id: int, sender_name: String, text: String) -> String:
-	var base: String = _format_message_full_no_right(sender_id, sender_name, text)
+	var name_color: String
+	if sender_id == ChatConstants.SYSTEM_SENDER_ID:
+		name_color = SYSTEM_NAME_COLOR
+	elif sender_id == int(ClientState.player_id):
+		name_color = self_name_color_override if not self_name_color_override.is_empty() else SELF_NAME_COLOR
+	else:
+		name_color = _hashed_name_color(sender_id, sender_name)
+
+	var name_chunk: String
+	if sender_id == ChatConstants.SYSTEM_SENDER_ID:
+		name_chunk = "[color=%s]%s[/color]" % [name_color, sender_name]
+	else:
+		name_chunk = "[color=%s][url=%d]%s[/url][/color]" % [name_color, sender_id, sender_name]
+
+	var base: String = "%s: %s" % [name_chunk, text]
 
 	var prefix: String = _peek_prefix_for_conversation(convo_id)
 	if prefix.is_empty():
 		return base
 
-	var c: String = _tag_color_for_conversation(convo_id)
-	return "[color=%s][%s][/color] %s" % [c, prefix, base]
+	var tag_color: String = _tag_color_for_conversation(convo_id)
+	return "[color=%s][%s][/color] %s" % [tag_color, prefix, base]
+
+
+## Short channel-prefix shown in the ALL view so the reader can see at a
+## glance which channel produced each line. DM gets the partner's name when
+## known so two DM threads don't collide visually.
+func _channel_prefix_for_conversation(convo_id: String) -> String:
+	if convo_id.begins_with("dm:"):
+		var self_id: int = int(ClientState.player_id)
+		var other_id: int = _dm_other_id_from_conversation(convo_id, self_id)
+		var dm_name: String = str(dm_name_by_player_id.get(other_id, ""))
+		return ("DM:" + dm_name) if not dm_name.is_empty() else "DM"
+	if convo_id.begins_with("guild:"):
+		return "GUILD"
+	if _is_system_conversation(convo_id):
+		return "SYS"
+	if convo_id == ChatConstants.channel_conversation_id(CHANNEL_WORLD):
+		return "WORLD"
+	if convo_id == ChatConstants.channel_conversation_id(CHANNEL_TEAM):
+		return "TEAM"
+	return "CHAT"
 
 
 func _peek_prefix_for_conversation(convo_id: String) -> String:
@@ -555,8 +859,8 @@ func _dm_other_id_from_conversation(convo_id: String, self_id: int) -> int:
 
 
 func _ensure_conversation_exists(convo_id: String) -> void:
-	if not messages_by_conversation.has(convo_id):
-		messages_by_conversation[convo_id] = PackedStringArray()
+	if not raw_messages_by_conversation.has(convo_id):
+		raw_messages_by_conversation[convo_id] = []
 
 	if not seen_msg_ids_by_conversation.has(convo_id):
 		seen_msg_ids_by_conversation[convo_id] = {}
@@ -687,9 +991,6 @@ func _set_public_button_text(button: Button, base_label: String, convo_id: Strin
 
 #region Peek mutes + echo
 func _should_show_in_peek(convo_id: String) -> bool:
-	if mute_peek_all:
-		return false
-
 	if convo_id.begins_with("dm:"):
 		return not mute_peek_dm
 
@@ -704,7 +1005,7 @@ func _should_show_in_peek(convo_id: String) -> bool:
 
 func _handle_local_mute_command(args: PackedStringArray) -> void:
 	if args.size() < 2:
-		_system_echo("Usage: /mute dm|world|sys|all|off")
+		_system_echo("Usage: /mute dm|world|sys|off")
 		return
 
 	var what: String = args[1].to_lower()
@@ -718,11 +1019,7 @@ func _handle_local_mute_command(args: PackedStringArray) -> void:
 	elif what == "world":
 		mute_peek_world = not mute_peek_world
 		_system_echo("Peek World mute: %s" % ("ON" if mute_peek_world else "OFF"))
-	elif what == "all":
-		mute_peek_all = not mute_peek_all
-		_system_echo("Peek All mute: %s" % ("ON" if mute_peek_all else "OFF"))
 	elif what == "off":
-		mute_peek_all = false
 		mute_peek_dm = false
 		mute_peek_world = false
 		mute_peek_system = false
@@ -752,12 +1049,88 @@ func _send_dm_message(other_id: int, text: String) -> void:
 		_system_echo("No DM target selected.")
 		return
 
+	# Cheap client-side guard: don't even round-trip if we know we've blocked
+	# the target. Server still validates authoritatively.
+	if ClientState.blocked_ids.has(other_id):
+		_show_full_notice("You have this player blocked. Unblock them to send a DM.")
+		return
+
 	Client.request_data(
 		&"chat.message.send",
-		Callable(),
+		_on_chat_send_result,
 		{"text": text, "dm_target_id": other_id},
 		InstanceClient.current.name
 	)
+
+
+## Surface backend rejections (blocks, mutes, rate-limits, etc.) as a notice
+## in the active chat view so the player understands why their message
+## didn't go out.
+func _on_chat_send_result(result: Dictionary) -> void:
+	if result.is_empty() or result.get("ok", true):
+		return
+	var msg: String = str(result.get("message", "Message failed."))
+	_show_full_notice(msg)
+
+
+## Tracks whether the server believes the local player is currently typing.
+## Both chat inputs share this flag — focus moving between peek and full
+## feed doesn't re-fire the network call.
+var _typing_state_sent: bool = false
+
+
+func _on_chat_input_focus_changed(now_focused: bool) -> void:
+	# A focus signal fires for the leaving control before the entering one,
+	# so check whether ANY chat input still has focus before declaring stop.
+	var any_focused: bool = (peek_feed_message_edit.has_focus()
+		or full_feed_message_edit.has_focus())
+	# Defer the actual decision one frame so the just-focused field has
+	# registered its focus state by the time we read it.
+	_set_typing_state.call_deferred(now_focused or any_focused)
+
+
+func _set_typing_state(should_be_typing: bool) -> void:
+	# Re-read focus after the deferred bounce — the cheap dedupe below
+	# handles redundant transitions either way.
+	var actually_typing: bool = should_be_typing and (
+		peek_feed_message_edit.has_focus()
+		or full_feed_message_edit.has_focus()
+	)
+	if actually_typing == _typing_state_sent:
+		return
+	_typing_state_sent = actually_typing
+	Client.request_data(
+		&"chat.typing.set",
+		Callable(),
+		{"typing": actually_typing},
+		InstanceClient.current.name
+	)
+	# Server skips the sender when broadcasting chat.typing (no need to
+	# round-trip our own state), so the local player never receives a push
+	# for itself. Drive the bubble locally instead — feels weird to see the
+	# indicator on others but not yourself.
+	if ClientState.local_player != null and is_instance_valid(ClientState.local_player):
+		ClientState.local_player.set_typing(actually_typing)
+
+
+func _on_chat_typing(payload: Dictionary) -> void:
+	if payload.is_empty():
+		return
+	var sender_peer_id: int = int(payload.get("peer_id", 0))
+	var sender_id: int = int(payload.get("id", 0))
+	if sender_peer_id <= 0:
+		return
+	# Block list: don't render an indicator for someone we've blocked.
+	# Server already filters but this is the same belt-and-braces pattern
+	# we use for chat.message.
+	if sender_id > 0 and ClientState.blocked_ids.has(sender_id):
+		return
+	if InstanceClient.current == null:
+		return
+	var sender_player: Player = InstanceClient.current.players_by_peer_id.get(sender_peer_id, null)
+	if sender_player == null or not is_instance_valid(sender_player):
+		return
+	sender_player.set_typing(bool(payload.get("typing", false)))
 #endregion
 
 
@@ -816,4 +1189,237 @@ func _get_active_guild_id() -> int:
 
 func _is_system_conversation(convo_id: String) -> bool:
 	return convo_id.begins_with("sys:")
+#endregion
+
+
+#region Settings panel
+## Settings panel is laid out in chat_menu.tscn under
+## ChatPanel/VBoxContainer2/SettingsPanel. This region only wires controls,
+## populates the dynamic content (block list buttons, name-colour swatches),
+## and persists choices to ClientState.settings.
+
+const SETTINGS_SECTION: StringName = &"chat"
+const SETTINGS_PEEK_FADE_KEY: StringName = &"peek_fade_seconds"
+const SETTINGS_SELF_COLOR_KEY: StringName = &"self_name_color"
+const SETTINGS_PEEK_SHOW_WORLD: StringName = &"peek_show_world"
+const SETTINGS_PEEK_SHOW_DM: StringName = &"peek_show_dm"
+const SETTINGS_PEEK_SHOW_SYSTEM: StringName = &"peek_show_system"
+
+## Peek fade duration presets shown in the OptionButton.
+## Label → seconds (0 means "never fade").
+const PEEK_FADE_PRESETS: Array[Dictionary] = [
+	{"label": "3 seconds", "seconds": 3},
+	{"label": "5 seconds", "seconds": 5},
+	{"label": "10 seconds", "seconds": 10},
+	{"label": "Never fade", "seconds": 0},
+]
+
+## Curated swatches for the "Your name color" picker. Empty hex means "use
+## the default neutral self-tone" — first slot is always the reset.
+const NAME_COLOR_SWATCHES: Array = [
+	"",          # default
+	"#ffd36b",   # gold
+	"#7dff9a",   # mint
+	"#66d9ff",   # cyan
+	"#d56bff",   # violet
+	"#ff8e8e",   # rose
+	"#ffffff",   # white
+]
+
+## Display-name cache for blocked players keyed by player_id. Populated when
+## the settings panel fetches social.block.list so the buttons read better
+## than "Player #42".
+var _blocked_names_by_id: Dictionary[int, String]
+
+
+func _init_settings_panel() -> void:
+	# Hydrate the persisted prefs first so the controls reflect saved state.
+	_load_chat_settings()
+
+	# Per-channel peek toggles.
+	settings_peek_show_world.button_pressed = not mute_peek_world
+	settings_peek_show_world.toggled.connect(func(pressed: bool) -> void:
+		mute_peek_world = not pressed
+		_save_chat_setting(SETTINGS_PEEK_SHOW_WORLD, pressed)
+	)
+	settings_peek_show_dm.button_pressed = not mute_peek_dm
+	settings_peek_show_dm.toggled.connect(func(pressed: bool) -> void:
+		mute_peek_dm = not pressed
+		_save_chat_setting(SETTINGS_PEEK_SHOW_DM, pressed)
+	)
+	settings_peek_show_system.button_pressed = not mute_peek_system
+	settings_peek_show_system.toggled.connect(func(pressed: bool) -> void:
+		mute_peek_system = not pressed
+		_save_chat_setting(SETTINGS_PEEK_SHOW_SYSTEM, pressed)
+	)
+
+	# Peek fade preset OptionButton.
+	settings_peek_fade_option.clear()
+	var selected_index: int = 0
+	for i: int in PEEK_FADE_PRESETS.size():
+		var preset: Dictionary = PEEK_FADE_PRESETS[i]
+		settings_peek_fade_option.add_item(str(preset["label"]), i)
+		if int(preset["seconds"]) == peek_fade_seconds:
+			selected_index = i
+	settings_peek_fade_option.select(selected_index)
+	_apply_peek_fade_seconds()
+	settings_peek_fade_option.item_selected.connect(func(index: int) -> void:
+		var preset: Dictionary = PEEK_FADE_PRESETS[index]
+		peek_fade_seconds = int(preset["seconds"])
+		_apply_peek_fade_seconds()
+		_save_chat_setting(SETTINGS_PEEK_FADE_KEY, peek_fade_seconds)
+	)
+
+	# Name-colour swatches (programmatic because they're a uniform grid of
+	# coloured buttons — fits the data-driven SWATCHES constant better than
+	# duplicating 7 nodes in the scene).
+	_build_name_color_swatches()
+
+
+func _build_name_color_swatches() -> void:
+	for swatch_v: Variant in NAME_COLOR_SWATCHES:
+		var swatch_hex: String = str(swatch_v)
+		var btn: Button = Button.new()
+		btn.custom_minimum_size = Vector2(28, 28)
+		btn.toggle_mode = true
+		btn.button_pressed = (swatch_hex == self_name_color_override)
+		btn.tooltip_text = "Default" if swatch_hex.is_empty() else swatch_hex
+		# Display-only stylebox showing the swatch colour. Empty hex shows a
+		# faint "auto" diamond instead of a coloured square.
+		var sb: StyleBoxFlat = StyleBoxFlat.new()
+		sb.bg_color = Color(0.35, 0.35, 0.4, 0.5) if swatch_hex.is_empty() else Color(swatch_hex)
+		sb.corner_radius_top_left = 4
+		sb.corner_radius_top_right = 4
+		sb.corner_radius_bottom_right = 4
+		sb.corner_radius_bottom_left = 4
+		btn.add_theme_stylebox_override(&"normal", sb)
+		btn.add_theme_stylebox_override(&"hover", sb)
+		btn.add_theme_stylebox_override(&"pressed", sb)
+		# Border around the picked one so the choice is visible.
+		var sb_picked: StyleBoxFlat = sb.duplicate()
+		sb_picked.border_color = Color(1, 1, 1, 0.9)
+		sb_picked.border_width_left = 2
+		sb_picked.border_width_top = 2
+		sb_picked.border_width_right = 2
+		sb_picked.border_width_bottom = 2
+		btn.add_theme_stylebox_override(&"pressed", sb_picked)
+		btn.toggled.connect(func(pressed: bool) -> void:
+			if not pressed:
+				# Re-press the default so we always have an explicit pick.
+				btn.set_pressed_no_signal(swatch_hex == self_name_color_override)
+				return
+			_set_self_name_color(swatch_hex)
+		)
+		settings_name_color_row.add_child(btn)
+
+
+func _set_self_name_color(hex: String) -> void:
+	if hex == self_name_color_override:
+		return
+	self_name_color_override = hex
+	_save_chat_setting(SETTINGS_SELF_COLOR_KEY, hex)
+	# Refresh swatches' pressed state and the chat view so existing messages
+	# from "you" repaint immediately.
+	for child: Node in settings_name_color_row.get_children():
+		var b: Button = child as Button
+		if b == null:
+			continue
+		b.set_pressed_no_signal(b.tooltip_text == ("Default" if hex.is_empty() else hex))
+	_refresh_full_feed()
+
+
+func _apply_peek_fade_seconds() -> void:
+	# 0 = never fade. We accomplish that by giving the timer a huge wait_time
+	# and never actually starting it (caller already gates with peek_fade_seconds).
+	if peek_fade_seconds > 0:
+		fade_out_timer.wait_time = float(peek_fade_seconds)
+
+
+func _load_chat_settings() -> void:
+	var section: Dictionary = ClientState.settings.data.get(SETTINGS_SECTION, {})
+	if section.has(SETTINGS_PEEK_FADE_KEY):
+		peek_fade_seconds = int(section[SETTINGS_PEEK_FADE_KEY])
+	if section.has(SETTINGS_SELF_COLOR_KEY):
+		self_name_color_override = str(section[SETTINGS_SELF_COLOR_KEY])
+	if section.has(SETTINGS_PEEK_SHOW_WORLD):
+		mute_peek_world = not bool(section[SETTINGS_PEEK_SHOW_WORLD])
+	if section.has(SETTINGS_PEEK_SHOW_DM):
+		mute_peek_dm = not bool(section[SETTINGS_PEEK_SHOW_DM])
+	if section.has(SETTINGS_PEEK_SHOW_SYSTEM):
+		mute_peek_system = not bool(section[SETTINGS_PEEK_SHOW_SYSTEM])
+
+
+func _save_chat_setting(key: StringName, value: Variant) -> void:
+	# ClientState.Settings.set_value needs the section dict to exist. The
+	# autoload pre-fills sections from client_default_settings.cfg; if "chat"
+	# isn't in there yet we create it on the fly so the first save sticks.
+	if not ClientState.settings.data.has(SETTINGS_SECTION):
+		ClientState.settings.data[SETTINGS_SECTION] = {}
+	ClientState.settings.set_value(SETTINGS_SECTION, key, value)
+
+
+func _toggle_settings_panel() -> void:
+	var opening: bool = not settings_panel.visible
+	settings_panel.visible = opening
+	# Feed + separator + input row swap places with the settings panel — same
+	# chat-panel real estate, no overlay layering required.
+	full_feed_text_display.visible = not opening
+	full_feed_sep_above_input.visible = not opening
+	full_feed_input_row.visible = not opening
+	settings_button.text = "Back" if opening else "Settings"
+	if opening:
+		_refresh_block_list_request()
+
+
+func _refresh_block_list_request() -> void:
+	Client.request_data(
+		&"social.block.list",
+		_on_block_list_for_settings,
+		{},
+		InstanceClient.current.name
+	)
+
+
+func _on_block_list_for_settings(payload: Dictionary) -> void:
+	if not payload.get("ok", false):
+		return
+	var entries_v: Variant = payload.get("entries", [])
+	if not (entries_v is Array):
+		return
+	for entry: Dictionary in entries_v:
+		_blocked_names_by_id[int(entry.get("id", 0))] = str(entry.get("name", ""))
+	# Mirror to the central set so chat filter / profile menu stay in sync.
+	ClientState.set_blocked_ids(entries_v)
+	_rebuild_block_list_ui()
+
+
+func _on_blocked_ids_changed_for_settings() -> void:
+	if settings_panel != null and settings_panel.visible:
+		_rebuild_block_list_ui()
+
+
+func _rebuild_block_list_ui() -> void:
+	if settings_blocked_list == null:
+		return
+	# Wipe existing rows, keep the empty-state label as a stable child.
+	for child: Node in settings_blocked_list.get_children():
+		if child == settings_blocked_empty:
+			continue
+		child.queue_free()
+
+	var ids: Array = ClientState.blocked_ids.keys()
+	settings_blocked_empty.visible = ids.is_empty()
+
+	for id_v: Variant in ids:
+		var blocked_id: int = int(id_v)
+		var blocked_name: String = str(_blocked_names_by_id.get(blocked_id, ""))
+		if blocked_name.is_empty():
+			blocked_name = "Player #%d" % blocked_id
+		var btn: Button = Button.new()
+		btn.text = blocked_name
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# Open the player's profile. Profile UI already handles the
+		# Block/Unblock toggle, so no separate "Unblock" button here.
+		btn.pressed.connect(ClientState.player_profile_requested.emit.bind(blocked_id))
+		settings_blocked_list.add_child(btn)
 #endregion

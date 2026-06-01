@@ -58,6 +58,12 @@ const BASE_STATS: Dictionary[StringName, float] = {
 
 @export var friends: PackedInt64Array
 
+## Per-player block list. When X has Y in here, the server suppresses every
+## chat message Y produces (DM / world / guild / overhead bubbles) from
+## reaching X's client. Asymmetric — Y never knows. Mirrors how friends is
+## persisted (JSON column on the players row, see world_store_sqlite.gd).
+@export var blocked_ids: PackedInt64Array
+
 ## Leaderboard counters with rolling day/week buckets. Keys:
 ## pvp_kills_day/week/total, pve_kills_day/week/total, lb_bucket_day_ms, lb_bucket_week_ms.
 ## Owned and rolled over by LeaderboardService.

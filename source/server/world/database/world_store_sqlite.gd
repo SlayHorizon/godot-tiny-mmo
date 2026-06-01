@@ -39,6 +39,7 @@ func save_player(player: PlayerResource) -> void:
 	var quests_json: String = JSON.stringify(player.quests)
 
 	var friends_json: String = JSON.stringify(player.friends)
+	var blocked_ids_json: String = JSON.stringify(player.blocked_ids)
 	var server_roles_json: String = JSON.stringify(player.server_roles)
 	var stats_json: String = JSON.stringify(player.lb_stats)
 	var titles_json: String = JSON.stringify({
@@ -57,9 +58,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, server_roles_json, stats_json, titles_json, dailies_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, blocked_ids_json, server_roles_json, stats_json, titles_json, dailies_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -78,6 +79,7 @@ func save_player(player: PlayerResource) -> void:
 			skills_json,
 			quests_json,
 			friends_json,
+			blocked_ids_json,
 			server_roles_json,
 			stats_json,
 			titles_json,
@@ -236,6 +238,9 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 
 	var friends_v: Variant = JSON.parse_string(str(row.get("friends_json", "[]")))
 	player.friends = PackedInt64Array(friends_v if friends_v is Array else [])
+
+	var blocked_v: Variant = JSON.parse_string(str(row.get("blocked_ids_json", "[]")))
+	player.blocked_ids = PackedInt64Array(blocked_v if blocked_v is Array else [])
 
 	player.server_roles = JSON.parse_string(str(row.get("server_roles_json", "{}"))) as Dictionary
 

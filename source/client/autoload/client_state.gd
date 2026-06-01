@@ -32,6 +32,16 @@ var settings: Settings = Settings.new()
 var quick_slots: DataDict = DataDict.new()
 var guilds: DataDict = DataDict.new()
 
+## Set of player_ids the local user has blocked. Used by chat_menu to drop
+## incoming messages from blocked senders (server already filters too, but
+## this catches the brief window between a Block click and the next message
+## the server may have already dispatched). Hydrated once at instance entry
+## via social.block.list and kept in sync as the user blocks/unblocks.
+var blocked_ids: Dictionary[int, bool]
+## Fired when blocked_ids changes — profile/chat-settings menus listen so
+## their UI mirrors the live state without a refresh round-trip.
+signal blocked_ids_changed
+
 var language: String:
 	set(value):
 		var loaded_locales: PackedStringArray = TranslationServer.get_loaded_locales()
@@ -46,7 +56,7 @@ var input_type: InputComponent.InputType:
 
 
 func _ready() -> void:
-	if not OS.has_feature("client"):
+	if not GameMode.is_client():
 		queue_free()
 	Client.subscribe(&"player_id.set", func(payload: Dictionary):
 		player_id = payload.get("player_id", 0))
@@ -81,6 +91,28 @@ func _on_combat_reward(data: Dictionary) -> void:
 func set_tracked_quest(quest_id: int) -> void:
 	tracked_quest_id = quest_id
 	tracked_quest_changed.emit(quest_id)
+
+
+## Replace the local block list (called after a social.block.list bootstrap).
+func set_blocked_ids(entries: Array) -> void:
+	blocked_ids.clear()
+	for entry: Dictionary in entries:
+		blocked_ids[int(entry.get("id", 0))] = true
+	blocked_ids_changed.emit()
+
+
+## Mark a player as blocked locally. Server confirms first.
+func add_blocked(id: int) -> void:
+	if id <= 0:
+		return
+	blocked_ids[id] = true
+	blocked_ids_changed.emit()
+
+
+## Unmark a player. Server confirms first.
+func remove_blocked(id: int) -> void:
+	blocked_ids.erase(id)
+	blocked_ids_changed.emit()
 
 
 ## Open/close the trade panel for a table (0 = close). Does not join or leave a seat.
