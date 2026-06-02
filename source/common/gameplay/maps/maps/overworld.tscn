@@ -65,9 +65,8 @@
 [ext_resource type="Texture2D" uid="uid://bmi6y1awf4id8" path="res://assets/sprites/environment/structures/stations/furnace/furnace.png" id="57_eiayv"]
 [ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="58_ofiq8"]
 [ext_resource type="Resource" uid="uid://doy47vraqsb02" path="res://source/common/gameplay/quests/resources/copper_for_the_smith.tres" id="61_2lykb"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_ovmn0"]
-radius = 51.48361
+[ext_resource type="PackedScene" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="66_bfb0y"]
+[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="67_nbrv6"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uw01f"]
 radius = 55.38041
@@ -175,7 +174,7 @@ position = Vector2(923, 1047)
 position = Vector2(552, 588)
 
 [node name="Spawn" parent="." unique_id=850568300 instance=ExtResource("9_vhwke")]
-position = Vector2(1384, 968)
+position = Vector2(803.03516, -230.26291)
 
 [node name="Trade_entrance" parent="." unique_id=1049912251 instance=ExtResource("9_vhwke")]
 position = Vector2(1283, 902)
@@ -236,11 +235,11 @@ id_to_node = {
 13: NodePath("Slime2"),
 14: NodePath("Slime4"),
 15: NodePath("Slime3"),
-16: NodePath("Goblin"),
-17: NodePath("Goblin2"),
-18: NodePath("Wolf"),
-19: NodePath("Wolf2"),
-20: NodePath("Wolf3"),
+16: NodePath("Wolf"),
+17: NodePath("Wolf2"),
+18: NodePath("Wolf3"),
+19: NodePath("Goblin"),
+20: NodePath("Goblin2"),
 21: NodePath("Goblin3"),
 22: NodePath("Goblin4"),
 23: NodePath("Goblin5")
@@ -249,11 +248,11 @@ node_to_id = {
 NodePath("Goblin5"): 23,
 NodePath("Goblin4"): 22,
 NodePath("Goblin3"): 21,
-NodePath("Wolf3"): 20,
-NodePath("Wolf2"): 19,
-NodePath("Wolf"): 18,
-NodePath("Goblin2"): 17,
-NodePath("Goblin"): 16,
+NodePath("Goblin2"): 20,
+NodePath("Goblin"): 19,
+NodePath("Wolf3"): 18,
+NodePath("Wolf2"): 17,
+NodePath("Wolf"): 16,
 NodePath("Slime3"): 15,
 NodePath("Slime4"): 14,
 NodePath("Slime2"): 13,
@@ -300,165 +299,101 @@ activable_door = [NodePath("../../Traps/ActivableDoor"), NodePath("../../Traps/A
 
 [node name="Bandit" parent="ReplicatedPropsContainer" unique_id=1087386232 instance=ExtResource("24_uytus")]
 position = Vector2(8, -184)
+debug_draw_ranges = false
 enemy_data = ExtResource("25_g3eyd")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Bandit" unique_id=2105278488]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Bandit/Area2D" unique_id=1769735645]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="BanditCaptain" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("24_uytus")]
 position = Vector2(-200, -152)
+debug_draw_ranges = false
 enemy_data = ExtResource("26_0lv0g")
 metadata/_edit_group_ = true
 
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/BanditCaptain" unique_id=1669106109]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/BanditCaptain/Area2D" unique_id=1806707416]
-shape = SubResource("CircleShape2D_ovmn0")
-
 [node name="Bandit2" parent="ReplicatedPropsContainer" unique_id=267862471 instance=ExtResource("24_uytus")]
 position = Vector2(80, -112)
+debug_draw_ranges = false
 enemy_data = ExtResource("25_g3eyd")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Bandit2" unique_id=1495250126]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Bandit2/Area2D" unique_id=383434929]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Bandit3" parent="ReplicatedPropsContainer" unique_id=1915614100 instance=ExtResource("24_uytus")]
 position = Vector2(0, -32)
+debug_draw_ranges = false
 enemy_data = ExtResource("25_g3eyd")
 metadata/_edit_group_ = true
 
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Bandit3" unique_id=1032239389]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Bandit3/Area2D" unique_id=1344285317]
-shape = SubResource("CircleShape2D_ovmn0")
-
 [node name="Slime" parent="ReplicatedPropsContainer" unique_id=763372527 instance=ExtResource("24_uytus")]
 position = Vector2(154.67554, 1360)
+debug_draw_ranges = false
 enemy_data = ExtResource("27_0a7m6")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime" unique_id=1647096972]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime/Area2D" unique_id=957109286]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Slime2" parent="ReplicatedPropsContainer" unique_id=205969184 instance=ExtResource("24_uytus")]
 position = Vector2(0, 1420.0715)
+debug_draw_ranges = false
 enemy_data = ExtResource("27_0a7m6")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime2" unique_id=1198491685]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime2/Area2D" unique_id=1502785779]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Slime4" parent="ReplicatedPropsContainer" unique_id=1977822441 instance=ExtResource("24_uytus")]
 position = Vector2(352, 1388.0715)
+debug_draw_ranges = false
 enemy_data = ExtResource("27_0a7m6")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime4" unique_id=1571732984]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime4/Area2D" unique_id=377938431]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Slime3" parent="ReplicatedPropsContainer" unique_id=871497672 instance=ExtResource("24_uytus")]
 position = Vector2(208, 1500.0715)
+debug_draw_ranges = false
 enemy_data = ExtResource("27_0a7m6")
 metadata/_edit_group_ = true
 
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Slime3" unique_id=157014534]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Slime3/Area2D" unique_id=1635068905]
-shape = SubResource("CircleShape2D_ovmn0")
-
-[node name="Goblin" parent="ReplicatedPropsContainer" unique_id=1886432537 instance=ExtResource("24_uytus")]
-position = Vector2(-986.10785, 1473.8162)
-enemy_data = ExtResource("28_huaqk")
-metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin" unique_id=1898273245]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin/Area2D" unique_id=1887506509]
-shape = SubResource("CircleShape2D_ovmn0")
-
-[node name="Goblin2" parent="ReplicatedPropsContainer" unique_id=452078205 instance=ExtResource("24_uytus")]
-position = Vector2(-1208, 1456)
-enemy_data = ExtResource("28_huaqk")
-metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin2" unique_id=1246345856]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin2/Area2D" unique_id=627085406]
-shape = SubResource("CircleShape2D_ovmn0")
-
 [node name="Wolf" parent="ReplicatedPropsContainer" unique_id=949477659 instance=ExtResource("24_uytus")]
 position = Vector2(-2148, 1248)
+debug_draw_ranges = false
 enemy_data = ExtResource("29_xkeub")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Wolf" unique_id=682580380]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Wolf/Area2D" unique_id=1291541389]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Wolf2" parent="ReplicatedPropsContainer" unique_id=1963564594 instance=ExtResource("24_uytus")]
 position = Vector2(-2088, 1272)
+debug_draw_ranges = false
 enemy_data = ExtResource("29_xkeub")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Wolf2" unique_id=1266599188]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Wolf2/Area2D" unique_id=2047992596]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Wolf3" parent="ReplicatedPropsContainer" unique_id=738741219 instance=ExtResource("24_uytus")]
 position = Vector2(-2104, 1224)
+debug_draw_ranges = false
 enemy_data = ExtResource("29_xkeub")
 metadata/_edit_group_ = true
 
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Wolf3" unique_id=915729887]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Wolf3/Area2D" unique_id=1089004593]
-shape = SubResource("CircleShape2D_ovmn0")
-
-[node name="Goblin3" parent="ReplicatedPropsContainer" unique_id=1558014776 instance=ExtResource("24_uytus")]
-position = Vector2(-1096, 1288)
+[node name="Goblin" parent="ReplicatedPropsContainer" unique_id=1886432537 instance=ExtResource("24_uytus")]
+position = Vector2(-986.1079, 1473.8162)
+debug_draw_ranges = false
 enemy_data = ExtResource("28_huaqk")
 metadata/_edit_group_ = true
 
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin3" unique_id=1537919356]
+[node name="Goblin2" parent="ReplicatedPropsContainer" unique_id=452078205 instance=ExtResource("24_uytus")]
+position = Vector2(-1208, 1456)
+debug_draw_ranges = false
+enemy_data = ExtResource("28_huaqk")
+metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin3/Area2D" unique_id=1626249605]
-shape = SubResource("CircleShape2D_ovmn0")
+[node name="Goblin3" parent="ReplicatedPropsContainer" unique_id=1558014776 instance=ExtResource("24_uytus")]
+position = Vector2(-1096, 1288)
+debug_draw_ranges = false
+enemy_data = ExtResource("28_huaqk")
+metadata/_edit_group_ = true
 
 [node name="Goblin4" parent="ReplicatedPropsContainer" unique_id=435030798 instance=ExtResource("24_uytus")]
 position = Vector2(-928, 1480.0001)
 rotation = 0.01588766
+debug_draw_ranges = false
 enemy_data = ExtResource("28_huaqk")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin4" unique_id=1491893043]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin4/Area2D" unique_id=45702685]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Goblin5" parent="ReplicatedPropsContainer" unique_id=893235474 instance=ExtResource("24_uytus")]
 position = Vector2(-1064, 1320.0001)
 rotation = 0.01588766
+debug_draw_ranges = false
 enemy_data = ExtResource("28_huaqk")
 metadata/_edit_group_ = true
-
-[node name="Area2D" type="Area2D" parent="ReplicatedPropsContainer/Goblin5" unique_id=1100738746]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReplicatedPropsContainer/Goblin5/Area2D" unique_id=129822190]
-shape = SubResource("CircleShape2D_ovmn0")
 
 [node name="Traps" type="Node2D" parent="." unique_id=571759958]
 
@@ -984,3 +919,8 @@ texture = ExtResource("57_eiayv")
 region_enabled = true
 region_rect = Rect2(53, 133, 38, 59)
 metadata/_edit_lock_ = true
+
+[node name="Coal" parent="." unique_id=1694106012 instance=ExtResource("66_bfb0y")]
+position = Vector2(1229.7979, -347.91693)
+ore = ExtResource("67_nbrv6")
+yield_amount = 2

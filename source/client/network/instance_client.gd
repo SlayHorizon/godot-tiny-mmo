@@ -4,6 +4,7 @@ extends Node
 
 const LOCAL_PLAYER: PackedScene = preload("res://source/client/local_player/local_player.tscn")
 const DUMMY_PLAYER: PackedScene = preload("res://source/common/gameplay/characters/player/player.tscn")
+const FLOATING_DAMAGE_NUMBER: PackedScene = preload("res://source/client/ui/combat_feedback/floating_damage_number.tscn")
 
 static var current: InstanceClient
 static var local_player: LocalPlayer
@@ -32,7 +33,13 @@ func _ready() -> void:
 	if not suscribed:
 		Client.subscribe(&"action.perform", _on_action_performed)
 		suscribed = true
-	
+
+	# Hit-feedback subscriber: server broadcasts combat.hit on every damage
+	# tick (arrows, melee, NPC attacks). We spawn a floating damage number
+	# into the world at the hit position. Future polish (flash, hit-pause,
+	# sound) hooks off the same event.
+	Client.subscribe(&"combat.hit", _on_combat_hit)
+
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
 
@@ -75,6 +82,23 @@ func spawn_player(player_id: int) -> void:
 	
 	var sync: StateSynchronizer = new_player.state_synchronizer
 	synchronizer_manager.add_entity(player_id, sync) 
+
+
+func _on_combat_hit(payload: Dictionary) -> void:
+	if payload.is_empty() or instance_map == null:
+		return
+	var amount: int = int(payload.get("amount", 0))
+	if amount <= 0:
+		return
+	var pos_v: Variant = payload.get("position", Vector2.ZERO)
+	var pos: Vector2 = pos_v if pos_v is Vector2 else Vector2.ZERO
+	var number: FloatingDamageNumber = FLOATING_DAMAGE_NUMBER.instantiate()
+	number.set_amount(amount)
+	# Hand spawn position to the node BEFORE add_child so its _ready (which
+	# fires synchronously during add_child) can seed its tween against the
+	# real position instead of (0,0).
+	number.set_spawn(pos)
+	instance_map.add_child(number)
 
 
 @rpc("authority", "call_remote", "reliable", 0)

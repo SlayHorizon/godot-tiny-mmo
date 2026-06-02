@@ -24,15 +24,25 @@ const STAT_LABELS: Dictionary = {
 
 
 func _ready() -> void:
+	# Re-fetch every time the panel becomes visible — without this, the
+	# values shown reflect the first open only, and a mid-session level-up
+	# leaves the panel reporting stale "available points" until relog.
+	visibility_changed.connect(_refetch_if_visible)
+	_refetch_if_visible()
+	for child: Node in get_children():
+		if child is HBoxContainer:
+			_setup_attribute_row(child)
+
+
+func _refetch_if_visible() -> void:
+	if not visible:
+		return
 	Client.request_data(
 		&"attribute.get",
 		_on_attribute_received,
 		{},
 		InstanceClient.current.name
 	)
-	for child: Node in get_children():
-		if child is HBoxContainer:
-			_setup_attribute_row(child)
 
 
 ## Wires a [Label, +Button] attribute row and adds an inline "what a point grants" note.

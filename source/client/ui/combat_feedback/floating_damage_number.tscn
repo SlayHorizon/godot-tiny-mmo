@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://djnj2f1hb6kt8"]
+
+[ext_resource type="Script" path="res://source/client/ui/combat_feedback/floating_damage_number.gd" id="1_dmg"]
+
+[node name="FloatingDamageNumber" type="Node2D"]
+script = ExtResource("1_dmg")
+z_index = 50
+
+[node name="Label" type="Label" parent="."]
+offset_left = -40.0
+offset_top = -10.0
+offset_right = 40.0
+offset_bottom = 10.0
+theme_override_colors/font_color = Color(1, 0.85, 0.85, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 14
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1

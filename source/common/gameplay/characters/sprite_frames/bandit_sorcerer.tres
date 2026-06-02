@@ -1,0 +1,171 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://bm8vwj7ahrduw"]
+
+[ext_resource type="Texture2D" uid="uid://cbs1bik6sil64" path="res://assets/sprites/characters/bandit_sorcerer/bandit_sorcerer_idle.png" id="1_idle"]
+[ext_resource type="Texture2D" uid="uid://d0siayf3nkxvh" path="res://assets/sprites/characters/bandit_sorcerer/bandit_sorcerer_death.png" id="2_death"]
+[ext_resource type="Texture2D" uid="uid://duaxkoh2b31" path="res://assets/sprites/characters/bandit_sorcerer/bandit_sorcerer_run.png" id="3_run"]
+[ext_resource type="Texture2D" uid="uid://bp3ojdc784ekk" path="res://assets/sprites/characters/bandit_sorcerer/bandit_sorcerer_hit.png" id="4_hit"]
+
+[sub_resource type="AtlasTexture" id="A_d0"]
+atlas = ExtResource("2_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_d1"]
+atlas = ExtResource("2_death")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_d2"]
+atlas = ExtResource("2_death")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_d3"]
+atlas = ExtResource("2_death")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_d4"]
+atlas = ExtResource("2_death")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_d5"]
+atlas = ExtResource("2_death")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_h0"]
+atlas = ExtResource("4_hit")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_h1"]
+atlas = ExtResource("4_hit")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_h2"]
+atlas = ExtResource("4_hit")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_h3"]
+atlas = ExtResource("4_hit")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_i0"]
+atlas = ExtResource("1_idle")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_i1"]
+atlas = ExtResource("1_idle")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_i2"]
+atlas = ExtResource("1_idle")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_i3"]
+atlas = ExtResource("1_idle")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_r0"]
+atlas = ExtResource("3_run")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_r1"]
+atlas = ExtResource("3_run")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_r2"]
+atlas = ExtResource("3_run")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_r3"]
+atlas = ExtResource("3_run")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_r4"]
+atlas = ExtResource("3_run")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="A_r5"]
+atlas = ExtResource("3_run")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("A_d0")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_d1")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_d2")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_d3")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_d4")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_d5")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("A_h0")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_h1")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_h2")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_h3")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("A_i0")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_i1")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_i2")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_i3")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("A_r0")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_r1")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_r2")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_r3")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_r4")
+}, {
+"duration": 1.0,
+"texture": SubResource("A_r5")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
+metadata/slug = &"bandit_sorcerer"
+metadata/id = 8

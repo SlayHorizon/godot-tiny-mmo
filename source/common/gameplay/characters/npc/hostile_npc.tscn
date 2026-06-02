@@ -4,24 +4,15 @@
 [ext_resource type="Script" uid="uid://drq65rdns3own" path="res://source/common/gameplay/characters/npc/hostile_npc.gd" id="2_yivip"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="3_x14mw"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_e1g67"]
-radius = 110.0
-
-[node name="NPC" unique_id=573307470 node_paths=PackedStringArray("detection_area") instance=ExtResource("1_w5sp3")]
+[node name="NPC" unique_id=573307470 instance=ExtResource("1_w5sp3")]
 script = ExtResource("2_yivip")
 chase_on_area = true
 distance_to_attack = 20
-max_distance_from_spawn = 100
+max_distance_from_spawn = 300
 move_speed = 20
-detection_area = NodePath("DetectionArea")
 max_health = 50.0
 attack_damage = 8.0
 armor = 0.0
 xp_reward = 25
 respawn_delay = 5.0
 loot = Array[ExtResource("3_x14mw")]([])
-
-[node name="DetectionArea" type="Area2D" parent="." index="10" unique_id=48866372]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" index="0" unique_id=1210478326]
-shape = SubResource("CircleShape2D_e1g67")

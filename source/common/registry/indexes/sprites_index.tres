@@ -6,7 +6,7 @@
 script = ExtResource("1_ccyyb")
 content_name = &"sprites"
 version = 1757682500
-next_id = 4
+next_id = 10
 entries = Array[Dictionary]([{
 &"hash": "b20c36766102dfdb9082db2882c32c878146f67e186800b55870eb4fec192a63",
 &"id": 1,
@@ -22,6 +22,36 @@ entries = Array[Dictionary]([{
 &"id": 3,
 &"path": "res://source/common/gameplay/characters/sprite_frames/wizard.tres",
 &"slug": &"wizard"
+}, {
+&"hash": "0000000000000000000000000000000000000000000000000000000000000000",
+&"id": 4,
+&"path": "res://source/common/gameplay/characters/sprite_frames/goblin.tres",
+&"slug": &"goblin"
+}, {
+&"hash": "0000000000000000000000000000000000000000000000000000000000000000",
+&"id": 5,
+&"path": "res://source/common/gameplay/characters/sprite_frames/skeleton.tres",
+&"slug": &"skeleton"
+}, {
+&"hash": "0000000000000000000000000000000000000000000000000000000000000000",
+&"id": 6,
+&"path": "res://source/common/gameplay/characters/sprite_frames/bandit_fighter.tres",
+&"slug": &"bandit_fighter"
+}, {
+&"hash": "0000000000000000000000000000000000000000000000000000000000000000",
+&"id": 7,
+&"path": "res://source/common/gameplay/characters/sprite_frames/bandit_scout.tres",
+&"slug": &"bandit_scout"
+}, {
+&"hash": "0000000000000000000000000000000000000000000000000000000000000000",
+&"id": 8,
+&"path": "res://source/common/gameplay/characters/sprite_frames/bandit_sorcerer.tres",
+&"slug": &"bandit_sorcerer"
+}, {
+&"hash": "0000000000000000000000000000000000000000000000000000000000000000",
+&"id": 9,
+&"path": "res://source/common/gameplay/characters/sprite_frames/bandit_tracker.tres",
+&"slug": &"bandit_tracker"
 }])
 scan_path = ""
 filters = PackedStringArray()

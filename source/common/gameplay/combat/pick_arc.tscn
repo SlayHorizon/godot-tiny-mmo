@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://b9p8x2k4tlz3m"]
+
+[ext_resource type="Script" path="res://source/common/gameplay/combat/pick_arc.gd" id="1_pick_arc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pick"]
+radius = 20.0
+
+[node name="PickArc" type="Area2D"]
+monitorable = false
+collision_layer = 0
+collision_mask = 7
+script = ExtResource("1_pick_arc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(12, 0)
+shape = SubResource("CircleShape2D_pick")

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MeleeSwingAbility" format=3 uid="uid://dydqgila3yro1"]
+
+[ext_resource type="Script" uid="uid://01sxrebcprpu" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/melee_swing_ability.gd" id="1_swing"]
+[ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="2_arc"]
+
+[resource]
+script = ExtResource("1_swing")
+arc_scene = ExtResource("2_arc")
+base_damage = 10.0
+swing_animation = &"weapon/sword.special.spin"
+name = "Sword Spin"
+cooldown = 2.5

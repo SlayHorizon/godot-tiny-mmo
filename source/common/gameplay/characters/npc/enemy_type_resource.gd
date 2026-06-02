@@ -38,7 +38,19 @@ extends Resource
 @export_group("AI & Movement")
 @export var move_speed: int = 20
 @export var distance_to_attack: int = 20
-@export var max_distance_from_spawn: int = 100
+## Leash radius. The mob will chase / attack up to this far from its spawn
+## point; cross it and the mob disengages and walks home (regenerates HP
+## en route at the boosted return speed). Tune small for tight cave mobs,
+## bigger for open-field mobs that need to allow comfortable ranged
+## engagement. ~300 default = bow at full draw + a bit of breathing room.
+@export var max_distance_from_spawn: int = 300
+
+## Aggro radius. The mob "sees" any player inside this circle and engages
+## (when chase_on_area is true) — or pack-mates that hear an ally's
+## was_attacked signal use it to decide if they're close enough to help.
+## Should be SMALLER than max_distance_from_spawn so the mob can reach
+## anything it sees before the leash kicks in. ~150 default.
+@export var detection_radius: int = 150
 @export var chase_on_area: bool = false
 
 @export_group("Rewards")

@@ -66,6 +66,7 @@ func _ready() -> void:
 		stats.data.merge(data, true)
 	)
 	Client.subscribe(&"combat.reward", _on_combat_reward)
+	Client.subscribe(&"mining.gather_result", _on_gather_result)
 	Client.subscribe(&"quest.update", func(data: Dictionary):
 		for message: String in data.get("messages", []):
 			Toaster.toast(message)
@@ -76,15 +77,93 @@ func _ready() -> void:
 	language = settings.data.get(&"general", {}).get(&"language", "en_US")
 
 
-## Server-pushed kill rewards: surface them as toasts.
+## Server-pushed kill rewards: surface them as ONE grouped toast card
+## ("Defeated a Goblin" + XP + loot + level-up) so the player reads it
+## as a single event instead of three flashes that happen to land
+## together. enemy_type may be missing for non-mob reward paths (basing
+## etc.) — falls back to a generic "Reward" header in that case.
 func _on_combat_reward(data: Dictionary) -> void:
+	var enemy_type: String = str(data.get("enemy_type", ""))
+	var title: String = "Defeated %s" % _readable_enemy_name(enemy_type) if not enemy_type.is_empty() else "Reward"
+
+	var lines: PackedStringArray = PackedStringArray()
 	var xp: int = int(data.get("xp", 0))
 	if xp > 0:
-		Toaster.toast("+%d XP" % xp)
+		lines.append("+%d XP" % xp)
 	for entry: Dictionary in data.get("loot", []):
-		Toaster.toast("Looted %d %s" % [int(entry.get("amount", 1)), str(entry.get("name", "item"))])
+		lines.append("Looted %d %s" % [int(entry.get("amount", 1)), str(entry.get("name", "item"))])
 	if int(data.get("levels_gained", 0)) > 0:
-		Toaster.toast("Level %d! +%d attribute points" % [int(data.get("level", 1)), int(data.get("points_gained", 0))])
+		lines.append("Level %d! +%d attribute points" % [int(data.get("level", 1)), int(data.get("points_gained", 0))])
+
+	if lines.is_empty() and enemy_type.is_empty():
+		return  # Nothing to show.
+	Toaster.toast_group(title, lines)
+
+
+## Server-pushed harvest result. Re-uses the gather_succeeded signal +
+## toast format that the legacy click-based mining handler used, so quest
+## tracking and any inventory UI that already listens to gather_succeeded
+## keeps working unchanged.
+func _on_gather_result(data: Dictionary) -> void:
+	if data.is_empty():
+		return
+	if not data.get("ok", false):
+		match str(data.get("reason", "")):
+			"no_tool":
+				Toaster.toast("You need a pickaxe equipped.")
+			"too_far":
+				Toaster.toast("Too far from the node.")
+			"level":
+				Toaster.toast("Requires Mining Lv %d." % int(data.get("required_level", 0)))
+			"depleted":
+				Toaster.toast("This vein is depleted — come back later.")
+			# "cooldown" stays silent — players will spam swings during it.
+		return
+
+	# Successful hit. Two shapes:
+	#   { ok: true, extracted: false, progress_hp, extraction_hp }   ← just a swing
+	#   { ok: true, extracted: true,  ore_id, amount, xp, ... }      ← a full yield
+	if not data.get("extracted", false):
+		# Mid-extraction swings are intentionally silent — feedback comes
+		# from the swing animation + (future) chip-sound, not a toast.
+		return
+
+	gather_succeeded.emit(data)
+
+	# Build a single grouped card so a yield reads as one event.
+	var title: String = "Mined"
+	var lines: PackedStringArray = PackedStringArray()
+	var amount: int = int(data.get("amount", 0))
+	if amount > 0:
+		lines.append("+%d ore" % amount)
+	# XP entries — primary job first (verbose), additional grants compact.
+	var grants_v: Variant = data.get("grants", [])
+	if grants_v is Array:
+		for grant: Dictionary in grants_v:
+			lines.append("+%d %s XP" % [int(grant.get("xp", 0)), str(grant.get("job", "")).capitalize()])
+	if data.get("leveled_up", false):
+		var job: String = str(data.get("job", "mining")).capitalize()
+		lines.append("%s — Level %d!" % [job, int(data.get("level", 1))])
+	if int(data.get("perk_points_gained", 0)) > 0:
+		lines.append("Perk point available — spend in Character → Jobs.")
+
+	Toaster.toast_group(title, lines)
+
+
+## "bandit_captain" → "a Bandit Captain". Article ("a"/"an") chosen by
+## first letter so we don't produce "a Orc" / "a Iron Warlord" weirdness.
+func _readable_enemy_name(slug: String) -> String:
+	if slug.is_empty():
+		return "an enemy"
+	var words: PackedStringArray = slug.split("_")
+	var titled: PackedStringArray = PackedStringArray()
+	for w: String in words:
+		if w.is_empty():
+			continue
+		titled.append(w.substr(0, 1).to_upper() + w.substr(1))
+	var pretty: String = " ".join(titled)
+	var article: String = "an" if "aeiou".contains(pretty.substr(0, 1).to_lower()) else "a"
+	return "%s %s" % [article, pretty]
 
 
 ## Pin a quest to the HUD tracker (from the quest log, or auto on accept).

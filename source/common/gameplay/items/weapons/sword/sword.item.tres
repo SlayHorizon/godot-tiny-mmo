@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://f0urxop3y64l"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_qe82u"]
+[ext_resource type="PackedScene" uid="uid://cq4pqfg3tnqxh" path="res://source/common/gameplay/items/weapons/sword/sword.tscn" id="1_sword_scene"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_g2wyg"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="2_weapon_item"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="3_slot"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uqqke"]
+atlas = ExtResource("2_g2wyg")
+region = Rect2(0, 0, 16, 48)
+
+[resource]
+script = ExtResource("2_weapon_item")
+right_hand_scene = ExtResource("1_sword_scene")
+slot = ExtResource("3_slot")
+item_name = &"Sword"
+item_icon = SubResource("AtlasTexture_uqqke")
+description = "A simple iron sword. Swing close, swing fast."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/slug = &"sword.item"
+metadata/id = 65

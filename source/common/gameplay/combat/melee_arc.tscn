@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://b8s7oak2vqlpx"]
+
+[ext_resource type="Script" path="res://source/common/gameplay/combat/melee_arc.gd" id="1_arc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_arc"]
+radius = 22.0
+
+[node name="MeleeArc" type="Area2D"]
+monitorable = false
+collision_layer = 0
+collision_mask = 7
+script = ExtResource("1_arc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(10, 0)
+shape = SubResource("CircleShape2D_arc")

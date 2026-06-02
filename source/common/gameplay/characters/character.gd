@@ -47,11 +47,53 @@ func _ready() -> void:
 	stats_component.stats.stat_changed.connect(_on_stat_changed)
 
 
+# --- Hit-feedback state (client-side only) -----------------------------------
+## Last seen HEALTH value, used to detect *decreases* so we only trigger hit
+## feedback on incoming damage, never on regen / respawn / heals.
+var _last_health_seen: float = -1.0
+## Sound path played on each hit. Spatial — SfxPool culls distance via the
+## LocalPlayer's position so off-screen hits don't make noise. Drop the
+## file under this path later and it'll just start working.
+const HIT_SOUND_PATH: String = "res://assets/audio/sfx/hit.wav"
+## How long the red-tint flash lasts on hit. Two-phase: snap to red (short),
+## fade back to white (longer). The snap reads as "impact", the fade lets
+## back-to-back hits stack readably.
+const HIT_FLASH_SNAP_S: float = 0.05
+const HIT_FLASH_FADE_S: float = 0.18
+
+var _hit_flash_tween: Tween
+
+
 func _on_stat_changed(stat_name: StringName, value: float) -> void:
 	if stat_name == Stat.HEALTH:
 		$ProgressBar.value = value
+		# Hit feedback fires on net HP decrease only — regen, idle-heal,
+		# respawn-snap-to-full would otherwise spam flash/sound.
+		if _last_health_seen >= 0.0 and value < _last_health_seen:
+			_play_hit_feedback()
+		_last_health_seen = value
 	if stat_name == Stat.HEALTH_MAX:
 		$ProgressBar.max_value = value
+
+
+## Combat juice: brief red tint on the sprite + a spatial hit SFX. Called
+## from _on_stat_changed when this character's HEALTH ticks down. No-op if
+## we're on the server (this whole region is gated by Character._ready).
+func _play_hit_feedback() -> void:
+	# Sprite flash: snap-bright red, fade back to neutral. modulate values
+	# above 1.0 brighten (multiplier), so (2.0, 0.5, 0.5) reads as a stark
+	# red pulse rather than a flat red overlay.
+	if animated_sprite != null:
+		if _hit_flash_tween != null and _hit_flash_tween.is_running():
+			_hit_flash_tween.kill()
+		_hit_flash_tween = create_tween()
+		_hit_flash_tween.tween_property(animated_sprite, ^"modulate", Color(2.0, 0.5, 0.5, 1.0), HIT_FLASH_SNAP_S)
+		_hit_flash_tween.tween_property(animated_sprite, ^"modulate", Color.WHITE, HIT_FLASH_FADE_S)
+
+	# Spatial hit sound. The SfxPool short-circuits if the LocalPlayer is
+	# out of audible range, so a hit happening across the map is silent.
+	if is_instance_valid(Client) and Client.audio_manager != null:
+		Client.audio_manager.play_sfx(HIT_SOUND_PATH, global_position)
 
 
 # --- Combat (server-authoritative) ---
@@ -76,14 +118,72 @@ func take_damage(amount: float, attacker: Character = null) -> void:
 	var new_health: float = maxf(0.0, stats_component.get_stat(Stat.HEALTH) - mitigated)
 	stats_component.set_stat(Stat.HEALTH, new_health)
 
+	# Broadcast a hit event so clients can render damage numbers, screen
+	# shake, hit pause, sound — anything game-feel piggybacks off the same
+	# server push. We send the post-mitigation number so what players see
+	# matches the HP actually lost.
+	_broadcast_hit_feedback(mitigated)
+
 	if new_health <= 0.0:
 		is_dead = true
 		die(attacker)
 
 
+## Wraps the combat.hit push so child classes (Player / NPC / future
+## buildings) don't each have to know how to find their ServerInstance.
+## Goes via ServerHub so common/ doesn't import server-only types.
+func _broadcast_hit_feedback(mitigated_amount: float) -> void:
+	if mitigated_amount <= 0.0 or ServerHub.current == null:
+		return
+	# Character is parented under Map, which is parented under ServerInstance.
+	# Walk up two steps to find the instance to scope the broadcast to. We
+	# don't type-check ServerInstance here because common-side code mustn't
+	# import server-only classes — propagate_rpc just needs the instance
+	# name (a String) and gracefully falls back if not found.
+	var maybe_map: Node = get_parent()
+	if maybe_map == null:
+		return
+	var maybe_instance: Node = maybe_map.get_parent()
+	if maybe_instance == null:
+		return
+	ServerHub.current.propagate_rpc(
+		ServerHub.current.data_push.bind(&"combat.hit", {
+			"amount": int(round(mitigated_amount)),
+			"position": global_position,
+		}),
+		maybe_instance.name
+	)
+
+
 ## Overridden by Player (respawn) and HostileNpc (reward + respawn). Base does nothing.
 func die(_killer: Character) -> void:
 	pass
+
+
+## Plays a short "action" animation (weapon swing, charge, cast — anything
+## abilities want to surface visually). Stamps the animation name into the
+## InteruptAnimation slot and triggers InteruptShot, which is the only
+## branch of the AnimationTree currently routed to the output.
+##
+## anim_name uses Godot's library/animation form, e.g. &"weapon/sword.swing".
+## The animation must have been added to the AnimationPlayer first — weapons
+## do this on equip via add_animation_library.
+##
+## Server-side is a no-op; animation work is purely cosmetic.
+func play_action_animation(anim_name: StringName) -> void:
+	if not GameMode.is_client() or anim_name.is_empty():
+		return
+	if animation_tree == null or animation_tree.tree_root == null:
+		return
+	# tree_root is a StateMachine; OnFoot is the BlendTree state we author in.
+	var on_foot: AnimationNodeBlendTree = animation_tree.tree_root.get_node(&"OnFoot") as AnimationNodeBlendTree
+	if on_foot == null:
+		return
+	var interrupt_anim: AnimationNodeAnimation = on_foot.get_node(&"InteruptAnimation") as AnimationNodeAnimation
+	if interrupt_anim == null:
+		return
+	interrupt_anim.animation = anim_name
+	animation_tree[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
 
 
 func update_weapon_animation(state: String) -> void:

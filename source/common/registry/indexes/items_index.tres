@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1780157540
-next_id = 65
+version = 1780352885
+next_id = 66
 entries = Array[Dictionary]([{
 &"hash": "0958b9dd9e3ba3112daa61005b77b31bda5385ab1ccd0c192c089362464a428d",
 &"id": 1,
@@ -298,7 +298,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/hammer/hammer.tscn",
 &"slug": &"hammer"
 }, {
-&"hash": "b2504553eb090104bf34bdfb5643ab18364cb22f087435b87703da02085df4a8",
+&"hash": "f0decf14527c8e5cad44fce70efb0db9f24d8e62075ca776787a6282b46c49f8",
+&"id": 65,
+&"path": "res://source/common/gameplay/items/weapons/sword/sword.item.tres",
+&"slug": &"sword.item"
+}, {
+&"hash": "993149fdaea7ca6b3a9da194afcc0dff060564f5bc9c5497b02edfd0a93a9765",
 &"id": 47,
 &"path": "res://source/common/gameplay/items/weapons/sword/sword.tscn",
 &"slug": &"sword"
@@ -308,7 +313,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/sword/sword_animations.tres",
 &"slug": &"sword_animations"
 }, {
-&"hash": "dc246b7247f7225191dd9075454ecbcccc8982f19767d0e49ba65780b87daa5d",
+&"hash": "5472adf92b201dec359f7a3f9943ebf58dbf989b14abf01caffc9bed9ad71f09",
 &"id": 52,
 &"path": "res://source/common/gameplay/items/weapons/tools/pickaxe.tres",
 &"slug": &"pickaxe"

@@ -272,6 +272,28 @@ func is_attack_just_released() -> bool:
 	return Input.is_action_just_released(&"player_shoot")
 
 
+## Special / secondary attack — second weapon ability slot. Mirrors the
+## primary attack helpers (pressed / just_pressed / just_released) so
+## weapons can opt into multi-input flows (charged abilities, for instance)
+## without bespoke input glue.
+func is_special_pressed() -> bool:
+	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
+	return Input.is_action_pressed(&"player_special")
+
+
+func is_special_just_pressed() -> bool:
+	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
+	return Input.is_action_just_pressed(&"player_special")
+
+
+func is_special_just_released() -> bool:
+	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
+	return Input.is_action_just_released(&"player_special")
+
+
 ## Returns a [code]Array[/code] containing [code][bool, StringName][/code] where [code]StringName[/code] is the name of the action
 ## that the event is assigned to. If the key is available the [code]StringName[/code] will be empty.
 static func is_event_available(event: InputEvent) -> Array:

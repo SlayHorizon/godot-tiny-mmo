@@ -1,16 +1,22 @@
 [gd_resource type="Resource" script_class="ToolItem" format=3 uid="uid://clvjdo7an4ctq"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_m58sl"]
-[ext_resource type="Texture2D" uid="uid://cf0y64q72i32l" path="res://assets/sprites/items/icons/Icon2.png" id="2_kh8wi"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_kh8wi"]
 [ext_resource type="Script" uid="uid://b5hsnu4140fky" path="res://source/common/gameplay/items/weapons/tool_item.gd" id="3_f5crd"]
 [ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="4_f5crd"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/items/weapons/tools/pickaxe.tscn" id="5_pickaxe_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f5crd"]
+atlas = ExtResource("2_kh8wi")
+region = Rect2(0, 48, 16, 32)
 
 [resource]
 script = ExtResource("3_f5crd")
 tool_type = &"pickaxe"
+right_hand_scene = ExtResource("5_pickaxe_scene")
 slot = ExtResource("4_f5crd")
 item_name = &"Pickaxe"
-item_icon = ExtResource("2_kh8wi")
+item_icon = SubResource("AtlasTexture_f5crd")
 description = "A solid iron-tipped pickaxe. Equip it to mine ore veins. Sold at the village starter shop and the Quarry Counter at the mine."
 vendor_value = 1
 metadata/_custom_type_script = "uid://b5hsnu4140fky"

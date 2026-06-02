@@ -12,6 +12,12 @@ var attack: Attack
 # NEW
 var effect: EffectSpec
 
+## Server-authoritative damage this arrow deals on impact. Set by the
+## spawning weapon (bow charge ratio, multishot fraction, etc.). Defaults
+## to a small fallback so a legacy spawn that forgot to set it doesn't
+## nuke the target.
+var damage: float = 5.0
+
 func _ready() -> void:
 	# Quick and dirty for tests - Need proper system
 	if multiplayer.is_server():
@@ -44,10 +50,8 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is TerritoryFlag:
 		if source is not Player:
 			return
-		var flag_damage: float = 10.0
-		if source is Character:
-			flag_damage = maxf(flag_damage, source.stats_component.get_stat(Stat.AD))
-		body.take_damage(flag_damage, source if source is Character else null)
+		# Flag damage scales with the arrow's tuned damage (charge-based).
+		body.take_damage(damage, source if source is Character else null)
 		if not piercing or pierce_left <= 0:
 			queue_free()
 		pierce_left -= 1
@@ -67,11 +71,10 @@ func _on_body_entered(body: Node2D) -> void:
 		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
 			return
 
-	# Damage scales with the shooter's Attack (falls back to a small base), and is
-	# mitigated by the target's armor inside take_damage.
-	var damage: float = 10.0
-	if source is Character:
-		damage = maxf(damage, source.stats_component.get_stat(Stat.AD))
+	# Damage is whatever the spawning weapon assigned (bow's charge curve
+	# scales it). Target armor is applied inside take_damage. AD coupling
+	# removed — weapon damage is the single source of truth now; AD can
+	# come back as a multiplier later if we want gear scaling.
 	body.take_damage(damage, source if source is Character else null)
 
 	if not piercing or pierce_left <= 0:

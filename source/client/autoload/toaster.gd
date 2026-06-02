@@ -44,16 +44,37 @@ func toast(text: String, duration: float = 2.0) -> void:
 
 	var panel: PanelContainer = _make_toast(text)
 	_container.add_child(panel)
+	_kick_dwell(duration)
 
-	# Scale dwell with the stack so a burst (quest reward = title + XP + gold +
-	# level-up all in one frame) stays readable. Then reset every visible
-	# toast's tween to this new dwell — older ones get extended too, so the
-	# whole stack disappears together once the burst ends.
+
+## Show a multi-line card: bold-ish title + a list of sub-lines. Use when
+## one logical event produces several feedback strings (kill = "Defeated
+## a Goblin" + "+15 XP" + "Looted 1 Tooth"; quest turn-in = title + XP +
+## gold + level-up). Renders as ONE PanelContainer so the player reads it
+## as one notification instead of a flood of 3-4 separate toasts.
+func toast_group(title: String, lines: PackedStringArray, duration: float = 2.0) -> void:
+	if _container == null:
+		return
+	if title.is_empty() and lines.is_empty():
+		return
+
+	while _container.get_child_count() >= MAX_TOASTS:
+		var oldest: Node = _container.get_child(0)
+		_container.remove_child(oldest)
+		oldest.queue_free()
+
+	var panel: PanelContainer = _make_group_toast(title, lines)
+	_container.add_child(panel)
+	_kick_dwell(duration)
+
+
+## Scale dwell with the stack so a burst stays readable, then reset every
+## visible toast's tween to this new dwell — older ones get extended too.
+func _kick_dwell(base_duration: float) -> void:
 	var stack_size: int = _container.get_child_count()
-	var dwell: float = duration + maxf(0.0, (stack_size - 1) * EXTRA_DWELL_PER_STACKED)
+	var dwell: float = base_duration + maxf(0.0, (stack_size - 1) * EXTRA_DWELL_PER_STACKED)
 	for sibling: Node in _container.get_children():
 		_restart_dwell(sibling as Control, dwell)
-
 
 ## Cancel any in-flight tween on this panel and start a fresh fade-in / dwell /
 ## fade-out sequence. Idempotent — calling repeatedly just keeps shifting the
@@ -74,6 +95,45 @@ func _restart_dwell(panel: Control, dwell: float) -> void:
 
 
 func _make_toast(text: String) -> PanelContainer:
+	var panel: PanelContainer = _make_panel_shell()
+	var label: Label = Label.new()
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	(panel.get_child(0) as MarginContainer).add_child(label)
+	return panel
+
+
+func _make_group_toast(title: String, lines: PackedStringArray) -> PanelContainer:
+	var panel: PanelContainer = _make_panel_shell()
+	var vbox: VBoxContainer = VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override(&"separation", 2)
+	(panel.get_child(0) as MarginContainer).add_child(vbox)
+
+	if not title.is_empty():
+		var title_label: Label = Label.new()
+		title_label.text = title
+		title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		title_label.add_theme_font_size_override(&"font_size", 16)
+		title_label.add_theme_color_override(&"font_color", Color(1, 0.95, 0.75, 1))
+		vbox.add_child(title_label)
+
+	for line: String in lines:
+		if line.is_empty():
+			continue
+		var sub: Label = Label.new()
+		sub.text = line
+		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		sub.add_theme_color_override(&"font_color", Color(0.88, 0.88, 0.9, 1))
+		vbox.add_child(sub)
+
+	return panel
+
+
+## Shared panel + margin scaffolding used by both single-line and grouped
+## toasts. The single child of the panel is always the MarginContainer the
+## caller can append text widgets into.
+func _make_panel_shell() -> PanelContainer:
 	var panel: PanelContainer = PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -85,15 +145,10 @@ func _make_toast(text: String) -> PanelContainer:
 	panel.add_theme_stylebox_override(&"panel", style)
 
 	var margin: MarginContainer = MarginContainer.new()
-	margin.add_theme_constant_override(&"margin_left", 12)
-	margin.add_theme_constant_override(&"margin_right", 12)
-	margin.add_theme_constant_override(&"margin_top", 6)
-	margin.add_theme_constant_override(&"margin_bottom", 6)
+	margin.add_theme_constant_override(&"margin_left", 14)
+	margin.add_theme_constant_override(&"margin_right", 14)
+	margin.add_theme_constant_override(&"margin_top", 8)
+	margin.add_theme_constant_override(&"margin_bottom", 8)
 	panel.add_child(margin)
-
-	var label: Label = Label.new()
-	label.text = text
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	margin.add_child(label)
 
 	return panel

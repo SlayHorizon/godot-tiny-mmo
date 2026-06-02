@@ -1,16 +1,16 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dqo57ux3v3lkq"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="2_marker"]
+[ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="2_marker"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_default"]
 size = Vector2(24, 24)
 
-[node name="MineableNode" type="Area2D"]
+[node name="MineableNode" type="Area2D" unique_id=1129547794]
 script = ExtResource("1_script")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=638739511]
 shape = SubResource("RectangleShape2D_default")
 
-[node name="InteractableMarker" parent="." instance=ExtResource("2_marker")]
+[node name="InteractableMarker" parent="." unique_id=113398544 instance=ExtResource("2_marker")]
 kind = 5
