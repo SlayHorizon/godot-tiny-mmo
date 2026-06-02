@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MineableNodeResource" format=3 uid="uid://dtpviov364y0b"]
+
+[ext_resource type="Script" uid="uid://w4s2ld2v5xdq" path="res://source/common/gameplay/maps/components/mineable_node_resource.gd" id="1_script"]
+[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="2_ore"]
+[ext_resource type="Texture2D" uid="uid://bhpljwhf8i5cl" path="res://assets/sprites/environment/props/rocks.png" id="3_5oun2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0dw3s"]
+atlas = ExtResource("3_5oun2")
+region = Rect2(0, 16, 32, 48)
+
+[resource]
+script = ExtResource("1_script")
+ore = ExtResource("2_ore")
+yield_amount = 2
+job_xp = Dictionary[StringName, int]({
+&"mining": 14
+})
+required_level = 3
+charge_regen_seconds = 15.0
+depleted_recharge_seconds = 75.0
+texture = SubResource("AtlasTexture_0dw3s")

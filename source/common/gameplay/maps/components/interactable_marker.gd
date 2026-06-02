@@ -27,12 +27,12 @@ enum Kind {
 
 ## Glyph map. Untyped const so const-init doesn't trip on enum-key typing rules.
 const _GLYPHS: Dictionary = {
-	Kind.QUEST_AVAILABLE: "❗",
-	Kind.QUEST_TURN_IN: "❓",
-	Kind.SHOP: "💰",
-	Kind.CRAFT: "⚒️",
-	Kind.DIALOG: "💬",
-	Kind.GATHER: "⛏️",
+	Kind.QUEST_AVAILABLE: "QUEST",
+	Kind.QUEST_TURN_IN: "QUEST",
+	Kind.SHOP: "SHOP",
+	Kind.CRAFT: "CRAFT",
+	Kind.DIALOG: "DIALOG",
+	Kind.GATHER: "GATHER",
 }
 
 ## What kind of interaction this marker advertises. Drives the emoji.

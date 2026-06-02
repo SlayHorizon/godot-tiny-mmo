@@ -1,7 +1,7 @@
 class_name MineableNode
 extends Area2D
 ## A world-space gathering node (ore vein, herb patch, etc.). v2: swing-based.
-## A pickaxe swing's hitbox overlaps this Area2D → register_pickaxe_hit fires
+## A pickaxe swing's hitbox overlaps this Area2D → register_gather_hit fires
 ## server-side, accumulates per-player extraction progress, and triggers a
 ## yield once the player's progress drains the per-extraction HP.
 ##
@@ -14,42 +14,22 @@ extends Area2D
 ## - **Snap-refill when fully depleted**: a depleted node waits longer
 ##   (depleted_recharge_seconds), then refills all charges at once. Prevents
 ##   the "1 charge appears → 3 players race to grab it" griefing pattern.
-## - **Job XP routing**: job_xp is a dict so a healing herb can grant both
-##   harvesting AND medicine; an ore vein just grants mining.
+## - **Job XP routing**: data.job_xp is a dict so a healing herb can grant
+##   both harvesting AND medicine; an ore vein just grants mining.
 ##
-## Setup: instance mineable_node.tscn under the Map, assign ore + job_xp,
-## position it. Identity is the node's Godot-unique name within the Map.
+## Setup: instance mineable_node.tscn under the Map, assign a
+## [MineableNodeResource] on [member data], position it. Identity is the
+## node's Godot-unique name within the Map.
 
-## The item granted per yield. Use a MaterialItem with vendor_value set.
-@export var ore: Item
-@export var yield_amount: int = 1
-## How many job-XP grants happen on each yield. Examples:
-##   { &"mining": 10 }                          # ore vein
-##   { &"harvesting": 5, &"medicine": 5 }       # herb that teaches both
-@export var job_xp: Dictionary[StringName, int] = {&"mining": 10}
-## Minimum mining level required (legacy: still gated on mining specifically
-## for ore veins). Set 0 for non-ore nodes.
-@export var required_level: int = 0
-## Tool the player must have equipped (matched against ToolItem.tool_type).
-@export var required_tool: StringName = &"pickaxe"
+## Defines what this node IS (ore type, yields, XP grants, timings).
+## Assign a `.tres` from `source/common/gameplay/maps/components/mineable_nodes/`.
+@export var data: MineableNodeResource
 
-@export_group("Extraction")
-## HP the per-player progress drains before one charge is consumed and the
-## player gets the yield. Each pickaxe swing chips this down by the swing's
-## extraction_damage (1 for wooden, more for higher tiers).
-@export var extraction_hp: int = 3
-## Total shared yields before depletion. Snap-refills as a group, not per-charge.
-@export var max_charges: int = 3
-## Continuous regen while at least 1 charge remains: +1 charge every X sec.
-@export var charge_regen_seconds: float = 12.0
-## Recharge time after the node hits 0 charges. Longer than continuous regen,
-## refills ALL charges at once so a returning group can mine in parallel
-## without racing for the first single charge to reappear.
-@export var depleted_recharge_seconds: float = 60.0
-## Per-player cooldown after a successful extraction (their progress can't
-## start accumulating again until this passes). Keeps a single player from
-## solo-vacuuming a full node.
-@export var player_cooldown_seconds: float = 5.0
+# --- Cached refs ------------------------------------------------------------
+@onready var _sprite: Sprite2D = $Sprite2D
+@onready var _bar: ProgressBar = $VisualState/ProgressBar
+@onready var _charge_label: Label = $VisualState/ChargeLabel
+@onready var _visual_state: Control = $VisualState
 
 # --- Server-only state ------------------------------------------------------
 var _charges: int
@@ -65,16 +45,20 @@ var _cooldown_until_ms_by_player: Dictionary[int, int]
 
 
 func _ready() -> void:
-	if multiplayer.is_server():
-		_charges = max_charges
-		_last_regen_ms = Time.get_ticks_msec()
-		# Server keeps the node for resolution / proximity; input is
-		# swing-driven now so we never need pickable input.
-		input_pickable = false
+	if data == null:
+		push_warning("MineableNode '%s' has no data resource assigned." % name)
 		return
-	# Client: no input pickable, no listeners. The pickaxe's swing hitbox
-	# drives extraction now. We keep this node around for visual / spatial
-	# placement only.
+
+	# Apply visuals on every peer (server included; harmless and keeps the
+	# editor's preview honest).
+	_apply_sprite()
+	_visual_state.visible = false
+
+	if multiplayer.is_server():
+		_charges = data.max_charges
+		_last_regen_ms = Time.get_ticks_msec()
+	# Input is swing-driven now — the pickaxe's hitbox drives extraction, so
+	# this Area2D never needs pickable input on either side.
 	input_pickable = false
 
 
@@ -82,41 +66,54 @@ func _ready() -> void:
 # Public server API
 # ---------------------------------------------------------------------------
 
-## Server-only. Called by PickSwingAbility's hitbox when it overlaps this
-## node. Drains the [param player]'s per-extraction HP by [param damage].
+## Server-only. Called by a tool's swing hitbox (PickArc) when it overlaps
+## this node. Drains the [param player]'s per-extraction HP by [param damage].
 ## On full drain, consumes a charge, awards items + job XP, returns a result
 ## the caller can push to the player's client.
 ##
-## Returns the same {"ok": bool, ...} shape the legacy click handler did,
-## so existing client toast / gather_succeeded code paths still work.
-func register_pickaxe_hit(player: Player, damage: int, instance: ServerInstance) -> Dictionary:
-	if ore == null:
+## Generic across gather types (ore veins, herb patches, etc.). The
+## mining-specific perk tree (level gate, bonus-ore chance, XP multiplier,
+## cooldown discount) only applies when this node's primary job is mining.
+##
+## Returns {"ok": bool, ...}. On success the dict also carries a
+## `node_path` so the client can route per-node visual state updates.
+func register_gather_hit(player: Player, damage: int, instance: ServerInstance) -> Dictionary:
+	if data == null or data.ore == null:
 		return {"ok": false}
 	if player == null or player.player_resource == null:
 		return {"ok": false}
 
 	var player_id: int = int(player.player_resource.player_id)
 	var now_ms: int = Time.get_ticks_msec()
+	var node_path: NodePath = instance.get_path_to(self)
 
 	# Per-player cooldown: silently soak the swing (no error toast; spamming
 	# during cooldown is normal and shouldn't pop notifications).
 	if int(_cooldown_until_ms_by_player.get(player_id, 0)) > now_ms:
 		return {"ok": false, "reason": "cooldown"}
 
-	# Level gate (still mining-specific for ore veins).
-	var mining_skill: Dictionary = player.player_resource.skills.get(MiningPerks.SKILL_NAME, {})
-	var mining_level: int = int(mining_skill.get("level", 1))
-	var mining_perks: Dictionary = mining_skill.get("perks", {})
-	if mining_level < required_level:
-		return {"ok": false, "reason": "level", "required_level": required_level}
+	# Mining-tree gates only apply to mining nodes. The check is "is mining
+	# in this node's job_xp dict" — that lets a future "ore that also grants
+	# smithing XP" still respect mining level/perks while keeping herbs
+	# free of mining bias.
+	var is_mining_node: bool = data.job_xp.has(&"mining")
+	var mining_perks_resource: JobPerks = JobRegistry.perks_for(&"mining")
+	var mining_level: int = 1
+	var mining_perks: Dictionary = {}
+	if is_mining_node:
+		var mining_skill: Dictionary = player.player_resource.skills.get(&"mining", {})
+		mining_level = int(mining_skill.get("level", 1))
+		mining_perks = mining_skill.get("perks", {})
+		if mining_level < data.required_level:
+			return {"ok": false, "reason": "level", "required_level": data.required_level}
 
 	# Lazy-regen first so a swing on a depleted node that just timed out
 	# refills before we ask for a charge.
 	_regen()
 
 	# Drain this player's extraction progress. First hit in a fresh round
-	# seeds at extraction_hp; subsequent hits chip down.
-	var progress: int = int(_progress_hp_by_player.get(player_id, extraction_hp))
+	# seeds at data.extraction_hp; subsequent hits chip down.
+	var progress: int = int(_progress_hp_by_player.get(player_id, data.extraction_hp))
 	progress -= maxi(1, damage)
 
 	if progress > 0:
@@ -125,55 +122,69 @@ func register_pickaxe_hit(player: Player, damage: int, instance: ServerInstance)
 			"ok": true,
 			"extracted": false,
 			"progress_hp": progress,
-			"extraction_hp": extraction_hp,
+			"extraction_hp": data.extraction_hp,
+			"charges_left": _charges,
+			"max_charges": data.max_charges,
+			"node_path": node_path,
 		}
 
 	# Full drain — try to take a charge. If depleted, no yield; reset their
 	# progress so they don't get a "free" first swing when the node refills.
 	if _charges <= 0:
 		_progress_hp_by_player.erase(player_id)
-		return {"ok": false, "extracted": false, "reason": "depleted"}
+		return {
+			"ok": false,
+			"extracted": false,
+			"reason": "depleted",
+			"charges_left": 0,
+			"max_charges": data.max_charges,
+			"node_path": node_path,
+		}
 
 	_consume_charge(now_ms)
 	_progress_hp_by_player.erase(player_id)
 
-	# Award. Mining bonus ore + cooldown discount still ride the mining perk
-	# tree; non-mining jobs get vanilla per-job XP for now.
-	var amount: int = yield_amount
-	if randf() < MiningPerks.effective_bonus_ore_chance(mining_level, mining_perks):
+	# Award. Bonus-yield + cooldown discount come from the mining perk tree
+	# and only apply to mining nodes (gated by is_mining_node above).
+	var amount: int = data.yield_amount
+	if is_mining_node and mining_perks_resource != null \
+			and randf() < mining_perks_resource.effective_bonus_yield_chance(mining_level, mining_perks):
 		amount += 1
 
-	var ore_id: int = int(ore.get_meta(&"id", 0))
+	var ore_id: int = int(data.ore.get_meta(&"id", 0))
 	Inventory.add_item(player.player_resource.inventory, ore_id, amount)
 
 	# Job XP — iterate the dict so a node can credit multiple jobs at once.
-	# Mining's Diligent perk multiplier still applies to mining specifically;
-	# other jobs get flat values until they have their own perk trees.
 	var grants: Array = []
-	for job_name: StringName in job_xp:
-		var raw: int = int(job_xp[job_name])
+	for job_name: StringName in data.job_xp:
+		var raw: int = int(data.job_xp[job_name])
 		var xp_gain: int = raw
-		if job_name == MiningPerks.SKILL_NAME:
-			xp_gain = roundi(raw * MiningPerks.xp_multiplier(mining_perks))
+		var jp: JobPerks = JobRegistry.perks_for(job_name)
+		if jp != null:
+			var job_skill: Dictionary = player.player_resource.skills.get(job_name, {})
+			var job_perks_dict: Dictionary = job_skill.get("perks", {})
+			xp_gain = roundi(raw * jp.xp_multiplier(job_perks_dict))
 		var prog: Dictionary = player.player_resource.add_skill_xp(job_name, xp_gain)
 		grants.append({"job": String(job_name), "xp": xp_gain, "progress": prog})
 
-	# Per-player cooldown after extraction. Shortened by mining baseline +
-	# the Efficient Mining perk (matches the old behaviour).
+	# Per-player cooldown after extraction. Shortened by mining perks on
+	# mining nodes; flat duration otherwise.
+	var cooldown_factor: float = 1.0
+	if is_mining_node and mining_perks_resource != null:
+		cooldown_factor = mining_perks_resource.effective_cooldown_factor(mining_level, mining_perks)
 	_cooldown_until_ms_by_player[player_id] = now_ms + int(
-		player_cooldown_seconds * 1000.0 * MiningPerks.effective_cooldown_factor(mining_level, mining_perks)
+		data.player_cooldown_seconds * 1000.0 * cooldown_factor
 	)
 
 	# Build the "first grant" mining-style payload for backwards-compatible
-	# toast / gather_succeeded handling on the client. Multi-job nodes still
-	# work, the toast UI just narrates the first one in detail.
+	# toast / gather_succeeded handling on the client.
 	var first: Dictionary = grants[0] if not grants.is_empty() else {}
 	var first_progress: Dictionary = first.get("progress", {})
 	var first_job: String = first.get("job", "")
 	var new_level: int = int(first_progress.get("level", 1))
 	var perk_points_gained: int = 0
-	if first_job == String(MiningPerks.SKILL_NAME):
-		perk_points_gained = MiningPerks.earned_points(new_level) - MiningPerks.earned_points(mining_level)
+	if is_mining_node and mining_perks_resource != null and first_job == "mining":
+		perk_points_gained = mining_perks_resource.earned_points(new_level) - mining_perks_resource.earned_points(mining_level)
 
 	return {
 		"ok": true,
@@ -186,8 +197,38 @@ func register_pickaxe_hit(player: Player, damage: int, instance: ServerInstance)
 		"leveled_up": first_progress.get("leveled_up", false),
 		"perk_points_gained": perk_points_gained,
 		"grants": grants,
+		"progress_hp": 0,
+		"extraction_hp": data.extraction_hp,
 		"charges_left": _charges,
+		"max_charges": data.max_charges,
+		"node_path": node_path,
 	}
+
+
+# ---------------------------------------------------------------------------
+# Client-side visual state — called by [member ClientState] when a gather
+# result comes in for THIS node. Only the player who swung will hit this
+# path; others see stale visuals until they swing it themselves. Acceptable
+# for prototype; broadcast can come later.
+# ---------------------------------------------------------------------------
+
+## Client-only. Updates the progress bar + charge label. Hides the whole
+## overlay when both progress is full and charges are full (the node looks
+## untouched at rest).
+func apply_visual_state(progress_hp: int, extraction_hp: int, charges: int, max_charges: int) -> void:
+	if _visual_state == null:
+		return
+	var hp_full: bool = progress_hp <= 0 or progress_hp >= extraction_hp
+	var charges_full: bool = charges >= max_charges
+	if hp_full and charges_full:
+		_visual_state.visible = false
+		return
+	_visual_state.visible = true
+	_bar.max_value = maxi(1, extraction_hp)
+	# A fresh swing seeds at extraction_hp and chips down — invert so the
+	# bar fills as the player gets closer to extracting.
+	_bar.value = maxi(0, extraction_hp - progress_hp)
+	_charge_label.text = "%d / %d" % [charges, max_charges]
 
 
 # ---------------------------------------------------------------------------
@@ -199,7 +240,7 @@ func _consume_charge(now_ms: int) -> void:
 	if _charges == 0:
 		# Mark the depletion time so the longer recharge window starts here.
 		_last_regen_ms = now_ms
-	elif _charges == max_charges - 1:
+	elif _charges == data.max_charges - 1:
 		# Just dropped from full → start the continuous regen clock.
 		_last_regen_ms = now_ms
 
@@ -207,34 +248,37 @@ func _consume_charge(now_ms: int) -> void:
 ## Continuous regen while > 0, snap-refill at == 0. Lazy: only updates on
 ## access so depleted veins don't burn CPU on a timer.
 func _regen() -> void:
-	if _charges >= max_charges:
+	if _charges >= data.max_charges:
 		return
 	var now_ms: int = Time.get_ticks_msec()
 	if _charges == 0:
 		# Depleted state: wait the longer interval, then snap to full.
-		if now_ms - _last_regen_ms >= int(depleted_recharge_seconds * 1000.0):
-			_charges = max_charges
+		if now_ms - _last_regen_ms >= int(data.depleted_recharge_seconds * 1000.0):
+			_charges = data.max_charges
 			_last_regen_ms = now_ms
 		return
 	# Continuous: tick +1 per interval elapsed (handles long-idle catch-up).
-	var regen_ms: int = int(charge_regen_seconds * 1000.0)
+	var regen_ms: int = int(data.charge_regen_seconds * 1000.0)
 	if regen_ms <= 0:
 		return
 	@warning_ignore("integer_division")
 	var gained: int = (now_ms - _last_regen_ms) / regen_ms
 	if gained > 0:
-		_charges = mini(max_charges, _charges + gained)
+		_charges = mini(data.max_charges, _charges + gained)
 		_last_regen_ms += gained * regen_ms
 
 
 # ---------------------------------------------------------------------------
-# Legacy compatibility — kept so anything still calling try_consume_charge
-# (e.g. an old debug command) doesn't crash. Prefer register_pickaxe_hit.
+# Sprite plumbing — read texture + region from data on _ready. Region is
+# applied only when set (zero-sized rect = full texture).
 # ---------------------------------------------------------------------------
 
-func try_consume_charge() -> bool:
-	_regen()
-	if _charges <= 0:
-		return false
-	_consume_charge(Time.get_ticks_msec())
-	return true
+func _apply_sprite() -> void:
+	if data == null or data.texture == null:
+		return
+	_sprite.texture = data.texture
+	if data.region_rect.size != Vector2.ZERO:
+		_sprite.region_enabled = true
+		_sprite.region_rect = data.region_rect
+	else:
+		_sprite.region_enabled = false

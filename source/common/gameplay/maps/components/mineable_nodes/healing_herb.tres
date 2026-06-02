@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MineableNodeResource" format=3 uid="uid://g8rxlnr0pfyk"]
+
+[ext_resource type="Script" uid="uid://w4s2ld2v5xdq" path="res://source/common/gameplay/maps/components/mineable_node_resource.gd" id="1_script"]
+[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="2_ore"]
+[ext_resource type="Texture2D" uid="uid://cg5jhosmuvhud" path="res://assets/sprites/environment/green_woods/props.png" id="3_twypx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nlin3"]
+atlas = ExtResource("3_twypx")
+region = Rect2(0, 32, 32, 32)
+
+[resource]
+script = ExtResource("1_script")
+ore = ExtResource("2_ore")
+job_xp = Dictionary[StringName, int]({
+&"harvesting": 10
+})
+required_tool = &"sickle"
+extraction_hp = 2
+charge_regen_seconds = 10.0
+depleted_recharge_seconds = 50.0
+player_cooldown_seconds = 4.0
+texture = SubResource("AtlasTexture_nlin3")

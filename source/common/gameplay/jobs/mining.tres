@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="JobPerks" format=3 uid="uid://b0qgfbimm0i23"]
+
+[ext_resource type="Script" uid="uid://de3kcsod5da5r" path="res://source/common/gameplay/jobs/job_perks.gd" id="1_jp"]
+
+[resource]
+script = ExtResource("1_jp")
+job_slug = &"mining"
+display_name = "Mining"
+category = &"gathering"
+cooldown_reduction_per_level = 0.02
+bonus_yield_per_level = 0.01
+perks = Array[Dictionary]([{
+"effect": "cooldown",
+"id": "efficient",
+"max_rank": 3,
+"name": "Efficient Mining",
+"per_rank": 0.05
+}, {
+"effect": "bonus_yield",
+"id": "prospector",
+"max_rank": 3,
+"name": "Prospector",
+"per_rank": 0.05
+}, {
+"effect": "xp",
+"id": "diligent",
+"max_rank": 3,
+"name": "Diligent",
+"per_rank": 0.1
+}])
+source_slugs = Array[String](["coal_ore", "copper_ore", "iron_ore"])
+describe_lines = Array[String](["Gather speed +{cooldown}%", "Bonus ore +{bonus_yield}%", "Mining XP +{xp}%"])

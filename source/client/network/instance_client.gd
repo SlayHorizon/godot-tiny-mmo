@@ -15,30 +15,43 @@ var synchronizer_manager: StateSynchronizerManagerClient
 var instance_map: Map
 
 
-static var suscribed: bool = false # Change this fast
-func _on_action_performed(payload: Dictionary) -> void:
+## Static dispatchers — called via the singleton subscriptions wired below.
+## They look up the LIVE InstanceClient via [member current] every time,
+## so we never hold a callable bound to a freed-instance `self`. That was
+## the root cause of "I shoot but see no arrow after switching maps": the
+## old per-instance subscription stayed in Client's subscriber list with
+## a stale `self`, so the local visual path silently no-op'd.
+static func _on_action_performed(payload: Dictionary) -> void:
+	if current == null:
+		return
 	if payload.is_empty() or not payload.has_all(["p", "d", "i"]):
 		return
-	var player: Player = InstanceClient.current.players_by_peer_id.get(payload["p"])
+	var player: Player = current.players_by_peer_id.get(payload["p"])
 	if not player:
 		return
-	
-	# To fix
 	if player.equipment_component.mounted_nodes.has(&"weapon"):
 		player.equipment_component.mounted_nodes[&"weapon"].perform_action(payload["i"], payload["d"])
 
 
+static func _on_combat_hit_static(payload: Dictionary) -> void:
+	if current == null:
+		return
+	current._on_combat_hit(payload)
+
+
+## Guard so we only subscribe ONCE per process — Client lives in the
+## autoload and outlives any InstanceClient, so re-subscribing on every
+## instance switch would either pile up callables or churn unsubscribe
+## races against in-flight RPCs.
+static var _subscribed: bool = false
+
+
 func _ready() -> void:
 	current = self
-	if not suscribed:
+	if not _subscribed:
 		Client.subscribe(&"action.perform", _on_action_performed)
-		suscribed = true
-
-	# Hit-feedback subscriber: server broadcasts combat.hit on every damage
-	# tick (arrows, melee, NPC attacks). We spawn a floating damage number
-	# into the world at the hit position. Future polish (flash, hit-pause,
-	# sound) hooks off the same event.
-	Client.subscribe(&"combat.hit", _on_combat_hit)
+		Client.subscribe(&"combat.hit", _on_combat_hit_static)
+		_subscribed = true
 
 	synchronizer_manager = StateSynchronizerManagerClient.new()
 	synchronizer_manager.name = "StateSynchronizerManager"

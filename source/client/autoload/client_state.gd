@@ -107,6 +107,13 @@ func _on_combat_reward(data: Dictionary) -> void:
 func _on_gather_result(data: Dictionary) -> void:
 	if data.is_empty():
 		return
+
+	# Route progress + charge state to the node's local visuals so the bar +
+	# label show only when the node is mid-extraction or partially depleted.
+	# Only fires for the player who swung — broadcast can come later if other
+	# players need to see live state on the same node.
+	_apply_node_visual_state(data)
+
 	if not data.get("ok", false):
 		match str(data.get("reason", "")):
 			"no_tool":
@@ -148,6 +155,28 @@ func _on_gather_result(data: Dictionary) -> void:
 		lines.append("Perk point available — spend in Character → Jobs.")
 
 	Toaster.toast_group(title, lines)
+
+
+## Look up the MineableNode the result is about and push the new progress +
+## charge counts into its [method MineableNode.apply_visual_state]. Silently
+## no-ops if the path is missing (older result shapes) or the node went away
+## (instance switch / despawn between the swing and the push).
+func _apply_node_visual_state(data: Dictionary) -> void:
+	var raw_path: Variant = data.get("node_path", null)
+	if raw_path == null:
+		return
+	if InstanceClient.current == null:
+		return
+	var path: NodePath = raw_path as NodePath
+	var node: Node = InstanceClient.current.get_node_or_null(path)
+	if node == null or not (node is MineableNode):
+		return
+	(node as MineableNode).apply_visual_state(
+		int(data.get("progress_hp", 0)),
+		int(data.get("extraction_hp", 1)),
+		int(data.get("charges_left", 0)),
+		int(data.get("max_charges", 1)),
+	)
 
 
 ## "bandit_captain" → "a Bandit Captain". Article ("a"/"an") chosen by

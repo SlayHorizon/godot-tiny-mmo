@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="JobPerks" format=3 uid="uid://b1apkc3g6nqnh"]
+
+[ext_resource type="Script" uid="uid://de3kcsod5da5r" path="res://source/common/gameplay/jobs/job_perks.gd" id="1_jp"]
+
+[resource]
+script = ExtResource("1_jp")
+job_slug = &"smithing"
+display_name = "Smithing"
+category = &"crafting"
+perks = Array[Dictionary]([{
+"effect": "xp",
+"id": "apprentice",
+"max_rank": 3,
+"name": "Apprentice",
+"per_rank": 0.1
+}, {
+"effect": "refund",
+"id": "frugal",
+"max_rank": 3,
+"name": "Frugal",
+"per_rank": 0.05
+}, {
+"effect": "extra_item",
+"id": "steady_hand",
+"max_rank": 3,
+"name": "Steady Hand",
+"per_rank": 0.04
+}])
+recipe_slugs = Array[String](["copper_bar", "iron_bar", "iron_chest", "iron_helmet"])
+describe_lines = Array[String](["Smithing XP +{xp}%", "Material refund: {refund}%", "Extra item: {extra_item}%"])

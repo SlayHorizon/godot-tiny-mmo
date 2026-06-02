@@ -6,6 +6,24 @@
 [ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="4_jobs"]
 [ext_resource type="Script" path="res://source/client/ui/menus/character/quest_log_panel.gd" id="5_questlog"]
 
+[sub_resource type="StyleBoxFlat" id="tab_selected_short"]
+content_margin_left = 18.0
+content_margin_top = 4.0
+content_margin_right = 18.0
+content_margin_bottom = 4.0
+bg_color = Color(0.18, 0.22, 0.36, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxFlat" id="tab_unselected_short"]
+content_margin_left = 18.0
+content_margin_top = 4.0
+content_margin_right = 18.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.12, 0.18, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
 [node name="Character" type="Control" unique_id=1468206702]
 layout_mode = 3
 anchors_preset = 15
@@ -52,21 +70,21 @@ theme_override_constants/separation = 10
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar" unique_id=953674170]
+[node name="Spacer" type="Control" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar" unique_id=953674170]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Character"
-vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar" unique_id=1191902580]
-custom_minimum_size = Vector2(88, 44)
+custom_minimum_size = Vector2(88, 36)
 layout_mode = 2
 text = "Close"
 
 [node name="TabContainer" type="TabContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer" unique_id=1836666072]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 13
+theme_override_styles/tab_selected = SubResource("tab_selected_short")
+theme_override_styles/tab_unselected = SubResource("tab_unselected_short")
 current_tab = 0
 
 [node name="Stats" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer" unique_id=1986628126]
@@ -200,11 +218,6 @@ layout_mode = 2
 theme_override_constants/separation = 8
 script = ExtResource("4_jobs")
 metadata/_tab_index = 1
-
-[node name="TitleLabel" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Jobs" unique_id=1120876173]
-layout_mode = 2
-text = "Professions"
-horizontal_alignment = 1
 
 [node name="SkillList" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Jobs" unique_id=588007850]
 unique_name_in_owner = true

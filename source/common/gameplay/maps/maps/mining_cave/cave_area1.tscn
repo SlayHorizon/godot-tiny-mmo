@@ -4,12 +4,10 @@
 [ext_resource type="TileSet" uid="uid://hrdxga40fogr" path="res://source/common/gameplay/maps/tilesets/mining_cave_tileset.tres" id="2_0tm4q"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="3_maslb"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="4_p0bms"]
-[ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="5_fm4d2"]
-[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="6_xjceb"]
-[ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="7_54nbf"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_b8qe3"]
-size = Vector2(36.136353, 27.279724)
+[ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="5_w13j6"]
+[ext_resource type="Resource" uid="uid://cutpirmfqwx8b" path="res://source/common/gameplay/maps/components/mineable_nodes/iron_vein.tres" id="6_fm4d2"]
+[ext_resource type="Resource" uid="uid://d08wf1j2mhlc5" path="res://source/common/gameplay/maps/components/mineable_nodes/copper_vein.tres" id="7_xjceb"]
+[ext_resource type="Resource" uid="uid://dtpviov364y0b" path="res://source/common/gameplay/maps/components/mineable_nodes/coal_vein.tres" id="8_54nbf"]
 
 [node name="Mining_cave" type="Node2D" unique_id=425990119]
 y_sort_enabled = true
@@ -38,68 +36,14 @@ scale = Vector2(4.61424, 1.26093)
 target_instance = ExtResource("4_p0bms")
 target_id = 6
 
-[node name="CopperOre" type="Area2D" parent="." unique_id=24855741]
-position = Vector2(532.3473, 101.965454)
-script = ExtResource("5_fm4d2")
-ore = ExtResource("6_xjceb")
-xp_reward = 400
+[node name="MineableNode" parent="." unique_id=1129547794 instance=ExtResource("5_w13j6")]
+position = Vector2(514, 98)
+data = ExtResource("6_fm4d2")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CopperOre" unique_id=1899191673]
-shape = SubResource("RectangleShape2D_b8qe3")
+[node name="MineableNode2" parent="." unique_id=190031455 instance=ExtResource("5_w13j6")]
+position = Vector2(672, 102)
+data = ExtResource("7_xjceb")
 
-[node name="Label" type="Label" parent="CopperOre" unique_id=2008987696]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Copper Ore"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="InteractableMarker" parent="CopperOre" unique_id=1116914763 instance=ExtResource("7_54nbf")]
-kind = 5
-
-[node name="CopperOre2" type="Area2D" parent="." unique_id=1787104660]
-position = Vector2(614.4459, 102.29907)
-script = ExtResource("5_fm4d2")
-ore = ExtResource("6_xjceb")
-xp_reward = 400
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CopperOre2" unique_id=1776567471]
-shape = SubResource("RectangleShape2D_b8qe3")
-
-[node name="Label" type="Label" parent="CopperOre2" unique_id=468009789]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Copper Ore"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="InteractableMarker" parent="CopperOre2" unique_id=352380873 instance=ExtResource("7_54nbf")]
-kind = 5
-
-[node name="CopperOre3" type="Area2D" parent="." unique_id=2048596897]
-position = Vector2(719.9446, 104.40204)
-script = ExtResource("5_fm4d2")
-ore = ExtResource("6_xjceb")
-xp_reward = 400
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CopperOre3" unique_id=1320111877]
-shape = SubResource("RectangleShape2D_b8qe3")
-
-[node name="Label" type="Label" parent="CopperOre3" unique_id=780586357]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Copper Ore"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="InteractableMarker" parent="CopperOre3" unique_id=1146564043 instance=ExtResource("7_54nbf")]
-kind = 5
+[node name="MineableNode3" parent="." unique_id=812100463 instance=ExtResource("5_w13j6")]
+position = Vector2(914, 207)
+data = ExtResource("8_54nbf")

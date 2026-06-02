@@ -36,14 +36,12 @@
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="31_ammjv"]
 [ext_resource type="Script" uid="uid://cg6wer5if2oyf" path="res://source/common/gameplay/crafting/crafting_station.gd" id="32_2aujs"]
 [ext_resource type="Resource" uid="uid://cmd78ic0if6sq" path="res://source/common/gameplay/shops/resources/miras_apothecary.tres" id="32_kj3yx"]
-[ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="32_sbo1b"]
 [ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="32_ygx5n"]
 [ext_resource type="Resource" uid="uid://cwojdmtkr5xwl" path="res://source/common/gameplay/crafting/resources/forge.tres" id="33_7nycf"]
 [ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="37_frbp0"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="38_dk1bj"]
 [ext_resource type="Resource" uid="uid://d3wr3s50a41mu" path="res://source/common/gameplay/crafting/resources/loom.tres" id="38_huaqk"]
 [ext_resource type="Resource" uid="uid://ca6hdigffs5j3" path="res://source/common/gameplay/quests/resources/slime_trouble.tres" id="38_md37v"]
-[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="39_frbp0"]
 [ext_resource type="Resource" uid="uid://8tf8hri302i" path="res://source/common/gameplay/crafting/resources/tanning_rack.tres" id="39_ko0jk"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="39_pb3ma"]
 [ext_resource type="Script" uid="uid://dp7km3l8yaot3" path="res://source/common/gameplay/quests/quest_board.gd" id="40_g3eyd"]
@@ -65,8 +63,9 @@
 [ext_resource type="Texture2D" uid="uid://bmi6y1awf4id8" path="res://assets/sprites/environment/structures/stations/furnace/furnace.png" id="57_eiayv"]
 [ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="58_ofiq8"]
 [ext_resource type="Resource" uid="uid://doy47vraqsb02" path="res://source/common/gameplay/quests/resources/copper_for_the_smith.tres" id="61_2lykb"]
-[ext_resource type="PackedScene" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="66_bfb0y"]
-[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="67_nbrv6"]
+[ext_resource type="Resource" uid="uid://d08wf1j2mhlc5" path="res://source/common/gameplay/maps/components/mineable_nodes/copper_vein.tres" id="65_npbu7"]
+[ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="66_bfb0y"]
+[ext_resource type="Resource" uid="uid://g8rxlnr0pfyk" path="res://source/common/gameplay/maps/components/mineable_nodes/healing_herb.tres" id="66_npbu7"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uw01f"]
 radius = 55.38041
@@ -88,9 +87,6 @@ size = Vector2(79.999985, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vkg56"]
 size = Vector2(224, 160.00002)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dk1bj"]
-size = Vector2(56.00003, 27.078186)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ygx5n"]
 size = Vector2(80, 20)
@@ -174,7 +170,7 @@ position = Vector2(923, 1047)
 position = Vector2(552, 588)
 
 [node name="Spawn" parent="." unique_id=850568300 instance=ExtResource("9_vhwke")]
-position = Vector2(803.03516, -230.26291)
+position = Vector2(1367.1528, 967.8827)
 
 [node name="Trade_entrance" parent="." unique_id=1049912251 instance=ExtResource("9_vhwke")]
 position = Vector2(1283, 902)
@@ -699,106 +695,6 @@ position = Vector2(394.24542, 1117.879)
 position = Vector2(5.7545776, 50.12097)
 shape = SubResource("RectangleShape2D_vkg56")
 
-[node name="HealingHerbNode" type="Area2D" parent="." unique_id=1144861485]
-position = Vector2(936.5235, 1404.9807)
-script = ExtResource("32_sbo1b")
-ore = ExtResource("39_frbp0")
-required_tool = &""
-metadata/_custom_type_script = "uid://cci5f3gf106ha"
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode" unique_id=495120305]
-position = Vector2(3.1712036, 3.5391235)
-shape = SubResource("RectangleShape2D_dk1bj")
-
-[node name="Label" type="Label" parent="HealingHerbNode" unique_id=2112392580]
-z_index = 1
-offset_left = -40.828796
-offset_top = -6.921814
-offset_right = 52.171204
-offset_bottom = 14.078186
-text = "Healing Herb"
-
-[node name="HealingHerbNode2" type="Area2D" parent="." unique_id=24907006]
-position = Vector2(826.0167, 1358.5687)
-script = ExtResource("32_sbo1b")
-ore = ExtResource("39_frbp0")
-required_tool = &""
-metadata/_custom_type_script = "uid://cci5f3gf106ha"
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode2" unique_id=834668811]
-position = Vector2(3.1712036, 3.5391235)
-shape = SubResource("RectangleShape2D_dk1bj")
-
-[node name="Label" type="Label" parent="HealingHerbNode2" unique_id=1184358537]
-z_index = 1
-offset_left = -40.828796
-offset_top = -6.921814
-offset_right = 52.171204
-offset_bottom = 14.078186
-text = "Healing Herb"
-
-[node name="HealingHerbNode3" type="Area2D" parent="." unique_id=1437561025]
-position = Vector2(1272, 1256)
-script = ExtResource("32_sbo1b")
-ore = ExtResource("39_frbp0")
-required_tool = &""
-metadata/_custom_type_script = "uid://cci5f3gf106ha"
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode3" unique_id=1804171507]
-position = Vector2(3.1712036, 3.5391235)
-shape = SubResource("RectangleShape2D_dk1bj")
-
-[node name="Label" type="Label" parent="HealingHerbNode3" unique_id=520595749]
-z_index = 1
-offset_left = -40.828796
-offset_top = -6.921814
-offset_right = 52.171204
-offset_bottom = 14.078186
-text = "Healing Herb"
-
-[node name="HealingHerbNode4" type="Area2D" parent="." unique_id=1025116045]
-position = Vector2(568.2728, 1503.8303)
-script = ExtResource("32_sbo1b")
-ore = ExtResource("39_frbp0")
-required_tool = &""
-metadata/_custom_type_script = "uid://cci5f3gf106ha"
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode4" unique_id=1268605147]
-position = Vector2(3.1712036, 3.5391235)
-shape = SubResource("RectangleShape2D_dk1bj")
-
-[node name="Label" type="Label" parent="HealingHerbNode4" unique_id=365354757]
-z_index = 1
-offset_left = -40.828796
-offset_top = -6.921814
-offset_right = 52.171204
-offset_bottom = 14.078186
-text = "Healing Herb"
-
-[node name="HealingHerbNode5" type="Area2D" parent="." unique_id=1918613170]
-position = Vector2(80, 1592)
-script = ExtResource("32_sbo1b")
-ore = ExtResource("39_frbp0")
-required_tool = &""
-metadata/_custom_type_script = "uid://cci5f3gf106ha"
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HealingHerbNode5" unique_id=1948088945]
-position = Vector2(3.1712036, 3.5391235)
-shape = SubResource("RectangleShape2D_dk1bj")
-
-[node name="Label" type="Label" parent="HealingHerbNode5" unique_id=629208901]
-z_index = 1
-offset_left = -40.828796
-offset_top = -6.921814
-offset_right = 52.171204
-offset_bottom = 14.078186
-text = "Healing Herb"
-
 [node name="QuestBoard" type="Area2D" parent="." unique_id=2124179738]
 position = Vector2(958.2897, 763.9043)
 script = ExtResource("40_g3eyd")
@@ -922,5 +818,28 @@ metadata/_edit_lock_ = true
 
 [node name="Coal" parent="." unique_id=1694106012 instance=ExtResource("66_bfb0y")]
 position = Vector2(1229.7979, -347.91693)
-ore = ExtResource("67_nbrv6")
-yield_amount = 2
+data = ExtResource("65_npbu7")
+
+[node name="MineableNode" parent="." unique_id=1129547794 instance=ExtResource("66_bfb0y")]
+position = Vector2(683.924, 1376.7302)
+data = ExtResource("66_npbu7")
+
+[node name="MineableNode6" parent="." unique_id=2043283220 instance=ExtResource("66_bfb0y")]
+position = Vector2(1260.8203, -147.88223)
+data = ExtResource("66_npbu7")
+
+[node name="MineableNode2" parent="." unique_id=1357688624 instance=ExtResource("66_bfb0y")]
+position = Vector2(573.8961, 1367.7057)
+data = ExtResource("66_npbu7")
+
+[node name="MineableNode3" parent="." unique_id=1274029359 instance=ExtResource("66_bfb0y")]
+position = Vector2(1191, 1288)
+data = ExtResource("66_npbu7")
+
+[node name="MineableNode4" parent="." unique_id=1949425543 instance=ExtResource("66_bfb0y")]
+position = Vector2(1145, 1166)
+data = ExtResource("66_npbu7")
+
+[node name="MineableNode5" parent="." unique_id=1801431587 instance=ExtResource("66_bfb0y")]
+position = Vector2(-463.20023, 1301.8997)
+data = ExtResource("66_npbu7")

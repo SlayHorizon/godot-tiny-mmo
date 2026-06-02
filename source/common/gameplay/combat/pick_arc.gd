@@ -61,7 +61,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if not (source is Player):
 		return
 	var node: MineableNode = area as MineableNode
-	var result: Dictionary = node.register_pickaxe_hit(source as Player, extraction_damage, instance)
+	var result: Dictionary = node.register_gather_hit(source as Player, extraction_damage, instance)
 	# Push the result to the swinging player so the client can toast / SFX
 	# without polling. Only fire when something happened (extraction or a
 	# named failure) — silent failures like cooldown stay silent.
