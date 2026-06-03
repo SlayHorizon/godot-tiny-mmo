@@ -19,6 +19,7 @@ kind = 5
 
 [node name="VisualState" type="Control" parent="." unique_id=1934028571]
 visible = false
+layout_mode = 3
 anchors_preset = 0
 offset_left = -32.0
 offset_top = -52.0
@@ -27,16 +28,15 @@ offset_bottom = -28.0
 mouse_filter = 2
 
 [node name="ProgressBar" type="ProgressBar" parent="VisualState" unique_id=1505719423]
-anchors_preset = 10
+layout_mode = 0
 anchor_right = 1.0
 offset_bottom = 8.0
 grow_horizontal = 2
 max_value = 3.0
-value = 0.0
 show_percentage = false
 
 [node name="ChargeLabel" type="Label" parent="VisualState" unique_id=1731283649]
-anchors_preset = 12
+layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
