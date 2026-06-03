@@ -285,6 +285,91 @@ expand_margin_top = 2.0
 expand_margin_right = 2.0
 expand_margin_bottom = 2.0
 
+[sub_resource type="StyleBoxFlat" id="HT_normal"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 7.0
+bg_color = Color(0.06, 0.078, 0.117, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxFlat" id="HT_hover"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 7.0
+bg_color = Color(0.13, 0.17, 0.26, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxFlat" id="HT_pressed"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 7.0
+bg_color = Color(0.1, 0.21, 0.34, 1)
+border_width_bottom = 3
+border_color = Color(0.96, 0.74, 0.16, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxEmpty" id="HT_focus"]
+
+[sub_resource type="StyleBoxFlat" id="ST_normal"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.06, 0.078, 0.117, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="ST_hover"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.13, 0.17, 0.26, 0.7)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="ST_pressed"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.21, 0.34, 1)
+border_width_bottom = 2
+border_color = Color(0.96, 0.74, 0.16, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="XP_bg"]
+bg_color = Color(0.03, 0.04, 0.06, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="XP_fill"]
+bg_color = Color(0.96, 0.74, 0.16, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [resource]
 default_font = ExtResource("1_pa11d")
 Button/colors/font_color = Color(0.936737, 0.959364, 0.98337, 1)
@@ -352,3 +437,27 @@ VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_24q0k")
 VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_24q0k")
 VScrollBar/styles/scroll = SubResource("StyleBoxFlat_2d7wv")
 VScrollBar/styles/scroll_focus = SubResource("StyleBoxFlat_01nms")
+HeaderTab/base_type = &"Button"
+HeaderTab/colors/font_color = Color(0.7, 0.76, 0.85, 1)
+HeaderTab/colors/font_hover_color = Color(0.93, 0.96, 0.98, 1)
+HeaderTab/colors/font_pressed_color = Color(1, 0.95, 0.8, 1)
+HeaderTab/font_sizes/font_size = 16
+HeaderTab/styles/focus = SubResource("HT_focus")
+HeaderTab/styles/hover = SubResource("HT_hover")
+HeaderTab/styles/hover_pressed = SubResource("HT_pressed")
+HeaderTab/styles/normal = SubResource("HT_normal")
+HeaderTab/styles/pressed = SubResource("HT_pressed")
+SectionTab/base_type = &"Button"
+SectionTab/colors/font_color = Color(0.7, 0.76, 0.85, 1)
+SectionTab/colors/font_hover_color = Color(0.93, 0.96, 0.98, 1)
+SectionTab/colors/font_pressed_color = Color(1, 0.95, 0.8, 1)
+SectionTab/font_sizes/font_size = 13
+SectionTab/styles/focus = SubResource("HT_focus")
+SectionTab/styles/hover = SubResource("ST_hover")
+SectionTab/styles/hover_pressed = SubResource("ST_pressed")
+SectionTab/styles/normal = SubResource("ST_normal")
+SectionTab/styles/pressed = SubResource("ST_pressed")
+XPBar/base_type = &"ProgressBar"
+XPBar/colors/font_color = Color(1, 0.95, 0.8, 1)
+XPBar/styles/background = SubResource("XP_bg")
+XPBar/styles/fill = SubResource("XP_fill")

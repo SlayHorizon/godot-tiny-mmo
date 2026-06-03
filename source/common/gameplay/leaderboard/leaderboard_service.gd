@@ -39,6 +39,7 @@ static func record_pvp_kill(killer: Character) -> void:
 ##   pvp_day, pvp_week, pvp_total
 ##   pve_day, pve_week, pve_total
 ##   level
+##   gold            (richest — total gold held in inventory)
 ##   glory_seasonal, glory_eternal
 ##
 ## Returns an Array of {id, name, score, [bonus_field]} entries, ranked.
@@ -96,8 +97,9 @@ static func _week_start_ms(now_ms: int) -> int:
 
 static func _top_n_player(world_server: Node, board: String, limit: int) -> Array:
 	var db = world_server.database.store.db
-	db.query("SELECT player_id, display_name, level, experience, stats_json FROM players;")
+	db.query("SELECT player_id, display_name, level, experience, stats_json, inventory_json FROM players;")
 	var rows: Array = db.query_result.duplicate()
+	var gold_id: int = Economy.gold_id()
 
 	# Index online players by player_id so live counters override the (stale)
 	# DB row. _increment doesn't flush to disk on every kill — saving each kill
@@ -156,6 +158,16 @@ static func _top_n_player(world_server: Node, board: String, limit: int) -> Arra
 				score = int(stats.get("arena_wins", 0))
 			"level":
 				score = level
+			"gold":
+				# Richest board — total gold held. Live players use their
+				# in-memory inventory; offline rows parse the saved JSON.
+				var inv: Dictionary
+				if live != null:
+					inv = live.inventory
+				else:
+					var inv_parsed: Variant = JSON.parse_string(str(row.get("inventory_json", "{}")))
+					inv = inv_parsed if inv_parsed is Dictionary else {}
+				score = Inventory.count(inv, gold_id)
 			_:
 				continue
 		if score <= 0 and board != "level":

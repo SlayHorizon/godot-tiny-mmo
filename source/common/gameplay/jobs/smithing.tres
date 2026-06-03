@@ -1,6 +1,11 @@
 [gd_resource type="Resource" script_class="JobPerks" format=3 uid="uid://b1apkc3g6nqnh"]
 
 [ext_resource type="Script" uid="uid://de3kcsod5da5r" path="res://source/common/gameplay/jobs/job_perks.gd" id="1_jp"]
+[ext_resource type="Script" uid="uid://bkat7yo0vssli" path="res://source/common/gameplay/items/item.gd" id="1_qh35w"]
+[ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="2_ixckp"]
+[ext_resource type="Resource" uid="uid://bkwfaojguoklp" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="3_soni8"]
+[ext_resource type="Resource" uid="uid://cb6x01k6mbv2x" path="res://source/common/gameplay/items/gears/iron_chest.tres" id="4_qjnhd"]
+[ext_resource type="Resource" uid="uid://bqd4ajt5kmlcr" path="res://source/common/gameplay/items/gears/iron_helmet.tres" id="5_4tjbh"]
 
 [resource]
 script = ExtResource("1_jp")
@@ -26,5 +31,6 @@ perks = Array[Dictionary]([{
 "name": "Steady Hand",
 "per_rank": 0.04
 }])
-recipe_slugs = Array[String](["copper_bar", "iron_bar", "iron_chest", "iron_helmet"])
+recipe_items = Array[ExtResource("1_qh35w")]([ExtResource("2_ixckp"), ExtResource("3_soni8"), ExtResource("4_qjnhd"), ExtResource("5_4tjbh")])
+recipe_levels = Array[int]([0, 0, 0, 0])
 describe_lines = Array[String](["Smithing XP +{xp}%", "Material refund: {refund}%", "Extra item: {extra_item}%"])

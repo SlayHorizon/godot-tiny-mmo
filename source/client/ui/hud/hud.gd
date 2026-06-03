@@ -8,7 +8,6 @@ var notifications: Array[Dictionary]
 var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
-@onready var close_button: Button = $MenuOverlay/VBoxContainer/CloseButton
 @onready var notification_button: Button = $MenuButtons/HBoxContainer/NotificationButton
 @onready var twin_sticks: Control = $TwinSticks
 @onready var experience_bar: ProgressBar = $Resources/ExperienceBar
@@ -23,11 +22,6 @@ func _ready() -> void:
 	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
 	ClientState.open_menu_requested.connect(_on_menu_requested)
-	for button: Button in $MenuOverlay/VBoxContainer.get_children():
-		if button.text.containsn("CLOSE"):
-			button.pressed.connect(_on_overlay_menu_close_button_pressed)
-		else:
-			button.pressed.connect(display_menu.bind(button.text.strip_edges().to_lower()))
 
 	ClientState.input_changed.connect(_on_input_type_changed)
 
@@ -74,10 +68,6 @@ func _on_input_type_changed(input_type: InputComponent.InputType) -> void:
 	twin_sticks.enabled = input_type == InputComponent.InputType.TOUCH
 
 
-func _on_overlay_menu_close_button_pressed() -> void:
-	menu_overlay.hide()
-
-
 func _on_menu_requested(menu_name: StringName, arg: Variant) -> void:
 	display_menu(menu_name, arg)
 
@@ -109,10 +99,7 @@ func display_menu(menu_name: StringName, arg: Variant = null) -> void:
 
 
 func _on_overlay_menu_button_pressed() -> void:
-	var tween: Tween = create_tween()
-	tween.tween_property(menu_overlay, ^"position:x", menu_overlay.position.x + menu_overlay.size.x, 0.0)
-	tween.tween_callback(menu_overlay.show)
-	tween.tween_property(menu_overlay, ^"position:x", 815.0, 0.3)
+	menu_overlay.open()
 
 
 func _on_notification_button_pressed() -> void:
@@ -126,10 +113,6 @@ func _on_notification_button_pressed() -> void:
 	if notifications.is_empty():
 		notification_button.visible = false
 		notification_button.disabled = true
-
-
-func _on_profile_button_pressed() -> void:
-	open_player_profile(0)
 
 
 func _on_notification_received(payload: Dictionary) -> void:

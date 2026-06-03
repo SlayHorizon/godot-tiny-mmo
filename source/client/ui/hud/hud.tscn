@@ -261,73 +261,13 @@ metadata/_edit_lock_ = true
 [node name="MenuOverlay" type="Control" parent="." unique_id=1850870091]
 visible = false
 layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -145.0
-grow_horizontal = 0
+grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_cx7qp")
 metadata/_edit_lock_ = true
-
-[node name="ColorRect" type="ColorRect" parent="MenuOverlay" unique_id=1514648248]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.173, 0.173, 0.173, 0.65)
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MenuOverlay" unique_id=1062125711]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
-
-[node name="GuildButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=1685239329]
-layout_mode = 2
-text = "GUILD"
-
-[node name="FriendsButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=1063569220]
-layout_mode = 2
-text = "FRIENDS"
-
-[node name="InventoryButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=422464795]
-layout_mode = 2
-text = "INVENTORY"
-
-[node name="InventoryButton3" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=1879051142]
-layout_mode = 2
-text = "CHARACTER"
-
-[node name="SettingsButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=494314626]
-layout_mode = 2
-text = "SETTINGS"
-
-[node name="LeaderboardButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=1234567890]
-layout_mode = 2
-text = "LEADERBOARD"
-
-[node name="CloseButton" type="Button" parent="MenuOverlay/VBoxContainer" unique_id=1398983088]
-layout_mode = 2
-text = "CLOSE"
-
-[node name="ProfileButton" type="Button" parent="MenuOverlay" unique_id=1666775440]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -133.0
-offset_top = 20.0
-offset_right = -13.0
-offset_bottom = 49.0
-grow_horizontal = 0
-text = "PROFILE"
 
 [node name="NotificationPopup" type="Control" parent="." unique_id=1966233478]
 visible = false
@@ -406,12 +346,16 @@ vertical_alignment = 1
 
 [node name="QuestTracker" type="PanelContainer" parent="." unique_id=1289632756]
 visible = false
-custom_minimum_size = Vector2(180, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 1
-offset_left = 603.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -230.0
 offset_top = 10.0
-offset_right = 783.0
+offset_right = -10.0
 offset_bottom = 38.0
+grow_horizontal = 0
 mouse_filter = 2
 script = ExtResource("8_qtrack")
 
@@ -427,6 +371,5 @@ script = ExtResource("9_trade")
 
 [connection signal="pressed" from="MenuButtons/HBoxContainer/NotificationButton" to="." method="_on_notification_button_pressed"]
 [connection signal="pressed" from="MenuButtons/HBoxContainer/MenuButton" to="." method="_on_overlay_menu_button_pressed"]
-[connection signal="pressed" from="MenuOverlay/ProfileButton" to="." method="_on_profile_button_pressed"]
 [connection signal="pressed" from="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer/CancelButton" to="NotificationPopup" method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer/ConfirmButton" to="NotificationPopup" method="_on_confirm_button_pressed"]

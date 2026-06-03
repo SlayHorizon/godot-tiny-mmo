@@ -16,6 +16,10 @@ enum Trades {
 }
 
 @export var shop_name: String
+## Default currency the whole shop trades in (e.g. event tokens for a fair
+## stall). Leave empty for gold. A per-entry [member ShopEntry.currency_item]
+## overrides this for that one item.
+@export var currency_item: Item
 @export var entries: Array[ShopEntry]
 @export var trades: Trades = Trades.BOTH
 ## Specialty recurring exchanges this vendor offers (e.g. Mira always accepts
@@ -48,10 +52,26 @@ func has_trades() -> bool:
 
 
 ## { "price": int, "currency_id": int } for one item, or {} if not sold here.
-## currency_id is the entry's currency item (or gold by default).
+## currency_id resolves entry → shop → gold (first non-null wins).
 func entry_for(item_id: int) -> Dictionary:
 	for entry: ShopEntry in entries:
 		if entry and entry.item and int(entry.item.get_meta(&"id", 0)) == item_id:
-			var currency_id: int = int(entry.currency_item.get_meta(&"id", 0)) if entry.currency_item else Economy.gold_id()
-			return {"price": entry.price, "currency_id": currency_id}
+			return {"price": entry.price, "currency_id": _resolve_currency_id(entry.currency_item)}
 	return {}
+
+
+## The currency id to charge for [param entry_currency]: the per-entry currency
+## if set, else the shop's default currency, else gold.
+func _resolve_currency_id(entry_currency: Item) -> int:
+	if entry_currency != null:
+		return int(entry_currency.get_meta(&"id", 0))
+	if currency_item != null:
+		return int(currency_item.get_meta(&"id", 0))
+	return Economy.gold_id()
+
+
+## The shop's display currency id (default for the UI's balance + price chips).
+func display_currency_id() -> int:
+	if currency_item != null:
+		return int(currency_item.get_meta(&"id", 0))
+	return Economy.gold_id()

@@ -52,16 +52,21 @@ extends Resource
 @export var perks: Array[Dictionary] = []
 
 @export_group("Content preview (Jobs UI)")
-## Things players can gather to feed THIS job's XP (item slugs — e.g.
-## "copper_ore", "iron_ore"). Shown in the "Sources" tab of the Jobs
-## panel. Hand-authored for v1; future TinyMMO plugin step can scan all
-## MineableNodeResource files, look at their job_xp dicts, and bake this
-## list automatically — same pattern as items_index.tres.
-@export var source_slugs: Array[String] = []
-## Recipes this job can craft (item-slug of the OUTPUT — e.g.
-## "iron_bar", "iron_helmet"). Shown in the "Recipes" tab. Same
-## hand-author-for-now → bake-later plan.
-@export var recipe_slugs: Array[String] = []
+## Items players can gather to feed THIS job's XP. Shown in the "Sources"
+## tab — the client renders icon + item_name + (Lv X from [member
+## source_levels]). Bake tool fills this from MineableNodeResource scans
+## (`source/common/gameplay/jobs/bake_source_slugs.gd`).
+@export var source_items: Array[Item] = []
+## Parallel to [member source_items] — the required job-level the source
+## was gated behind on its MineableNodeResource. Length must match
+## source_items; 0 = no requirement.
+@export var source_levels: Array[int] = []
+## Items this job can craft (the recipe outputs). Shown in the "Recipes"
+## tab the same way. Bake tool fills from CraftingStationResource scans.
+@export var recipe_items: Array[Item] = []
+## Parallel to [member recipe_items] — the required job-level on each
+## recipe. 0 = no requirement.
+@export var recipe_levels: Array[int] = []
 
 @export_group("UI")
 ## describe() formats these against a context dict built from the current

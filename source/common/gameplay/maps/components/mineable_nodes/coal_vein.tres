@@ -15,7 +15,6 @@ yield_amount = 2
 job_xp = Dictionary[StringName, int]({
 &"mining": 14
 })
-required_level = 3
 charge_regen_seconds = 15.0
 depleted_recharge_seconds = 75.0
 texture = SubResource("AtlasTexture_0dw3s")

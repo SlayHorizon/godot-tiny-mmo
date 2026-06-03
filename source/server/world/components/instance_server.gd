@@ -49,10 +49,22 @@ func _ready() -> void:
 func load_map(map_path: String) -> void:
 	if instance_map:
 		instance_map.queue_free()
-	if ResourceLoader.exists(map_path):
-		var map_scene: PackedScene = load(map_path)
-		instance_map = map_scene.instantiate()
-		add_child.call_deferred(instance_map)
+	if not ResourceLoader.exists(map_path):
+		push_error("ServerInstance.load_map: map path does not exist: %s" % map_path)
+		return
+	# Two-step load + instantiate so a busted dependency (e.g. a referenced
+	# resource that fails to parse) surfaces as a clean push_error here
+	# rather than a NPE on the next line. Matches the "sometimes crashes
+	# on world spin-up" repro pattern from the dashboard.
+	var map_scene: PackedScene = load(map_path)
+	if map_scene == null:
+		push_error("ServerInstance.load_map: load() returned null for %s" % map_path)
+		return
+	instance_map = map_scene.instantiate()
+	if instance_map == null:
+		push_error("ServerInstance.load_map: instantiate() returned null for %s" % map_path)
+		return
+	add_child.call_deferred(instance_map)
 
 	ready.connect(func():
 		if instance_map.replicated_props_container:

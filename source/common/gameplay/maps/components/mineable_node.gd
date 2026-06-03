@@ -43,6 +43,17 @@ var _progress_hp_by_player: Dictionary[int, int]
 ## player_id → ticks_msec at which their cooldown ends.
 var _cooldown_until_ms_by_player: Dictionary[int, int]
 
+# --- Client-only charge prediction -----------------------------------------
+# The server reports the authoritative charge count on each swing result, but
+# between swings nobody pushes regen updates, so the label would read a stale
+# "0/3" until the next hit. Since the regen timings live on `data` (shared by
+# client + server), the client can predict the tick-up locally and keep the
+# label live. -1 = no state received yet.
+var _disp_charges: int = -1
+var _disp_max: int
+## Predicted ticks_msec of the next charge gain (or full snap-refill at 0).
+var _next_regen_ms: int
+
 
 func _ready() -> void:
 	if data == null:
@@ -60,6 +71,8 @@ func _ready() -> void:
 	# Input is swing-driven now — the pickaxe's hitbox drives extraction, so
 	# this Area2D never needs pickable input on either side.
 	input_pickable = false
+	# Charge prediction only runs once a client receives state and arms it.
+	set_process(false)
 
 
 # ---------------------------------------------------------------------------
@@ -111,6 +124,22 @@ func register_gather_hit(player: Player, damage: int, instance: ServerInstance) 
 	# refills before we ask for a charge.
 	_regen()
 
+	# Depleted nodes reject the swing outright — we drain nothing so the
+	# client never shows a teasing progress bar on a vein that can't yield.
+	# The 0/N charge label + client-side regen prediction tell the player to
+	# come back later. (Checked here, before draining, so a fresh swinger
+	# doesn't get the first few "free" progress ticks on an empty node.)
+	if _charges <= 0:
+		_progress_hp_by_player.erase(player_id)
+		return {
+			"ok": false,
+			"extracted": false,
+			"reason": "depleted",
+			"charges_left": 0,
+			"max_charges": data.max_charges,
+			"node_path": node_path,
+		}
+
 	# Drain this player's extraction progress. First hit in a fresh round
 	# seeds at data.extraction_hp; subsequent hits chip down.
 	var progress: int = int(_progress_hp_by_player.get(player_id, data.extraction_hp))
@@ -128,19 +157,7 @@ func register_gather_hit(player: Player, damage: int, instance: ServerInstance) 
 			"node_path": node_path,
 		}
 
-	# Full drain — try to take a charge. If depleted, no yield; reset their
-	# progress so they don't get a "free" first swing when the node refills.
-	if _charges <= 0:
-		_progress_hp_by_player.erase(player_id)
-		return {
-			"ok": false,
-			"extracted": false,
-			"reason": "depleted",
-			"charges_left": 0,
-			"max_charges": data.max_charges,
-			"node_path": node_path,
-		}
-
+	# Full drain — consume a charge (guaranteed > 0 by the early reject above).
 	_consume_charge(now_ms)
 	_progress_hp_by_player.erase(player_id)
 
@@ -190,6 +207,7 @@ func register_gather_hit(player: Player, damage: int, instance: ServerInstance) 
 		"ok": true,
 		"extracted": true,
 		"ore_id": ore_id,
+		"ore_name": String(data.ore.item_name),
 		"amount": amount,
 		"xp": int(first.get("xp", 0)),
 		"job": first_job,
@@ -212,23 +230,70 @@ func register_gather_hit(player: Player, damage: int, instance: ServerInstance) 
 # for prototype; broadcast can come later.
 # ---------------------------------------------------------------------------
 
-## Client-only. Updates the progress bar + charge label. Hides the whole
-## overlay when both progress is full and charges are full (the node looks
-## untouched at rest).
+## Client-only. Updates the progress bar (extraction progress) and hands the
+## charge count to the predictor, which owns the charge label and ticks it
+## back up over time. Two independent visibilities so the bar isn't lingering
+## "full" after a yield while the charge label keeps reading the partial state:
+##   - Bar:    only while mid-extraction (0 < progress < extraction_hp).
+##             Drains like mob HP (extraction_hp → 0), then hides on yield.
+##   - Charge: only when the vein is partially depleted (charges < max), and
+##             predicted forward by [method _process] between swings.
 func apply_visual_state(progress_hp: int, extraction_hp: int, charges: int, max_charges: int) -> void:
 	if _visual_state == null:
 		return
-	var hp_full: bool = progress_hp <= 0 or progress_hp >= extraction_hp
-	var charges_full: bool = charges >= max_charges
-	if hp_full and charges_full:
-		_visual_state.visible = false
+	var mid_extraction: bool = progress_hp > 0 and progress_hp < extraction_hp
+	_bar.visible = mid_extraction
+	if mid_extraction:
+		_bar.max_value = maxi(1, extraction_hp)
+		_bar.value = progress_hp
+	_set_displayed_charges(charges, max_charges)
+
+
+# ---------------------------------------------------------------------------
+# Client-only charge prediction
+# ---------------------------------------------------------------------------
+
+func _set_displayed_charges(charges: int, max_charges: int) -> void:
+	_disp_charges = charges
+	_disp_max = max_charges
+	_arm_regen_prediction()
+	_refresh_charge_label()
+
+
+## Schedules the next predicted regen tick from the shared `data` timings,
+## mirroring the server's lazy [method _regen] (continuous +1 while > 0, a
+## single snap-refill to full from 0). Disables prediction when already full.
+func _arm_regen_prediction() -> void:
+	if data == null or _disp_charges < 0 or _disp_charges >= _disp_max:
+		set_process(false)
 		return
-	_visual_state.visible = true
-	_bar.max_value = maxi(1, extraction_hp)
-	# A fresh swing seeds at extraction_hp and chips down — invert so the
-	# bar fills as the player gets closer to extracting.
-	_bar.value = maxi(0, extraction_hp - progress_hp)
-	_charge_label.text = "%d / %d" % [charges, max_charges]
+	var interval_s: float = data.depleted_recharge_seconds if _disp_charges <= 0 else data.charge_regen_seconds
+	_next_regen_ms = Time.get_ticks_msec() + int(interval_s * 1000.0)
+	set_process(true)
+
+
+func _process(_delta: float) -> void:
+	if _disp_charges < 0 or _disp_charges >= _disp_max:
+		set_process(false)
+		return
+	if Time.get_ticks_msec() < _next_regen_ms:
+		return
+	if _disp_charges <= 0:
+		_disp_charges = _disp_max  # depleted nodes snap-refill all at once
+	else:
+		_disp_charges += 1
+	_arm_regen_prediction()
+	_refresh_charge_label()
+
+
+func _refresh_charge_label() -> void:
+	if _visual_state == null:
+		return
+	var partial: bool = _disp_charges >= 0 and _disp_charges < _disp_max
+	_charge_label.visible = partial
+	_visual_state.visible = _bar.visible or partial
+	if partial:
+		_charge_label.text = "%d / %d" % [_disp_charges, _disp_max]
 
 
 # ---------------------------------------------------------------------------
@@ -276,9 +341,6 @@ func _regen() -> void:
 func _apply_sprite() -> void:
 	if data == null or data.texture == null:
 		return
+	# Works whether `data.texture` is a plain Texture2D or an AtlasTexture —
+	# AtlasTexture is itself a Texture2D and carries its own region.
 	_sprite.texture = data.texture
-	if data.region_rect.size != Vector2.ZERO:
-		_sprite.region_enabled = true
-		_sprite.region_rect = data.region_rect
-	else:
-		_sprite.region_enabled = false

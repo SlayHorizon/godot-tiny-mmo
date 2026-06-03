@@ -170,7 +170,7 @@ position = Vector2(923, 1047)
 position = Vector2(552, 588)
 
 [node name="Spawn" parent="." unique_id=850568300 instance=ExtResource("9_vhwke")]
-position = Vector2(1367.1528, 967.8827)
+position = Vector2(693.0045, -278.22345)
 
 [node name="Trade_entrance" parent="." unique_id=1049912251 instance=ExtResource("9_vhwke")]
 position = Vector2(1283, 902)

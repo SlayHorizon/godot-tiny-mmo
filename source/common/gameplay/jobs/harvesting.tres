@@ -1,6 +1,8 @@
 [gd_resource type="Resource" script_class="JobPerks" format=3 uid="uid://dveu5j2ifx3q8"]
 
+[ext_resource type="Script" uid="uid://bkat7yo0vssli" path="res://source/common/gameplay/items/item.gd" id="1_8yfjc"]
 [ext_resource type="Script" uid="uid://de3kcsod5da5r" path="res://source/common/gameplay/jobs/job_perks.gd" id="1_jp"]
+[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="3_00t3y"]
 
 [resource]
 script = ExtResource("1_jp")
@@ -29,5 +31,6 @@ perks = Array[Dictionary]([{
 "name": "Patient",
 "per_rank": 0.1
 }])
-source_slugs = Array[String](["healing_herb"])
+source_items = Array[ExtResource("1_8yfjc")]([ExtResource("3_00t3y")])
+source_levels = Array[int]([0])
 describe_lines = Array[String](["Gather speed +{cooldown}%", "Bonus herb +{bonus_yield}%", "Harvesting XP +{xp}%"])

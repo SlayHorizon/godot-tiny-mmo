@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cl7m05muyqe6k"]
+[gd_scene load_steps=9 format=3 uid="uid://cl7m05muyqe6k"]
 
 [ext_resource type="Script" uid="uid://dclhekd2fkh0e" path="res://source/client/ui/menus/inventory/inventory_menu.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://cx6ltmvpbwdng" path="res://source/client/ui/menus/inventory/gear_slot.gd" id="2_gear"]
@@ -9,7 +9,7 @@
 [ext_resource type="Resource" uid="uid://dn7q51odqrqp5" path="res://source/common/gameplay/items/item_slot/slots/boot.tres" id="7_boot"]
 [ext_resource type="Resource" uid="uid://dp67jicqi8ovy" path="res://source/common/gameplay/items/item_slot/slots/relic.tres" id="8_relic"]
 
-[node name="Inventory" type="Control" unique_id=418274422]
+[node name="Inventory" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,92 +18,37 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_main")
 
-[node name="Background" type="ColorRect" parent="." unique_id=59951218]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.07, 0.08, 0.12, 0.92)
-
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=483920670]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 10
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=489336631]
+[node name="MainBody" type="VBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
-[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1466942098]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar" unique_id=2064756333]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Inventory"
-vertical_alignment = 1
-
-[node name="Wallet" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar" unique_id=745289449]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="WalletIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/TopBar/Wallet" unique_id=848068540]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-size_flags_vertical = 4
-expand_mode = 1
-stretch_mode = 5
-
-[node name="WalletAmount" type="Label" parent="MarginContainer/VBoxContainer/TopBar/Wallet" unique_id=1731120460]
-unique_name_in_owner = true
-layout_mode = 2
-text = "0"
-vertical_alignment = 1
-
-[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1206948094]
-custom_minimum_size = Vector2(88, 44)
-layout_mode = 2
-text = "Close"
-
-[node name="Body" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=804180248]
+[node name="Body" type="HBoxContainer" parent="MainBody"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="CharacterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/Body" unique_id=1581598917]
+[node name="CharacterPanel" type="PanelContainer" parent="MainBody/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/Body/CharacterPanel" unique_id=1440138938]
+[node name="MarginContainer" type="MarginContainer" parent="MainBody/Body/CharacterPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer" unique_id=582763687]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainBody/Body/CharacterPanel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="EquipmentLabel" type="Label" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer" unique_id=771897054]
+[node name="EquipmentLabel" type="Label" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
 text = "Equipment"
 horizontal_alignment = 1
 
-[node name="EquipmentSlots" type="GridContainer" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer" unique_id=8168249]
+[node name="EquipmentSlots" type="GridContainer" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -111,7 +56,7 @@ theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 columns = 3
 
-[node name="HelmetSlot" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots" unique_id=94958889]
+[node name="HelmetSlot" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots"]
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 icon_alignment = 1
@@ -119,7 +64,7 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("3_helmet")
 
-[node name="WeaponSlot" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots" unique_id=1962870391]
+[node name="WeaponSlot" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots"]
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 icon_alignment = 1
@@ -127,7 +72,7 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("4_weapon")
 
-[node name="TorsoSlot" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots" unique_id=1529568664]
+[node name="TorsoSlot" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots"]
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 icon_alignment = 1
@@ -135,7 +80,7 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("5_torso")
 
-[node name="RingSlot" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots" unique_id=744639618]
+[node name="RingSlot" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots"]
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 icon_alignment = 1
@@ -143,7 +88,7 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("6_ring")
 
-[node name="BootSlot" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots" unique_id=216420063]
+[node name="BootSlot" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/EquipmentSlots"]
 custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 icon_alignment = 1
@@ -151,12 +96,13 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("7_boot")
 
-[node name="RelicsLabel" type="Label" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer" unique_id=423734082]
+[node name="RelicsLabel" type="Label" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
 text = "Relics"
 horizontal_alignment = 1
 
-[node name="RelicSlots" type="GridContainer" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer" unique_id=1781124240]
+[node name="RelicSlots" type="GridContainer" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -164,7 +110,7 @@ theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 columns = 4
 
-[node name="RelicSlot1" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots" unique_id=21849758]
+[node name="RelicSlot1" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots"]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 icon_alignment = 1
@@ -172,7 +118,7 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("8_relic")
 
-[node name="RelicSlot2" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots" unique_id=238149058]
+[node name="RelicSlot2" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots"]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 icon_alignment = 1
@@ -180,7 +126,7 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("8_relic")
 
-[node name="RelicSlot3" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots" unique_id=1433719277]
+[node name="RelicSlot3" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots"]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 icon_alignment = 1
@@ -188,7 +134,7 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("8_relic")
 
-[node name="RelicSlot4" type="Button" parent="MarginContainer/VBoxContainer/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots" unique_id=152826649]
+[node name="RelicSlot4" type="Button" parent="MainBody/Body/CharacterPanel/MarginContainer/VBoxContainer/RelicSlots"]
 custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 icon_alignment = 1
@@ -196,61 +142,70 @@ expand_icon = true
 script = ExtResource("2_gear")
 gear_slot = ExtResource("8_relic")
 
-[node name="BagPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/Body" unique_id=1032781526]
+[node name="BagPanel" type="PanelContainer" parent="MainBody/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.4
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/Body/BagPanel" unique_id=1786853483]
+[node name="MarginContainer" type="MarginContainer" parent="MainBody/Body/BagPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer" unique_id=1711000508]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainBody/Body/BagPanel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="CategoryTabs" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer/VBoxContainer" unique_id=2008364874]
+[node name="CategoryTabs" type="HBoxContainer" parent="MainBody/Body/BagPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="AllTab" type="Button" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs" unique_id=79825289]
+[node name="AllTab" type="Button" parent="MainBody/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
-disabled = true
+theme_type_variation = &"SectionTab"
+toggle_mode = true
+button_pressed = true
 text = "All"
 
-[node name="GearTab" type="Button" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs" unique_id=72950357]
+[node name="GearTab" type="Button" parent="MainBody/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"SectionTab"
+toggle_mode = true
 text = "Gear"
 
-[node name="ConsumablesTab" type="Button" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs" unique_id=456955201]
+[node name="ConsumablesTab" type="Button" parent="MainBody/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"SectionTab"
+toggle_mode = true
 text = "Consumables"
 
-[node name="MaterialsTab" type="Button" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs" unique_id=790906634]
+[node name="MaterialsTab" type="Button" parent="MainBody/Body/BagPanel/MarginContainer/VBoxContainer/CategoryTabs"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"SectionTab"
+toggle_mode = true
 text = "Materials"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer/VBoxContainer" unique_id=1921860676]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainBody/Body/BagPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="InventoryGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/Body/BagPanel/MarginContainer/VBoxContainer/ScrollContainer" unique_id=822471662]
+[node name="InventoryGrid" type="GridContainer" parent="MainBody/Body/BagPanel/MarginContainer/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -258,22 +213,22 @@ theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 columns = 6
 
-[node name="DetailPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=119655061]
+[node name="DetailPanel" type="PanelContainer" parent="MainBody"]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/DetailPanel" unique_id=1338103532]
+[node name="MarginContainer" type="MarginContainer" parent="MainBody/DetailPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/DetailPanel/MarginContainer" unique_id=410994834]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainBody/DetailPanel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="DetailIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/DetailPanel/MarginContainer/HBoxContainer" unique_id=1428306572]
+[node name="DetailIcon" type="TextureRect" parent="MainBody/DetailPanel/MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
@@ -281,23 +236,24 @@ size_flags_vertical = 4
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Info" type="VBoxContainer" parent="MarginContainer/VBoxContainer/DetailPanel/MarginContainer/HBoxContainer" unique_id=2133374799]
+[node name="Info" type="VBoxContainer" parent="MainBody/DetailPanel/MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="DetailName" type="Label" parent="MarginContainer/VBoxContainer/DetailPanel/MarginContainer/HBoxContainer/Info" unique_id=332046883]
+[node name="DetailName" type="Label" parent="MainBody/DetailPanel/MarginContainer/HBoxContainer/Info"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.75, 1)
+theme_override_font_sizes/font_size = 16
 text = "Select an item"
 
-[node name="DetailDescription" type="RichTextLabel" parent="MarginContainer/VBoxContainer/DetailPanel/MarginContainer/HBoxContainer/Info" unique_id=421099812]
+[node name="DetailDescription" type="RichTextLabel" parent="MainBody/DetailPanel/MarginContainer/HBoxContainer/Info"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-fit_content = true
 
-[node name="ActionButton" type="Button" parent="MarginContainer/VBoxContainer/DetailPanel/MarginContainer/HBoxContainer" unique_id=1524180524]
+[node name="ActionButton" type="Button" parent="MainBody/DetailPanel/MarginContainer/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(150, 48)
 layout_mode = 2
@@ -305,5 +261,4 @@ size_flags_vertical = 4
 disabled = true
 text = "Equip"
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/TopBar/CloseButton" to="." method="_on_close_button_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/DetailPanel/MarginContainer/HBoxContainer/ActionButton" to="." method="_on_action_button_pressed"]
+[connection signal="pressed" from="MainBody/DetailPanel/MarginContainer/HBoxContainer/ActionButton" to="." method="_on_action_button_pressed"]

@@ -1,10 +1,20 @@
-[gd_scene format=3 uid="uid://dqo57ux3v3lkq"]
+[gd_scene load_steps=5 format=3 uid="uid://dqo57ux3v3lkq"]
 
 [ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="1_script"]
-[ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="2_marker"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_default"]
 size = Vector2(32, 32)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_bar_bg"]
+bg_color = Color(0.06, 0.05, 0.02, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0.7)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_bar_fill"]
+bg_color = Color(0.98, 0.78, 0.12, 1)
 
 [node name="MineableNode" type="Area2D" unique_id=1129547794]
 script = ExtResource("1_script")
@@ -14,15 +24,12 @@ script = ExtResource("1_script")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=638739511]
 shape = SubResource("RectangleShape2D_default")
 
-[node name="InteractableMarker" parent="." unique_id=113398544 instance=ExtResource("2_marker")]
-kind = 5
-
 [node name="VisualState" type="Control" parent="." unique_id=1934028571]
 visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = -32.0
-offset_top = -52.0
+offset_top = -54.0
 offset_right = 32.0
 offset_bottom = -28.0
 mouse_filter = 2
@@ -30,8 +37,10 @@ mouse_filter = 2
 [node name="ProgressBar" type="ProgressBar" parent="VisualState" unique_id=1505719423]
 layout_mode = 0
 anchor_right = 1.0
-offset_bottom = 8.0
+offset_bottom = 9.0
 grow_horizontal = 2
+theme_override_styles/background = SubResource("StyleBox_bar_bg")
+theme_override_styles/fill = SubResource("StyleBox_bar_fill")
 max_value = 3.0
 show_percentage = false
 
@@ -40,9 +49,12 @@ layout_mode = 0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -14.0
+offset_top = -15.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(1, 0.93, 0.7, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 11
 text = "0 / 0"
 horizontal_alignment = 1

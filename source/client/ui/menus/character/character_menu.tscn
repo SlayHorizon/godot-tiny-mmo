@@ -1,30 +1,12 @@
 [gd_scene format=3 uid="uid://xiagd4b43kl5"]
 
 [ext_resource type="Script" uid="uid://4k5246c3w18u" path="res://source/client/ui/menus/character/character_menu.gd" id="1_main"]
-[ext_resource type="Script" uid="uid://dm4es1smo6nxw" path="res://source/client/ui/menus/inventory/stats_panel.gd" id="2_stats"]
-[ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/menus/inventory/attributes_panel.gd" id="3_attr"]
-[ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="4_jobs"]
-[ext_resource type="Script" path="res://source/client/ui/menus/character/quest_log_panel.gd" id="5_questlog"]
+[ext_resource type="Script" uid="uid://dm4es1smo6nxw" path="res://source/client/ui/menus/inventory/stats_panel.gd" id="3_stats"]
+[ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/menus/inventory/attributes_panel.gd" id="4_attr"]
+[ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="5_jobs"]
+[ext_resource type="Script" uid="uid://cxlsj3ekiy453" path="res://source/client/ui/menus/character/quest_log_panel.gd" id="6_quest"]
 
-[sub_resource type="StyleBoxFlat" id="tab_selected_short"]
-content_margin_left = 18.0
-content_margin_top = 4.0
-content_margin_right = 18.0
-content_margin_bottom = 4.0
-bg_color = Color(0.18, 0.22, 0.36, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-
-[sub_resource type="StyleBoxFlat" id="tab_unselected_short"]
-content_margin_left = 18.0
-content_margin_top = 4.0
-content_margin_right = 18.0
-content_margin_bottom = 4.0
-bg_color = Color(0.1, 0.12, 0.18, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-
-[node name="Character" type="Control" unique_id=1468206702]
+[node name="Character" type="Control" unique_id=1903605425]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,218 +15,223 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_main")
 
-[node name="Background" type="ColorRect" parent="." unique_id=185724404]
-visible = false
+[node name="Background" type="ColorRect" parent="." unique_id=1678494962]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.07, 0.08, 0.12, 0.92)
+color = Color(0.04, 0.05, 0.08, 0.85)
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=556510023]
+[node name="Margin" type="MarginContainer" parent="." unique_id=45795561]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
 
-[node name="Card" type="PanelContainer" parent="CenterContainer" unique_id=917800863]
-custom_minimum_size = Vector2(890, 500)
+[node name="Card" type="PanelContainer" parent="Margin" unique_id=1062589325]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Card" unique_id=1978927567]
+[node name="Pad" type="MarginContainer" parent="Margin/Card" unique_id=970754355]
 layout_mode = 2
 theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 12
+theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 12
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer" unique_id=531500194]
+[node name="Root" type="VBoxContainer" parent="Margin/Card/Pad" unique_id=1593514935]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="TopBar" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer" unique_id=1417872719]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="Spacer" type="Control" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar" unique_id=953674170]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="CloseButton" type="Button" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar" unique_id=1191902580]
-custom_minimum_size = Vector2(88, 36)
-layout_mode = 2
-text = "Close"
-
-[node name="TabContainer" type="TabContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer" unique_id=1836666072]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 13
-theme_override_styles/tab_selected = SubResource("tab_selected_short")
-theme_override_styles/tab_unselected = SubResource("tab_unselected_short")
-current_tab = 0
-
-[node name="Stats" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer" unique_id=1986628126]
+[node name="HeaderBar" type="HBoxContainer" parent="Margin/Card/Pad/Root" unique_id=149543693]
 layout_mode = 2
 theme_override_constants/separation = 10
-metadata/_tab_index = 0
 
-[node name="StatsPanel" type="PanelContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats" unique_id=2110079174 node_paths=PackedStringArray("stats_display")]
+[node name="TitleLabel" type="Label" parent="Margin/Card/Pad/Root/HeaderBar" unique_id=1900806949]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-script = ExtResource("2_stats")
-stats_display = NodePath("MarginContainer/VBoxContainer/RichTextLabel")
+theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+theme_override_font_sizes/font_size = 20
+text = "Character"
+vertical_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/StatsPanel" unique_id=1276360872]
+[node name="TabBar" type="HBoxContainer" parent="Margin/Card/Pad/Root/HeaderBar" unique_id=478700433]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/StatsPanel/MarginContainer" unique_id=1813742622]
-layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 6
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/StatsPanel/MarginContainer/VBoxContainer" unique_id=1987050730]
+[node name="StatsTab" type="Button" parent="Margin/Card/Pad/Root/HeaderBar/TabBar" unique_id=1656217729]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
+theme_type_variation = &"HeaderTab"
+toggle_mode = true
+button_pressed = true
 text = "Stats"
-horizontal_alignment = 1
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/StatsPanel/MarginContainer/VBoxContainer" unique_id=572602219]
+[node name="JobsTab" type="Button" parent="Margin/Card/Pad/Root/HeaderBar/TabBar" unique_id=1717343591]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_type_variation = &"HeaderTab"
+toggle_mode = true
+text = "Jobs"
+
+[node name="QuestsTab" type="Button" parent="Margin/Card/Pad/Root/HeaderBar/TabBar" unique_id=1496356662]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_type_variation = &"HeaderTab"
+toggle_mode = true
+text = "Quests"
+
+[node name="RightBox" type="HBoxContainer" parent="Margin/Card/Pad/Root/HeaderBar" unique_id=1364567951]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="CloseButton" type="Button" parent="Margin/Card/Pad/Root/HeaderBar/RightBox" unique_id=40468866]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 34)
+layout_mode = 2
+size_flags_vertical = 4
+text = "Close"
+
+[node name="HSeparator" type="HSeparator" parent="Margin/Card/Pad/Root" unique_id=248843550]
+layout_mode = 2
+
+[node name="Content" type="PanelContainer" parent="Margin/Card/Pad/Root" unique_id=2012618665]
 layout_mode = 2
 size_flags_vertical = 3
-bbcode_enabled = true
-text = "HP 100"
-fit_content = true
 
-[node name="AttributesPanel" type="PanelContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats" unique_id=1651753153]
+[node name="StatsContent" type="HBoxContainer" parent="Margin/Card/Pad/Root/Content" unique_id=1341313417]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="StatsPanel" type="PanelContainer" parent="Margin/Card/Pad/Root/Content/StatsContent" unique_id=1347764307]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_stats")
+
+[node name="AttributesPanel" type="PanelContainer" parent="Margin/Card/Pad/Root/Content/StatsContent" unique_id=1095835537]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel" unique_id=1943037658]
+[node name="Pad" type="MarginContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel" unique_id=1064636717]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="Attributes" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer" unique_id=570233739]
+[node name="Attributes" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad" unique_id=1539015317]
 layout_mode = 2
 theme_override_constants/separation = 8
-script = ExtResource("3_attr")
+script = ExtResource("4_attr")
 
-[node name="AvailablePointsLabel" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes" unique_id=1378289242]
+[node name="TitleLabel" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=1174501795]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.55, 1)
+theme_override_font_sizes/font_size = 16
+text = "Attributes"
+
+[node name="AvailablePointsLabel" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=1209105337]
 layout_mode = 2
 text = "Available points: 0"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes" unique_id=2072286527]
+[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=794430182]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer" unique_id=782079446]
+[node name="Label" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer" unique_id=93915371]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Vitality 0"
 
-[node name="Button" type="Button" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer" unique_id=1154212825]
-custom_minimum_size = Vector2(44, 44)
+[node name="Button" type="Button" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer" unique_id=1909351056]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "+"
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes" unique_id=1603924464]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=149482688]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer2" unique_id=1769628575]
+[node name="Label" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer2" unique_id=1536117576]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Strenght 0"
 
-[node name="Button" type="Button" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer2" unique_id=456147778]
-custom_minimum_size = Vector2(44, 44)
+[node name="Button" type="Button" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer2" unique_id=207070448]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "+"
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes" unique_id=177873466]
+[node name="HBoxContainer3" type="HBoxContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=1048798731]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer3" unique_id=1722784332]
+[node name="Label" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer3" unique_id=1297436482]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Intelligence 0"
 
-[node name="Button" type="Button" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer3" unique_id=1047075218]
-custom_minimum_size = Vector2(44, 44)
+[node name="Button" type="Button" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer3" unique_id=1699077642]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "+"
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes" unique_id=755837064]
+[node name="HBoxContainer4" type="HBoxContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=1310453702]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer4" unique_id=1761274076]
+[node name="Label" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer4" unique_id=1433587394]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Spirit 0"
 
-[node name="Button" type="Button" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer4" unique_id=640719813]
-custom_minimum_size = Vector2(44, 44)
+[node name="Button" type="Button" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer4" unique_id=1439433845]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "+"
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes" unique_id=1635908097]
+[node name="HBoxContainer5" type="HBoxContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=1553936970]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Label" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer5" unique_id=1714251358]
+[node name="Label" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer5" unique_id=1780594447]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Agility 0"
 
-[node name="Button" type="Button" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Stats/AttributesPanel/MarginContainer/Attributes/HBoxContainer5" unique_id=123239663]
-custom_minimum_size = Vector2(44, 44)
+[node name="Button" type="Button" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer5" unique_id=233711618]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "+"
 
-[node name="Jobs" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer" unique_id=948487405]
+[node name="JobsContent" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content" unique_id=1596733831]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
-script = ExtResource("4_jobs")
-metadata/_tab_index = 1
+script = ExtResource("5_jobs")
 
-[node name="SkillList" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Jobs" unique_id=588007850]
+[node name="SkillList" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content/JobsContent" unique_id=1924344970]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 10
 
-[node name="Quests" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer"]
+[node name="QuestsContent" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content" unique_id=1496784281]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
-script = ExtResource("5_questlog")
-metadata/_tab_index = 2
-
-[node name="TitleLabel" type="Label" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Quests"]
-layout_mode = 2
-text = "Quests"
-horizontal_alignment = 1
-
-[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Quests"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="QuestLogList" type="VBoxContainer" parent="CenterContainer/Card/MarginContainer/VBoxContainer/TabContainer/Quests/ScrollContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
-
-[connection signal="pressed" from="CenterContainer/Card/MarginContainer/VBoxContainer/TopBar/CloseButton" to="." method="_on_close_button_pressed"]
+script = ExtResource("6_quest")

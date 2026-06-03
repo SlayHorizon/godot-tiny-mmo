@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://bx72x50snncbw"]
+[gd_scene load_steps=2 format=3 uid="uid://bx72x50snncbw"]
 
 [ext_resource type="Script" uid="uid://bepr0u8pcyg8a" path="res://source/client/ui/menus/shop/shop_menu.gd" id="1_vm7rp"]
 
-[node name="ShopMenu" type="Control" unique_id=326992278]
+[node name="ShopMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,169 +11,133 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_vm7rp")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=87486518]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=2011267291]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1553884024]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="ShopNameLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1145808859]
-unique_name_in_owner = true
+[node name="Body" type="HBoxContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-text = "Shop"
-vertical_alignment = 1
-
-[node name="GoldsLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar" unique_id=653288806]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 1
-text = "Golds: 0"
-vertical_alignment = 1
-
-[node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1680821454]
-custom_minimum_size = Vector2(96, 56)
-layout_mode = 2
-text = "Close"
-
-[node name="Body" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=178679746]
-layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="ListPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/Body" unique_id=821754979]
+[node name="ListPanel" type="PanelContainer" parent="Body"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 1.4
+size_flags_stretch_ratio = 1.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Body/ListPanel" unique_id=1717536789]
+[node name="VBoxContainer" type="VBoxContainer" parent="Body/ListPanel"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="ModeTabs" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer" unique_id=898507807]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="BuyTab" type="Button" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer/ModeTabs" unique_id=1787060586]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-size_flags_horizontal = 3
-disabled = true
-text = "Buy"
-
-[node name="SellTab" type="Button" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer/ModeTabs" unique_id=941065566]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Sell"
-
-[node name="ListHeader" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer" unique_id=285358058]
+[node name="ListHeader" type="HBoxContainer" parent="Body/ListPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ItemsHeader" type="Label" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer/ListHeader" unique_id=1855727624]
+[node name="ItemsHeader" type="Label" parent="Body/ListPanel/VBoxContainer/ListHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
 text = "Items"
 
-[node name="StockHeader" type="Label" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer/ListHeader" unique_id=1461115908]
+[node name="StockHeader" type="Label" parent="Body/ListPanel/VBoxContainer/ListHeader"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
 text = "Stock"
 horizontal_alignment = 1
 
-[node name="PriceHeader" type="Label" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer/ListHeader" unique_id=518933385]
+[node name="PriceHeader" type="Label" parent="Body/ListPanel/VBoxContainer/ListHeader"]
 custom_minimum_size = Vector2(88, 0)
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
 text = "Price"
 horizontal_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer" unique_id=2030177772]
+[node name="ScrollContainer" type="ScrollContainer" parent="Body/ListPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="ItemList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Body/ListPanel/VBoxContainer/ScrollContainer" unique_id=809209640]
+[node name="ItemList" type="VBoxContainer" parent="Body/ListPanel/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="DetailPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/Body" unique_id=2122645665]
+[node name="DetailPanel" type="PanelContainer" parent="Body"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/Body/DetailPanel" unique_id=1275626460]
+[node name="MarginContainer" type="MarginContainer" parent="Body/DetailPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer" unique_id=1353233854]
+[node name="VBoxContainer" type="VBoxContainer" parent="Body/DetailPanel/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="DetailIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer" unique_id=2067219782]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(96, 96)
+[node name="TopRow" type="HBoxContainer" parent="Body/DetailPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+theme_override_constants/separation = 12
+
+[node name="LeftCol" type="VBoxContainer" parent="Body/DetailPanel/MarginContainer/VBoxContainer/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="DetailIcon" type="TextureRect" parent="Body/DetailPanel/MarginContainer/VBoxContainer/TopRow/LeftCol"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="DetailNameLabel" type="Label" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer" unique_id=2057029277]
+[node name="DetailNameLabel" type="Label" parent="Body/DetailPanel/MarginContainer/VBoxContainer/TopRow/LeftCol"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.75, 1)
+theme_override_font_sizes/font_size = 18
 text = "Select an item"
-horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="DetailPriceLabel" type="Label" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer" unique_id=881434431]
+[node name="RightCol" type="VBoxContainer" parent="Body/DetailPanel/MarginContainer/VBoxContainer/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+
+[node name="DetailPriceLabel" type="Label" parent="Body/DetailPanel/MarginContainer/VBoxContainer/TopRow/RightCol"]
 unique_name_in_owner = true
 layout_mode = 2
-horizontal_alignment = 1
+horizontal_alignment = 2
 
-[node name="DetailOwnedLabel" type="Label" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer" unique_id=1473442133]
+[node name="DetailOwnedLabel" type="Label" parent="Body/DetailPanel/MarginContainer/VBoxContainer/TopRow/RightCol"]
 unique_name_in_owner = true
 layout_mode = 2
-horizontal_alignment = 1
+horizontal_alignment = 2
 
-[node name="DetailDescription" type="RichTextLabel" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer" unique_id=1428177852]
+[node name="HSeparator" type="HSeparator" parent="Body/DetailPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="DetailDescription" type="RichTextLabel" parent="Body/DetailPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-fit_content = true
 
-[node name="QuantityRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer"]
+[node name="QuantityRow" type="HBoxContainer" parent="Body/DetailPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="QuantityLabel" type="Label" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
+[node name="QuantityLabel" type="Label" parent="Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Quantity"
 vertical_alignment = 1
 
-[node name="QuantitySpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
+[node name="QuantitySpinBox" type="SpinBox" parent="Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
@@ -181,17 +145,16 @@ min_value = 1.0
 value = 1.0
 rounded = true
 
-[node name="MaxButton" type="Button" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
+[node name="MaxButton" type="Button" parent="Body/DetailPanel/MarginContainer/VBoxContainer/QuantityRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Max"
 
-[node name="ActionButton" type="Button" parent="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer" unique_id=2051739338]
+[node name="ActionButton" type="Button" parent="Body/DetailPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 disabled = true
 text = "Buy"
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/TopBar/CloseButton" to="." method="_on_close_button_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Body/DetailPanel/MarginContainer/VBoxContainer/ActionButton" to="." method="_on_action_button_pressed"]
+[connection signal="pressed" from="Body/DetailPanel/MarginContainer/VBoxContainer/ActionButton" to="." method="_on_action_button_pressed"]

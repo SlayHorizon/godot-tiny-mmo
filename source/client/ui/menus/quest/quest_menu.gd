@@ -26,6 +26,8 @@ var _title_buttons: Dictionary[int, Button]
 
 @onready var title_label: Label = %TitleLabel
 @onready var title_list: VBoxContainer = %TitleList
+@onready var detail_title: Label = %DetailTitle
+@onready var action_slot: HBoxContainer = %ActionSlot
 @onready var details_container: VBoxContainer = %DetailsContainer
 
 
@@ -164,26 +166,39 @@ func _select_quest(quest_id: int) -> void:
 # ---------------------------------------------------------------------------
 
 func _show_empty_details() -> void:
+	detail_title.text = ""
+	for child in action_slot.get_children():
+		child.queue_free()
 	for child in details_container.get_children():
 		child.queue_free()
 	var hint: Label = Label.new()
 	hint.text = "No quests to discuss."
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.modulate.a = 0.55
 	details_container.add_child(hint)
 
 
 func _show_details(quest: Dictionary) -> void:
 	for child in details_container.get_children():
 		child.queue_free()
+	for child in action_slot.get_children():
+		child.queue_free()
 
 	var state: String = str(quest.get("state", ""))
 	var complete: bool = bool(quest.get("complete", false))
 	var any_mode: bool = int(quest.get("completion", 0)) == 1
 
-	var name_label: Label = Label.new()
-	name_label.text = str(quest.get("name", "?"))
-	name_label.add_theme_font_size_override(&"font_size", 20)
-	details_container.add_child(name_label)
+	# Title + action live in the pinned header (mirrors the quest log) so the
+	# Accept / Turn-in button is always reachable without scrolling past a long
+	# description.
+	detail_title.text = str(quest.get("name", "?"))
+	action_slot.add_child(_make_action(
+		int(quest.get("id", 0)),
+		state,
+		complete,
+		bool(quest.get("meets_level", true)),
+		int(quest.get("min_level", 0)),
+	))
 
 	var description: String = str(quest.get("description", ""))
 	if not description.is_empty():
@@ -195,7 +210,10 @@ func _show_details(quest: Dictionary) -> void:
 
 	var objectives: Array = quest.get("objectives", [])
 	if not objectives.is_empty():
-		details_container.add_child(_spacer(6))
+		var obj_header: Label = Label.new()
+		obj_header.text = "Objectives"
+		obj_header.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.5))
+		details_container.add_child(obj_header)
 		for i: int in objectives.size():
 			# ANY-mode quests intersperse an OR line between objectives so the
 			# player reads them as alternatives, not a checklist. We render OR
@@ -206,21 +224,13 @@ func _show_details(quest: Dictionary) -> void:
 			details_container.add_child(_make_objective_row(objectives[i]))
 
 	details_container.add_child(_spacer(8))
+	details_container.add_child(HSeparator.new())
 	var reward_label: Label = Label.new()
 	reward_label.text = "Rewards: %d XP, %d gold" % [
 		int(quest.get("reward_xp", 0)), int(quest.get("reward_gold", 0))
 	]
 	reward_label.add_theme_color_override(&"font_color", COLOR_REWARD)
 	details_container.add_child(reward_label)
-
-	details_container.add_child(_spacer(8))
-	details_container.add_child(_make_action(
-		int(quest.get("id", 0)),
-		state,
-		complete,
-		bool(quest.get("meets_level", true)),
-		int(quest.get("min_level", 0)),
-	))
 
 
 func _make_objective_row(objective: Dictionary) -> Label:
@@ -254,24 +264,27 @@ func _make_action(quest_id: int, state: String, complete: bool, meets_level: boo
 				return locked
 			var accept: Button = Button.new()
 			accept.text = "Accept"
-			accept.custom_minimum_size = Vector2(0, 44)
+			accept.custom_minimum_size = Vector2(110, 36)
 			accept.pressed.connect(_on_accept.bind(quest_id))
 			return accept
 		"active":
 			if complete:
 				var turn_in: Button = Button.new()
 				turn_in.text = "Turn in"
-				turn_in.custom_minimum_size = Vector2(0, 44)
+				turn_in.custom_minimum_size = Vector2(110, 36)
 				turn_in.pressed.connect(_on_turn_in.bind(quest_id))
 				return turn_in
 			var in_progress: Label = Label.new()
 			in_progress.text = "In progress…"
 			in_progress.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			in_progress.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			in_progress.add_theme_color_override(&"font_color", COLOR_ACTIVE)
 			return in_progress
 		_:
 			var done: Label = Label.new()
 			done.text = "Completed ✓"
 			done.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			done.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 			done.add_theme_color_override(&"font_color", COLOR_READY)
 			return done
 

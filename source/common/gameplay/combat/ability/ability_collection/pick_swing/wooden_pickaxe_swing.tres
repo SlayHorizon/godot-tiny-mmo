@@ -1,13 +1,9 @@
-[gd_resource type="Resource" script_class="PickSwingAbility" format=3]
+[gd_resource type="Resource" script_class="PickSwingAbility" format=3 uid="uid://6fihowp7uuky"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/combat/ability/ability_collection/pick_swing/pick_swing_ability.gd" id="1_pick"]
-[ext_resource type="PackedScene" uid="uid://b9p8x2k4tlz3m" path="res://source/common/gameplay/combat/pick_arc.tscn" id="2_arc"]
+[ext_resource type="Script" uid="uid://c7n8ppdiuppnx" path="res://source/common/gameplay/combat/ability/ability_collection/pick_swing/pick_swing_ability.gd" id="1_pick"]
+[ext_resource type="PackedScene" uid="uid://cap8x2k4tl03m" path="res://source/common/gameplay/combat/pick_arc.tscn" id="2_arc"]
 
 [resource]
 script = ExtResource("1_pick")
 name = "Pickaxe Swing"
 cooldown = 0.45
-arc_scene = ExtResource("2_arc")
-character_damage = 2.0
-extraction_damage = 1
-spawn_offset = 0.0

@@ -36,11 +36,9 @@ func data_request_handler(
 			var perks_dict: Dictionary = entry.get("perks", {})
 			info["perks"] = jp.describe(skill_level, perks_dict)
 			info["points"] = jp.available_points({"level": skill_level, "perks": perks_dict})
-			# Content previews — slugs the Jobs UI renders in "Sources"
-			# (what to gather to feed this job's XP) and "Recipes"
-			# (what the job can craft). Empty arrays = tab hidden.
-			info["source_slugs"] = jp.source_slugs
-			info["recipe_slugs"] = jp.recipe_slugs
+			# Sources / Recipes tabs read JobRegistry directly on the client
+			# (JobPerks is preloaded in `common/`, so the client already has
+			# the rich Item refs + required-levels). No need to ship them.
 			var choices: Array = []
 			for perk in jp.perks:
 				var pid: StringName = StringName(String(perk.get("id", "")))

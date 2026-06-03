@@ -1,0 +1,118 @@
+[gd_resource type="Theme" format=3 uid="uid://ymrmsrtpy8y4"]
+
+[ext_resource type="FontFile" uid="uid://dkhbwo1ivbqjd" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" id="1_font"]
+
+[sub_resource type="StyleBoxEmpty" id="tab_focus"]
+
+[sub_resource type="StyleBoxFlat" id="tab_hover"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 7.0
+bg_color = Color(0.13, 0.17, 0.26, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxFlat" id="tab_pressed"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 7.0
+bg_color = Color(0.1, 0.21, 0.34, 1)
+border_width_bottom = 3
+border_color = Color(0.96, 0.74, 0.16, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxFlat" id="tab_normal"]
+content_margin_left = 16.0
+content_margin_top = 7.0
+content_margin_right = 16.0
+content_margin_bottom = 7.0
+bg_color = Color(0.06, 0.078, 0.117, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxFlat" id="pb_bg"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.03, 0.04, 0.06, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="pb_fill"]
+bg_color = Color(0.96, 0.74, 0.16, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="sec_hover"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.13, 0.17, 0.26, 0.7)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="sec_pressed"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.1, 0.21, 0.34, 1)
+border_width_bottom = 2
+border_color = Color(0.96, 0.74, 0.16, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="sec_normal"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.06, 0.078, 0.117, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[resource]
+default_font = ExtResource("1_font")
+HeaderTab/base_type = &"Button"
+HeaderTab/colors/font_color = Color(0.7, 0.76, 0.85, 1)
+HeaderTab/colors/font_hover_color = Color(0.93, 0.96, 0.98, 1)
+HeaderTab/colors/font_pressed_color = Color(1, 0.95, 0.8, 1)
+HeaderTab/font_sizes/font_size = 16
+HeaderTab/styles/focus = SubResource("tab_focus")
+HeaderTab/styles/hover = SubResource("tab_hover")
+HeaderTab/styles/hover_pressed = SubResource("tab_pressed")
+HeaderTab/styles/normal = SubResource("tab_normal")
+HeaderTab/styles/pressed = SubResource("tab_pressed")
+ProgressBar/colors/font_color = Color(1, 0.95, 0.8, 1)
+ProgressBar/styles/background = SubResource("pb_bg")
+ProgressBar/styles/fill = SubResource("pb_fill")
+SectionTab/base_type = &"Button"
+SectionTab/colors/font_color = Color(0.7, 0.76, 0.85, 1)
+SectionTab/colors/font_hover_color = Color(0.93, 0.96, 0.98, 1)
+SectionTab/colors/font_pressed_color = Color(1, 0.95, 0.8, 1)
+SectionTab/font_sizes/font_size = 13
+SectionTab/styles/focus = SubResource("tab_focus")
+SectionTab/styles/hover = SubResource("sec_hover")
+SectionTab/styles/hover_pressed = SubResource("sec_pressed")
+SectionTab/styles/normal = SubResource("sec_normal")
+SectionTab/styles/pressed = SubResource("sec_pressed")

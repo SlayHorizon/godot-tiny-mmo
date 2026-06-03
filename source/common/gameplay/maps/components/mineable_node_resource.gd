@@ -41,9 +41,8 @@ extends Resource
 @export var player_cooldown_seconds: float = 5.0
 
 @export_group("Visual")
-## Spritesheet for the node. The same .png (e.g. rocks.png) is used across
-## many ore types — region_rect carves out the right tile.
+## Sprite shown at the node. Use an [AtlasTexture] (right-click in the
+## inspector → "New AtlasTexture", then assign the spritesheet to its `atlas`
+## and click "Edit Region" to pick the sub-rect visually). A plain Texture2D
+## also works for one-off art.
 @export var texture: Texture2D
-## Sub-rect of [member texture] to display. Leave at zero-size to use the
-## whole texture (no region_enabled).
-@export var region_rect: Rect2 = Rect2()

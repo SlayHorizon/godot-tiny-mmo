@@ -15,7 +15,7 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 	if item_id <= 0 or amount <= 0:
 		return "Invalid item id or amount."
 
-	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
+	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id) as Item
 	if item == null:
 		return "No item with id %d." % item_id
 

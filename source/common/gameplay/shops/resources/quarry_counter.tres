@@ -15,6 +15,7 @@ metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 script = ExtResource("2_shop")
 shop_name = "Quarry Counter"
 entries = Array[ExtResource("1_entry")]([SubResource("Entry_pickaxe")])
+trades = 0
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"quarry_counter"
 metadata/id = 5

@@ -8,18 +8,21 @@ var _content: VBoxContainer
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# On-theme panel: dark card with an amber left accent so the tracker reads
+	# as part of the same visual language as the quest log / giver dialog.
+	add_theme_stylebox_override(&"panel", _make_panel_style())
 
 	var margin: MarginContainer = MarginContainer.new()
 	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	for side: String in ["left", "right"]:
-		margin.add_theme_constant_override("margin_" + side, 8)
+	margin.add_theme_constant_override(&"margin_left", 12)
+	margin.add_theme_constant_override(&"margin_right", 10)
 	for side: String in ["top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 6)
+		margin.add_theme_constant_override("margin_" + side, 7)
 	add_child(margin)
 
 	_content = VBoxContainer.new()
 	_content.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_content.add_theme_constant_override(&"separation", 2)
+	_content.add_theme_constant_override(&"separation", 3)
 	margin.add_child(_content)
 
 	hide()
@@ -64,6 +67,22 @@ func _on_received(data: Dictionary) -> void:
 	show()
 
 
+## Dark card with a thick amber left border — visually ties the floating
+## tracker to the quest log's selected-row / section-tab accent.
+func _make_panel_style() -> StyleBoxFlat:
+	var box: StyleBoxFlat = StyleBoxFlat.new()
+	box.bg_color = Color(0.06, 0.078, 0.117, 0.92)
+	box.border_width_left = 3
+	box.border_color = Color(0.96, 0.74, 0.16, 1)
+	box.corner_radius_top_left = 4
+	box.corner_radius_top_right = 4
+	box.corner_radius_bottom_right = 4
+	box.corner_radius_bottom_left = 4
+	box.shadow_color = Color(0, 0, 0, 0.3)
+	box.shadow_size = 4
+	return box
+
+
 func _display(quest: Dictionary) -> void:
 	for child in _content.get_children():
 		child.queue_free()
@@ -71,15 +90,24 @@ func _display(quest: Dictionary) -> void:
 	var complete: bool = bool(quest.get("complete", false))
 	var any_mode: bool = int(quest.get("completion", 0)) == 1
 
+	# Tiny "QUEST" eyebrow so the panel is self-explanatory at a glance.
+	var eyebrow: Label = Label.new()
+	eyebrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	eyebrow.text = "QUEST"
+	eyebrow.add_theme_font_size_override(&"font_size", 9)
+	eyebrow.add_theme_color_override(&"font_color", Color(0.6, 0.66, 0.78))
+	_content.add_child(eyebrow)
+
 	# Name: yellow while in progress, bright green with a ✓ prefix once ready.
 	# The shift in color is the player's primary "I'm done!" cue.
 	var name_label: Label = Label.new()
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	name_label.add_theme_font_size_override(&"font_size", 14)
 	var prefix: String = "✓ " if complete else ""
 	name_label.text = prefix + str(quest.get("name", "?"))
 	name_label.add_theme_color_override(
 		&"font_color",
-		Color(0.5, 0.95, 0.5) if complete else Color(0.85, 0.8, 0.4)
+		Color(0.5, 0.95, 0.5) if complete else Color(1.0, 0.9, 0.55)
 	)
 	_content.add_child(name_label)
 

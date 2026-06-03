@@ -1,8 +1,8 @@
-extends Control
-## Sandbox redesign of the character/inventory menu (kept separate from the live
-## inventory_menu so it can be iterated/compared safely). Landscape layout:
-## TopBar (title + wallet + close) / Body (equipment | stats+attributes | bag) /
-## bottom DetailPanel that serves both bag items and equipped gear.
+extends MenuShell
+## Character / inventory menu. Built on the shared [MenuShell]: title + wallet
+## + close live in the banner header; the body (equipment | bag) and the bottom
+## detail strip are wrapped in the card. The detail strip serves both bag items
+## and equipped gear.
 
 enum Category { ALL, GEAR, CONSUMABLES, MATERIALS }
 
@@ -18,9 +18,9 @@ var _selected_item_id: int
 ## Set when an equipped gear slot is selected (Unequip mode); empty for a bag item.
 var _selected_gear_slot: StringName
 
-@onready var title_label: Label = %TitleLabel
-@onready var wallet_icon: TextureRect = %WalletIcon
-@onready var wallet_amount: Label = %WalletAmount
+## Wallet widgets, created in the shell header at runtime.
+var wallet_icon: TextureRect
+var wallet_amount: Label
 @onready var equipment_slots: GridContainer = %EquipmentSlots
 @onready var relic_slots: GridContainer = %RelicSlots
 @onready var all_tab: Button = %AllTab
@@ -36,9 +36,9 @@ var _selected_gear_slot: StringName
 
 func _ready() -> void:
 	_gold_id = Economy.gold_id()
-	var gold: Item = ContentRegistryHub.load_by_id(&"items", _gold_id)
-	if gold:
-		wallet_icon.texture = gold.item_icon
+	# Wrap the authored body in the shared menu shell (banner header + card).
+	build_shell("Inventory", $MainBody)
+	_build_wallet()
 
 	all_tab.pressed.connect(_set_category.bind(Category.ALL))
 	gear_tab.pressed.connect(_set_category.bind(Category.GEAR))
@@ -58,6 +58,25 @@ func _ready() -> void:
 	ClientState.gather_succeeded.connect(func(_result: Dictionary):
 		if visible:
 			fill_inventory())
+
+
+## Currency chip (icon + amount) in the shell header, top-right next to Close.
+## Icon-driven so it's ready for alt-currency the same way the shop is.
+func _build_wallet() -> void:
+	wallet_icon = TextureRect.new()
+	wallet_icon.custom_minimum_size = Vector2(22, 22)
+	wallet_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	wallet_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var gold: Item = ContentRegistryHub.load_by_id(&"items", _gold_id)
+	if gold:
+		wallet_icon.texture = gold.item_icon
+	wallet_amount = Label.new()
+	wallet_amount.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.45))
+	wallet_amount.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	header_right.add_child(wallet_icon)
+	header_right.add_child(wallet_amount)
+	header_right.move_child(wallet_icon, 0)
+	header_right.move_child(wallet_amount, 1)
 
 
 func fill_inventory() -> void:
@@ -181,19 +200,15 @@ func _on_action_button_pressed() -> void:
 
 func _set_category(category: Category) -> void:
 	_category = category
-	all_tab.disabled = category == Category.ALL
-	gear_tab.disabled = category == Category.GEAR
-	consumables_tab.disabled = category == Category.CONSUMABLES
-	materials_tab.disabled = category == Category.MATERIALS
+	all_tab.button_pressed = category == Category.ALL
+	gear_tab.button_pressed = category == Category.GEAR
+	consumables_tab.button_pressed = category == Category.CONSUMABLES
+	materials_tab.button_pressed = category == Category.MATERIALS
 	_rebuild_grid()
 
 
 func _set_wallet(amount: int) -> void:
 	wallet_amount.text = str(amount)
-
-
-func _on_close_button_pressed() -> void:
-	hide()
 
 
 # --- Equipment slot icons (reactive, like the live inventory) ---

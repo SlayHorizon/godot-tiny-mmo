@@ -1,4 +1,4 @@
-extends Control
+extends MenuShell
 
 
 enum Mode { BUY, SELL }
@@ -11,6 +11,9 @@ var _mode: Mode
 var _golds: int
 ## Registry id of the gold currency item (the player's balance is its inventory count).
 var _gold_id: int
+## The currency this shop trades in (gold by default; e.g. event tokens for a
+## fair stall). Drives the header balance chip + affordability.
+var _currency_id: int
 var _slots: Array[ShopSlot]
 var _selected_slot: ShopSlot
 ## Raw inventory (slot_uid -> {"id", "a"}), fetched on open and after each transaction.
@@ -20,11 +23,12 @@ var _owned: Dictionary[int, int]
 ## item_ids the local player currently has equipped (can't be sold). Refreshed per list build.
 var _equipped_ids: Array
 
-@onready var shop_name_label: Label = %ShopNameLabel
-@onready var golds_label: Label = %GoldsLabel
-@onready var mode_tabs: HBoxContainer = %ModeTabs
-@onready var buy_tab: Button = %BuyTab
-@onready var sell_tab: Button = %SellTab
+## Header widgets, created in the shell header at runtime.
+var mode_tabs: HBoxContainer
+var buy_tab: Button
+var sell_tab: Button
+var golds_icon: TextureRect
+var golds_label: Label
 @onready var item_list: VBoxContainer = %ItemList
 @onready var detail_icon: TextureRect = %DetailIcon
 @onready var detail_name_label: Label = %DetailNameLabel
@@ -39,11 +43,53 @@ var _equipped_ids: Array
 
 func _ready() -> void:
 	_gold_id = Economy.gold_id()
-	# Active tab is the disabled one; clicking the other switches mode.
+	_currency_id = _gold_id
+	# Wrap the authored Body in the shared menu shell (banner header + card).
+	build_shell("Shop", $Body)
+	_build_header()
+
 	buy_tab.pressed.connect(_set_mode.bind(Mode.BUY))
 	sell_tab.pressed.connect(_set_mode.bind(Mode.SELL))
 	quantity_spinbox.value_changed.connect(_on_quantity_changed)
 	max_button.pressed.connect(func(): quantity_spinbox.value = quantity_spinbox.max_value)
+
+
+## Builds the header content: Buy/Sell mode tabs (centre, like the character
+## menu) and a currency icon + balance (top-right, next to Close). Using an
+## icon instead of the word "Golds" keeps it ready for alt-currency shops.
+func _build_header() -> void:
+	mode_tabs = HBoxContainer.new()
+	mode_tabs.add_theme_constant_override(&"separation", 6)
+	header_center.add_child(mode_tabs)
+	buy_tab = _make_mode_tab("Buy")
+	sell_tab = _make_mode_tab("Sell")
+	mode_tabs.add_child(buy_tab)
+	mode_tabs.add_child(sell_tab)
+
+	golds_icon = TextureRect.new()
+	golds_icon.custom_minimum_size = Vector2(20, 20)
+	golds_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	golds_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var gold: Item = ContentRegistryHub.load_by_id(&"items", _gold_id)
+	if gold:
+		golds_icon.texture = gold.item_icon
+	golds_label = Label.new()
+	golds_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.45))
+	golds_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	# Insert before the Close button (added by build_shell at index 0).
+	header_right.add_child(golds_icon)
+	header_right.add_child(golds_label)
+	header_right.move_child(golds_icon, 0)
+	header_right.move_child(golds_label, 1)
+
+
+func _make_mode_tab(text: String) -> Button:
+	var tab: Button = Button.new()
+	tab.text = text
+	tab.theme_type_variation = &"HeaderTab"
+	tab.toggle_mode = true
+	tab.custom_minimum_size = Vector2(104, 0)
+	return tab
 
 
 func open(shop_id: int) -> void:
@@ -53,7 +99,12 @@ func open(shop_id: int) -> void:
 	if not _shop:
 		return
 	if not _shop.shop_name.is_empty():
-		shop_name_label.text = _shop.shop_name
+		set_title(_shop.shop_name)
+	# Resolve the shop's currency and point the header chip at its icon.
+	_currency_id = _shop.display_currency_id()
+	var currency: Item = ContentRegistryHub.load_by_id(&"items", _currency_id)
+	if currency and golds_icon:
+		golds_icon.texture = currency.item_icon
 	# Tab bar shown if the shop offers both flavors of interaction. Specialty trades
 	# live inside the Sell tab and force it open even when generic sells are off.
 	var has_sell_side: bool = _shop.allows_selling() or _shop.has_trades()
@@ -69,8 +120,8 @@ func open(shop_id: int) -> void:
 
 func _set_mode(mode: Mode) -> void:
 	_mode = mode
-	buy_tab.disabled = mode == Mode.BUY
-	sell_tab.disabled = mode == Mode.SELL
+	buy_tab.button_pressed = mode == Mode.BUY
+	sell_tab.button_pressed = mode == Mode.SELL
 	_build_list()
 	_clear_detail()
 
@@ -145,6 +196,7 @@ func _build_trade_rows() -> void:
 			continue
 		var item_id: int = int(trade.item.get_meta(&"id", 0))
 		var owned: int = _owned.get(item_id, 0)
+		@warning_ignore("integer_division")
 		var bundles_available: int = owned / trade.amount
 		var slot: ShopSlot = ShopSlot.new()
 		slot.item = trade.item
@@ -188,7 +240,8 @@ func _make_row(item: Item, middle_text: String, price: int) -> Button:
 
 	hbox.add_child(_column(str(item.item_name), 0, HORIZONTAL_ALIGNMENT_LEFT))
 	hbox.add_child(_column(middle_text, 64, HORIZONTAL_ALIGNMENT_CENTER))
-	hbox.add_child(_column("%d g" % price, 88, HORIZONTAL_ALIGNMENT_CENTER))
+	# Currency-neutral: the header chip shows which currency these prices are in.
+	hbox.add_child(_column(str(price), 88, HORIZONTAL_ALIGNMENT_CENTER))
 
 	return row
 
@@ -203,7 +256,11 @@ func _column(text: String, width: int, align: HorizontalAlignment) -> Label:
 	if width > 0:
 		label.custom_minimum_size = Vector2(width, 0)
 	else:
+		# The expanding name column clips with an ellipsis so a long item name
+		# can't widen the row and push the menu out (rows stay uniform).
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label.clip_text = true
+		label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	return label
 
 
@@ -281,9 +338,12 @@ func _update_price_label() -> void:
 		]
 		return
 	var total: int = _selected_slot.price * bundles
+	# Value first, caption last, right-aligned — keeps the caption pinned to the
+	# right edge so it doesn't jitter when the number's width changes between
+	# items (the Zelda "30  Price" layout).
 	detail_price_label.text = (
-		"Sells for: %d golds" % total if _mode == Mode.SELL
-		else "Price: %d golds" % total
+		"%d   Value" % total if _mode == Mode.SELL
+		else "%d   Price" % total
 	)
 
 
@@ -292,7 +352,7 @@ func _update_owned_label() -> void:
 		detail_owned_label.text = ""
 		return
 	var owned: int = _selected_slot.quantity if _mode == Mode.SELL else _owned.get(_selected_slot.item_id, 0)
-	detail_owned_label.text = "In inventory: %d" % owned
+	detail_owned_label.text = "%d   In inventory" % owned
 
 
 ## In Buy mode, enable/disable the action by whether the chosen quantity is affordable.
@@ -323,7 +383,7 @@ func _refresh_affordability() -> void:
 
 func _set_golds(value: int) -> void:
 	_golds = value
-	golds_label.text = "Golds: %d" % _golds
+	golds_label.text = "%d" % _golds
 
 
 ## Authorize opening the shop (gold + contents come from elsewhere).
@@ -342,8 +402,8 @@ func _request_inventory() -> void:
 		return
 	_inventory = result[0]
 	_recompute_owned()
-	# Gold is a currency item; the balance is its amount in inventory.
-	_set_golds(_owned.get(_gold_id, 0))
+	# The shop's currency is an item; the balance is its amount in inventory.
+	_set_golds(_owned.get(_currency_id, 0))
 	if _mode == Mode.SELL:
 		_build_list()
 	_refresh_affordability()
@@ -360,10 +420,6 @@ func _recompute_owned() -> void:
 		var item_id: int = int(data.get("id", 0))
 		if item_id > 0:
 			_owned[item_id] = _owned.get(item_id, 0) + int(data.get("a", 0))
-
-
-func _on_close_button_pressed() -> void:
-	hide()
 
 
 func _on_action_button_pressed() -> void:

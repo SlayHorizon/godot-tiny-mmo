@@ -11,5 +11,4 @@ region = Rect2(0.9250717, 112.912254, 31.33641, 47.399605)
 [resource]
 script = ExtResource("1_script")
 ore = ExtResource("2_ore")
-required_level = 1
 texture = SubResource("AtlasTexture_5ug66")

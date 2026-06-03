@@ -104,6 +104,11 @@ func _on_combat_reward(data: Dictionary) -> void:
 ## toast format that the legacy click-based mining handler used, so quest
 ## tracking and any inventory UI that already listens to gather_succeeded
 ## keeps working unchanged.
+## Throttle for the "depleted" toast — depleted swings are now rejected
+## server-side on every hit, so without this the message would spam.
+var _last_depleted_toast_ms: int
+
+
 func _on_gather_result(data: Dictionary) -> void:
 	if data.is_empty():
 		return
@@ -123,7 +128,10 @@ func _on_gather_result(data: Dictionary) -> void:
 			"level":
 				Toaster.toast("Requires Mining Lv %d." % int(data.get("required_level", 0)))
 			"depleted":
-				Toaster.toast("This vein is depleted — come back later.")
+				var now_ms: int = Time.get_ticks_msec()
+				if now_ms - _last_depleted_toast_ms > 4000:
+					_last_depleted_toast_ms = now_ms
+					Toaster.toast("This vein is depleted — come back later.")
 			# "cooldown" stays silent — players will spam swings during it.
 		return
 
@@ -142,7 +150,7 @@ func _on_gather_result(data: Dictionary) -> void:
 	var lines: PackedStringArray = PackedStringArray()
 	var amount: int = int(data.get("amount", 0))
 	if amount > 0:
-		lines.append("+%d ore" % amount)
+		lines.append("+%d %s" % [amount, str(data.get("ore_name", "ore"))])
 	# XP entries — primary job first (verbose), additional grants compact.
 	var grants_v: Variant = data.get("grants", [])
 	if grants_v is Array:

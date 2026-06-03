@@ -22,6 +22,8 @@
 [ext_resource type="Resource" uid="uid://b30ybcv0ulinq" path="res://source/common/gameplay/characters/npc/types/goblin.tres" id="14_pnbwk"]
 [ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="15_vc2t3"]
 [ext_resource type="Resource" uid="uid://jo7v7jfc54kp" path="res://source/common/gameplay/characters/npc/types/bandit_captain.tres" id="16_tlky3"]
+[ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="18_m4n4e"]
+[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="19_n81rr"]
 [ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="23_xwvb5"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
@@ -30,9 +32,16 @@
 [ext_resource type="Resource" uid="uid://b5rjgo848r2n7" path="res://source/common/gameplay/quests/resources/the_bandit_captain.tres" id="28_xaqxt"]
 [ext_resource type="Resource" uid="uid://dd7tu8yrec3ie" path="res://source/common/gameplay/quests/resources/camp_cleanup.tres" id="29_e4lv4"]
 [ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="30_m6sqw"]
+[ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="33_n81rr"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ikkk2"]
+radius = 55.38041
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ovmn0"]
 size = Vector2(48.993896, 43.498413)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ikkk2"]
+size = Vector2(40, 32)
 
 [node name="NOverworld" type="Node2D" unique_id=1304922757 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -251,6 +260,27 @@ position = Vector2(-32, 10)
 color = Color(1, 0, 0, 0.16)
 polygon = PackedVector2Array(2238, 863, 2244, 1179, 2399, 1352, 2575, 1410, 2797, 1410, 2960, 1362, 3103, 1283, 3207, 1214, 3238, 1113, 3238, 901, 3131, 716, 2977, 609, 2686, 576, 2468, 609, 2295, 744)
 
+[node name="ShopInteractable" type="Area2D" parent="." unique_id=1812436126]
+position = Vector2(1177.7854, 817.37085)
+script = ExtResource("18_m4n4e")
+shop = ExtResource("19_n81rr")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=1728883080]
+shape = SubResource("CircleShape2D_ikkk2")
+
+[node name="Label" type="Label" parent="ShopInteractable/CollisionShape2D" unique_id=427980610]
+offset_left = -26.651733
+offset_top = -20.843018
+offset_right = 39.348267
+offset_bottom = 24.156982
+text = "STARTER
+SHOP"
+horizontal_alignment = 1
+
+[node name="InteractableMarker" parent="ShopInteractable" unique_id=1116914763 instance=ExtResource("30_m6sqw")]
+kind = 2
+
 [node name="CoalOre" parent="." unique_id=881279537 instance=ExtResource("11_5jj8c")]
 y_sort_enabled = true
 position = Vector2(157, 480)
@@ -426,5 +456,26 @@ text = "Village Elder
 Quest giver"
 horizontal_alignment = 1
 
-[node name="InteractableMarker" parent="VillageElder" unique_id=1116914763 instance=ExtResource("30_m6sqw")]
+[node name="InteractableMarker" parent="VillageElder" unique_id=1036156253 instance=ExtResource("30_m6sqw")]
 kind = 0
+
+[node name="QuarryCounter" type="Area2D" parent="." unique_id=127675430]
+position = Vector2(1220.2197, 681.62036)
+script = ExtResource("18_m4n4e")
+shop = ExtResource("33_n81rr")
+metadata/_custom_type_script = "uid://bd3mum0wbv2c0"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="QuarryCounter" unique_id=584144885]
+position = Vector2(-0.26550293, -0.64697266)
+shape = SubResource("RectangleShape2D_ikkk2")
+
+[node name="Label" type="Label" parent="QuarryCounter" unique_id=1688847250]
+offset_left = -20.265503
+offset_top = -8.646973
+offset_right = 19.734497
+offset_bottom = 12.353027
+text = "QuarryCounter"
+
+[node name="InteractableMarker" parent="QuarryCounter" unique_id=1969050560 instance=ExtResource("30_m6sqw")]
+kind = 2

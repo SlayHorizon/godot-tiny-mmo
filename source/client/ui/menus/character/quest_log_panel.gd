@@ -1,30 +1,87 @@
 extends VBoxContainer
-## Global quest log (Character menu "Quests" tab). Lists active quests with live progress,
-## a Track button (pins one to the HUD tracker) and a Details button (full info popup),
-## plus completed quests greyed out.
+## Quest log (Character → Quests tab). Split view: quest list on the left,
+## selected-quest details on the right with a pinned Track/Untrack button.
+## Replaces the older list-only + modal-popup design.
 
-@onready var quest_list: VBoxContainer = %QuestLogList
-
-## Latest quest data from the server (used to (re)build the details popup).
+## Latest quest data from the server.
 var _quests: Array
-## Full-rect modal showing a single quest's details (description + objectives + rewards).
-var _overlay: Control
-var _detail_root: VBoxContainer
-## Quest currently shown in the details popup (0 = closed).
-var _open_quest_id: int
+var _selected_id: int
+
+# Layout, built once in _ready.
+var _list_vbox: VBoxContainer
+var _detail_title: Label
+var _track_button: Button
+var _detail_body: VBoxContainer
+var _row_buttons: Dictionary[int, Button]
 
 
 func _ready() -> void:
+	_build_layout()
 	visibility_changed.connect(_on_visibility_changed)
 	ClientState.tracked_quest_changed.connect(func(_id: int): _refresh())
 	Client.subscribe(&"quest.update", func(_data: Dictionary): _refresh())
+	_refresh()
+
+
+func _build_layout() -> void:
+	var hbox: HBoxContainer = HBoxContainer.new()
+	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	hbox.add_theme_constant_override(&"separation", 12)
+	add_child(hbox)
+
+	# Left: quest list.
+	var left_scroll: ScrollContainer = ScrollContainer.new()
+	left_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	left_scroll.size_flags_stretch_ratio = 0.85
+	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	hbox.add_child(left_scroll)
+
+	_list_vbox = VBoxContainer.new()
+	_list_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_list_vbox.add_theme_constant_override(&"separation", 4)
+	left_scroll.add_child(_list_vbox)
+
+	# Right: details column. Header (title + track) pinned, body scrolls.
+	var right_col: VBoxContainer = VBoxContainer.new()
+	right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_col.size_flags_stretch_ratio = 1.3
+	right_col.add_theme_constant_override(&"separation", 8)
+	hbox.add_child(right_col)
+
+	var header: HBoxContainer = HBoxContainer.new()
+	header.add_theme_constant_override(&"separation", 8)
+	right_col.add_child(header)
+
+	_detail_title = Label.new()
+	_detail_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_detail_title.add_theme_font_size_override(&"font_size", 18)
+	_detail_title.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.75))
+	_detail_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	header.add_child(_detail_title)
+
+	_track_button = Button.new()
+	_track_button.custom_minimum_size = Vector2(96, 36)
+	_track_button.visible = false
+	header.add_child(_track_button)
+
+	var body_scroll: ScrollContainer = ScrollContainer.new()
+	body_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	right_col.add_child(body_scroll)
+
+	_detail_body = VBoxContainer.new()
+	_detail_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_detail_body.add_theme_constant_override(&"separation", 8)
+	body_scroll.add_child(_detail_body)
 
 
 func _on_visibility_changed() -> void:
 	if is_visible_in_tree():
 		_refresh()
-	elif _overlay:
-		_close_detail()
 
 
 func _refresh() -> void:
@@ -35,16 +92,31 @@ func _refresh() -> void:
 
 func _on_received(data: Dictionary) -> void:
 	_quests = data.get("quests", [])
+	# Keep the current selection if it still exists; else pick a sensible
+	# default (tracked quest first, then the first active one).
+	if _selected_id == 0 or _find_quest(_selected_id).is_empty():
+		_selected_id = _default_selection()
 	_rebuild_list()
-	if _open_quest_id != 0 and _overlay and _overlay.visible:
-		_rebuild_detail()
+	_rebuild_detail()
+
+
+func _default_selection() -> int:
+	if ClientState.tracked_quest_id > 0 and not _find_quest(ClientState.tracked_quest_id).is_empty():
+		return ClientState.tracked_quest_id
+	for quest: Dictionary in _quests:
+		if str(quest.get("state", "")) == "active":
+			return int(quest.get("id", 0))
+	if not _quests.is_empty():
+		return int(_quests[0].get("id", 0))
+	return 0
 
 
 # --- List ---
 
 func _rebuild_list() -> void:
-	for child in quest_list.get_children():
+	for child in _list_vbox.get_children():
 		child.queue_free()
+	_row_buttons.clear()
 
 	var active: Array = []
 	var done: Array = []
@@ -59,177 +131,124 @@ func _rebuild_list() -> void:
 		var empty: Label = Label.new()
 		empty.text = "No quests yet."
 		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		quest_list.add_child(empty)
+		empty.modulate.a = 0.55
+		_list_vbox.add_child(empty)
 		return
 
-	for quest: Dictionary in active:
-		quest_list.add_child(_make_entry(quest, true))
-	for quest: Dictionary in done:
-		quest_list.add_child(_make_entry(quest, false))
+	if not active.is_empty():
+		_list_vbox.add_child(_make_header("Active"))
+		for quest: Dictionary in active:
+			_add_row(quest, true)
+	if not done.is_empty():
+		_list_vbox.add_child(_make_header("Completed"))
+		for quest: Dictionary in done:
+			_add_row(quest, false)
 
 
-func _make_entry(quest: Dictionary, is_active: bool) -> PanelContainer:
+func _make_header(text: String) -> Label:
+	var header: Label = Label.new()
+	header.text = text
+	header.add_theme_font_size_override(&"font_size", 13)
+	header.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.5))
+	return header
+
+
+func _add_row(quest: Dictionary, is_active: bool) -> void:
 	var quest_id: int = int(quest.get("id", 0))
-
-	var panel: PanelContainer = PanelContainer.new()
-	var margin: MarginContainer = MarginContainer.new()
-	for side: String in ["left", "right"]:
-		margin.add_theme_constant_override("margin_" + side, 8)
-	for side: String in ["top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 6)
-	panel.add_child(margin)
-
-	var vbox: VBoxContainer = VBoxContainer.new()
-	vbox.add_theme_constant_override(&"separation", 2)
-	margin.add_child(vbox)
-
-	var header: HBoxContainer = HBoxContainer.new()
-	header.add_theme_constant_override(&"separation", 8)
-	vbox.add_child(header)
-
-	var name_label: Label = Label.new()
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_label.text = str(quest.get("name", "?"))
-	header.add_child(name_label)
-
-	if is_active:
-		# The tracked quest gets an Untrack button (clears the HUD); others a Track button.
-		var track_button: Button = Button.new()
-		track_button.custom_minimum_size = Vector2(0, 40)
-		if ClientState.tracked_quest_id == quest_id:
-			track_button.text = "Untrack"
-			track_button.pressed.connect(func(): ClientState.set_tracked_quest(-1))
-		else:
-			track_button.text = "Track"
-			track_button.pressed.connect(func(): ClientState.set_tracked_quest(quest_id))
-		header.add_child(track_button)
-	else:
-		name_label.add_theme_color_override(&"font_color", Color(0.6, 0.6, 0.65))
-		var done_label: Label = Label.new()
-		done_label.text = "Completed ✓"
-		done_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
-		header.add_child(done_label)
-
-	var details_button: Button = Button.new()
-	details_button.text = "Details"
-	details_button.custom_minimum_size = Vector2(0, 40)
-	details_button.pressed.connect(_open_detail.bind(quest_id))
-	header.add_child(details_button)
-
-	if is_active:
-		for objective: Dictionary in quest.get("objectives", []):
-			var count: int = int(objective.get("count", 0))
-			var required: int = int(objective.get("required", 1))
-			var objective_label: Label = Label.new()
-			objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
-			if count >= required:
-				objective_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
-			vbox.add_child(objective_label)
-
-	return panel
+	var button: Button = Button.new()
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.toggle_mode = true
+	button.button_pressed = (quest_id == _selected_id)
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.custom_minimum_size = Vector2(0, 38)
+	button.text = str(quest.get("name", "?"))
+	if not is_active:
+		button.text += "  ✓"
+		button.add_theme_color_override(&"font_color", Color(0.6, 0.75, 0.6))
+	button.pressed.connect(_select_quest.bind(quest_id))
+	_list_vbox.add_child(button)
+	_row_buttons[quest_id] = button
 
 
-# --- Details popup ---
-
-func _open_detail(quest_id: int) -> void:
-	_open_quest_id = quest_id
-	if _overlay == null:
-		_build_overlay()
+func _select_quest(quest_id: int) -> void:
+	_selected_id = quest_id
+	for qid in _row_buttons:
+		_row_buttons[qid].button_pressed = (qid == quest_id)
 	_rebuild_detail()
-	_overlay.show()
 
 
-func _build_overlay() -> void:
-	_overlay = Control.new()
-	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-
-	var dim: ColorRect = ColorRect.new()
-	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	dim.color = Color(0.0, 0.0, 0.0, 0.5)
-	dim.mouse_filter = Control.MOUSE_FILTER_STOP
-	dim.gui_input.connect(func(event: InputEvent):
-		if event is InputEventMouseButton and event.pressed:
-			_close_detail())
-	_overlay.add_child(dim)
-
-	var center: CenterContainer = CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_overlay.add_child(center)
-
-	var card: PanelContainer = PanelContainer.new()
-	card.custom_minimum_size = Vector2(360, 0)
-	card.mouse_filter = Control.MOUSE_FILTER_STOP
-	center.add_child(card)
-
-	var card_margin: MarginContainer = MarginContainer.new()
-	for side: String in ["left", "right"]:
-		card_margin.add_theme_constant_override("margin_" + side, 14)
-	for side: String in ["top", "bottom"]:
-		card_margin.add_theme_constant_override("margin_" + side, 12)
-	card.add_child(card_margin)
-
-	_detail_root = VBoxContainer.new()
-	_detail_root.add_theme_constant_override(&"separation", 6)
-	card_margin.add_child(_detail_root)
-
-	var host: Node = owner if owner else self
-	host.add_child(_overlay)
-
-
-func _close_detail() -> void:
-	_open_quest_id = 0
-	if _overlay:
-		_overlay.hide()
-
+# --- Detail ---
 
 func _rebuild_detail() -> void:
-	if _detail_root == null:
-		return
-	var quest: Dictionary = _find_quest(_open_quest_id)
-	if quest.is_empty():
-		_close_detail()
-		return
-
-	for child in _detail_root.get_children():
+	for child in _detail_body.get_children():
 		child.queue_free()
 
-	var header: HBoxContainer = HBoxContainer.new()
-	header.add_theme_constant_override(&"separation", 8)
-	_detail_root.add_child(header)
+	var quest: Dictionary = _find_quest(_selected_id)
+	if quest.is_empty():
+		_detail_title.text = ""
+		_track_button.visible = false
+		var hint: Label = Label.new()
+		hint.text = "Select a quest on the left."
+		hint.modulate.a = 0.55
+		_detail_body.add_child(hint)
+		return
 
-	var title: Label = Label.new()
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.text = str(quest.get("name", "?"))
-	header.add_child(title)
+	var is_active: bool = str(quest.get("state", "")) == "active"
+	_detail_title.text = str(quest.get("name", "?"))
 
-	var close_button: Button = Button.new()
-	close_button.text = "✕"
-	close_button.pressed.connect(_close_detail)
-	header.add_child(close_button)
+	# Track / Untrack — only for active quests.
+	_track_button.visible = is_active
+	if is_active:
+		var quest_id: int = int(quest.get("id", 0))
+		for conn in _track_button.pressed.get_connections():
+			_track_button.pressed.disconnect(conn["callable"])
+		if ClientState.tracked_quest_id == quest_id:
+			_track_button.text = "Untrack"
+			_track_button.pressed.connect(func(): ClientState.set_tracked_quest(-1))
+		else:
+			_track_button.text = "Track"
+			_track_button.pressed.connect(func(): ClientState.set_tracked_quest(quest_id))
 
 	var description: String = str(quest.get("description", ""))
 	if not description.is_empty():
 		var desc_label: Label = Label.new()
 		desc_label.text = description
 		desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		desc_label.add_theme_color_override(&"font_color", Color(0.7, 0.7, 0.75))
-		_detail_root.add_child(desc_label)
+		desc_label.add_theme_color_override(&"font_color", Color(0.75, 0.77, 0.83))
+		_detail_body.add_child(desc_label)
 
-	for objective: Dictionary in quest.get("objectives", []):
+	var obj_header: Label = Label.new()
+	obj_header.text = "Objectives"
+	obj_header.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.5))
+	_detail_body.add_child(obj_header)
+
+	# ANY-mode quests (completion == 1) treat objectives as alternatives — an
+	# "— OR —" line between them reads them as a choice, not a checklist.
+	var any_mode: bool = int(quest.get("completion", 0)) == 1
+	var objectives: Array = quest.get("objectives", [])
+	for i in objectives.size():
+		if any_mode and i > 0:
+			var or_label: Label = Label.new()
+			or_label.text = "— OR —"
+			or_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			or_label.add_theme_color_override(&"font_color", Color(0.65, 0.75, 0.9))
+			_detail_body.add_child(or_label)
+		var objective: Dictionary = objectives[i]
 		var count: int = int(objective.get("count", 0))
 		var required: int = int(objective.get("required", 1))
 		var objective_label: Label = Label.new()
 		objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
+		objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if count >= required:
 			objective_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
-		_detail_root.add_child(objective_label)
+		_detail_body.add_child(objective_label)
+
+	_detail_body.add_child(HSeparator.new())
 
 	var reward_label: Label = Label.new()
 	reward_label.text = "Rewards: %d XP, %d gold" % [int(quest.get("reward_xp", 0)), int(quest.get("reward_gold", 0))]
 	reward_label.add_theme_color_override(&"font_color", Color(0.85, 0.8, 0.4))
-	_detail_root.add_child(reward_label)
+	_detail_body.add_child(reward_label)
 
 
 func _find_quest(quest_id: int) -> Dictionary:

@@ -1,20 +1,23 @@
-extends Control
-## Leaderboard panel: pick a domain (PvP / PvE / Guilds / Level / Arena), then a
-## time period when relevant, see the top 20. Two-step picker keeps the UI light
-## instead of a flat dropdown of 10 entries.
+extends MenuShell
+## Leaderboard — split view (quests/jobs style): a list of board domains on the
+## left, and on the right the selected board's period toggles (This Week / Today
+## / All-Time, where relevant) above the ranked entries. Player rows are
+## clickable to open that player's profile.
 ##
-## The shell (header / two empty button rows / scroll) lives in the .tscn for
-## editor auditing; this script just populates the two button rows from DOMAINS
-## below and wires clicks. Add or rename a domain by editing DOMAINS only.
+## Add or rename a board by editing DOMAINS only. Each domain's period `id` (or
+## the domain's `board_id` when period-less) is the board sent to the server's
+## leaderboard.top handler.
 
 const ROW_LIMIT: int = 20
-## A domain is a category of board. Domains with an empty `periods` list have
-## no time-window choice (e.g. Level is naturally lifetime). The `board_id` on
-## each period (or on the domain itself for period-less ones) is what gets sent
-## to the server's leaderboard.top handler.
+## Categories group the board list on the left (like the jobs panel).
+const CATEGORIES: Array = [
+	{"id": "combat", "label": "Combat"},
+	{"id": "progression", "label": "Progression"},
+	{"id": "guild", "label": "Guild"},
+]
 const DOMAINS: Array = [
 	{
-		"id": "pvp", "label": "PvP",
+		"id": "pvp", "label": "PvP Kills", "category": "combat",
 		"periods": [
 			{"id": "pvp_week",  "label": "This Week"},
 			{"id": "pvp_day",   "label": "Today"},
@@ -22,7 +25,7 @@ const DOMAINS: Array = [
 		],
 	},
 	{
-		"id": "pve", "label": "PvE",
+		"id": "pve", "label": "PvE Kills", "category": "combat",
 		"periods": [
 			{"id": "pve_week",  "label": "This Week"},
 			{"id": "pve_day",   "label": "Today"},
@@ -30,136 +33,278 @@ const DOMAINS: Array = [
 		],
 	},
 	{
-		"id": "guilds", "label": "Guilds",
+		"id": "guilds", "label": "Guild Glory", "category": "guild",
 		"periods": [
 			{"id": "glory_seasonal", "label": "Seasonal"},
 			{"id": "glory_eternal",  "label": "Eternal"},
 		],
 	},
-	{"id": "arena", "label": "Arena", "board_id": "arena_wins", "periods": []},
-	{"id": "level", "label": "Level", "board_id": "level",      "periods": []},
+	{"id": "arena", "label": "Arena Wins", "category": "combat", "board_id": "arena_wins", "periods": []},
+	{"id": "level", "label": "Highest Level", "category": "progression", "board_id": "level", "periods": []},
+	{"id": "gold",  "label": "Richest", "category": "progression", "board_id": "gold", "periods": []},
 ]
 
-@export var domain_buttons_box: HBoxContainer
-@export var period_buttons_box: HBoxContainer
-@export var period_row: Control # Hidden when the selected domain has no periods.
-@export var refresh_button: Button
-@export var close_button: Button
-@export var status_label: Label
-@export var entries_box: VBoxContainer
+const RANK_COLORS: Dictionary = {
+	1: Color(1.0, 0.84, 0.3),    # gold
+	2: Color(0.8, 0.82, 0.88),   # silver
+	3: Color(0.82, 0.56, 0.35),  # bronze
+}
 
-var _current_domain_idx: int = 0
-var _current_period_idx: int = 0
+var _domain_list: VBoxContainer
+var _board_title: Label
+var _period_bar: HBoxContainer
+var _status_label: Label
+var _entries_box: VBoxContainer
+
+var _domain_idx: int
+var _period_idx: int
+## Keyed by DOMAINS index (the list is built grouped by category, so a plain
+## array's positions wouldn't line up with domain indices).
+var _domain_buttons: Dictionary[int, Button]
+var _period_buttons: Array[Button]
 
 
 func _ready() -> void:
-	for i: int in DOMAINS.size():
-		var btn: Button = Button.new()
-		btn.text = str(DOMAINS[i]["label"])
-		btn.toggle_mode = true
-		btn.pressed.connect(_on_domain_pressed.bind(i))
-		domain_buttons_box.add_child(btn)
-	refresh_button.pressed.connect(_request)
-	close_button.pressed.connect(hide)
-	visibility_changed.connect(_on_visibility_changed)
+	build_shell("Leaderboard")
+	_build_layout()
+	visibility_changed.connect(func() -> void:
+		if visible:
+			_request())
 	_select_domain(0)
 
 
-func _on_visibility_changed() -> void:
-	if visible:
-		_request()
+func _build_layout() -> void:
+	var hbox: HBoxContainer = HBoxContainer.new()
+	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	hbox.add_theme_constant_override(&"separation", 12)
+	content.add_child(hbox)
+
+	# Left: board domain list.
+	var left_scroll: ScrollContainer = ScrollContainer.new()
+	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	left_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	left_scroll.size_flags_stretch_ratio = 0.7
+	hbox.add_child(left_scroll)
+
+	_domain_list = VBoxContainer.new()
+	_domain_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_domain_list.add_theme_constant_override(&"separation", 4)
+	left_scroll.add_child(_domain_list)
+
+	for cat: Dictionary in CATEGORIES:
+		var domain_indices: Array = []
+		for i: int in DOMAINS.size():
+			if str(DOMAINS[i].get("category", "")) == str(cat["id"]):
+				domain_indices.append(i)
+		if domain_indices.is_empty():
+			continue
+		_domain_list.add_child(_make_section_header(str(cat["label"])))
+		for i: int in domain_indices:
+			var btn: Button = Button.new()
+			btn.text = str(DOMAINS[i]["label"])
+			btn.toggle_mode = true
+			btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			btn.custom_minimum_size = Vector2(0, 40)
+			btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			btn.pressed.connect(_select_domain.bind(i))
+			_domain_list.add_child(btn)
+			_domain_buttons[i] = btn
+
+	# Right: title + period toggles + entries.
+	var right_col: VBoxContainer = VBoxContainer.new()
+	right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_col.size_flags_stretch_ratio = 1.5
+	right_col.add_theme_constant_override(&"separation", 8)
+	hbox.add_child(right_col)
+
+	var header: HBoxContainer = HBoxContainer.new()
+	header.add_theme_constant_override(&"separation", 8)
+	right_col.add_child(header)
+
+	_board_title = Label.new()
+	_board_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_board_title.add_theme_font_size_override(&"font_size", 18)
+	_board_title.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.75))
+	_board_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	header.add_child(_board_title)
+
+	var refresh: Button = Button.new()
+	refresh.text = "↻"
+	refresh.tooltip_text = "Refresh"
+	refresh.custom_minimum_size = Vector2(40, 0)
+	refresh.pressed.connect(_request)
+	header.add_child(refresh)
+
+	_period_bar = HBoxContainer.new()
+	_period_bar.add_theme_constant_override(&"separation", 4)
+	right_col.add_child(_period_bar)
+
+	_status_label = Label.new()
+	_status_label.modulate = Color(1, 1, 1, 0.6)
+	right_col.add_child(_status_label)
+
+	var entries_scroll: ScrollContainer = ScrollContainer.new()
+	entries_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	entries_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	entries_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_col.add_child(entries_scroll)
+
+	_entries_box = VBoxContainer.new()
+	_entries_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_entries_box.add_theme_constant_override(&"separation", 4)
+	entries_scroll.add_child(_entries_box)
 
 
-func _on_domain_pressed(idx: int) -> void:
-	_select_domain(idx)
+# ---------------------------------------------------------------------------
+# Selection
+# ---------------------------------------------------------------------------
 
-
-func _on_period_pressed(idx: int) -> void:
-	_current_period_idx = idx
-	_paint_selection(period_buttons_box, idx)
-	_request()
-
-
-## Switch domain, rebuild the period row to match, default to the first period.
 func _select_domain(idx: int) -> void:
-	_current_domain_idx = idx
-	_current_period_idx = 0
-	_paint_selection(domain_buttons_box, idx)
+	_domain_idx = idx
+	_period_idx = 0
+	for key: int in _domain_buttons:
+		_domain_buttons[key].button_pressed = (key == idx)
 
-	for child: Node in period_buttons_box.get_children():
+	_board_title.text = str(DOMAINS[idx]["label"])
+
+	for child: Node in _period_bar.get_children():
 		child.queue_free()
+	_period_buttons.clear()
 
 	var periods: Array = DOMAINS[idx].get("periods", [])
-	period_row.visible = not periods.is_empty()
+	_period_bar.visible = not periods.is_empty()
 	for i: int in periods.size():
 		var btn: Button = Button.new()
 		btn.text = str(periods[i]["label"])
+		btn.theme_type_variation = &"SectionTab"
 		btn.toggle_mode = true
-		btn.pressed.connect(_on_period_pressed.bind(i))
-		period_buttons_box.add_child(btn)
-	if not periods.is_empty():
-		_paint_selection(period_buttons_box, 0)
+		btn.button_pressed = (i == 0)
+		btn.custom_minimum_size = Vector2(0, 32)
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.pressed.connect(_select_period.bind(i))
+		_period_bar.add_child(btn)
+		_period_buttons.append(btn)
+
 	_request()
 
 
-## Visually mark which button in a row is the active one.
-func _paint_selection(box: HBoxContainer, idx: int) -> void:
-	for i: int in box.get_child_count():
-		var btn: Button = box.get_child(i) as Button
-		if btn == null:
-			continue
-		btn.button_pressed = (i == idx)
+func _select_period(idx: int) -> void:
+	_period_idx = idx
+	for i: int in _period_buttons.size():
+		_period_buttons[i].button_pressed = (i == idx)
+	_request()
 
 
-## Resolve the current selection to a server board_id.
 func _current_board_id() -> String:
-	var domain: Dictionary = DOMAINS[_current_domain_idx]
+	var domain: Dictionary = DOMAINS[_domain_idx]
 	var periods: Array = domain.get("periods", [])
 	if periods.is_empty():
 		return str(domain.get("board_id", ""))
-	return str(periods[_current_period_idx]["id"])
+	return str(periods[_period_idx]["id"])
 
+
+# ---------------------------------------------------------------------------
+# Data
+# ---------------------------------------------------------------------------
 
 func _request() -> void:
 	var board: String = _current_board_id()
 	if board.is_empty():
 		return
-	status_label.text = "Loading..."
+	_status_label.text = "Loading..."
 	Client.request_data(
 		&"leaderboard.top",
 		_apply_response,
 		{"board": board, "limit": ROW_LIMIT},
-		InstanceClient.current.name if InstanceClient.current else ""
+		String(InstanceClient.current.name) if InstanceClient.current else ""
 	)
 
 
 func _apply_response(response: Dictionary) -> void:
-	for child: Node in entries_box.get_children():
+	for child: Node in _entries_box.get_children():
 		child.queue_free()
 
 	var entries: Array = response.get("entries", [])
 	if entries.is_empty():
-		status_label.text = "No entries yet — go earn some glory."
+		_status_label.text = "No entries yet — go earn some glory."
 		return
-	status_label.text = "Top %d" % entries.size()
+	_status_label.text = "Top %d" % entries.size()
 
+	var is_player_board: bool = str(DOMAINS[_domain_idx]["id"]) != "guilds"
 	for i: int in entries.size():
-		var entry: Dictionary = entries[i]
-		var row: HBoxContainer = HBoxContainer.new()
-		row.add_theme_constant_override(&"separation", 8)
+		_entries_box.add_child(_make_entry_row(i + 1, entries[i], is_player_board))
 
-		var rank: Label = Label.new()
-		rank.text = "%d." % (i + 1)
-		rank.custom_minimum_size = Vector2(40, 0)
-		row.add_child(rank)
 
-		var name_lbl: Label = Label.new()
-		name_lbl.text = str(entry.get("name", "?"))
-		name_lbl.size_flags_horizontal = SIZE_EXPAND_FILL
-		row.add_child(name_lbl)
+## A ranked row: rank (top-3 medal-coloured) + name + score. Player rows are
+## clickable to open the profile; guild rows are static.
+func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool) -> Control:
+	var hbox: HBoxContainer = HBoxContainer.new()
+	hbox.add_theme_constant_override(&"separation", 10)
+	if is_player_board:
+		hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
-		var score_lbl: Label = Label.new()
-		score_lbl.text = str(entry.get("score", 0))
-		row.add_child(score_lbl)
+	var rank_label: Label = Label.new()
+	rank_label.text = "%d" % rank_num
+	rank_label.custom_minimum_size = Vector2(36, 0)
+	rank_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	rank_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	if RANK_COLORS.has(rank_num):
+		rank_label.add_theme_color_override(&"font_color", RANK_COLORS[rank_num])
+		rank_label.add_theme_font_size_override(&"font_size", 16)
+	if is_player_board:
+		rank_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.add_child(rank_label)
 
-		entries_box.add_child(row)
+	var name_label: Label = Label.new()
+	name_label.text = str(entry.get("name", "?"))
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_label.clip_text = true
+	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	if is_player_board:
+		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.add_child(name_label)
+
+	var score_label: Label = Label.new()
+	score_label.text = str(entry.get("score", 0))
+	score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	score_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.45))
+	if is_player_board:
+		score_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.add_child(score_label)
+
+	if is_player_board:
+		var button: Button = Button.new()
+		button.custom_minimum_size = Vector2(0, 40)
+		button.add_child(hbox)
+		button.pressed.connect(_on_entry_pressed.bind(int(entry.get("id", 0))))
+		return button
+
+	var panel: PanelContainer = PanelContainer.new()
+	var margin: MarginContainer = MarginContainer.new()
+	margin.add_theme_constant_override(&"margin_left", 8)
+	margin.add_theme_constant_override(&"margin_right", 8)
+	margin.add_theme_constant_override(&"margin_top", 6)
+	margin.add_theme_constant_override(&"margin_bottom", 6)
+	margin.add_child(hbox)
+	panel.add_child(margin)
+	return panel
+
+
+func _on_entry_pressed(player_id: int) -> void:
+	if player_id <= 0:
+		return
+	hide()
+	ClientState.player_profile_requested.emit(player_id)
+
+
+func _make_section_header(text: String) -> Label:
+	var header: Label = Label.new()
+	header.text = text
+	header.add_theme_font_size_override(&"font_size", 13)
+	header.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.5))
+	return header
