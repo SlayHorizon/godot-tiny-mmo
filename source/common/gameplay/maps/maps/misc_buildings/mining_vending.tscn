@@ -1,17 +1,16 @@
-[gd_scene load_steps=3 format=4 uid="uid://daytwqtwiixqx"]
+[gd_scene format=4 uid="uid://daytwqtwiixqx"]
 
 [ext_resource type="TileSet" uid="uid://b2d4sq0id3vc2" path="res://source/common/gameplay/maps/tilesets/base_outpost_inside_tileset.tres" id="1_86vsh"]
 [ext_resource type="TileSet" uid="uid://cp3aq00j7d6as" path="res://source/common/gameplay/maps/tilesets/buildings_inside_tileset.tres" id="2_lby55"]
 
-[node name="Mining_vending" type="Node2D"]
+[node name="Mining_vending" type="Node2D" unique_id=1236061498]
 y_sort_enabled = true
 
-[node name="Props2" type="TileMapLayer" parent="."]
+[node name="Props2" type="TileMapLayer" parent="." unique_id=1918693212]
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAEAP//AAAQABAAAAAFAAAAAAAQABMAAAAEAAAAAAAQABMAAAAFAAEAAAAQABMAAAADAAAAAAATAA4AAAADAAEAAAAVAA4AAAACAAEAAAATAA0AAAAEAAIAAAARAAYAAAAGAAIAAAATAAMAAAA=")
+tile_map_data = PackedByteArray("AAACAAEAAAATAAMAAAD+/wAAAAATAA0AAAD/////AAATAA4AAAD//wAAAAAVAA4AAAAAAP7/AAAQABAAAAAAAP//AAAQABMAAAAAAAEAAAARAAYAAAABAP//AAAQABMAAAABAAAAAAAQABMAAAD9/wEAAAAWAAgAAAA=")
 tile_set = ExtResource("1_86vsh")
 
-[node name="Props" type="TileMapLayer" parent="."]
+[node name="Props" type="TileMapLayer" parent="." unique_id=1686492522]
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAD6/wAAAAAKABAAAAD6/wMAAAAKABAAAAAAAAAAAAAKABAAAAAAAAMAAAAKABAAAAA=")
 tile_set = ExtResource("2_lby55")
