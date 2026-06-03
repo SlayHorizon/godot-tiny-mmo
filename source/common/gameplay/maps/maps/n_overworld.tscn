@@ -11,19 +11,23 @@
 [ext_resource type="PackedScene" uid="uid://bejfk0u1aillb" path="res://source/common/gameplay/maps/maps/smith_house/outside_building.tscn" id="6_fgxfr"]
 [ext_resource type="PackedScene" uid="uid://bpr8ccojh5dbi" path="res://source/common/gameplay/maps/maps/spar_house/outside_building.tscn" id="7_sgqiv"]
 [ext_resource type="PackedScene" uid="uid://ckx8tludq8q4m" path="res://source/common/gameplay/maps/maps/misc_buildings/house_1.tscn" id="8_0hg1i"]
+[ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/guild_house/guild_house.tres" id="11_4kwnu"]
 [ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="11_5jj8c"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="11_naiac"]
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="12_bhe7f"]
 [ext_resource type="Resource" uid="uid://cutpirmfqwx8b" path="res://source/common/gameplay/maps/components/mineable_nodes/iron_vein.tres" id="12_go7ir"]
+[ext_resource type="Resource" uid="uid://bqx2riy2f440w" path="res://source/common/gameplay/maps/instance/instance_collection/trade_house/trade_house.tres" id="12_m6s46"]
 [ext_resource type="Resource" uid="uid://djj2vxg3nbswn" path="res://source/common/gameplay/characters/npc/types/fungus.tres" id="13_go7ir"]
+[ext_resource type="Resource" uid="uid://b832bjouifd56" path="res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_house.tres" id="13_hs4x2"]
 [ext_resource type="Resource" uid="uid://dtpviov364y0b" path="res://source/common/gameplay/maps/components/mineable_nodes/coal_vein.tres" id="13_pnbwk"]
 [ext_resource type="Resource" uid="uid://g8rxlnr0pfyk" path="res://source/common/gameplay/maps/components/mineable_nodes/healing_herb.tres" id="14_nkbe4"]
 [ext_resource type="Resource" uid="uid://d08wf1j2mhlc5" path="res://source/common/gameplay/maps/components/mineable_nodes/copper_vein.tres" id="14_pj1dl"]
 [ext_resource type="Resource" uid="uid://b30ybcv0ulinq" path="res://source/common/gameplay/characters/npc/types/goblin.tres" id="14_pnbwk"]
+[ext_resource type="Resource" uid="uid://csp4j7lr4famg" path="res://source/common/gameplay/maps/instance/instance_collection/smith_house/smith_house.tres" id="14_re23f"]
+[ext_resource type="Resource" uid="uid://ci3xj57ys32t7" path="res://source/common/gameplay/maps/instance/instance_collection/guild_outpost_base/guild_outpost.tres" id="15_ag2f3"]
 [ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="15_vc2t3"]
 [ext_resource type="Resource" uid="uid://jo7v7jfc54kp" path="res://source/common/gameplay/characters/npc/types/bandit_captain.tres" id="16_tlky3"]
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="18_m4n4e"]
-[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="19_n81rr"]
 [ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="23_xwvb5"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
@@ -33,9 +37,6 @@
 [ext_resource type="Resource" uid="uid://dd7tu8yrec3ie" path="res://source/common/gameplay/quests/resources/camp_cleanup.tres" id="29_e4lv4"]
 [ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="30_m6sqw"]
 [ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="33_n81rr"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_ikkk2"]
-radius = 55.38041
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ovmn0"]
 size = Vector2(48.993896, 43.498413)
@@ -109,29 +110,36 @@ position = Vector2(1329, 839)
 [node name="GuildHouse" parent="." unique_id=1783528862 instance=ExtResource("2_o3drh")]
 position = Vector2(1323, 688)
 scale = Vector2(2.6774926, 1.173247)
+target_instance = ExtResource("11_4kwnu")
 warper_id = 1
 
 [node name="TradeHouse" parent="." unique_id=1613866376 instance=ExtResource("2_o3drh")]
 position = Vector2(1832, 986)
 scale = Vector2(1.52, 1)
-warper_id = 1
+target_instance = ExtResource("12_m6s46")
+warper_id = 2
 
 [node name="SparHouse" parent="." unique_id=1683620952 instance=ExtResource("2_o3drh")]
 position = Vector2(902, 828)
-warper_id = 1
+target_instance = ExtResource("13_hs4x2")
+warper_id = 3
 
 [node name="SmithHouse" parent="." unique_id=665033636 instance=ExtResource("2_o3drh")]
 position = Vector2(771, 974)
-warper_id = 1
+target_instance = ExtResource("14_re23f")
+warper_id = 4
 
 [node name="GuildOutpostEntrance1" parent="." unique_id=166001226 instance=ExtResource("2_o3drh")]
 position = Vector2(2639, 1091)
 scale = Vector2(2.7102876, 0.8535888)
-warper_id = 1
+target_instance = ExtResource("15_ag2f3")
+warper_id = 5
 
 [node name="GuildOutpostEntrance2" parent="." unique_id=936188692 instance=ExtResource("2_o3drh")]
 position = Vector2(2791, 1079)
-warper_id = 1
+target_instance = ExtResource("15_ag2f3")
+warper_id = 6
+target_id = 1
 
 [node name="ReplicatedPropsContainer" type="Node2D" parent="." unique_id=1981280680 node_paths=PackedStringArray("id_to_node", "node_to_id")]
 position = Vector2(274, 289)
@@ -259,27 +267,6 @@ metadata/_edit_group_ = true
 position = Vector2(-32, 10)
 color = Color(1, 0, 0, 0.16)
 polygon = PackedVector2Array(2238, 863, 2244, 1179, 2399, 1352, 2575, 1410, 2797, 1410, 2960, 1362, 3103, 1283, 3207, 1214, 3238, 1113, 3238, 901, 3131, 716, 2977, 609, 2686, 576, 2468, 609, 2295, 744)
-
-[node name="ShopInteractable" type="Area2D" parent="." unique_id=1812436126]
-position = Vector2(1177.7854, 817.37085)
-script = ExtResource("18_m4n4e")
-shop = ExtResource("19_n81rr")
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=1728883080]
-shape = SubResource("CircleShape2D_ikkk2")
-
-[node name="Label" type="Label" parent="ShopInteractable/CollisionShape2D" unique_id=427980610]
-offset_left = -26.651733
-offset_top = -20.843018
-offset_right = 39.348267
-offset_bottom = 24.156982
-text = "STARTER
-SHOP"
-horizontal_alignment = 1
-
-[node name="InteractableMarker" parent="ShopInteractable" unique_id=1116914763 instance=ExtResource("30_m6sqw")]
-kind = 2
 
 [node name="CoalOre" parent="." unique_id=881279537 instance=ExtResource("11_5jj8c")]
 y_sort_enabled = true
@@ -460,7 +447,7 @@ horizontal_alignment = 1
 kind = 0
 
 [node name="QuarryCounter" type="Area2D" parent="." unique_id=127675430]
-position = Vector2(1220.2197, 681.62036)
+position = Vector2(1239, 686)
 script = ExtResource("18_m4n4e")
 shop = ExtResource("33_n81rr")
 metadata/_custom_type_script = "uid://bd3mum0wbv2c0"

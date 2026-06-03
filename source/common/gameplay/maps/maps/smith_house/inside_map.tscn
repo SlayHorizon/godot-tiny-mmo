@@ -44,7 +44,7 @@ tile_set = ExtResource("2_khpmq")
 [node name="Entrance" parent="." unique_id=916773362 instance=ExtResource("3_dr2jr")]
 position = Vector2(120, 337)
 target_instance = ExtResource("4_alrfp")
-target_id = 2
+target_id = 4
 
 [node name="Forge" type="Area2D" parent="." unique_id=118051923]
 position = Vector2(92, 150)

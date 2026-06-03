@@ -6,9 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="4_0jqnl"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="5_5ghuf"]
 [ext_resource type="Script" uid="uid://dp7km3l8yaot3" path="res://source/common/gameplay/quests/quest_board.gd" id="6_ag5d4"]
+[ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="7_lkcla"]
+[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="8_subvk"]
+[ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="9_domtg"]
+[ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="10_subvk"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5v2ol"]
-size = Vector2(80, 20)
+size = Vector2(80, 50)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_e6ho2"]
+radius = 55.38041
 
 [node name="Guild_house_inside" type="Node2D" unique_id=108008123]
 y_sort_enabled = true
@@ -39,7 +46,7 @@ tile_set = ExtResource("2_xkpnh")
 position = Vector2(0, 690)
 scale = Vector2(2.76, 1)
 target_instance = ExtResource("5_5ghuf")
-target_id = 3
+target_id = 1
 
 [node name="QuestBoard" type="Area2D" parent="." unique_id=440578225]
 position = Vector2(-250, 216)
@@ -47,7 +54,7 @@ script = ExtResource("6_ag5d4")
 metadata/_custom_type_script = "uid://dp7km3l8yaot3"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="QuestBoard" unique_id=1619151640]
-position = Vector2(1.7103271, 0)
+position = Vector2(1.7103271, -25)
 shape = SubResource("RectangleShape2D_5v2ol")
 
 [node name="Questboard" type="TileMapLayer" parent="QuestBoard" unique_id=275627442]
@@ -55,3 +62,18 @@ y_sort_enabled = true
 position = Vector2(250, -216)
 tile_map_data = PackedByteArray("AADw/wsAAwAMAAoAAAA=")
 tile_set = ExtResource("3_cwf2m")
+
+[node name="ShopInteractable" type="Area2D" parent="." unique_id=2061268057]
+position = Vector2(-24, 424)
+script = ExtResource("7_lkcla")
+shop = ExtResource("8_subvk")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=991511259]
+shape = SubResource("CircleShape2D_e6ho2")
+
+[node name="InteractableMarker" parent="ShopInteractable" unique_id=1116914763 instance=ExtResource("9_domtg")]
+kind = 2
+
+[node name="NPC" parent="ShopInteractable" unique_id=1922057613 instance=ExtResource("10_subvk")]
+position = Vector2(0, 5)
