@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://bihlmci6oa6b8" path="res://source/common/gameplay/maps/maps/guild_house/outside_building.tscn" id="4_bhe7f"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="4_de0pc"]
 [ext_resource type="PackedScene" uid="uid://dfgyo6udh8k1s" path="res://source/common/gameplay/maps/maps/trade_house/outside_building.tscn" id="5_rn6ga"]
-[ext_resource type="PackedScene" uid="uid://bejfk0u1aillb" path="res://source/common/gameplay/maps/maps/starter_shop/outside_building.tscn" id="6_fgxfr"]
+[ext_resource type="PackedScene" uid="uid://bejfk0u1aillb" path="res://source/common/gameplay/maps/maps/smith_house/outside_building.tscn" id="6_fgxfr"]
 [ext_resource type="PackedScene" uid="uid://bpr8ccojh5dbi" path="res://source/common/gameplay/maps/maps/spar_house/outside_building.tscn" id="7_sgqiv"]
 [ext_resource type="PackedScene" uid="uid://ckx8tludq8q4m" path="res://source/common/gameplay/maps/maps/misc_buildings/house_1.tscn" id="8_0hg1i"]
 [ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="11_5jj8c"]
@@ -91,8 +91,8 @@ position = Vector2(1330, 661)
 [node name="Trade_house" parent="Buildings" unique_id=1401174336 instance=ExtResource("5_rn6ga")]
 position = Vector2(1794, 915)
 
-[node name="Shop" parent="Buildings" unique_id=497726883 instance=ExtResource("6_fgxfr")]
-position = Vector2(731, 920)
+[node name="SmithHouse" parent="Buildings" unique_id=497726883 instance=ExtResource("6_fgxfr")]
+position = Vector2(731, 973)
 
 [node name="Spar_house" parent="Buildings" unique_id=1555914643 instance=ExtResource("7_sgqiv")]
 position = Vector2(1031, 755)
@@ -120,8 +120,8 @@ warper_id = 1
 position = Vector2(902, 828)
 warper_id = 1
 
-[node name="Shop" parent="." unique_id=665033636 instance=ExtResource("2_o3drh")]
-position = Vector2(771, 929)
+[node name="SmithHouse" parent="." unique_id=665033636 instance=ExtResource("2_o3drh")]
+position = Vector2(771, 974)
 warper_id = 1
 
 [node name="GuildOutpostEntrance1" parent="." unique_id=166001226 instance=ExtResource("2_o3drh")]

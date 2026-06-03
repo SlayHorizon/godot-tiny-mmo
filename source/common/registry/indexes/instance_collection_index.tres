@@ -50,8 +50,8 @@ entries = Array[Dictionary]([{
 }, {
 &"hash": "3c61bb95115ce9d3eb7731d96745935f16549fc7ad2f27eb8d219c58df0f784a",
 &"id": 8,
-&"path": "res://source/common/gameplay/maps/instance/instance_collection/starter_shop/starter_shop.tres",
-&"slug": &"starter_shop"
+&"path": "res://source/common/gameplay/maps/instance/instance_collection/smith_house/smith_house.tres",
+&"slug": &"smith_house"
 }, {
 &"hash": "d1b5af52de5192a824dc8f95557f57c1449f2da1a9e2295f83acd0e82993bf85",
 &"id": 9,
