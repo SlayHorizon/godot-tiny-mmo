@@ -6,13 +6,13 @@
 
 [sub_resource type="Resource" id="Obj_kill_slime"]
 script = ExtResource("1_obj")
-enemy_type = &"slime"
+enemy_type = &"fungus"
 required_amount = 3
 
 [resource]
 script = ExtResource("2_quest")
-quest_name = "Slime Trouble"
-description = "Slimes have been crawling out of the meadow again. Thin them out — three of them should do."
+quest_name = "Fungus Trouble"
+description = "Fungus have been crawling out of the meadow again. Thin them out — three of them should do."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_slime")])
 reward_xp = 50
 reward_gold = 2

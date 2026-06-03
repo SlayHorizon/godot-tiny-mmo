@@ -75,8 +75,8 @@ entries = Array[Dictionary]([{
 }, {
 &"hash": "1eeadb256b1b9356dbf7cac68cf4fa570b4fc3254fd4b2d231e6b4a74d7d2c04",
 &"id": 18,
-&"path": "res://source/common/gameplay/quests/resources/slime_trouble.tres",
-&"slug": &"slime_trouble"
+&"path": "res://source/common/gameplay/quests/resources/fungus_trouble.tres",
+&"slug": &"fungus_trouble"
 }, {
 &"hash": "ee34413b7da609fb5088e6a993ef6495243dd9d28fea3a215310cee69afe085c",
 &"id": 19,

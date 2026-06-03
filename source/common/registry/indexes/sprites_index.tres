@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ContentIndex" load_steps=2 format=3 uid="uid://cmlrxlrwn0h6t"]
+[gd_resource type="Resource" script_class="ContentIndex" format=3 uid="uid://cmlrxlrwn0h6t"]
 
 [ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_ccyyb"]
 
@@ -52,6 +52,9 @@ entries = Array[Dictionary]([{
 &"id": 9,
 &"path": "res://source/common/gameplay/characters/sprite_frames/bandit_tracker.tres",
 &"slug": &"bandit_tracker"
+}, {
+&"hash": "0000000000000000000000000000000000000000000000000000000000000000",
+&"id": 10,
+&"path": "res://source/common/gameplay/characters/sprite_frames/fungus.tres",
+&"slug": "fungus"
 }])
-scan_path = ""
-filters = PackedStringArray()
