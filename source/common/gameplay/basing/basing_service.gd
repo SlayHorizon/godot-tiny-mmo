@@ -8,9 +8,12 @@ class_name BasingService
 ## a future migration breaks invariants, recomputing from total_sg_ever yields
 ## the canonical EG.
 
-## How long a guild must hold a territory before earning the next tick. Each
-## tick grants TERRITORY_TICK_SG to every owning guild for every held flag.
-const TERRITORY_TICK_SECONDS: float = 30.0 * 60.0
+## How often held territory pays out: each tick grants TERRITORY_TICK_SG (glory),
+## treasury, and credits base-time to every owning guild per held flag. Kept at
+## 5 min so progress is visible during a session (was 30 min — too coarse to feel
+## like anything was happening). Glory/treasury per-tick amounts are tunable if
+## the faster cadence makes the economy run hot.
+const TERRITORY_TICK_SECONDS: float = 5.0 * 60.0
 const TERRITORY_TICK_SG: int = 1
 ## Kills made inside an owned territory by a member of the owning guild count
 ## toward this milestone. On every hit, +1 SG is granted and the counter rolls
@@ -18,6 +21,31 @@ const TERRITORY_TICK_SG: int = 1
 const KILLS_PER_GLORY: int = 200
 ## "10 SG => 3 EG" conversion ratio.
 const EG_PER_10_SG: int = 3
+
+## In-memory accumulator of guild kills by tagged members (anywhere, not just in
+## territory). Flushed to the DB on the territory tick so we don't pay a DB
+## write per kill.
+static var _pending_kills: Dictionary[int, int] = {}
+
+
+## Records a kill by a tagged member toward their guild's lifetime kill stat.
+## Called from LeaderboardService on every PvP/PvE kill; batched (see flush).
+static func record_guild_kill(guild_id: int) -> void:
+	if guild_id <= 0:
+		return
+	_pending_kills[guild_id] = int(_pending_kills.get(guild_id, 0)) + 1
+
+
+static func _flush_pending_kills(world_server: Node) -> void:
+	for gid: int in _pending_kills:
+		var count: int = int(_pending_kills[gid])
+		if count <= 0:
+			continue
+		var guild: Guild = world_server.database.get_guild(gid)
+		if guild != null:
+			guild.total_kills += count
+			world_server.database.save_guild(guild)
+	_pending_kills.clear()
 
 
 ## Grant [param amount] Seasonal Glory to [param guild] and emit any Eternal
@@ -60,6 +88,8 @@ static func on_pve_kill(killer: Player) -> void:
 static func tick_all_territories(world_server: Node) -> void:
 	if world_server == null or world_server.instance_manager == null:
 		return
+	# Flush accumulated guild kills first (these guilds may not hold territory).
+	_flush_pending_kills(world_server)
 	var guilds_to_save: Dictionary = {} # guild_id -> Guild
 	var ticks_by_guild: Dictionary = {} # guild_id -> int (for the chat announce)
 
@@ -73,10 +103,14 @@ static func tick_all_territories(world_server: Node) -> void:
 					continue
 				if not guilds_to_save.has(gid):
 					guilds_to_save[gid] = world_server.database.get_guild(gid)
+					# Credit held-time once per tick for any guild holding ≥1 flag.
+					if guilds_to_save[gid] != null:
+						guilds_to_save[gid].territory_seconds += int(TERRITORY_TICK_SECONDS)
 				var guild: Guild = guilds_to_save[gid]
 				if guild == null:
 					continue
 				grant_sg(guild, TERRITORY_TICK_SG)
+				guild.treasury += GuildUpgrades.treasury_per_flag(guild)
 				ticks_by_guild[gid] = int(ticks_by_guild.get(gid, 0)) + TERRITORY_TICK_SG
 
 	for gid in guilds_to_save:

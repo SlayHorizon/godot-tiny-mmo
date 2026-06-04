@@ -20,6 +20,8 @@ static func record_pve_kill(killer: Player) -> void:
 	if killer == null or killer.player_resource == null:
 		return
 	_increment(killer.player_resource, "pve_kills")
+	if killer.player_resource.active_guild_id > 0:
+		BasingService.record_guild_kill(killer.player_resource.active_guild_id)
 
 
 ## Hook from Player.die(killer). Increments PvP counters on the killer, only
@@ -31,6 +33,8 @@ static func record_pvp_kill(killer: Character) -> void:
 	if killer_player.player_resource == null:
 		return
 	_increment(killer_player.player_resource, "pvp_kills")
+	if killer_player.player_resource.active_guild_id > 0:
+		BasingService.record_guild_kill(killer_player.player_resource.active_guild_id)
 
 
 # --- Server-side: top-N ---

@@ -306,11 +306,32 @@ func get_guild(guild_id: int) -> Guild:
 		var ranks: Array = data.get("ranks", Guild.DEFAULT_RANKS)
 		guild.ranks.assign(ranks)
 
+		# JSON numbers parse as float, so coerce back to int ids.
+		guild.pending_invites.clear()
+		for pid: Variant in data.get("pending_invites", []):
+			guild.pending_invites.append(int(pid))
+
+		# JSON object keys are strings — coerce back to int player ids.
+		guild.member_perms.clear()
+		var perms_raw: Variant = data.get("member_perms", {})
+		if perms_raw is Dictionary:
+			for key: Variant in perms_raw:
+				guild.member_perms[int(key)] = int(perms_raw[key])
+
 		# Glory state — defaults to 0 for guilds that pre-dated this column.
 		guild.seasonal_glory = int(data.get("seasonal_glory", 0))
 		guild.eternal_glory = int(data.get("eternal_glory", 0))
 		guild.total_sg_ever = int(data.get("total_sg_ever", 0))
 		guild.kill_counter_for_glory = int(data.get("kill_counter_for_glory", 0))
+		guild.total_kills = int(data.get("total_kills", 0))
+		guild.territory_seconds = int(data.get("territory_seconds", 0))
+		guild.spar_score = int(data.get("spar_score", 0))
+		guild.treasury = int(data.get("treasury", 0))
+		# JSON object keys are strings & values floats — coerce to StringName/int.
+		var ups_raw: Variant = data.get("upgrades", {})
+		if ups_raw is Dictionary:
+			for key: Variant in ups_raw:
+				guild.upgrades[StringName(key)] = int(ups_raw[key])
 
 	# members
 	db.query_with_bindings("SELECT player_id, rank FROM guild_members WHERE guild_id=?;", [guild_id])
@@ -327,10 +348,17 @@ func save_guild(guild: Guild) -> void:
 		"description": guild.description,
 		"logo_id": guild.logo_id,
 		"ranks": guild.ranks,
+		"pending_invites": guild.pending_invites,
+		"member_perms": guild.member_perms,
 		"seasonal_glory": guild.seasonal_glory,
 		"eternal_glory": guild.eternal_glory,
 		"total_sg_ever": guild.total_sg_ever,
 		"kill_counter_for_glory": guild.kill_counter_for_glory,
+		"total_kills": guild.total_kills,
+		"territory_seconds": guild.territory_seconds,
+		"spar_score": guild.spar_score,
+		"treasury": guild.treasury,
+		"upgrades": guild.upgrades,
 	})
 
 	db.query_with_bindings(

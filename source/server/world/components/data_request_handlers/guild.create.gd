@@ -22,6 +22,11 @@ func data_request_handler(
 	if player.led_guild_id > 0:
 		return {"error": 1, "ok": false, "message": "You already have a guild."}
 
+	# Creation costs gold — check before reserving the name.
+	var gold_id: int = Economy.gold_id()
+	if Inventory.count(player.inventory, gold_id) < Guild.CREATION_COST:
+		return {"error": 1, "ok": false, "message": "You need %d gold to create a guild." % Guild.CREATION_COST}
+
 	# Create + assign atomically
 	store.begin()
 
@@ -38,6 +43,9 @@ func data_request_handler(
 	# Ensure leader is member with rank 0
 	guild.members[player.player_id] = 0
 	store.save_guild(guild)
+
+	# Charge the creation cost (already verified above; persisted by save_player).
+	Inventory.remove_amount_by_id(player.inventory, gold_id, Guild.CREATION_COST)
 
 	# Update player guild fields
 	player.active_guild_id = new_guild_id

@@ -25,13 +25,44 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		"id": guild.guild_id,
 		"name": guild.guild_name,
 		"size": guild.members.size(),
+		"max_members": GuildUpgrades.total_cap(guild),
+		"tag_cap": GuildUpgrades.tag_cap(guild),
 		"logo_id": guild.logo_id,
 		"leader_id": guild.leader_id,
-		"description": guild.description
+		"leader_name": store.get_player_display_name(guild.leader_id),
+		"description": guild.description,
+		"motd": guild.motd,
+		"seasonal_glory": guild.seasonal_glory,
+		"eternal_glory": guild.eternal_glory,
+		"total_kills": guild.total_kills,
+		"territory_seconds": guild.territory_seconds,
+		"spar_score": guild.spar_score,
+		"treasury": guild.treasury,
+		"hall_upgrades": _build_hall_upgrades(guild),
+		"viewer_gold": Inventory.count(player.inventory, Economy.gold_id()),
+		"is_active": player.active_guild_id == guild.guild_id,
 	}
 
 	if guild.members.has(player.player_id):
 		guild_info["is_member"] = true
+		guild_info["is_leader"] = guild.leader_id == player.player_id
 		guild_info["permissions"] = guild.get_member_rank(player.player_id).get("permissions", Guild.Permissions.NONE)
 
 	return guild_info
+
+
+## Server-computed upgrade rows so the client just renders (no shared resolver
+## calls on a dict). One entry per catalog upgrade with current level + next cost.
+func _build_hall_upgrades(guild: Guild) -> Array:
+	var out: Array = []
+	for uid: StringName in GuildUpgrades.CATALOG:
+		var entry: Dictionary = GuildUpgrades.CATALOG[uid]
+		out.append({
+			"id": String(uid),
+			"name": str(entry.get("name", "?")),
+			"desc": str(entry.get("desc", "")),
+			"level": GuildUpgrades.level_of(guild, uid),
+			"max_level": GuildUpgrades.max_level(uid),
+			"next_cost": GuildUpgrades.cost_for_next(guild, uid),
+		})
+	return out

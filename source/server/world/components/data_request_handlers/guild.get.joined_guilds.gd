@@ -9,10 +9,16 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	if player_resource == null:
 		return {}
 
-	var out: Dictionary = {}
+	var guilds: Array = []
 	for guild_id: int in player_resource.joined_guild_ids:
 		var guild: Guild = store.get_guild(int(guild_id))
 		if guild != null:
-			out[guild.guild_name] = guild.members.size()
+			guilds.append({
+				"id": guild.guild_id,
+				"name": guild.guild_name,
+				"size": guild.members.size(),
+				"logo_id": guild.logo_id,
+				"is_active": player_resource.active_guild_id == guild.guild_id,
+			})
 
-	return out
+	return {"guilds": guilds}

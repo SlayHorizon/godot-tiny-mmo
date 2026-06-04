@@ -49,7 +49,21 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Player and source is Player and not (body as Player).is_pvp():
 		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
 			return
+	# Guild friendly fire: same-tagged-guild members don't damage each other
+	# (except in a live sparring match).
+	if _same_guild_no_spar(source, body):
+		return
 	body.take_damage(character_damage, source if source is Character else null)
+
+
+func _same_guild_no_spar(source_node: Node, body: Node) -> bool:
+	if source_node is not Player or body is not Player:
+		return false
+	var src_guild: int = (source_node as Player).player_resource.active_guild_id
+	var tgt_guild: int = (body as Player).player_resource.active_guild_id
+	if src_guild <= 0 or src_guild != tgt_guild:
+		return false
+	return not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source_node as Player))
 
 
 # MineableNode is an Area2D, so it surfaces via area_entered (Area2D vs Area2D).

@@ -29,7 +29,10 @@
 [ext_resource type="Resource" uid="uid://ci3xj57ys32t7" path="res://source/common/gameplay/maps/instance/instance_collection/guild_outpost_base/guild_outpost.tres" id="15_ag2f3"]
 [ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="15_vc2t3"]
 [ext_resource type="Resource" uid="uid://jo7v7jfc54kp" path="res://source/common/gameplay/characters/npc/types/bandit_captain.tres" id="16_tlky3"]
+[ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="18_077qd"]
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="18_m4n4e"]
+[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="19_n81rr"]
+[ext_resource type="Texture2D" uid="uid://don6jdlt3vpia" path="res://icon.svg" id="19_tlkfq"]
 [ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="23_xwvb5"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
@@ -40,6 +43,12 @@
 [ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="30_m6sqw"]
 [ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="33_n81rr"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="39_hs4x2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cglqt"]
+size = Vector2(64, 32)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_re23f"]
+radius = 55.38041
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ovmn0"]
 size = Vector2(48.993896, 43.498413)
@@ -149,6 +158,52 @@ position = Vector2(2791, 1079)
 target_instance = ExtResource("15_ag2f3")
 warper_id = 6
 target_id = 1
+
+[node name="TerritoryFlag" type="StaticBody2D" parent="." unique_id=1211345834 node_paths=PackedStringArray("banner", "health_bar", "grace_label")]
+position = Vector2(1241.1476, 908.3893)
+script = ExtResource("18_077qd")
+flag_id = 2
+territory_name = "Village Outpost"
+banner = NodePath("Banner")
+health_bar = NodePath("HealthBar")
+grace_label = NodePath("Label")
+metadata/_custom_type_script = "uid://bydt2tg3ki33r"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TerritoryFlag" unique_id=930027085]
+position = Vector2(-1.9056396, -0.7564697)
+shape = SubResource("RectangleShape2D_cglqt")
+
+[node name="Banner" type="Sprite2D" parent="TerritoryFlag" unique_id=1437594670]
+position = Vector2(2.09437, -0.7564392)
+scale = Vector2(0.31250015, 0.12500046)
+texture = ExtResource("19_tlkfq")
+
+[node name="HealthBar" type="ProgressBar" parent="TerritoryFlag" unique_id=2099327524]
+offset_left = -33.90564
+offset_top = -32.75647
+offset_right = 38.09436
+offset_bottom = -7.7564697
+
+[node name="Label" type="Label" parent="TerritoryFlag" unique_id=2105434390]
+offset_left = -41.90564
+offset_top = 7.2435303
+offset_right = 43.397217
+offset_bottom = 28.24353
+
+[node name="ShopInteractable" type="Area2D" parent="." unique_id=1106341432]
+position = Vector2(1197.2002, 793.7174)
+script = ExtResource("18_m4n4e")
+shop = ExtResource("19_n81rr")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=1434827383]
+shape = SubResource("CircleShape2D_re23f")
+
+[node name="InteractableMarker" parent="ShopInteractable" unique_id=1116914763 instance=ExtResource("30_m6sqw")]
+kind = 2
+
+[node name="NPC" parent="ShopInteractable" unique_id=1922057613 instance=ExtResource("39_hs4x2")]
+position = Vector2(0, 5)
 
 [node name="ReplicatedPropsContainer" type="Node2D" parent="." unique_id=1981280680 node_paths=PackedStringArray("id_to_node", "node_to_id")]
 position = Vector2(274, 289)
@@ -469,5 +524,5 @@ shape = SubResource("RectangleShape2D_ikkk2")
 [node name="InteractableMarker" parent="QuarryCounter" unique_id=1969050560 instance=ExtResource("30_m6sqw")]
 kind = 2
 
-[node name="NPC" parent="QuarryCounter" unique_id=1922057613 instance=ExtResource("39_hs4x2")]
+[node name="NPC" parent="QuarryCounter" unique_id=1878809314 instance=ExtResource("39_hs4x2")]
 position = Vector2(-1, 5)

@@ -11,26 +11,53 @@ enum Permissions {
 }
 
 
+## Base roster cap fallback. The real cap is `GuildUpgrades.total_cap(guild)`,
+## which scales with the Member Capacity upgrade; this equals the level-0 value
+## (BASE_TAG_CAP + ROSTER_BUFFER = 15 + 10). Kept for old call sites / defaults.
+const MAX_MEMBERS: int = 25
+
+## Gold charged to create a guild.
+const CREATION_COST: int = 150
+
+
+## Rank ladder R5 (leader-tier, all perms) down to R1 (fresh member). `grade`
+## drives the can-act hierarchy (lower grade = higher authority). New members
+## join at the lowest rank ([constant DEFAULT_MEMBER_RANK]).
 const DEFAULT_RANKS: Array[Dictionary] = [
 	{
 		"id": 0,
-		"name": "Leader",
+		"name": "R5",
 		"permissions": 0x7FFFFFFF,
 		"grade": 0,
 	},
 	{
 		"id": 1,
-		"name": "Officer",
-		"permissions": Permissions.INVITE | Permissions.KICK,
+		"name": "R4",
+		"permissions": Permissions.INVITE | Permissions.KICK | Permissions.PROMOTE | Permissions.EDIT,
 		"grade": 10,
 	},
 	{
 		"id": 2,
-		"name": "Member",
+		"name": "R3",
+		"permissions": Permissions.INVITE | Permissions.KICK,
+		"grade": 20,
+	},
+	{
+		"id": 3,
+		"name": "R2",
+		"permissions": Permissions.INVITE,
+		"grade": 30,
+	},
+	{
+		"id": 4,
+		"name": "R1",
 		"permissions": Permissions.NONE,
 		"grade": 100,
 	},
 ]
+
+## Rank id new members are added at (R1).
+const DEFAULT_MEMBER_RANK: int = 4
 
 
 @export var guild_name: String
@@ -48,6 +75,15 @@ const DEFAULT_RANKS: Array[Dictionary] = [
 ## Each element: {"id": int, "name": String, "permissions": int, "grade": int}
 @export var ranks: Array[Dictionary] = DEFAULT_RANKS
 
+## Player ids with a pending invite. Only a player on this list can accept and
+## join (so invites can't be forged client-side). Cleared on accept.
+@export var pending_invites: Array[int] = []
+
+## Per-member permission overrides (player_id -> permission bitmask), OR'd onto
+## the member's rank permissions. Lets an R5 grant a single player extra rights
+## (e.g. recruit) without promoting them. See docs/guild.md.
+@export var member_perms: Dictionary[int, int] = {}
+
 # --- Basing / Glory ---
 ## Current-season Glory. Resets to 0 on each season rollover.
 @export var seasonal_glory: int = 0
@@ -60,9 +96,25 @@ const DEFAULT_RANKS: Array[Dictionary] = [
 ## Every KILLS_PER_GLORY hits grants +1 SG and the counter rolls over.
 @export var kill_counter_for_glory: int = 0
 
+# --- Lifetime stat counters (feed Profile stats + trophies; see docs/guild.md) ---
+## Kills by tagged members in owned territory.
+@export var total_kills: int = 0
+## Cumulative seconds the guild has held at least one territory.
+@export var territory_seconds: int = 0
+## Guild-spar score (placeholder until guild spar exists).
+@export var spar_score: int = 0
+
+# --- Treasury (single abstract guild currency; see docs/guild.md) ---
+## Guild funds. Earned from held territory and member gold deposits, spent on
+## Guild Hall upgrades. Not transferable back to players.
+@export var treasury: int = 0
+
+# --- Guild Hall upgrades (upgrade_id -> level; see GuildUpgrades) ---
+@export var upgrades: Dictionary[StringName, int] = {}
+
 
 func add_member(player_id: int) -> void:
-	members[player_id] = 2
+	members[player_id] = DEFAULT_MEMBER_RANK
 
 
 func remove_member(player_id: int) -> void:
@@ -92,7 +144,9 @@ func has_permission(player_id: int, permission: Permissions) -> bool:
 	if rank.is_empty():
 		return false
 
-	return (int(rank.get("permissions", Permissions.NONE)) & permission) == permission
+	# Rank permissions OR the player's individual overrides.
+	var combined: int = int(rank.get("permissions", Permissions.NONE)) | int(member_perms.get(player_id, 0))
+	return (combined & permission) == permission
 
 
 func can_act(actor_id: int, target_id: int) -> bool:

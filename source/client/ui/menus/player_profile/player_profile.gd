@@ -238,6 +238,13 @@ func _render_action_bar(profile: Dictionary, is_self: bool) -> void:
 			CONNECT_ONE_SHOT
 		)
 
+		if invite_guild_button.pressed.is_connected(_on_invite_guild_button_pressed):
+			invite_guild_button.pressed.disconnect(_on_invite_guild_button_pressed)
+		invite_guild_button.pressed.connect(
+			_on_invite_guild_button_pressed.bind(target_id),
+			CONNECT_ONE_SHOT
+		)
+
 
 func _show_more_popup() -> void:
 	more_popup.clear()
@@ -348,6 +355,12 @@ func _on_friend_button_pressed(player_id: int) -> void:
 	Client.request_data(&"friend.request", Callable(), {"id": player_id})
 	friend_button.disabled = true
 	friend_button.text = "Added"
+
+
+func _on_invite_guild_button_pressed(player_id: int) -> void:
+	Client.request_data(&"guild.invite", Callable(), {"id": player_id})
+	invite_guild_button.disabled = true
+	invite_guild_button.text = "Invited"
 
 
 func _on_message_button_pressed(target_id: int) -> void:

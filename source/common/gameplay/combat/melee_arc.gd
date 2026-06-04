@@ -55,7 +55,24 @@ func _on_body_entered(body: Node2D) -> void:
 		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
 			return
 
+	# Guild friendly fire: members tagged into the same guild don't damage each
+	# other — except in a live sparring match (a consented duel still lands).
+	if _same_guild_no_spar(source, body):
+		return
+
 	# Damage is whatever the ability tuned in (`base_damage` field on the
 	# MeleeSwingAbility .tres). Mitigation happens inside take_damage via
 	# the target's armor.
 	body.take_damage(damage, source if source is Character else null)
+
+
+## True when both are Players tagged into the same guild and not in a live
+## sparring match (so guildmates are protected from friendly fire).
+func _same_guild_no_spar(source_node: Node, body: Node) -> bool:
+	if source_node is not Player or body is not Player:
+		return false
+	var src_guild: int = (source_node as Player).player_resource.active_guild_id
+	var tgt_guild: int = (body as Player).player_resource.active_guild_id
+	if src_guild <= 0 or src_guild != tgt_guild:
+		return false
+	return not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source_node as Player))
