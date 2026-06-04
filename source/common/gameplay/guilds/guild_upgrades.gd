@@ -108,3 +108,19 @@ static func defender_count(guild: Guild) -> int:
 ## Defender strength tier (1 = base, +1 per Defender Strength level).
 static func defender_tier(guild: Guild) -> int:
 	return 1 + level_of(guild, DEFENDER_TIER)
+
+
+## Enemy archetype each Defender Strength tier maps to. Reuses existing mobs so
+## defenders inherit real stats + loot (no new content). Index = tier - 1.
+const DEFENDER_TYPE_BY_TIER: PackedStringArray = [
+	"res://source/common/gameplay/characters/npc/types/fungus.tres",
+	"res://source/common/gameplay/characters/npc/types/goblin.tres",
+	"res://source/common/gameplay/characters/npc/types/bandit.tres",
+	"res://source/common/gameplay/characters/npc/types/bandit_captain.tres",
+]
+
+
+## Resource path of the enemy archetype this guild's defenders spawn as.
+static func defender_type_path(guild: Guild) -> String:
+	var idx: int = clampi(defender_tier(guild) - 1, 0, DEFENDER_TYPE_BY_TIER.size() - 1)
+	return DEFENDER_TYPE_BY_TIER[idx]

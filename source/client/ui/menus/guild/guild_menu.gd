@@ -818,7 +818,11 @@ func _deposit_treasury(amount: int, reopen_overlay: Control = null) -> void:
 
 ## Re-fetch the guild (updating treasury / upgrades / gold), rebuild the side
 ## panel, and — if a Hall overlay was open — replace it with a fresh one.
+## NB: capture a plain bool, not the overlay node. queue_free() is deferred, so
+## by the time the async guild.get response fires the node is gone; referencing
+## it in the callback would trip "Lambda capture was freed" and skip the reopen.
 func _refresh_after_hall_action(old_overlay: Control) -> void:
+	var should_reopen: bool = old_overlay != null
 	if is_instance_valid(old_overlay):
 		old_overlay.queue_free()
 	if _selected_name == "":
@@ -827,7 +831,7 @@ func _refresh_after_hall_action(old_overlay: Control) -> void:
 		if data.has("name"):
 			_guild = data
 			_rebuild_right()
-			if old_overlay != null:
+			if should_reopen:
 				_open_hall_panel(),
 		{"q": _selected_name}, _inst())
 
