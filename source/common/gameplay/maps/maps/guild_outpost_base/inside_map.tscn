@@ -40,14 +40,14 @@ tile_set = ExtResource("3_fyvcr")
 position = Vector2(224, 534)
 scale = Vector2(3.2, 1)
 target_instance = ExtResource("6_fyvcr")
-target_id = 4
+target_id = 5
 
 [node name="Second_entrance" parent="." unique_id=396816002 instance=ExtResource("5_x8eyl")]
 position = Vector2(857, 486)
 scale = Vector2(3.12, 1)
 target_instance = ExtResource("6_fyvcr")
 warper_id = 1
-target_id = 5
+target_id = 6
 
 [node name="TerritoryFlag" type="StaticBody2D" parent="." unique_id=351544705 node_paths=PackedStringArray("banner", "health_bar", "grace_label", "territory_zone")]
 position = Vector2(705.3376, -574.6041)

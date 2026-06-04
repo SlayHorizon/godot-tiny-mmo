@@ -30,4 +30,4 @@ tile_set = ExtResource("3_8gpir")
 position = Vector2(417, 530)
 scale = Vector2(2.6, 1)
 target_instance = ExtResource("5_s0cch")
-target_id = 1
+target_id = 2
