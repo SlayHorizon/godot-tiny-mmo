@@ -24,3 +24,5 @@ chase_on_area = true
 xp_reward = 100
 respawn_delay = 60.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_iron_ore")])
+metadata/slug = &"iron_golem"
+metadata/id = 5

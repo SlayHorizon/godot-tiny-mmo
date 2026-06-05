@@ -29,3 +29,5 @@ move_speed = 22
 chase_on_area = true
 respawn_delay = 30.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_leather"), SubResource("Drop_copper")])
+metadata/slug = &"bandit"
+metadata/id = 1

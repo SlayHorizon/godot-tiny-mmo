@@ -6,7 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="5_x8eyl"]
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="6_bryvr"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="6_fyvcr"]
-[ext_resource type="Texture2D" uid="uid://n41mj10gouiv" path="res://assets/sprites/environment/structures/stations/sawmill/base.png" id="7_6yvf0"]
+[ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="7_bryvr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6yvf0"]
+size = Vector2(40, 32)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ohyyt"]
 radius = 1382.0393
@@ -49,34 +52,42 @@ target_instance = ExtResource("6_fyvcr")
 warper_id = 1
 target_id = 6
 
-[node name="TerritoryFlag" type="StaticBody2D" parent="." unique_id=351544705 node_paths=PackedStringArray("banner", "health_bar", "grace_label", "territory_zone")]
-position = Vector2(705.3376, -574.6041)
+[node name="TerritoryFlag" type="StaticBody2D" parent="." unique_id=1957648341 node_paths=PackedStringArray("banner", "health_bar", "grace_label", "territory_zone")]
+position = Vector2(640, -584)
 script = ExtResource("6_bryvr")
-flag_id = 5
-territory_name = "OOUTPOST"
-banner = NodePath("Base")
-health_bar = NodePath("ProgressBar")
+flag_id = 3
+territory_name = "Bandit Zone"
+banner = NodePath("Banner")
+health_bar = NodePath("HealthBar")
 grace_label = NodePath("Label")
-territory_zone = NodePath("Area2D")
+territory_zone = NodePath("../Area2D")
 metadata/_custom_type_script = "uid://bydt2tg3ki33r"
+metadata/_edit_group_ = true
 
-[node name="Base" type="Sprite2D" parent="TerritoryFlag" unique_id=1939471175]
-texture = ExtResource("7_6yvf0")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TerritoryFlag" unique_id=734098805]
+position = Vector2(2.852417, 19.610718)
+shape = SubResource("RectangleShape2D_6yvf0")
+
+[node name="Banner" type="Sprite2D" parent="TerritoryFlag" unique_id=1764798899]
+texture = ExtResource("7_bryvr")
 region_enabled = true
-region_rect = Rect2(144, 1, 112, 75)
+region_rect = Rect2(440, 336, 40, 72)
 
-[node name="Label" type="Label" parent="TerritoryFlag" unique_id=364091813]
-offset_right = 40.0
-offset_bottom = 21.0
+[node name="HealthBar" type="ProgressBar" parent="TerritoryFlag" unique_id=158047859]
+offset_left = -33.147583
+offset_top = 43.610718
+offset_right = 38.852417
+offset_bottom = 68.61072
 
-[node name="Area2D" type="Area2D" parent="TerritoryFlag" unique_id=1339188352]
+[node name="Label" type="Label" parent="TerritoryFlag" unique_id=174584507]
+offset_left = -41.90564
+offset_top = 7.2435303
+offset_right = 43.397217
+offset_bottom = 28.24353
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1339188352]
 visible = false
+position = Vector2(705.3376, -574.6041)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="TerritoryFlag/Area2D" unique_id=615267307]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=615267307]
 shape = SubResource("CircleShape2D_ohyyt")
-
-[node name="ProgressBar" type="ProgressBar" parent="TerritoryFlag" unique_id=1033120349]
-offset_left = -57.337585
-offset_top = -42.85504
-offset_right = 78.662415
-offset_bottom = -17.855042

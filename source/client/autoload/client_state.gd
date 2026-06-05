@@ -26,7 +26,19 @@ signal input_changed(input_type: InputComponent.InputType)
 
 var local_player: LocalPlayer
 var player_id: int
-var active_guild_id: int
+## Fired when the local player's tagged guild changes (login / tag / create /
+## join / leave). Ally-aware visuals (e.g. guild guard health bars) listen so
+## they re-evaluate without a relog.
+signal active_guild_id_changed(value: int)
+var active_guild_id: int:
+	set(value):
+		if value == active_guild_id:
+			return
+		active_guild_id = value
+		# Mirror into the static Player/HostileNpc read (avoids them importing us).
+		Character.local_viewer_guild_id = value
+		active_guild_id_changed.emit(value)
+		_retint_local_players()
 var stats: DataDict = DataDict.new()
 var settings: Settings = Settings.new()
 var quick_slots: DataDict = DataDict.new()
@@ -53,6 +65,20 @@ var input_type: InputComponent.InputType:
 	set(value):
 		input_type = value
 		input_changed.emit(value)
+
+
+## Re-color visible players' team health bars after the local guild changes —
+## already-spawned players read Character.local_viewer_guild_id (set above) but
+## need a nudge to re-evaluate. Called by method name to avoid importing Player.
+func _retint_local_players() -> void:
+	if not is_instance_valid(local_player):
+		return
+	var map: Node = local_player.get_parent()
+	if map == null:
+		return
+	for child: Node in map.get_children():
+		if child.has_method(&"_apply_team_bar_color"):
+			child.call(&"_apply_team_bar_color")
 
 
 func _ready() -> void:

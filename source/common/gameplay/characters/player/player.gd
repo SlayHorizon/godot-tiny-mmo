@@ -9,6 +9,11 @@ var player_resource: PlayerResource
 var display_name: String = "Unknown":
 	set = _set_display_name
 
+## Synced guild tag — drives the blue ally health-bar tint guildmates see on each
+## other. Synced like display_name (set_by_path → baseline + live dirty).
+var active_guild_id: int = 0:
+	set = _set_active_guild_id
+
 var zone_flags: int = 0
 
 var teleport_lock_until_ms: int = 0
@@ -66,6 +71,29 @@ func _set_display_name(new_name: String) -> void:
 	display_name = new_name
 	if not multiplayer.is_server():
 		display_name_changed.emit(new_name)
+
+
+func _ready() -> void:
+	super._ready()
+	if not multiplayer.is_server():
+		_apply_team_bar_color()
+
+
+func _set_active_guild_id(value: int) -> void:
+	active_guild_id = value
+	_apply_team_bar_color()
+
+
+## Client-only: color this (remote) player's HP bar — blue for a guildmate, neutral
+## otherwise. Reads Character.local_viewer_guild_id (a static mirror of ClientState)
+## so Player never references ClientState — see the cycle note on that static.
+## LocalPlayer overrides this to "self" (green). Re-applied for everyone on a local
+## guild change by ClientState._retint_local_players.
+func _apply_team_bar_color() -> void:
+	if multiplayer.is_server():
+		return
+	var same_guild: bool = active_guild_id > 0 and active_guild_id == Character.local_viewer_guild_id
+	set_health_bar_fill(BAR_COLOR_ALLY if same_guild else BAR_COLOR_HOSTILE)
 
 
 func is_pvp() -> bool:

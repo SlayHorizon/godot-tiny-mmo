@@ -16,6 +16,22 @@ extends Node2D
 ## static ids in [0..STATIC_MAX], dynamic start above
 const STATIC_MAX: int = 32767
 
+## Hardcoded table of dynamically-spawnable scenes, keyed by a small id sent on
+## the spawn op. These scenes are constants (e.g. the generic NPC), so there's no
+## need for a scan-generated `scenes` registry — add an entry to make a new scene
+## spawnable. load() (not preload) avoids a class cycle with the scene's script.
+const SCENE_HOSTILE_NPC: int = 0
+const DYNAMIC_SCENE_PATHS: Dictionary = {
+	SCENE_HOSTILE_NPC: "res://source/common/gameplay/characters/npc/hostile_npc.tscn",
+}
+
+
+static func _dynamic_scene(scene_id: int) -> PackedScene:
+	var path: String = DYNAMIC_SCENE_PATHS.get(scene_id, "")
+	if path.is_empty():
+		return null
+	return load(path) as PackedScene
+
 # --- CPID helpers (16 bits child / 16 bits field) 6-
 
 const CPID_CHILD_BITS := 16
@@ -98,16 +114,30 @@ func apply_spawns(spawns: Array) -> void:
 		if _resolve_child(child_id) != null:
 			continue
 
-		var packed_scene: PackedScene = ContentRegistryHub.load_by_id(&"scenes", scene_id)
+		var packed_scene: PackedScene = _dynamic_scene(scene_id)
 		if not packed_scene:
 			continue
 
 		var instance: Node = packed_scene.instantiate()
+		# Per-spawn init (e.g. enemy_type_id) applied BEFORE add_child so the
+		# child's _ready sees it — mirrors how the server configured it.
+		var init: Dictionary = to_spawn[2] if to_spawn.size() > 2 and to_spawn[2] is Dictionary else {}
+		_apply_spawn_init(instance, init)
 		dynamic_nodes[child_id] = instance
+		# Register in node_to_id too so child_id_of_node(self) resolves for a
+		# dynamic prop — HostileNpc._ready relies on it to find its prop_id.
+		node_to_id[instance] = child_id
 		instance.set_meta(&"rp_container", self)
 		add_child(instance)
-		
+
 	_flush_pending_pairs_for_spawned(spawns)
+
+
+## Set arbitrary properties on a freshly-instantiated dynamic prop before it
+## enters the tree. Keys are property names, values applied via Object.set.
+static func _apply_spawn_init(instance: Node, init: Dictionary) -> void:
+	for key: Variant in init:
+		instance.set(StringName(key), init[key])
 
 
 func _flush_pending_pairs_for_spawned(spawns: Array) -> void:
@@ -179,6 +209,7 @@ func apply_despawns(ids: Array) -> void:
 		var node: Node = dynamic_nodes.get(child_id, null)
 		if node:
 			dynamic_nodes.erase(child_id)
+			node_to_id.erase(node)
 			node.queue_free()
 
 
@@ -199,8 +230,8 @@ func mark_by_node(node: Node, field_id: int, value: Variant, only_if_changed: bo
 		mark_child_prop(cid, field_id, value, only_if_changed)
 
 
-func queue_spawn(child_id: int, scene_id: int) -> void:
-	_dyn_spawns_queued.append([child_id, scene_id])
+func queue_spawn(child_id: int, scene_id: int, init: Dictionary = {}) -> void:
+	_dyn_spawns_queued.append([child_id, scene_id, init])
 
 
 func queue_despawn(child_id: int) -> void:
@@ -241,6 +272,44 @@ func alloc_dynamic_id() -> int:
 	if next_dynamic_prop_id > 0xFFFF:
 		next_dynamic_prop_id = STATIC_MAX + 1
 	return cid
+
+
+## Server: spawn a dynamic prop from a registered `scenes` id. Instantiates
+## locally (so server game logic / AI runs), registers it for sync + late-joiner
+## bootstrap, and queues the spawn for current clients. Returns the live node so
+## the caller can configure it before/after it enters the tree. NB: node_to_id +
+## position are set BEFORE add_child so the child's _ready can resolve its
+## prop_id and spawn origin.
+func spawn_dynamic(scene_id: int, at_position: Vector2 = Vector2.ZERO, init: Dictionary = {}) -> Node:
+	var packed_scene: PackedScene = _dynamic_scene(scene_id)
+	if packed_scene == null:
+		push_error("ReplicatedPropsContainer.spawn_dynamic: unknown dynamic scene id %d" % scene_id)
+		return null
+	var child_id: int = alloc_dynamic_id()
+	var instance: Node = packed_scene.instantiate()
+	# Same init the client applies (rides the spawn op + bootstrap), set before
+	# add_child so this server-side _ready is configured identically.
+	_apply_spawn_init(instance, init)
+	instance.set_meta(&"rp_container", self)
+	instance.set_meta(&"scene_id", scene_id) # capture_bootstrap_block reads this
+	instance.set_meta(&"spawn_init", init)   # late-joiner bootstrap re-applies it
+	dynamic_nodes[child_id] = instance
+	node_to_id[instance] = child_id
+	if instance is Node2D and at_position != Vector2.ZERO:
+		(instance as Node2D).position = at_position
+	add_child(instance)
+	queue_spawn(child_id, scene_id, init)
+	return instance
+
+
+## Server: despawn a dynamic prop everywhere and free the local node.
+func despawn_dynamic(child_id: int) -> void:
+	queue_despawn(child_id)
+	var node: Node = dynamic_nodes.get(child_id, null)
+	if node:
+		dynamic_nodes.erase(child_id)
+		node_to_id.erase(node)
+		node.queue_free()
 
 
 # --- Baseline (server -> client)
@@ -286,7 +355,7 @@ func capture_bootstrap_block() -> Dictionary:
 			continue
 		var scene_id: int = int(n.get_meta(&"scene_id", -1))
 		if scene_id >= 0:
-			spawns.append([child_id, scene_id])
+			spawns.append([child_id, scene_id, n.get_meta(&"spawn_init", {})])
 
 	var pairs: Array = []
 	for cpid: int in _state_by_cpid:

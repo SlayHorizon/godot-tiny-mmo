@@ -1,6 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dqo57ux3v3lkq"]
+[gd_scene format=3 uid="uid://dqo57ux3v3lkq"]
 
 [ext_resource type="Script" uid="uid://cci5f3gf106ha" path="res://source/common/gameplay/maps/components/mineable_node.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bhpljwhf8i5cl" path="res://assets/sprites/environment/props/rocks.png" id="2_7dauq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g4qfl"]
+atlas = ExtResource("2_7dauq")
+region = Rect2(0, 16, 32, 48)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_default"]
 size = Vector2(32, 32)
@@ -20,6 +25,7 @@ bg_color = Color(0.98, 0.78, 0.12, 1)
 script = ExtResource("1_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1101883737]
+texture = SubResource("AtlasTexture_g4qfl")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=638739511]
 shape = SubResource("RectangleShape2D_default")

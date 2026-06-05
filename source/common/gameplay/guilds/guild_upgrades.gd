@@ -110,17 +110,16 @@ static func defender_tier(guild: Guild) -> int:
 	return 1 + level_of(guild, DEFENDER_TIER)
 
 
-## Enemy archetype each Defender Strength tier maps to. Reuses existing mobs so
-## defenders inherit real stats + loot (no new content). Index = tier - 1.
-const DEFENDER_TYPE_BY_TIER: PackedStringArray = [
-	"res://source/common/gameplay/characters/npc/types/fungus.tres",
-	"res://source/common/gameplay/characters/npc/types/goblin.tres",
-	"res://source/common/gameplay/characters/npc/types/bandit.tres",
-	"res://source/common/gameplay/characters/npc/types/bandit_captain.tres",
+## ContentRegistry `enemy_types` slug of the archetype each Defender Strength
+## tier uses. Matches the .tres filename basenames (the TinyMMO plugin slugs by
+## basename). Guards reuse the generic hostile_npc scene + this archetype (no
+## per-tier scenes); the flag resolves the slug to an id and ships it in the
+## spawn init. Index = tier - 1.
+const DEFENDER_ENEMY_SLUG_BY_TIER: Array[StringName] = [
+	&"fungus", &"goblin", &"bandit", &"bandit_captain",
 ]
 
 
-## Resource path of the enemy archetype this guild's defenders spawn as.
-static func defender_type_path(guild: Guild) -> String:
-	var idx: int = clampi(defender_tier(guild) - 1, 0, DEFENDER_TYPE_BY_TIER.size() - 1)
-	return DEFENDER_TYPE_BY_TIER[idx]
+static func defender_enemy_slug(guild: Guild) -> StringName:
+	var idx: int = clampi(defender_tier(guild) - 1, 0, DEFENDER_ENEMY_SLUG_BY_TIER.size() - 1)
+	return DEFENDER_ENEMY_SLUG_BY_TIER[idx]

@@ -610,8 +610,19 @@ func _more_entry(text: String, enabled: bool, on_pressed: Callable) -> Button:
 	return btn
 
 
+# Live references into the open Guild Hall modal, so a buy/deposit updates these
+# widgets IN PLACE instead of closing + reopening the modal (which flickered and
+# reset the scroll position).
+var _hall_balance_label: Label
+var _hall_caps_label: Label
+var _hall_gold_label: Label
+var _hall_deposit_spin: SpinBox
+var _hall_rows: Dictionary # upgrade id (String) -> {"title": Label, "buy": Button}
+
+
 ## Opens the Guild Hall as a focused modal (like the member popup) so treasury,
 ## deposit, and the upgrade list have room instead of cramping the side panel.
+## Buy/deposit refresh the widgets in place (see _refresh_hall_in_place).
 func _open_hall_panel() -> void:
 	var overlay: Control = Control.new()
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -673,6 +684,7 @@ func _open_hall_panel() -> void:
 	balance.add_theme_font_size_override(&"font_size", 22)
 	balance.add_theme_color_override(&"font_color", COLOR_GOLD)
 	left.add_child(balance)
+	_hall_balance_label = balance
 
 	var caps: Label = Label.new()
 	caps.text = "Tag cap: %d online\nRoster: %d / %d" % [
@@ -680,6 +692,7 @@ func _open_hall_panel() -> void:
 	caps.add_theme_color_override(&"font_color", COLOR_MUTED)
 	caps.add_theme_font_size_override(&"font_size", 12)
 	left.add_child(caps)
+	_hall_caps_label = caps
 
 	left.add_child(HSeparator.new())
 	left.add_child(_make_section_header("Deposit gold"))
@@ -689,6 +702,7 @@ func _open_hall_panel() -> void:
 	gold_label.add_theme_color_override(&"font_color", COLOR_MUTED)
 	gold_label.add_theme_font_size_override(&"font_size", 12)
 	left.add_child(gold_label)
+	_hall_gold_label = gold_label
 
 	var dep_row: HBoxContainer = HBoxContainer.new()
 	dep_row.add_theme_constant_override(&"separation", 8)
@@ -700,11 +714,12 @@ func _open_hall_panel() -> void:
 	amount_field.step = 10
 	amount_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	dep_row.add_child(amount_field)
+	_hall_deposit_spin = amount_field
 	var deposit: Button = Button.new()
 	deposit.text = "Deposit"
 	deposit.disabled = gold <= 0
 	deposit.pressed.connect(func() -> void:
-		_deposit_treasury(int(amount_field.value), overlay))
+		_deposit_treasury(int(amount_field.value)))
 	dep_row.add_child(deposit)
 
 	# --- Right: upgrades ---
@@ -726,8 +741,9 @@ func _open_hall_panel() -> void:
 	var perms: int = int(_guild.get("permissions", 0))
 	var can_upgrade: bool = (perms & Guild.Permissions.EDIT) != 0
 	var treasury: int = int(_guild.get("treasury", 0))
+	_hall_rows = {}
 	for up: Dictionary in _guild.get("hall_upgrades", []):
-		ups_box.add_child(_upgrade_row(up, can_upgrade, treasury, overlay))
+		ups_box.add_child(_upgrade_row(up, can_upgrade, treasury))
 
 	if not can_upgrade:
 		var note: Label = Label.new()
@@ -740,8 +756,8 @@ func _open_hall_panel() -> void:
 
 ## One Guild Hall upgrade row: name + level, description, and a Buy button
 ## (disabled if maxed, unaffordable, or the viewer lacks the Edit permission).
-## Buying refreshes the guild then reopens the modal so the new level shows.
-func _upgrade_row(up: Dictionary, can_upgrade: bool, treasury: int, overlay: Control) -> Control:
+## Registers its title/buy into _hall_rows so it can be refreshed in place.
+func _upgrade_row(up: Dictionary, can_upgrade: bool, treasury: int) -> Control:
 	var panel: PanelContainer = PanelContainer.new()
 	var pad: MarginContainer = MarginContainer.new()
 	for side: String in ["left", "right", "top", "bottom"]:
@@ -756,8 +772,6 @@ func _upgrade_row(up: Dictionary, can_upgrade: bool, treasury: int, overlay: Con
 	row.add_child(info)
 
 	var title: Label = Label.new()
-	title.text = "%s   (Lv %d / %d)" % [
-		str(up.get("name", "?")), int(up.get("level", 0)), int(up.get("max_level", 0))]
 	title.add_theme_color_override(&"font_color", COLOR_GOLD)
 	info.add_child(title)
 
@@ -768,27 +782,43 @@ func _upgrade_row(up: Dictionary, can_upgrade: bool, treasury: int, overlay: Con
 	desc.add_theme_font_size_override(&"font_size", 11)
 	info.add_child(desc)
 
-	var next_cost: int = int(up.get("next_cost", -1))
+	var uid: String = str(up.get("id", ""))
 	var buy: Button = Button.new()
 	buy.custom_minimum_size = Vector2(120, 36)
 	buy.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	if next_cost < 0:
-		buy.text = "Maxed"
-		buy.disabled = true
-	else:
-		buy.text = "Buy (%d)" % next_cost
-		buy.disabled = not can_upgrade or treasury < next_cost
-		if can_upgrade and treasury < next_cost:
-			buy.tooltip_text = "Not enough Guild Funds."
-		var uid: String = str(up.get("id", ""))
-		buy.pressed.connect(func() -> void: _buy_upgrade(uid, overlay))
+	buy.pressed.connect(func() -> void: _buy_upgrade(uid))
 	row.add_child(buy)
+
+	_hall_rows[uid] = {"title": title, "buy": buy}
+	# Title + buy state are filled by the shared updater (also used on refresh).
+	_update_upgrade_row(_hall_rows[uid], up, can_upgrade, treasury)
 	return panel
 
 
-## Buy the next level of a Guild Hall upgrade. Server gates permission + cost.
-## If [param reopen_overlay] is set, the Hall modal is refreshed in place.
-func _buy_upgrade(upgrade_id: String, reopen_overlay: Control = null) -> void:
+## Set a row's title + buy-button state from an upgrade entry. Used both at build
+## time and when refreshing the modal in place.
+func _update_upgrade_row(refs: Dictionary, up: Dictionary, can_upgrade: bool, treasury: int) -> void:
+	var title: Label = refs.get("title")
+	var buy: Button = refs.get("buy")
+	if is_instance_valid(title):
+		title.text = "%s   (Lv %d / %d)" % [
+			str(up.get("name", "?")), int(up.get("level", 0)), int(up.get("max_level", 0))]
+	if not is_instance_valid(buy):
+		return
+	var next_cost: int = int(up.get("next_cost", -1))
+	if next_cost < 0:
+		buy.text = "Maxed"
+		buy.disabled = true
+		buy.tooltip_text = ""
+	else:
+		buy.text = "Buy (%d)" % next_cost
+		buy.disabled = not can_upgrade or treasury < next_cost
+		buy.tooltip_text = "Not enough Guild Funds." if (can_upgrade and treasury < next_cost) else ""
+
+
+## Buy the next level of a Guild Hall upgrade. Server gates permission + cost;
+## on success the open modal is refreshed in place (no flicker / scroll reset).
+func _buy_upgrade(upgrade_id: String) -> void:
 	if upgrade_id.is_empty():
 		return
 	Client.request_data(&"guild.hall.upgrade", func(data: Dictionary) -> void:
@@ -797,14 +827,13 @@ func _buy_upgrade(upgrade_id: String, reopen_overlay: Control = null) -> void:
 			return
 		Toaster.toast("%s upgraded to Lv %d." % [
 			str(data.get("upgrade", "Upgrade")), int(data.get("level", 0))])
-		_refresh_after_hall_action(reopen_overlay),
+		_refresh_hall_in_place(),
 		{"id": int(_guild.get("id", 0)), "upgrade": upgrade_id}, _inst())
 
 
 ## Deposit [param amount] gold into the active guild's treasury. Server gates it
-## (membership + gold balance). If [param reopen_overlay] is set, the Hall modal
-## is refreshed in place.
-func _deposit_treasury(amount: int, reopen_overlay: Control = null) -> void:
+## (membership + gold balance); on success the open modal is refreshed in place.
+func _deposit_treasury(amount: int) -> void:
 	if amount <= 0:
 		return
 	Client.request_data(&"guild.treasury.deposit", func(data: Dictionary) -> void:
@@ -812,28 +841,44 @@ func _deposit_treasury(amount: int, reopen_overlay: Control = null) -> void:
 			Toaster.toast(str(data.get("message", "Couldn't deposit.")))
 			return
 		Toaster.toast("Deposited %d to the treasury." % int(data.get("deposited", amount)))
-		_refresh_after_hall_action(reopen_overlay),
+		_refresh_hall_in_place(),
 		{"id": int(_guild.get("id", 0)), "amount": amount}, _inst())
 
 
-## Re-fetch the guild (updating treasury / upgrades / gold), rebuild the side
-## panel, and — if a Hall overlay was open — replace it with a fresh one.
-## NB: capture a plain bool, not the overlay node. queue_free() is deferred, so
-## by the time the async guild.get response fires the node is gone; referencing
-## it in the callback would trip "Lambda capture was freed" and skip the reopen.
-func _refresh_after_hall_action(old_overlay: Control) -> void:
-	var should_reopen: bool = old_overlay != null
-	if is_instance_valid(old_overlay):
-		old_overlay.queue_free()
+## Re-fetch the guild and update the open Hall modal's widgets IN PLACE — no
+## close/reopen, so no flicker and the scroll position is preserved. Also quietly
+## rebuilds the side panel behind the overlay (member count etc. may have changed).
+func _refresh_hall_in_place() -> void:
 	if _selected_name == "":
 		return
 	Client.request_data(&"guild.get", func(data: Dictionary) -> void:
-		if data.has("name"):
-			_guild = data
-			_rebuild_right()
-			if should_reopen:
-				_open_hall_panel(),
+		if not data.has("name"):
+			return
+		_guild = data
+		_rebuild_right()
+		_hall_apply_data(),
 		{"q": _selected_name}, _inst())
+
+
+## Push current _guild data into the open Hall widgets. Safe if the modal was
+## closed in the meantime (every write guards on is_instance_valid).
+func _hall_apply_data() -> void:
+	if is_instance_valid(_hall_balance_label):
+		_hall_balance_label.text = "%d  Guild Funds" % int(_guild.get("treasury", 0))
+	if is_instance_valid(_hall_caps_label):
+		_hall_caps_label.text = "Tag cap: %d online\nRoster: %d / %d" % [
+			int(_guild.get("tag_cap", 15)), int(_guild.get("size", 0)), int(_guild.get("max_members", 25))]
+	var gold: int = int(_guild.get("viewer_gold", 0))
+	if is_instance_valid(_hall_gold_label):
+		_hall_gold_label.text = "You have %d gold" % gold
+	if is_instance_valid(_hall_deposit_spin):
+		_hall_deposit_spin.max_value = maxi(gold, 0)
+	var can_upgrade: bool = (int(_guild.get("permissions", 0)) & Guild.Permissions.EDIT) != 0
+	var treasury: int = int(_guild.get("treasury", 0))
+	for up: Dictionary in _guild.get("hall_upgrades", []):
+		var id: String = str(up.get("id", ""))
+		if _hall_rows.has(id):
+			_update_upgrade_row(_hall_rows[id], up, can_upgrade, treasury)
 
 
 func _view_settings(parent: Node) -> void:

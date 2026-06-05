@@ -39,12 +39,38 @@ var pivot: float = 0.0:
 @onready var weapon_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/WeaponSM/playback")
 
 
+## Over-head HP bar fill colors by relationship to the local viewer. Missing HP
+## shows the bar's dark background. Subclasses recolor on _ready / guild change.
+const BAR_COLOR_SELF: Color = Color(0.38, 0.82, 0.42)    # you
+const BAR_COLOR_ALLY: Color = Color(0.30, 0.62, 1.0)     # guildmate / guard
+const BAR_COLOR_NEUTRAL: Color = Color(0.82, 0.82, 0.86) # other players
+const BAR_COLOR_HOSTILE: Color = Color(0.86, 0.33, 0.28) # mobs / default
+
+## The local viewer's tagged guild, mirrored here from ClientState. Static so
+## Player can read it WITHOUT referencing ClientState — that reference would close
+## a ClientState → LocalPlayer → Player → ClientState compile cycle.
+static var local_viewer_guild_id: int = 0
+
+
 func _ready() -> void:
 	if multiplayer.is_server():
 		return
 	_on_stat_changed(Stat.HEALTH, stats_component.get_stat(Stat.HEALTH))
 	_on_stat_changed(Stat.HEALTH_MAX, stats_component.get_stat(Stat.HEALTH_MAX))
 	stats_component.stats.stat_changed.connect(_on_stat_changed)
+	set_health_bar_fill(BAR_COLOR_HOSTILE) # default; subclasses recolor by team
+
+
+## Client: paint the over-head HP bar fill a solid color. Always SET (never
+## remove the override — that reverts to the theme's gray default). Square,
+## anti-aliasing off so edges stay crisp on a low-res pixel-art canvas.
+func set_health_bar_fill(color: Color) -> void:
+	if not has_node(^"ProgressBar"):
+		return
+	var fill: StyleBoxFlat = StyleBoxFlat.new()
+	fill.bg_color = color
+	fill.anti_aliasing = false
+	($ProgressBar as ProgressBar).add_theme_stylebox_override(&"fill", fill)
 
 
 # --- Hit-feedback state (client-side only) -----------------------------------

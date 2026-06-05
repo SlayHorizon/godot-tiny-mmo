@@ -19,6 +19,24 @@ extends StaticBody2D
 
 const GRACE_MS: int = 5 * 60 * 1000
 const MAX_HP: float = 500.0
+## Floating nameplate (territory + owning guild, like a player nametag). Drawn at
+## a big font then scaled down for crispness, matching DisplayNameLabel.
+const NAMEPLATE_WIDTH: float = 320.0
+const NAMEPLATE_SCALE: float = 0.28
+const NAMEPLATE_Y: float = -62.0
+## Guild logo emblem on the flag (client-only). Paths mirror the guild menu's
+## LOGOS; loaded at runtime so the server never touches the textures.
+const LOGO_PATHS: PackedStringArray = [
+	"res://assets/sprites/guild_logos/wyvern.png",
+	"res://assets/sprites/guild_logos/kawaii_skull.png",
+	"res://assets/sprites/guild_logos/cute_crown.png",
+	"res://assets/sprites/guild_logos/cute_fish.png",
+]
+## Max on-screen size (px) for the emblem. Downscaled by an integer divisor (1/N)
+## from the source texture so it stays crisp under nearest-neighbor filtering.
+const EMBLEM_MAX_PX: float = 16.0
+## Emblem Y — above the nameplate (Sprite2D centers on its position).
+const EMBLEM_Y: float = -82.0
 ## Color used for the banner when the flag is unowned (guild_id = 0).
 const NEUTRAL_COLOR: Color = Color(0.7, 0.7, 0.7)
 ## Per-guild banner color is a hash of guild_id mapped into a saturated palette —
@@ -50,8 +68,15 @@ const PALETTE: PackedColorArray = [
 var hp: float = MAX_HP
 var owner_guild_id: int = 0
 var owner_guild_name: String = ""
+## Owning guild's logo id (for the banner emblem). Synced via flag.update.
+var owner_logo_id: int = 0
 var last_attacker: Character = null
 var grace_until_ms: int = 0
+
+## Client-only floating nameplate showing the territory + owning guild.
+var _nameplate: Label
+## Client-only guild-logo emblem on the flag.
+var _emblem: Sprite2D
 
 # True between damage start and the next capture or full-heal-broadcast. Lets
 # us send a single "under attack" chat notice instead of one per arrow.
@@ -67,6 +92,10 @@ func _ready() -> void:
 		call_deferred("_broadcast_state")
 	else:
 		Client.subscribe(&"flag.update", _on_flag_update_pushed)
+		_build_nameplate()
+		_build_emblem()
+		_style_health_bar()
+		_request_state.call_deferred()
 	_refresh_visuals()
 
 
@@ -136,13 +165,18 @@ func _capture(killer: Character) -> void:
 	var previous_id: int = owner_guild_id
 	var previous_name: String = owner_guild_name
 	owner_guild_id = new_owner_id
-	owner_guild_name = ServerHub.current.database.store.get_guild_name(new_owner_id)
+	var owner_guild: Guild = ServerHub.current.database.store.get_guild(new_owner_id)
+	owner_guild_name = owner_guild.guild_name if owner_guild != null else ""
+	owner_logo_id = owner_guild.logo_id if owner_guild != null else 0
 	grace_until_ms = Time.get_ticks_msec() + GRACE_MS
 
 	ServerHub.current.database.store.save_flag_state(
 		flag_id, owner_guild_id, int(Time.get_unix_time_from_system() * 1000.0)
 	)
 	_announce_capture(killer as Player, previous_id, previous_name)
+	# Deferred: _capture runs inside the arrow's physics collision callback, and
+	# spawning the guards' detection areas can't mutate physics mid-flush.
+	BasingService.spawn_defenders.call_deferred(self)
 	_broadcast_state()
 
 
@@ -154,7 +188,9 @@ func _load_state_from_db() -> void:
 		return
 	owner_guild_id = int(row.get("owner_guild_id", 0))
 	if owner_guild_id > 0:
-		owner_guild_name = ServerHub.current.database.store.get_guild_name(owner_guild_id)
+		var owner_guild: Guild = ServerHub.current.database.store.get_guild(owner_guild_id)
+		owner_guild_name = owner_guild.guild_name if owner_guild != null else ""
+		owner_logo_id = owner_guild.logo_id if owner_guild != null else 0
 	# Grace from the persisted last_capture_ms — so a restart doesn't reset the
 	# defender's protection window. last_capture_ms is unix-ms; grace_until_ms
 	# is ticks-ms (uptime). Convert via the current offset.
@@ -176,12 +212,20 @@ func _broadcast_state() -> void:
 	)
 
 
+## Public accessor for the current state — used by the flag.get pull handler so a
+## client entering the instance can fetch it on _ready (the one-shot flag.update
+## broadcast may have fired before they joined, e.g. on warp re-entry).
+func get_state_payload() -> Dictionary:
+	return _state_payload()
+
+
 func _state_payload() -> Dictionary:
 	return {
 		"flag_id": flag_id,
 		"territory_name": territory_name,
 		"owner_guild_id": owner_guild_id,
 		"owner_guild_name": owner_guild_name,
+		"owner_logo_id": owner_logo_id,
 		"hp": hp,
 		"hp_max": MAX_HP,
 		"grace_until_ms_remaining": maxi(0, grace_until_ms - Time.get_ticks_msec()),
@@ -254,10 +298,22 @@ func _on_flag_update_pushed(payload: Dictionary) -> void:
 		return
 	owner_guild_id = int(payload.get("owner_guild_id", 0))
 	owner_guild_name = str(payload.get("owner_guild_name", ""))
+	owner_logo_id = int(payload.get("owner_logo_id", 0))
 	hp = float(payload.get("hp", MAX_HP))
 	var grace_left: int = int(payload.get("grace_until_ms_remaining", 0))
 	grace_until_ms = Time.get_ticks_msec() + grace_left
 	_refresh_visuals()
+
+
+## Pull the current flag state from the server on entry — robust to warp re-entry
+## (the one-shot flag.update broadcast may have fired before this client joined).
+func _request_state() -> void:
+	if InstanceClient.current == null:
+		return
+	Client.request_data(&"flag.get", func(data: Dictionary) -> void:
+		if not data.is_empty():
+			_on_flag_update_pushed(data),
+		{"flag_id": flag_id}, InstanceClient.current.name)
 
 
 func _refresh_visuals() -> void:
@@ -269,6 +325,86 @@ func _refresh_visuals() -> void:
 		# Hide when full HP so the world isn't cluttered with idle bars.
 		if health_bar is CanvasItem:
 			(health_bar as CanvasItem).visible = hp < MAX_HP
+	_update_nameplate()
+	_update_emblem()
+
+
+## Build the client-side floating nameplate above the flag. Big font scaled down
+## (crisp), centered over the flag, lifted above the banner.
+func _build_nameplate() -> void:
+	_nameplate = Label.new()
+	_nameplate.size = Vector2(NAMEPLATE_WIDTH, 40)
+	_nameplate.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_nameplate.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_nameplate.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_nameplate.add_theme_font_size_override(&"font_size", 30)
+	_nameplate.add_theme_color_override(&"font_outline_color", Color(0, 0, 0, 0.85))
+	_nameplate.add_theme_constant_override(&"outline_size", 6)
+	_nameplate.scale = Vector2(NAMEPLATE_SCALE, NAMEPLATE_SCALE)
+	# Center the scaled box over the flag origin and raise it above the banner.
+	_nameplate.position = Vector2(-NAMEPLATE_WIDTH * NAMEPLATE_SCALE * 0.5, NAMEPLATE_Y)
+	_nameplate.z_index = 20
+	add_child(_nameplate)
+
+
+## Refresh nameplate text + color from the current owner. Guild color + tag when
+## held, neutral "(Unclaimed)" otherwise. No-op on the server (plate is client-only).
+func _update_nameplate() -> void:
+	if _nameplate == null:
+		return
+	if owner_guild_id <= 0:
+		_nameplate.text = "%s\n(Unclaimed)" % territory_name
+		_nameplate.add_theme_color_override(&"font_color", NEUTRAL_COLOR)
+	else:
+		_nameplate.text = "%s\n[%s]" % [territory_name, owner_guild_name]
+		_nameplate.add_theme_color_override(&"font_color", _color_for_guild(owner_guild_id))
+
+
+## Build the client-side guild emblem on the flag. Sits on the banner if one is
+## wired (reusing its placement), else a default spot above the origin.
+func _build_emblem() -> void:
+	_emblem = Sprite2D.new()
+	_emblem.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST # crisp pixels
+	_emblem.position = Vector2(0, EMBLEM_Y) # above the nameplate (Sprite2D centers)
+	_emblem.z_index = 20
+	add_child(_emblem)
+
+
+## Show the owning guild's logo on the emblem (hidden when unclaimed). Downscaled
+## by an integer divisor (1/N) so it stays at or under EMBLEM_MAX_PX without
+## fractional sampling — sharp under nearest-neighbor.
+func _update_emblem() -> void:
+	if _emblem == null:
+		return
+	if owner_guild_id <= 0:
+		_emblem.visible = false
+		return
+	_emblem.visible = true
+	var idx: int = clampi(owner_logo_id, 0, LOGO_PATHS.size() - 1)
+	var tex: Texture2D = load(LOGO_PATHS[idx]) as Texture2D
+	_emblem.texture = tex
+	if tex != null and tex.get_width() > 0:
+		var n: int = maxi(1, ceili(tex.get_width() / EMBLEM_MAX_PX))
+		_emblem.scale = Vector2.ONE / float(n)
+
+
+## Restyle the flag HP bar to the navy theme with a danger-red fill (only shows
+## while contested). No-op if no bar is wired or it isn't a ProgressBar.
+func _style_health_bar() -> void:
+	if health_bar is not ProgressBar:
+		return
+	var bar: ProgressBar = health_bar as ProgressBar
+	var bg: StyleBoxFlat = StyleBoxFlat.new()
+	bg.bg_color = Color(0.06, 0.078, 0.117, 0.85)
+	bg.anti_aliasing = false # square, crisp edges for pixel art
+	bg.set_border_width_all(1)
+	bg.border_color = Color(0, 0, 0, 0.5)
+	var fill: StyleBoxFlat = StyleBoxFlat.new()
+	fill.bg_color = Color(0.86, 0.33, 0.28)
+	fill.anti_aliasing = false
+	bar.add_theme_stylebox_override(&"background", bg)
+	bar.add_theme_stylebox_override(&"fill", fill)
+	bar.show_percentage = false
 
 
 static func _color_for_guild(guild_id: int) -> Color:

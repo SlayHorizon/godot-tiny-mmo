@@ -147,6 +147,7 @@ func instantiate_player(peer_id: int) -> Player:
 		var syn: StateSynchronizer = new_player.state_synchronizer
 		syn.set_by_path(^":skin_id", new_player.player_resource.skin_id)
 		syn.set_by_path(^":display_name", new_player.player_resource.display_name)
+		syn.set_by_path(^":active_guild_id", new_player.player_resource.active_guild_id)
 
 		# BASE_STATS is a const (read-only); copy it into a fresh dict before mutating.
 		var player_stats: Dictionary[StringName, float]

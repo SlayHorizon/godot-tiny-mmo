@@ -62,6 +62,24 @@ signal was_attacked(attacker: Character)
 ## just cleaned up.
 @export var enemy_data: EnemyTypeResource
 
+## ContentRegistry `enemy_types` slug of this NPC's archetype. Setting it resolves
+## [member enemy_data] from the registry — lets a dynamically-spawned NPC (e.g. a
+## guild guard) carry its archetype over the wire as a short slug instead of a
+## resource path. Applied BEFORE add_child on both sides so _ready sees
+## enemy_data. Authored mobs set enemy_data directly and leave this empty.
+var enemy_type_slug: StringName = &"":
+	set(value):
+		enemy_type_slug = value
+		if value != &"":
+			var data: EnemyTypeResource = ContentRegistryHub.load_by_slug(&"enemy_types", value) as EnemyTypeResource
+			if data != null:
+				enemy_data = data
+
+## Owning guild / faction (0 = none). When > 0 this NPC is a guild defender: it
+## ignores players tagged into that guild and is single-life (despawns on death,
+## no respawn). Set on spawn by the flag (server-only — clients just render).
+var owner_guild_id: int = 0
+
 ## Server-only aggro trigger. Built programmatically in _ready (server)
 ## from max_distance_from_spawn × DETECTION_RADIUS_FACTOR — no scene
 ## wiring, no client-side cost. The radius is the only meaningful tuning
@@ -169,6 +187,11 @@ func _ready() -> void:
 		# transitions live in their own [SRV NPC ...] prints.
 		if DEBUG_NPC:
 			stats_component.stats.stat_changed.connect(_debug_client_stat_changed)
+		_apply_ally_bar_tint()
+		# Re-evaluate if the local player's guild changes (so a guard that spawned
+		# before you tagged in updates without a relog).
+		if is_instance_valid(ClientState):
+			ClientState.active_guild_id_changed.connect(_on_local_guild_changed)
 		set_physics_process(false)
 		return
 	
@@ -194,6 +217,22 @@ func _ready() -> void:
 	stats_component.set_stat(Stat.HEALTH, max_health)
 	stats_component.set_stat(Stat.AD, attack_damage)
 	stats_component.set_stat(Stat.ARMOR, armor)
+
+
+func _on_local_guild_changed(_new_id: int) -> void:
+	_apply_ally_bar_tint()
+
+
+## Client-only: a guild guard's HP bar reads blue to guildmates (ally) and red to
+## everyone else; ally guards also stay visible. Regular mobs keep the default
+## hostile color from Character._ready. Idempotent (re-runs on guild change).
+func _apply_ally_bar_tint() -> void:
+	if multiplayer.is_server() or owner_guild_id <= 0:
+		return
+	var is_ally: bool = is_instance_valid(ClientState) and ClientState.active_guild_id == owner_guild_id
+	set_health_bar_fill(BAR_COLOR_ALLY if is_ally else BAR_COLOR_HOSTILE)
+	if is_ally and has_node(^"ProgressBar"):
+		($ProgressBar as CanvasItem).show() # ally guards stay visible
 
 
 func _physics_process(_delta: float) -> void:
@@ -230,6 +269,7 @@ func _on_body_entered(body: Node) -> void:
 		return
 
 	if body is not Player: return
+	if not _is_hostile_to(body): return # Defenders ignore their own guild.
 
 	if possible_targets.has(body):
 		possible_targets.set(possible_targets.find(body, 0), body)
@@ -276,7 +316,7 @@ func _on_ally_attacked(attacker: Character) -> void:
 		return
 	if targeted_player != null:
 		return
-	if attacker is Player and not (attacker as Player).is_dead:
+	if attacker is Player and not (attacker as Player).is_dead and _is_hostile_to(attacker as Player):
 		targeted_player = attacker as Player
 		enemy_state = EnemyState.CHASE
 
@@ -288,10 +328,29 @@ func _find_targets() -> void:
 	# First living player still in range (skips dead/freed entries). Re-acquires
 	# players who were already inside the area after a respawn.
 	for candidate: Player in possible_targets:
-		if is_instance_valid(candidate) and not candidate.is_dead:
+		if _is_target_valid(candidate) and _is_hostile_to(candidate):
 			targeted_player = candidate
 			enemy_state = EnemyState.CHASE
 			return
+
+
+## Defenders are hostile to everyone EXCEPT players tagged into their owning
+## guild. Regular mobs are hostile to all players.
+func _is_hostile_to(player: Player) -> bool:
+	if owner_guild_id <= 0:
+		return true # Ordinary mob — hostile to every player.
+	if player == null or player.player_resource == null:
+		return true
+	return player.player_resource.active_guild_id != owner_guild_id
+
+
+## Valid = a living player still in THIS instance. Catches warp-outs: a warped
+## player is reparented to another instance (different viewport, or briefly no
+## parent mid-transfer), so the guard drops the target and heads home instead of
+## chasing into the void.
+func _is_target_valid(player: Player) -> bool:
+	return is_instance_valid(player) and player.is_inside_tree() \
+			and not player.is_dead and player.get_viewport() == get_viewport()
 
 
 func _process_animations() -> void:
@@ -335,7 +394,7 @@ func _process_idle_regen() -> void:
 func _process_return() -> void:
 	# Move toward spawn at the boosted return speed — outpaces typical
 	# player movement so leashed mobs can't be re-kited.
-	var direction: Vector2 = position.direction_to(spawn_position)
+	var direction: Vector2 = global_position.direction_to(spawn_position)
 	velocity = direction * move_speed * RETURN_SPEED_MULTIPLIER
 	move_and_slide()
 
@@ -349,7 +408,7 @@ func _process_return() -> void:
 		var regen: float = hmax * RETURN_REGEN_RATE * dt
 		stats_component.set_stat(Stat.HEALTH, minf(hmax, current_h + regen))
 
-	var distance_from_spawn: float = position.distance_to(spawn_position)
+	var distance_from_spawn: float = global_position.distance_to(spawn_position)
 	if distance_from_spawn < 10: # minimum distance from spawn.
 		# Snap remaining HP to full on arrival — handles the rounding edge
 		# where the return walk ended a hair before full regen completed.
@@ -359,28 +418,27 @@ func _process_return() -> void:
 
 
 func _process_chase() -> void:
-	if not targeted_player: return
-	if targeted_player.is_dead:
+	if not _is_target_valid(targeted_player):
 		_abandon_target()
 		return
 
-	var direction: Vector2 = position.direction_to(targeted_player.global_position)
+	var direction: Vector2 = global_position.direction_to(targeted_player.global_position)
 	velocity = direction * move_speed
 	move_and_slide()
 
-	var distance_from_spawn: float = position.distance_to(spawn_position)
+	var distance_from_spawn: float = global_position.distance_to(spawn_position)
 	if distance_from_spawn > max_distance_from_spawn:
 		stop_chase()
 		return
 
-	var distance_from_player: float = position.distance_to(targeted_player.global_position)
+	var distance_from_player: float = global_position.distance_to(targeted_player.global_position)
 	if distance_from_player < distance_to_attack:
 		enemy_state = EnemyState.ATTACK
 		return
 
 
 func _process_attack() -> void:
-	if not targeted_player or targeted_player.is_dead:
+	if not _is_target_valid(targeted_player):
 		_abandon_target()
 		return
 
@@ -391,12 +449,12 @@ func _process_attack() -> void:
 	# pull the mob to the edge of max_distance_from_spawn, then stand still
 	# at attack range and farm forever because the mob never re-checks the
 	# distance while in ATTACK state.
-	var distance_from_spawn: float = position.distance_to(spawn_position)
+	var distance_from_spawn: float = global_position.distance_to(spawn_position)
 	if distance_from_spawn > max_distance_from_spawn:
 		stop_chase()
 		return
 
-	var distance_from_player: float = position.distance_to(targeted_player.global_position)
+	var distance_from_player: float = global_position.distance_to(targeted_player.global_position)
 	if distance_from_player > distance_to_attack:
 		enemy_state = EnemyState.CHASE
 		return
@@ -417,8 +475,9 @@ func _perform_melee_attack() -> void:
 	container.queue_op(_prop_id, "rp_attack", [float(distance_to_attack)])
 	var damage: float = stats_component.get_stat(Stat.AD)
 	for candidate: Player in possible_targets:
-		if is_instance_valid(candidate) and not candidate.is_dead \
-				and position.distance_to(candidate.global_position) <= distance_to_attack:
+		if _is_target_valid(candidate) \
+				and _is_hostile_to(candidate) \
+				and global_position.distance_to(candidate.global_position) <= distance_to_attack:
 			candidate.take_damage(damage, self)
 
 
@@ -532,6 +591,14 @@ func die(killer: Character) -> void:
 ##    (a far-away snipe wouldn't trigger CHASE through detection_area).
 ## 4. Pre/post logs gated on DEBUG_NPC for future bug triage.
 func take_damage(amount: float, attacker: Character = null) -> void:
+	# Ally protection: a guild guard ignores damage from its own guild's members.
+	# Blocking here (before super) means no HP loss, no death, and no hit feedback
+	# (numbers/flash/sound all hang off the HP-decrease push).
+	if owner_guild_id > 0 and attacker is Player:
+		var ap: Player = attacker
+		if ap.player_resource != null and ap.player_resource.active_guild_id == owner_guild_id:
+			return
+
 	if not GameMode.is_world_server():
 		super.take_damage(amount, attacker)
 		return
@@ -574,7 +641,7 @@ func take_damage(amount: float, attacker: Character = null) -> void:
 		return
 	if targeted_player != null:
 		return
-	if attacker is Player and not (attacker as Player).is_dead:
+	if attacker is Player and not (attacker as Player).is_dead and _is_hostile_to(attacker as Player):
 		targeted_player = attacker as Player
 		enemy_state = EnemyState.CHASE
 
@@ -587,6 +654,11 @@ func _abandon_target() -> void:
 
 func _process_death() -> void:
 	if Time.get_ticks_msec() < _respawn_at_ms:
+		return
+	# Guild defenders are single-life: once the death animation has lingered,
+	# remove them from the world (no respawn) through the container.
+	if owner_guild_id > 0:
+		container.despawn_dynamic(_prop_id)
 		return
 	if DEBUG_NPC:
 		printerr("[SRV NPC %s] _process_death respawn START: HP=%.1f HP_MAX=%.1f is_dead=%s state=%d" % [

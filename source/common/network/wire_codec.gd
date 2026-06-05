@@ -278,6 +278,7 @@ static func encode_container_block_named(eid: int, spawns: Array, pairs: Array, 
 	for s in spawns:
 		spb.put_u16(int(s[0])) # child_id
 		spb.put_u16(int(s[1])) # scene_id
+		spb.put_var(s[2] if s.size() > 2 else {}) # per-spawn init (e.g. enemy_type_slug)
 
 	# pairs
 	spb.put_u16(pairs.size())
@@ -315,7 +316,9 @@ static func decode_container_block_named(data: PackedByteArray) -> Dictionary:
 	var spn_n := spb.get_u16()
 	var spawns: Array = []
 	for _i in range(spn_n):
-		spawns.append([spb.get_u16(), spb.get_u16()])
+		var sp_child: int = spb.get_u16()
+		var sp_scene: int = spb.get_u16()
+		spawns.append([sp_child, sp_scene, spb.get_var()])
 
 	var pr_n := spb.get_u16()
 	var pairs: Array = []

@@ -47,6 +47,13 @@ func _ready() -> void:
 	Client.subscribe(&"sparring.match.state", _on_sparring_match_state)
 
 
+## The local player's own over-head HP bar reads as "self" (green), never
+## ally/neutral. (Overrides Player so the local-player check stays out of Player —
+## see the cycle note there.)
+func _apply_team_bar_color() -> void:
+	set_health_bar_fill(BAR_COLOR_SELF)
+
+
 ## Lock control while dead, then teleport ourselves to the spawn point (the server owns
 ## HP + the dead flag; position is ours to set).
 func _on_player_died(data: Dictionary) -> void:

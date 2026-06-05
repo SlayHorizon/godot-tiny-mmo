@@ -31,8 +31,8 @@
 [ext_resource type="Resource" uid="uid://jo7v7jfc54kp" path="res://source/common/gameplay/characters/npc/types/bandit_captain.tres" id="16_tlky3"]
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="18_077qd"]
 [ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="18_m4n4e"]
+[ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="19_077qd"]
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="19_n81rr"]
-[ext_resource type="Texture2D" uid="uid://don6jdlt3vpia" path="res://icon.svg" id="19_tlkfq"]
 [ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="23_xwvb5"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
@@ -45,7 +45,7 @@
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="39_hs4x2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cglqt"]
-size = Vector2(64, 32)
+size = Vector2(40, 32)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_re23f"]
 radius = 55.38041
@@ -160,7 +160,7 @@ warper_id = 6
 target_id = 1
 
 [node name="TerritoryFlag" type="StaticBody2D" parent="." unique_id=1211345834 node_paths=PackedStringArray("banner", "health_bar", "grace_label")]
-position = Vector2(1241.1476, 908.3893)
+position = Vector2(1325.637, 264.08542)
 script = ExtResource("18_077qd")
 flag_id = 2
 territory_name = "Village Outpost"
@@ -170,19 +170,19 @@ grace_label = NodePath("Label")
 metadata/_custom_type_script = "uid://bydt2tg3ki33r"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TerritoryFlag" unique_id=930027085]
-position = Vector2(-1.9056396, -0.7564697)
+position = Vector2(2.852417, 19.610718)
 shape = SubResource("RectangleShape2D_cglqt")
 
 [node name="Banner" type="Sprite2D" parent="TerritoryFlag" unique_id=1437594670]
-position = Vector2(2.09437, -0.7564392)
-scale = Vector2(0.31250015, 0.12500046)
-texture = ExtResource("19_tlkfq")
+texture = ExtResource("19_077qd")
+region_enabled = true
+region_rect = Rect2(440, 336, 40, 72)
 
 [node name="HealthBar" type="ProgressBar" parent="TerritoryFlag" unique_id=2099327524]
-offset_left = -33.90564
-offset_top = -32.75647
-offset_right = 38.09436
-offset_bottom = -7.7564697
+offset_left = -33.147583
+offset_top = 43.610718
+offset_right = 38.852417
+offset_bottom = 68.61072
 
 [node name="Label" type="Label" parent="TerritoryFlag" unique_id=2105434390]
 offset_left = -41.90564
@@ -206,7 +206,6 @@ kind = 2
 position = Vector2(0, 5)
 
 [node name="ReplicatedPropsContainer" type="Node2D" parent="." unique_id=1981280680 node_paths=PackedStringArray("id_to_node", "node_to_id")]
-position = Vector2(274, 289)
 script = ExtResource("11_naiac")
 id_to_node = {
 0: NodePath("Fungus"),
@@ -243,34 +242,35 @@ NodePath("Bandit5"): 13,
 NodePath("BanditCaptain"): 14
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
+metadata/_edit_lock_ = true
 
 [node name="Fungus" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("4_de0pc")]
-position = Vector2(26, 910)
+position = Vector2(282, 1202)
 debug_draw_ranges = false
 enemy_data = ExtResource("13_go7ir")
 
 [node name="Fungus2" parent="ReplicatedPropsContainer" unique_id=6706833 instance=ExtResource("4_de0pc")]
-position = Vector2(135, 848)
+position = Vector2(391, 1140)
 debug_draw_ranges = false
 enemy_data = ExtResource("13_go7ir")
 
 [node name="Fungus3" parent="ReplicatedPropsContainer" unique_id=111771334 instance=ExtResource("4_de0pc")]
-position = Vector2(181, 955)
+position = Vector2(437, 1247)
 debug_draw_ranges = false
 enemy_data = ExtResource("13_go7ir")
 
 [node name="Fungus4" parent="ReplicatedPropsContainer" unique_id=303585585 instance=ExtResource("4_de0pc")]
-position = Vector2(75, 1023)
+position = Vector2(331, 1315)
 debug_draw_ranges = false
 enemy_data = ExtResource("13_go7ir")
 
 [node name="Goblin" parent="ReplicatedPropsContainer" unique_id=1289545716 instance=ExtResource("4_de0pc")]
-position = Vector2(195, 1436)
+position = Vector2(466, 1743)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
 
 [node name="Goblin2" parent="ReplicatedPropsContainer" unique_id=598464135 instance=ExtResource("4_de0pc")]
-position = Vector2(344, 1502)
+position = Vector2(615, 1809)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
 
@@ -280,42 +280,42 @@ debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
 
 [node name="Goblin4" parent="ReplicatedPropsContainer" unique_id=1776423560 instance=ExtResource("4_de0pc")]
-position = Vector2(296, 1722)
+position = Vector2(567, 2029)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
 
 [node name="Goblin5" parent="ReplicatedPropsContainer" unique_id=764696779 instance=ExtResource("4_de0pc")]
-position = Vector2(452, 1887)
+position = Vector2(723, 2194)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
 
 [node name="Bandit" parent="ReplicatedPropsContainer" unique_id=704183070 instance=ExtResource("4_de0pc")]
-position = Vector2(1120, 2266)
+position = Vector2(1602, 2405)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
 
 [node name="Bandit2" parent="ReplicatedPropsContainer" unique_id=1966133719 instance=ExtResource("4_de0pc")]
-position = Vector2(1427, 1981)
+position = Vector2(1369, 2538)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
 
 [node name="Bandit3" parent="ReplicatedPropsContainer" unique_id=1234025587 instance=ExtResource("4_de0pc")]
-position = Vector2(1275, 2143)
+position = Vector2(1757, 2282)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
 
 [node name="Bandit4" parent="ReplicatedPropsContainer" unique_id=1417063041 instance=ExtResource("4_de0pc")]
-position = Vector2(1547, 2058)
+position = Vector2(1475, 2551)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
 
 [node name="Bandit5" parent="ReplicatedPropsContainer" unique_id=1348882462 instance=ExtResource("4_de0pc")]
-position = Vector2(1276, 1743)
+position = Vector2(1600, 2088)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
 
 [node name="BanditCaptain" parent="ReplicatedPropsContainer" unique_id=518780958 instance=ExtResource("4_de0pc")]
-position = Vector2(1386, 2064)
+position = Vector2(1393, 2645)
 debug_draw_ranges = false
 enemy_data = ExtResource("16_tlky3")
 
@@ -330,36 +330,31 @@ metadata/_edit_group_ = true
 [node name="Polygon2D" type="Polygon2D" parent="ZonePatch2D" unique_id=382960097]
 position = Vector2(-32, 10)
 color = Color(1, 0, 0, 0.16)
-polygon = PackedVector2Array(2238, 863, 2244, 1179, 2399, 1352, 2575, 1410, 2797, 1410, 2960, 1362, 3103, 1283, 3207, 1214, 3238, 1113, 3238, 901, 3131, 716, 2977, 609, 2686, 576, 2468, 609, 2295, 744)
+polygon = PackedVector2Array(2208, 1462, 3424, 1462, 3424, 374, 2208, 374)
 
 [node name="CoalOre" parent="." unique_id=881279537 instance=ExtResource("11_5jj8c")]
 y_sort_enabled = true
-position = Vector2(157, 480)
+position = Vector2(176, 550)
 data = ExtResource("13_pnbwk")
 
 [node name="CoalOre2" parent="." unique_id=1129547794 instance=ExtResource("11_5jj8c")]
 y_sort_enabled = true
-position = Vector2(188, 369)
+position = Vector2(207, 439)
 data = ExtResource("13_pnbwk")
 
 [node name="CoalOre3" parent="." unique_id=674232109 instance=ExtResource("11_5jj8c")]
 y_sort_enabled = true
-position = Vector2(262, 258)
-data = ExtResource("13_pnbwk")
-
-[node name="CoalOre4" parent="." unique_id=56611332 instance=ExtResource("11_5jj8c")]
-y_sort_enabled = true
-position = Vector2(324, 176)
+position = Vector2(256, 336)
 data = ExtResource("13_pnbwk")
 
 [node name="CoalOre5" parent="." unique_id=335220558 instance=ExtResource("11_5jj8c")]
 y_sort_enabled = true
-position = Vector2(404, 141)
+position = Vector2(392, 192)
 data = ExtResource("13_pnbwk")
 
 [node name="CoalOre6" parent="." unique_id=637213133 instance=ExtResource("11_5jj8c")]
 y_sort_enabled = true
-position = Vector2(496, 153)
+position = Vector2(500, 196)
 data = ExtResource("13_pnbwk")
 
 [node name="CopperOre" parent="." unique_id=851779996 instance=ExtResource("11_5jj8c")]

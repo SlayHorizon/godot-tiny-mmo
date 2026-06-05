@@ -60,6 +60,12 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	player.active_guild_id = 0 if was_active else guild_id
 	_last_tag_ms[player.player_id] = now_ms
 	store.save_player(player)
+	# Keep the client's ClientState.active_guild_id in sync (drives ally tints etc.).
+	world_server.data_push.rpc_id(peer_id, &"active_guild_id.set", {"active_guild_id": player.active_guild_id})
+	# Sync the player node's tag so OTHER players re-tint this player's ally bar live.
+	var pnode: Player = instance.players_by_peer_id.get(peer_id)
+	if pnode != null:
+		pnode.state_synchronizer.set_by_path(^":active_guild_id", player.active_guild_id)
 
 	var message: String = ("Untagged from %s." % guild.guild_name) if was_active else ("Tagged into %s." % guild.guild_name)
 	world_server.chat_service.push_system_to_player(instance, player.player_id, message)

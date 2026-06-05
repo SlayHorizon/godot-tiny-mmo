@@ -32,3 +32,5 @@ chase_on_area = true
 xp_reward = 125
 respawn_delay = 120.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_tag"), SubResource("Drop_copper_bar")])
+metadata/slug = &"bandit_captain"
+metadata/id = 2

@@ -21,11 +21,17 @@ const TERRITORY_TICK_SG: int = 1
 const KILLS_PER_GLORY: int = 200
 ## "10 SG => 3 EG" conversion ratio.
 const EG_PER_10_SG: int = 3
+## Ring radius (px) defender guards fan out to around a flag on capture.
+const DEFENDER_SPAWN_RADIUS: float = 48.0
 
 ## In-memory accumulator of guild kills by tagged members (anywhere, not just in
 ## territory). Flushed to the DB on the territory tick so we don't pay a DB
 ## write per kill.
 static var _pending_kills: Dictionary[int, int] = {}
+
+## Dynamic prop ids of the guards currently defending each flag (flag_id ->
+## [child_id, ...]), so the previous owner's guards are cleared on recapture.
+static var _defenders_by_flag: Dictionary[int, Array] = {}
 
 
 ## Records a kill by a tagged member toward their guild's lifetime kill stat.
@@ -46,6 +52,69 @@ static func _flush_pending_kills(world_server: Node) -> void:
 			guild.total_kills += count
 			world_server.database.save_guild(guild)
 	_pending_kills.clear()
+
+
+# --- Defenders (guild guards) ---
+
+## Spawn the owning guild's defender guards in a ring around [param flag]. Called
+## on capture (deferred — _capture runs inside a physics callback, and spawning
+## an NPC's detection Area2D can't mutate physics mid-flush). Clears the previous
+## owner's guards first. Guards are single-life HostileNpcs that ignore the owning
+## guild. No-ops cleanly until the archetype is registered in `enemy_types`.
+static func spawn_defenders(flag: TerritoryFlag) -> void:
+	despawn_defenders(flag)
+	if flag == null or flag.owner_guild_id <= 0:
+		return
+	var container: ReplicatedPropsContainer = _flag_container(flag)
+	if container == null:
+		return
+	var guild: Guild = ServerHub.current.database.store.get_guild(flag.owner_guild_id)
+	if guild == null:
+		return
+	var count: int = GuildUpgrades.defender_count(guild)
+	if count <= 0:
+		return
+	# Per-tier archetype rides the spawn as a short slug; the NPC scene is a
+	# hardcoded constant (no scenes registry). Bail if the archetype isn't
+	# registered yet so we never spawn a guard with no enemy_data.
+	var slug: StringName = GuildUpgrades.defender_enemy_slug(guild)
+	if ContentRegistryHub.load_by_slug(&"enemy_types", slug) == null:
+		return
+	var origin: Vector2 = container.to_local(flag.global_position)
+	var ids: Array = []
+	for i: int in count:
+		var angle: float = TAU * float(i) / float(count)
+		var spot: Vector2 = origin + Vector2(cos(angle), sin(angle)) * DEFENDER_SPAWN_RADIUS
+		# owner_guild_id rides the init so clients have it too (ally bar tint);
+		# applied before _ready on both sides.
+		var guard: Node = container.spawn_dynamic(
+			ReplicatedPropsContainer.SCENE_HOSTILE_NPC, spot,
+			{"enemy_type_slug": slug, "owner_guild_id": flag.owner_guild_id}
+		)
+		var pid: int = container.child_id_of_node(guard)
+		if pid >= 0:
+			ids.append(pid)
+	_defenders_by_flag[flag.flag_id] = ids
+
+
+## Despawn all guards currently defending [param flag] (server + clients).
+static func despawn_defenders(flag: TerritoryFlag) -> void:
+	if flag == null:
+		return
+	var ids: Array = _defenders_by_flag.get(flag.flag_id, [])
+	if not ids.is_empty():
+		var container: ReplicatedPropsContainer = _flag_container(flag)
+		if container != null:
+			for pid: int in ids:
+				container.despawn_dynamic(pid)
+	_defenders_by_flag.erase(flag.flag_id)
+
+
+static func _flag_container(flag: TerritoryFlag) -> ReplicatedPropsContainer:
+	var map: Node = flag.get_parent()
+	if map is Map:
+		return (map as Map).replicated_props_container
+	return null
 
 
 ## Grant [param amount] Seasonal Glory to [param guild] and emit any Eternal

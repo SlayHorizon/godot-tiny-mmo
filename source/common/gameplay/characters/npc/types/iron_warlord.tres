@@ -25,3 +25,5 @@ chase_on_area = true
 xp_reward = 300
 respawn_delay = 600.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_iron_bars")])
+metadata/slug = &"iron_warlord"
+metadata/id = 6
