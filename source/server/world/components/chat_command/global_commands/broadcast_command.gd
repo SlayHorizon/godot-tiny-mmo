@@ -6,11 +6,12 @@ extends ChatCommand
 func _init() -> void:
 	command_name = "broadcast"
 	command_priority = 2 # admin+
+	command_usage = "/broadcast <message>"
 
 
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
 	if args.size() < 2:
-		return "Usage: /broadcast <message>"
+		return "Usage: " + command_usage
 
 	var msg: String = " ".join(args.slice(1))
 	var ws: WorldServer = server_instance.world_server

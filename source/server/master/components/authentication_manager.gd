@@ -32,6 +32,10 @@ func generate_random_token() -> String:
 
 
 func create_account(username: String, password: String, is_guest: bool) -> AccountResource:
+	# Account names are case-insensitive (like Discord) so "John" and "john"
+	# can't both exist. Normalize to lowercase before any lookup / storage.
+	if not is_guest:
+		username = username.strip_edges().to_lower()
 	if not is_guest and username_exists(username):
 		return null
 	var account_id: int = account_collection.get_new_account_id()
@@ -62,12 +66,12 @@ func save_account_collection() -> void:
 
 
 func username_exists(username: String) -> bool:
-	if account_collection.collection.has(username):
-		return true
-	return false
+	return account_collection.collection.has(username.strip_edges().to_lower())
 
 
 func validate_credentials(username: String, password: String) -> AccountResource:
+	# Case-insensitive lookup to match create_account's lowercase normalization.
+	username = username.strip_edges().to_lower()
 	var account: AccountResource = null
 	if account_collection.collection.has(username):
 		account = account_collection.collection[username]

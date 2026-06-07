@@ -11,6 +11,7 @@
 [ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="8_je10t"]
 [ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="9_y1msh"]
 [ext_resource type="Resource" uid="uid://f0urxop3y64l" path="res://source/common/gameplay/items/weapons/sword/sword.item.tres" id="10_kyjwk"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/tools/sickle.tres" id="11_sickle"]
 
 [sub_resource type="Resource" id="Entry_cloth_hood"]
 script = ExtResource("1_dqht8")
@@ -48,6 +49,12 @@ item = ExtResource("7_o7ypm")
 price = 5
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
+[sub_resource type="Resource" id="Entry_sickle"]
+script = ExtResource("1_dqht8")
+item = ExtResource("11_sickle")
+price = 5
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [sub_resource type="Resource" id="Entry_potion"]
 script = ExtResource("1_dqht8")
 item = ExtResource("8_je10t")
@@ -63,7 +70,7 @@ metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 [resource]
 script = ExtResource("9_y1msh")
 shop_name = "Starter Shop"
-entries = Array[ExtResource("1_dqht8")]([SubResource("Entry_cloth_hood"), SubResource("Entry_cloth_vest"), SubResource("Entry_old_boots"), SubResource("Entry_leather_jacket"), SubResource("Entry_copper_ring"), SubResource("Entry_pickaxe"), SubResource("Entry_potion"), SubResource("Resource_lhqif")])
+entries = Array[ExtResource("1_dqht8")]([SubResource("Entry_cloth_hood"), SubResource("Entry_cloth_vest"), SubResource("Entry_old_boots"), SubResource("Entry_leather_jacket"), SubResource("Entry_copper_ring"), SubResource("Entry_pickaxe"), SubResource("Entry_sickle"), SubResource("Entry_potion"), SubResource("Resource_lhqif")])
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"start_shop"
 metadata/id = 3

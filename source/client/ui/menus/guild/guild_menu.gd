@@ -28,6 +28,9 @@ var _guild: Dictionary
 ## Last guild.get.members payload (members + ranks + viewer) — drives the
 ## manage popup's gating + rank dropdown.
 var _members_data: Dictionary
+## True while showing a guild the viewer isn't in (opened via "Show Guild" on
+## another player's profile). Stops _on_joined from snapping back to your guild.
+var _external_view: bool = false
 
 
 func _ready() -> void:
@@ -37,6 +40,15 @@ func _ready() -> void:
 		if visible:
 			_refresh())
 	_refresh()
+
+
+## Open to a specific guild by name (e.g. "Show Guild" from another player's
+## profile — possibly a guild you're not in). Called by the HUD's display_menu
+## with the Variant arg.
+func open(arg: Variant) -> void:
+	if arg is String and not (arg as String).is_empty():
+		_external_view = true
+		_select_guild(arg as String)
 
 
 func _build_layout() -> void:
@@ -77,6 +89,11 @@ func _refresh() -> void:
 func _on_joined(data: Dictionary) -> void:
 	_joined = data.get("guilds", [])
 	_rebuild_left()
+	# Viewing another player's guild (Show Guild): keep it shown, don't snap to
+	# the default. One-shot — a later refresh returns to normal behavior.
+	if _external_view:
+		_external_view = false
+		return
 	if _selected_name == "" or not _is_joined(_selected_name):
 		_selected_name = _default_guild_name()
 	if _selected_name != "":
@@ -275,12 +292,22 @@ func _view_profile(parent: Node) -> void:
 	top.add_child(big_logo)
 
 	var desc: String = str(_guild.get("description", ""))
+	# An autowrap Label placed as a DIRECT flex child of an HBoxContainer makes
+	# its width<->height minimum-size calc oscillate once the text wraps to a
+	# second line — a logless native hang/crash. Wrapping it in a VBox gives the
+	# Label a resolved width so wrapping is stable (same shape as the trophies
+	# Label, which lives in a VBox and never crashed).
+	var desc_col: VBoxContainer = VBoxContainer.new()
+	desc_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	desc_col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	top.add_child(desc_col)
+
 	var desc_label: Label = Label.new()
 	desc_label.text = desc if not desc.is_empty() else "No description."
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	desc_label.add_theme_color_override(&"font_color", COLOR_MUTED)
-	top.add_child(desc_label)
+	desc_col.add_child(desc_label)
 
 	box.add_child(HSeparator.new())
 

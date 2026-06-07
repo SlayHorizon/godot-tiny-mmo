@@ -22,6 +22,12 @@ const STAT_LABELS: Dictionary = {
 	&"tenacity": "Tenacity",
 }
 
+## Attributes whose stats aren't wired into gameplay yet (the magic / skill
+## system). Their + buttons are disabled and the row reads "Coming soon" so
+## players don't sink points into dead stats. Remove an entry the moment that
+## system ships — that's the one-click re-enable.
+const LOCKED_ATTRIBUTES: PackedStringArray = ["intelligence", "spirit"]
+
 
 func _ready() -> void:
 	# Re-fetch every time the panel becomes visible — without this, the
@@ -49,8 +55,9 @@ func _refetch_if_visible() -> void:
 func _setup_attribute_row(row: HBoxContainer) -> void:
 	var name_label: Label = row.get_child(0)
 	var attribute_name: String = name_label.text.get_slice(" ", 0).to_lower()
+	var locked: bool = attribute_name in LOCKED_ATTRIBUTES
 
-	var description: String = _describe_attribute(attribute_name)
+	var description: String = "Coming soon" if locked else _describe_attribute(attribute_name)
 	if not description.is_empty():
 		var desc_label: Label = Label.new()
 		desc_label.text = description
@@ -60,10 +67,21 @@ func _setup_attribute_row(row: HBoxContainer) -> void:
 		row.add_child(desc_label)
 		row.move_child(desc_label, 1)
 
+	# Dim locked rows so the "Coming soon" reads as inactive, not broken.
+	if locked:
+		row.modulate.a = 0.5
+
 	# Find the + button by type (robust to the inserted description label).
 	for node: Node in row.get_children():
 		if node is Button:
-			node.pressed.connect(_on_attribute_pressed.bind(name_label, node))
+			# Locked attributes (magic, not wired yet) can't be spent — disable the
+			# button instead of letting players waste points. Re-enable by removing
+			# the name from LOCKED_ATTRIBUTES once the magic system ships.
+			if locked:
+				(node as Button).disabled = true
+				(node as Button).tooltip_text = "Unlocks with the magic update."
+			else:
+				node.pressed.connect(_on_attribute_pressed.bind(name_label, node))
 			break
 
 

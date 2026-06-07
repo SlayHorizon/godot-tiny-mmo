@@ -42,7 +42,10 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 		return
 	var arc: MeleeArc = arc_scene.instantiate()
 	arc.source = user if user is Character else null
-	arc.damage = base_damage
+	# Damage scales with the wielder's AD (STRENGTH attribute + gear); base_damage
+	# is just the floor for a weapon with no attack power behind it.
+	var ad: float = (user as Character).stats_component.get_stat(Stat.AD) if user is Character else 0.0
+	arc.damage = maxf(base_damage, ad)
 	var dir_norm: Vector2 = direction.normalized() if direction != Vector2.ZERO else Vector2.RIGHT
 	arc.global_position = user.global_position + dir_norm * spawn_offset
 	arc.rotation = dir_norm.angle()

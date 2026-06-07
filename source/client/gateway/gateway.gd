@@ -449,6 +449,7 @@ func request_login(username: String, password: String) -> Dictionary:
 		{
 			GatewayAPI.KEY_ACCOUNT_USERNAME: username,
 			GatewayAPI.KEY_ACCOUNT_PASSWORD: password,
+			GatewayAPI.KEY_CLIENT_VERSION: GatewayAPI.game_version(),
 		}
 	)
 

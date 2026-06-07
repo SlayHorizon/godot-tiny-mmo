@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://6iow1vrv0iq7"]
+
+[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_weapon"]
+[ext_resource type="Script" uid="uid://cxxc0hod6vkeu" path="res://source/common/gameplay/items/weapons/tools/sickle.gd" id="2_sickle"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="3_ability_script"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/pick_swing/wooden_sickle_swing.tres" id="4_sickle_swing"]
+
+[node name="Sickle" instance=ExtResource("1_weapon")]
+script = ExtResource("2_sickle")
+abilities = Array[ExtResource("3_ability_script")]([ExtResource("4_sickle_swing")])
+
+[node name="WeaponSprite" parent="." index="0"]
+offset = Vector2(0, -10)
+flip_h = false
+region_rect = Rect2(32, 48, 16, 32)

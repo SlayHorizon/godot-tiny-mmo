@@ -18,11 +18,17 @@ var effect: EffectSpec
 ## nuke the target.
 var damage: float = 5.0
 
+## Seconds an arrow flies before despawning if it hits nothing. Short so stray
+## shots don't sail across the whole map (speed × this ≈ max range).
+const LIFETIME: float = 1.2
+
 func _ready() -> void:
-	# Quick and dirty for tests - Need proper system
-	if multiplayer.is_server():
-		body_entered.connect(_on_body_entered)
-	else:
+	# Detect the same layers as melee (combatants + flags + walls) so arrows stop
+	# on geometry. On BOTH peers: the server applies damage, the client stops its
+	# own visual (take_damage is server-gated, so the client deals none).
+	collision_mask = CombatHit.TARGET_MASK
+	body_entered.connect(_on_body_entered)
+	if not multiplayer.is_server():
 		var vosn := VisibleOnScreenNotifier2D.new()
 		vosn.screen_exited.connect(queue_free)
 		add_child(vosn)
@@ -31,10 +37,11 @@ func _ready() -> void:
 	# One timer by bullet is bad practice.
 	# TODO MOVE IT TO A MANAGER
 	var timer: Timer = Timer.new()
-	timer.wait_time = 3.0
+	timer.wait_time = LIFETIME
 	timer.one_shot = true
 	timer.timeout.connect(queue_free)
 	add_child(timer)
+	timer.start() # was missing — arrows never timed out, only despawned on hit/off-screen
 
 
 func _physics_process(delta: float) -> void:
@@ -44,39 +51,14 @@ func _physics_process(delta: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body == source:
 		return
-
-	# Flags are damageable by any player projectile — bypass character-vs-character
-	# rules (PvP zones, NPC friendly-fire) since a flag isn't a combatant.
-	if body is TerritoryFlag:
-		if source is not Player:
-			return
-		# Flag damage scales with the arrow's tuned damage (charge-based).
-		body.take_damage(damage, source if source is Character else null)
-		if not piercing or pierce_left <= 0:
-			queue_free()
-		pierce_left -= 1
-		return
-
-	if body is not Character:
-		return
-
-	# No NPC-vs-NPC friendly fire (until proper teams exist).
-	if source is not Player and body is not Player:
-		return
-
-	# Player-vs-player only lands in PvP zones; NPC->player (PvE) damage always lands.
-	# Sparring is the explicit exception: if both fighters are in a live match
-	# (countdown over), zone rules don't matter — the arena hosts the fight.
-	if body is Player and source is Player and not body.is_pvp():
-		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
-			return
-
-	# Damage is whatever the spawning weapon assigned (bow's charge curve
-	# scales it). Target armor is applied inside take_damage. AD coupling
-	# removed — weapon damage is the single source of truth now; AD can
-	# come back as a multiplier later if we want gear scaling.
-	body.take_damage(damage, source if source is Character else null)
-
-	if not piercing or pierce_left <= 0:
-		queue_free()
-	pierce_left -= 1
+	# Shared target rules (flags, PvP zones, sparring, guild friendly-fire) in one
+	# place — see CombatHit. The result tells the projectile how to react.
+	match CombatHit.try_damage(source as Character, body, damage):
+		CombatHit.Result.IGNORED:
+			return # friendly / safe-zone / non-target — keep flying
+		CombatHit.Result.BLOCKED:
+			queue_free() # hit a wall / door — stop here
+		CombatHit.Result.DAMAGED:
+			if not piercing or pierce_left <= 0:
+				queue_free()
+			pierce_left -= 1

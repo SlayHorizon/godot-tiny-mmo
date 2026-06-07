@@ -17,6 +17,9 @@ extends AbilityResource
 ## "swings per ore yield" feel.
 @export var extraction_damage: int = 1
 @export var spawn_offset: float = 0.0
+## The tool this swing counts as. Veins want &"pickaxe", herbs want &"sickle".
+## Forwarded to the PickArc so MineableNode.required_tool can gate the gather.
+@export var tool_type: StringName = &"pickaxe"
 
 
 func use_ability(user: Entity, direction: Vector2) -> void:
@@ -38,6 +41,7 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 	arc.source = user if user is Character else null
 	arc.character_damage = character_damage
 	arc.extraction_damage = extraction_damage
+	arc.tool_type = tool_type
 	# Pass the ServerInstance reference through so the arc's area_entered
 	# can route the gather result back to the right peer. user.get_parent()
 	# is the Map, and Map's parent is the ServerInstance (matches the

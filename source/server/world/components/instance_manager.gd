@@ -75,7 +75,7 @@ func _on_peer_connected(peer_id: int) -> void:
 	# Jailed players go straight to the jail instance, regardless of where they
 	# logged out. If the jail map is missing (not authored yet), fall through
 	# to normal spawn so we don't strand them in a black void.
-	if JailList.is_jailed(player_resource.player_id):
+	if JailList.is_jailed(player_resource.account_name):
 		var jail_res: InstanceResource = instance_collection.get(JAIL_INSTANCE_NAME, null)
 		if jail_res != null:
 			var jail_inst: ServerInstance
@@ -111,7 +111,7 @@ func _on_peer_connected(peer_id: int) -> void:
 func _on_player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper) -> void:
 	# Jailed players can't traverse warpers — that's the whole point of jail.
 	# We notify them once per attempt so they know it's intentional.
-	if JailList.is_jailed(player.player_resource.player_id):
+	if JailList.is_jailed(player.player_resource.account_name):
 		world_server.chat_service.push_system_to_player(
 			current_instance, player.player_resource.player_id,
 			"You are jailed and cannot leave this area."
@@ -269,4 +269,34 @@ func send_player_to_jail(peer_id: int) -> bool:
 		)
 	else:
 		player_switch_instance(jail_res.get_instance(), 0, player, current_inst)
+	return true
+
+
+## Teleport an online player to an absolute position, in their current instance
+## or another one. Used by /goto and /summon. Returns true if scheduled.
+##
+## Same instance: move server-side state (so other viewers see it) AND push an
+## explicit teleport to the moved client — its LocalPlayer owns its position, so
+## a state delta alone won't move it (it'd overwrite next input frame).
+## Cross instance: despawn here and respawn at the position over there; the fresh
+## spawn places the LocalPlayer correctly with no extra push.
+func teleport_peer_to(peer_id: int, dest_instance: ServerInstance, dest_position: Vector2) -> bool:
+	if dest_instance == null:
+		return false
+	var current_inst: ServerInstance = find_instance_for_peer(peer_id)
+	if current_inst == null:
+		return false
+	var player: Player = current_inst.get_player(peer_id)
+	if player == null:
+		return false
+
+	if current_inst == dest_instance:
+		player.mark_just_teleported()
+		player.state_synchronizer.set_by_path(^":position", dest_position)
+		world_server.data_push.rpc_id(peer_id, &"player.teleport", {"position": dest_position})
+		return true
+
+	current_inst.despawn_player(peer_id, false)
+	charge_new_instance.rpc_id(peer_id, dest_instance.instance_resource.map_path, dest_instance.name)
+	dest_instance.awaiting_peers[peer_id] = {"player": player, "target_position": dest_position}
 	return true

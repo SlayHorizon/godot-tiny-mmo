@@ -1,9 +1,9 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://ctc421ijcvyn7"]
 
 [ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_weapon"]
-[ext_resource type="Script" path="res://source/common/gameplay/items/weapons/tools/pickaxe.gd" id="2_pickaxe"]
+[ext_resource type="Script" uid="uid://b05ldufcv5mbl" path="res://source/common/gameplay/items/weapons/tools/pickaxe.gd" id="2_pickaxe"]
 [ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="3_ability_script"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/pick_swing/wooden_pickaxe_swing.tres" id="4_pick_swing"]
+[ext_resource type="Resource" uid="uid://6fihowp7uuky" path="res://source/common/gameplay/combat/ability/ability_collection/pick_swing/wooden_pickaxe_swing.tres" id="4_pick_swing"]
 
 [node name="Pickaxe" instance=ExtResource("1_weapon")]
 script = ExtResource("2_pickaxe")

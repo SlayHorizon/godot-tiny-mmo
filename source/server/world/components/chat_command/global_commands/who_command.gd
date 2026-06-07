@@ -7,6 +7,7 @@ extends ChatCommand
 func _init() -> void:
 	command_name = "who"
 	command_priority = 1 # moderator+
+	command_usage = "/who"
 
 
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:

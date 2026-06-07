@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ToolItem" format=3 uid="uid://c4r6h4wum0u0b"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_5xcnt"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="1_tex"]
+[ext_resource type="Script" uid="uid://b5hsnu4140fky" path="res://source/common/gameplay/items/weapons/tool_item.gd" id="2_toolitem"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="3_slot"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/items/weapons/tools/sickle.tscn" id="4_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sickle"]
+atlas = ExtResource("1_tex")
+region = Rect2(32, 48, 16, 32)
+
+[resource]
+script = ExtResource("2_toolitem")
+tool_type = &"sickle"
+right_hand_scene = ExtResource("4_scene")
+slot = ExtResource("3_slot")
+item_name = &"Sickle"
+item_icon = SubResource("AtlasTexture_sickle")
+description = "A curved harvesting sickle. Equip it to cut herbs and other plants from the wild. Sold at the village starter shop."
+vendor_value = 1
+metadata/slug = &"sickle"
+metadata/id = 66

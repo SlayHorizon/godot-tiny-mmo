@@ -239,13 +239,13 @@ func _apply_response(response: Dictionary) -> void:
 
 
 ## A ranked row: rank (top-3 medal-coloured) + name + score. Player rows are
-## clickable to open the profile; guild rows are static.
+## clickable: a player row opens that player's profile, a guild row opens that
+## guild in the guild menu (even if you're not a member).
 func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool) -> Control:
 	var hbox: HBoxContainer = HBoxContainer.new()
 	hbox.add_theme_constant_override(&"separation", 10)
-	if is_player_board:
-		hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		hbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	var rank_label: Label = Label.new()
 	rank_label.text = "%d" % rank_num
@@ -255,8 +255,7 @@ func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool) ->
 	if RANK_COLORS.has(rank_num):
 		rank_label.add_theme_color_override(&"font_color", RANK_COLORS[rank_num])
 		rank_label.add_theme_font_size_override(&"font_size", 16)
-	if is_player_board:
-		rank_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rank_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hbox.add_child(rank_label)
 
 	var name_label: Label = Label.new()
@@ -265,34 +264,24 @@ func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool) ->
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	name_label.clip_text = true
 	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	if is_player_board:
-		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hbox.add_child(name_label)
 
 	var score_label: Label = Label.new()
 	score_label.text = str(entry.get("score", 0))
 	score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	score_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.45))
-	if is_player_board:
-		score_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	score_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hbox.add_child(score_label)
 
+	var button: Button = Button.new()
+	button.custom_minimum_size = Vector2(0, 40)
+	button.add_child(hbox)
 	if is_player_board:
-		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(0, 40)
-		button.add_child(hbox)
 		button.pressed.connect(_on_entry_pressed.bind(int(entry.get("id", 0))))
-		return button
-
-	var panel: PanelContainer = PanelContainer.new()
-	var margin: MarginContainer = MarginContainer.new()
-	margin.add_theme_constant_override(&"margin_left", 8)
-	margin.add_theme_constant_override(&"margin_right", 8)
-	margin.add_theme_constant_override(&"margin_top", 6)
-	margin.add_theme_constant_override(&"margin_bottom", 6)
-	margin.add_child(hbox)
-	panel.add_child(margin)
-	return panel
+	else:
+		button.pressed.connect(_on_guild_entry_pressed.bind(str(entry.get("name", ""))))
+	return button
 
 
 func _on_entry_pressed(player_id: int) -> void:
@@ -300,6 +289,13 @@ func _on_entry_pressed(player_id: int) -> void:
 		return
 	hide()
 	ClientState.player_profile_requested.emit(player_id)
+
+
+func _on_guild_entry_pressed(guild_name: String) -> void:
+	if guild_name.is_empty():
+		return
+	hide()
+	ClientState.open_menu_requested.emit(&"guild", guild_name)
 
 
 func _make_section_header(text: String) -> Label:

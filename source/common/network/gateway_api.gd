@@ -8,6 +8,15 @@ const KEY_ACCOUNT_USERNAME: String = "a-u"
 const KEY_ACCOUNT_PASSWORD: String  = "a-p"
 const KEY_WORLD_ID: String = "w-id"
 const KEY_CHAR_ID: String = "c-id"
+## Client build version (the project's config/version), sent on login so an
+## outdated client gets a clear "please update" message instead of failing deeper.
+const KEY_CLIENT_VERSION: String = "c-v"
+
+
+## This build's version, from project.godot's application/config/version. Same
+## call returns the client's version on the client and the server's on the server.
+static func game_version() -> String:
+	return str(ProjectSettings.get_setting("application/config/version", ""))
 
 const ACTION_LOGIN := "login"
 const ACTION_CREATE_ACCOUNT := "create_account"

@@ -1,17 +1,25 @@
 extends ChatCommand
+## Give an item to a player by item id (testing helper).
 
 
 func _init() -> void:
 	command_name = "give"
 	command_priority = 100 # senior_admin
+	command_usage = "/give <self|@account|#id> <item_id> [amount]"
 
 
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
-	if args.size() < 2 or args.size() > 3:
-		return "Invalid command format: /give <item_id> [amount]"
+	if args.size() < 3 or args.size() > 4:
+		return "Usage: " + command_usage
 
-	var item_id: int = args[1].to_int()
-	var amount: int = args[2].to_int() if args.size() == 3 else 1
+	var target: CommandTarget.Result = CommandTarget.resolve(args[1], peer_id, server_instance)
+	if not target.ok:
+		return target.error
+	if not target.online:
+		return "%s must be online." % target.label()
+
+	var item_id: int = args[2].to_int()
+	var amount: int = args[3].to_int() if args.size() == 4 else 1
 	if item_id <= 0 or amount <= 0:
 		return "Invalid item id or amount."
 
@@ -19,9 +27,5 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 	if item == null:
 		return "No item with id %d." % item_id
 
-	var player: PlayerResource = server_instance.world_server.connected_players.get(peer_id)
-	if player == null:
-		return "Player not found."
-
-	Inventory.add_item(player.inventory, item_id, amount)
-	return "Gave %d x %s (id %d)." % [amount, str(item.item_name), item_id]
+	Inventory.add_item(target.resource.inventory, item_id, amount)
+	return "Gave %d x %s (id %d) to %s." % [amount, str(item.item_name), item_id, target.label()]

@@ -96,8 +96,8 @@ func _build_snapshot() -> Dictionary:
 			"roles":        p.server_roles.keys(),
 			# Surface punishment state so the dashboard can render "Unmute"/
 			# "Unjail" instead of duplicating buttons that no-op or fail.
-			"is_muted":     MuteList.is_muted(p.player_id),
-			"is_jailed":    JailList.is_jailed(p.player_id),
+			"is_muted":     MuteList.is_muted(p.account_name),
+			"is_jailed":    JailList.is_jailed(p.account_name),
 		})
 
 	# Recent channel chat (excludes DMs) and the in-memory log tail. Both are
@@ -171,8 +171,12 @@ func master_broadcast(message: String) -> void:
 
 @rpc("authority")
 func master_mute(player_id: int, reason: String, duration_ms: int) -> void:
-	MuteList.mute(player_id, reason, 0, duration_ms)
-	ServerLog.info("Dashboard mute: player #%d (reason=%s, dur=%dms)" % [player_id, reason, duration_ms])
+	var account: String = _account_for_id(player_id)
+	if account.is_empty():
+		ServerLog.warn("Dashboard mute: no account for player #%d" % player_id)
+		return
+	MuteList.mute(account, reason, 0, duration_ms)
+	ServerLog.info("Dashboard mute: @%s (#%d, reason=%s, dur=%dms)" % [account, player_id, reason, duration_ms])
 	_notify_player(player_id, "You have been muted by a moderator.%s" % (
 		"\nReason: " + reason if not reason.is_empty() else ""
 	))
@@ -180,19 +184,24 @@ func master_mute(player_id: int, reason: String, duration_ms: int) -> void:
 
 @rpc("authority")
 func master_unmute(player_id: int) -> void:
-	if MuteList.unmute(player_id):
-		ServerLog.info("Dashboard unmute: player #%d" % player_id)
+	var account: String = _account_for_id(player_id)
+	if not account.is_empty() and MuteList.unmute(account):
+		ServerLog.info("Dashboard unmute: @%s (#%d)" % [account, player_id])
 		_notify_player(player_id, "You have been unmuted.")
 
 
 @rpc("authority")
 func master_jail(player_id: int, reason: String, duration_ms: int) -> void:
-	JailList.jail(player_id, reason, 0, duration_ms)
+	var account: String = _account_for_id(player_id)
+	if account.is_empty():
+		ServerLog.warn("Dashboard jail: no account for player #%d" % player_id)
+		return
+	JailList.jail(account, reason, 0, duration_ms)
 	# If they're online, send them to jail right now via the existing helper.
 	var peer_id: int = world_server.player_id_to_peer_id.get(player_id, 0)
 	if peer_id != 0:
 		world_server.instance_manager.send_player_to_jail(peer_id)
-	ServerLog.info("Dashboard jail: player #%d (reason=%s, dur=%dms)" % [player_id, reason, duration_ms])
+	ServerLog.info("Dashboard jail: @%s (#%d, reason=%s, dur=%dms)" % [account, player_id, reason, duration_ms])
 	_notify_player(player_id, "You have been jailed by an admin.%s" % (
 		"\nReason: " + reason if not reason.is_empty() else ""
 	))
@@ -200,9 +209,23 @@ func master_jail(player_id: int, reason: String, duration_ms: int) -> void:
 
 @rpc("authority")
 func master_unjail(player_id: int) -> void:
-	if JailList.release(player_id):
-		ServerLog.info("Dashboard unjail: player #%d" % player_id)
+	var account: String = _account_for_id(player_id)
+	if not account.is_empty() and JailList.release(account):
+		ServerLog.info("Dashboard unjail: @%s (#%d)" % [account, player_id])
 		_notify_player(player_id, "You have been released from jail.")
+
+
+## Map a character id to its account handle for account-level mute/jail: prefer
+## the live resource (online), fall back to the DB (offline). "" if unknown.
+func _account_for_id(player_id: int) -> String:
+	var peer_id: int = world_server.player_id_to_peer_id.get(player_id, 0)
+	if peer_id != 0:
+		var p: PlayerResource = world_server.connected_players.get(peer_id)
+		if p != null:
+			return p.account_name
+	if database != null and database.store != null:
+		return database.store.get_player_account_name(player_id)
+	return ""
 
 
 @rpc("authority")

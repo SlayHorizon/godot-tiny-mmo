@@ -220,6 +220,10 @@ func _render_action_bar(profile: Dictionary, is_self: bool) -> void:
 
 	var is_friend: bool = profile.get("friend", false)
 	friend_button.text = "Remove friend" if is_friend else "Add friend"
+	# Reset the disabled state — a prior "Add friend" click disabled it, and
+	# without this it stays disabled for every profile opened afterwards (the
+	# "can't add anyone" bug).
+	friend_button.disabled = false
 
 	if not is_self:
 		# Defensive reconnect with bind so the latest payload's ids are used.
@@ -285,7 +289,7 @@ func _on_more_item_pressed(id: int) -> void:
 			# the rest of the world uses. Guild id isn't currently shipped on
 			# the profile payload — emit by name and let the guild menu resolve
 			# the active guild for the target if a future change adds it.
-			ClientState.open_menu_requested.emit(&"guild", 0)
+			ClientState.open_menu_requested.emit(&"guild", str(_current_profile.get("guild_name", "")))
 			hide()
 		# REPORT is deliberately a disabled stub for now.
 
@@ -352,9 +356,15 @@ func _on_close_pressed() -> void:
 
 
 func _on_friend_button_pressed(player_id: int) -> void:
-	Client.request_data(&"friend.request", Callable(), {"id": player_id})
+	# "Remove friend" actually removes now (was always sending an add request).
+	var is_friend: bool = bool(_current_profile.get("friend", false))
+	var topic: StringName = &"friend.remove" if is_friend else &"friend.request"
+	Client.request_data(topic, func(data: Dictionary) -> void:
+		Toaster.toast(str(data.get("msg", "Done."))),
+		{"id": player_id})
+	_current_profile["friend"] = not is_friend
 	friend_button.disabled = true
-	friend_button.text = "Added"
+	friend_button.text = "Removed" if is_friend else "Added"
 
 
 func _on_invite_guild_button_pressed(player_id: int) -> void:

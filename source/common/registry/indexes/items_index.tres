@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1780352885
-next_id = 66
+version = 1780863159
+next_id = 67
 entries = Array[Dictionary]([{
 &"hash": "0958b9dd9e3ba3112daa61005b77b31bda5385ab1ccd0c192c089362464a428d",
 &"id": 1,
@@ -278,7 +278,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres",
 &"slug": &"wooden_bow.item"
 }, {
-&"hash": "0eb8cbb20b2f80cb5a37045892a886d4900adae05a8198e25baf3c0692911809",
+&"hash": "ed3edee23b784bceae5fba49c22fd2b7813fc2af2140e439b589d8a3532abc90",
 &"id": 43,
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn",
 &"slug": &"wooden_bow"
@@ -303,7 +303,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/sword/sword.item.tres",
 &"slug": &"sword.item"
 }, {
-&"hash": "993149fdaea7ca6b3a9da194afcc0dff060564f5bc9c5497b02edfd0a93a9765",
+&"hash": "dfbe6e7984d0c9d4845f406bd2b34909e302f480e8214390895518ca35b2b718",
 &"id": 47,
 &"path": "res://source/common/gameplay/items/weapons/sword/sword.tscn",
 &"slug": &"sword"
@@ -313,10 +313,25 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/sword/sword_animations.tres",
 &"slug": &"sword_animations"
 }, {
-&"hash": "5472adf92b201dec359f7a3f9943ebf58dbf989b14abf01caffc9bed9ad71f09",
+&"hash": "3444280febf664679ffac84213747d21a8347b2701c85017b160929fed206e81",
 &"id": 52,
 &"path": "res://source/common/gameplay/items/weapons/tools/pickaxe.tres",
 &"slug": &"pickaxe"
+}, {
+&"hash": "d6178e9f01fde2ae04474cc78f5fa9a760d3e216f6c06152fe97795613caae4c",
+&"id": 52,
+&"path": "res://source/common/gameplay/items/weapons/tools/pickaxe.tscn",
+&"slug": &"pickaxe"
+}, {
+&"hash": "b71a8c2bd1bdddd76dab1dab36d0ec6483ba285d4fffaa2ece50057cd66a3b2a",
+&"id": 66,
+&"path": "res://source/common/gameplay/items/weapons/tools/sickle.tres",
+&"slug": &"sickle"
+}, {
+&"hash": "2621639ff599ac08604b844487554546ba469867f045a67f7061d208cc5b3ff2",
+&"id": 66,
+&"path": "res://source/common/gameplay/items/weapons/tools/sickle.tscn",
+&"slug": &"sickle"
 }, {
 &"hash": "d86eb683076ca5537ae006279dc44ac880da2706688ce3d90583a72c2e28a9c5",
 &"id": 40,

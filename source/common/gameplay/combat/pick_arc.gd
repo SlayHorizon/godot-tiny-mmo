@@ -18,16 +18,23 @@ var character_damage: float = 2.0
 ## iron = 2, etc. Combined with the node's extraction_hp this determines
 ## swings-per-yield.
 var extraction_damage: int = 1
+## Which tool this swing represents (&"pickaxe", &"sickle", ...). A MineableNode
+## checks it against its required_tool so a pickaxe can't harvest a herb patch.
+var tool_type: StringName = &"pickaxe"
 var source: Character
 ## Instance ref passed through so register_pickaxe_hit can route the result
 ## back to the right peer (server pushes mining.gather_result).
 var instance: Node
+
+## Bodies already hit this swing (spawn-overlap scan + body_entered de-dupe).
+var _hit_bodies: Array[Node] = []
 
 
 func _ready() -> void:
 	if GameMode.is_world_server():
 		body_entered.connect(_on_body_entered)
 		area_entered.connect(_on_area_entered)
+		_scan_initial_overlaps()
 
 	var t: Timer = Timer.new()
 	t.wait_time = lifetime
@@ -39,31 +46,25 @@ func _ready() -> void:
 
 # Character bodies — same target-validation rules as MeleeArc so PvP zones
 # and sparring stay consistent. Damage is the low pickaxe-as-weapon value.
+## Catch targets already overlapping at spawn (e.g. a stationary territory flag);
+## body_entered alone only fires for bodies that ENTER the arc.
+func _scan_initial_overlaps() -> void:
+	await get_tree().physics_frame
+	if not is_inside_tree():
+		return
+	for body: Node2D in get_overlapping_bodies():
+		_on_body_entered(body)
+
+
 func _on_body_entered(body: Node2D) -> void:
 	if body == source:
 		return
-	if body is not Character:
+	if _hit_bodies.has(body):
 		return
-	if source is not Player and body is not Player:
-		return
-	if body is Player and source is Player and not (body as Player).is_pvp():
-		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
-			return
-	# Guild friendly fire: same-tagged-guild members don't damage each other
-	# (except in a live sparring match).
-	if _same_guild_no_spar(source, body):
-		return
-	body.take_damage(character_damage, source if source is Character else null)
-
-
-func _same_guild_no_spar(source_node: Node, body: Node) -> bool:
-	if source_node is not Player or body is not Player:
-		return false
-	var src_guild: int = (source_node as Player).player_resource.active_guild_id
-	var tgt_guild: int = (body as Player).player_resource.active_guild_id
-	if src_guild <= 0 or src_guild != tgt_guild:
-		return false
-	return not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source_node as Player))
+	_hit_bodies.append(body)
+	# Shared target rules (flags, PvP, sparring, guild friendly-fire) via CombatHit.
+	# The pickaxe is a weak weapon; mining nodes come through _on_area_entered.
+	CombatHit.try_damage(source if source is Character else null, body, character_damage)
 
 
 # MineableNode is an Area2D, so it surfaces via area_entered (Area2D vs Area2D).
@@ -75,7 +76,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if not (source is Player):
 		return
 	var node: MineableNode = area as MineableNode
-	var result: Dictionary = node.register_gather_hit(source as Player, extraction_damage, instance)
+	var result: Dictionary = node.register_gather_hit(source as Player, extraction_damage, instance, tool_type)
 	# Push the result to the swinging player so the client can toast / SFX
 	# without polling. Only fire when something happened (extraction or a
 	# named failure) — silent failures like cooldown stay silent.

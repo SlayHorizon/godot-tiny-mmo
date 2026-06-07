@@ -23,7 +23,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 
 	# Muted players can't send to any channel or DM. We push a system message
 	# back so they know it's blocked (not a network bug).
-	if MuteList.is_muted(player.player_id):
+	if MuteList.is_muted(player.account_name):
 		chat_service.push_system_to_player(instance, player.player_id, "You are muted and cannot send messages.")
 		return {"error": 3, "ok": false, "message": "muted"}
 

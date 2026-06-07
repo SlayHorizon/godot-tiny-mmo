@@ -17,6 +17,8 @@ radius = 1382.0393
 [node name="Base_outpost_inside" type="Node2D" unique_id=953681390]
 y_sort_enabled = true
 script = ExtResource("1_by20y")
+default_mode = 1
+default_modifiers = 12
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=250887496]

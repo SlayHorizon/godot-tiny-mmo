@@ -114,7 +114,7 @@ func create_player_character(account_name: String, character_data: Dictionary) -
 	Inventory.add_item(player.inventory, 4, 1) # bone
 	Inventory.add_item(player.inventory, 5, 1) # wooden_bow
 	# Starting gold (gold is a currency item; balance = amount held in inventory).
-	Inventory.add_item(player.inventory, Economy.gold_id(), 100)
+	Inventory.add_item(player.inventory, Economy.gold_id(), 15)
 	# Starting attribute points so a new character has something to spend.
 	player.available_attributes_points = PlayerResource.ATTRIBUTE_POINTS_PER_LEVEL
 	# Leave defaults to PlayerResource where possible.
@@ -281,6 +281,20 @@ func get_player_display_name(player_id: int) -> String:
 		return ""
 
 	return str(db.query_result[0].get("display_name", ""))
+
+
+## The stable account handle for a character id (works offline). Used to map a
+## player_id back to an account for account-level mute/jail.
+func get_player_account_name(player_id: int) -> String:
+	db.query_with_bindings(
+		"SELECT account_name FROM players WHERE player_id=?;",
+		[player_id]
+	)
+
+	if db.query_result.is_empty():
+		return ""
+
+	return str(db.query_result[0].get("account_name", ""))
 #endregion
 
 
@@ -427,6 +441,30 @@ func search_guilds_by_name(query: String, limit: int) -> Array:
 		+ "FROM guilds "
 		+ "WHERE guild_name LIKE ? COLLATE NOCASE "
 		+ "ORDER BY guild_name ASC "
+		+ "LIMIT ?;",
+		[like, limit]
+	)
+
+	return db.query_result
+
+
+## Search players by name. With [param by_account] true the query matches the
+## stable account_name (@handle); otherwise it matches the character display_name.
+## [param column] is a fixed internal string (not user input), so it's safe to
+## interpolate. Returns rows of {player_id, account_name, display_name}.
+func search_players(query: String, limit: int, by_account: bool) -> Array:
+	var q: String = query.strip_edges()
+	if q.is_empty():
+		return []
+
+	var like: String = "%" + q + "%"
+	var column: String = "account_name" if by_account else "display_name"
+
+	db.query_with_bindings(
+		"SELECT player_id, account_name, display_name "
+		+ "FROM players "
+		+ "WHERE " + column + " LIKE ? COLLATE NOCASE "
+		+ "ORDER BY " + column + " ASC "
 		+ "LIMIT ?;",
 		[like, limit]
 	)

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PickSwingAbility" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/combat/ability/ability_collection/pick_swing/pick_swing_ability.gd" id="1_pick"]
+
+[resource]
+script = ExtResource("1_pick")
+name = "Sickle Swing"
+cooldown = 0.45
+tool_type = &"sickle"

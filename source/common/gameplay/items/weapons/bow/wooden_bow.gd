@@ -130,11 +130,21 @@ func perform_action(action_index: int, direction: Vector2) -> void:
 ## at full charge_time_s held, lerps between. charge_start < 0 means we
 ## somehow lost the start (shouldn't happen) so default to min.
 func _charge_scaled_damage(now: float) -> float:
+	# A fully-charged shot scales with the wielder's AD (STRENGTH + gear), so
+	# investing in attack power matters; max_damage is just a floor. An uncharged
+	# insta-release still only deals min_damage, keeping the charge skill curve.
+	var top: float = maxf(max_damage, _wielder_ad())
 	if charge_start < 0.0:
 		return min_damage
 	var held: float = now - charge_start
 	var t: float = clampf(held / charge_time_s, 0.0, 1.0)
-	return lerpf(min_damage, max_damage, t)
+	return lerpf(min_damage, top, t)
+
+
+func _wielder_ad() -> float:
+	if character != null and character.stats_component != null:
+		return character.stats_component.get_stat(Stat.AD)
+	return max_damage
 
 
 ## NPC / auto use: fire one uncharged arrow immediately (skips the charge/release

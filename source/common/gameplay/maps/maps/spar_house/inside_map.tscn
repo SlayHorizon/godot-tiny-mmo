@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/gameplay/maps/components/interaction_areas/teleporter/teleporter.tscn" id="3_q62f4"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="4_nfh6w"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="5_10bed"]
+[ext_resource type="Resource" uid="uid://g3b32ong5pkq" path="res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_room_arena_1.tres" id="6_3ktqf"]
 
 [node name="Spar_house_inside" type="Node2D" unique_id=1368643614]
 y_sort_enabled = true
@@ -46,22 +47,28 @@ scale = Vector2(3.44, 1)
 target_instance = ExtResource("5_10bed")
 target_id = 3
 
-[node name="Arena_entrance" parent="." unique_id=1203934173 instance=ExtResource("4_nfh6w")]
+[node name="ArenaEntrance" parent="." unique_id=1539954247 instance=ExtResource("4_nfh6w")]
+position = Vector2(120.17954, 593.70013)
+scale = Vector2(2.36, 1)
+target_instance = ExtResource("6_3ktqf")
+warper_id = 1
+
+[node name="ArenaEntrance2" parent="." unique_id=1203934173 instance=ExtResource("4_nfh6w")]
 position = Vector2(120, 442)
 scale = Vector2(2.36, 1)
-warper_id = 1
+warper_id = 2
 
 [node name="Arena_entrance2" parent="." unique_id=739193152 instance=ExtResource("4_nfh6w")]
 position = Vector2(120, 250)
 scale = Vector2(2.36, 1)
-warper_id = 2
+warper_id = 3
 
 [node name="Arena_entrance3" parent="." unique_id=1550742610 instance=ExtResource("4_nfh6w")]
 position = Vector2(264, 250)
 scale = Vector2(2.36, 1)
-warper_id = 3
+warper_id = 4
 
 [node name="Arena_entrance4" parent="." unique_id=784716499 instance=ExtResource("4_nfh6w")]
 position = Vector2(1496, 362)
 scale = Vector2(2.36, 1)
-warper_id = 4
+warper_id = 5

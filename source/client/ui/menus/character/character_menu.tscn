@@ -219,6 +219,20 @@ custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 text = "+"
 
+[node name="HBoxContainer6" type="HBoxContainer" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes" unique_id=1999000001]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer6" unique_id=1999000002]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Defense 0"
+
+[node name="Button" type="Button" parent="Margin/Card/Pad/Root/Content/StatsContent/AttributesPanel/Pad/Attributes/HBoxContainer6" unique_id=1999000003]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+text = "+"
+
 [node name="JobsContent" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content" unique_id=1596733831]
 unique_name_in_owner = true
 visible = false

@@ -64,6 +64,9 @@ func _ready() -> void:
 	# editor's preview honest).
 	_apply_sprite()
 	_visual_state.visible = false
+	# Lift the progress bar + charge label above map decorations (plants, rocks)
+	# that otherwise render on top of this node's world-space Control.
+	_visual_state.z_index = 100
 
 	if multiplayer.is_server():
 		_charges = data.max_charges
@@ -90,7 +93,7 @@ func _ready() -> void:
 ##
 ## Returns {"ok": bool, ...}. On success the dict also carries a
 ## `node_path` so the client can route per-node visual state updates.
-func register_gather_hit(player: Player, damage: int, instance: ServerInstance) -> Dictionary:
+func register_gather_hit(player: Player, damage: int, instance: ServerInstance, tool_type: StringName = &"") -> Dictionary:
 	if data == null or data.ore == null:
 		return {"ok": false}
 	if player == null or player.player_resource == null:
@@ -99,6 +102,19 @@ func register_gather_hit(player: Player, damage: int, instance: ServerInstance) 
 	var player_id: int = int(player.player_resource.player_id)
 	var now_ms: int = Time.get_ticks_msec()
 	var node_path: NodePath = instance.get_path_to(self)
+
+	# Wrong-tool gate: a node worked by the wrong tool (e.g. a pickaxe on a herb
+	# that needs a sickle) yields nothing and tells the client which tool to
+	# equip. Checked before the cooldown soak so the hint always reaches the
+	# player even mid-cooldown. A node with no required_tool accepts any tool.
+	if data.required_tool != &"" and tool_type != data.required_tool:
+		return {
+			"ok": false,
+			"extracted": false,
+			"reason": "wrong_tool",
+			"required_tool": String(data.required_tool),
+			"node_path": node_path,
+		}
 
 	# Per-player cooldown: silently soak the swing (no error toast; spamming
 	# during cooldown is normal and shouldn't pop notifications).

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="InstanceResource" format=3 uid="uid://g3b32ong5pkq"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_vv0rd"]
+
+[resource]
+script = ExtResource("1_vv0rd")
+instance_name = &"SparRoomArena1"
+map_path = "uid://cvra6xkjwo1iy"
+spawn_override = 1
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"

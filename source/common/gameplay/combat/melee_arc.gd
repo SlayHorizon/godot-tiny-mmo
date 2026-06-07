@@ -15,10 +15,15 @@ extends Area2D
 var source: Character
 var damage: float = 10.0
 
+## Bodies already damaged this swing, so the spawn-overlap scan and a later
+## body_entered don't double-hit the same target.
+var _hit_bodies: Array[Node] = []
+
 
 func _ready() -> void:
 	if GameMode.is_world_server():
 		body_entered.connect(_on_body_entered)
+		_scan_initial_overlaps()
 
 	var t: Timer = Timer.new()
 	t.wait_time = lifetime
@@ -28,51 +33,24 @@ func _ready() -> void:
 	t.start()
 
 
+## body_entered only fires for bodies that ENTER the arc — a hitbox spawned on
+## top of a STILL target (e.g. a territory flag, or a motionless mob) would miss
+## it. Wait one physics step so the overlap registers, then process current bodies.
+func _scan_initial_overlaps() -> void:
+	await get_tree().physics_frame
+	if not is_inside_tree():
+		return
+	for body: Node2D in get_overlapping_bodies():
+		_on_body_entered(body)
+
+
 func _on_body_entered(body: Node2D) -> void:
 	if body == source:
 		return
-
-	# Same target-validation rules as the arrow — flags get a special path,
-	# everything else funnels through take_damage with PvP/sparring gates.
-	if body is TerritoryFlag:
-		if source is not Player:
-			return
-		# Flag damage = weapon damage straight. AD coupling removed so the
-		# weapon's tuned values are the source of truth.
-		body.take_damage(damage, source if source is Character else null)
+	if _hit_bodies.has(body):
 		return
-
-	if body is not Character:
-		return
-
-	# No NPC-vs-NPC friendly fire (until proper teams exist).
-	if source is not Player and body is not Player:
-		return
-
-	# Player-vs-player only lands in PvP zones — same exception for live
-	# sparring matches the arrow respects.
-	if body is Player and source is Player and not (body as Player).is_pvp():
-		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
-			return
-
-	# Guild friendly fire: members tagged into the same guild don't damage each
-	# other — except in a live sparring match (a consented duel still lands).
-	if _same_guild_no_spar(source, body):
-		return
-
-	# Damage is whatever the ability tuned in (`base_damage` field on the
-	# MeleeSwingAbility .tres). Mitigation happens inside take_damage via
-	# the target's armor.
-	body.take_damage(damage, source if source is Character else null)
-
-
-## True when both are Players tagged into the same guild and not in a live
-## sparring match (so guildmates are protected from friendly fire).
-func _same_guild_no_spar(source_node: Node, body: Node) -> bool:
-	if source_node is not Player or body is not Player:
-		return false
-	var src_guild: int = (source_node as Player).player_resource.active_guild_id
-	var tgt_guild: int = (body as Player).player_resource.active_guild_id
-	if src_guild <= 0 or src_guild != tgt_guild:
-		return false
-	return not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source_node as Player))
+	_hit_bodies.append(body)
+	# All target rules (flags, PvP zones, sparring, guild friendly-fire) live in
+	# CombatHit. A swing doesn't "consume" — it damages everything valid in range,
+	# so the result is ignored (a wall just resolves to BLOCKED and is skipped).
+	CombatHit.try_damage(source if source is Character else null, body, damage)

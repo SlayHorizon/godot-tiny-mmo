@@ -5,6 +5,10 @@ extends RefCounted
 var command_name: String = ""
 var command_alias: PackedStringArray = []
 var command_priority: int = 0
+## One-line usage string, e.g. "/heal <self|@account|#id> <amount>". Set in
+## _init(); commands return it on a malformed call AND /help <name> prints it, so
+## the format lives in exactly one place. Empty falls back to "/<name>".
+var command_usage: String = ""
 
 
 @warning_ignore("unused_parameter")

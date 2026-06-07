@@ -11,11 +11,11 @@ const ALLOWED_PROFILE_ANIMATIONS: PackedStringArray = ["idle", "run", "death"]
 const MAX_DISPLAYED_TROPHIES: int = 3
 
 const BASE_STATS: Dictionary[StringName, float] = {
-	Stat.HEALTH_MAX: 100.0,
+	Stat.HEALTH_MAX: 50.0,
 	Stat.AD: 20.0,
 	Stat.ARMOR: 15.0,
 	Stat.MR: 15.0,
-	Stat.MOVE_SPEED: 75.0,
+	Stat.MOVE_SPEED: 90.0,
 	Stat.ATTACK_SPEED: 0.8
 }
 

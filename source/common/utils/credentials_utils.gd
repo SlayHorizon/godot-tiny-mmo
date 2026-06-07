@@ -32,8 +32,11 @@ static func validate_username(username: String) -> Dictionary:
 		return _fail(UsernameError.TOO_SHORT, "Min %d characters." % USERNAME_MIN_LEN)
 	if username.length() > USERNAME_MAX_LEN:
 		return _fail(UsernameError.TOO_LONG, "Max %d characters." % USERNAME_MAX_LEN)
-	#if not username.is_valid_ascii_identifier():
-		#return _fail(UsernameError.INVALID_CHARS, "Use letters, digits, underscore.")
+	# Letters, digits and underscore only (accounts are lowercased anyway) — keeps
+	# names tidy and safe for chat / admin commands / display.
+	for c: String in username.to_lower():
+		if not ((c >= "a" and c <= "z") or (c >= "0" and c <= "9") or c == "_"):
+			return _fail(UsernameError.INVALID_CHARS, "Use letters, digits and _ only.")
 	if USERNAME_RESERVED.has(username.to_lower()):
 		return _fail(UsernameError.RESERVED, "This name is reserved.")
 	return {"code": UsernameError.OK, "message": ""}

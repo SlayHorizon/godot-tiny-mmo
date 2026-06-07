@@ -2,7 +2,9 @@ class_name LocalPlayer
 extends Player
 
 
-var speed: float = 75.0
+## Fallback move speed until the synced MOVE_SPEED stat arrives. Actual movement
+## reads the stat (see process_movement) so AGILITY / gear speed bonuses apply.
+var speed: float = 90.0
 var hand_pivot_speed: float = 17.5
 
 var input_direction: Vector2 = Vector2.ZERO
@@ -45,6 +47,9 @@ func _ready() -> void:
 	# need to actually set the position here AND freeze input briefly so the
 	# player doesn't run off the spot they were teleported to.
 	Client.subscribe(&"sparring.match.state", _on_sparring_match_state)
+	# Staff teleports (/goto, /summon) within the same map: same problem as the
+	# sparring teleport — we must set position locally + freeze input briefly.
+	Client.subscribe(&"player.teleport", _on_teleport)
 
 
 ## The local player's own over-head HP bar reads as "self" (green), never
@@ -78,6 +83,14 @@ func _on_sparring_match_state(payload: Dictionary) -> void:
 		_teleport_lock_until_ms = Time.get_ticks_msec() + 500
 
 
+## Generic server-driven teleport (staff /goto, /summon within the same map).
+func _on_teleport(payload: Dictionary) -> void:
+	var pos: Variant = payload.get("position", null)
+	if pos is Vector2:
+		global_position = pos
+		_teleport_lock_until_ms = Time.get_ticks_msec() + 500
+
+
 func _physics_process(delta: float) -> void:
 	process_input()
 	process_movement()
@@ -89,7 +102,11 @@ func process_movement() -> void:
 	if _dead or Time.get_ticks_msec() < _teleport_lock_until_ms:
 		velocity = Vector2.ZERO
 		return
-	velocity = input_direction * speed
+	# Read the server-synced MOVE_SPEED stat so AGILITY (and speed gear) actually
+	# move you faster. Fall back to `speed` until the first stat sync lands so the
+	# player isn't frozen on spawn.
+	var move_speed: float = stats_component.get_stat(Stat.MOVE_SPEED)
+	velocity = input_direction * (move_speed if move_speed > 0.0 else speed)
 	move_and_slide()
 
 

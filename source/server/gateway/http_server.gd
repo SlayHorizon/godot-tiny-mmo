@@ -103,6 +103,13 @@ func handle_login(payload: Dictionary) -> Dictionary:
 		]
 	):
 		return {"error": "invalid_payload"}
+	# Version gate: reject a client whose build doesn't match this server's, so an
+	# outdated player gets a clear update prompt instead of cryptic failures later.
+	var server_version: String = GatewayAPI.game_version()
+	var client_version: String = str(payload.get(GatewayAPI.KEY_CLIENT_VERSION, ""))
+	if client_version != server_version:
+		var have: String = client_version if not client_version.is_empty() else "unknown"
+		return {"error": "Outdated game version — please update. (server %s, you have %s)" % [server_version, have]}
 	var result: Dictionary = await send_request("login", payload)
 	var error: Error = result.get("error", 0)
 	if error != OK:
@@ -194,6 +201,17 @@ func handle_account_creation(payload: Dictionary) -> Dictionary:
 		]
 	):
 		return {"error": "invalid_payload"}
+
+	# Validate server-side too — never trust the client's pre-check (length, chars,
+	# reserved names). Same CredentialsUtils the client uses, so messages match.
+	var username: String = str(payload.get(GatewayAPI.KEY_ACCOUNT_USERNAME, ""))
+	var password: String = str(payload.get(GatewayAPI.KEY_ACCOUNT_PASSWORD, ""))
+	var uname_check: Dictionary = CredentialsUtils.validate_username(username)
+	if uname_check.get("code", CredentialsUtils.UsernameError.EMPTY) != CredentialsUtils.UsernameError.OK:
+		return {"error": str(uname_check.get("message", "Invalid username."))}
+	var pass_check: Dictionary = CredentialsUtils.validate_password(password)
+	if pass_check.get("code", CredentialsUtils.UsernameError.EMPTY) != CredentialsUtils.UsernameError.OK:
+		return {"error": str(pass_check.get("message", "Invalid password."))}
 
 	var response: Dictionary = await send_request("create_account", payload)
 	var error: Error = response.get("error", 0)

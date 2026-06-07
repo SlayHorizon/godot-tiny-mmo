@@ -4,6 +4,7 @@
 [ext_resource type="TileSet" uid="uid://cp3aq00j7d6as" path="res://source/common/gameplay/maps/tilesets/buildings_inside_tileset.tres" id="2_5lp52"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="3_c8iah"]
 [ext_resource type="Script" uid="uid://crn8mflgu0qvy" path="res://source/common/gameplay/sparring/duel_master.gd" id="4_6yeio"]
+[ext_resource type="Resource" uid="uid://b832bjouifd56" path="res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_house.tres" id="4_7553i"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7553i"]
 
@@ -33,6 +34,8 @@ tile_set = ExtResource("2_5lp52")
 [node name="Entrance" parent="." unique_id=499655649 instance=ExtResource("3_c8iah")]
 position = Vector2(527, 418)
 scale = Vector2(3.16, 1)
+target_instance = ExtResource("4_7553i")
+target_id = 2
 
 [node name="DuelMaster" type="Area2D" parent="." unique_id=1427004820 node_paths=PackedStringArray("spawn_a", "spawn_b")]
 position = Vector2(554.1217, 85.276474)
@@ -43,6 +46,13 @@ metadata/_custom_type_script = "uid://crn8mflgu0qvy"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DuelMaster" unique_id=553013406]
 shape = SubResource("RectangleShape2D_7553i")
+
+[node name="Label" type="Label" parent="DuelMaster" unique_id=1226340512]
+offset_left = -18.121704
+offset_top = -13.276474
+offset_right = 13.878296
+offset_bottom = 7.723526
+text = "Duel"
 
 [node name="SpawnPoint1" type="Marker2D" parent="." unique_id=225322716]
 position = Vector2(149.40271, 167.08939)

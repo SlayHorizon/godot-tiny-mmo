@@ -1,24 +1,28 @@
 extends ChatCommand
-## Block a player from sending any chat (channels or DMs). Persists via MuteList
-## (user://server_mutes.cfg) so it survives a restart. Works on offline targets
-## too — they'll be muted as soon as they reconnect.
+## Block an account from sending any chat (channels or DMs). Persists via MuteList
+## (user://server_mutes.cfg), keyed by account so it survives a restart AND a
+## character switch. Works on offline targets too — applied as soon as they
+## reconnect.
 
 
 func _init() -> void:
 	command_name = "mute"
 	command_priority = 1 # moderator+
+	command_usage = "/mute <self|@account|#id> [duration] [reason]   (duration e.g. 30s, 10m, 2h, 1d; omit for permanent)"
 
 
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
 	if args.size() < 2:
-		return "Usage: /mute <player_id> [duration] [reason]   (duration e.g. 30s, 10m, 2h, 1d; omit for permanent)"
+		return "Usage: " + command_usage
 
-	var target_id: int = args[1].to_int()
-	if target_id <= 0:
-		return "Invalid player id."
+	var target: CommandTarget.Result = CommandTarget.resolve(args[1], peer_id, server_instance)
+	if not target.ok:
+		return target.error
+	if target.account_name.is_empty():
+		return "Couldn't resolve an account for that target."
 
 	# Optional duration in args[2]. If it parses as a valid duration token we
-	# consume it; otherwise treat args[2..] as the reason (so "/mute id spam"
+	# consume it; otherwise treat args[2..] as the reason (so "/mute @x spam"
 	# still works without a duration).
 	var args_offset: int = 2
 	var duration_ms: int = 0
@@ -34,18 +38,13 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 	var moderator: PlayerResource = ws.connected_players.get(peer_id)
 	var moderator_id: int = moderator.player_id if moderator else 0
 
-	# If target is online, notify them so they understand why chat is silent.
-	# Resolve a nicer display name for the confirmation too.
-	var target_name: String = "#%d" % target_id
-	var target_peer_id: int = ws.player_id_to_peer_id.get(target_id, 0)
-	if target_peer_id != 0:
-		var target: PlayerResource = ws.connected_players.get(target_peer_id)
-		if target:
-			target_name = "%s @%s (#%d)" % [target.display_name, target.account_name, target.player_id]
-			var notice: String = "You have been muted by a moderator (%s)." % duration_label
-			if not reason.is_empty():
-				notice += "\nReason: " + reason
-			ws.chat_service.push_system_to_player(server_instance, target.player_id, notice)
+	MuteList.mute(target.account_name, reason, moderator_id, duration_ms)
 
-	MuteList.mute(target_id, reason, moderator_id, duration_ms)
-	return "Muted %s for %s." % [target_name, duration_label]
+	# Notify the target if they're online so they understand the silence.
+	if target.online:
+		var notice: String = "You have been muted by a moderator (%s)." % duration_label
+		if not reason.is_empty():
+			notice += "\nReason: " + reason
+		ws.chat_service.push_system_to_player(server_instance, target.player_id, notice)
+
+	return "Muted %s for %s." % [target.label(), duration_label]

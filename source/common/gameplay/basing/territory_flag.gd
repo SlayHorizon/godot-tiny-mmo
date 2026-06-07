@@ -17,7 +17,7 @@ extends StaticBody2D
 ##   - Wire the @export slots (banner / health_bar / territory_zone / grace_label)
 ##     to the children you want. All optional — leave any unset to skip that feature.
 
-const GRACE_MS: int = 5 * 60 * 1000
+const GRACE_MS: int = 2 * 60 * 1000
 const MAX_HP: float = 500.0
 ## Floating nameplate (territory + owning guild, like a player nametag). Drawn at
 ## a big font then scaled down for crispness, matching DisplayNameLabel.

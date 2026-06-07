@@ -1,30 +1,27 @@
 extends ChatCommand
-## Lift a chat mute. Works on offline targets too.
+## Lift a chat mute. Account-keyed; works on offline targets too.
 
 
 func _init() -> void:
 	command_name = "unmute"
 	command_priority = 1 # moderator+
+	command_usage = "/unmute <self|@account|#id>"
 
 
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
 	if args.size() != 2:
-		return "Usage: /unmute <player_id>"
+		return "Usage: " + command_usage
 
-	var target_id: int = args[1].to_int()
-	if target_id <= 0:
-		return "Invalid player id."
+	var target: CommandTarget.Result = CommandTarget.resolve(args[1], peer_id, server_instance)
+	if not target.ok:
+		return target.error
+	if target.account_name.is_empty():
+		return "Couldn't resolve an account for that target."
 
-	if not MuteList.unmute(target_id):
-		return "Player #%d is not muted." % target_id
+	if not MuteList.unmute(target.account_name):
+		return "%s is not muted." % target.label()
 
-	# Notify the target if they're online so they know chat is open again.
 	var ws: WorldServer = server_instance.world_server
-	var target_peer_id: int = ws.player_id_to_peer_id.get(target_id, 0)
-	if target_peer_id != 0:
-		var target: PlayerResource = ws.connected_players.get(target_peer_id)
-		if target:
-			ws.chat_service.push_system_to_player(server_instance, target.player_id, "You have been unmuted.")
-			return "Unmuted %s (#%d)." % [target.display_name, target.player_id]
-
-	return "Unmuted #%d." % target_id
+	if target.online:
+		ws.chat_service.push_system_to_player(server_instance, target.player_id, "You have been unmuted.")
+	return "Unmuted %s." % target.label()

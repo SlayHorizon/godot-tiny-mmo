@@ -147,7 +147,10 @@ func fetch_token(_auth_token: String, _username: String, _character_id: int) -> 
 
 @rpc("any_peer")
 func player_disconnected(username: String) -> void:
-	authentication_manager.account_collection.collection[username].peer_id = 0
+	var account: AccountResource = authentication_manager.account_collection.collection.get(username)
+	if account != null:
+		account.peer_id = 0 # frees the account for a fresh login (see login_request)
+		authentication_manager.active_accounts.erase(account.username)
 
 
 @rpc("authority")
@@ -164,6 +167,7 @@ func player_character_creation_result(gateway_id: int, peer_id: int, username: S
 			return
 		account.last_world_name = connected_worlds[world_id].get("info", {}).get("name", "")
 		account.last_character_id = result_code
+		account.peer_id = peer_id # mark connected so a second login is refused
 		if OS.has_feature("debug"):
 			authentication_manager.save_account_collection()
 		var auth_token: String = authentication_manager.generate_random_token()
@@ -198,6 +202,11 @@ func request_login(_gateway_id: int, _peer_id: int, _username: String, _characte
 func result_login(result_code: int, gateway_id: int, peer_id: int, username: String, character_id: int) -> void:
 	var world_id: int = multiplayer_api.get_remote_sender_id()
 	if result_code == OK:
+		# Mark the account connected so login_request refuses a second login;
+		# player_disconnected clears it on world disconnect.
+		var account: AccountResource = authentication_manager.account_collection.collection.get(username)
+		if account != null:
+			account.peer_id = peer_id
 		var auth_token: String = authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, auth_token, username, character_id)
 		await get_tree().create_timer(0.5).timeout

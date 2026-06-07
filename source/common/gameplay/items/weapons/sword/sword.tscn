@@ -3,9 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_6bj2e"]
 [ext_resource type="Script" uid="uid://ct0u1fvddy3aa" path="res://source/common/gameplay/items/weapons/sword/sword.gd" id="2_gih3n"]
 [ext_resource type="AnimationLibrary" uid="uid://rbv6cl1ldcc7" path="res://source/common/gameplay/items/weapons/sword/sword_animations.tres" id="3_xqg3f"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_swing.tres" id="4_swing"]
+[ext_resource type="Resource" uid="uid://piotigmkphy3" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_swing.tres" id="4_swing"]
 [ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="5_ability_script"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_spin.tres" id="6_spin"]
+[ext_resource type="Resource" uid="uid://dydqgila3yro1" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_spin.tres" id="6_spin"]
 
 [node name="Sword" instance=ExtResource("1_6bj2e")]
 script = ExtResource("2_gih3n")

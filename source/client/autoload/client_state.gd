@@ -148,7 +148,9 @@ func _on_gather_result(data: Dictionary) -> void:
 	if not data.get("ok", false):
 		match str(data.get("reason", "")):
 			"no_tool":
-				Toaster.toast("You need a pickaxe equipped.")
+				Toaster.toast("You need a gathering tool equipped.")
+			"wrong_tool":
+				Toaster.toast("You need a %s for this." % str(data.get("required_tool", "different tool")).capitalize())
 			"too_far":
 				Toaster.toast("Too far from the node.")
 			"level":

@@ -99,7 +99,7 @@ func login_request(username: String, password: String) -> Dictionary:
 	if not account:
 		return {"error": 50}
 	elif account.peer_id:
-		return {"error": 51}
+		return {"error": 51, "msg": "This account is already connected."}
 
 	authentication_manager.active_accounts[account.username] = account
 
