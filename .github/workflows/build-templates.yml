@@ -1,0 +1,81 @@
+name: Build slim export templates
+
+# Compiles size-stripped Godot export templates for Web / Windows / Linux and
+# uploads them as downloadable artifacts. SLOW (~20-40 min) and expensive, so it
+# runs on demand only — trigger it once now, then again only when you bump the
+# Godot version. The fast per-release export workflow reuses these artifacts.
+on:
+  workflow_dispatch:
+
+env:
+  # MUST match your editor version exactly (see deploy-server.sh / Godot's About
+  # dialog). The template ABI is version-locked to the editor that exports with it.
+  GODOT_REF: "4.6.3-stable"
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux
+            scons: "platform=linuxbsd target=template_release arch=x86_64"
+          - name: windows
+            scons: "platform=windows target=template_release arch=x86_64 use_mingw=yes"
+          - name: web
+            scons: "platform=web target=template_release threads=no"
+    steps:
+      - name: Checkout game repo (for ci/custom.py)
+        uses: actions/checkout@v4
+        with:
+          path: game
+
+      - name: Clone Godot ${{ env.GODOT_REF }}
+        run: git clone --depth 1 --branch "${{ env.GODOT_REF }}" https://github.com/godotengine/godot.git
+
+      - name: Apply slim build options
+        run: cp game/ci/custom.py godot/custom.py
+
+      - name: Install SCons + Linux build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y scons pkg-config build-essential \
+            libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev \
+            libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev libwayland-dev
+
+      - name: Install MinGW (Windows cross-compile)
+        if: matrix.name == 'windows'
+        run: sudo apt-get install -y mingw-w64
+
+      - name: Set up Emscripten (Web)
+        if: matrix.name == 'web'
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          # WEB ONLY: this must match the Emscripten version Godot ${{ env.GODOT_REF }}
+          # was built against. If the web job fails on an Emscripten error, the
+          # required version is printed in godot/platform/web/README.md (in the
+          # cloned source) — bump this to match and re-run.
+          version: 3.1.64
+
+      - name: Compile template
+        working-directory: godot
+        run: scons ${{ matrix.scons }} -j"$(nproc)" verbose=no progress=no
+
+      - name: Stage built binaries
+        run: |
+          mkdir -p out
+          # Web ships a .zip template; desktop ship raw binaries. Grab whatever
+          # landed in bin/ so we don't hard-code version-specific filenames.
+          cp -v godot/bin/* out/
+          echo "---- produced ----"
+          ls -lah out
+
+      - name: Upload ${{ matrix.name }} template
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-template-${{ matrix.name }}
+          path: out/*
+          if-no-files-found: error
+          retention-days: 90
