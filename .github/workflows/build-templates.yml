@@ -48,9 +48,14 @@ jobs:
             libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev \
             libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev libwayland-dev
 
-      - name: Install MinGW (Windows cross-compile)
+      - name: Install MinGW + switch to posix threads (Windows cross-compile)
         if: matrix.name == 'windows'
-        run: sudo apt-get install -y mingw-w64
+        run: |
+          sudo apt-get install -y mingw-w64
+          # Godot only supports the POSIX thread model, but Ubuntu's mingw-w64
+          # defaults to the win32 model. Switch both gcc and g++ to -posix.
+          sudo update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
+          sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 
       - name: Set up Emscripten (Web)
         if: matrix.name == 'web'
