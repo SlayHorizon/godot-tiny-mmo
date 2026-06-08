@@ -137,8 +137,13 @@ func level_up() -> void:
 	level += 1
 
 
-## Baseline character xp needed to advance a level (scales with current level).
-const LEVEL_XP_BASE: int = 100
+## Character xp to advance a level: one clean linear-incremental curve — level N
+## costs N × this. It's already super-linear, so each level is harder than the
+## last (19→20 needs ~19× the first level) and the late game gets meaty on its
+## own — no breakpoints or special-casing. Shape the PACING via xp SOURCES (quest
+## rewards + mob xp), which is the honest, flexible lever. Total to cap (20) with
+## base 70 ≈ 13,300.
+const LEVEL_XP_BASE: int = 70
 
 
 func level_xp_to_next() -> int:

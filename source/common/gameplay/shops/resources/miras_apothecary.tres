@@ -3,8 +3,11 @@
 [ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_entry"]
 [ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="2_trade"]
 [ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="3_shop"]
+[ext_resource type="Resource" uid="uid://6m10gk0883iw" path="res://source/common/gameplay/items/consumables/minor_health_potion.tres" id="4_hrjyu"]
 [ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="4_potion"]
 [ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="5_herb"]
+[ext_resource type="Resource" uid="uid://cd4yooe27ja23" path="res://source/common/gameplay/items/consumables/greater_health_potion.tres" id="6_qf0tq"]
+[ext_resource type="Resource" uid="uid://c4r6h4wum0u0b" path="res://source/common/gameplay/items/weapons/tools/sickle.tres" id="7_qf0tq"]
 
 [sub_resource type="Resource" id="Trade_herb_bundle"]
 script = ExtResource("2_trade")
@@ -12,16 +15,34 @@ item = ExtResource("5_herb")
 amount = 5
 payout = 4
 
+[sub_resource type="Resource" id="Resource_2ggpu"]
+script = ExtResource("1_entry")
+item = ExtResource("4_hrjyu")
+price = 3
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [sub_resource type="Resource" id="Entry_potion"]
 script = ExtResource("1_entry")
 item = ExtResource("4_potion")
+price = 6
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_a0r3b"]
+script = ExtResource("1_entry")
+item = ExtResource("6_qf0tq")
 price = 10
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_lmg0x"]
+script = ExtResource("1_entry")
+item = ExtResource("7_qf0tq")
+price = 5
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
 [resource]
 script = ExtResource("3_shop")
 shop_name = "Mira's Apothecary"
-entries = Array[ExtResource("1_entry")]([SubResource("Entry_potion")])
+entries = Array[ExtResource("1_entry")]([SubResource("Resource_2ggpu"), SubResource("Entry_potion"), SubResource("Resource_a0r3b"), SubResource("Resource_lmg0x")])
 accepted_trades = Array[ExtResource("2_trade")]([SubResource("Trade_herb_bundle")])
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"miras_apothecary"

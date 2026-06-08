@@ -8,3 +8,5 @@ instance_name = &"SparRoomArena1"
 map_path = "uid://cvra6xkjwo1iy"
 spawn_override = 1
 metadata/_custom_type_script = "uid://deqjrbn7hm53u"
+metadata/slug = &"spar_room_arena_1"
+metadata/id = 13

@@ -45,6 +45,7 @@
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="39_hs4x2"]
 [ext_resource type="Resource" uid="uid://cenoj3b4ix3kk" path="res://source/common/gameplay/quests/resources/first_harvest.tres" id="44_cglqt"]
 [ext_resource type="Resource" uid="uid://cawy8c6jytb28" path="res://source/common/gameplay/quests/resources/miras_supplies.tres" id="45_7l150"]
+[ext_resource type="Resource" uid="uid://cmd78ic0if6sq" path="res://source/common/gameplay/shops/resources/miras_apothecary.tres" id="46_44a5o"]
 [ext_resource type="Resource" uid="uid://b7f4m4sicoieb" path="res://source/common/gameplay/quests/resources/apprentice_miner.tres" id="46_dwcjk"]
 [ext_resource type="Resource" uid="uid://dhvcbtyb5eppi" path="res://source/common/gameplay/quests/resources/the_iron_vein.tres" id="47_44a5o"]
 
@@ -561,6 +562,30 @@ vertical_alignment = 1
 
 [node name="InteractableMarker" parent="MiraTheHerbalist" unique_id=944955180 instance=ExtResource("30_m6sqw")]
 kind = 0
+
+[node name="MiraTheHerbalist2" type="Area2D" parent="." unique_id=1895063163]
+position = Vector2(1037.4547, 1118.9103)
+script = ExtResource("18_m4n4e")
+shop = ExtResource("46_44a5o")
+metadata/_custom_type_script = "uid://bd3mum0wbv2c0"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MiraTheHerbalist2" unique_id=1697541181]
+shape = SubResource("RectangleShape2D_dwcjk")
+
+[node name="Label" type="Label" parent="MiraTheHerbalist2" unique_id=432525156]
+z_index = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Mira the Herbalist
+(SHOP)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InteractableMarker" parent="MiraTheHerbalist2" unique_id=1269090608 instance=ExtResource("30_m6sqw")]
+kind = 2
 
 [node name="Foreman" type="Area2D" parent="." unique_id=1880426500]
 position = Vector2(861, 278)

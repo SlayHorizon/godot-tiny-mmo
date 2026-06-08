@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://6m10gk0883iw"]
+
+[ext_resource type="Script" uid="uid://bprsise4rcsak" path="res://source/common/gameplay/items/consumable_item.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://j05ahoas0tcu" path="res://assets/sprites/items/icons/Icon303.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+heal_amount = 20
+item_name = &"Minor Health Potion"
+item_icon = ExtResource("2_icon")
+description = "A small draught. Restores a little health — cheap and handy early on."
+vendor_value = 1
+metadata/slug = &"minor_health_potion"
+metadata/id = 68
