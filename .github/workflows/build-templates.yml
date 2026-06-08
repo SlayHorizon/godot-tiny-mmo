@@ -20,10 +20,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Desktop renders with gl_compatibility, so strip the Vulkan backend
+          # (vulkan=no + use_volk=no). Windows additionally drops the D3D12
+          # backend (d3d12=no) — also fixes the "D3D12 SDK missing" build error.
           - name: linux
-            scons: "platform=linuxbsd target=template_release arch=x86_64"
+            scons: "platform=linuxbsd target=template_release arch=x86_64 vulkan=no use_volk=no"
           - name: windows
-            scons: "platform=windows target=template_release arch=x86_64 use_mingw=yes"
+            scons: "platform=windows target=template_release arch=x86_64 use_mingw=yes vulkan=no use_volk=no d3d12=no"
           - name: web
             scons: "platform=web target=template_release threads=no"
     steps:
@@ -53,11 +56,10 @@ jobs:
         if: matrix.name == 'web'
         uses: mymindstorm/setup-emsdk@v14
         with:
-          # WEB ONLY: this must match the Emscripten version Godot ${{ env.GODOT_REF }}
-          # was built against. If the web job fails on an Emscripten error, the
-          # required version is printed in godot/platform/web/README.md (in the
-          # cloned source) — bump this to match and re-run.
-          version: 3.1.64
+          # WEB ONLY: must match the Emscripten version Godot ${{ env.GODOT_REF }}
+          # was built against — pinned to EM_VERSION in Godot's own web_builds.yml
+          # CI for the 4.6.3-stable tag. Bump this in lockstep when you upgrade Godot.
+          version: 4.0.11
 
       - name: Compile template
         working-directory: godot

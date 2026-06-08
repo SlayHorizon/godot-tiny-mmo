@@ -14,7 +14,12 @@ optimize = "size"
 lto = "full"
 production = "yes"
 
-# Unused modules — verified absent from the codebase (no 3D, XR, video, camera,
+# No 3D anywhere in the game — drop all 3D classes and servers. This is the
+# single biggest size win, and since Godot 4.5 it's a plain SCons flag (no
+# engine build profile needed).
+disable_3d = "yes"
+
+# Unused modules — verified absent from the codebase (no XR, video, camera,
 # CSG, gridmap, navmesh, or 3D raycast/lightmapper usage anywhere).
 module_openxr_enabled = "no"
 module_mobile_vr_enabled = "no"
@@ -26,6 +31,7 @@ module_raycast_enabled = "no"
 module_lightmapper_rd_enabled = "no"
 module_navigation_enabled = "no"
 
-# NOTE: the BIGGEST win — stripping all 3D *classes* (Node3D etc.) — comes from
-# a Godot "engine build profile" (.build), added in a follow-up once this
-# pipeline is green. Module flags above are the safe first pass.
+# NOTE: Vulkan + D3D12 removal lives in build-templates.yml as platform-specific
+# flags (the web build never registers those variables, so they can't go here).
+# The project renders with gl_compatibility, so both backends are dead weight on
+# desktop — safe to strip.
