@@ -22,7 +22,10 @@ const VITALITY: Dictionary[StringName, float] = {
 }
 
 const STRENGHT: Dictionary[StringName, float] = {
-	Stat.AD: 0.4,  # ~50 pts ≈ +20 AD (base 20 → 2×)
+	# Steep on purpose: with a low base AD (10), Strength is the main driver of
+	# damage growth. 60 pts ≈ +36 AD, so a maxed STR build hits ~3-4× a fresh
+	# level-1 — a strong, earned progression curve.
+	Stat.AD: 0.6,
 }
 
 const AGILITY: Dictionary[StringName, float] = {

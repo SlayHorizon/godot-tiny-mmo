@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_swing")
 arc_scene = ExtResource("2_arc")
-base_damage = 10.0
+ad_ratio = 1.4
 swing_animation = &"weapon/sword.special.spin"
 name = "Sword Spin"
 cooldown = 2.5

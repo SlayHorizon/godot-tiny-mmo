@@ -150,15 +150,27 @@ func generate_content_index(
 	content_index.scan_path = path
 	content_index.filters = filters 
 	
+	# Slug = filename basename, so "sickle.tres" and "sickle.tscn" both become
+	# "sickle" and would collide on the same id — and load_by_id would then
+	# resolve to the PackedScene, which fails to cast to Item (the buy crash).
+	# Sort so .tres sorts before .tscn (a same-dir "X.tres" < "X.tscn"), then keep
+	# the first file per slug. The data resource wins; its scene twin is skipped.
+	resource_paths.sort()
 	var entries: Array[Dictionary]
+	var seen_slugs: Dictionary[StringName, bool] = {}
 	for resource_path: String in resource_paths:
 		var resource: Resource = ResourceLoader.load(resource_path)
 		if not resource:
 			continue
-		
+
 		var slug: StringName = resource_path.get_file().get_basename()
+		if seen_slugs.has(slug):
+			print_plugin("Skipping '%s' — slug '%s' already indexed (duplicate basename)." % [resource_path, slug])
+			continue
+		seen_slugs[slug] = true
+
 		var id: int = get_slug_id(content_index, slug)
-		
+
 		resource.set_meta(&"slug", slug)
 		resource.set_meta(&"id", id)
 		ResourceSaver.save(resource, resource_path)

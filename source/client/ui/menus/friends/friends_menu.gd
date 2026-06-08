@@ -13,11 +13,20 @@ var _list: VBoxContainer
 func _ready() -> void:
 	build_shell("Friends")
 
+	# content is a MarginContainer (sizes every child to the same rect), so all the
+	# pieces go in ONE VBox — otherwise the scroll list overlaps and covers the
+	# search bar (you can't click it).
+	var col: VBoxContainer = VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override(&"separation", 8)
+	content.add_child(col)
+
 	# Search bar: type a name and press Enter (or the button). Prefix with "@"
 	# to match account names instead of character names.
 	var search_bar: HBoxContainer = HBoxContainer.new()
 	search_bar.add_theme_constant_override(&"separation", 6)
-	content.add_child(search_bar)
+	col.add_child(search_bar)
 
 	_search_field = LineEdit.new()
 	_search_field.placeholder_text = "Search players…  (@name for account)"
@@ -36,13 +45,13 @@ func _ready() -> void:
 	_status = Label.new()
 	_status.modulate.a = 0.55
 	_status.visible = false
-	content.add_child(_status)
+	col.add_child(_status)
 
 	var scroll: ScrollContainer = ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	content.add_child(scroll)
+	col.add_child(scroll)
 
 	_list = VBoxContainer.new()
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL

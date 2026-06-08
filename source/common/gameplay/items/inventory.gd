@@ -30,7 +30,9 @@ static func add_item(inventory: Dictionary, item_id: int, amount: int = 1) -> vo
 	if item_id <= 0 or amount <= 0:
 		return
 
-	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
+	# `as Item` so a bad index entry (e.g. an id pointing at a PackedScene) yields
+	# null instead of crashing the server on the strict assignment.
+	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id) as Item
 	# Unknown items default to non-stackable (own slot) to stay safe.
 	var stackable: bool = item != null and item.is_stackable()
 

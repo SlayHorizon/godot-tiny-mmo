@@ -1,29 +1,32 @@
 class_name MeleeArc
 extends Area2D
-## Short-lived hitbox spawned by melee weapons. Damages every valid target
-## it overlaps during its brief lifetime, then frees itself. Honors the same
-## PvP / sparring / friendly-fire rules as the bow arrow so combat behaves
-## consistently regardless of weapon type.
+## Short-lived hitbox spawned (server-only) by melee weapons. Damages every valid
+## target it overlaps via CombatHit — same flag / PvP / sparring / friendly-fire
+## rules as the bow arrow, so combat stays consistent across weapons.
 ##
-## Server-only logic — clients spawn an empty visual placeholder (the
-## CollisionShape and damage path are gated behind multiplayer.is_server()).
+## The arc is a STATIC box at the swing position; it does NOT follow the player
+## (a swing is a brief moment in front of you). The visible swing is the weapon's
+## own animation, not this node.
+##
+## Detection goes through CombatHit.overlapping_bodies (a deterministic physics
+## shape query) on the first physics step, plus body_entered for anything that
+## walks in during its life. The shape query is what lets a swing hit a STILL
+## target (a territory flag, a motionless mob) that enter-events miss.
 
-## How long the arc stays live before despawning. Short enough to feel like
-## a single swing, long enough to forgive timing.
 @export var lifetime: float = 0.18
 
 var source: Character
 var damage: float = 10.0
 
-## Bodies already damaged this swing, so the spawn-overlap scan and a later
-## body_entered don't double-hit the same target.
 var _hit_bodies: Array[Node] = []
+var _scanned: bool = false
 
 
 func _ready() -> void:
-	if GameMode.is_world_server():
+	if not GameMode.is_world_server():
+		set_physics_process(false)
+	else:
 		body_entered.connect(_on_body_entered)
-		_scan_initial_overlaps()
 
 	var t: Timer = Timer.new()
 	t.wait_time = lifetime
@@ -33,14 +36,12 @@ func _ready() -> void:
 	t.start()
 
 
-## body_entered only fires for bodies that ENTER the arc — a hitbox spawned on
-## top of a STILL target (e.g. a territory flag, or a motionless mob) would miss
-## it. Wait one physics step so the overlap registers, then process current bodies.
-func _scan_initial_overlaps() -> void:
-	await get_tree().physics_frame
-	if not is_inside_tree():
+func _physics_process(_delta: float) -> void:
+	set_physics_process(false)
+	if _scanned:
 		return
-	for body: Node2D in get_overlapping_bodies():
+	_scanned = true
+	for body: Node2D in CombatHit.overlapping_bodies(self):
 		_on_body_entered(body)
 
 
@@ -50,7 +51,4 @@ func _on_body_entered(body: Node2D) -> void:
 	if _hit_bodies.has(body):
 		return
 	_hit_bodies.append(body)
-	# All target rules (flags, PvP zones, sparring, guild friendly-fire) live in
-	# CombatHit. A swing doesn't "consume" — it damages everything valid in range,
-	# so the result is ignored (a wall just resolves to BLOCKED and is skipped).
 	CombatHit.try_damage(source if source is Character else null, body, damage)

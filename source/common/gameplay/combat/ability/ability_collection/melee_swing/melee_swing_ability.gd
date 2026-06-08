@@ -11,8 +11,11 @@ extends AbilityResource
 
 ## Spawned in front of [param user] when the swing fires.
 @export var arc_scene: PackedScene = preload("res://source/common/gameplay/combat/melee_arc.tscn")
-## Base damage floor. Effective damage = max(base_damage, attacker's AD).
-@export var base_damage: float = 12.0
+## Damage as a fraction of the wielder's AD (LoL-style). 1.0 = a swing deals
+## 100% of your AD; a heavy slow weapon might go 1.3, a fast dagger 0.7. AD comes
+## from base + the Strength attribute + gear (incl. the weapon's own AD bonus),
+## so a stronger character / better weapon scales every swing.
+@export var ad_ratio: float = 1.0
 ## How far forward (along [param direction]) the hitbox spawns from the
 ## character's origin. The CollisionShape inside the arc scene already has
 ## its own forward offset + radius — this just biases the whole spawn so
@@ -42,10 +45,10 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 		return
 	var arc: MeleeArc = arc_scene.instantiate()
 	arc.source = user if user is Character else null
-	# Damage scales with the wielder's AD (STRENGTH attribute + gear); base_damage
-	# is just the floor for a weapon with no attack power behind it.
+	# A swing deals ad_ratio × the wielder's AD (base + Strength + gear), so both
+	# leveling and a better weapon raise every hit.
 	var ad: float = (user as Character).stats_component.get_stat(Stat.AD) if user is Character else 0.0
-	arc.damage = maxf(base_damage, ad)
+	arc.damage = ad * ad_ratio
 	var dir_norm: Vector2 = direction.normalized() if direction != Vector2.ZERO else Vector2.RIGHT
 	arc.global_position = user.global_position + dir_norm * spawn_offset
 	arc.rotation = dir_norm.angle()

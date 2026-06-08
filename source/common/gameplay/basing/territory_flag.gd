@@ -19,6 +19,14 @@ extends StaticBody2D
 
 const GRACE_MS: int = 2 * 60 * 1000
 const MAX_HP: float = 500.0
+## Raw weapon damage is multiplied by this before hitting the flag. A flag is an
+## objective, not a duel — but capturing one shouldn't be a minute-long solo slog
+## either. At 1.5 a fresh solo player needs ~20 swings; a leveled player or a
+## 2-3 person group is much faster, which is the intended "bring friends" feel.
+const HIT_SCALE: float = 1.5
+## Own-guild repair mends at this fraction of a hit's damage, so a lone defender
+## can chip in but can't out-heal a real attack (you must fight, not spam-repair).
+const REPAIR_FRACTION: float = 0.5
 ## Floating nameplate (territory + owning guild, like a player nametag). Drawn at
 ## a big font then scaled down for crispness, matching DisplayNameLabel.
 const NAMEPLATE_WIDTH: float = 320.0
@@ -34,7 +42,7 @@ const LOGO_PATHS: PackedStringArray = [
 ]
 ## Max on-screen size (px) for the emblem. Downscaled by an integer divisor (1/N)
 ## from the source texture so it stays crisp under nearest-neighbor filtering.
-const EMBLEM_MAX_PX: float = 16.0
+const EMBLEM_MAX_PX: float = 32.0
 ## Emblem Y — above the nameplate (Sprite2D centers on its position).
 const EMBLEM_Y: float = -82.0
 ## Color used for the banner when the flag is unowned (guild_id = 0).
@@ -75,12 +83,23 @@ var grace_until_ms: int = 0
 
 ## Client-only floating nameplate showing the territory + owning guild.
 var _nameplate: Label
+## Client-only HP readout, its own label under the nameplate (shown only while
+## contested). Separate from the nameplate so a third line can't get clipped in
+## the nameplate's fixed-height, scaled box.
+var _hp_label: Label
 ## Client-only guild-logo emblem on the flag.
 var _emblem: Sprite2D
+## Client-only HP-bar fill stylebox, re-tinted blue when YOUR guild owns the flag
+## (matching the blue ally tint on guildmates), red otherwise.
+var _bar_fill: StyleBoxFlat
 
 # True between damage start and the next capture or full-heal-broadcast. Lets
 # us send a single "under attack" chat notice instead of one per arrow.
 var _attack_notice_sent: bool = false
+## Client-only: true once any live flag.update broadcast has been applied. Stops a
+## late flag.get pull response (initial-state fallback) from clobbering fresher
+## state — e.g. resetting HP to full right after the first hit, hiding the HP.
+var _state_initialized: bool = false
 
 
 func _ready() -> void:
@@ -93,6 +112,7 @@ func _ready() -> void:
 	else:
 		Client.subscribe(&"flag.update", _on_flag_update_pushed)
 		_build_nameplate()
+		_build_hp_label()
 		_build_emblem()
 		_style_health_bar()
 		_request_state.call_deferred()
@@ -124,16 +144,24 @@ func take_damage(amount: float, attacker: Character = null) -> void:
 	if Time.get_ticks_msec() < grace_until_ms:
 		return # Immune during post-capture grace.
 
-	# Basing is a guild-vs-guild system: solo players can't damage a flag.
-	# Without this, a guildless griefer could grind the flag down to 0 HP and
-	# the owning guild would lose ownership-grace cycles for nothing.
+	# Basing is a guild-vs-guild system: solo players can't touch a flag.
+	# Without this, a guildless griefer could grind the flag down for nothing.
 	if attacker is not Player:
 		return
-	if (attacker as Player).player_resource.active_guild_id <= 0:
+	var attacker_guild: int = (attacker as Player).player_resource.active_guild_id
+	if attacker_guild <= 0:
 		return
 
-	last_attacker = attacker; amount *= 5
+	# Own guild REPAIRS the flag instead of attacking it — allies can't grief
+	# their own territory (and no "under attack" spam), and chipping in mends it.
+	if owner_guild_id > 0 and attacker_guild == owner_guild_id:
+		_repair(amount)
+		return
+
+	last_attacker = attacker
+	amount *= HIT_SCALE
 	hp = maxf(0.0, hp - amount)
+	_broadcast_hit(amount, false)
 
 	# First damage since last full-HP -> notify the holding guild's members.
 	if not _attack_notice_sent and hp < MAX_HP:
@@ -144,6 +172,38 @@ func take_damage(amount: float, attacker: Character = null) -> void:
 		_capture(attacker)
 	else:
 		_broadcast_state()
+
+
+## An owning-guild member's hit mends the flag instead of damaging it — half the
+## damage it would have dealt (REPAIR_FRACTION), so repairing helps but can't beat
+## an attacker trading blow-for-blow. No-op at full HP.
+func _repair(amount: float) -> void:
+	if hp >= MAX_HP:
+		return
+	var mend: float = amount * HIT_SCALE * REPAIR_FRACTION
+	hp = minf(MAX_HP, hp + mend)
+	_broadcast_hit(mend, true)
+	if hp >= MAX_HP:
+		_attack_notice_sent = false # full again → a fresh assault re-notifies
+	_broadcast_state()
+
+
+## Juice: floating number over the flag on every hit (red damage / green heal),
+## reusing the same combat.hit feedback path weapons use on characters.
+func _broadcast_hit(amount: float, is_heal: bool) -> void:
+	if amount <= 0.0 or ServerHub.current == null:
+		return
+	var instance: Node = _server_instance()
+	if instance == null:
+		return
+	ServerHub.current.propagate_rpc(
+		ServerHub.current.data_push.bind(&"combat.hit", {
+			"amount": int(round(amount)),
+			"position": global_position,
+			"heal": is_heal,
+		}),
+		instance.name
+	)
 
 
 func _capture(killer: Character) -> void:
@@ -296,6 +356,7 @@ func is_body_in_territory(body: Node2D) -> bool:
 func _on_flag_update_pushed(payload: Dictionary) -> void:
 	if int(payload.get("flag_id", -1)) != flag_id:
 		return
+	_state_initialized = true
 	owner_guild_id = int(payload.get("owner_guild_id", 0))
 	owner_guild_name = str(payload.get("owner_guild_name", ""))
 	owner_logo_id = int(payload.get("owner_logo_id", 0))
@@ -311,7 +372,9 @@ func _request_state() -> void:
 	if InstanceClient.current == null:
 		return
 	Client.request_data(&"flag.get", func(data: Dictionary) -> void:
-		if not data.is_empty():
+		# Initial-state fallback only: skip if a live broadcast already arrived, so
+		# a late pull can't overwrite fresher HP/owner state.
+		if not data.is_empty() and not _state_initialized:
 			_on_flag_update_pushed(data),
 		{"flag_id": flag_id}, InstanceClient.current.name)
 
@@ -325,6 +388,20 @@ func _refresh_visuals() -> void:
 		# Hide when full HP so the world isn't cluttered with idle bars.
 		if health_bar is CanvasItem:
 			(health_bar as CanvasItem).visible = hp < MAX_HP
+	# Blue fill when the local viewer's guild owns this flag (same blue guildmates
+	# get), red otherwise — instant "mine vs theirs" read.
+	var owned_by_viewer: bool = owner_guild_id > 0 and owner_guild_id == Character.local_viewer_guild_id
+	if _bar_fill != null:
+		_bar_fill.bg_color = Character.BAR_COLOR_ALLY if owned_by_viewer else Color(0.86, 0.33, 0.28)
+	# Dedicated HP readout — shown only while contested, tinted to match the bar.
+	if _hp_label != null:
+		var damaged: bool = hp < MAX_HP
+		_hp_label.visible = damaged
+		if damaged:
+			_hp_label.text = "%d / %d" % [int(ceil(hp)), int(MAX_HP)]
+			_hp_label.add_theme_color_override(
+				&"font_color", Character.BAR_COLOR_ALLY if owned_by_viewer else Color(0.96, 0.5, 0.45)
+			)
 	_update_nameplate()
 	_update_emblem()
 
@@ -345,6 +422,27 @@ func _build_nameplate() -> void:
 	_nameplate.position = Vector2(-NAMEPLATE_WIDTH * NAMEPLATE_SCALE * 0.5, NAMEPLATE_Y)
 	_nameplate.z_index = 20
 	add_child(_nameplate)
+
+
+## Dedicated HP readout, sitting just under the nameplate. Same crisp big-font-
+## scaled-down approach, but its own node so it can't be clipped as a nameplate
+## third line. Hidden until the flag is contested.
+func _build_hp_label() -> void:
+	_hp_label = Label.new()
+	_hp_label.size = Vector2(NAMEPLATE_WIDTH, 40)
+	_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hp_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_hp_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_hp_label.add_theme_font_size_override(&"font_size", 26)
+	_hp_label.add_theme_color_override(&"font_outline_color", Color(0, 0, 0, 0.85))
+	_hp_label.add_theme_constant_override(&"outline_size", 6)
+	_hp_label.scale = Vector2(NAMEPLATE_SCALE, NAMEPLATE_SCALE)
+	# Clearly below the two-line nameplate (territory + [guild]) so it doesn't
+	# overlap the guild name. Nudge this offset if it needs more/less clearance.
+	_hp_label.position = Vector2(-NAMEPLATE_WIDTH * NAMEPLATE_SCALE * 0.5, NAMEPLATE_Y + 28)
+	_hp_label.z_index = 21
+	_hp_label.visible = false
+	add_child(_hp_label)
 
 
 ## Refresh nameplate text + color from the current owner. Guild color + tag when
@@ -402,6 +500,7 @@ func _style_health_bar() -> void:
 	var fill: StyleBoxFlat = StyleBoxFlat.new()
 	fill.bg_color = Color(0.86, 0.33, 0.28)
 	fill.anti_aliasing = false
+	_bar_fill = fill # kept so _refresh_visuals can re-tint it on ownership change
 	bar.add_theme_stylebox_override(&"background", bg)
 	bar.add_theme_stylebox_override(&"fill", fill)
 	bar.show_percentage = false

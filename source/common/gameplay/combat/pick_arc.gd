@@ -1,40 +1,38 @@
 class_name PickArc
 extends Area2D
-## Pickaxe swing hitbox. Hybrid of MeleeArc and an Area2D-vs-Area2D detector:
-## - body_entered → Character → small "weak weapon" damage (your point 4)
-## - area_entered → MineableNode → register_pickaxe_hit (your point 3)
+## Pickaxe / sickle swing hitbox. Hybrid:
+## - bodies (players, NPCs, territory flags) → small "tool as weapon" damage via
+##   CombatHit, using the SAME deterministic shape query as MeleeArc so a swing
+##   lands on still targets (a flag) that enter-events miss.
+## - areas (MineableNode) → register_gather_hit (the actual harvest).
 ##
-## Lives ~lifetime seconds then frees itself. Server-only damage / extraction
-## logic — clients spawn the same scene for visual feedback but the gates
-## around body_entered / area_entered keep effects scoped to the server.
+## Server-only damage / extraction; clients spawn the same scene for visual
+## feedback but the gates keep effects server-side.
 
 
 @export var lifetime: float = 0.2
 
-## Damage dealt to Character bodies (players + NPCs). Kept low — the pickaxe
-## is a tool, not a sword. ~25-30% of a basic sword swing.
+## Damage dealt to Character bodies + flags. Kept low — a tool is a weak weapon.
 var character_damage: float = 2.0
-## Extraction damage dealt per swing to MineableNodes. Wooden pickaxe = 1,
-## iron = 2, etc. Combined with the node's extraction_hp this determines
-## swings-per-yield.
+## Extraction damage per swing to MineableNodes (wooden = 1, iron = 2, …).
 var extraction_damage: int = 1
-## Which tool this swing represents (&"pickaxe", &"sickle", ...). A MineableNode
-## checks it against its required_tool so a pickaxe can't harvest a herb patch.
+## Which tool this swing represents (&"pickaxe", &"sickle", …) — checked against
+## a MineableNode's required_tool.
 var tool_type: StringName = &"pickaxe"
 var source: Character
-## Instance ref passed through so register_pickaxe_hit can route the result
-## back to the right peer (server pushes mining.gather_result).
+## Instance ref so register_gather_hit can route the result back to the peer.
 var instance: Node
 
-## Bodies already hit this swing (spawn-overlap scan + body_entered de-dupe).
 var _hit_bodies: Array[Node] = []
+var _scanned: bool = false
 
 
 func _ready() -> void:
 	if GameMode.is_world_server():
 		body_entered.connect(_on_body_entered)
 		area_entered.connect(_on_area_entered)
-		_scan_initial_overlaps()
+	else:
+		set_physics_process(false)
 
 	var t: Timer = Timer.new()
 	t.wait_time = lifetime
@@ -44,15 +42,12 @@ func _ready() -> void:
 	t.start()
 
 
-# Character bodies — same target-validation rules as MeleeArc so PvP zones
-# and sparring stay consistent. Damage is the low pickaxe-as-weapon value.
-## Catch targets already overlapping at spawn (e.g. a stationary territory flag);
-## body_entered alone only fires for bodies that ENTER the arc.
-func _scan_initial_overlaps() -> void:
-	await get_tree().physics_frame
-	if not is_inside_tree():
+func _physics_process(_delta: float) -> void:
+	set_physics_process(false)
+	if _scanned:
 		return
-	for body: Node2D in get_overlapping_bodies():
+	_scanned = true
+	for body: Node2D in CombatHit.overlapping_bodies(self):
 		_on_body_entered(body)
 
 
@@ -63,13 +58,13 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 	_hit_bodies.append(body)
 	# Shared target rules (flags, PvP, sparring, guild friendly-fire) via CombatHit.
-	# The pickaxe is a weak weapon; mining nodes come through _on_area_entered.
+	# The tool is a weak weapon; mining nodes come through _on_area_entered.
 	CombatHit.try_damage(source if source is Character else null, body, character_damage)
 
 
-# MineableNode is an Area2D, so it surfaces via area_entered (Area2D vs Area2D).
-# Routes through the node's register_pickaxe_hit; that method handles charge
-# accounting, per-player progress, awards, and returns the result we push back.
+# MineableNode is an Area2D, so it surfaces via area_entered. Routes through the
+# node's register_gather_hit; that handles charges, per-player progress, awards,
+# and returns the result we push back.
 func _on_area_entered(area: Area2D) -> void:
 	if not (area is MineableNode):
 		return
@@ -77,9 +72,6 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 	var node: MineableNode = area as MineableNode
 	var result: Dictionary = node.register_gather_hit(source as Player, extraction_damage, instance, tool_type)
-	# Push the result to the swinging player so the client can toast / SFX
-	# without polling. Only fire when something happened (extraction or a
-	# named failure) — silent failures like cooldown stay silent.
 	if result.get("ok", false) or result.has("reason"):
 		var peer_id: int = int((source as Player).player_resource.current_peer_id)
 		if peer_id > 0 and ServerHub.current != null:

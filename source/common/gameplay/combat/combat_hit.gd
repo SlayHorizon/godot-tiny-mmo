@@ -58,6 +58,34 @@ static func try_damage(source: Character, body: Node2D, damage: float) -> Result
 	return Result.DAMAGED
 
 
+## The single melee-detection path. Server-only. Runs a deterministic physics
+## shape query against [param hitbox]'s "CollisionShape2D" child and returns the
+## bodies currently inside it. Every melee weapon (sword, pickaxe, sickle, …)
+## routes through this, so they all hit the same things — STILL targets included
+## (a territory flag, a motionless mob), which an Area2D's enter-events and
+## get_overlapping_bodies() miss for a hitbox spawned on top of them. Must be
+## called from _physics_process (direct_space_state is only valid during physics).
+static func overlapping_bodies(hitbox: Area2D) -> Array[Node2D]:
+	var out: Array[Node2D] = []
+	var shape_node: CollisionShape2D = hitbox.get_node_or_null(^"CollisionShape2D")
+	if shape_node == null or shape_node.shape == null:
+		return out
+	var space: PhysicsDirectSpaceState2D = hitbox.get_world_2d().direct_space_state
+	if space == null:
+		return out
+	var params := PhysicsShapeQueryParameters2D.new()
+	params.shape = shape_node.shape
+	params.transform = shape_node.global_transform
+	params.collision_mask = hitbox.collision_mask
+	params.collide_with_bodies = true
+	params.collide_with_areas = false
+	for hit: Dictionary in space.intersect_shape(params, 16):
+		var collider: Object = hit.get("collider")
+		if collider is Node2D:
+			out.append(collider as Node2D)
+	return out
+
+
 static func _same_guild_no_spar(source: Node, body: Node) -> bool:
 	if source is not Player or body is not Player:
 		return false

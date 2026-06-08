@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_swing")
-base_damage = 6.0
+ad_ratio = 1.0
 swing_animation = &"weapon/sword.swing"
 name = "Sword Swing"
 cooldown = 0.6

@@ -10,8 +10,11 @@ enum State {
 
 @export var cooldown: float = 0.8
 @export var charge_time_s: float = 0.4
-@export var min_damage: float = 3.0   ## uncharged shot (insta-release at 0 charge)
-@export var max_damage: float = 12.0  ## fully-charged shot
+## Damage as a fraction of the wielder's AD. An uncharged tap deals
+## min_ad_ratio × AD; a full charge deals max_ad_ratio × AD. AD = base +
+## Strength + gear, so a stronger archer / better bow scales every shot.
+@export var min_ad_ratio: float = 0.3  ## uncharged tap (insta-release)
+@export var max_ad_ratio: float = 1.0  ## fully-charged shot
 @export var min_speed: float = 400.0
 @export var max_speed: float = 900.0
 ## Multishot fires N arrows in a cone. Per-arrow damage = primary's
@@ -130,28 +133,28 @@ func perform_action(action_index: int, direction: Vector2) -> void:
 ## at full charge_time_s held, lerps between. charge_start < 0 means we
 ## somehow lost the start (shouldn't happen) so default to min.
 func _charge_scaled_damage(now: float) -> float:
-	# A fully-charged shot scales with the wielder's AD (STRENGTH + gear), so
-	# investing in attack power matters; max_damage is just a floor. An uncharged
-	# insta-release still only deals min_damage, keeping the charge skill curve.
-	var top: float = maxf(max_damage, _wielder_ad())
+	# Damage = AD × a charge-scaled ratio, so a stronger archer (Strength + gear)
+	# hits harder at every charge level while the charge skill curve is preserved.
+	var ad: float = _wielder_ad()
 	if charge_start < 0.0:
-		return min_damage
+		return ad * min_ad_ratio
 	var held: float = now - charge_start
 	var t: float = clampf(held / charge_time_s, 0.0, 1.0)
-	return lerpf(min_damage, top, t)
+	return ad * lerpf(min_ad_ratio, max_ad_ratio, t)
 
 
 func _wielder_ad() -> float:
 	if character != null and character.stats_component != null:
 		return character.stats_component.get_stat(Stat.AD)
-	return max_damage
+	return 0.0
 
 
 ## NPC / auto use: fire one uncharged arrow immediately (skips the charge/release
 ## sequence players go through). NPC's get the uncharged base damage; that's
 ## fine because their HP/AD are tuned separately on the EnemyTypeResource.
 func auto_attack(direction: Vector2) -> void:
-	shoot_arrow(character, direction, min_damage)
+	# NPC / auto use: one uncharged shot, scaled to the wielder's AD.
+	shoot_arrow(character, direction, _wielder_ad() * min_ad_ratio)
 
 
 func process_input(local_player: LocalPlayer) -> void:
@@ -265,10 +268,8 @@ func shoot_arrow(entity: Entity, direction: Vector2, arrow_damage: float = -1.0)
 	arrow.global_position = character.right_hand_spot.global_position
 
 	arrow.source = entity
-	# Default to min_damage when no explicit damage passed (e.g. NPC auto-attack
-	# paths that still use the old signature). Player paths always pass the
-	# charge-scaled value.
-	arrow.damage = arrow_damage if arrow_damage >= 0.0 else min_damage
+	# Callers pass an explicit (already AD-scaled) damage value; clamp to >= 0.
+	arrow.damage = maxf(0.0, arrow_damage)
 	# Kept for now in case downstream code still reads .effect; not used by
 	# arrow.gd anymore since damage is read directly from arrow.damage.
 	arrow.effect = EffectSpec.damage(

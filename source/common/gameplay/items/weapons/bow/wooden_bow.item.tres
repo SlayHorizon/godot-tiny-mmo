@@ -12,11 +12,17 @@ stat_name = "move_speed"
 value = -5.0
 metadata/_custom_type_script = "uid://cvggwjkht4km4"
 
+[sub_resource type="Resource" id="Mod_ad_bow"]
+script = ExtResource("3_10omy")
+stat_name = "ad"
+value = 5.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
 [resource]
 script = ExtResource("5_ts60e")
 right_hand_scene = ExtResource("4_x4sqe")
 slot = ExtResource("6_j3qvs")
-base_modifiers = Array[ExtResource("3_10omy")]([SubResource("Resource_ibcoj")])
+base_modifiers = Array[ExtResource("3_10omy")]([SubResource("Resource_ibcoj"), SubResource("Mod_ad_bow")])
 item_name = &"Bow"
 item_icon = ExtResource("4_wi6rl")
 description = "A wooden boow."
