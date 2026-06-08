@@ -1,6 +1,8 @@
 # Godot 4+ specific ignores
 .godot/
-export_presets.cfg
+# NOTE: export_presets.cfg IS committed — CI (release.yml) needs it to export
+# headlessly. It contains no secrets (encrypt_pck=false). If you ever add signing
+# keys or store credentials to a preset, move those to CI secrets instead.
 
 # Imported translations (automatically generated from CSV files)
 *.translation
@@ -32,3 +34,4 @@ addons/godot-sqlite/bin/*
 /docs
 /data/config/discord_webhook.cfg
 source/server/master/account_collection.tres
+/addons/godot_mcp
