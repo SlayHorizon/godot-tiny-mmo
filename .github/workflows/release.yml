@@ -1,0 +1,97 @@
+name: Release clients to itch.io
+
+# Tag a release (e.g. `git tag v0.2.0 && git push --tags`) → exports the three
+# game clients with the slim templates and pushes them to itch.io via butler.
+# Server deploy is a separate workflow (deploy-server.yml) on purpose — this one
+# never touches the live server, so it's safe to run often.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  GODOT_REF: "4.6.3-stable"        # editor + source tag
+  GODOT_VERSION_DIR: "4.6.3.stable" # export_templates subfolder name
+  ITCH_GAME: "slayhorizon/ekonia-online"
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: read   # needed for `gh run download` to read the build-templates run
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download slim export templates (latest successful build)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          RUN_ID=$(gh run list --workflow=build-templates.yml --status=success \
+            --limit=1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::No successful 'Build slim export templates' run found. Run that workflow first."
+            exit 1
+          fi
+          echo "Using build-templates run $RUN_ID"
+          gh run download "$RUN_ID" --name godot-template-linux   --dir tpl/linux
+          gh run download "$RUN_ID" --name godot-template-windows --dir tpl/windows
+          gh run download "$RUN_ID" --name godot-template-web     --dir tpl/web
+
+      - name: Install templates where Godot expects them
+        run: |
+          set -euo pipefail
+          DEST="$HOME/.local/share/godot/export_templates/${GODOT_VERSION_DIR}"
+          mkdir -p "$DEST"
+          echo "$GODOT_VERSION_DIR" > "$DEST/version.txt"
+          cp tpl/linux/godot.linuxbsd.template_release.x86_64        "$DEST/linux_release.x86_64"
+          cp tpl/windows/godot.windows.template_release.x86_64.exe   "$DEST/windows_release_x86_64.exe"
+          cp tpl/web/godot.web.template_release.wasm32.nothreads.zip "$DEST/web_nothreads_release.zip"
+          ls -lah "$DEST"
+
+      - name: Fetch headless Godot editor ${{ env.GODOT_REF }}
+        run: |
+          set -euo pipefail
+          curl -fL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_REF}/Godot_v${GODOT_REF}_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_REF}_linux.x86_64" godot
+          chmod +x godot
+          ./godot --headless --version
+
+      - name: Import project (warm the .godot cache)
+        run: |
+          # Cold-start import first — exporting on a fresh checkout otherwise
+          # segfaults (Godot 4 CLI quirk; same trick as deploy-server.sh).
+          ./godot --headless --path . --import || true
+
+      - name: Export clients
+        run: |
+          set -euo pipefail
+          mkdir -p exports/windows exports/linux exports/web
+          ./godot --headless --path . --export-release "Windows" exports/windows/ekonia_online.exe
+          ./godot --headless --path . --export-release "Linux"   exports/linux/ekonia_online.x86_64
+          ./godot --headless --path . --export-release "Web"     exports/web/index.html
+          chmod +x exports/linux/ekonia_online.x86_64
+          echo "---- export sizes ----"
+          du -sh exports/windows exports/linux exports/web
+
+      - name: Install butler
+        run: |
+          set -euo pipefail
+          curl -fL -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip -q butler.zip
+          chmod +x butler
+          ./butler -V
+
+      - name: Push clients to itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          set -euo pipefail
+          ./butler push exports/windows "${ITCH_GAME}:windows"
+          ./butler push exports/linux   "${ITCH_GAME}:linux"
+          ./butler push exports/web     "${ITCH_GAME}:web"
+          ./butler status "${ITCH_GAME}"
