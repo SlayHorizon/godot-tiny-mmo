@@ -73,9 +73,10 @@ jobs:
       - name: Stage built binaries
         run: |
           mkdir -p out
-          # Web ships a .zip template; desktop ship raw binaries. Grab whatever
-          # landed in bin/ so we don't hard-code version-specific filenames.
-          cp -v godot/bin/* out/
+          # Copy only the files directly in bin/ (the template binaries). Skip the
+          # obj/ build-cache subdirectory — cp without -r errors on it (exit 1)
+          # even after copying the real binaries, which is what broke this before.
+          find godot/bin -maxdepth 1 -type f -exec cp -v {} out/ \;
           echo "---- produced ----"
           ls -lah out
 
