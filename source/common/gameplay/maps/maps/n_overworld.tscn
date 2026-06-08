@@ -43,6 +43,10 @@
 [ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="30_m6sqw"]
 [ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="33_n81rr"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="39_hs4x2"]
+[ext_resource type="Resource" uid="uid://cenoj3b4ix3kk" path="res://source/common/gameplay/quests/resources/first_harvest.tres" id="44_cglqt"]
+[ext_resource type="Resource" uid="uid://cawy8c6jytb28" path="res://source/common/gameplay/quests/resources/miras_supplies.tres" id="45_7l150"]
+[ext_resource type="Resource" uid="uid://b7f4m4sicoieb" path="res://source/common/gameplay/quests/resources/apprentice_miner.tres" id="46_dwcjk"]
+[ext_resource type="Resource" uid="uid://dhvcbtyb5eppi" path="res://source/common/gameplay/quests/resources/the_iron_vein.tres" id="47_44a5o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cglqt"]
 size = Vector2(40, 32)
@@ -55,6 +59,12 @@ size = Vector2(48.993896, 43.498413)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ikkk2"]
 size = Vector2(54, 58.646973)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dwcjk"]
+size = Vector2(64, 32.00003)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ckska"]
+size = Vector2(64, 32.00003)
 
 [node name="NOverworld" type="Node2D" unique_id=1304922757 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -525,3 +535,53 @@ kind = 2
 
 [node name="NPC" parent="QuarryCounter" unique_id=1878809314 instance=ExtResource("39_hs4x2")]
 position = Vector2(-1, 5)
+
+[node name="MiraTheHerbalist" type="Area2D" parent="." unique_id=951098719]
+position = Vector2(1080, 996)
+script = ExtResource("23_xwvb5")
+giver_id = 4
+giver_name = "Mira the Herbalist"
+quests = Array[ExtResource("24_f4w4m")]([ExtResource("44_cglqt"), ExtResource("45_7l150")])
+metadata/_custom_type_script = "uid://cm4dod11fv3fj"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MiraTheHerbalist" unique_id=1899821625]
+shape = SubResource("RectangleShape2D_dwcjk")
+
+[node name="Label" type="Label" parent="MiraTheHerbalist" unique_id=1386795727]
+z_index = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Mira the Herbalist
+(quests)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InteractableMarker" parent="MiraTheHerbalist" unique_id=944955180 instance=ExtResource("30_m6sqw")]
+kind = 0
+
+[node name="Foreman" type="Area2D" parent="." unique_id=1880426500]
+position = Vector2(861, 278)
+script = ExtResource("23_xwvb5")
+giver_id = 10
+giver_name = "Foreman"
+quests = Array[ExtResource("24_f4w4m")]([ExtResource("46_dwcjk"), ExtResource("47_44a5o")])
+metadata/_custom_type_script = "uid://cm4dod11fv3fj"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Foreman" unique_id=858005131]
+position = Vector2(6.756714, 3.3986206)
+shape = SubResource("RectangleShape2D_ckska")
+
+[node name="Label" type="Label" parent="Foreman" unique_id=1528553631]
+offset_left = -25.243286
+offset_top = -20.60138
+offset_right = 38.756714
+offset_bottom = 24.39862
+text = "Foreman
+(quests)"
+
+[node name="InteractableMarker" parent="Foreman" unique_id=1831736636 instance=ExtResource("30_m6sqw")]
+kind = 0

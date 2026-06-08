@@ -14,12 +14,26 @@
 [ext_resource type="Resource" uid="uid://pm3j1lgi0vig" path="res://source/common/gameplay/quests/resources/master_of_the_forge.tres" id="12_gl3u8"]
 [ext_resource type="Resource" uid="uid://doy47vraqsb02" path="res://source/common/gameplay/quests/resources/copper_for_the_smith.tres" id="13_56e5m"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="14_qwuyn"]
+[ext_resource type="Resource" uid="uid://byp1hhtmmyi8e" path="res://source/common/gameplay/quests/resources/linen_for_the_tailor.tres" id="15_dr2jr"]
+[ext_resource type="Resource" uid="uid://b3qk27fw0k2ko" path="res://source/common/gameplay/quests/resources/a_tailored_hood.tres" id="16_alrfp"]
+[ext_resource type="Resource" uid="uid://8tf8hri302i" path="res://source/common/gameplay/crafting/resources/tanning_rack.tres" id="17_e4oji"]
+[ext_resource type="Texture2D" uid="uid://d1o56hk11y82e" path="res://assets/sprites/environment/structures/stations/workbench/workbench.png" id="18_2u01l"]
+[ext_resource type="Resource" uid="uid://d3wr3s50a41mu" path="res://source/common/gameplay/crafting/resources/loom.tres" id="18_u56lp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jeal5"]
 size = Vector2(31.99997, 28.720032)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o73u3"]
 size = Vector2(64, 62.601395)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e4oji"]
+size = Vector2(48.993896, 43.498413)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2u01l"]
+size = Vector2(31.99997, 28.720032)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yuq8a"]
+size = Vector2(31.99997, 28.720032)
 
 [node name="Shop_inside" type="Node2D" unique_id=1941819693]
 y_sort_enabled = true
@@ -38,7 +52,7 @@ tile_set = ExtResource("2_khpmq")
 
 [node name="Props" type="TileMapLayer" parent="." unique_id=218582419]
 y_sort_enabled = true
-tile_map_data = PackedByteArray("AAAKAAgABAAWAAAAAAALAAgABAAWAAAAAAALAAkABAAWAAAAAAAMAAkABAAWAAAAAAALAAwABAAXAAAAAADx/wgABAAVAAAAAADy/wgABAAVAAAAAADz/wkABAAWAAAAAAD0/wgABAAWAAAAAADx/wsABAAWAAAAAAD3/wgABAAUAAIAAAAJAAYABAAVAAwAAAACAAYABAAVAAwAAAD7/wYABAAVAAwAAAD0/wYABAAVAAwAAAADABQABAATAAAAAAD//xQABAATAAAAAAD7/xQABAATAAAAAAD3/xQABAATAAAAAADz/xQABAATAAAAAAALABAABAAXAAAAAAA=")
+tile_map_data = PackedByteArray("AAAKAAgABAAWAAAAAAALAAgABAAWAAAAAAALAAkABAAWAAAAAAAMAAkABAAWAAAAAAALAAwABAAXAAAAAADx/wgABAAVAAAAAADy/wgABAAVAAAAAADz/wkABAAWAAAAAAD0/wgABAAWAAAAAADx/wsABAAWAAAAAAD3/wgABAAUAAIAAAAJAAYABAAVAAwAAAACAAYABAAVAAwAAAD7/wYABAAVAAwAAAD0/wYABAAVAAwAAAADABQABAATAAAAAAD//xQABAATAAAAAAD7/xQABAATAAAAAAD3/xQABAATAAAAAADz/xQABAATAAAAAAALABEABAAXAAAAAAA=")
 tile_set = ExtResource("2_khpmq")
 
 [node name="Entrance" parent="." unique_id=916773362 instance=ExtResource("3_dr2jr")]
@@ -83,3 +97,91 @@ kind = 0
 
 [node name="NPC" parent="MasterSmith" unique_id=1922057613 instance=ExtResource("14_qwuyn")]
 position = Vector2(8, 12)
+
+[node name="TheTailor" type="Area2D" parent="." unique_id=1828470845]
+position = Vector2(183, 253)
+script = ExtResource("9_mrcli")
+giver_id = 7
+giver_name = "the Tailer"
+quests = Array[ExtResource("10_o343s")]([ExtResource("15_dr2jr"), ExtResource("16_alrfp")])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TheTailor" unique_id=1695869868]
+position = Vector2(-1.0061035, 1.4984131)
+shape = SubResource("RectangleShape2D_e4oji")
+
+[node name="Label" type="Label" parent="TheTailor" unique_id=241299744]
+offset_left = -41.006104
+offset_top = -6.501587
+offset_right = 39.993896
+offset_bottom = 14.498413
+text = "The Tailor
+Quest giver"
+horizontal_alignment = 1
+
+[node name="InteractableMarker" parent="TheTailor" unique_id=505169974 instance=ExtResource("7_2u01l")]
+kind = 0
+
+[node name="TanningRack" type="Area2D" parent="." unique_id=1204895455]
+position = Vector2(12, 151)
+script = ExtResource("5_e4oji")
+station = ExtResource("17_e4oji")
+metadata/_custom_type_script = "uid://cg6wer5if2oyf"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TanningRack" unique_id=1698534514]
+scale = Vector2(1.7077924, 1.1768324)
+shape = SubResource("RectangleShape2D_2u01l")
+
+[node name="Label" type="Label" parent="TanningRack" unique_id=1465658961]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -53.5
+offset_top = 9.5
+offset_right = 53.5
+offset_bottom = 30.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "TanningRack"
+horizontal_alignment = 1
+
+[node name="InteractableMarker" parent="TanningRack" unique_id=1206639282 instance=ExtResource("7_2u01l")]
+kind = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="TanningRack" unique_id=36538499]
+position = Vector2(-1, -9)
+texture = ExtResource("18_2u01l")
+region_enabled = true
+region_rect = Rect2(45.657715, 248.24031, 51.29956, 43.333786)
+
+[node name="Loom" type="Area2D" parent="." unique_id=1975178793]
+position = Vector2(14, 238)
+script = ExtResource("5_e4oji")
+station = ExtResource("18_u56lp")
+metadata/_custom_type_script = "uid://cg6wer5if2oyf"
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Loom" unique_id=1123282078]
+shape = SubResource("RectangleShape2D_yuq8a")
+
+[node name="Label" type="Label" parent="Loom" unique_id=1188480908]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -53.5
+offset_top = 9.5
+offset_right = 53.5
+offset_bottom = 30.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Loom"
+horizontal_alignment = 1
+
+[node name="InteractableMarker" parent="Loom" unique_id=1949642504 instance=ExtResource("7_2u01l")]
+kind = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="Loom" unique_id=1196279793]
+position = Vector2(0, -5)
+texture = ExtResource("18_2u01l")
+region_enabled = true
+region_rect = Rect2(0, 80, 32, 32)
