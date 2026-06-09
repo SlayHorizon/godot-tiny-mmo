@@ -86,6 +86,10 @@ func _ready() -> void:
 # Deals with input detection and stick attack sync.
 func _input(event: InputEvent) -> void:
 	if _is_event_relevant(event):
+
+		var is_fake_mouse: bool = (event is InputEventMouseButton or event is InputEventMouseMotion and event.device == -1)
+		if is_fake_mouse: return
+
 		if event is InputEventKey:
 			_set_input_type(InputType.MOUSE_KEYBOARD)
 
