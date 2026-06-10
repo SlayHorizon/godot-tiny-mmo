@@ -18,6 +18,11 @@ const BASE_STATS: Dictionary[StringName, float] = {
 	Stat.AD: 10.0,
 	Stat.ARMOR: 15.0,
 	Stat.MR: 15.0,
+	# Mana gates SPECIAL abilities only (mana_cost on the AbilityResource);
+	# basic attacks stay free. Regen lives in Player (server tick). Spirit
+	# grows the pool.
+	Stat.MANA_MAX: 50.0,
+	Stat.MANA_REGEN: 0.5,
 	Stat.MOVE_SPEED: 90.0,
 	Stat.ATTACK_SPEED: 0.8
 }
@@ -115,6 +120,10 @@ var session_start_ms: int = 0
 var in_match: bool = false
 
 var stats: Dictionary
+
+## Live timed stat buffs ({stat, amount, expires_ms} — see BuffService). Runtime
+## only on purpose: survives instance changes within a session, gone on logout.
+var active_buffs: Array[Dictionary] = []
 
 ## Per-node gather cooldowns (node_id -> next-ready time in ms). Runtime only, not persisted.
 var gather_cooldowns: Dictionary

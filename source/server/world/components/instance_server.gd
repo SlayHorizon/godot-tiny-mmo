@@ -42,8 +42,41 @@ func _ready() -> void:
 	synchronizer_manager = StateSynchronizerManagerServer.new()
 	synchronizer_manager.name = "StateSynchronizerManager"
 	synchronizer_manager.init_zones_from_map(instance_map)
-	
+
 	add_child(synchronizer_manager, true)
+
+	# Status tick: ONE 1 Hz timer per instance for everything that regenerates
+	# periodically (mana today; HP regen / poison / buffs slot in here later).
+	# Deliberately not a per-frame poll on every Player node — N updates per
+	# SECOND instead of 60×N, and clients run nothing at all.
+	var status_tick: Timer = Timer.new()
+	status_tick.name = "StatusTick"
+	status_tick.wait_time = 1.0
+	status_tick.timeout.connect(_on_status_tick)
+	add_child(status_tick)
+	status_tick.start()
+
+
+## 1 Hz upkeep for every player in this instance. Mana regen reads the
+## MANA_REGEN stat (base + Spirit + future gear/food), so "regens faster" is
+## an itemizable property, not a constant.
+func _on_status_tick() -> void:
+	for peer_id: int in players_by_peer_id:
+		var player: Player = players_by_peer_id[peer_id]
+		if player == null or player.is_dead:
+			continue
+		# Expire finished buffs FIRST so this tick's regen uses the post-buff rate.
+		BuffService.tick(player)
+		var mana_max: float = player.stats_component.get_stat(Stat.MANA_MAX)
+		if mana_max <= 0.0:
+			continue
+		var mana: float = player.stats_component.get_stat(Stat.MANA)
+		if mana >= mana_max:
+			continue
+		var regen: float = player.stats_component.get_stat(Stat.MANA_REGEN)
+		if regen <= 0.0:
+			continue
+		player.stats_component.set_stat(Stat.MANA, minf(mana_max, mana + regen))
 
 
 func load_map(map_path: String) -> void:
@@ -180,10 +213,19 @@ func instantiate_player(peer_id: int) -> Player:
 				# Rule changed (level/slot) -> return it to inventory rather than lose it.
 				Inventory.add_item(player_resource.inventory, equip_id, 1)
 
+		# Stats were rebuilt from base + attributes + gear above — put any live
+		# timed buffs (potions) back on top so an instance change doesn't strip them.
+		BuffService.reapply(new_player)
+
 		# Set health to max health (heal player to full HP)
 		new_player.stats_component.set_stat(
 			Stat.HEALTH,
 			new_player.stats_component.get_stat(Stat.HEALTH_MAX)
+		)
+		# Same for mana — spawn with a full pool.
+		new_player.stats_component.set_stat(
+			Stat.MANA,
+			new_player.stats_component.get_stat(Stat.MANA_MAX)
 		)
 		WorldServer.curr.data_push.rpc_id(peer_id, &"stats.get", new_player.stats_component.stats.values)
 	new_player.ready.connect(setup_new_player,CONNECT_ONE_SHOT)

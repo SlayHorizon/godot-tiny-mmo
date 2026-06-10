@@ -6,17 +6,15 @@ var direction: Vector2 = Vector2.RIGHT
 
 var piercing: bool = false
 var pierce_left: int = 0
-# OLD
 var source: Node
-var attack: Attack
-# NEW
-var effect: EffectSpec
 
 ## Server-authoritative damage this arrow deals on impact. Set by the
 ## spawning weapon (bow charge ratio, multishot fraction, etc.). Defaults
 ## to a small fallback so a legacy spawn that forgot to set it doesn't
 ## nuke the target.
 var damage: float = 5.0
+## Mitigation channel: ARMOR for physical (arrows), MR for magic (wand bolts).
+var damage_type: StringName = CombatHit.DAMAGE_PHYSICAL
 
 ## Seconds an arrow flies before despawning if it hits nothing. Short so stray
 ## shots don't sail across the whole map (speed × this ≈ max range).
@@ -53,7 +51,7 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 	# Shared target rules (flags, PvP zones, sparring, guild friendly-fire) in one
 	# place — see CombatHit. The result tells the projectile how to react.
-	match CombatHit.try_damage(source as Character, body, damage):
+	match CombatHit.try_damage(source as Character, body, damage, damage_type):
 		CombatHit.Result.IGNORED:
 			return # friendly / safe-zone / non-target — keep flying
 		CombatHit.Result.BLOCKED:

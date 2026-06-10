@@ -8,6 +8,8 @@
 [ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="5_herb"]
 [ext_resource type="Resource" uid="uid://cd4yooe27ja23" path="res://source/common/gameplay/items/consumables/greater_health_potion.tres" id="6_qf0tq"]
 [ext_resource type="Resource" uid="uid://c4r6h4wum0u0b" path="res://source/common/gameplay/items/weapons/tools/sickle.tres" id="7_qf0tq"]
+[ext_resource type="Resource" uid="uid://c3yrbuisnrtng" path="res://source/common/gameplay/items/consumables/focus_tonic.tres" id="8_a0r3b"]
+[ext_resource type="Resource" uid="uid://ckwf1ifl3but0" path="res://source/common/gameplay/items/consumables/mana_potion.tres" id="9_lmg0x"]
 
 [sub_resource type="Resource" id="Trade_herb_bundle"]
 script = ExtResource("2_trade")
@@ -39,10 +41,22 @@ item = ExtResource("7_qf0tq")
 price = 5
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
+[sub_resource type="Resource" id="Resource_ko3yj"]
+script = ExtResource("1_entry")
+item = ExtResource("8_a0r3b")
+price = 8
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_7j1dx"]
+script = ExtResource("1_entry")
+item = ExtResource("9_lmg0x")
+price = 3
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [resource]
 script = ExtResource("3_shop")
 shop_name = "Mira's Apothecary"
-entries = Array[ExtResource("1_entry")]([SubResource("Resource_2ggpu"), SubResource("Entry_potion"), SubResource("Resource_a0r3b"), SubResource("Resource_lmg0x")])
+entries = Array[ExtResource("1_entry")]([SubResource("Resource_2ggpu"), SubResource("Entry_potion"), SubResource("Resource_a0r3b"), SubResource("Resource_lmg0x"), SubResource("Resource_ko3yj"), SubResource("Resource_7j1dx")])
 accepted_trades = Array[ExtResource("2_trade")]([SubResource("Trade_herb_bundle")])
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"miras_apothecary"

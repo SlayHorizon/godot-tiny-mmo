@@ -69,7 +69,7 @@ func _ready() -> void:
 
 	server.listen(PORT, BIND_ADDRESS)
 	ServerLog.info("Dashboard listening on %s:%d" % [BIND_ADDRESS, PORT])
-	DiscordNotifier.notify_master_online(BIND_ADDRESS, PORT)
+	DiscordNotifier.notify_master_online()
 
 
 # --- handlers ---

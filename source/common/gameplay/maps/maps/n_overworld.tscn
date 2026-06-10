@@ -30,42 +30,81 @@
 [ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="15_vc2t3"]
 [ext_resource type="Resource" uid="uid://jo7v7jfc54kp" path="res://source/common/gameplay/characters/npc/types/bandit_captain.tres" id="16_tlky3"]
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="18_077qd"]
-[ext_resource type="Script" uid="uid://bd3mum0wbv2c0" path="res://source/common/gameplay/maps/components/shop_interactable.gd" id="18_m4n4e"]
 [ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="19_077qd"]
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="19_n81rr"]
-[ext_resource type="Script" uid="uid://cm4dod11fv3fj" path="res://source/common/gameplay/quests/quest_giver.gd" id="23_xwvb5"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
+[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/training_dummy.tres" id="26_gf85t"]
 [ext_resource type="Resource" uid="uid://ca6hdigffs5j3" path="res://source/common/gameplay/quests/resources/fungus_trouble.tres" id="26_n81rr"]
 [ext_resource type="Resource" uid="uid://bj4t6nwwxtmh6" path="res://source/common/gameplay/quests/resources/wolves_at_the_ranch.tres" id="27_ikkk2"]
 [ext_resource type="Resource" uid="uid://b5rjgo848r2n7" path="res://source/common/gameplay/quests/resources/the_bandit_captain.tres" id="28_xaqxt"]
 [ext_resource type="Resource" uid="uid://dd7tu8yrec3ie" path="res://source/common/gameplay/quests/resources/camp_cleanup.tres" id="29_e4lv4"]
-[ext_resource type="PackedScene" uid="uid://dxhvri4c04md1" path="res://source/common/gameplay/maps/components/interactable_marker.tscn" id="30_m6sqw"]
 [ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="33_n81rr"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="34_ckska"]
+[ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="38_y0w5p"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="39_gf85t"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="39_hs4x2"]
-[ext_resource type="Resource" uid="uid://cenoj3b4ix3kk" path="res://source/common/gameplay/quests/resources/first_harvest.tres" id="44_cglqt"]
-[ext_resource type="Resource" uid="uid://cawy8c6jytb28" path="res://source/common/gameplay/quests/resources/miras_supplies.tres" id="45_7l150"]
-[ext_resource type="Resource" uid="uid://cmd78ic0if6sq" path="res://source/common/gameplay/shops/resources/miras_apothecary.tres" id="46_44a5o"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="41_v4qho"]
+[ext_resource type="Resource" uid="uid://dtojmae8u5g6l" path="res://source/common/gameplay/characters/npc/npcs/mira.tres" id="44_y0w5p"]
 [ext_resource type="Resource" uid="uid://b7f4m4sicoieb" path="res://source/common/gameplay/quests/resources/apprentice_miner.tres" id="46_dwcjk"]
 [ext_resource type="Resource" uid="uid://dhvcbtyb5eppi" path="res://source/common/gameplay/quests/resources/the_iron_vein.tres" id="47_44a5o"]
+[ext_resource type="Script" uid="uid://beeyftaqtiwe3" path="res://source/common/gameplay/characters/npc/interactions/attribute_reset_interaction.gd" id="47_48jqa"]
+[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="48_bauih"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="48_y0w5p"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cglqt"]
 size = Vector2(40, 32)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_re23f"]
-radius = 55.38041
+[sub_resource type="Resource" id="Resource_x51h1"]
+script = ExtResource("38_y0w5p")
+quests = Array[ExtResource("24_f4w4m")]([ExtResource("46_dwcjk"), ExtResource("47_44a5o")])
+metadata/_custom_type_script = "uid://dka1daj2vrhn"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ovmn0"]
-size = Vector2(48.993896, 43.498413)
+[sub_resource type="Resource" id="Resource_iqd18"]
+script = ExtResource("39_gf85t")
+shop = ExtResource("33_n81rr")
+metadata/_custom_type_script = "uid://bpo804060rk5t"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ikkk2"]
-size = Vector2(54, 58.646973)
+[sub_resource type="Resource" id="Resource_cm7qm"]
+script = ExtResource("41_v4qho")
+npc_id = 10
+npc_name = "Foreman"
+interactions = Array[ExtResource("34_ckska")]([SubResource("Resource_x51h1"), SubResource("Resource_iqd18")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_dwcjk"]
-size = Vector2(64, 32.00003)
+[sub_resource type="Resource" id="Resource_dnrtu"]
+script = ExtResource("38_y0w5p")
+quests = Array[ExtResource("24_f4w4m")]([ExtResource("25_m4n4e"), ExtResource("26_n81rr"), ExtResource("27_ikkk2"), ExtResource("28_xaqxt"), ExtResource("29_e4lv4")])
+metadata/_custom_type_script = "uid://dka1daj2vrhn"
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ckska"]
-size = Vector2(64, 32.00003)
+[sub_resource type="Resource" id="Resource_agjut"]
+script = ExtResource("47_48jqa")
+metadata/_custom_type_script = "uid://beeyftaqtiwe3"
+
+[sub_resource type="Resource" id="Resource_gf85t"]
+script = ExtResource("48_y0w5p")
+lines = Array[String](["Talk me about yourself", "No"])
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
+[sub_resource type="Resource" id="Resource_6hgwb"]
+script = ExtResource("41_v4qho")
+npc_id = 100
+npc_name = "Village Elder"
+skin = ExtResource("48_bauih")
+greeting = "Hello I'am the old man here what can I do for you?"
+interactions = Array[ExtResource("34_ckska")]([SubResource("Resource_dnrtu"), SubResource("Resource_agjut"), SubResource("Resource_gf85t")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
+
+[sub_resource type="Resource" id="Resource_udfpp"]
+script = ExtResource("39_gf85t")
+shop = ExtResource("19_n81rr")
+metadata/_custom_type_script = "uid://bpo804060rk5t"
+
+[sub_resource type="Resource" id="Resource_x11ol"]
+script = ExtResource("41_v4qho")
+npc_name = "Merchant"
+interactions = Array[ExtResource("34_ckska")]([SubResource("Resource_udfpp")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="NOverworld" type="Node2D" unique_id=1304922757 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -201,21 +240,6 @@ offset_top = 7.2435303
 offset_right = 43.397217
 offset_bottom = 28.24353
 
-[node name="ShopInteractable" type="Area2D" parent="." unique_id=1106341432]
-position = Vector2(1197.2002, 793.7174)
-script = ExtResource("18_m4n4e")
-shop = ExtResource("19_n81rr")
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ShopInteractable" unique_id=1434827383]
-shape = SubResource("CircleShape2D_re23f")
-
-[node name="InteractableMarker" parent="ShopInteractable" unique_id=1116914763 instance=ExtResource("30_m6sqw")]
-kind = 2
-
-[node name="NPC" parent="ShopInteractable" unique_id=1922057613 instance=ExtResource("39_hs4x2")]
-position = Vector2(0, 5)
-
 [node name="ReplicatedPropsContainer" type="Node2D" parent="." unique_id=1981280680 node_paths=PackedStringArray("id_to_node", "node_to_id")]
 script = ExtResource("11_naiac")
 id_to_node = {
@@ -233,7 +257,8 @@ id_to_node = {
 11: NodePath("Bandit3"),
 12: NodePath("Bandit4"),
 13: NodePath("Bandit5"),
-14: NodePath("BanditCaptain")
+14: NodePath("BanditCaptain"),
+15: NodePath("Dummy")
 }
 node_to_id = {
 NodePath("Fungus"): 0,
@@ -250,7 +275,8 @@ NodePath("Bandit2"): 10,
 NodePath("Bandit3"): 11,
 NodePath("Bandit4"): 12,
 NodePath("Bandit5"): 13,
-NodePath("BanditCaptain"): 14
+NodePath("BanditCaptain"): 14,
+NodePath("Dummy"): 15
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 metadata/_edit_lock_ = true
@@ -329,6 +355,11 @@ enemy_data = ExtResource("15_vc2t3")
 position = Vector2(1393, 2645)
 debug_draw_ranges = false
 enemy_data = ExtResource("16_tlky3")
+
+[node name="Dummy" parent="ReplicatedPropsContainer" unique_id=2063449186 instance=ExtResource("4_de0pc")]
+position = Vector2(1189.1405, 830.62177)
+debug_draw_ranges = false
+enemy_data = ExtResource("26_gf85t")
 
 [node name="ZonePatch2D" type="Node2D" parent="." unique_id=167804232]
 script = ExtResource("12_bhe7f")
@@ -497,116 +528,18 @@ y_sort_enabled = true
 position = Vector2(1062, 1319)
 data = ExtResource("14_nkbe4")
 
-[node name="VillageElder" type="Area2D" parent="." unique_id=1178372165]
-position = Vector2(1569, 856)
-script = ExtResource("23_xwvb5")
-giver_id = 100
-giver_name = "Village Elder"
-quests = Array[ExtResource("24_f4w4m")]([ExtResource("25_m4n4e"), ExtResource("26_n81rr"), ExtResource("27_ikkk2"), ExtResource("28_xaqxt"), ExtResource("29_e4lv4")])
+[node name="Mira" parent="." unique_id=1010354883 instance=ExtResource("39_hs4x2")]
+position = Vector2(1218.1519, 901.1301)
+npc_resource = ExtResource("44_y0w5p")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="VillageElder" unique_id=1289440611]
-position = Vector2(-1.0061035, 1.4984131)
-shape = SubResource("RectangleShape2D_ovmn0")
+[node name="Foreman" parent="." unique_id=1922057613 instance=ExtResource("39_hs4x2")]
+position = Vector2(616, 272)
+npc_resource = SubResource("Resource_cm7qm")
 
-[node name="Label" type="Label" parent="VillageElder" unique_id=1714309190]
-offset_left = -41.006104
-offset_top = -6.501587
-offset_right = 39.993896
-offset_bottom = 14.498413
-text = "Village Elder
-Quest giver"
-horizontal_alignment = 1
+[node name="VillageElder" parent="." unique_id=376078184 instance=ExtResource("39_hs4x2")]
+position = Vector2(1426.9717, 829.47534)
+npc_resource = SubResource("Resource_6hgwb")
 
-[node name="InteractableMarker" parent="VillageElder" unique_id=1036156253 instance=ExtResource("30_m6sqw")]
-kind = 0
-
-[node name="QuarryCounter" type="Area2D" parent="." unique_id=127675430]
-position = Vector2(615, 280)
-script = ExtResource("18_m4n4e")
-shop = ExtResource("33_n81rr")
-metadata/_custom_type_script = "uid://bd3mum0wbv2c0"
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="QuarryCounter" unique_id=584144885]
-position = Vector2(1, 12.676514)
-shape = SubResource("RectangleShape2D_ikkk2")
-
-[node name="InteractableMarker" parent="QuarryCounter" unique_id=1969050560 instance=ExtResource("30_m6sqw")]
-kind = 2
-
-[node name="NPC" parent="QuarryCounter" unique_id=1878809314 instance=ExtResource("39_hs4x2")]
-position = Vector2(-1, 5)
-
-[node name="MiraTheHerbalist" type="Area2D" parent="." unique_id=951098719]
-position = Vector2(1080, 996)
-script = ExtResource("23_xwvb5")
-giver_id = 4
-giver_name = "Mira the Herbalist"
-quests = Array[ExtResource("24_f4w4m")]([ExtResource("44_cglqt"), ExtResource("45_7l150")])
-metadata/_custom_type_script = "uid://cm4dod11fv3fj"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MiraTheHerbalist" unique_id=1899821625]
-shape = SubResource("RectangleShape2D_dwcjk")
-
-[node name="Label" type="Label" parent="MiraTheHerbalist" unique_id=1386795727]
-z_index = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Mira the Herbalist
-(quests)"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="InteractableMarker" parent="MiraTheHerbalist" unique_id=944955180 instance=ExtResource("30_m6sqw")]
-kind = 0
-
-[node name="MiraTheHerbalist2" type="Area2D" parent="." unique_id=1895063163]
-position = Vector2(1037.4547, 1118.9103)
-script = ExtResource("18_m4n4e")
-shop = ExtResource("46_44a5o")
-metadata/_custom_type_script = "uid://bd3mum0wbv2c0"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MiraTheHerbalist2" unique_id=1697541181]
-shape = SubResource("RectangleShape2D_dwcjk")
-
-[node name="Label" type="Label" parent="MiraTheHerbalist2" unique_id=432525156]
-z_index = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Mira the Herbalist
-(SHOP)"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="InteractableMarker" parent="MiraTheHerbalist2" unique_id=1269090608 instance=ExtResource("30_m6sqw")]
-kind = 2
-
-[node name="Foreman" type="Area2D" parent="." unique_id=1880426500]
-position = Vector2(861, 278)
-script = ExtResource("23_xwvb5")
-giver_id = 10
-giver_name = "Foreman"
-quests = Array[ExtResource("24_f4w4m")]([ExtResource("46_dwcjk"), ExtResource("47_44a5o")])
-metadata/_custom_type_script = "uid://cm4dod11fv3fj"
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Foreman" unique_id=858005131]
-position = Vector2(6.756714, 3.3986206)
-shape = SubResource("RectangleShape2D_ckska")
-
-[node name="Label" type="Label" parent="Foreman" unique_id=1528553631]
-offset_left = -25.243286
-offset_top = -20.60138
-offset_right = 38.756714
-offset_bottom = 24.39862
-text = "Foreman
-(quests)"
-
-[node name="InteractableMarker" parent="Foreman" unique_id=1831736636 instance=ExtResource("30_m6sqw")]
-kind = 0
+[node name="NPC" parent="." unique_id=1229291857 instance=ExtResource("39_hs4x2")]
+position = Vector2(1178.4053, 772.82745)
+npc_resource = SubResource("Resource_x11ol")

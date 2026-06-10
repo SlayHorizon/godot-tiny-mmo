@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://ckwf1ifl3but0"]
+
+[ext_resource type="Texture2D" uid="uid://cjkfdttfk3lnw" path="res://assets/sprites/items/icons/Icon307.png" id="1_8k35l"]
+[ext_resource type="Script" uid="uid://bprsise4rcsak" path="res://source/common/gameplay/items/consumable_item.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+mana_amount = 100
+item_name = &"Mana Potion"
+item_icon = ExtResource("1_8k35l")
+description = "A swirl of blue. Restores a chunk of mana on the spot."
+vendor_value = 2
+metadata/slug = &"mana_potion"
+metadata/id = 75

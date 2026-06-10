@@ -6,6 +6,8 @@ const HEALTH_MAX: StringName = &"health_max"
 
 const MANA: StringName = &"mana"
 const MANA_MAX: StringName = &"mana_max"
+## Mana restored per second by the instance status tick (base + Spirit + gear).
+const MANA_REGEN: StringName = &"mana_regen"
 
 const ENERGY: StringName = &"energy"
 const ENERGY_MAX: StringName = &"energy_max"

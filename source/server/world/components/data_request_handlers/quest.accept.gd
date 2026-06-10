@@ -14,7 +14,7 @@ func data_request_handler(
 	var quest_id: int = int(args.get("id", 0))
 
 	# Verify the quest is actually offered by that giver in the player's map.
-	var giver: QuestGiver = instance.instance_map.get_quest_giver(giver_id)
+	var giver: Object = instance.instance_map.get_quest_giver(giver_id)
 	if giver == null or not _giver_offers(giver, quest_id):
 		return {"ok": false}
 
@@ -40,8 +40,8 @@ func data_request_handler(
 	return {"ok": true}
 
 
-func _giver_offers(giver: QuestGiver, quest_id: int) -> bool:
-	for quest: QuestResource in giver.quests:
+func _giver_offers(giver: Object, quest_id: int) -> bool:
+	for quest: QuestResource in giver.get(&"quests"):
 		if quest and int(quest.get_meta(&"id", 0)) == quest_id:
 			return true
 	return false

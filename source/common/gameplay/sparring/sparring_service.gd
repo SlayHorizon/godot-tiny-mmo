@@ -1,296 +1,313 @@
 class_name SparringService
-## Server-side 1v1 sparring matchmaker. Each DuelMaster has its own queue and
-## hosts one match at a time. Multiple DuelMasters can run in parallel.
+## Server-side spar matchmaker for N teams of any sizes — the station's SparTeam
+## children define how many teams and how many slots each has (1v1, 2v2, 1v3,
+## 1v1v1, ...). Each DuelMaster station runs one match at a time; stations run
+## in parallel.
 ##
-## Match lifecycle (per master):
-##   queue (size 1)               -> waiting, broadcast queue state
-##   queue size 2                 -> start_match: teleport, in_match flags up,
-##                                   push countdown 3-2-1, then PvP enabled
-##   either player dies           -> end_match: tally wins/losses, teleport
-##                                   both back to master, clear in_match
-##   either player disconnects    -> end_match with the remaining player as
-##                                   the winner (or both lose if both gone)
+## Pick-a-side: players join a team slot; when EVERY team is full the match
+## starts. Default rules (see SparGameMode for the override hooks): fighters
+## keep their own stats, and LAST TEAM STANDING wins — a dead fighter is out
+## and the match continues until at most one team has fighters left. Friendly
+## fire is OFF (see can_spar_damage).
 ##
-## State lives in two static dicts keyed by (instance_name, master_id) — a flat
-## composite key keeps the lookup O(1) and avoids per-instance nesting.
+## State lives in static dicts keyed by (instance_name, master_id).
 
 const COUNTDOWN_SECONDS: int = 3
 const PVP_ENABLE_DELAY_MS: int = COUNTDOWN_SECONDS * 1000
 
-# (instance_name + "::" + master_id) -> Array[peer_id]
+# key -> Array[Array[peer_id]] — one roster per team, indexed like master.teams().
 static var _queues: Dictionary = {}
-# (instance_name + "::" + master_id) -> Dictionary
-#   {peer_a, peer_b, master_id, instance_name, pvp_enabled_at_ms, started_ms}
+# key -> match dict (see _start_match)
 static var _matches: Dictionary = {}
-# peer_id -> match key (for fast disconnect / death lookup)
+# peer_id -> match key (active fighters only; cleared the moment a fighter is out)
 static var _peer_to_match: Dictionary = {}
 
 
-# --- queue management (called from sparring.queue handler) ---
+# --- queue management -------------------------------------------------------
 
-## Returns a status dict describing the queue after the action. ok=false with
-## a reason on validation failures (out of range, master not found, etc.).
-static func handle_queue_request(instance: Node, peer_id: int, master_id: int, action: String) -> Dictionary:
+static func handle_queue_request(instance: Node, peer_id: int, master_id: int, action: String, team_index: int = -1) -> Dictionary:
 	if instance == null or instance.instance_map == null:
 		return {"ok": false, "reason": "no_map"}
 	var master: DuelMaster = instance.instance_map.get_duel_master(master_id)
 	if master == null:
 		return {"ok": false, "reason": "no_master"}
-
+	var teams: Array[SparTeam] = master.teams()
+	if teams.size() < 2:
+		return {"ok": false, "reason": "bad_station"}
 	var player: Player = instance.get_player(peer_id)
 	if player == null:
 		return {"ok": false, "reason": "no_player"}
-	# Player must be near the duel master to interact — same UX as warpers/trade.
 	if player.global_position.distance_to(master.global_position) > 120.0:
 		return {"ok": false, "reason": "too_far"}
-
 	if player.player_resource.in_match:
 		return {"ok": false, "reason": "already_in_match"}
 
 	var key: String = _key(instance.name, master_id)
-	var queue: Array = _queues.get(key, [])
+	var queue: Array = _queues.get(key, _empty_queue(teams.size()))
 
 	match action:
-		"join":
-			if queue.has(peer_id):
-				return _queue_status(instance, master_id, queue, "already_queued")
-			# Capacity 2: if we'd be the third, refuse (a match is already starting).
-			if queue.size() >= 2:
-				return _queue_status(instance, master_id, queue, "full")
-			queue.append(peer_id)
-			_queues[key] = queue
-			if queue.size() == 2:
-				_start_match(instance, master, queue[0], queue[1])
-				_queues.erase(key)
-				_broadcast_queue(instance, master_id, 0)
-				return {"ok": true, "queue_size": 0, "started": true}
-			_broadcast_queue(instance, master_id, queue.size())
-			return _queue_status(instance, master_id, queue, "queued")
 		"leave":
-			queue.erase(peer_id)
+			for roster: Array in queue:
+				roster.erase(peer_id)
 			_queues[key] = queue
-			_broadcast_queue(instance, master_id, queue.size())
-			return _queue_status(instance, master_id, queue, "left")
+			_broadcast_queue(instance, master, queue)
+			return _queue_status(master, queue, peer_id, "left")
+		"join":
+			if team_index < 0 or team_index >= teams.size():
+				return {"ok": false, "reason": "bad_team"}
+			for roster: Array in queue:
+				if roster.has(peer_id):
+					return _queue_status(master, queue, peer_id, "already_queued")
+			var roster: Array = queue[team_index]
+			if roster.size() >= teams[team_index].capacity():
+				return _queue_status(master, queue, peer_id, "team_full")
+			roster.append(peer_id)
+			_queues[key] = queue
+			if _all_full(queue, teams):
+				var rosters: Array = []
+				for r: Array in queue:
+					rosters.append(r.duplicate())
+				_queues.erase(key)
+				_start_match(instance, master, rosters)
+				_broadcast_queue(instance, master, _empty_queue(teams.size()))
+				return {"ok": true, "started": true}
+			_broadcast_queue(instance, master, queue)
+			return _queue_status(master, queue, peer_id, "queued")
 		_:
 			return {"ok": false, "reason": "bad_action"}
 
 
-## Snapshot of a duel master's queue. Used by sparring.info.
+## Snapshot of a station's rosters (+ which team the caller sits in). sparring.info.
 static func queue_status(instance: Node, peer_id: int, master_id: int) -> Dictionary:
-	var key: String = _key(instance.name, master_id)
-	var queue: Array = _queues.get(key, [])
-	return _queue_status(instance, master_id, queue, "queued" if queue.has(peer_id) else "idle")
+	var master: DuelMaster = null
+	if instance != null and instance.instance_map != null:
+		master = instance.instance_map.get_duel_master(master_id)
+	if master == null:
+		return {"ok": false, "reason": "no_master"}
+	var queue: Array = _queues.get(_key(instance.name, master_id), _empty_queue(master.teams().size()))
+	return _queue_status(master, queue, peer_id, "idle")
 
 
-# --- match flow ---
+# --- match flow -------------------------------------------------------------
 
-static func _start_match(instance: Node, master: DuelMaster, peer_a: int, peer_b: int) -> void:
-	var player_a: Player = instance.get_player(peer_a)
-	var player_b: Player = instance.get_player(peer_b)
-	if player_a == null or player_b == null:
-		return # One peer dropped between queue and start; abandon quietly.
-
-	# Teleport via state sync so the move is authoritative and seen by everyone
-	# (spectators in the same instance watch from outside the arena walls).
-	if master.spawn_a:
-		player_a.state_synchronizer.set_by_path(^":position", master.spawn_a.global_position)
-		player_a.mark_just_teleported()
-	if master.spawn_b:
-		player_b.state_synchronizer.set_by_path(^":position", master.spawn_b.global_position)
-		player_b.mark_just_teleported()
-
-	# Both fighters start at full HP — a duel with one combatant pre-damaged
-	# from PvE isn't a fair test of skill. The new HP propagates to clients
-	# automatically via the existing stat-sync delta.
-	player_a.stats_component.set_stat(Stat.HEALTH, player_a.stats_component.get_stat(Stat.HEALTH_MAX))
-	player_b.stats_component.set_stat(Stat.HEALTH, player_b.stats_component.get_stat(Stat.HEALTH_MAX))
-
+static func _start_match(instance: Node, master: DuelMaster, rosters: Array) -> void:
+	var teams: Array[SparTeam] = master.teams()
 	var now_ms: int = Time.get_ticks_msec()
 	var key: String = _key(instance.name, master.master_id)
+	var alive: Dictionary = {}
+	var team_of: Dictionary = {}
 	_matches[key] = {
-		"peer_a": peer_a,
-		"peer_b": peer_b,
-		"instance_name": instance.name,
-		"master_id": master.master_id,
-		"started_ms": now_ms,
-		"pvp_enabled_at_ms": now_ms + PVP_ENABLE_DELAY_MS,
+		"rosters": rosters, "alive": alive, "team_of": team_of,
+		"instance_name": instance.name, "master_id": master.master_id,
+		"started_ms": now_ms, "pvp_enabled_at_ms": now_ms + PVP_ENABLE_DELAY_MS,
 	}
-	_peer_to_match[peer_a] = key
-	_peer_to_match[peer_b] = key
 
-	# In-match flag goes up *now* so the deferred PvP-enable check fires at the
-	# right time. Damage is still blocked until pvp_enabled_at_ms; the projectile
-	# code reads in_match and the per-match timestamp.
-	player_a.player_resource.in_match = true
-	player_b.player_resource.in_match = true
+	var ws: Node = ServerHub.current
+	var all_peers: Array = []
+	var flat_all: Array = []
+	for r: Array in rosters:
+		flat_all.append_array(r)
+	for t: int in rosters.size():
+		var spawns: Array[Marker2D] = teams[t].spawns()
+		for i: int in (rosters[t] as Array).size():
+			var peer: int = rosters[t][i]
+			all_peers.append(peer)
+			team_of[peer] = t
+			_peer_to_match[peer] = key
+			var player: Player = instance.get_player(peer)
+			if player == null:
+				alive[peer] = false # dropped between queue + start; counts as out
+				continue
+			alive[peer] = true
+			var spawn_pos: Vector2 = master.global_position
+			if i < spawns.size() and spawns[i] != null:
+				spawn_pos = spawns[i].global_position
+			player.state_synchronizer.set_by_path(^":position", spawn_pos)
+			player.mark_just_teleported()
+			# Full HP — a duel where one fighter is PvE-chipped isn't a fair test.
+			player.stats_component.set_stat(Stat.HEALTH, player.stats_component.get_stat(Stat.HEALTH_MAX))
+			# Mode hook (default: keep the player's own stats untouched).
+			if master.game_mode != null:
+				master.game_mode.apply_to_fighter(player)
+			player.player_resource.in_match = true
+			if ws != null:
+				# Allies/opponents (peer ids) ride along so the client can tint
+				# health bars by SPAR team, overriding guild colors for the match.
+				var allies: Array = (rosters[t] as Array).duplicate()
+				allies.erase(peer)
+				var opponents: Array = []
+				for p: int in flat_all:
+					if not (rosters[t] as Array).has(p):
+						opponents.append(p)
+				ws.data_push.rpc_id(peer, &"sparring.match.state", {
+					"in_match": true,
+					"position": spawn_pos,
+					"allies": allies,
+					"opponents": opponents,
+				})
 
-	# Hook the arena boundary if the designer wired one. Anyone leaving via
-	# exploit / map-edge bug instantly loses, see _on_fighter_left_zone.
 	if master.fight_zone != null:
 		var cb: Callable = _on_fighter_left_zone.bind(key)
 		master.fight_zone.body_exited.connect(cb)
 		_matches[key]["fight_zone"] = master.fight_zone
 		_matches[key]["body_exited_cb"] = cb
 
-	# Tell each client their match started + which spawn point to teleport to.
-	# The state-sync set_by_path above gets overwritten on the LocalPlayer by
-	# its own input each frame, so we also push the position explicitly here
-	# and let LocalPlayer apply it + lock its input briefly.
-	var ws: Node = ServerHub.current
-	if ws != null:
-		ws.data_push.rpc_id(peer_a, &"sparring.match.state", {
-			"in_match": true,
-			"position": master.spawn_a.global_position if master.spawn_a else Vector2.ZERO,
-		})
-		ws.data_push.rpc_id(peer_b, &"sparring.match.state", {
-			"in_match": true,
-			"position": master.spawn_b.global_position if master.spawn_b else Vector2.ZERO,
-		})
-
-	_push_countdown(instance, peer_a, peer_b, COUNTDOWN_SECONDS)
+	# Degenerate case: a whole team dropped between queue and start.
+	if _check_elimination(key):
+		return
+	_push_countdown(instance, all_peers, COUNTDOWN_SECONDS)
 
 
-## Walks the countdown by emitting a push every second. Each tick we re-check
-## that the match still exists (could have been ended by disconnect mid-count).
-static func _push_countdown(instance: Node, peer_a: int, peer_b: int, seconds_left: int) -> void:
+static func _push_countdown(instance: Node, peers: Array, seconds_left: int) -> void:
 	var ws: Node = ServerHub.current
 	if ws == null:
 		return
+	var payload: Dictionary = (
+		{"seconds": 0, "text": "FIGHT!"} if seconds_left <= 0
+		else {"seconds": seconds_left, "text": str(seconds_left)}
+	)
+	for peer: int in peers:
+		ws.data_push.rpc_id(peer, &"sparring.countdown", payload)
 	if seconds_left <= 0:
-		ws.data_push.rpc_id(peer_a, &"sparring.countdown", {"seconds": 0, "text": "FIGHT!"})
-		ws.data_push.rpc_id(peer_b, &"sparring.countdown", {"seconds": 0, "text": "FIGHT!"})
 		return
-	ws.data_push.rpc_id(peer_a, &"sparring.countdown", {"seconds": seconds_left, "text": str(seconds_left)})
-	ws.data_push.rpc_id(peer_b, &"sparring.countdown", {"seconds": seconds_left, "text": str(seconds_left)})
-	# Use a Tree-bound timer so this survives the static-call context.
 	var tree: SceneTree = (ws as Node).get_tree()
 	tree.create_timer(1.0).timeout.connect(
-		func(): _push_countdown(instance, peer_a, peer_b, seconds_left - 1),
+		func() -> void: _push_countdown(instance, peers, seconds_left - 1),
 		CONNECT_ONE_SHOT
 	)
 
 
-## Called from Player.die when player_resource.in_match is true. Tally and
-## end the match.
-static func on_player_died_in_match(loser: Player, killer: Character) -> void:
+## Called from Player.die when in_match. Marks the fighter out; if at most one
+## team still has fighters the match ends. Player.die handles teleporting them
+## (via return_position_for, called BEFORE this).
+static func on_player_died_in_match(loser: Player, _killer: Character) -> void:
 	var loser_peer: int = int(loser.player_resource.current_peer_id)
 	var key: String = str(_peer_to_match.get(loser_peer, ""))
 	if key.is_empty() or not _matches.has(key):
-		# In-match flag set but no match record — defensive cleanup.
 		loser.player_resource.in_match = false
 		return
-	var match: Dictionary = _matches[key]
-	var winner_peer: int = int(match["peer_a"])
-	if winner_peer == loser_peer:
-		winner_peer = int(match["peer_b"])
-	# If the killer is the other fighter, credit the win there. Otherwise (NPC
-	# kill, environmental, etc.) nobody wins but the match still ends.
-	var killer_peer: int = 0
-	if killer is Player:
-		killer_peer = int((killer as Player).player_resource.current_peer_id)
-	var winner: int = winner_peer if killer_peer == winner_peer else 0
-	_end_match(key, loser_peer, winner)
+	(_matches[key]["alive"] as Dictionary)[loser_peer] = false
+	loser.player_resource.in_match = false # out → harmless spectator while it continues
+	_peer_to_match.erase(loser_peer)
+	_check_elimination(key)
 
 
-## Called from world_server peer_disconnected. The remaining peer wins by default,
-## and any pending queue entry the dropped peer was sitting in gets swept out so
-## the next viewer doesn't see a phantom queue count.
+## Sweep a disconnecting peer out of any queue, and treat an in-match disconnect
+## as a death (their team may now be eliminated).
 static func on_peer_disconnected(peer_id: int) -> void:
-	# Sweep queue entries first — a player can be queued without being in an
-	# active match.
 	var ws: Node = ServerHub.current
 	for key: String in _queues.keys():
 		var queue: Array = _queues[key]
-		if queue.has(peer_id):
-			queue.erase(peer_id)
-			_queues[key] = queue
-			# Re-broadcast so any open menu drops the stale 1/2 → 0/2.
-			# Parse the master_id off the composite key (instance::master_id).
-			if ws != null:
-				var parts: PackedStringArray = key.split("::")
-				if parts.size() == 2:
-					var instance: Node = ws.instance_manager.get_instance_server_by_id(parts[0])
-					_broadcast_queue(instance, parts[1].to_int(), queue.size())
+		var was_queued: bool = false
+		for roster: Array in queue:
+			if roster.has(peer_id):
+				roster.erase(peer_id)
+				was_queued = true
+		if not was_queued:
+			continue
+		_queues[key] = queue
+		if ws != null:
+			var parts: PackedStringArray = key.split("::")
+			if parts.size() == 2:
+				var instance: Node = ws.instance_manager.get_instance_server_by_id(parts[0])
+				var master: DuelMaster = null
+				if instance != null and instance.instance_map != null:
+					master = instance.instance_map.get_duel_master(parts[1].to_int())
+				_broadcast_queue(instance, master, queue)
 
-	var key: String = str(_peer_to_match.get(peer_id, ""))
-	if key.is_empty() or not _matches.has(key):
+	var mkey: String = str(_peer_to_match.get(peer_id, ""))
+	if mkey.is_empty() or not _matches.has(mkey):
 		return
-	var match: Dictionary = _matches[key]
-	var other: int = int(match["peer_a"])
-	if other == peer_id:
-		other = int(match["peer_b"])
-	_end_match(key, peer_id, other)
+	(_matches[mkey]["alive"] as Dictionary)[peer_id] = false
+	_peer_to_match.erase(peer_id)
+	_check_elimination(mkey)
 
 
-# --- internals ---
+# --- internals --------------------------------------------------------------
 
-static func _end_match(key: String, loser_peer: int, winner_peer: int) -> void:
-	var match: Dictionary = _matches.get(key, {})
-	if match.is_empty():
+static func _empty_queue(team_count: int) -> Array:
+	var out: Array = []
+	for _i: int in team_count:
+		out.append([])
+	return out
+
+
+static func _all_full(queue: Array, teams: Array[SparTeam]) -> bool:
+	for t: int in teams.size():
+		if (queue[t] as Array).size() < teams[t].capacity():
+			return false
+	return true
+
+
+## Ends the match if at most one team still has living fighters. True if ended.
+static func _check_elimination(key: String) -> bool:
+	var match_data: Dictionary = _matches.get(key, {})
+	if match_data.is_empty():
+		return false
+	var last_alive: int = -1
+	var alive_teams: int = 0
+	for t: int in (match_data["rosters"] as Array).size():
+		if _alive_count(match_data, t) > 0:
+			alive_teams += 1
+			last_alive = t
+	if alive_teams > 1:
+		return false
+	_end_match(key, last_alive) # -1 = everyone down = draw
+	return true
+
+
+static func _alive_count(match_data: Dictionary, team_index: int) -> int:
+	var alive: Dictionary = match_data["alive"]
+	var n: int = 0
+	for peer: int in (match_data["rosters"] as Array)[team_index]:
+		if alive.get(peer, false):
+			n += 1
+	return n
+
+
+static func _end_match(key: String, winner_index: int) -> void:
+	var match_data: Dictionary = _matches.get(key, {})
+	if match_data.is_empty():
 		return
 
-	# Detach the boundary signal first so it can't re-fire during teleport-out
-	# and re-end the same match. Safe to no-op if no zone was wired.
-	var fz: Area2D = match.get("fight_zone") as Area2D
-	var cb: Callable = match.get("body_exited_cb", Callable())
+	var fz: Area2D = match_data.get("fight_zone") as Area2D
+	var cb: Callable = match_data.get("body_exited_cb", Callable())
 	if fz != null and cb.is_valid() and fz.body_exited.is_connected(cb):
 		fz.body_exited.disconnect(cb)
 
 	_matches.erase(key)
-	_peer_to_match.erase(int(match["peer_a"]))
-	_peer_to_match.erase(int(match["peer_b"]))
+	var rosters: Array = match_data["rosters"]
+	for roster: Array in rosters:
+		for peer: int in roster:
+			if _peer_to_match.get(peer) == key:
+				_peer_to_match.erase(peer)
 
 	var ws: Node = ServerHub.current
 	if ws == null:
 		return
-
-	# Locate the instance + master so we can teleport back.
-	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match["instance_name"]))
+	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match_data["instance_name"]))
 	var master: DuelMaster = null
 	if instance != null and instance.instance_map != null:
-		master = instance.instance_map.get_duel_master(int(match["master_id"]))
+		master = instance.instance_map.get_duel_master(int(match_data["master_id"]))
 	var return_pos: Vector2 = master.global_position if master != null else Vector2.ZERO
 
-	# Push the match.state END (with the duel master's position) so LocalPlayer
-	# teleports + locks input briefly. The dying player also gets the standard
-	# player.died teleport (which now uses the same position via Player.die's
-	# in_match override).
-	ws.data_push.rpc_id(int(match["peer_a"]), &"sparring.match.state", {"in_match": false, "position": return_pos})
-	ws.data_push.rpc_id(int(match["peer_b"]), &"sparring.match.state", {"in_match": false, "position": return_pos})
+	for t: int in rosters.size():
+		for peer: int in rosters[t]:
+			_finalize_fighter(ws, instance, master, peer, return_pos, t == winner_index)
+			ws.data_push.rpc_id(peer, &"sparring.match.state", {"in_match": false, "position": return_pos})
 
-	# Tally + clear flag + heal-if-alive for each fighter still present.
-	_finalize_fighter(ws, instance, int(match["peer_a"]), return_pos, winner_peer == int(match["peer_a"]))
-	_finalize_fighter(ws, instance, int(match["peer_b"]), return_pos, winner_peer == int(match["peer_b"]))
-
-	# Announce result in chat — players love to see it.
-	var loser_player: PlayerResource = ws.connected_players.get(loser_peer)
-	var winner_player: PlayerResource = ws.connected_players.get(winner_peer)
-	var msg: String
-	if winner_player != null and loser_player != null:
-		msg = "⚔ %s defeated %s in a 1v1." % [winner_player.display_name, loser_player.display_name]
-	elif loser_player != null:
-		msg = "⚔ %s fell in the arena." % loser_player.display_name
-	else:
-		msg = "⚔ The match ended."
-	for peer_id: int in ws.connected_players:
-		var p: PlayerResource = ws.connected_players[peer_id]
-		if p != null:
-			ws.chat_service.push_system_to_player(instance, p.player_id, msg)
+	_announce_result(ws, instance, master, rosters, winner_index)
 
 
-static func _finalize_fighter(ws: Node, instance: Node, peer_id: int, return_pos: Vector2, won: bool) -> void:
+static func _finalize_fighter(ws: Node, instance: Node, master: DuelMaster, peer_id: int, return_pos: Vector2, won: bool) -> void:
 	var player_res: PlayerResource = ws.connected_players.get(peer_id)
 	if player_res == null:
 		return
 	player_res.in_match = false
-
-	# Tally arena_wins / arena_losses on the persistent lb_stats dict.
 	if won:
 		player_res.lb_stats["arena_wins"] = int(player_res.lb_stats.get("arena_wins", 0)) + 1
 	else:
 		player_res.lb_stats["arena_losses"] = int(player_res.lb_stats.get("arena_losses", 0)) + 1
-
-	# Persist now so the result survives a crash before the periodic save.
 	ws.database.save_player(player_res)
 
 	if instance == null:
@@ -298,94 +315,174 @@ static func _finalize_fighter(ws: Node, instance: Node, peer_id: int, return_pos
 	var player: Player = instance.get_player(peer_id)
 	if player == null:
 		return
-	# State-sync write so other clients see the position update too (the actual
-	# LocalPlayer teleport is driven by the sparring.match.state push above).
+	# Undo whatever the mode applied (default mode: nothing to undo).
+	if master != null and master.game_mode != null:
+		master.game_mode.remove_from_fighter(player)
 	player.state_synchronizer.set_by_path(^":position", return_pos)
 	player.mark_just_teleported()
-	# Heal alive fighters back to full HP. The dying fighter is handled by
-	# Player.die's respawn path (which now respawns at the duel master too).
 	if not player.is_dead:
 		player.stats_component.set_stat(Stat.HEALTH, player.stats_component.get_stat(Stat.HEALTH_MAX))
 
 
-static func _queue_status(instance: Node, master_id: int, queue: Array, status: String) -> Dictionary:
-	return {
-		"ok": true,
-		"master_id": master_id,
-		"queue_size": queue.size(),
-		"status": status,
-	}
+static func _announce_result(ws: Node, instance: Node, master: DuelMaster, rosters: Array, winner_index: int) -> void:
+	var msg: String
+	if winner_index < 0:
+		msg = "⚔ The match ended in a draw."
+	else:
+		var losers: Array = []
+		for t: int in rosters.size():
+			if t != winner_index:
+				losers.append_array(_names(rosters[t]))
+		msg = "⚔ %s defeated %s%s." % [
+			", ".join(_names(rosters[winner_index])),
+			", ".join(losers),
+			"" if master == null else " at %s" % master.master_name,
+		]
+	for peer: int in ws.connected_players:
+		var p: PlayerResource = ws.connected_players[peer]
+		if p != null:
+			ws.chat_service.push_system_to_player(instance, p.player_id, msg)
 
 
-## Broadcast the new queue size to every peer in the instance so any open
-## sparring menu updates live without polling.
-static func _broadcast_queue(instance: Node, master_id: int, size: int) -> void:
+static func _queue_status(master: DuelMaster, queue: Array, peer_id: int, status: String) -> Dictionary:
+	var your_team: int = -1
+	for t: int in queue.size():
+		if (queue[t] as Array).has(peer_id):
+			your_team = t
+			break
+	var snapshot: Dictionary = _teams_snapshot(master, queue)
+	snapshot["ok"] = true
+	snapshot["master_id"] = master.master_id
+	snapshot["master_name"] = master.master_name
+	snapshot["your_team"] = your_team
+	snapshot["status"] = status
+	return snapshot
+
+
+## {teams: [names...], capacities: [int...], team_names: [String...]} for the lobby.
+static func _teams_snapshot(master: DuelMaster, queue: Array) -> Dictionary:
+	var teams: Array[SparTeam] = master.teams()
+	var rosters: Array = []
+	var capacities: Array = []
+	var team_names: Array = []
+	for t: int in teams.size():
+		var roster: Array = queue[t] if t < queue.size() else []
+		rosters.append(_names(roster))
+		capacities.append(teams[t].capacity())
+		team_names.append(_team_label(teams[t], t, roster))
+	return {"teams": rosters, "capacities": capacities, "team_names": team_names}
+
+
+## Team label fallback chain: authored team_name → the guild of the first queued
+## member who has one (nice for guild-vs-guild lobbies) → plain "Team N".
+static func _team_label(team: SparTeam, index: int, peers: Array) -> String:
+	if not team.team_name.is_empty():
+		return team.team_name
 	var ws: Node = ServerHub.current
-	if ws == null or instance == null:
+	if ws != null:
+		for peer: int in peers:
+			var pr: PlayerResource = ws.connected_players.get(peer)
+			if pr != null and pr.active_guild_id > 0:
+				var guild_name: String = ws.database.store.get_guild_name(pr.active_guild_id)
+				if not guild_name.is_empty():
+					return guild_name
+	return "Team %d" % (index + 1)
+
+
+static func _broadcast_queue(instance: Node, master: DuelMaster, queue: Array) -> void:
+	var ws: Node = ServerHub.current
+	if ws == null or instance == null or master == null:
 		return
+	var payload: Dictionary = _teams_snapshot(master, queue)
+	payload["master_id"] = master.master_id
 	ws.propagate_rpc(
-		ws.data_push.bind(&"sparring.queue.update", {
-			"master_id": master_id,
-			"queue_size": size,
-		}),
+		ws.data_push.bind(&"sparring.queue.update", payload),
 		instance.name
 	)
 
 
-## Fight-zone Area2D.body_exited callback. If the exiting body is one of the
-## two fighters in this match, they instantly lose (anti-exploit / boundary
-## escape). Non-fighter bodies (spectators wandering past, NPCs, etc.) are
-## ignored.
+static func _names(peers: Array) -> Array:
+	var ws: Node = ServerHub.current
+	var out: Array = []
+	if ws == null:
+		return out
+	for peer: int in peers:
+		var pr: PlayerResource = ws.connected_players.get(peer)
+		out.append(pr.display_name if pr != null else "?")
+	return out
+
+
 static func _on_fighter_left_zone(body: Node, key: String) -> void:
 	if body is not Player:
 		return
-	var match: Dictionary = _matches.get(key, {})
-	if match.is_empty():
+	var match_data: Dictionary = _matches.get(key, {})
+	if match_data.is_empty():
 		return
-	var leaver_peer: int = int((body as Player).player_resource.current_peer_id)
-	var peer_a: int = int(match["peer_a"])
-	var peer_b: int = int(match["peer_b"])
-	if leaver_peer != peer_a and leaver_peer != peer_b:
+	var leaver: int = int((body as Player).player_resource.current_peer_id)
+	if not (match_data["team_of"] as Dictionary).has(leaver):
 		return
-	var winner_peer: int = peer_b if leaver_peer == peer_a else peer_a
-	_end_match(key, leaver_peer, winner_peer)
+	# Leaving the arena = dying: out, and maybe their team is eliminated.
+	(match_data["alive"] as Dictionary)[leaver] = false
+	(body as Player).player_resource.in_match = false
+	_peer_to_match.erase(leaver)
+	_check_elimination(key)
 
 
 static func _key(instance_name: String, master_id: int) -> String:
 	return "%s::%d" % [instance_name, master_id]
 
 
-## The duel master's position for the match this player is in, or Vector2.ZERO
-## if not in a match / can't resolve. Used by Player.die to respawn at the duel
-## master instead of the map's default spawn.
+## The station position for the match this player is in (where a dying fighter
+## respawns). Vector2.ZERO if not resolvable. Called by Player.die BEFORE
+## on_player_died_in_match, while the peer is still mapped.
 static func return_position_for(player: Player) -> Vector2:
 	if player == null or player.player_resource == null:
 		return Vector2.ZERO
-	var peer_id: int = int(player.player_resource.current_peer_id)
-	var key: String = str(_peer_to_match.get(peer_id, ""))
+	var key: String = str(_peer_to_match.get(int(player.player_resource.current_peer_id), ""))
 	if key.is_empty() or not _matches.has(key):
 		return Vector2.ZERO
-	var match: Dictionary = _matches[key]
+	var match_data: Dictionary = _matches[key]
 	var ws: Node = ServerHub.current
 	if ws == null or ws.instance_manager == null:
 		return Vector2.ZERO
-	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match["instance_name"]))
+	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match_data["instance_name"]))
 	if instance == null or instance.instance_map == null:
 		return Vector2.ZERO
-	var master: DuelMaster = instance.instance_map.get_duel_master(int(match["master_id"]))
-	if master == null:
-		return Vector2.ZERO
-	return master.global_position
+	var master: DuelMaster = instance.instance_map.get_duel_master(int(match_data["master_id"]))
+	return master.global_position if master != null else Vector2.ZERO
 
 
-## True if the given player is currently inside an active match where PvP has
-## been enabled (countdown has ended). Used by the projectile damage path.
-static func is_pvp_live_for(player: Player) -> bool:
-	if player == null or player.player_resource == null or not player.player_resource.in_match:
+## True if both players are ACTIVE fighters on the same team of the same match.
+## Used by support effects (heal bolt) so "ally" means spar teammate while a
+## match is live — and an outsider can't buff a fighter from the sidelines.
+static func are_spar_teammates(a: Player, b: Player) -> bool:
+	if a == null or b == null or a.player_resource == null or b.player_resource == null:
 		return false
-	var peer_id: int = int(player.player_resource.current_peer_id)
-	var key: String = str(_peer_to_match.get(peer_id, ""))
-	if key.is_empty() or not _matches.has(key):
+	var a_key: String = str(_peer_to_match.get(int(a.player_resource.current_peer_id), ""))
+	if a_key.is_empty() or not _matches.has(a_key):
 		return false
-	var match: Dictionary = _matches[key]
-	return Time.get_ticks_msec() >= int(match.get("pvp_enabled_at_ms", 0))
+	if a_key != str(_peer_to_match.get(int(b.player_resource.current_peer_id), "")):
+		return false
+	var team_of: Dictionary = _matches[a_key]["team_of"]
+	var a_peer: int = int(a.player_resource.current_peer_id)
+	var b_peer: int = int(b.player_resource.current_peer_id)
+	return team_of.has(a_peer) and team_of.has(b_peer) and team_of[a_peer] == team_of[b_peer]
+
+
+## True if `source` may damage `target` via a live spar: same match, DIFFERENT
+## teams (friendly fire off), and the countdown is over.
+static func can_spar_damage(source: Player, target: Player) -> bool:
+	if source == null or target == null or source.player_resource == null or target.player_resource == null:
+		return false
+	if not source.player_resource.in_match or not target.player_resource.in_match:
+		return false
+	var s_peer: int = int(source.player_resource.current_peer_id)
+	var t_peer: int = int(target.player_resource.current_peer_id)
+	var key: String = str(_peer_to_match.get(s_peer, ""))
+	if key.is_empty() or key != str(_peer_to_match.get(t_peer, "")) or not _matches.has(key):
+		return false
+	var match_data: Dictionary = _matches[key]
+	if Time.get_ticks_msec() < int(match_data.get("pvp_enabled_at_ms", 0)):
+		return false
+	var team_of: Dictionary = match_data["team_of"]
+	return team_of.has(s_peer) and team_of.has(t_peer) and team_of[s_peer] != team_of[t_peer]

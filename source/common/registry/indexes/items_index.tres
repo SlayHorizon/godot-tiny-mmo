@@ -5,9 +5,14 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1780934182
-next_id = 69
+version = 1781116117
+next_id = 76
 entries = Array[Dictionary]([{
+&"hash": "39482c65b2b821790313c848a2b006b977b0441bdd76ad1d84205629097c994e",
+&"id": 74,
+&"path": "res://source/common/gameplay/items/consumables/focus_tonic.tres",
+&"slug": &"focus_tonic"
+}, {
 &"hash": "3a0b58d921a3a952e987899aee2490d722290623015e3810abc37f5146cf5a00",
 &"id": 67,
 &"path": "res://source/common/gameplay/items/consumables/greater_health_potion.tres",
@@ -17,6 +22,11 @@ entries = Array[Dictionary]([{
 &"id": 1,
 &"path": "res://source/common/gameplay/items/consumables/health_potion.tres",
 &"slug": &"health_potion"
+}, {
+&"hash": "9330dd438ecbe69809925b012f0e55446a716275eadf8db29e77d0db7a83caf3",
+&"id": 75,
+&"path": "res://source/common/gameplay/items/consumables/mana_potion.tres",
+&"slug": &"mana_potion"
 }, {
 &"hash": "7a4344d318656633c0d391119ac543990305a060b90dab573be9fd84a3c968d5",
 &"id": 68,
@@ -288,7 +298,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres",
 &"slug": &"wooden_bow.item"
 }, {
-&"hash": "2f136d2f7bf308721520427a4ff688b0718d8b517c7c87e5d74accf3a6751c44",
+&"hash": "cbce971aa5826aab23f6aede9bc61ce8e21c75958907e254fff73d6e70b4e794",
 &"id": 43,
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn",
 &"slug": &"wooden_bow"
@@ -303,7 +313,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/empty_hand/empty_hand.tscn",
 &"slug": &"empty_hand"
 }, {
-&"hash": "2ba0f9a0b5bc261cd21aadd9ea70f770f67517a93f8a1614ccd6462ed5ce0d03",
+&"hash": "83b43a7581838136d7dac510811257bb08b8c1b18df29f16b257239ac739978d",
+&"id": 69,
+&"path": "res://source/common/gameplay/items/weapons/hammer/hammer.item.tres",
+&"slug": &"hammer.item"
+}, {
+&"hash": "0e8bf15a03e546f046d0aec60e932f1f8cbf56f18078c17eb45d5a18c2660482",
 &"id": 46,
 &"path": "res://source/common/gameplay/items/weapons/hammer/hammer.tscn",
 &"slug": &"hammer"
@@ -332,6 +347,26 @@ entries = Array[Dictionary]([{
 &"id": 66,
 &"path": "res://source/common/gameplay/items/weapons/tools/sickle.tres",
 &"slug": &"sickle"
+}, {
+&"hash": "b1f4b9d4912ca5daef25910105347fa89ab7f0ae73ad1be00ef612234429c41a",
+&"id": 70,
+&"path": "res://source/common/gameplay/items/weapons/wand/bolt.tscn",
+&"slug": &"bolt"
+}, {
+&"hash": "c8ae244f4a3d7e4a76ad52009b12a7fa41da4166291a864711b5cdcf172de6df",
+&"id": 71,
+&"path": "res://source/common/gameplay/items/weapons/wand/heal_bolt.tscn",
+&"slug": &"heal_bolt"
+}, {
+&"hash": "e35ba4f0365f80ef50f1db2219b442964183a34b4faf33a1d25a1968d28161e5",
+&"id": 72,
+&"path": "res://source/common/gameplay/items/weapons/wand/wand.item.tres",
+&"slug": &"wand.item"
+}, {
+&"hash": "030f2aea33a52bfb080626b907a16627070d2fe88f8aed86ef2061bf5311c3dc",
+&"id": 73,
+&"path": "res://source/common/gameplay/items/weapons/wand/wand.tscn",
+&"slug": &"wand"
 }])
 scan_path = "res://source/common/gameplay/items"
 filters = PackedStringArray("*.tres", "*.tscn")

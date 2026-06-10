@@ -32,6 +32,10 @@ extends Resource
 ## Seconds between auto-attacks while in range.
 @export var attack_cooldown: float = 1.5
 @export var armor: float = 0.0
+## Magic resistance — mitigates magic damage (wand bolts) the way armor mitigates
+## physical. Default 0: mob toughness is tuned via HP; reserve MR for the rare
+## "resists magic" archetype so the stat means something when it appears.
+@export var mr: float = 0.0
 ## Optional weapon. Null = melee AoE attacker.
 @export var weapon: WeaponItem
 

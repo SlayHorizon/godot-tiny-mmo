@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://cwu8e44mt3dnl"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_tex"]
+[ext_resource type="PackedScene" uid="uid://ivb4cdjfwbtx" path="res://source/common/gameplay/items/weapons/hammer/hammer.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_weapon_item"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_slot"]
+
+[sub_resource type="Resource" id="Mod_ad_hammer"]
+script = ExtResource("1_mod")
+stat_name = "ad"
+value = 7.0
+
+[sub_resource type="Resource" id="Mod_ms_hammer"]
+script = ExtResource("1_mod")
+stat_name = "move_speed"
+value = -10.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hammer"]
+atlas = ExtResource("2_tex")
+region = Rect2(16, 16, 16, 32)
+
+[resource]
+script = ExtResource("4_weapon_item")
+right_hand_scene = ExtResource("3_scene")
+slot = ExtResource("5_slot")
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ad_hammer"), SubResource("Mod_ms_hammer")])
+item_name = &"War Hammer"
+item_icon = SubResource("AtlasTexture_hammer")
+description = "Slow and heavy. Slams the ground, hitting everything around you — best when you're surrounded."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/slug = &"hammer.item"
+metadata/id = 69

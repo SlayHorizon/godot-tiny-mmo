@@ -3,6 +3,8 @@ class_name Character
 extends Entity
 
 
+signal display_name_changed(new_name: String)
+
 enum Animations {
 	IDLE,
 	RUN,
@@ -13,6 +15,9 @@ var hand_type: Hand.Types
 
 var skin_id: int:
 	set = _set_skin_id
+
+var display_name: String = "Unknown":
+	set = _set_display_name
 
 var anim: Animations = Animations.IDLE:
 	set = _set_anim
@@ -50,6 +55,13 @@ const BAR_COLOR_HOSTILE: Color = Color(0.86, 0.33, 0.28) # mobs / default
 ## Player can read it WITHOUT referencing ClientState — that reference would close
 ## a ClientState → LocalPlayer → Player → ClientState compile cycle.
 static var local_viewer_guild_id: int = 0
+
+## Peer ids of the local player's CURRENT spar teammates / opponents (empty when
+## not in a match). Same static-mirror pattern as local_viewer_guild_id; set by
+## LocalPlayer from the sparring.match.state push. While a match is live these
+## override guild colors on health bars — an opposing guildmate reads hostile.
+static var spar_ally_peers: Array = []
+static var spar_opponent_peers: Array = []
 
 
 func _ready() -> void:
@@ -131,16 +143,19 @@ var last_attacker: Character
 
 
 ## Server-only. Applies [param amount] raw damage from [param attacker], mitigated by
-## the target's ARMOR, then triggers death at zero health. Every attack (projectiles,
-## melee, NPC hits) routes through here so damage/death/attribution live in one place.
-func take_damage(amount: float, attacker: Character = null) -> void:
+## the matching resistance — ARMOR for physical, MR for magic (see CombatHit's
+## damage-type constants) — then triggers death at zero health. Every attack
+## (projectiles, melee, NPC hits) routes through here so damage/death/attribution
+## live in one place.
+func take_damage(amount: float, attacker: Character = null, damage_type: StringName = CombatHit.DAMAGE_PHYSICAL) -> void:
 	if not multiplayer.is_server() or is_dead or amount <= 0.0:
 		return
 	if attacker:
 		last_attacker = attacker
 
-	var armor: float = stats_component.get_stat(Stat.ARMOR)
-	var mitigated: float = amount * (100.0 / (100.0 + maxf(0.0, armor)))
+	var resist_stat: StringName = Stat.MR if damage_type == CombatHit.DAMAGE_MAGIC else Stat.ARMOR
+	var resist: float = stats_component.get_stat(resist_stat)
+	var mitigated: float = amount * (100.0 / (100.0 + maxf(0.0, resist)))
 	var new_health: float = maxf(0.0, stats_component.get_stat(Stat.HEALTH) - mitigated)
 	stats_component.set_stat(Stat.HEALTH, new_health)
 
@@ -249,3 +264,9 @@ func _set_flip(new_flip: bool) -> void:
 func _set_pivot(new_pivot: float) -> void:
 	pivot = new_pivot
 	hand_pivot.rotation = new_pivot
+
+
+func _set_display_name(new_name: String) -> void:
+	display_name = new_name
+	if not multiplayer.is_server():
+		display_name_changed.emit(new_name)

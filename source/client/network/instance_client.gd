@@ -30,7 +30,9 @@ static func _on_action_performed(payload: Dictionary) -> void:
 	if not player:
 		return
 	if player.equipment_component.mounted_nodes.has(&"weapon"):
-		player.equipment_component.mounted_nodes[&"weapon"].perform_action(payload["i"], payload["d"])
+		player.equipment_component.mounted_nodes[&"weapon"].perform_action(
+			payload["i"], payload["d"], bool(payload.get("r", false))
+		)
 
 
 static func _on_combat_hit_static(payload: Dictionary) -> void:

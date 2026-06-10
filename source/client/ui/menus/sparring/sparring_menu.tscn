@@ -2,48 +2,8 @@
 
 [ext_resource type="Script" path="res://source/client/ui/menus/sparring/sparring_menu.gd" id="1_sparm"]
 
-[node name="SparringMenu" type="Control" node_paths=PackedStringArray("title_label", "status_label", "queue_button", "close_button")]
+[node name="SparringMenu" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 script = ExtResource("1_sparm")
-title_label = NodePath("CenterContainer/Card/Margin/VBox/TitleLabel")
-status_label = NodePath("CenterContainer/Card/Margin/VBox/StatusLabel")
-queue_button = NodePath("CenterContainer/Card/Margin/VBox/Buttons/QueueButton")
-close_button = NodePath("CenterContainer/Card/Margin/VBox/Buttons/CloseButton")
-
-[node name="CenterContainer" type="CenterContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Card" type="PanelContainer" parent="CenterContainer"]
-mouse_filter = 0
-
-[node name="Margin" type="MarginContainer" parent="CenterContainer/Card"]
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
-
-[node name="VBox" type="VBoxContainer" parent="CenterContainer/Card/Margin"]
-theme_override_constants/separation = 8
-
-[node name="TitleLabel" type="Label" parent="CenterContainer/Card/Margin/VBox"]
-horizontal_alignment = 1
-text = "Duel Master"
-
-[node name="StatusLabel" type="Label" parent="CenterContainer/Card/Margin/VBox"]
-horizontal_alignment = 1
-modulate = Color(1, 1, 1, 0.7)
-text = "Queue: 0 / 2"
-
-[node name="Buttons" type="HBoxContainer" parent="CenterContainer/Card/Margin/VBox"]
-alignment = 1
-theme_override_constants/separation = 8
-
-[node name="QueueButton" type="Button" parent="CenterContainer/Card/Margin/VBox/Buttons"]
-text = "Queue for 1v1"
-
-[node name="CloseButton" type="Button" parent="CenterContainer/Card/Margin/VBox/Buttons"]
-text = "Close"

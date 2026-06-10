@@ -32,10 +32,10 @@ func data_request_handler(
 		var visit_updates: Array = QuestService.on_visit(resource, giver_id, peer_id, instance)
 		if not visit_updates.is_empty():
 			WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": visit_updates})
-		var giver: QuestGiver = instance.instance_map.get_quest_giver(giver_id)
+		var giver: Object = instance.instance_map.get_quest_giver(giver_id)
 		if giver:
-			giver_name = giver.giver_name
-			for quest: QuestResource in giver.quests:
+			giver_name = str(giver.get(&"giver_name"))
+			for quest: QuestResource in giver.get(&"quests"):
 				if quest:
 					var qid: int = int(quest.get_meta(&"id", 0))
 					resources_by_id[qid] = quest

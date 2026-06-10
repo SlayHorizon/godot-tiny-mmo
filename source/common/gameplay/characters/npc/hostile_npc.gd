@@ -100,6 +100,7 @@ var attack_damage: float = 8.0
 ## Seconds between auto-attacks while in range.
 var attack_cooldown: float = 1.5
 var armor: float = 0.0
+var mr: float = 0.0
 ## Optional weapon. If set, the enemy equips it and fires its ability at the
 ## target (reusing the same projectiles players use). If null, the enemy is a
 ## melee AoE attacker.
@@ -126,10 +127,12 @@ var chase_on_area: bool = false
 func _apply_enemy_data() -> void:
 	assert(enemy_data != null, "HostileNpc requires an enemy_data resource — see characters/npc/types/.")
 	enemy_type = enemy_data.enemy_type
+	display_name = enemy_data.display_name # drives the shared over-head name label
 	max_health = enemy_data.max_health
 	attack_damage = enemy_data.attack_damage
 	attack_cooldown = enemy_data.attack_cooldown
 	armor = enemy_data.armor
+	mr = enemy_data.mr
 	weapon = enemy_data.weapon
 	xp_reward = enemy_data.xp_reward
 	respawn_delay = enemy_data.respawn_delay
@@ -217,6 +220,7 @@ func _ready() -> void:
 	stats_component.set_stat(Stat.HEALTH, max_health)
 	stats_component.set_stat(Stat.AD, attack_damage)
 	stats_component.set_stat(Stat.ARMOR, armor)
+	stats_component.set_stat(Stat.MR, mr)
 
 
 func _on_local_guild_changed(_new_id: int) -> void:
@@ -590,7 +594,7 @@ func die(killer: Character) -> void:
 ## 3. Engages an IDLE mob that's been hit from outside detection range
 ##    (a far-away snipe wouldn't trigger CHASE through detection_area).
 ## 4. Pre/post logs gated on DEBUG_NPC for future bug triage.
-func take_damage(amount: float, attacker: Character = null) -> void:
+func take_damage(amount: float, attacker: Character = null, damage_type: StringName = CombatHit.DAMAGE_PHYSICAL) -> void:
 	# Ally protection: a guild guard ignores damage from its own guild's members.
 	# Blocking here (before super) means no HP loss, no death, and no hit feedback
 	# (numbers/flash/sound all hang off the HP-decrease push).
@@ -600,7 +604,7 @@ func take_damage(amount: float, attacker: Character = null) -> void:
 			return
 
 	if not GameMode.is_world_server():
-		super.take_damage(amount, attacker)
+		super.take_damage(amount, attacker, damage_type)
 		return
 
 	var was_alive: bool = not is_dead
@@ -612,7 +616,7 @@ func take_damage(amount: float, attacker: Character = null) -> void:
 			attacker.name if attacker else "null"
 		])
 
-	super.take_damage(amount, attacker)
+	super.take_damage(amount, attacker, damage_type)
 
 	if DEBUG_NPC:
 		var post_h: float = stats_component.get_stat(Stat.HEALTH)

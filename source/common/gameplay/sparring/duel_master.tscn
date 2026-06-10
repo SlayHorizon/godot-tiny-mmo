@@ -1,10 +1,12 @@
-[gd_scene load_steps=2 format=4]
+[gd_scene format=3 uid="uid://otv230rdmir2"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/sparring/duel_master.gd" id="1_duelm"]
+[ext_resource type="Script" uid="uid://crn8mflgu0qvy" path="res://source/common/gameplay/sparring/duel_master.gd" id="1_duelm"]
 
-[node name="DuelMaster" type="Area2D" node_paths=PackedStringArray("spawn_a", "spawn_b")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m5doe"]
+size = Vector2(16, 16)
+
+[node name="DuelMaster" type="Area2D" unique_id=601088349]
 script = ExtResource("1_duelm")
-spawn_a = NodePath("")
-spawn_b = NodePath("")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1695513967]
+shape = SubResource("RectangleShape2D_m5doe")

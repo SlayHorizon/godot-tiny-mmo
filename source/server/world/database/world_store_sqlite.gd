@@ -107,16 +107,18 @@ func create_player_character(account_name: String, character_data: Dictionary) -
 		int(character_data.get("skin", 1))
 	)
 
-	# Hardcode default items (instance-based slots).
+	# Starting kit: ONE potion + gold, no weapon — a fresh character's first
+	# decision is choosing a weapon at the starter shop (sword / bow / wand /
+	# hammer, 6-8g), which seeds build identity and teaches the economy. 25g
+	# covers a weapon + a potion or a cheap armor piece.
 	player.inventory = {}
 	Inventory.add_item(player.inventory, 1, 1) # health_potion
-	Inventory.add_item(player.inventory, 2, 1) # copper_ring
-	Inventory.add_item(player.inventory, 4, 1) # bone
-	Inventory.add_item(player.inventory, 5, 1) # wooden_bow
-	# Starting gold (gold is a currency item; balance = amount held in inventory).
-	Inventory.add_item(player.inventory, Economy.gold_id(), 15)
+	Inventory.add_item(player.inventory, Economy.gold_id(), 25)
 	# Starting attribute points so a new character has something to spend.
 	player.available_attributes_points = PlayerResource.ATTRIBUTE_POINTS_PER_LEVEL
+	# Everyone who plays the alpha carries the badge for it.
+	player.titles_unlocked = PackedStringArray(["Alpha tester"])
+	player.display_title = "Alpha tester"
 	# Leave defaults to PlayerResource where possible.
 	save_player(player)
 	return next_id

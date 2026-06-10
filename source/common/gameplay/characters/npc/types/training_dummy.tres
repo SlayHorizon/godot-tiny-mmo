@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_skin"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"training_dummy"
+display_name = "Training Dummy"
+skin = ExtResource("2_skin")
+max_health = 100.0
+attack_damage = 0.0
+attack_cooldown = 99.0
+armor = 0.0
+mr = 0.0
+move_speed = 0
+distance_to_attack = 0
+max_distance_from_spawn = 10
+detection_radius = 0
+chase_on_area = false
+xp_reward = 0
+respawn_delay = 2.0
+metadata/slug = &"training_dummy"

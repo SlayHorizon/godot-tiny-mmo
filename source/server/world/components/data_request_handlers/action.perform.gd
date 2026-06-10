@@ -17,14 +17,18 @@ func data_request_handler(
 		return {}
 	
 	var action_index: int = args.get("i", 0)
+	if action_index < 0:
+		return {} # negative indices would wrap weapon ability arrays — reject early
 	var action_direction: Vector2 = args.get("d", Vector2.ZERO)
-	if player.equipment_component.can_use(&"weapon", action_index):
-		player.equipment_component.mounted_nodes[&"weapon"].perform_action(action_index, action_direction)
+	# "r" marks the RELEASE phase of a two-phase (charge) ability.
+	var released: bool = bool(args.get("r", false))
+	if player.equipment_component.can_use(&"weapon", action_index, released):
+		player.equipment_component.mounted_nodes[&"weapon"].perform_action(action_index, action_direction, released)
 		WorldServer.curr.propagate_rpc(
 			WorldServer.curr.data_push.bind(
 				&"action.perform",
-				{"i": action_index, "d": action_direction, "p": peer_id}
-			), 
+				{"i": action_index, "d": action_direction, "p": peer_id, "r": released}
+			),
 			instance.name
 		)
 	return {}

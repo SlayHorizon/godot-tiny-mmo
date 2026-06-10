@@ -1,62 +1,142 @@
 class_name NPC
 extends Character
-## Static NPCS? No enemy AI or combat logics?
+## A friendly, INTERACTIVE NPC (shopkeeper, quest giver, ...). Everything about it
+## — name, look, greeting, and what it can do — lives in one NPCResource. Clicking
+## opens a greeting dialogue (or, with a single action, that action directly).
+## Place it as a direct child of a Map, like other interactables.
+##
+## Hostile enemies are HostileNpc — a separate Character subclass — so they get
+## none of this interaction machinery. The display name uses Character.display_name
+## (which drives the shared name label).
 
-#var behavior: Callable = hostile_behavior
-#var arr: Array[Player]
+const MARKER_SCENE: PackedScene = preload("res://source/common/gameplay/maps/components/interactable_marker.tscn")
 
-#var container: ReplicatedPropsContainer
-#var prop_id: int
-#var timer: float
-#var cooldown: float = 0.7
+@export var npc_resource: NPCResource
 
-#@onready var detection_area: Area2D = $DetectionArea
-
-
-#func _ready() -> void:
-#	if not multiplayer.is_server():
-#		set_physics_process(multiplayer.is_server())
-#		return
-#	get_parent().ready.connect(func():
-#		container = get_parent()
-#		prop_id = container.child_id_of_node(self)
-#		container.set_baseline_ops(prop_id, [["rp_equip", ["wooden_bow.item"]]])
-#		container.queue_op(prop_id, "rp_equip", ["wooden_bow.item"])
-#		rp_equip("wooden_bow.item")
-#	)
-#	detection_area.body_entered.connect(_on_detection_area_body_entered)
-#	detection_area.body_exited.connect(_on_detection_area_body_exited)
+## Quest-giver key, mirrored from the resource (interactions resolve quests by it).
+var npc_id: int
 
 
-#func _physics_process(delta: float) -> void:
-#	#hostile_behavior()
-#	timer += delta
-#	if timer >= cooldown and arr:
-#		timer = 0
-#		if equipment_component.can_use(&"weapon", 0):
-#			var dir: Vector2 = global_position.direction_to(arr.front().global_position)
-#			equipment_component._mounted[&"weapon"].perform_action(0, dir)
-#			container.queue_op(prop_id, "rp_attack", [dir])
+func _ready() -> void:
+	_apply_resource()
+	super._ready() # Character setup (animations, sync, etc.)
+	# Friendly NPCs never take damage — hide the health bar Character wires up.
+	if has_node(^"ProgressBar"):
+		($ProgressBar as CanvasItem).hide()
+	if npc_resource == null:
+		return
+
+	if multiplayer.is_server():
+		# Server: register each capability so its data-request handler resolves it.
+		# No client visuals server-side.
+		var map: Map = _find_map()
+		if map != null:
+			for interaction: NPCInteraction in npc_resource.interactions:
+				interaction.register(map, self)
+		return
+
+	# --- Client only past here ---
+	# Idle the (static) NPC so it breathes instead of freezing on frame 0.
+	if animation_tree != null:
+		animation_tree.active = true
+	anim = Animations.IDLE
+	# An interactive NPC needs a click target + a floating "talk" glyph — spawn
+	# both dynamically so the scene stays clean and the server carries no useless
+	# nodes.
+	if not npc_resource.interactions.is_empty():
+		_spawn_click_area()
+		_spawn_marker()
 
 
-#func rp_equip(weapon_slug: String):
-#	var weapon: WeaponItem = ContentRegistryHub.load_by_slug(&"items", &"wooden_bow.item").duplicate(true)
-#	equipment_component.equip(weapon.slot.key, weapon)
+func _apply_resource() -> void:
+	if npc_resource == null:
+		return
+	npc_id = npc_resource.npc_id
+	display_name = npc_resource.npc_name # drives the shared name label (client)
+	if npc_resource.skin != null:
+		skin_id = 0 # disable id-based skin; drive it directly (mirrors HostileNpc)
+		if has_node(^"AnimatedSprite2D"):
+			($AnimatedSprite2D as AnimatedSprite2D).sprite_frames = npc_resource.skin
 
 
-#func rp_attack(dir: Vector2):
-#	equipment_component._mounted[&"weapon"].perform_action(0, dir)
+## Walk up to the owning Map (interactables are placed as map children).
+func _find_map() -> Map:
+	var node: Node = get_parent()
+	while node != null:
+		if node is Map:
+			return node
+		node = node.get_parent()
+	return null
 
 
-#func _on_detection_area_body_entered(body: Node2D) -> void:
-#	if body is Player:
-#		arr.append(body)
+func _spawn_click_area() -> void:
+	var area: Area2D = Area2D.new()
+	area.input_pickable = true
+	var collision: CollisionShape2D = CollisionShape2D.new()
+	var rect: RectangleShape2D = RectangleShape2D.new()
+	rect.size = _sprite_size()
+	collision.shape = rect
+	if has_node(^"AnimatedSprite2D"):
+		collision.position = ($AnimatedSprite2D as AnimatedSprite2D).position
+	area.add_child(collision)
+	add_child(area)
+	area.input_event.connect(_on_clicked)
 
 
-#func _on_detection_area_body_exited(body: Node2D) -> void:
-#	if body is Player:
-#		arr.erase(body)
+## Float a "DIALOG" glyph above the head so players know the NPC is talkable.
+func _spawn_marker() -> void:
+	var marker: InteractableMarker = MARKER_SCENE.instantiate()
+	marker.kind = InteractableMarker.Kind.DIALOG
+	var top_y: float = -_sprite_size().y * 0.5
+	if has_node(^"AnimatedSprite2D"):
+		top_y = ($AnimatedSprite2D as AnimatedSprite2D).position.y - _sprite_size().y * 0.5
+	marker.position = Vector2(0, top_y - 8.0)
+	add_child(marker)
 
 
-#func hostile_behavior(player: Player) -> void:
-#	pass
+## Best-effort click-box / marker-offset size from the idle frame, with a fallback.
+func _sprite_size() -> Vector2:
+	var fallback: Vector2 = Vector2(28, 44)
+	if not has_node(^"AnimatedSprite2D"):
+		return fallback
+	var sprite: AnimatedSprite2D = $AnimatedSprite2D
+	var frames: SpriteFrames = sprite.sprite_frames
+	if frames == null or not frames.has_animation(sprite.animation):
+		return fallback
+	var tex: Texture2D = frames.get_frame_texture(sprite.animation, 0)
+	return tex.get_size() if tex != null else fallback
+
+
+func _on_clicked(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	var clicked: bool = (
+		(event is InputEventMouseButton
+			and event.button_index == MOUSE_BUTTON_LEFT
+			and event.pressed)
+		or (event is InputEventScreenTouch and event.pressed)
+	)
+	if clicked:
+		_open_interactions()
+
+
+func _open_interactions() -> void:
+	if npc_resource == null:
+		return
+	var entries: Array = []
+	for interaction: NPCInteraction in npc_resource.interactions:
+		var entry: Dictionary = interaction.menu_entry(self)
+		if not entry.is_empty():
+			entries.append(entry)
+	if entries.is_empty():
+		return
+	# A single ROUTING action (shop, quests, ...) opens directly — no pointless
+	# one-option dialogue. A lone "Talk" still goes through the box (it plays lines
+	# inline, it has no menu to route to).
+	if entries.size() == 1 and entries[0].has("menu"):
+		ClientState.open_menu_requested.emit(entries[0]["menu"], entries[0]["arg"])
+		return
+	# Several → the greeting dialogue.
+	ClientState.open_menu_requested.emit(&"npc", {
+		"name": display_name,
+		"greeting": npc_resource.greeting,
+		"entries": entries,
+	})

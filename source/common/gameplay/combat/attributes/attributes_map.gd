@@ -5,14 +5,11 @@ class_name AttributeMap
 ## the power gap fair (≈2x, not 5x). Each level (3 pts) is a visible bump, so
 ## leveling always reads as progress.
 ##
-## LIVE physical attributes (read by gameplay today): VITALITY, STRENGHT,
-## AGILITY, DEFENSE — they cover the four stats combat actually consumes
-## (HEALTH_MAX, AD, MOVE_SPEED, ARMOR).
-##
-## INTELLIGENCE (AP) and SPIRIT (mana/energy) feed the upcoming skill / magic
-## weapon system. They're kept here so they're ready the moment that ships, but
-## until then no combat code reads AP/mana — a point spent there is inert. Flag
-## them as "coming soon" in the UI before launch so players don't sink points.
+## All six attributes are LIVE: VITALITY (HP), STRENGHT (AD), AGILITY (speed),
+## DEFENSE (armor, vs physical), INTELLIGENCE (AP — magic damage + heal power),
+## SPIRIT (MR, vs magic). AP scales wand bolts/heals; MR mitigates magic damage
+## in take_damage — the magic mirrors of AD/ARMOR. Mana/energy stay parked until
+## the mana system ships (re-add to SPIRIT then).
 
 
 # --- Live physical attributes -------------------------------------------------
@@ -32,7 +29,9 @@ const AGILITY: Dictionary[StringName, float] = {
 	# Move speed scales GENTLY on purpose — doubling it would break kiting/PvP.
 	# ~60 pts ≈ +18 (90 → 108, +20%): a real edge, not a runaway.
 	Stat.MOVE_SPEED: 0.3,
-	Stat.ATTACK_SPEED: 0.015,  # activates once attack-speed gates weapon cooldowns
+	# Haste shortens EVERY ability cooldown (attack speed for basics, CDR for
+	# specials — one stat, see AbilityResource). 60 pts ≈ +15% faster actions.
+	Stat.ABILITY_HASTE: 0.25,
 }
 
 const DEFENSE: Dictionary[StringName, float] = {
@@ -43,15 +42,23 @@ const DEFENSE: Dictionary[StringName, float] = {
 	Stat.HEALTH_MAX: 0.5,
 }
 
-# --- Magic attributes (reserved for the skill / magic-weapon update) ----------
+# --- Magic attributes ----------------------------------------------------------
 
 const INTELLIGENCE: Dictionary[StringName, float] = {
-	Stat.AP: 0.4,
+	# Mirrors STRENGHT: the main driver of MAGIC damage growth. Weapons grant the
+	# base AP (wand +18), INT scales it — 60 pts ≈ +36 AP (×3 a fresh caster).
+	# Also scales heal bolts (heal = AP × ratio), so INT is the support stat too.
+	Stat.AP: 0.6,
 }
 
 const SPIRIT: Dictionary[StringName, float] = {
-	Stat.MANA_MAX: 1.0,
-	Stat.ENERGY: 0.7,
+	# Mirrors DEFENSE on the magic side: MR mitigates magic damage in take_damage
+	# with the same diminishing-returns curve as armor. Mana rides along so Spirit
+	# is also the "use your specials more often" stat — the support/sustain pick.
+	Stat.MR: 0.5,
+	Stat.MANA_MAX: 0.7,
+	# 60 pts ≈ +1.2/s on the 0.5 base — a dedicated Spirit build refills ~3× faster.
+	Stat.MANA_REGEN: 0.02,
 }
 
 

@@ -10,3 +10,4 @@ ad_ratio = 1.4
 swing_animation = &"weapon/sword.special.spin"
 name = "Sword Spin"
 cooldown = 2.5
+mana_cost = 10

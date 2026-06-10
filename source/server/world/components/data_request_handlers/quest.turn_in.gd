@@ -13,7 +13,7 @@ func data_request_handler(
 	var giver_id: int = int(args.get("giver", 0))
 	var quest_id: int = int(args.get("id", 0))
 
-	var giver: QuestGiver = instance.instance_map.get_quest_giver(giver_id)
+	var giver: Object = instance.instance_map.get_quest_giver(giver_id)
 	if giver == null:
 		return {"ok": false}
 
@@ -45,8 +45,8 @@ func data_request_handler(
 	return {"ok": true, "name": quest.quest_name}
 
 
-func _giver_offers(giver: QuestGiver, quest_id: int) -> bool:
-	for quest: QuestResource in giver.quests:
+func _giver_offers(giver: Object, quest_id: int) -> bool:
+	for quest: QuestResource in giver.get(&"quests"):
 		if quest and int(quest.get_meta(&"id", 0)) == quest_id:
 			return true
 	return false

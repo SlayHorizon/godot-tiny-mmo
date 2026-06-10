@@ -57,9 +57,10 @@ var mineables: Dictionary[StringName, MineableNode]
 ## nodes placed in this map (mirrors shops). The server resolves/verifies the station
 ## a player crafts at, rather than trusting a client-sent id.
 var crafting_stations: Dictionary[int, CraftingStationResource]
-## giver_id -> QuestGiver node, gathered from the quest-giver NPCs placed in this map.
-## The server resolves which quests a giver offers (never trusts a client-sent list).
-var quest_givers: Dictionary[int, QuestGiver]
+## giver_id -> quest source: a legacy QuestGiver node OR a QuestInteraction
+## component on an NPC. Both expose `quests` + `giver_name` (duck-typed by the
+## quest handlers). The server resolves offered quests (never a client-sent list).
+var quest_givers: Dictionary[int, Object]
 ## table_id -> TradeTable node. The server holds each table's trade session.
 var trade_tables: Dictionary[int, TradeTable]
 ## flag_id -> TerritoryFlag node, gathered from the basing flags placed in this
@@ -119,7 +120,7 @@ func get_crafting_station(station_id: int) -> CraftingStationResource:
 
 
 ## The quest-giver NPC with this id in this map, or null.
-func get_quest_giver(giver_id: int) -> QuestGiver:
+func get_quest_giver(giver_id: int) -> Object:
 	return quest_givers.get(giver_id)
 
 

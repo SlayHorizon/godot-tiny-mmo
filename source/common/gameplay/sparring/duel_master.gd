@@ -1,40 +1,49 @@
 class_name DuelMaster
 extends Area2D
-## Clickable NPC that queues players for a 1v1 spar. Mirrors QuestGiver: send
-## only the master_id to the server, the server resolves the configured spawn
-## points against the map.
+## Clickable spar STATION. Its teams are SparTeam child nodes, and each team's
+## Marker2D children are its spawn slots — so the station's shape is authored
+## entirely in the editor: two SparTeams with 1 marker each = 1v1; 2+2 = 2v2;
+## 1+3 = 1v3; three SparTeams = a three-way. (The named "Duel Master" NPC who
+## introduces the arena is a separate regular NPC; this node is purely the
+## queue mechanic.)
 ##
-## Setup: place as a direct child of a Map; give it a unique master_id; assign
-## spawn_a / spawn_b to two Marker2D nodes inside the closed arena area; place
-## the DuelMaster itself in the corridor (its own position is also the return
-## point after the match ends).
+## Setup: place as a direct child of a Map; give it a unique master_id and a
+## CollisionShape2D (the click target); add SparTeam children, each with its
+## spawn Marker2Ds inside the arena. The station's own position is the return
+## point after the match. Optional: fight_zone (leaving it mid-match = instant
+## loss) and game_mode (stat modifiers / future win conditions; null = default
+## "keep your stats, last team standing").
 
 @export var master_id: int = 0
-@export var master_name: String = "Duel Master"
-## Two spawn points inside the closed arena area. Designer places these Markers
-## anywhere in the map; server teleports the first queued player to spawn_a and
-## the second to spawn_b at match start.
-@export var spawn_a: Marker2D
-@export var spawn_b: Marker2D
+## Shown as the lobby title (e.g. "Duel Arena", "2v2 Arena").
+@export var master_name: String = "Duel Arena"
 ## Optional Area2D enclosing the arena interior. If wired, a fighter who leaves
-## the zone mid-match instantly loses (anti-exploit). Without it the match has
-## no positional bounds — fine for an enclosed walled arena where you trust
-## the geometry.
+## the zone mid-match instantly loses (anti-exploit).
 @export var fight_zone: Area2D
+## Optional mode hook (stat modifiers etc.). Null = SparGameMode defaults.
+@export var game_mode: SparGameMode
 
 
 func _ready() -> void:
-	# Loud warning for a common setup miss: master_id left at the default 0
-	# means the server's get_duel_master(0) lookup fails on every click. We
-	# could clamp it server-side, but a warning here points to the actual
-	# misconfigured node by name.
 	if master_id <= 0:
 		push_warning("DuelMaster '%s' has master_id=%d. Set a unique positive id in the inspector or it'll fail every lookup." % [name, master_id])
+	if multiplayer.is_server() and teams().size() < 2:
+		push_warning("DuelMaster '%s' has %d usable team(s) — add SparTeam children with at least one Marker2D each." % [name, teams().size()])
 	if multiplayer.is_server():
 		input_pickable = false
 		return
 	input_pickable = true
 	input_event.connect(_on_input_event)
+
+
+## Usable teams, in child order. A SparTeam with no Marker2D children can never
+## fill, so it's skipped (with a warning at ready-time server-side).
+func teams() -> Array[SparTeam]:
+	var out: Array[SparTeam] = []
+	for child: Node in get_children():
+		if child is SparTeam and (child as SparTeam).capacity() > 0:
+			out.append(child)
+	return out
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:

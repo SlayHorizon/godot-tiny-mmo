@@ -19,14 +19,15 @@ const STAT_LABELS: Dictionary = {
 	&"energy": "Energy",
 	&"move_speed": "Move Speed",
 	&"attack_speed": "Atk Speed",
+	&"ability_haste": "Haste",
+	&"mana_regen": "Mana Regen",
 	&"tenacity": "Tenacity",
 }
 
-## Attributes whose stats aren't wired into gameplay yet (the magic / skill
-## system). Their + buttons are disabled and the row reads "Coming soon" so
-## players don't sink points into dead stats. Remove an entry the moment that
-## system ships — that's the one-click re-enable.
-const LOCKED_ATTRIBUTES: PackedStringArray = ["intelligence", "spirit"]
+## Attributes whose stats aren't wired into gameplay yet. Empty since the magic
+## update went live (AP scales wand damage/heals, MR mitigates magic damage) —
+## add a name here to disable its row with a "Coming soon" tag.
+const LOCKED_ATTRIBUTES: PackedStringArray = []
 
 
 func _ready() -> void:

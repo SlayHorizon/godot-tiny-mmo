@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bivhh1men00rg"]
+
+[ext_resource type="Script" uid="uid://c2f126nxuonb3" path="res://source/common/gameplay/items/weapons/bow/arrow.gd" id="1_proj"]
+[ext_resource type="Texture2D" uid="uid://bg355a0er6or" path="res://assets/sprites/particles/white_circle.png" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape_bolt"]
+radius = 4.5
+
+[node name="Bolt" type="Area2D"]
+collision_layer = 0
+script = ExtResource("1_proj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape_bolt")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.75, 0.55, 1, 1)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_tex")

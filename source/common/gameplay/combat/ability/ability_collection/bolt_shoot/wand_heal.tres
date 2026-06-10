@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="HealBoltAbility" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/heal_bolt_ability.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/items/weapons/wand/heal_bolt.tscn" id="2_bolt"]
+
+[resource]
+script = ExtResource("1_script")
+projectile_scene = ExtResource("2_bolt")
+ap_ratio = 1.2
+speed = 340.0
+cast_animation = &""
+name = "Mending Bolt"
+cooldown = 3.0
+mana_cost = 15

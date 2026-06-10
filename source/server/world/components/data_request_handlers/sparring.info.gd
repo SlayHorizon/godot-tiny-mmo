@@ -22,6 +22,4 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	if player.player_resource.in_match:
 		return {"ok": false, "reason": "in_match"}
 
-	var status: Dictionary = SparringService.queue_status(instance, peer_id, master_id)
-	status["master_name"] = master.master_name
-	return status
+	return SparringService.queue_status(instance, peer_id, master_id)

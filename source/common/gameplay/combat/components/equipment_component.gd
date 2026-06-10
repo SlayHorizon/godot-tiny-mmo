@@ -39,11 +39,11 @@ func unequip(slot: StringName) -> void:
 	synchronizer.set_by_path(slot_path(slot), 0)
 
 
-func can_use(slot: StringName, index: int) -> bool:
+func can_use(slot: StringName, index: int, released: bool = false) -> bool:
 	var mounted: Weapon = mounted_nodes.get(slot, null)
 
 	if mounted and mounted.has_method("can_use_weapon"):
-		return mounted.can_use_weapon(index)
+		return mounted.can_use_weapon(index, released)
 	return false
 
 

@@ -15,7 +15,7 @@ func start_database(world_info: Dictionary) -> void:
 
 
 func configure_database(world_info: Dictionary) -> void:
-	var file_name := (str(world_info["name"]) + ".db").to_lower()
+	var file_name: String = (str(world_info["name"]) + ".db").to_lower()
 
 	# Reminder: writing to res:// is fine in editor, NOT in exports.
 	if OS.has_feature("editor"):

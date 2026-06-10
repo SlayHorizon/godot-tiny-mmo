@@ -1,35 +1,23 @@
 [gd_scene format=3 uid="uid://ivb4cdjfwbtx"]
 
-[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_sog2w"]
+[ext_resource type="Script" uid="uid://bro2oljlaeval" path="res://source/common/gameplay/items/weapons/hammer/hammer.gd" id="0_script"]
+[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_base"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="2_ability"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/hammer_slam.tres" id="3_slam"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="4_tex"]
 
-[sub_resource type="Animation" id="Animation_dbohu"]
-resource_name = "idle"
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_ndsof"]
-_data = {
-&"idle": SubResource("Animation_dbohu")
-}
-
-[sub_resource type="Animation" id="Animation_phmkg"]
-
-[sub_resource type="Animation" id="Animation_2ibxn"]
-resource_name = "uf"
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_4ukvo"]
-_data = {
-&"salade": SubResource("Animation_phmkg"),
-&"uf": SubResource("Animation_2ibxn")
-}
-
-[node name="Weapon" instance=ExtResource("1_sog2w")]
+[node name="Weapon" instance=ExtResource("1_base")]
+script = ExtResource("0_script")
+abilities = Array[ExtResource("2_ability")]([ExtResource("3_slam")])
 
 [node name="WeaponSprite" parent="." index="0"]
 position = Vector2(-8, -7)
 centered = false
+texture = ExtResource("4_tex")
 region_rect = Rect2(16, 16, 16, 32)
 
-[node name="AnimationPlayer" parent="." index="2"]
-libraries = {
-"": SubResource("AnimationLibrary_ndsof"),
-"hammer": SubResource("AnimationLibrary_4ukvo")
-}
+[node name="WeaponSprite" parent="." index="0"]
+position = Vector2(-8, -7)
+centered = false
+texture = ExtResource("4_tex")
+region_rect = Rect2(16, 16, 16, 32)

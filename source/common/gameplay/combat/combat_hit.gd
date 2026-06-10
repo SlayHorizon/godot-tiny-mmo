@@ -11,6 +11,11 @@ class_name CombatHit
 ## here so they all detect the same things.
 const TARGET_MASK: int = 7
 
+## Damage types. Physical is mitigated by ARMOR, magic by MR — pass the right
+## one to try_damage (melee/arrows default to physical; wand bolts send magic).
+const DAMAGE_PHYSICAL: StringName = &"physical"
+const DAMAGE_MAGIC: StringName = &"magic"
+
 enum Result {
 	IGNORED,  ## pass through — not a valid target (self, friendly, safe zone…)
 	DAMAGED,  ## a combatant or flag took the hit
@@ -23,7 +28,7 @@ enum Result {
 ## queue_frees on DAMAGED/BLOCKED and passes through on IGNORED; a melee arc just
 ## ignores the result and lets the damage land. Server-authoritative — call only
 ## where damage is owned (the hitboxes already gate on multiplayer.is_server()).
-static func try_damage(source: Character, body: Node2D, damage: float) -> Result:
+static func try_damage(source: Character, body: Node2D, damage: float, damage_type: StringName = DAMAGE_PHYSICAL) -> Result:
 	if body == source:
 		return Result.IGNORED
 
@@ -46,7 +51,7 @@ static func try_damage(source: Character, body: Node2D, damage: float) -> Result
 
 	# Player-vs-player only lands in PvP zones — exception for a live sparring match.
 	if body is Player and source is Player and not (body as Player).is_pvp():
-		if not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player)):
+		if not SparringService.can_spar_damage(source as Player, body as Player):
 			return Result.IGNORED
 
 	# Guild friendly fire: members tagged into the same guild don't damage each
@@ -54,7 +59,7 @@ static func try_damage(source: Character, body: Node2D, damage: float) -> Result
 	if _same_guild_no_spar(source, body):
 		return Result.IGNORED
 
-	body.take_damage(damage, source)
+	body.take_damage(damage, source, damage_type)
 	return Result.DAMAGED
 
 
@@ -99,4 +104,4 @@ static func _same_guild_no_spar(source: Node, body: Node) -> bool:
 	var tgt_guild: int = tgt_res.active_guild_id
 	if src_guild <= 0 or src_guild != tgt_guild:
 		return false
-	return not (SparringService.is_pvp_live_for(body as Player) and SparringService.is_pvp_live_for(source as Player))
+	return not SparringService.can_spar_damage(source as Player, body as Player)

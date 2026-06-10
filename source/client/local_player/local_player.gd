@@ -81,6 +81,19 @@ func _on_sparring_match_state(payload: Dictionary) -> void:
 	if pos is Vector2 and pos != Vector2.ZERO:
 		global_position = pos
 		_teleport_lock_until_ms = Time.get_ticks_msec() + 500
+	# Spar-team tinting: remember allies/opponents for the match (cleared on end)
+	# and re-tint everyone in the map so health bars flip immediately.
+	if bool(payload.get("in_match", false)):
+		Character.spar_ally_peers = payload.get("allies", [])
+		Character.spar_opponent_peers = payload.get("opponents", [])
+	else:
+		Character.spar_ally_peers = []
+		Character.spar_opponent_peers = []
+	var map: Node = get_parent()
+	if map != null:
+		for child: Node in map.get_children():
+			if child.has_method(&"_apply_team_bar_color"):
+				child.call(&"_apply_team_bar_color")
 
 
 ## Generic server-driven teleport (staff /goto, /summon within the same map).

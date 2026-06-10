@@ -43,16 +43,18 @@ static func notify(title: String, description: String, color: int = COLOR_INFO) 
 
 # --- Common events as named helpers so call sites stay readable ---
 
-static func notify_master_online(address: String, port: int) -> void:
-	notify("🟢 Master server online", "Listening on `%s:%d`." % [address, port], COLOR_OK)
+static func notify_master_online() -> void:
+	# Version (not host:port — irrelevant behind a reverse proxy) lets an operator
+	# confirm at a glance that a deploy actually took effect.
+	notify("🟢 Master server online", "Running version `%s`." % GatewayAPI.game_version(), COLOR_OK)
 
 
 static func notify_master_offline() -> void:
 	notify("🔴 Master server offline", "Shutting down.", COLOR_BAD)
 
 
-static func notify_world_connected(world_name: String, address: String, port: int) -> void:
-	notify("🟢 World connected", "**%s** (`%s:%d`) joined the master." % [world_name, address, port], COLOR_OK)
+static func notify_world_connected(world_name: String) -> void:
+	notify("🟢 World connected", "**%s** is online." % world_name, COLOR_OK)
 
 
 static func notify_world_disconnected(world_name: String) -> void:

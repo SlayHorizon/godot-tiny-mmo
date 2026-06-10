@@ -2,12 +2,7 @@ class_name Player
 extends Character
 
 
-signal display_name_changed(new_name: String)
-
 var player_resource: PlayerResource
-
-var display_name: String = "Unknown":
-	set = _set_display_name
 
 ## Synced guild tag — drives the blue ally health-bar tint guildmates see on each
 ## other. Synced like display_name (set_by_path → baseline + live dirty).
@@ -67,16 +62,14 @@ func die(_killer: Character) -> void:
 	is_dead = false
 
 
-func _set_display_name(new_name: String) -> void:
-	display_name = new_name
-	if not multiplayer.is_server():
-		display_name_changed.emit(new_name)
-
-
 func _ready() -> void:
 	super._ready()
 	if not multiplayer.is_server():
 		_apply_team_bar_color()
+
+
+## Mana regen lives in ServerInstance's 1 Hz status tick (one timer per instance,
+## not a per-frame poll on every player node) — see instance_server.gd.
 
 
 func _set_active_guild_id(value: int) -> void:
@@ -91,6 +84,16 @@ func _set_active_guild_id(value: int) -> void:
 ## guild change by ClientState._retint_local_players.
 func _apply_team_bar_color() -> void:
 	if multiplayer.is_server():
+		return
+	# Spar team overrides guild for the duration of a match: an opposing
+	# guildmate reads hostile, a non-guild teammate reads ally. (Client Player
+	# nodes are named by peer id — see InstanceClient.)
+	var peer: int = name.to_int()
+	if Character.spar_opponent_peers.has(peer):
+		set_health_bar_fill(BAR_COLOR_HOSTILE)
+		return
+	if Character.spar_ally_peers.has(peer):
+		set_health_bar_fill(BAR_COLOR_ALLY)
 		return
 	var same_guild: bool = active_guild_id > 0 and active_guild_id == Character.local_viewer_guild_id
 	set_health_bar_fill(BAR_COLOR_ALLY if same_guild else BAR_COLOR_HOSTILE)

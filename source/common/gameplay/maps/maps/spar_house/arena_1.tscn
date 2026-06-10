@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_48v02"]
 [ext_resource type="TileSet" uid="uid://cp3aq00j7d6as" path="res://source/common/gameplay/maps/tilesets/buildings_inside_tileset.tres" id="2_5lp52"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="3_c8iah"]
-[ext_resource type="Script" uid="uid://crn8mflgu0qvy" path="res://source/common/gameplay/sparring/duel_master.gd" id="4_6yeio"]
 [ext_resource type="Resource" uid="uid://b832bjouifd56" path="res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_house.tres" id="4_7553i"]
+[ext_resource type="PackedScene" uid="uid://otv230rdmir2" path="res://source/common/gameplay/sparring/duel_master.tscn" id="5_iyqdx"]
+[ext_resource type="Script" uid="uid://c1nyyoow8f4tw" path="res://source/common/gameplay/sparring/spar_team.gd" id="6_iyqdx"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_7553i"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d7ncd"]
+size = Vector2(456, 352)
 
 [node name="Arena" type="Node2D" unique_id=613613791]
 y_sort_enabled = true
@@ -37,25 +39,34 @@ scale = Vector2(3.16, 1)
 target_instance = ExtResource("4_7553i")
 target_id = 2
 
-[node name="DuelMaster" type="Area2D" parent="." unique_id=1427004820 node_paths=PackedStringArray("spawn_a", "spawn_b")]
-position = Vector2(554.1217, 85.276474)
-script = ExtResource("4_6yeio")
-spawn_a = NodePath("../SpawnPoint1")
-spawn_b = NodePath("../SpawnPoint2")
-metadata/_custom_type_script = "uid://crn8mflgu0qvy"
+[node name="DuelMaster2" parent="." unique_id=601088349 node_paths=PackedStringArray("fight_zone") instance=ExtResource("5_iyqdx")]
+position = Vector2(552.41156, 93.07193)
+fight_zone = NodePath("Area2D")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DuelMaster" unique_id=553013406]
-shape = SubResource("RectangleShape2D_7553i")
+[node name="Area2D" type="Area2D" parent="DuelMaster2" unique_id=115252777]
+position = Vector2(-291.69397, 47.69403)
 
-[node name="Label" type="Label" parent="DuelMaster" unique_id=1226340512]
-offset_left = -18.121704
-offset_top = -13.276474
-offset_right = 13.878296
-offset_bottom = 7.723526
-text = "Duel"
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DuelMaster2/Area2D" unique_id=1787235239]
+position = Vector2(-0.71759033, 27.23404)
+shape = SubResource("RectangleShape2D_d7ncd")
 
-[node name="SpawnPoint1" type="Marker2D" parent="." unique_id=225322716]
-position = Vector2(149.40271, 167.08939)
+[node name="SparTeam" type="Node2D" parent="DuelMaster2" unique_id=1612601687]
+script = ExtResource("6_iyqdx")
+metadata/_custom_type_script = "uid://c1nyyoow8f4tw"
 
-[node name="SpawnPoint2" type="Marker2D" parent="." unique_id=133720982]
-position = Vector2(371.79187, 162.58148)
+[node name="Marker2D" type="Marker2D" parent="DuelMaster2/SparTeam" unique_id=1433561466]
+position = Vector2(-98.00403, 64.36798)
+
+[node name="SparTeam2" type="Node2D" parent="DuelMaster2" unique_id=920814712]
+script = ExtResource("6_iyqdx")
+metadata/_custom_type_script = "uid://c1nyyoow8f4tw"
+
+[node name="Marker2D" type="Marker2D" parent="DuelMaster2/SparTeam2" unique_id=1325839053]
+position = Vector2(-414.9096, 63.47165)
+
+[node name="Label" type="Label" parent="DuelMaster2" unique_id=1749143299]
+offset_left = -9.320923
+offset_top = -14.465698
+offset_right = 7.679077
+offset_bottom = 6.5343018
+text = "ac"

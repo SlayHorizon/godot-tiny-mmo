@@ -41,9 +41,7 @@ func fetch_server_info(info: Dictionary) -> void:
 	connected_worlds[game_server_id]["connected_at"] = int(Time.get_unix_time_from_system())
 	gateway_manager.update_worlds_info.rpc(connected_worlds)
 	var world_name: String = str(info.get("info", {}).get("name", "world#%d" % game_server_id))
-	DiscordNotifier.notify_world_connected(
-		world_name, str(info.get("address", "?")), int(info.get("port", 0))
-	)
+	DiscordNotifier.notify_world_connected(world_name)
 
 
 ## Periodic snapshot push from each world. Replaces the live numbers on the
