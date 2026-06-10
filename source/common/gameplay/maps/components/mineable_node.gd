@@ -93,7 +93,10 @@ func _ready() -> void:
 ##
 ## Returns {"ok": bool, ...}. On success the dict also carries a
 ## `node_path` so the client can route per-node visual state updates.
-func register_gather_hit(player: Player, damage: int, instance: ServerInstance, tool_type: StringName = &"") -> Dictionary:
+# `instance` is the ServerInstance, typed Node on purpose: this is common/ code
+# shipped to clients, and server-only classes are stripped from client exports —
+# naming the type would break this whole script on exported clients.
+func register_gather_hit(player: Player, damage: int, instance: Node, tool_type: StringName = &"") -> Dictionary:
 	if data == null or data.ore == null:
 		return {"ok": false}
 	if player == null or player.player_resource == null:

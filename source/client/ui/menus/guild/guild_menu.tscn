@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://la1wru6pvnyy"]
+[gd_scene format=3 uid="uid://la1wru6pvnyy"]
 
 [ext_resource type="Script" uid="uid://d1cseo7blcif2" path="res://source/client/ui/menus/guild/guild_menu.gd" id="1_njed6"]
 
-[node name="GuildMenu" type="Control"]
+[node name="GuildMenu" type="Control" unique_id=2092499712]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

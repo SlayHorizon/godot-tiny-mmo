@@ -3,17 +3,17 @@
 [ext_resource type="Script" uid="uid://c5d1sftv6bxs1" path="res://source/common/gameplay/items/weapons/wand/heal_bolt.gd" id="1_heal"]
 [ext_resource type="Texture2D" uid="uid://bg355a0er6or" path="res://assets/sprites/particles/white_circle.png" id="2_tex"]
 
-[sub_resource type="CircleShape2D" id="CircleShape_heal"]
-radius = 4.5
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_445qu"]
+size = Vector2(16, 16)
 
-[node name="HealBolt" type="Area2D"]
+[node name="HealBolt" type="Area2D" unique_id=899497288]
 collision_layer = 0
 script = ExtResource("1_heal")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape_heal")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1852417144]
+shape = SubResource("RectangleShape2D_445qu")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1613978348]
 modulate = Color(0.45, 1, 0.55, 1)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_tex")

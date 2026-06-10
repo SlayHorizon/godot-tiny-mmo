@@ -285,29 +285,32 @@ func _view_profile(parent: Node) -> void:
 	box.add_child(top)
 
 	var big_logo: TextureRect = TextureRect.new()
+	# EXPAND_IGNORE_SIZE pins the node to custom_minimum_size no matter how tall
+	# the row gets — a long description must never inflate the logo. SHRINK_CENTER
+	# keeps the HBox from stretching it vertically.
 	big_logo.custom_minimum_size = Vector2(120, 120)
-	big_logo.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	big_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	big_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	big_logo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	big_logo.texture = _logo_for(int(_guild.get("logo_id", 0)))
 	top.add_child(big_logo)
 
 	var desc: String = str(_guild.get("description", ""))
-	# An autowrap Label placed as a DIRECT flex child of an HBoxContainer makes
-	# its width<->height minimum-size calc oscillate once the text wraps to a
-	# second line — a logless native hang/crash. Wrapping it in a VBox gives the
-	# Label a resolved width so wrapping is stable (same shape as the trophies
-	# Label, which lives in a VBox and never crashed).
-	var desc_col: VBoxContainer = VBoxContainer.new()
-	desc_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	desc_col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	top.add_child(desc_col)
-
-	var desc_label: Label = Label.new()
-	desc_label.text = desc if not desc.is_empty() else "No description."
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# RichTextLabel with fit_content OFF: fixed-height box (matches the logo) that
+	# scrolls internally when the text overflows — the row's size is CONSTANT
+	# regardless of description length. Also immune to the autowrap-Label-in-HBox
+	# min-size oscillation that used to hard-crash this view. bbcode stays OFF —
+	# descriptions are player-written, no tag injection.
+	var desc_label: RichTextLabel = RichTextLabel.new()
+	desc_label.bbcode_enabled = true
+	desc_label.fit_content = false
+	desc_label.scroll_active = true
+	desc_label.custom_minimum_size = Vector2(0, 120)
 	desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	desc_label.add_theme_color_override(&"font_color", COLOR_MUTED)
-	desc_col.add_child(desc_label)
+	desc_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	desc_label.text = desc if not desc.is_empty() else "No description."
+	desc_label.add_theme_color_override(&"default_color", COLOR_MUTED)
+	top.add_child(desc_label)
 
 	box.add_child(HSeparator.new())
 

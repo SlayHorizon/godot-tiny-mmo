@@ -203,7 +203,7 @@ transitions = ["Start", "OnFoot", SubResource("AnimationNodeStateMachineTransiti
 graph_offset = Vector2(13.9791, -42)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
-size = Vector2(16, 18)
+size = Vector2(16, 26)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eyotc"]
 size = Vector2(16, 32)
@@ -248,7 +248,7 @@ speed_scale = 1.5
 offset = Vector2(0, -30)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1897743854]
-position = Vector2(0, -7)
+position = Vector2(0, -11)
 shape = SubResource("RectangleShape2D_3w1m3")
 
 [node name="HandOffset" type="Node2D" parent="." unique_id=2126751317]

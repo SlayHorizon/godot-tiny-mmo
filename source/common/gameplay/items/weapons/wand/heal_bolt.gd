@@ -54,13 +54,18 @@ func _is_heal_ally(healer: Player, target: Player) -> bool:
 
 ## Green floating "+N" over the healed ally, for everyone in the instance —
 ## same combat.hit path weapon damage and flag repairs use.
+## NO ServerInstance type-check here: this is common/ code shipped to clients,
+## and server-only classes are stripped from client exports — referencing one
+## breaks the whole script on exported clients (the frozen-orb bug). Walk the
+## tree by SHAPE instead: Player → Map → ServerInstance, like character.gd does.
 func _broadcast_heal(target: Player, healed: float) -> void:
 	if ServerHub.current == null:
 		return
-	var instance: Node = target.get_parent()
-	while instance != null and instance is not ServerInstance:
-		instance = instance.get_parent()
-	if instance == null:
+	var maybe_map: Node = target.get_parent()
+	if maybe_map == null:
+		return
+	var maybe_instance: Node = maybe_map.get_parent()
+	if maybe_instance == null:
 		return
 	ServerHub.current.propagate_rpc(
 		ServerHub.current.data_push.bind(&"combat.hit", {
@@ -68,5 +73,5 @@ func _broadcast_heal(target: Player, healed: float) -> void:
 			"position": target.global_position,
 			"heal": true,
 		}),
-		instance.name
+		maybe_instance.name
 	)

@@ -3,17 +3,17 @@
 [ext_resource type="Script" uid="uid://c2f126nxuonb3" path="res://source/common/gameplay/items/weapons/bow/arrow.gd" id="1_proj"]
 [ext_resource type="Texture2D" uid="uid://bg355a0er6or" path="res://assets/sprites/particles/white_circle.png" id="2_tex"]
 
-[sub_resource type="CircleShape2D" id="CircleShape_bolt"]
-radius = 4.5
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vm0af"]
+size = Vector2(16, 16)
 
-[node name="Bolt" type="Area2D"]
+[node name="Bolt" type="Area2D" unique_id=510750383]
 collision_layer = 0
 script = ExtResource("1_proj")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape_bolt")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1887810936]
+shape = SubResource("RectangleShape2D_vm0af")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1077079608]
 modulate = Color(0.75, 0.55, 1, 1)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_tex")
