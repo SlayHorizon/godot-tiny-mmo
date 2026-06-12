@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="InstanceResource" format=3 uid="uid://dfeyr0kdescac"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_pjag0"]
+
+[resource]
+script = ExtResource("1_pjag0")
+instance_name = &"Forest"
+map_path = "uid://c4nf240jpebhj"
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"
