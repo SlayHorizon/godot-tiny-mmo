@@ -16,6 +16,11 @@ var damage: float = 5.0
 ## Mitigation channel: ARMOR for physical (arrows), MR for magic (wand bolts).
 var damage_type: StringName = CombatHit.DAMAGE_PHYSICAL
 
+## Optional damage-over-time applied on a DAMAGED hit (Ember Bolt's burn).
+## 0 = none. Set by the spawning ability alongside damage.
+var burn_dps: float = 0.0
+var burn_duration_s: float = 0.0
+
 ## Seconds an arrow flies before despawning if it hits nothing. Short so stray
 ## shots don't sail across the whole map (speed × this ≈ max range).
 const LIFETIME: float = 1.2
@@ -57,6 +62,10 @@ func _on_body_entered(body: Node2D) -> void:
 		CombatHit.Result.BLOCKED:
 			queue_free() # hit a wall / door — stop here
 		CombatHit.Result.DAMAGED:
+			# The gated hit landed — ride a burn on top if this projectile
+			# carries one (server applies; clients see the health drain sync).
+			if burn_dps > 0.0 and multiplayer.is_server() and body is Character:
+				DamageOverTime.apply(body as Character, source as Character, &"burn", burn_dps, burn_duration_s, damage_type)
 			if not piercing or pierce_left <= 0:
 				queue_free()
 			pierce_left -= 1

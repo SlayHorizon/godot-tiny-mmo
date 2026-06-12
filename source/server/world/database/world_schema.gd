@@ -15,6 +15,9 @@ static func ensure_schema(db: SQLite) -> void:
 	if version < 2:
 		_migration_v2(db)
 		_set_schema_version(db, 2)
+	if version < 3:
+		_migration_v3(db)
+		_set_schema_version(db, 3)
 
 
 static func _migration_v1(db: SQLite) -> void:
@@ -110,6 +113,14 @@ static func _migration_v1(db: SQLite) -> void:
 static func _migration_v2(db: SQLite) -> void:
 	if not _column_exists(db, "players", "blocked_ids_json"):
 		db.query("ALTER TABLE players ADD COLUMN blocked_ids_json TEXT NOT NULL DEFAULT '[]';")
+
+
+## v3: weapon mastery. One JSON blob per player: {"masteries": {category ->
+## {"level", "xp", "spent"}}, "loadout": {category -> node_id}}. See
+## docs/mastery.md.
+static func _migration_v3(db: SQLite) -> void:
+	if not _column_exists(db, "players", "mastery_json"):
+		db.query("ALTER TABLE players ADD COLUMN mastery_json TEXT NOT NULL DEFAULT '{}';")
 
 
 static func _column_exists(db: SQLite, table: String, column: String) -> bool:

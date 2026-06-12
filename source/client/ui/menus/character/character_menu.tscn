@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/menus/inventory/attributes_panel.gd" id="4_attr"]
 [ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="5_jobs"]
 [ext_resource type="Script" uid="uid://cxlsj3ekiy453" path="res://source/client/ui/menus/character/quest_log_panel.gd" id="6_quest"]
+[ext_resource type="Script" path="res://source/client/ui/menus/character/mastery_panel.gd" id="7_mastery"]
 
 [node name="Character" type="Control" unique_id=1903605425]
 layout_mode = 3
@@ -84,6 +85,14 @@ layout_mode = 2
 theme_type_variation = &"HeaderTab"
 toggle_mode = true
 text = "Jobs"
+
+[node name="MasteryTab" type="Button" parent="Margin/Card/Pad/Root/HeaderBar/TabBar" unique_id=1999000101]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_type_variation = &"HeaderTab"
+toggle_mode = true
+text = "Mastery"
 
 [node name="QuestsTab" type="Button" parent="Margin/Card/Pad/Root/HeaderBar/TabBar" unique_id=1496356662]
 unique_name_in_owner = true
@@ -243,6 +252,12 @@ script = ExtResource("5_jobs")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="MasteryContent" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content" unique_id=1999000102]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+script = ExtResource("7_mastery")
 
 [node name="QuestsContent" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content" unique_id=1496784281]
 unique_name_in_owner = true

@@ -33,9 +33,10 @@
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="18_077qd"]
 [ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="19_077qd"]
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="19_n81rr"]
+[ext_resource type="Resource" uid="uid://dlgfcyxce1v1y" path="res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres" id="24_bauih"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
-[ext_resource type="Resource" uid="uid://d16ou2ymbmlhi" path="res://source/common/gameplay/characters/npc/types/training_dummy.tres" id="26_gf85t"]
+[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/training_dummy.tres" id="26_gf85t"]
 [ext_resource type="Resource" uid="uid://ca6hdigffs5j3" path="res://source/common/gameplay/quests/resources/fungus_trouble.tres" id="26_n81rr"]
 [ext_resource type="Resource" uid="uid://bj4t6nwwxtmh6" path="res://source/common/gameplay/quests/resources/wolves_at_the_ranch.tres" id="27_ikkk2"]
 [ext_resource type="Resource" uid="uid://c43oawxmbygiq" path="res://source/common/gameplay/characters/npc/types/wolf.tres" id="27_v4qho"]
@@ -301,101 +302,121 @@ metadata/_edit_lock_ = true
 position = Vector2(282, 1202)
 debug_draw_ranges = false
 enemy_data = ExtResource("13_go7ir")
+weapon = null
 
 [node name="Fungus2" parent="ReplicatedPropsContainer" unique_id=6706833 instance=ExtResource("4_de0pc")]
 position = Vector2(391, 1140)
 debug_draw_ranges = false
 enemy_data = ExtResource("13_go7ir")
+weapon = null
 
 [node name="Fungus3" parent="ReplicatedPropsContainer" unique_id=111771334 instance=ExtResource("4_de0pc")]
 position = Vector2(437, 1247)
 debug_draw_ranges = false
 enemy_data = ExtResource("13_go7ir")
+weapon = null
 
 [node name="Fungus4" parent="ReplicatedPropsContainer" unique_id=303585585 instance=ExtResource("4_de0pc")]
 position = Vector2(331, 1315)
 debug_draw_ranges = false
-enemy_data = ExtResource("13_go7ir")
+enemy_data = ExtResource("24_bauih")
+weapon = null
 
 [node name="Goblin" parent="ReplicatedPropsContainer" unique_id=1289545716 instance=ExtResource("4_de0pc")]
 position = Vector2(466, 1743)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
+weapon = null
 
 [node name="Goblin2" parent="ReplicatedPropsContainer" unique_id=598464135 instance=ExtResource("4_de0pc")]
 position = Vector2(615, 1809)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
+weapon = null
 
 [node name="Goblin3" parent="ReplicatedPropsContainer" unique_id=1784356280 instance=ExtResource("4_de0pc")]
 position = Vector2(149, 1578)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
+weapon = null
 
 [node name="Goblin4" parent="ReplicatedPropsContainer" unique_id=1776423560 instance=ExtResource("4_de0pc")]
 position = Vector2(567, 2029)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
+weapon = null
 
 [node name="Goblin5" parent="ReplicatedPropsContainer" unique_id=764696779 instance=ExtResource("4_de0pc")]
 position = Vector2(723, 2194)
 debug_draw_ranges = false
 enemy_data = ExtResource("14_pnbwk")
+weapon = null
 
 [node name="Bandit" parent="ReplicatedPropsContainer" unique_id=704183070 instance=ExtResource("4_de0pc")]
 position = Vector2(1602, 2405)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
+weapon = null
 
 [node name="Bandit2" parent="ReplicatedPropsContainer" unique_id=1966133719 instance=ExtResource("4_de0pc")]
 position = Vector2(1369, 2538)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
+weapon = null
 
 [node name="Bandit3" parent="ReplicatedPropsContainer" unique_id=1234025587 instance=ExtResource("4_de0pc")]
 position = Vector2(1757, 2282)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
+weapon = null
 
 [node name="Bandit4" parent="ReplicatedPropsContainer" unique_id=1417063041 instance=ExtResource("4_de0pc")]
 position = Vector2(1475, 2551)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
+weapon = null
 
 [node name="Bandit5" parent="ReplicatedPropsContainer" unique_id=1348882462 instance=ExtResource("4_de0pc")]
 position = Vector2(1600, 2088)
 debug_draw_ranges = false
 enemy_data = ExtResource("15_vc2t3")
+weapon = null
 
 [node name="BanditCaptain" parent="ReplicatedPropsContainer" unique_id=518780958 instance=ExtResource("4_de0pc")]
 position = Vector2(1393, 2645)
 debug_draw_ranges = false
 enemy_data = ExtResource("16_tlky3")
+weapon = null
 
 [node name="Dummy" parent="ReplicatedPropsContainer" unique_id=2063449186 instance=ExtResource("4_de0pc")]
 position = Vector2(1189.1405, 830.62177)
 debug_draw_ranges = false
 enemy_data = ExtResource("26_gf85t")
+weapon = null
 
 [node name="Wolf" parent="ReplicatedPropsContainer" unique_id=94255933 instance=ExtResource("4_de0pc")]
 position = Vector2(2225, 1553)
 debug_draw_ranges = false
 enemy_data = ExtResource("27_v4qho")
+weapon = null
 
 [node name="Wolf2" parent="ReplicatedPropsContainer" unique_id=335879426 instance=ExtResource("4_de0pc")]
 position = Vector2(2111, 1560)
 debug_draw_ranges = false
 enemy_data = ExtResource("27_v4qho")
+weapon = null
 
 [node name="Wolf3" parent="ReplicatedPropsContainer" unique_id=1646413180 instance=ExtResource("4_de0pc")]
 position = Vector2(2092, 1692)
 debug_draw_ranges = false
 enemy_data = ExtResource("27_v4qho")
+weapon = null
 
 [node name="Wolf4" parent="ReplicatedPropsContainer" unique_id=1588898387 instance=ExtResource("4_de0pc")]
 position = Vector2(2247, 1694)
 debug_draw_ranges = false
 enemy_data = ExtResource("27_v4qho")
+weapon = null
 
 [node name="ZonePatch2D" type="Node2D" parent="." unique_id=167804232]
 script = ExtResource("12_bhe7f")

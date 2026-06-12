@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres" id="4_multi"]
+
+[sub_resource type="Resource" id="Node_multishot"]
+script = ExtResource("2_node")
+id = &"bow_multishot"
+node_name = "Multishot"
+description = "Charge and loose a fan of three arrows. Mount it in your bow's special slot."
+branch = &"offensive"
+tier = 1
+ability = ExtResource("4_multi")
+
+[sub_resource type="Resource" id="Mod_ms_lightstep"]
+script = ExtResource("3_mod")
+stat_name = "move_speed"
+value = 6.0
+
+[sub_resource type="Resource" id="Node_lightstep"]
+script = ExtResource("2_node")
+id = &"bow_lightstep"
+node_name = "Light Step"
+description = "+6 move speed while wielding a bow — stay out of reach."
+branch = &"defensive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ms_lightstep")])
+
+[sub_resource type="Resource" id="Mod_regen_patience"]
+script = ExtResource("3_mod")
+stat_name = "mana_regen"
+value = 0.2
+
+[sub_resource type="Resource" id="Node_patience"]
+script = ExtResource("2_node")
+id = &"bow_patience"
+node_name = "Hunter's Patience"
+description = "+0.2 mana regeneration while wielding a bow."
+branch = &"supportive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_regen_patience")])
+
+[resource]
+script = ExtResource("1_tree")
+category = &"bow"
+display_name = "Bow"
+nodes = Array[ExtResource("2_node")]([SubResource("Node_multishot"), SubResource("Node_lightstep"), SubResource("Node_patience")])

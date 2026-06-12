@@ -21,6 +21,9 @@ var _selected_gear_slot: StringName
 ## Wallet widgets, created in the shell header at runtime.
 var wallet_icon: TextureRect
 var wallet_amount: Label
+## "Hotkey" button in the detail strip (created next to ActionButton at
+## runtime) — assigns the selected bag item to a HUD quick slot.
+var hotkey_button: Button
 @onready var equipment_slots: GridContainer = %EquipmentSlots
 @onready var relic_slots: GridContainer = %RelicSlots
 @onready var all_tab: Button = %AllTab
@@ -47,6 +50,15 @@ func _ready() -> void:
 
 	for slot_button: GearSlotButton in _gear_buttons():
 		slot_button.pressed.connect(_on_gear_slot_pressed.bind(slot_button))
+
+	hotkey_button = Button.new()
+	hotkey_button.text = "Hotkey"
+	# Twin of ActionButton — same size and centering, consistent tap target.
+	hotkey_button.custom_minimum_size = action_button.custom_minimum_size
+	hotkey_button.size_flags_vertical = action_button.size_flags_vertical
+	hotkey_button.disabled = true
+	hotkey_button.pressed.connect(_on_hotkey_button_pressed)
+	action_button.add_sibling(hotkey_button)
 
 	_connect_equipment_signal()
 	ClientState.local_player_ready.connect(func(_lp: LocalPlayer): _connect_equipment_signal())
@@ -152,6 +164,8 @@ func _on_bag_item_pressed(item_id: int, item: Item) -> void:
 	else:
 		action_button.text = "—"
 		action_button.disabled = true
+	# Anything equip/usable can sit on a quick slot; materials can't.
+	hotkey_button.disabled = action_button.disabled
 
 
 func _on_gear_slot_pressed(slot_button: GearSlotButton) -> void:
@@ -173,6 +187,7 @@ func _on_gear_slot_pressed(slot_button: GearSlotButton) -> void:
 	detail_description.text = item.description
 	action_button.text = "Unequip"
 	action_button.disabled = false
+	hotkey_button.disabled = true # bag items only — equipped gear isn't in the bag
 
 
 func _clear_detail() -> void:
@@ -183,6 +198,34 @@ func _clear_detail() -> void:
 	detail_name.text = "Select an item"
 	detail_description.text = ""
 	action_button.disabled = true
+	if hotkey_button != null:
+		hotkey_button.disabled = true
+
+
+## Opens the shared slot picker for the selected bag item. Picking the slot
+## the item already occupies clears it (toggle); picking another slot moves
+## it there, vacating its old one.
+func _on_hotkey_button_pressed() -> void:
+	if _selected_item == null:
+		return
+	var item: Item = _selected_item
+	var entries: PackedStringArray = PackedStringArray()
+	for i: int in 3:
+		var occupant: Item = ClientState.quick_slots.get_key(i) as Item
+		var occupant_name: String = String(occupant.item_name) if occupant != null else "empty"
+		entries.append("Slot %d (key %d)  —  %s" % [i + 1, i + 1, occupant_name])
+	SlotPickerOverlay.open(self, "Place %s on which quick slot?" % item.item_name, entries,
+		func(slot: int) -> void:
+			var occupant: Item = ClientState.quick_slots.get_key(slot) as Item
+			if occupant == item:
+				ClientState.quick_slots.set_key(slot, null) # toggle off
+				return
+			# Move semantics: vacate any other slot already holding this item.
+			for i: int in 3:
+				if (ClientState.quick_slots.get_key(i) as Item) == item:
+					ClientState.quick_slots.set_key(i, null)
+			ClientState.quick_slots.set_key(slot, item)
+	)
 
 
 func _on_action_button_pressed() -> void:

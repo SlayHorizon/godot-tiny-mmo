@@ -90,6 +90,14 @@ func predict_release() -> void:
 	charging = false
 
 
+## NPC / auto use: one full-power shot, no hold. Backdate the charge timestamp
+## by a whole charge_time so release_ability computes t = 1.0.
+func auto_use(entity: Entity, direction: Vector2) -> void:
+	charging = true
+	_charge_start = (Time.get_ticks_msec() / 1000.0) - charge_time_s
+	release_ability(entity, direction)
+
+
 func _init() -> void:
 	has_release = true
 

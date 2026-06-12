@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BoltShootAbility" format=3 uid="uid://dw54ygo4c0g7w"]
+
+[ext_resource type="Script" uid="uid://v03p4cycoksj" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/bolt_shoot_ability.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://bivhh1men00rg" path="res://source/common/gameplay/items/weapons/wand/bolt.tscn" id="2_bolt"]
+
+[resource]
+script = ExtResource("1_script")
+projectile_scene = ExtResource("2_bolt")
+ap_ratio = 0.85
+speed = 360.0
+burn_dps = 4.0
+burn_duration_s = 3.0
+bolt_modulate = Color(1, 0.5, 0.3, 1)
+name = "Ember Bolt"
+cooldown = 2.0
+mana_cost = 12
+metadata/slug = &"ember_bolt"
+metadata/id = 10

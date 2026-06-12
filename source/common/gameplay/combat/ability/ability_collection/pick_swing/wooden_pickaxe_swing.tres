@@ -7,3 +7,5 @@
 script = ExtResource("1_pick")
 name = "Pickaxe Swing"
 cooldown = 0.45
+metadata/slug = &"wooden_pickaxe_swing"
+metadata/id = 8

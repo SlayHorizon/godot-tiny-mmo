@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://blxysmttimic7"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_tnje4"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_df0na"]
+[ext_resource type="PackedScene" uid="uid://dkope8a17ojkl" path="res://source/common/gameplay/items/weapons/wand/wand.tscn" id="3_d6o88"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_hkafx"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_t37d0"]
+
+[sub_resource type="Resource" id="Mod_ap_wand"]
+script = ExtResource("1_tnje4")
+stat_name = "ap"
+value = 26.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wand"]
+atlas = ExtResource("2_df0na")
+region = Rect2(80, 0, 32, 16)
+
+[resource]
+script = ExtResource("4_hkafx")
+category = &"wand"
+capacity = 3
+right_hand_scene = ExtResource("3_d6o88")
+slot = ExtResource("5_t37d0")
+base_modifiers = Array[ExtResource("1_tnje4")]([SubResource("Mod_ap_wand")])
+item_name = &"Bandit Wand"
+item_icon = SubResource("AtlasTexture_wand")
+description = "A crooked wand pried from a bandit sorcerer. Sturdy enough to channel two focuses at once (weight 3)."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/slug = &"wand_bandit.item"
+metadata/id = 76

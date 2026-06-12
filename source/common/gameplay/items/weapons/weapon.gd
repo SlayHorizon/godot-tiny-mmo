@@ -18,6 +18,12 @@ var character: Character
 ## button, so the release sends even if the server's "began" hasn't echoed back.
 var _held: Dictionary[int, bool] = {}
 
+## Ability count the SCENE shipped (after _ready's duplication) — mastery
+## loadout abilities are appended after this index, so remounting can strip
+## them without touching scene defaults (the bow/hammer pattern until their
+## trees ship).
+var _base_ability_count: int = 1
+
 @onready var hand: Hand = $Hand
 @onready var weapon_sprite: Sprite2D = $WeaponSprite
 
@@ -31,6 +37,42 @@ func _ready() -> void:
 	for i: int in abilities.size():
 		if abilities[i] != null:
 			abilities[i] = abilities[i].duplicate()
+	_base_ability_count = abilities.size()
+	# Register this weapon's animation libraries on the wielder so ability
+	# swing_animation names ("weapon/sword.swing", ...) resolve. ONE loader for
+	# every weapon — per-weapon scripts must not re-implement this. Idempotent:
+	# first equip wins if two weapons share a library name.
+	if GameMode.is_client() and character != null:
+		for lib_name: StringName in animation_libraries:
+			if not character.animation_player.has_animation_library(lib_name):
+				character.animation_player.add_animation_library(lib_name, animation_libraries[lib_name])
+
+
+## Mounts the mastery-chosen special abilities at their PICKED slot positions
+## (every machine runs this off the synced special-ability ids — see
+## EquipmentComponent). Slot i lands at abilities[_base_ability_count + i], so
+## the panel's "Slot 1 (Q) / Slot 2 (E)" labels are always truthful; an empty
+## pick leaves a null HOLE (all input/use gates skip nulls) instead of
+## shifting later picks onto the wrong key. All-empty ids just strip previous
+## loadout mounts — scene-default specials (bow/hammer until their trees
+## ship) are untouched.
+func mount_specials(ability_ids: Array[int]) -> void:
+	var ids: Array[int] = ability_ids.duplicate()
+	while not ids.is_empty() and ids[ids.size() - 1] <= 0:
+		ids.pop_back() # trailing empties: shrink the array, no pointless holes
+	abilities.resize(_base_ability_count)
+	if ids.is_empty():
+		return
+	if ContentRegistryHub.registry_of(&"abilities") == null:
+		return # index not generated yet — loadout stays inert
+	abilities.resize(_base_ability_count + ids.size())
+	for i: int in ids.size():
+		if ids[i] <= 0:
+			continue # explicit empty slot — leave the null hole
+		var ability: AbilityResource = ContentRegistryHub.load_by_id(&"abilities", ids[i]) as AbilityResource
+		if ability != null:
+			# Same rule as _ready: each weapon instance owns its abilities outright.
+			abilities[_base_ability_count + i] = ability.duplicate()
 
 
 func try_perform_action(action_index: int, direction: Vector2) -> bool:
@@ -38,7 +80,7 @@ func try_perform_action(action_index: int, direction: Vector2) -> bool:
 	if action_index < 0 or action_index >= abilities.size():
 		return false
 	var ability: AbilityResource = abilities[action_index]
-	if not ability.can_use(character):
+	if ability == null or not ability.can_use(character):
 		return false
 	perform_action(action_index, direction)
 	return true
@@ -49,6 +91,8 @@ func try_perform_action(action_index: int, direction: Vector2) -> bool:
 func can_use_weapon(action_index: int, released: bool = false) -> bool:
 	if action_index < 0 or action_index >= abilities.size():
 		return false
+	if abilities[action_index] == null:
+		return false # empty loadout slot (null hole)
 	if released:
 		return abilities[action_index].has_release and abilities[action_index].can_use_release()
 	return abilities[action_index].can_use(character)
@@ -58,6 +102,8 @@ func perform_action(action_index: int, direction: Vector2, released: bool = fals
 	if action_index < 0 or action_index >= abilities.size():
 		return
 	var ability: AbilityResource = abilities[action_index]
+	if ability == null:
+		return # empty loadout slot (null hole)
 	# Cooldown + mana stamp on the COMPLETING phase: press for single-phase
 	# abilities, release for charge abilities. mark_used here (not only in
 	# try_perform_action) so the server action.perform path respects cooldowns.
@@ -88,20 +134,24 @@ func _consume_mana(ability: AbilityResource) -> void:
 	character.stats_component.set_stat(Stat.MANA, maxf(0.0, mana - ability.mana_cost))
 
 
-## A complete one-shot attack for AI / auto use. For charge abilities the
-## release follows instantly — an uncharged (minimum) shot, which is the right
-## NPC behavior (their damage is tuned on the EnemyTypeResource anyway).
+## A complete one-shot attack for AI / auto use. Routes through the ability's
+## auto_use so charge weapons fire at FULL power (an NPC's damage is its
+## EnemyTypeResource tuning, not a button-tap minimum).
 func auto_attack(direction: Vector2) -> void:
 	if abilities.is_empty():
 		return
-	perform_action(0, direction)
-	if abilities[0].has_release:
-		perform_action(0, direction, true)
+	var ability: AbilityResource = abilities[0]
+	if not ability.can_use(character):
+		return
+	ability.auto_use(character, direction)
+	ability.mark_used()
+	_consume_mana(ability)
 
 
 func process_input(local_player: LocalPlayer) -> void:
-	# primary attack (player_shoot)   → abilities[0]
-	# special attack (player_special) → abilities[1]
+	# primary attack (player_shoot)      → abilities[0]
+	# special attack (player_special)    → abilities[1]
+	# special 2      (player_special_2)  → abilities[2]
 	# Single-phase: tap to fire (predictive local mark_used keeps the channel
 	# quiet while held). Two-phase: press sends the charge, release sends the
 	# fire — _held bridges the round-trip so a fast tap still releases.
@@ -111,10 +161,14 @@ func process_input(local_player: LocalPlayer) -> void:
 	_handle_slot_input(0, controller.is_attack_just_pressed(), controller.is_attack_just_released(), local_player)
 	if abilities.size() > 1:
 		_handle_slot_input(1, controller.is_special_just_pressed(), controller.is_special_just_released(), local_player)
+	if abilities.size() > 2:
+		_handle_slot_input(2, controller.is_special2_just_pressed(), controller.is_special2_just_released(), local_player)
 
 
 func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, local_player: LocalPlayer) -> void:
 	var ability: AbilityResource = abilities[slot]
+	if ability == null:
+		return # empty loadout slot (null hole)
 	if just_pressed and ability.can_use(character):
 		if ability.has_release:
 			_held[slot] = true

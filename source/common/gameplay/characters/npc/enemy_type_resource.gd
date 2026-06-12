@@ -39,6 +39,18 @@ extends Resource
 ## Optional weapon. Null = melee AoE attacker.
 @export var weapon: WeaponItem
 
+@export_group("Lunge")
+## Telegraphed gap-closer. 0 = this enemy never lunges. When its target sits in
+## the pounce window (between ~2× melee range and lunge_range), the mob winds
+## up — a red circle marks the target's CURRENT spot — then dashes to that
+## LOCKED spot and damages players still inside lunge_radius (attack_damage).
+## Fully dodgeable by moving during the windup; punishes standing still.
+@export var lunge_range: float = 0.0
+@export var lunge_radius: float = 24.0
+@export var lunge_windup_s: float = 0.55
+@export var lunge_speed_multiplier: float = 5.0
+@export var lunge_cooldown: float = 5.0
+
 @export_group("AI & Movement")
 @export var move_speed: int = 20
 @export var distance_to_attack: int = 20

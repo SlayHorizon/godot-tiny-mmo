@@ -36,6 +36,10 @@ func save_player(player: PlayerResource) -> void:
 	var inventory_json: String = JSON.stringify(player.inventory)
 	var equipment_json: String = JSON.stringify(player.equipment)
 	var skills_json: String = JSON.stringify(player.skills)
+	var mastery_json: String = JSON.stringify({
+		"masteries": player.masteries,
+		"loadout": player.ability_loadout,
+	})
 	var quests_json: String = JSON.stringify(player.quests)
 
 	var friends_json: String = JSON.stringify(player.friends)
@@ -58,9 +62,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, quests_json, friends_json, blocked_ids_json, server_roles_json, stats_json, titles_json, dailies_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, server_roles_json, stats_json, titles_json, dailies_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -77,6 +81,7 @@ func save_player(player: PlayerResource) -> void:
 			inventory_json,
 			equipment_json,
 			skills_json,
+			mastery_json,
 			quests_json,
 			friends_json,
 			blocked_ids_json,
@@ -223,6 +228,39 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 			"xp": int(entry.get("xp", 0)),
 			"perks": perks,
 		}
+
+	# Weapon mastery: {"masteries": {category -> {"level","xp","spent"}},
+	# "loadout": {category -> node_id}}. JSON gives string keys / float values —
+	# normalize like skills above (categories back to StringName, spent ids stay
+	# String — that's how the runtime reads them).
+	var mastery_v: Variant = JSON.parse_string(str(row.get("mastery_json", "{}")))
+	player.masteries = {}
+	player.ability_loadout = {}
+	if mastery_v is Dictionary:
+		var masteries_raw: Dictionary = (mastery_v as Dictionary).get("masteries", {})
+		for category in masteries_raw:
+			var m_entry: Dictionary = masteries_raw[category]
+			var spent_raw: Dictionary = m_entry.get("spent", {})
+			var spent: Dictionary = {}
+			for node_id in spent_raw:
+				spent[String(node_id)] = true
+			player.masteries[StringName(category)] = {
+				"level": int(m_entry.get("level", 1)),
+				"xp": int(m_entry.get("xp", 0)),
+				"spent": spent,
+			}
+		var loadout_raw: Dictionary = (mastery_v as Dictionary).get("loadout", {})
+		for category in loadout_raw:
+			# Array of node ids in slot order. Early saves stored a single
+			# string — wrap it so alpha characters keep their pick.
+			var picks_v: Variant = loadout_raw[category]
+			var picks: Array = []
+			if picks_v is Array:
+				for pick in picks_v:
+					picks.append(str(pick))
+			elif not str(picks_v).is_empty():
+				picks.append(str(picks_v))
+			player.ability_loadout[String(category)] = picks
 
 	# Quests: { quest_id (int) -> {"state": StringName, "progress": {obj_index(int) -> count(int)}} }.
 	var quests_raw: Dictionary = JSON.parse_string(str(row.get("quests_json", "{}"))) as Dictionary

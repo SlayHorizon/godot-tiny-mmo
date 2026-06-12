@@ -55,8 +55,7 @@ func _apply_resource() -> void:
 	display_name = npc_resource.npc_name # drives the shared name label (client)
 	if npc_resource.skin != null:
 		skin_id = 0 # disable id-based skin; drive it directly (mirrors HostileNpc)
-		if has_node(^"AnimatedSprite2D"):
-			($AnimatedSprite2D as AnimatedSprite2D).sprite_frames = npc_resource.skin
+		animated_sprite.sprite_frames = npc_resource.skin
 
 
 ## Walk up to the owning Map (interactables are placed as map children).
@@ -76,8 +75,7 @@ func _spawn_click_area() -> void:
 	var rect: RectangleShape2D = RectangleShape2D.new()
 	rect.size = _sprite_size()
 	collision.shape = rect
-	if has_node(^"AnimatedSprite2D"):
-		collision.position = ($AnimatedSprite2D as AnimatedSprite2D).position
+	collision.position = animated_sprite.position
 	area.add_child(collision)
 	add_child(area)
 	area.input_event.connect(_on_clicked)
@@ -87,9 +85,7 @@ func _spawn_click_area() -> void:
 func _spawn_marker() -> void:
 	var marker: InteractableMarker = MARKER_SCENE.instantiate()
 	marker.kind = InteractableMarker.Kind.DIALOG
-	var top_y: float = -_sprite_size().y * 0.5
-	if has_node(^"AnimatedSprite2D"):
-		top_y = ($AnimatedSprite2D as AnimatedSprite2D).position.y - _sprite_size().y * 0.5
+	var top_y: float = animated_sprite.position.y - _sprite_size().y * 0.5
 	marker.position = Vector2(0, top_y - 8.0)
 	add_child(marker)
 
@@ -97,13 +93,10 @@ func _spawn_marker() -> void:
 ## Best-effort click-box / marker-offset size from the idle frame, with a fallback.
 func _sprite_size() -> Vector2:
 	var fallback: Vector2 = Vector2(28, 44)
-	if not has_node(^"AnimatedSprite2D"):
+	var frames: SpriteFrames = animated_sprite.sprite_frames
+	if frames == null or not frames.has_animation(animated_sprite.animation):
 		return fallback
-	var sprite: AnimatedSprite2D = $AnimatedSprite2D
-	var frames: SpriteFrames = sprite.sprite_frames
-	if frames == null or not frames.has_animation(sprite.animation):
-		return fallback
-	var tex: Texture2D = frames.get_frame_texture(sprite.animation, 0)
+	var tex: Texture2D = frames.get_frame_texture(animated_sprite.animation, 0)
 	return tex.get_size() if tex != null else fallback
 
 

@@ -11,3 +11,5 @@ swing_animation = &"weapon/sword.special.spin"
 name = "Sword Spin"
 cooldown = 2.5
 mana_cost = 10
+metadata/slug = &"sword_spin"
+metadata/id = 6

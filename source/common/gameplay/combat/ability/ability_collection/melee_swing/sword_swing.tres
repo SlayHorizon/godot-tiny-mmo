@@ -5,7 +5,8 @@
 
 [resource]
 script = ExtResource("1_swing")
-ad_ratio = 1.0
 swing_animation = &"weapon/sword.swing"
 name = "Sword Swing"
 cooldown = 0.6
+metadata/slug = &"sword_swing"
+metadata/id = 7

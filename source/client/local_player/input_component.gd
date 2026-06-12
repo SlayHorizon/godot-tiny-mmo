@@ -255,10 +255,27 @@ func get_look_direction() -> Vector2:
 	return _snap_direction(_last_look_direction) if use_snap else _last_look_direction
 
 
+## True while combat presses should be swallowed by the UI: the pointer is
+## over an INTERACTIVE control (mouse_filter STOP — buttons, menus, chat
+## panel; full-rect PASS overlays like the touch sticks don't count), or a
+## text field has keyboard focus (typing "qe" in chat must not cast). Combat
+## input is POLLED (Input.is_action_*), which bypasses GUI consumption — so
+## without this gate, clicking any menu button also swings the weapon.
+## Releases are deliberately NOT gated: a release completes an action begun
+## outside the UI (e.g. a drawn bow) and can't start a new one.
+func _ui_blocks_combat() -> bool:
+	var focused: Control = get_viewport().gui_get_focus_owner()
+	if focused is LineEdit or focused is TextEdit:
+		return true
+	var hovered: Control = get_viewport().gui_get_hovered_control()
+	return hovered != null and hovered.mouse_filter == Control.MOUSE_FILTER_STOP
+
+
 ## Returns [code]true[/code] while the attack action is held.
 func is_attack_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
+	if _ui_blocks_combat(): return false
 	return Input.is_action_pressed(&"player_shoot")
 
 
@@ -266,6 +283,7 @@ func is_attack_pressed() -> bool:
 func is_attack_just_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
+	if _ui_blocks_combat(): return false
 	return Input.is_action_just_pressed(&"player_shoot")
 
 
@@ -283,12 +301,14 @@ func is_attack_just_released() -> bool:
 func is_special_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
+	if _ui_blocks_combat(): return false
 	return Input.is_action_pressed(&"player_special")
 
 
 func is_special_just_pressed() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
+	if _ui_blocks_combat(): return false
 	return Input.is_action_just_pressed(&"player_special")
 
 
@@ -296,6 +316,28 @@ func is_special_just_released() -> bool:
 	if not enabled: return false
 	if _mouse_aiming and not is_mouse_onscreen: return false
 	return Input.is_action_just_released(&"player_special")
+
+
+## Third weapon ability slot (player_special_2, default E) — only used by
+## weapons whose capacity lets a second mastery special mount (abilities[2]).
+func is_special2_pressed() -> bool:
+	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
+	if _ui_blocks_combat(): return false
+	return Input.is_action_pressed(&"player_special_2")
+
+
+func is_special2_just_pressed() -> bool:
+	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
+	if _ui_blocks_combat(): return false
+	return Input.is_action_just_pressed(&"player_special_2")
+
+
+func is_special2_just_released() -> bool:
+	if not enabled: return false
+	if _mouse_aiming and not is_mouse_onscreen: return false
+	return Input.is_action_just_released(&"player_special_2")
 
 
 ## Returns a [code]Array[/code] containing [code][bool, StringName][/code] where [code]StringName[/code] is the name of the action

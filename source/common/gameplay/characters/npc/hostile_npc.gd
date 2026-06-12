@@ -8,7 +8,10 @@ enum EnemyState {
 	IDLE,
 	CHASE,
 	ATTACK,
-	DEAD
+	DEAD,
+	# Appended (don't reorder — the int value is state-synced to clients):
+	LUNGE_WINDUP, ## planted, telegraphing the pounce zone
+	LUNGING,      ## dashing to the locked spot
 }
 
 ## Flip to true to dump every meaningful NPC state transition. Server lines
@@ -103,8 +106,10 @@ var armor: float = 0.0
 var mr: float = 0.0
 ## Optional weapon. If set, the enemy equips it and fires its ability at the
 ## target (reusing the same projectiles players use). If null, the enemy is a
-## melee AoE attacker.
-var weapon: WeaponItem
+## melee AoE attacker. Exported as a PER-NODE OVERRIDE: leave empty to use the
+## EnemyTypeResource's weapon; set it on a placed node to arm just that one
+## (an archer in a melee camp) without touching the shared .tres.
+@export var weapon: WeaponItem
 var xp_reward: int = 25
 ## Seconds before a killed enemy respawns at its spawn point.
 var respawn_delay: float = 5.0
@@ -120,6 +125,26 @@ var max_distance_from_spawn: int = 300
 var detection_radius: int = 150
 ## Start chasing as soon as a player steps inside detection_area.
 var chase_on_area: bool = false
+## Telegraphed lunge knobs (see EnemyTypeResource). lunge_range 0 = never lunges.
+var lunge_range: float = 0.0
+var lunge_radius: float = 24.0
+var lunge_windup_s: float = 0.55
+var lunge_speed_multiplier: float = 5.0
+var lunge_cooldown: float = 5.0
+
+## Where the pounce will land — locked at windup start, NOT homing (that's what
+## makes it dodgeable).
+var _lunge_target_position: Vector2
+## Dash heading, locked at windup start — the dash flies STRAIGHT, never
+## re-aims mid-flight (re-aiming is what made it jitter around a point it
+## couldn't reach when that point sat inside the player's collider).
+var _lunge_direction: Vector2
+var _lunge_phase_until_ms: int
+var _lunge_deadline_ms: int
+var _lunge_ready_at_ms: int
+## Players already hit by the CURRENT dash (instance id -> true) — the sweep
+## damages anyone the dash runs over, but each victim only once per lunge.
+var _lunge_hit: Dictionary = {}
 
 
 ## Copy archetype fields onto this instance. Called once at _ready so the rest
@@ -133,7 +158,8 @@ func _apply_enemy_data() -> void:
 	attack_cooldown = enemy_data.attack_cooldown
 	armor = enemy_data.armor
 	mr = enemy_data.mr
-	weapon = enemy_data.weapon
+	if weapon == null: # node-level override wins; resource is the default
+		weapon = enemy_data.weapon
 	xp_reward = enemy_data.xp_reward
 	respawn_delay = enemy_data.respawn_delay
 	loot = enemy_data.loot
@@ -142,10 +168,16 @@ func _apply_enemy_data() -> void:
 	max_distance_from_spawn = enemy_data.max_distance_from_spawn
 	detection_radius = enemy_data.detection_radius
 	chase_on_area = enemy_data.chase_on_area
+	lunge_range = enemy_data.lunge_range
+	lunge_radius = enemy_data.lunge_radius
+	lunge_windup_s = enemy_data.lunge_windup_s
+	lunge_speed_multiplier = enemy_data.lunge_speed_multiplier
+	lunge_cooldown = enemy_data.lunge_cooldown
 	if enemy_data.skin != null:
 		skin_id = 0 # disable id-based skin; we're driving it directly
-		if has_node(^"AnimatedSprite2D"):
-			($AnimatedSprite2D as AnimatedSprite2D).sprite_frames = enemy_data.skin
+		# animated_sprite (from Character) is @onready — already assigned by the
+		# time _ready (and therefore this) runs.
+		animated_sprite.sprite_frames = enemy_data.skin
 
 var container: ReplicatedPropsContainer
 var enemy_state: EnemyState = EnemyState.IDLE
@@ -219,6 +251,9 @@ func _ready() -> void:
 	stats_component.set_stat(Stat.HEALTH_MAX, max_health)
 	stats_component.set_stat(Stat.HEALTH, max_health)
 	stats_component.set_stat(Stat.AD, attack_damage)
+	# AP mirrors AD so a magic weapon (wand bolt scales off AP) hits with the
+	# same tuned attack_damage as any other armament — mob power is ONE number.
+	stats_component.set_stat(Stat.AP, attack_damage)
 	stats_component.set_stat(Stat.ARMOR, armor)
 	stats_component.set_stat(Stat.MR, mr)
 
@@ -256,6 +291,10 @@ func _physics_process(_delta: float) -> void:
 			_process_attack()
 		EnemyState.DEAD:
 			_process_death()
+		EnemyState.LUNGE_WINDUP:
+			_process_lunge_windup()
+		EnemyState.LUNGING:
+			_process_lunging()
 
 	_find_targets()
 	_process_animations()
@@ -357,6 +396,108 @@ func _is_target_valid(player: Player) -> bool:
 			and not player.is_dead and player.get_viewport() == get_viewport()
 
 
+## A player can't MOVE more than a couple of px per physics tick — a bigger jump
+## means they TELEPORTED (death respawn, warp, /goto, spar start...). Server-side
+## death + respawn happens within one frame, so is_dead is never observably true;
+## perceiving the position discontinuity is the intuitive, mechanism-agnostic way
+## to notice "my prey vanished" instead of marching across the map to the respawn.
+const TARGET_TELEPORT_BREAK_PX: float = 60.0
+var _tracked_target: Player
+var _tracked_target_position: Vector2
+
+
+func _target_escaped() -> bool:
+	if targeted_player != _tracked_target:
+		# New target — start tracking from wherever they are now.
+		_tracked_target = targeted_player
+		_tracked_target_position = targeted_player.global_position
+		return false
+	var jump: float = _tracked_target_position.distance_to(targeted_player.global_position)
+	_tracked_target_position = targeted_player.global_position
+	return jump > TARGET_TELEPORT_BREAK_PX
+
+
+# --- Telegraphed lunge -------------------------------------------------------
+
+## Lock the pounce at the target's CURRENT position (not homing — that's the
+## dodge), show the zone on every client, and start the windup.
+func _begin_lunge() -> void:
+	# Charge THROUGH the target's spot, not TO it: the landing point overshoots
+	# behind the player (relative to us), so backing straight away stays inside
+	# the corridor — the only real dodge is stepping OUT of it sideways. Also
+	# keeps the landing point out of the player's collider.
+	_lunge_direction = global_position.direction_to(targeted_player.global_position)
+	_lunge_target_position = targeted_player.global_position + _lunge_direction * (lunge_radius * 2.0)
+	_lunge_phase_until_ms = Time.get_ticks_msec() + int(lunge_windup_s * 1000.0)
+	enemy_state = EnemyState.LUNGE_WINDUP
+	velocity = Vector2.ZERO
+	_lunge_hit.clear()
+	# Corridor telegraph (wolf → landing spot) so players see WHO is charging
+	# and which strip of ground to vacate. Lives through windup + travel time.
+	container.queue_op(_prop_id, "rp_lunge_telegraph", [
+		_lunge_target_position, lunge_radius, lunge_windup_s + 0.45
+	])
+
+
+func _process_lunge_windup() -> void:
+	if Time.get_ticks_msec() >= _lunge_phase_until_ms:
+		enemy_state = EnemyState.LUNGING
+		# Safety deadline: a wall-stuck pounce lands where it got stuck instead
+		# of dashing forever.
+		_lunge_deadline_ms = Time.get_ticks_msec() + 1200
+
+
+func _process_lunging() -> void:
+	# Straight-line dash with the heading locked at windup. Termination is by
+	# PROJECTION onto that heading — once we reach or pass the landing plane
+	# (even after sliding around a collider) the dash is over. No re-aiming →
+	# no jitter, ever.
+	var remaining: float = (_lunge_target_position - global_position).dot(_lunge_direction)
+	if remaining <= 8.0 or Time.get_ticks_msec() >= _lunge_deadline_ms:
+		_land_lunge()
+		return
+	velocity = _lunge_direction * move_speed * lunge_speed_multiplier
+	move_and_slide()
+	# The DASH is the attack: anyone the wolf runs over inside the corridor
+	# takes the hit (once per lunge). Per-tick distance check is sweep-safe —
+	# at ~5px of travel per physics tick the radius can't tunnel past a player.
+	var damage: float = stats_component.get_stat(Stat.AD)
+	for candidate: Player in possible_targets:
+		if _lunge_hit.has(candidate.get_instance_id()):
+			continue
+		if _is_target_valid(candidate) and _is_hostile_to(candidate) \
+				and global_position.distance_to(candidate.global_position) <= lunge_radius:
+			_lunge_hit[candidate.get_instance_id()] = true
+			candidate.take_damage(damage, self)
+
+
+## Touchdown: start the cooldown and hand control back to the normal brain.
+## (Damage already happened in-flight — the dash itself is the hitbox.)
+func _land_lunge() -> void:
+	_lunge_ready_at_ms = Time.get_ticks_msec() + int(lunge_cooldown * 1000.0)
+	# The windup+dash took ~a second — the target legitimately moved meanwhile.
+	# Reset the escape tracker so that movement isn't misread as a teleport.
+	_tracked_target = null
+	if _is_target_valid(targeted_player):
+		enemy_state = EnemyState.CHASE
+	else:
+		_abandon_target()
+
+
+## Client-visual: the red dodge corridor from this wolf to the locked landing
+## spot — shows WHO is charging and the exact strip of ground to vacate.
+func rp_lunge_telegraph(to_position: Vector2, radius: float, duration: float) -> void:
+	if multiplayer.is_server():
+		return
+	var telegraph: AttackTelegraph = AttackTelegraph.new()
+	telegraph.radius = radius
+	telegraph.duration = duration
+	telegraph.top_level = true # pinned to the world, not to the moving wolf
+	add_child(telegraph)
+	telegraph.global_position = global_position
+	telegraph.line_to = to_position - global_position
+
+
 func _process_animations() -> void:
 	match enemy_state:
 		EnemyState.RETURNING:
@@ -369,8 +510,19 @@ func _process_animations() -> void:
 			if anim != Character.Animations.RUN:
 				anim = Character.Animations.RUN
 		EnemyState.ATTACK:
+			# Attacking on the move reads as RUN; planted reads as IDLE.
+			var attack_anim: Character.Animations = (
+				Character.Animations.RUN if velocity.length_squared() > 1.0
+				else Character.Animations.IDLE
+			)
+			if anim != attack_anim:
+				anim = attack_anim
+		EnemyState.LUNGE_WINDUP:
 			if anim != Character.Animations.IDLE:
 				anim = Character.Animations.IDLE
+		EnemyState.LUNGING:
+			if anim != Character.Animations.RUN:
+				anim = Character.Animations.RUN
 
 
 func _process_synchronization() -> void:
@@ -425,6 +577,9 @@ func _process_chase() -> void:
 	if not _is_target_valid(targeted_player):
 		_abandon_target()
 		return
+	if _target_escaped():
+		stop_chase()
+		return
 
 	var direction: Vector2 = global_position.direction_to(targeted_player.global_position)
 	velocity = direction * move_speed
@@ -440,14 +595,27 @@ func _process_chase() -> void:
 		enemy_state = EnemyState.ATTACK
 		return
 
+	# Telegraphed lunge: when the target sits in the pounce window (too far to
+	# melee, close enough to pounce) and the cooldown is up, commit to a lunge.
+	if lunge_range > 0.0 and Time.get_ticks_msec() >= _lunge_ready_at_ms:
+		var lunge_min: float = maxf(distance_to_attack * 2.0, lunge_range * 0.4)
+		if distance_from_player >= lunge_min and distance_from_player <= lunge_range:
+			_begin_lunge()
+			return
+
+
+## Inside ATTACK state the mob keeps advancing until this fraction of its
+## attack range, then plants — see _process_attack.
+const ATTACK_ADVANCE_STOP_FRACTION: float = 0.65
+
 
 func _process_attack() -> void:
 	if not _is_target_valid(targeted_player):
 		_abandon_target()
 		return
-
-	# Stand and face the target while attacking.
-	velocity = Vector2.ZERO
+	if _target_escaped():
+		stop_chase()
+		return
 
 	# Same leash check the chase has — without this, a ranged player can
 	# pull the mob to the edge of max_distance_from_spawn, then stand still
@@ -462,6 +630,16 @@ func _process_attack() -> void:
 	if distance_from_player > distance_to_attack:
 		enemy_state = EnemyState.CHASE
 		return
+
+	# Attack starts at distance_to_attack, but keep CLOSING IN while firing
+	# until comfortably inside range — mobs shoot on the move like players do
+	# instead of freezing at the range boundary. Melee mobs are already nearly
+	# point-blank when this state starts, so only ranged feel changes.
+	if distance_from_player > distance_to_attack * ATTACK_ADVANCE_STOP_FRACTION:
+		velocity = global_position.direction_to(targeted_player.global_position) * move_speed
+		move_and_slide()
+	else:
+		velocity = Vector2.ZERO
 
 	# Auto-attack on cooldown.
 	var now: int = Time.get_ticks_msec()
@@ -713,6 +891,13 @@ func _reward_killer(killer: Player) -> void:
 	for entry: Dictionary in loot_gained:
 		Inventory.add_item(resource.inventory, int(entry["id"]), int(entry["amount"]))
 
+	# Weapon mastery: practicing a category = killing with it. Same xp number
+	# as the character grant — one tuning knob per mob (docs/mastery.md).
+	var mastery: Dictionary = {}
+	var weapon_item: WeaponItem = killer.equipment_component.equipped_items.get(&"weapon", null) as WeaponItem
+	if weapon_item != null and not weapon_item.category.is_empty():
+		mastery = resource.add_mastery_xp(weapon_item.category, xp_reward)
+
 	var peer_id: int = int(resource.current_peer_id)
 	if peer_id > 0:
 		ServerHub.current.data_push.rpc_id(peer_id, &"combat.reward", {
@@ -724,6 +909,7 @@ func _reward_killer(killer: Player) -> void:
 			"experience": resource.experience,
 			"xp_to_next": resource.level_xp_to_next(),
 			"loot": loot_gained,
+			"mastery": mastery,
 		})
 
 	# Quest KILL progress for this enemy type.

@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="ContentIndex" format=3 uid="uid://2dsx2cystptb"]
+
+[ext_resource type="Script" uid="uid://0wmtcxri41vp" path="res://source/common/registry/content_index.gd" id="1_pce05"]
+
+[resource]
+script = ExtResource("1_pce05")
+content_name = &"abilities"
+version = 1781294439
+next_id = 12
+entries = Array[Dictionary]([{
+&"hash": "89ad782a48ea5db037f26be9e5c0a4b813dbb3625ccf3d3c292df7c5078210a6",
+&"id": 10,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres",
+&"slug": &"ember_bolt"
+}, {
+&"hash": "4585696f5d99b404a6531137fb435fab1c8d98c7abbb7189c49a01fc9006d414",
+&"id": 1,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_bolt.tres",
+&"slug": &"wand_bolt"
+}, {
+&"hash": "a5ca450603c7c9d2a4c5d2062ce567bac9f1c9b00246227d6ac93cad8e917bf4",
+&"id": 2,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres",
+&"slug": &"wand_heal"
+}, {
+&"hash": "2c3bde9e9391444c1847dd316cb91c5e491af226e306b7dd971b9169c23e107d",
+&"id": 3,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres",
+&"slug": &"bow_multishot"
+}, {
+&"hash": "b1c350aacfab9fc49977a261f28b3b8ec93dbf087198f877ea357a9823785a51",
+&"id": 4,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_shot.tres",
+&"slug": &"bow_shot"
+}, {
+&"hash": "efc70a5b7fe019aa2272b9f409df03c2e32b03bc40efe8a83b2df990f75bf748",
+&"id": 11,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres",
+&"slug": &"crushing_blow"
+}, {
+&"hash": "c5be3e15d1189dad907284c0e054dcffa2460148167e3087e92a153edf765ed6",
+&"id": 5,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/hammer_slam.tres",
+&"slug": &"hammer_slam"
+}, {
+&"hash": "dd60a0aa1519e6c1ddbe0ebf07fdfc9ae2c7dd5eb994daecb26b11673bf65598",
+&"id": 6,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_spin.tres",
+&"slug": &"sword_spin"
+}, {
+&"hash": "4d80b288b426ebe9329786eb01c547b8a3afb73c166c9ccde885d852dec6f192",
+&"id": 7,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_swing.tres",
+&"slug": &"sword_swing"
+}, {
+&"hash": "208d77de6cbeb0907a65da3d1b02add22aad5d936333a9d8f66cd16e9d76111e",
+&"id": 8,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/pick_swing/wooden_pickaxe_swing.tres",
+&"slug": &"wooden_pickaxe_swing"
+}, {
+&"hash": "219935df81bed33a323661b2e0bbcc3db31eadbb5cce0dd91ba6cba807150d6c",
+&"id": 9,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/pick_swing/wooden_sickle_swing.tres",
+&"slug": &"wooden_sickle_swing"
+}])
+scan_path = "res://source/common/gameplay/combat/ability/ability_collection"
+filters = PackedStringArray("*.tres")

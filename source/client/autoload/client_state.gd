@@ -121,6 +121,17 @@ func _on_combat_reward(data: Dictionary) -> void:
 	if int(data.get("levels_gained", 0)) > 0:
 		lines.append("Level %d! +%d attribute points" % [int(data.get("level", 1)), int(data.get("points_gained", 0))])
 
+	# Weapon mastery: announce the FIRST practice and each level-up (per-kill
+	# xp itself stays silent — too spammy).
+	var mastery: Dictionary = data.get("mastery", {})
+	if bool(mastery.get("started", false)):
+		lines.append("%s Mastery begun! +1 mastery point (Character > Mastery)" % str(mastery.get("category", "")).capitalize())
+	elif bool(mastery.get("leveled_up", false)):
+		lines.append("%s Mastery Lv %d! +1 mastery point" % [
+			str(mastery.get("category", "")).capitalize(),
+			int(mastery.get("level", 1)),
+		])
+
 	if lines.is_empty() and enemy_type.is_empty():
 		return  # Nothing to show.
 	Toaster.toast_group(title, lines)

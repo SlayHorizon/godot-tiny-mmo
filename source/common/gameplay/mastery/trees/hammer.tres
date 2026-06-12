@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres" id="4_crush"]
+
+[sub_resource type="Resource" id="Node_crush"]
+script = ExtResource("2_node")
+id = &"hammer_crush"
+node_name = "Crushing Blow"
+description = "A wind-up slam that hits everything around you for massive damage. Mount it in your hammer's special slot."
+branch = &"offensive"
+tier = 1
+ability = ExtResource("4_crush")
+
+[sub_resource type="Resource" id="Mod_armor_bulwark"]
+script = ExtResource("3_mod")
+stat_name = "armor"
+value = 6.0
+
+[sub_resource type="Resource" id="Node_bulwark"]
+script = ExtResource("2_node")
+id = &"hammer_bulwark"
+node_name = "Bulwark"
+description = "+6 armor while wielding a hammer."
+branch = &"defensive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_armor_bulwark")])
+
+[sub_resource type="Resource" id="Mod_hp_juggernaut"]
+script = ExtResource("3_mod")
+stat_name = "health_max"
+value = 12.0
+
+[sub_resource type="Resource" id="Node_juggernaut"]
+script = ExtResource("2_node")
+id = &"hammer_juggernaut"
+node_name = "Juggernaut"
+description = "+12 max health while wielding a hammer."
+branch = &"supportive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_juggernaut")])
+
+[resource]
+script = ExtResource("1_tree")
+category = &"hammer"
+display_name = "Hammer"
+nodes = Array[ExtResource("2_node")]([SubResource("Node_crush"), SubResource("Node_bulwark"), SubResource("Node_juggernaut")])

@@ -20,19 +20,6 @@ const BOW_CHARGE_FRAMES: Array[Rect2] = [
 var _charge_tween: Tween
 
 
-func _ready() -> void:
-	super._ready()
-	# Don't bother loading animation stuff on the server.
-	if multiplayer.is_server():
-		return
-	if character.animation_player.has_animation_library(&"weapon"):
-		return
-	character.animation_player.add_animation_library(
-		&"weapon",
-		animation_libraries[&"weapon"]
-	)
-
-
 func perform_action(action_index: int, direction: Vector2, released: bool = false) -> void:
 	super.perform_action(action_index, direction, released)
 	if not GameMode.is_client():

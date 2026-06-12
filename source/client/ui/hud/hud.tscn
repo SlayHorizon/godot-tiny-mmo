@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://l5oto05m20wi" path="res://source/client/ui/hud/touch_stick/twin_sticks.tscn" id="7_popxh"]
 [ext_resource type="Script" uid="uid://clicvxchvi5an" path="res://source/client/ui/hud/quest_tracker.gd" id="8_qtrack"]
 [ext_resource type="Script" uid="uid://cvras2gvcldqx" path="res://source/client/ui/hud/trade_panel.gd" id="9_trade"]
+[ext_resource type="Script" path="res://source/client/ui/hud/ability_bar.gd" id="10_abilitybar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
 bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
@@ -68,9 +69,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -62.0
-offset_top = -57.0
+offset_top = -88.0
 offset_right = -10.0
-offset_bottom = 57.0
+offset_bottom = 88.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_constants/separation = 10
@@ -90,9 +91,35 @@ layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"SlotButton"
 theme_override_constants/icon_max_width = 64
-text = "2
-"
+text = "2"
 icon_alignment = 1
+
+[node name="ItemSlotButton3" type="Button" parent="ItemSlots/VBoxContainer" unique_id=1999000401]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"SlotButton"
+theme_override_constants/icon_max_width = 64
+text = "3"
+icon_alignment = 1
+
+[node name="AbilityBar" type="HBoxContainer" parent="." unique_id=1999000301]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -95.0
+offset_top = -130.0
+offset_right = 95.0
+offset_bottom = -78.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+theme_override_constants/separation = 8
+mouse_filter = 2
+script = ExtResource("10_abilitybar")
 
 [node name="Resources" type="Control" parent="." unique_id=890489342]
 layout_mode = 1

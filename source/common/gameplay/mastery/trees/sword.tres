@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_spin.tres" id="4_spin"]
+
+[sub_resource type="Resource" id="Node_spin"]
+script = ExtResource("2_node")
+id = &"sword_spin"
+node_name = "Spin Attack"
+description = "A whirling strike that hits everyone around you. Mount it in your sword's special slot."
+branch = &"offensive"
+tier = 1
+ability = ExtResource("4_spin")
+
+[sub_resource type="Resource" id="Mod_armor_parry"]
+script = ExtResource("3_mod")
+stat_name = "armor"
+value = 6.0
+
+[sub_resource type="Resource" id="Node_parry"]
+script = ExtResource("2_node")
+id = &"sword_parry"
+node_name = "Parry Stance"
+description = "+6 armor while wielding a sword."
+branch = &"defensive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_armor_parry")])
+
+[sub_resource type="Resource" id="Mod_hp_vigor"]
+script = ExtResource("3_mod")
+stat_name = "health_max"
+value = 10.0
+
+[sub_resource type="Resource" id="Node_vigor"]
+script = ExtResource("2_node")
+id = &"sword_vigor"
+node_name = "Veteran's Vigor"
+description = "+10 max health while wielding a sword."
+branch = &"supportive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_vigor")])
+
+[resource]
+script = ExtResource("1_tree")
+category = &"sword"
+display_name = "Sword"
+nodes = Array[ExtResource("2_node")]([SubResource("Node_spin"), SubResource("Node_parry"), SubResource("Node_vigor")])

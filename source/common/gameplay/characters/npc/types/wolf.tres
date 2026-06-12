@@ -17,10 +17,11 @@ chance = 0.3
 
 [resource]
 script = ExtResource("1_script")
-max_health = 95.0
 enemy_type = &"wolf"
 display_name = "Wild Wolf"
+max_health = 95.0
 attack_cooldown = 1.3
+lunge_range = 130.0
 move_speed = 65
 distance_to_attack = 16
 chase_on_area = true

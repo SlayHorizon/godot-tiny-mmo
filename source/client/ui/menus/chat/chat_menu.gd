@@ -174,6 +174,57 @@ func _ready() -> void:
 	peek_feed.show()
 	full_feed.hide()
 
+	_build_chat_toggle()
+	_apply_input_mode()
+	ClientState.input_changed.connect(func(_t: InputComponent.InputType) -> void: _apply_input_mode())
+	# PC: hide the compose field again when focus leaves it (Enter re-opens).
+	peek_feed_message_edit.focus_exited.connect(_apply_input_mode)
+
+	_refresh_full_feed()
+	_refresh_title_and_input()
+	_update_input_enabled_state()
+
+
+## PC: the peek feed is read-only SCENERY — fighting near the top-left corner
+## must neither unfade it, open it, nor (via InputComponent's UI gate) block
+## attacks. Compose with Enter; the full panel opens from the bubble button.
+## Touch keeps tap-to-open: there's no mouse to aim with, taps are deliberate.
+func _apply_input_mode() -> void:
+	var touch: bool = ClientState.input_type == InputComponent.InputType.TOUCH
+	var filter: Control.MouseFilter = Control.MOUSE_FILTER_STOP if touch else Control.MOUSE_FILTER_IGNORE
+	peek_feed.mouse_filter = filter
+	peek_feed_text_display.mouse_filter = filter
+	peek_feed_message_edit.visible = touch or peek_feed_message_edit.has_focus()
+
+
+## The one deliberate chat click-target on every platform: a small bubble
+## pinned under the peek block toggling the full panel.
+var _chat_toggle: Button
+
+func _build_chat_toggle() -> void:
+	_chat_toggle = Button.new()
+	_chat_toggle.text = "💬"
+	_chat_toggle.custom_minimum_size = Vector2(34, 34)
+	_chat_toggle.focus_mode = Control.FOCUS_NONE
+	_chat_toggle.tooltip_text = "Chat  (Enter to type)"
+	_chat_toggle.position = Vector2(10, 218)
+	_chat_toggle.pressed.connect(_on_chat_toggle_pressed)
+	add_child(_chat_toggle)
+	# The bubble is the OPENER — the full panel has its own Close button, so
+	# hide it while the panel is up (it drew on top of the panel otherwise).
+	full_feed.visibility_changed.connect(func() -> void:
+		_chat_toggle.visible = not full_feed.visible
+	)
+
+
+func _on_chat_toggle_pressed() -> void:
+	if full_feed.visible:
+		_on_close_button_pressed()
+		return
+	peek_feed.hide()
+	full_feed.show()
+	_sync_channel_buttons()
+	_update_public_button_labels()
 	_refresh_full_feed()
 	_refresh_title_and_input()
 	_update_input_enabled_state()
@@ -202,6 +253,7 @@ func _input(event: InputEvent) -> void:
 func _open_peek_for_typing() -> void:
 	peek_feed.show()
 	_reset_peek_view()
+	peek_feed_message_edit.show() # hidden on PC until composing
 	peek_feed_message_edit.grab_focus()
 	fade_out_timer.stop()
 

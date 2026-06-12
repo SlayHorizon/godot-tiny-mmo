@@ -37,7 +37,7 @@ tile_set = ExtResource("2_5lp52")
 position = Vector2(527, 418)
 scale = Vector2(3.16, 1)
 target_instance = ExtResource("4_7553i")
-target_id = 2
+target_id = 1
 
 [node name="DuelMaster2" parent="." unique_id=601088349 node_paths=PackedStringArray("fight_zone") instance=ExtResource("5_iyqdx")]
 position = Vector2(552.41156, 93.07193)

@@ -3,12 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_01c3m"]
 [ext_resource type="Script" uid="uid://c7ykw8u3nncil" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.gd" id="2_75guj"]
 [ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="2_l3y58"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_shot.tres" id="3_shot"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres" id="4_multi"]
+[ext_resource type="Resource" uid="uid://jpic865idg0x" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_shot.tres" id="3_shot"]
 
 [node name="WoodenBow" unique_id=504140017 instance=ExtResource("1_01c3m")]
 script = ExtResource("2_75guj")
-abilities = Array[ExtResource("2_l3y58")]([ExtResource("3_shot"), ExtResource("4_multi")])
+abilities = Array[ExtResource("2_l3y58")]([ExtResource("3_shot")])
 
 [node name="WeaponSprite" parent="." index="0"]
 offset = Vector2(-3, -1)

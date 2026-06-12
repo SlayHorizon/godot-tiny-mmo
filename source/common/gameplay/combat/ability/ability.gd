@@ -8,6 +8,9 @@ extends Resource
 
 
 @export var name: String
+## HUD art (ability bar tile, future tooltips). Null = the bar shows the
+## ability's initials instead, so missing art degrades gracefully.
+@export var icon: Texture2D
 @export var cooldown: float = 1.0
 ## Mana cost. 0 = free (basic attacks). Checked in can_use (client predicts with
 ## its synced mana; server is authoritative) and consumed server-side by the
@@ -44,6 +47,14 @@ func can_use_release() -> bool:
 ## weapon bricks until relog.
 func predict_release() -> void:
 	pass
+
+
+## One-call complete use for AI / auto attackers (no press/release input to
+## drive multi-phase abilities). Default = the normal single-phase use; charge
+## abilities override to fire at FULL power — an NPC's output is tuned by its
+## EnemyTypeResource numbers, not by how fast code can tap a button.
+func auto_use(entity: Entity, direction: Vector2) -> void:
+	use_ability(entity, direction)
 
 
 ## [param user] enables the mana check + haste-adjusted cooldown. Null skips

@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres" id="4_heal"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres" id="5_ember"]
+
+[sub_resource type="Resource" id="Mod_ap_attunement"]
+script = ExtResource("3_mod")
+stat_name = "ap"
+value = 5.0
+
+[sub_resource type="Resource" id="Node_attunement"]
+script = ExtResource("2_node")
+id = &"wand_attunement"
+node_name = "Attunement"
+description = "+5 ability power while wielding a wand."
+branch = &"offensive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ap_attunement")])
+
+[sub_resource type="Resource" id="Mod_mr_warding"]
+script = ExtResource("3_mod")
+stat_name = "mr"
+value = 6.0
+
+[sub_resource type="Resource" id="Node_warding"]
+script = ExtResource("2_node")
+id = &"wand_warding"
+node_name = "Warding"
+description = "+6 magic resistance while wielding a wand."
+branch = &"defensive"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_mr_warding")])
+
+[sub_resource type="Resource" id="Node_ember"]
+script = ExtResource("2_node")
+id = &"wand_ember"
+node_name = "Ember Bolt"
+description = "A smoldering bolt that sets the target ablaze, burning for 3 seconds. Heavy: needs a wand that can channel weight 2."
+branch = &"offensive"
+tier = 2
+ability = ExtResource("5_ember")
+
+[sub_resource type="Resource" id="Node_heal"]
+script = ExtResource("2_node")
+id = &"wand_heal"
+node_name = "Heal Bolt"
+description = "A bolt that mends instead of harms. Mount it in your wand's special slot to heal allies."
+branch = &"supportive"
+tier = 1
+ability = ExtResource("4_heal")
+
+[resource]
+script = ExtResource("1_tree")
+category = &"wand"
+display_name = "Wand"
+nodes = Array[ExtResource("2_node")]([SubResource("Node_attunement"), SubResource("Node_ember"), SubResource("Node_warding"), SubResource("Node_heal")])

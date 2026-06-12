@@ -2,6 +2,14 @@ class_name WeaponItem
 extends GearItem
 
 
+## Mastery category this weapon belongs to (&"sword", &"bow", &"wand",
+## &"hammer"). Killing with it earns mastery xp for the category; empty = no
+## mastery (tools, special-case weapons). See docs/mastery.md.
+@export var category: StringName
+## Max ability weight (= node tier) the special slot accepts — the gear half
+## of the mastery system: higher-tier weapons channel heavier abilities.
+@export_range(1, 3) var capacity: int = 1
+
 @export var right_hand_scene: PackedScene
 
 @export var left_hand_scene: PackedScene

@@ -17,5 +17,6 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 	bolt.speed = speed
 	bolt.source = user
 	bolt.heal_amount = maxf(0.0, _wielder_ap(user) * ap_ratio)
+	bolt.modulate = bolt_modulate
 	bolt.global_position = _spawn_position(user)
 	user.add_child(bolt)

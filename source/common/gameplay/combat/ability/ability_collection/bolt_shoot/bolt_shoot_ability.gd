@@ -17,6 +17,16 @@ extends AbilityResource
 ## Optional cast animation ("weapon/...'"). Empty = none.
 @export var cast_animation: StringName
 
+## Optional burn applied on hit (DamageOverTime, refreshed not stacked).
+## 0 = plain bolt. Damage ticks 1/s for the duration.
+@export var burn_dps: float = 0.0
+@export var burn_duration_s: float = 0.0
+
+## Bolt tint — the ONE visual knob, so new bolt flavors are pure data (the
+## bolt scenes' sprites are white on purpose). Default = the classic arcane
+## purple; heal sets green, ember sets red.
+@export var bolt_modulate: Color = Color(0.75, 0.55, 1.0)
+
 
 func use_ability(user: Entity, direction: Vector2) -> void:
 	if user is Character:
@@ -30,6 +40,9 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 	bolt.source = user
 	bolt.damage = maxf(0.0, _wielder_ap(user) * ap_ratio)
 	bolt.damage_type = CombatHit.DAMAGE_MAGIC # mitigated by MR, not armor
+	bolt.burn_dps = burn_dps
+	bolt.burn_duration_s = burn_duration_s
+	bolt.modulate = bolt_modulate
 	bolt.global_position = _spawn_position(user)
 	user.add_child(bolt)
 
