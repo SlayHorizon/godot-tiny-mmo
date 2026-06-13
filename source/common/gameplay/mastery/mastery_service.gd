@@ -126,6 +126,13 @@ static func refresh(player: Player) -> void:
 	if resource == null:
 		return
 
+	# Snapshot the resource caps so a passive that raises them can carry current
+	# HP/MANA up by the same delta (a +max-health node should feel like a gain,
+	# not leave you at 50/60). Skipped on the spawn pass, where HEALTH is still 0
+	# and the spawn code refills to max right after.
+	var old_hp_max: float = player.stats_component.get_stat(Stat.HEALTH_MAX)
+	var old_mana_max: float = player.stats_component.get_stat(Stat.MANA_MAX)
+
 	for applied: Dictionary in resource.applied_mastery_passives:
 		player.stats_component.modify_stat(applied["stat"], -float(applied["value"]))
 	resource.applied_mastery_passives.clear()
@@ -133,18 +140,34 @@ static func refresh(player: Player) -> void:
 	var weapon_item: WeaponItem = player.equipment_component.equipped_items.get(&"weapon", null) as WeaponItem
 	player.equipment_component.set_special_abilities(effective_special_ids(resource, weapon_item))
 
-	if weapon_item == null or weapon_item.category.is_empty():
+	if weapon_item != null and not weapon_item.category.is_empty():
+		var tree: MasteryTreeResource = tree_for(weapon_item.category)
+		if tree != null and resource.masteries.has(weapon_item.category):
+			var spent: Dictionary = (resource.masteries[weapon_item.category] as Dictionary).get("spent", {})
+			for node: MasteryNode in tree.nodes:
+				if node.ability != null or not spent.has(String(node.id)):
+					continue
+				for modifier: StatModifier in node.passive_modifiers:
+					player.stats_component.modify_stat(modifier.stat_name, modifier.value)
+					resource.applied_mastery_passives.append({"stat": modifier.stat_name, "value": modifier.value})
+
+	_carry_current_to_max(player, Stat.HEALTH, Stat.HEALTH_MAX, old_hp_max)
+	_carry_current_to_max(player, Stat.MANA, Stat.MANA_MAX, old_mana_max)
+
+
+## When a max stat changed (a +/- max-health passive equipped/removed), shift
+## the current value by the same delta and clamp — so gaining max HP heals you
+## by that much and losing it trims you, instead of desyncing the bar. Skips the
+## spawn pass (current still 0, refilled to max afterward).
+static func _carry_current_to_max(player: Player, current: StringName, maxs: StringName, old_max: float) -> void:
+	var new_max: float = player.stats_component.get_stat(maxs)
+	var delta: float = new_max - old_max
+	if is_zero_approx(delta):
 		return
-	var tree: MasteryTreeResource = tree_for(weapon_item.category)
-	if tree == null or not resource.masteries.has(weapon_item.category):
-		return
-	var spent: Dictionary = (resource.masteries[weapon_item.category] as Dictionary).get("spent", {})
-	for node: MasteryNode in tree.nodes:
-		if node.ability != null or not spent.has(String(node.id)):
-			continue
-		for modifier: StatModifier in node.passive_modifiers:
-			player.stats_component.modify_stat(modifier.stat_name, modifier.value)
-			resource.applied_mastery_passives.append({"stat": modifier.stat_name, "value": modifier.value})
+	var cur: float = player.stats_component.get_stat(current)
+	if cur <= 0.0:
+		return # dead / pre-spawn — leave it to the spawn refill
+	player.stats_component.set_stat(current, clampf(cur + delta, 0.0, new_max))
 
 
 static func _load_trees() -> void:

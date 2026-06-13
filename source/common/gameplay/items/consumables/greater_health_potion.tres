@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://cd4yooe27ja23"]
 
+[ext_resource type="Texture2D" uid="uid://b6kjau4lowuo" path="res://assets/sprites/items/icons/Icon304.png" id="1_3l1dt"]
 [ext_resource type="Script" uid="uid://bprsise4rcsak" path="res://source/common/gameplay/items/consumable_item.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://j05ahoas0tcu" path="res://assets/sprites/items/icons/Icon303.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_script")
 heal_amount = 80
 item_name = &"Greater Health Potion"
-item_icon = ExtResource("2_icon")
+item_icon = ExtResource("1_3l1dt")
 description = "A potent brew. Restores a large amount of health for a tougher fight."
 vendor_value = 5
 metadata/slug = &"greater_health_potion"

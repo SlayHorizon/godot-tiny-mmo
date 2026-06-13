@@ -16,10 +16,12 @@ var damage: float = 5.0
 ## Mitigation channel: ARMOR for physical (arrows), MR for magic (wand bolts).
 var damage_type: StringName = CombatHit.DAMAGE_PHYSICAL
 
-## Optional damage-over-time applied on a DAMAGED hit (Ember Bolt's burn).
-## 0 = none. Set by the spawning ability alongside damage.
+## Optional damage-over-time applied on a DAMAGED hit (Ember Bolt's burn,
+## Venom Shot's poison). 0 dps = none. [member dot_kind] picks the status
+## family (drives which debuff icon shows). Set by the spawning ability.
 var burn_dps: float = 0.0
 var burn_duration_s: float = 0.0
+var dot_kind: StringName = &"burn"
 
 ## Seconds an arrow flies before despawning if it hits nothing. Short so stray
 ## shots don't sail across the whole map (speed × this ≈ max range).
@@ -54,6 +56,17 @@ func _physics_process(delta: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if body == source:
 		return
+	# Arcane Wall: a damage-pool shield, not a hard wall. It eats up to its
+	# remaining HP and lets the OVERFLOW punch through (so a big nuke is reduced,
+	# not fully negated by a cheap cast). Runs on every peer — the pool drains
+	# deterministically since all peers fire the same synced-damage projectile.
+	if body is Barrier:
+		var overflow: float = (body as Barrier).absorb(damage)
+		if overflow <= 0.0:
+			queue_free() # fully absorbed
+			return
+		damage = overflow # reduced, keep flying to whatever's behind the wall
+		return
 	# Shared target rules (flags, PvP zones, sparring, guild friendly-fire) in one
 	# place — see CombatHit. The result tells the projectile how to react.
 	match CombatHit.try_damage(source as Character, body, damage, damage_type):
@@ -65,7 +78,7 @@ func _on_body_entered(body: Node2D) -> void:
 			# The gated hit landed — ride a burn on top if this projectile
 			# carries one (server applies; clients see the health drain sync).
 			if burn_dps > 0.0 and multiplayer.is_server() and body is Character:
-				DamageOverTime.apply(body as Character, source as Character, &"burn", burn_dps, burn_duration_s, damage_type)
+				DamageOverTime.apply(body as Character, source as Character, dot_kind, burn_dps, burn_duration_s, damage_type)
 			if not piercing or pierce_left <= 0:
 				queue_free()
 			pierce_left -= 1

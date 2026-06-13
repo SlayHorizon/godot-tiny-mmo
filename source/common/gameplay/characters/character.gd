@@ -141,6 +141,18 @@ var is_dead: bool = false
 ## The character that dealt the most recent damage (for kill attribution).
 var last_attacker: Character
 
+## How long a hit (dealt OR taken) keeps a combatant "in combat". Gear swaps
+## are locked while in combat so you can't re-spec mid-fight.
+const COMBAT_LINGER_MS: int = 5000
+## Server-side runtime: ticks_msec until which this character counts as in
+## combat. Set on every hit for both attacker and victim.
+var combat_until_ms: int = 0
+
+
+## Server-side: true while a recent hit still keeps this character in combat.
+func is_in_combat() -> bool:
+	return Time.get_ticks_msec() < combat_until_ms
+
 
 ## Server-only. Applies [param amount] raw damage from [param attacker], mitigated by
 ## the matching resistance — ARMOR for physical, MR for magic (see CombatHit's
@@ -150,8 +162,13 @@ var last_attacker: Character
 func take_damage(amount: float, attacker: Character = null, damage_type: StringName = CombatHit.DAMAGE_PHYSICAL) -> void:
 	if not multiplayer.is_server() or is_dead or amount <= 0.0:
 		return
+	# Any landed hit puts BOTH sides in combat (locks gear swaps for a few
+	# seconds): the victim here, and the attacker so they can't tag-and-swap.
+	var now: int = Time.get_ticks_msec()
+	combat_until_ms = now + COMBAT_LINGER_MS
 	if attacker:
 		last_attacker = attacker
+		attacker.combat_until_ms = now + COMBAT_LINGER_MS
 
 	var resist_stat: StringName = Stat.MR if damage_type == CombatHit.DAMAGE_MAGIC else Stat.ARMOR
 	var resist: float = stats_component.get_stat(resist_stat)

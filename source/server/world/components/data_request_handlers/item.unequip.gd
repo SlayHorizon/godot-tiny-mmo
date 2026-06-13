@@ -20,6 +20,11 @@ func data_request_handler(
 	if item_id <= 0:
 		return {"ok": false}
 
+	# Same combat lock as equipping — armor/rings stay put mid-fight, but the
+	# weapon slot is exempt (weapon swapping is core combat).
+	if player.is_in_combat() and slot != &"weapon":
+		return {"ok": false, "reason": "in_combat"}
+
 	player.equipment_component.unequip(slot)
 	# Move the item back into the inventory.
 	Inventory.add_item(player.player_resource.inventory, item_id, 1)

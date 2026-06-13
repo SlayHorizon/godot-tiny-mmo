@@ -30,6 +30,12 @@ extends AbilityResource
 ## single-target burst nuke).
 @export var damage_factor: float = 1.0
 
+## Optional damage-over-time on hit (Venom Shot). 0 dps = none; dot_kind drives
+## the debuff icon (&"poison", &"burn", ...).
+@export var dot_dps: float = 0.0
+@export var dot_duration_s: float = 0.0
+@export var dot_kind: StringName = &"poison"
+
 ## True between press and release. Per-weapon-instance state (abilities are
 ## duplicated on equip), server-authoritative for damage.
 var charging: bool = false
@@ -109,6 +115,9 @@ func _spawn(entity: Entity, direction: Vector2, damage: float, speed: float) -> 
 	projectile.speed = speed
 	projectile.source = entity
 	projectile.damage = damage
+	projectile.burn_dps = dot_dps
+	projectile.burn_duration_s = dot_duration_s
+	projectile.dot_kind = dot_kind
 	if entity is Character and (entity as Character).right_hand_spot != null:
 		projectile.global_position = (entity as Character).right_hand_spot.global_position
 	else:

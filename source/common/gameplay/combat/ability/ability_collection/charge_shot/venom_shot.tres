@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ChargeAbility" format=3 uid="uid://b85pgtif6blf8"]
+
+[ext_resource type="Script" uid="uid://byk0d74w4xe1n" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/charge_ability.gd" id="1_charge"]
+[ext_resource type="PackedScene" uid="uid://cckkklpa17vo" path="res://source/common/gameplay/items/weapons/bow/arrow.tscn" id="2_arrow"]
+
+[resource]
+script = ExtResource("1_charge")
+projectile_scene = ExtResource("2_arrow")
+charge_time_s = 0.7
+min_ad_ratio = 0.4
+max_ad_ratio = 0.9
+min_speed = 220.0
+max_speed = 420.0
+dot_dps = 5.0
+dot_duration_s = 4.0
+name = "Venom Shot"
+cooldown = 4.0
+mana_cost = 12
+metadata/slug = &"venom_shot"
+metadata/id = 16

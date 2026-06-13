@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://clicvxchvi5an" path="res://source/client/ui/hud/quest_tracker.gd" id="8_qtrack"]
 [ext_resource type="Script" uid="uid://cvras2gvcldqx" path="res://source/client/ui/hud/trade_panel.gd" id="9_trade"]
 [ext_resource type="Script" path="res://source/client/ui/hud/ability_bar.gd" id="10_abilitybar"]
+[ext_resource type="Script" path="res://source/client/ui/hud/status_bar.gd" id="11_statusbar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
 bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
@@ -102,6 +103,20 @@ theme_type_variation = &"SlotButton"
 theme_override_constants/icon_max_width = 64
 text = "3"
 icon_alignment = 1
+
+[node name="StatusBar" type="HBoxContainer" parent="." unique_id=1999000501]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 8.0
+offset_right = 100.0
+offset_bottom = 40.0
+grow_horizontal = 2
+alignment = 1
+mouse_filter = 2
+script = ExtResource("11_statusbar")
 
 [node name="AbilityBar" type="HBoxContainer" parent="." unique_id=1999000301]
 layout_mode = 1

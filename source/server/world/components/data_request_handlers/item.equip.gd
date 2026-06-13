@@ -21,6 +21,11 @@ func data_request_handler(
 		return {}
 
 	if item is GearItem and item.can_equip(player):
+		# Combat lock — but WEAPONS stay swappable mid-fight (sword for melee,
+		# bow for range is core play). Only armor/rings/etc. are locked so you
+		# can't re-spec defenses under pressure.
+		if player.is_in_combat() and item.slot.key != &"weapon":
+			return {"ok": false, "reason": "in_combat"}
 		var slot_key: StringName = item.slot.key
 		var previous_id: int = int(player.equipment_component.slots.values.get(slot_key, 0))
 		if not player.equipment_component.equip_item(item_id):
@@ -31,5 +36,16 @@ func data_request_handler(
 			Inventory.add_item(inventory, previous_id, 1)
 		player.player_resource.equipment[slot_key] = item_id
 	elif item is ConsumableItem and item.can_use(player):
+		# Shared category cooldown (potion chugging) — server-authoritative.
+		var category: StringName = item.cooldown_category
+		var now: int = Time.get_ticks_msec()
+		var cooldowns: Dictionary = player.player_resource.consumable_cooldowns
+		if now < int(cooldowns.get(category, 0)):
+			return {"ok": false, "reason": "cooldown"}
 		item.on_use(player)
+		if item.shared_cooldown_ms > 0:
+			cooldowns[category] = now + item.shared_cooldown_ms
+		# Root the drinker briefly so they can't run-and-chug.
+		if item.use_freeze_ms > 0:
+			WorldServer.curr.data_push.rpc_id(peer_id, &"player.freeze", {"ms": item.use_freeze_ms})
 	return {}

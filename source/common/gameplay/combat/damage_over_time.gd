@@ -13,7 +13,15 @@ extends Node
 var source: Character
 var damage_per_tick: float
 var damage_type: StringName = CombatHit.DAMAGE_MAGIC
+## Effect family (&"burn", &"poison", ...) — the node name carries it for
+## refresh lookups, this exposes it for the status HUD.
+var kind: StringName
 var _remaining_ticks: int
+
+
+## Whole seconds left, for the status-icon countdown.
+func remaining_seconds() -> int:
+	return maxi(0, _remaining_ticks)
 
 
 ## Attach (or refresh) a DoT on [param victim]. Server-side only; clients see
@@ -37,6 +45,7 @@ static func apply(
 		return
 	var dot: DamageOverTime = DamageOverTime.new()
 	dot.name = node_name
+	dot.kind = kind
 	dot.source = from
 	dot.damage_per_tick = dps
 	dot.damage_type = type

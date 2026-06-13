@@ -4,15 +4,35 @@
 [ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
 [ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres" id="4_crush"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/shockwave.tres" id="5_shock"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/earthshatter.tres" id="6_quake"]
 
 [sub_resource type="Resource" id="Node_crush"]
 script = ExtResource("2_node")
 id = &"hammer_crush"
 node_name = "Crushing Blow"
 description = "A wind-up slam that hits everything around you for massive damage. Mount it in your hammer's special slot."
-branch = &"offensive"
+branch = &"domination"
 tier = 1
 ability = ExtResource("4_crush")
+
+[sub_resource type="Resource" id="Node_shock"]
+script = ExtResource("2_node")
+id = &"hammer_shockwave"
+node_name = "Shockwave"
+description = "Slam the ground, damaging and slowing everyone around you for 1.5 seconds. Weight 2."
+branch = &"domination"
+tier = 2
+ability = ExtResource("5_shock")
+
+[sub_resource type="Resource" id="Node_quake"]
+script = ExtResource("2_node")
+id = &"hammer_earthshatter"
+node_name = "Earthshatter"
+description = "A devastating overhead blow that shatters the ground, hitting and slowing all around. Weight 3."
+branch = &"domination"
+tier = 3
+ability = ExtResource("6_quake")
 
 [sub_resource type="Resource" id="Mod_armor_bulwark"]
 script = ExtResource("3_mod")
@@ -24,26 +44,40 @@ script = ExtResource("2_node")
 id = &"hammer_bulwark"
 node_name = "Bulwark"
 description = "+6 armor while wielding a hammer."
-branch = &"defensive"
+branch = &"resolve"
 tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_armor_bulwark")])
 
 [sub_resource type="Resource" id="Mod_hp_juggernaut"]
 script = ExtResource("3_mod")
 stat_name = "health_max"
-value = 12.0
+value = 20.0
 
 [sub_resource type="Resource" id="Node_juggernaut"]
 script = ExtResource("2_node")
 id = &"hammer_juggernaut"
 node_name = "Juggernaut"
-description = "+12 max health while wielding a hammer."
-branch = &"supportive"
-tier = 1
+description = "+20 max health while wielding a hammer."
+branch = &"resolve"
+tier = 2
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_juggernaut")])
+
+[sub_resource type="Resource" id="Mod_ms_momentum"]
+script = ExtResource("3_mod")
+stat_name = "move_speed"
+value = 10.0
+
+[sub_resource type="Resource" id="Node_momentum"]
+script = ExtResource("2_node")
+id = &"hammer_momentum"
+node_name = "Momentum"
+description = "+10 move speed while wielding a hammer — shrug off its weight and keep advancing."
+branch = &"inspiration"
+tier = 1
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ms_momentum")])
 
 [resource]
 script = ExtResource("1_tree")
 category = &"hammer"
 display_name = "Hammer"
-nodes = Array[ExtResource("2_node")]([SubResource("Node_crush"), SubResource("Node_bulwark"), SubResource("Node_juggernaut")])
+nodes = Array[ExtResource("2_node")]([SubResource("Node_crush"), SubResource("Node_shock"), SubResource("Node_quake"), SubResource("Node_bulwark"), SubResource("Node_juggernaut"), SubResource("Node_momentum")])

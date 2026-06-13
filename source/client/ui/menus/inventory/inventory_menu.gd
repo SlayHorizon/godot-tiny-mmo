@@ -231,14 +231,30 @@ func _on_hotkey_button_pressed() -> void:
 func _on_action_button_pressed() -> void:
 	if not _selected_gear_slot.is_empty():
 		var slot_key: StringName = _selected_gear_slot
-		await Client.request_data_await(&"item.unequip", {"slot": slot_key}, InstanceClient.current.name)
-		_clear_detail()
-		fill_inventory()
+		var unequip_result: Array = await Client.request_data_await(&"item.unequip", {"slot": slot_key}, InstanceClient.current.name)
+		if not _surface_item_rejection(unequip_result):
+			_clear_detail()
+			fill_inventory()
 		return
 	if _selected_item_id > 0 and (_selected_item is GearItem or _selected_item is WeaponItem or _selected_item is ConsumableItem):
-		await Client.request_data_await(&"item.equip", {"id": _selected_item_id}, InstanceClient.current.name)
-		_clear_detail()
-		fill_inventory()
+		var result: Array = await Client.request_data_await(&"item.equip", {"id": _selected_item_id}, InstanceClient.current.name)
+		if not _surface_item_rejection(result):
+			_clear_detail()
+			fill_inventory()
+
+
+## Toasts a server rejection (combat lock, cooldown) and returns true if the
+## action was rejected, so the caller skips the success refresh.
+func _surface_item_rejection(result: Array) -> bool:
+	var payload: Dictionary = result[0] if result[1] == OK and result[0] is Dictionary else {}
+	match str(payload.get("reason", "")):
+		"in_combat":
+			Toaster.toast("Can't change gear in combat (weapons only).")
+			return true
+		"cooldown":
+			Toaster.toast("That's still on cooldown.")
+			return true
+	return false
 
 
 func _set_category(category: Category) -> void:

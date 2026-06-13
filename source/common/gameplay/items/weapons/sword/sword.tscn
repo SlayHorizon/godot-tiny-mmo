@@ -5,10 +5,14 @@
 [ext_resource type="AnimationLibrary" uid="uid://rbv6cl1ldcc7" path="res://source/common/gameplay/items/weapons/sword/sword_animations.tres" id="3_xqg3f"]
 [ext_resource type="Resource" uid="uid://piotigmkphy3" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_swing.tres" id="4_swing"]
 [ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="5_ability_script"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="6_w7nnk"]
 
-[node name="Sword" instance=ExtResource("1_6bj2e")]
+[node name="Sword" unique_id=924782394 instance=ExtResource("1_6bj2e")]
 script = ExtResource("2_gih3n")
 abilities = Array[ExtResource("5_ability_script")]([ExtResource("4_swing")])
 animation_libraries = Dictionary[StringName, AnimationLibrary]({
 &"weapon": ExtResource("3_xqg3f")
 })
+
+[node name="WeaponSprite" parent="." index="0"]
+texture = ExtResource("6_w7nnk")

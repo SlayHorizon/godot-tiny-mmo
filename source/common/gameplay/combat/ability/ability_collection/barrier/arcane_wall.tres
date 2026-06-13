@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BarrierAbility" format=3 uid="uid://cr8htn0a6gd12"]
+
+[ext_resource type="Script" uid="uid://efc507prunq2" path="res://source/common/gameplay/combat/ability/ability_collection/barrier/barrier_ability.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+length = 72.0
+duration_s = 4.5
+block_hp = 180.0
+name = "Arcane Wall"
+cooldown = 9.0
+mana_cost = 40
+metadata/slug = &"arcane_wall"
+metadata/id = 12

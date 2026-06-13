@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://qkaxc6cijn84"
-path="res://.godot/imported/Run-Sheet.png-cee606fc41df66edf8c445652541161e.ctex"
+uid="uid://c22bcmk68b5r7"
+path="res://.godot/imported/fungus_run.png-c4eaf3a29e2bbad88ea46ebde1d8fdef.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/characters/Fungus/Run-Sheet.png"
-dest_files=["res://.godot/imported/Run-Sheet.png-cee606fc41df66edf8c445652541161e.ctex"]
+source_file="res://assets/sprites/characters/fungus/fungus_run.png"
+dest_files=["res://.godot/imported/fungus_run.png-c4eaf3a29e2bbad88ea46ebde1d8fdef.ctex"]
 
 [params]
 

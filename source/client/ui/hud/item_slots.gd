@@ -61,17 +61,29 @@ func _trigger_slot(index: int) -> void:
 	if item is GearItem and _is_equipped(item):
 		Client.request_data(
 			&"item.unequip",
-			Callable(),
+			_on_item_action_result,
 			{"slot": (item as GearItem).slot.key},
 			InstanceClient.current.name
 		)
 		return
 	Client.request_data(
 		&"item.equip",
-		_after_slot_used.bind(index),
+		func(result: Dictionary) -> void:
+			_on_item_action_result(result)
+			_after_slot_used(result, index),
 		{"id": int(item.get_meta(&"id", 0))},
 		InstanceClient.current.name
 	)
+
+
+## Surfaces server rejections (combat lock, potion cooldown) as a toast so a
+## key that "did nothing" explains itself.
+func _on_item_action_result(result: Dictionary) -> void:
+	match str(result.get("reason", "")):
+		"in_combat":
+			Toaster.toast("Can't change gear in combat (weapons only).")
+		"cooldown":
+			Toaster.toast("That's still on cooldown.")
 
 
 func _is_equipped(item: Item) -> bool:

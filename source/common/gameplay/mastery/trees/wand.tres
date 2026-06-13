@@ -5,6 +5,8 @@
 [ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres" id="4_heal"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres" id="5_ember"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres" id="6_wall"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/overload.tres" id="7_overload"]
 
 [sub_resource type="Resource" id="Mod_ap_attunement"]
 script = ExtResource("3_mod")
@@ -16,9 +18,27 @@ script = ExtResource("2_node")
 id = &"wand_attunement"
 node_name = "Attunement"
 description = "+5 ability power while wielding a wand."
-branch = &"offensive"
+branch = &"domination"
 tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ap_attunement")])
+
+[sub_resource type="Resource" id="Node_ember"]
+script = ExtResource("2_node")
+id = &"wand_ember"
+node_name = "Ember Bolt"
+description = "A smoldering bolt that sets the target ablaze, burning for 3 seconds. Heavy: needs a wand that can channel weight 2."
+branch = &"domination"
+tier = 2
+ability = ExtResource("5_ember")
+
+[sub_resource type="Resource" id="Node_overload"]
+script = ExtResource("2_node")
+id = &"wand_overload"
+node_name = "Overload"
+description = "Unleashes a massive bolt that pierces through everything in its path. Heaviest technique: needs a wand that can channel weight 3."
+branch = &"domination"
+tier = 3
+ability = ExtResource("7_overload")
 
 [sub_resource type="Resource" id="Mod_mr_warding"]
 script = ExtResource("3_mod")
@@ -30,25 +50,25 @@ script = ExtResource("2_node")
 id = &"wand_warding"
 node_name = "Warding"
 description = "+6 magic resistance while wielding a wand."
-branch = &"defensive"
+branch = &"resolve"
 tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_mr_warding")])
 
-[sub_resource type="Resource" id="Node_ember"]
+[sub_resource type="Resource" id="Node_wall"]
 script = ExtResource("2_node")
-id = &"wand_ember"
-node_name = "Ember Bolt"
-description = "A smoldering bolt that sets the target ablaze, burning for 3 seconds. Heavy: needs a wand that can channel weight 2."
-branch = &"offensive"
+id = &"wand_wall"
+node_name = "Arcane Wall"
+description = "Conjures a short-lived wall ahead of you that soaks projectiles from any side (yours included) until it shatters. Weight 2."
+branch = &"resolve"
 tier = 2
-ability = ExtResource("5_ember")
+ability = ExtResource("6_wall")
 
 [sub_resource type="Resource" id="Node_heal"]
 script = ExtResource("2_node")
 id = &"wand_heal"
 node_name = "Heal Bolt"
 description = "A bolt that mends instead of harms. Mount it in your wand's special slot to heal allies."
-branch = &"supportive"
+branch = &"inspiration"
 tier = 1
 ability = ExtResource("4_heal")
 
@@ -56,4 +76,4 @@ ability = ExtResource("4_heal")
 script = ExtResource("1_tree")
 category = &"wand"
 display_name = "Wand"
-nodes = Array[ExtResource("2_node")]([SubResource("Node_attunement"), SubResource("Node_ember"), SubResource("Node_warding"), SubResource("Node_heal")])
+nodes = Array[ExtResource("2_node")]([SubResource("Node_attunement"), SubResource("Node_ember"), SubResource("Node_overload"), SubResource("Node_warding"), SubResource("Node_wall"), SubResource("Node_heal")])

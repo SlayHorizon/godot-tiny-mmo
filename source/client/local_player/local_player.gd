@@ -50,6 +50,9 @@ func _ready() -> void:
 	# Staff teleports (/goto, /summon) within the same map: same problem as the
 	# sparring teleport — we must set position locally + freeze input briefly.
 	Client.subscribe(&"player.teleport", _on_teleport)
+	# Generic server-driven root (consuming a potion, future cast times): no
+	# teleport, just freeze movement + actions for the pushed duration.
+	Client.subscribe(&"player.freeze", _on_freeze)
 
 
 ## The local player's own over-head HP bar reads as "self" (green), never
@@ -74,13 +77,13 @@ func _on_player_died(data: Dictionary) -> void:
 ## Server-driven teleport for the start/end of a sparring match. Pushes carry
 ## the new position; we apply it and freeze input briefly so the player
 ## doesn't immediately walk off the spot.
-var _teleport_lock_until_ms: int = 0
+var _movement_lock_until_ms: int = 0
 
 func _on_sparring_match_state(payload: Dictionary) -> void:
 	var pos: Variant = payload.get("position", null)
 	if pos is Vector2 and pos != Vector2.ZERO:
 		global_position = pos
-		_teleport_lock_until_ms = Time.get_ticks_msec() + 500
+		_movement_lock_until_ms = Time.get_ticks_msec() + 500
 	# Spar-team tinting: remember allies/opponents for the match (cleared on end)
 	# and re-tint everyone in the map so health bars flip immediately.
 	if bool(payload.get("in_match", false)):
@@ -101,7 +104,15 @@ func _on_teleport(payload: Dictionary) -> void:
 	var pos: Variant = payload.get("position", null)
 	if pos is Vector2:
 		global_position = pos
-		_teleport_lock_until_ms = Time.get_ticks_msec() + 500
+		_movement_lock_until_ms = Time.get_ticks_msec() + 500
+
+
+## Server-driven root with no teleport (potion sip, future cast times). The
+## movement-lock gate freezes both movement and actions for the duration.
+func _on_freeze(payload: Dictionary) -> void:
+	var ms: int = int(payload.get("ms", 0))
+	if ms > 0:
+		_movement_lock_until_ms = maxi(_movement_lock_until_ms, Time.get_ticks_msec() + ms)
 
 
 func _physics_process(delta: float) -> void:
@@ -112,7 +123,7 @@ func _physics_process(delta: float) -> void:
 
 
 func process_movement() -> void:
-	if _dead or Time.get_ticks_msec() < _teleport_lock_until_ms:
+	if _dead or Time.get_ticks_msec() < _movement_lock_until_ms:
 		velocity = Vector2.ZERO
 		return
 	# Read the server-synced MOVE_SPEED stat so AGILITY (and speed gear) actually
@@ -124,7 +135,7 @@ func process_movement() -> void:
 
 
 func process_input() -> void:
-	if _dead or _has_gui_focus() or Time.get_ticks_msec() < _teleport_lock_until_ms:
+	if _dead or _has_gui_focus() or Time.get_ticks_msec() < _movement_lock_until_ms:
 		input_direction = Vector2.ZERO
 		action_input = false
 		return

@@ -17,13 +17,12 @@ region = Rect2(80, 0, 32, 16)
 
 [resource]
 script = ExtResource("4_weapon_item")
-category = &"wand"
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
 base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap_wand")])
 item_name = &"Apprentice Wand"
 item_icon = SubResource("AtlasTexture_wand")
-description = "A simple casting wand. Fires a magic bolt — wand mastery can teach it a second focus."
+description = "A simple casting wand. Fires a magic bolt; its second focus mends an ally instead."
 can_trade = true
 can_sell = true
 stack_limit = 1

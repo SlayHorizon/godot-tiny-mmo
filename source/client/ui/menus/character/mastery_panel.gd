@@ -10,14 +10,18 @@ extends VBoxContainer
 ## xp, points, owned nodes, loadout pick) is fetched via mastery.get.
 ## Spend / equip / respec are server-validated; the panel just re-fetches.
 
-const BRANCHES: Array[StringName] = [&"offensive", &"defensive", &"supportive"]
+# Three weapon-agnostic playstyle pillars (LoL-runes flavored): Domination =
+# aggression/damage, Resolve = durability/survival, Inspiration = utility/
+# tempo/sustain. Vaguer than offensive/defensive/supportive on purpose — a
+# sword can't "support allies" like a wand heal, but it CAN have tempo tricks.
+const BRANCHES: Array[StringName] = [&"domination", &"resolve", &"inspiration"]
 ## Input labels by special-slot position (slot 1 = player_special, slot 2 =
 ## player_special_2). Purely cosmetic — actual binds live in the InputMap.
 const SLOT_KEYS: Array[String] = ["Q", "E"]
 const BRANCH_COLORS: Dictionary[StringName, Color] = {
-	&"offensive": Color(1.0, 0.6, 0.45),
-	&"defensive": Color(0.55, 0.75, 1.0),
-	&"supportive": Color(0.6, 0.95, 0.65),
+	&"domination": Color(1.0, 0.55, 0.42),
+	&"resolve": Color(0.55, 0.75, 1.0),
+	&"inspiration": Color(0.65, 0.95, 0.72),
 }
 
 ## Per-category server state: category (String) -> {level, xp, xp_to_next,

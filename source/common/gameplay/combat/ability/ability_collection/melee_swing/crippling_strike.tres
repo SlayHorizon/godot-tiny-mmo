@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="MeleeSwingAbility" format=3 uid="uid://41sliav2wm8r"]
+
+[ext_resource type="Script" uid="uid://01sxrebcprpu" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/melee_swing_ability.gd" id="1_swing"]
+[ext_resource type="PackedScene" uid="uid://b8s7oak2vqlpx" path="res://source/common/gameplay/combat/melee_arc.tscn" id="2_arc"]
+
+[resource]
+script = ExtResource("1_swing")
+ad_ratio = 1.1
+swing_animation = &"weapon/sword.swing"
+slow_amount = 30.0
+slow_duration_s = 2.0
+name = "Crippling Strike"
+cooldown = 5.0
+mana_cost = 8
+metadata/slug = &"crippling_strike"
+metadata/id = 14

@@ -22,6 +22,11 @@ extends AbilityResource
 @export var burn_dps: float = 0.0
 @export var burn_duration_s: float = 0.0
 
+## Piercing: the bolt passes through up to [member pierce_count] targets before
+## stopping (Overload). Default = a normal one-and-done bolt.
+@export var piercing: bool = false
+@export var pierce_count: int = 0
+
 ## Bolt tint — the ONE visual knob, so new bolt flavors are pure data (the
 ## bolt scenes' sprites are white on purpose). Default = the classic arcane
 ## purple; heal sets green, ember sets red.
@@ -42,6 +47,8 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 	bolt.damage_type = CombatHit.DAMAGE_MAGIC # mitigated by MR, not armor
 	bolt.burn_dps = burn_dps
 	bolt.burn_duration_s = burn_duration_s
+	bolt.piercing = piercing
+	bolt.pierce_left = pierce_count
 	bolt.modulate = bolt_modulate
 	bolt.global_position = _spawn_position(user)
 	user.add_child(bolt)

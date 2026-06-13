@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ChargeAbility" format=3 uid="uid://b12to6pnwc2sj"]
+
+[ext_resource type="Script" uid="uid://byk0d74w4xe1n" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/charge_ability.gd" id="1_charge"]
+[ext_resource type="PackedScene" uid="uid://cckkklpa17vo" path="res://source/common/gameplay/items/weapons/bow/arrow.tscn" id="2_arrow"]
+
+[resource]
+script = ExtResource("1_charge")
+projectile_scene = ExtResource("2_arrow")
+charge_time_s = 1.0
+min_ad_ratio = 0.5
+min_speed = 260.0
+max_speed = 460.0
+projectile_count = 7
+spread_deg = 32.0
+damage_factor = 0.4
+name = "Arrow Storm"
+cooldown = 6.0
+mana_cost = 18
+metadata/slug = &"arrow_storm"
+metadata/id = 15

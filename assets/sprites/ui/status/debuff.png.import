@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2v272adkcb52"
-path="res://.godot/imported/Idle-Sheet.png-64d90126f8a1e616be6f0778c23c63c1.ctex"
+uid="uid://nrniyq17218p"
+path="res://.godot/imported/debuff.png-462020a37f2298e098e7b42e2d9e7d99.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/characters/Fungus/Idle-Sheet.png"
-dest_files=["res://.godot/imported/Idle-Sheet.png-64d90126f8a1e616be6f0778c23c63c1.ctex"]
+source_file="res://assets/sprites/ui/status/debuff.png"
+dest_files=["res://.godot/imported/debuff.png-462020a37f2298e098e7b42e2d9e7d99.ctex"]
 
 [params]
 

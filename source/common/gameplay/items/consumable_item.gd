@@ -14,6 +14,10 @@ extends Item
 @export var buff_duration_s: float = 0.0
 @export var shared_cooldown_ms: int = 1500
 @export var cooldown_category: StringName = &"potion"
+## Server roots the drinker in place for this long on use, so you can't run
+## and chug at the same time (a sip animation slots in here later). 0 = no
+## freeze.
+@export var use_freeze_ms: int = 900
 ## initial charges per single copy if 1 can use the potion one time, if 2 can use the potion 2 times for example.
 @export var default_charges: int = 1
 

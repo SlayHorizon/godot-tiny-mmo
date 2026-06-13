@@ -1,8 +1,8 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://dobjx0ntafslb"]
 
-[ext_resource type="Texture2D" uid="uid://dccos7vor4e87" path="res://assets/sprites/characters/Fungus/Death-Sheet.png" id="1_5ce41"]
-[ext_resource type="Texture2D" uid="uid://b2v272adkcb52" path="res://assets/sprites/characters/Fungus/Idle-Sheet.png" id="2_t4062"]
-[ext_resource type="Texture2D" uid="uid://qkaxc6cijn84" path="res://assets/sprites/characters/Fungus/Run-Sheet.png" id="3_6clr7"]
+[ext_resource type="Texture2D" path="res://assets/sprites/characters/fungus/fungus_death.png" id="1_5ce41"]
+[ext_resource type="Texture2D" path="res://assets/sprites/characters/fungus/fungus_idle.png" id="2_t4062"]
+[ext_resource type="Texture2D" path="res://assets/sprites/characters/fungus/fungus_run.png" id="3_6clr7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_u4c0g"]
 atlas = ExtResource("1_5ce41")

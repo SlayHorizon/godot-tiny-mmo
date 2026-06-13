@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dccos7vor4e87"
-path="res://.godot/imported/Death-Sheet.png-cc2e0bb17f629ac5d12ed19b92b26eba.ctex"
+uid="uid://de4eqwtovuq6y"
+path="res://.godot/imported/stone_lava_death.png-425cade646c0c3f0e03335cad3c61a0f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/characters/Fungus/Death-Sheet.png"
-dest_files=["res://.godot/imported/Death-Sheet.png-cc2e0bb17f629ac5d12ed19b92b26eba.ctex"]
+source_file="res://assets/sprites/characters/stone_lava/stone_lava_death.png"
+dest_files=["res://.godot/imported/stone_lava_death.png-425cade646c0c3f0e03335cad3c61a0f.ctex"]
 
 [params]
 

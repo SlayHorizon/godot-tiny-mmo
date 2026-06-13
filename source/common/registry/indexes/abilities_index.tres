@@ -5,23 +5,38 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1781294439
-next_id = 12
+version = 1781337582
+next_id = 20
 entries = Array[Dictionary]([{
+&"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
+&"id": 12,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres",
+&"slug": &"arcane_wall"
+}, {
 &"hash": "89ad782a48ea5db037f26be9e5c0a4b813dbb3625ccf3d3c292df7c5078210a6",
 &"id": 10,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres",
 &"slug": &"ember_bolt"
+}, {
+&"hash": "f69da66e7bf7299bf0066c9b17aa7948e734b24ec2452e5a1b227183590a92d5",
+&"id": 13,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/overload.tres",
+&"slug": &"overload"
 }, {
 &"hash": "4585696f5d99b404a6531137fb435fab1c8d98c7abbb7189c49a01fc9006d414",
 &"id": 1,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_bolt.tres",
 &"slug": &"wand_bolt"
 }, {
-&"hash": "a5ca450603c7c9d2a4c5d2062ce567bac9f1c9b00246227d6ac93cad8e917bf4",
+&"hash": "8e941caeb8a0b4348b774ca7627b010009b4286c133a3ac92e50807fafe1a144",
 &"id": 2,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres",
 &"slug": &"wand_heal"
+}, {
+&"hash": "979e3836ded66f65dff84541b04e51ec96b65c3d6475bdcb4466181d9dc1a6b9",
+&"id": 15,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres",
+&"slug": &"arrow_storm"
 }, {
 &"hash": "2c3bde9e9391444c1847dd316cb91c5e491af226e306b7dd971b9169c23e107d",
 &"id": 3,
@@ -33,15 +48,40 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_shot.tres",
 &"slug": &"bow_shot"
 }, {
+&"hash": "3086fa677f224c958274d1740628966b841d9ae0f35b4204392a5fae18a6839e",
+&"id": 16,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/venom_shot.tres",
+&"slug": &"venom_shot"
+}, {
+&"hash": "cd6704e6a8f234533bda6a8fd46369b28bc356f6571abe1af29c28a5990e86eb",
+&"id": 17,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/bladestorm.tres",
+&"slug": &"bladestorm"
+}, {
+&"hash": "fb78dc6a2e0b0e86c5bb7abbfa77b6521cf7dcbda97fd9b92182cc7c94e11b80",
+&"id": 14,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crippling_strike.tres",
+&"slug": &"crippling_strike"
+}, {
 &"hash": "efc70a5b7fe019aa2272b9f409df03c2e32b03bc40efe8a83b2df990f75bf748",
 &"id": 11,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres",
 &"slug": &"crushing_blow"
 }, {
+&"hash": "1462e4e552681a2f6fb48d33c1009dcadae81e7256976f706f1d22e6504c877f",
+&"id": 18,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/earthshatter.tres",
+&"slug": &"earthshatter"
+}, {
 &"hash": "c5be3e15d1189dad907284c0e054dcffa2460148167e3087e92a153edf765ed6",
 &"id": 5,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/hammer_slam.tres",
 &"slug": &"hammer_slam"
+}, {
+&"hash": "1fa640a93fd7026df42c25605d46251ca06b1ad171c1c455361d3de967a3d48c",
+&"id": 19,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/shockwave.tres",
+&"slug": &"shockwave"
 }, {
 &"hash": "dd60a0aa1519e6c1ddbe0ebf07fdfc9ae2c7dd5eb994daecb26b11673bf65598",
 &"id": 6,

@@ -67,6 +67,9 @@ func _on_status_tick() -> void:
 			continue
 		# Expire finished buffs FIRST so this tick's regen uses the post-buff rate.
 		BuffService.tick(player)
+		# Status HUD snapshot (buffs / DoTs / in-combat) — after the expiry pass
+		# so dropped buffs vanish from the strip the same second they end.
+		StatusService.sync(player)
 		var mana_max: float = player.stats_component.get_stat(Stat.MANA_MAX)
 		if mana_max <= 0.0:
 			continue

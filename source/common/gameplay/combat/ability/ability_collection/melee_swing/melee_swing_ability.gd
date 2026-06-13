@@ -26,6 +26,11 @@ extends AbilityResource
 ## (e.g. "weapon/sword.swing"). The weapon scene loads the library on equip.
 @export var swing_animation: StringName
 
+## On-hit slow (Crippling Strike): flat move_speed cut + duration, handed to the
+## arc so each struck Player gets a timed negative buff. 0 = no slow.
+@export var slow_amount: float = 0.0
+@export var slow_duration_s: float = 0.0
+
 
 func use_ability(user: Entity, direction: Vector2) -> void:
 	# Animation runs on every peer (client AND server) so the swing reads
@@ -45,6 +50,8 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 		return
 	var arc: MeleeArc = arc_scene.instantiate()
 	arc.source = user if user is Character else null
+	arc.slow_amount = slow_amount
+	arc.slow_duration_s = slow_duration_s
 	# A swing deals ad_ratio × the wielder's AD (base + Strength + gear), so both
 	# leveling and a better weapon raise every hit.
 	var ad: float = (user as Character).stats_component.get_stat(Stat.AD) if user is Character else 0.0

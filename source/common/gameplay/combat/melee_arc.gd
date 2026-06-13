@@ -17,6 +17,10 @@ extends Area2D
 
 var source: Character
 var damage: float = 10.0
+## On-hit slow (Crippling Strike): flat move_speed reduction applied as a
+## timed negative buff to each Player struck. 0 = no slow. Set by the ability.
+var slow_amount: float = 0.0
+var slow_duration_s: float = 0.0
 
 var _hit_bodies: Array[Node] = []
 var _scanned: bool = false
@@ -51,4 +55,9 @@ func _on_body_entered(body: Node2D) -> void:
 	if _hit_bodies.has(body):
 		return
 	_hit_bodies.append(body)
-	CombatHit.try_damage(source if source is Character else null, body, damage)
+	var result: CombatHit.Result = CombatHit.try_damage(source if source is Character else null, body, damage)
+	# Slow rides a LANDED hit only (not a blocked wall or an ignored ally), and
+	# only on Players — the first negative status buff in the game, applied via
+	# the same BuffService that handles potions.
+	if result == CombatHit.Result.DAMAGED and slow_amount > 0.0 and slow_duration_s > 0.0 and body is Player:
+		BuffService.apply(body as Player, Stat.MOVE_SPEED, -slow_amount, slow_duration_s)
