@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://b78yh1c3uto0o" path="res://source/client/ui/menus/settings/components/setting_container.gd" id="6_b8kg5"]
 [ext_resource type="Script" uid="uid://ciom2x4q8p6ql" path="res://source/client/ui/menus/settings/controls_settings.gd" id="6_x8gi7"]
 [ext_resource type="Script" uid="uid://dlp5twd0pw868" path="res://source/client/ui/menus/settings/components/settings_widget.gd" id="8_x8gi7"]
+[ext_resource type="Script" path="res://source/client/ui/menus/settings/components/setting_palette.gd" id="9_palette"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8ix7g"]
 content_margin_top = 12.0
@@ -203,6 +204,37 @@ layout_mode = 2
 script = ExtResource("6_552vb")
 setting_section = &"general"
 setting_property = &"language"
+controller = NodePath(".")
+
+[node name="Appearance" type="VBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=700000001]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Appearance" unique_id=700000002]
+layout_mode = 2
+text = "Appearance"
+
+[node name="GatewayTheme" type="HBoxContainer" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Appearance" unique_id=700000003]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Appearance/GatewayTheme" unique_id=700000004]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Gateway theme"
+vertical_alignment = 1
+
+[node name="Palette" type="OptionButton" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Appearance/GatewayTheme" unique_id=700000005 node_paths=PackedStringArray("controller")]
+layout_mode = 2
+script = ExtResource("9_palette")
+setting_section = &"gateway"
+setting_property = &"palette"
+controller = NodePath(".")
+
+[node name="RandomizeTheme" type="CheckButton" parent="MainContainer/HBoxContainer/General/ScrollContainer/VBoxContainer/Appearance" unique_id=700000006 node_paths=PackedStringArray("controller")]
+layout_mode = 2
+text = "SettingName"
+script = ExtResource("8_x8gi7")
+setting_section = &"gateway"
+setting_property = &"randomize"
 controller = NodePath(".")
 
 [node name="ControlsSettings" type="PanelContainer" parent="MainContainer/HBoxContainer" unique_id=394050120 node_paths=PackedStringArray("input_type_title", "settings_containers")]

@@ -43,3 +43,13 @@ DESCRIPTION,Description,Descrição,Descripción
 CHARACTER_NAME,Character name,Nome do personagem,Nombrel del personaje
 RANDOM,Random,Aleatório,Aleatorio
 CREATE,Create,Criar,Crear
+ERR_BAD_CREDENTIALS,Incorrect account name or password.,Nome da conta ou senha incorretos.,Nombre de cuenta o contraseña incorrectos.
+ERR_ALREADY_CONNECTED,This account is already in game. Try again in a moment.,Esta conta já está em jogo. Tente novamente em instantes.,Esta cuenta ya está en juego. Inténtalo de nuevo en un momento.
+ERR_ACCOUNT_CREATE_FAILED,Couldn't create the account. That name may already be taken.,Não foi possível criar a conta. Esse nome pode já estar em uso.,No se pudo crear la cuenta. Ese nombre puede estar en uso.
+ERR_CONNECTION,Couldn't reach the server. Check your connection and try again.,Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.,No se pudo conectar al servidor. Comprueba tu conexión e inténtalo de nuevo.
+ERR_GENERIC,Something went wrong. Please try again.,Algo deu errado. Tente novamente.,Algo salió mal. Inténtalo de nuevo.
+NO_WORLDS_ONLINE,No worlds are online right now. Trying again shortly…,Nenhum mundo está online no momento. Tentando novamente em breve…,No hay mundos en línea ahora mismo. Reintentando en breve…
+ERR_RATE_LIMITED,Too many attempts. Please wait a moment and try again.,Muitas tentativas. Aguarde um momento e tente novamente.,Demasiados intentos. Espera un momento e inténtalo de nuevo.
+SHOW_PASSWORD,Show password,Mostrar senha,Mostrar contraseña
+CONNECTED_AS,Connected · %s,Conectado · %s,Conectado · %s
+NAME_LEVEL,%s\nLevel %d,%s\nNível %d,%s\nNivel %d

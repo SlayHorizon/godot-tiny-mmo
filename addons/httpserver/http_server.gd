@@ -117,6 +117,11 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 				payload[k] = v
 
 	payload["__path__"] = path
+	# Client IP for per-IP rate-limiting (AuthRateLimiter). Behind the reverse proxy
+	# the socket host is always the proxy (loopback), so prefer the X-Real-IP header
+	# Caddy stamps with the real client (header_up overwrites any client-sent value,
+	# so it can't be spoofed). Falls back to the socket host for direct / local dev.
+	payload["__ip__"] = _header_value(headers, "x-real-ip", connection.get_connected_host())
 
 	# Try a registered route first. Static fallback only fires when no route
 	# matched, so API paths can use any prefix without colliding with the
@@ -142,6 +147,19 @@ func handle_connection(connection: StreamPeerTCP) -> void:
 	# Nothing matched.
 	http_send(connection, {"ok": false, "error": "not_found"}, HTTPClient.ResponseCode.RESPONSE_NOT_FOUND)
 	close_connection(connection)
+
+
+## Case-insensitive lookup of a request header value in the raw header block (the
+## text before the blank line), or `fallback` if the header is absent / empty.
+## `lower_name` must already be lower-case (e.g. "x-real-ip").
+func _header_value(header_block: String, lower_name: String, fallback: String) -> String:
+	for line: String in header_block.split("\r\n"):
+		var colon: int = line.find(":")
+		if colon != -1 and line.substr(0, colon).strip_edges().to_lower() == lower_name:
+			var value: String = line.substr(colon + 1).strip_edges()
+			if not value.is_empty():
+				return value
+	return fallback
 
 
 func http_send(

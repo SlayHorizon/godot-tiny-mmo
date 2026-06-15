@@ -5,6 +5,7 @@
 [ext_resource type="FontFile" uid="uid://cehc3gujked8x" path="res://assets/fonts/Cinzel/static/Cinzel-Bold.ttf" id="5_opc3y"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="6_g2eid"]
 [ext_resource type="FontFile" uid="uid://cr1d4ugttxggp" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" id="6_tnybn"]
+[ext_resource type="Texture2D" uid="uid://drh48n51habmy" path="res://assets/sprites/gui/gateway/icon_more.png" id="7_4oa66"]
 [ext_resource type="PackedScene" uid="uid://dgpsxb4qq1hex" path="res://source/client/ui/menus/settings/settings_menu.tscn" id="7_g2eid"]
 [ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/popup_panel.gd" id="9_4rdug"]
 [ext_resource type="AudioStream" uid="uid://xxr4otrq1cg0" path="res://assets/audio/music/ekonia-main-theme.wav" id="10_q1aoo"]
@@ -46,6 +47,7 @@ shadow_size = 12
 shadow_offset = Vector2(0, 4)
 
 [node name="Gateway" type="Control" unique_id=1284599044]
+texture_filter = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,6 +85,7 @@ offset_right = 280.0
 offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"FloatingPanel"
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
 
 [node name="PanelRect" type="TextureRect" parent="MainPanel" unique_id=2129319634]
@@ -98,39 +101,41 @@ theme_override_constants/separation = 16
 [node name="Label" type="Label" parent="MainPanel/VBoxContainer" unique_id=2087592224]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
-theme_override_font_sizes/font_size = 24
-text = "WELCOME"
+theme_override_font_sizes/font_size = 34
+text = "Ekonia Online"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer" unique_id=281198905]
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"TitleDivider"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer" unique_id=1026911619]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 16
+theme_override_constants/separation = 14
 
 [node name="LoginButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer" unique_id=1337529927]
-custom_minimum_size = Vector2(420, 56)
+custom_minimum_size = Vector2(420, 60)
 layout_mode = 2
+theme_type_variation = &"FrameButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "LOGIN"
 
 [node name="CreateAccountButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer" unique_id=1337747159]
-custom_minimum_size = Vector2(420, 56)
+custom_minimum_size = Vector2(420, 60)
 layout_mode = 2
-theme_type_variation = &"GradientButton"
+theme_type_variation = &"FrameButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "CREATE_ACC"
 
 [node name="GuestButton" type="Button" parent="MainPanel/VBoxContainer/VBoxContainer" unique_id=720776451]
-custom_minimum_size = Vector2(420, 56)
+custom_minimum_size = Vector2(420, 60)
 layout_mode = 2
-theme_type_variation = &"GradientButton"
+theme_type_variation = &"FrameButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "PLAY_AS_GUEST"
@@ -166,6 +171,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"TitleDivider"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LoginPanel/VBoxContainer" unique_id=381977018]
 layout_mode = 2
@@ -203,9 +209,9 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "ENTER_PASSWORD"
 
 [node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer/VBoxContainer" unique_id=2113345034]
-custom_minimum_size = Vector2(420, 56)
+custom_minimum_size = Vector2(420, 60)
 layout_mode = 2
-theme_type_variation = &"GradientButton"
+theme_type_variation = &"FrameButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "LOGIN"
@@ -241,6 +247,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"TitleDivider"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CreateAccountPanel/VBoxContainer" unique_id=358211503]
 layout_mode = 2
@@ -293,9 +300,9 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_dfj0q")
 placeholder_text = "ENTER_PASSWORD_CONFIRM"
 
 [node name="CreateAccountButton" type="Button" parent="CreateAccountPanel/VBoxContainer/VBoxContainer" unique_id=1234407790]
-custom_minimum_size = Vector2(420, 56)
+custom_minimum_size = Vector2(420, 60)
 layout_mode = 2
-theme_type_variation = &"GradientButton"
+theme_type_variation = &"FrameButton"
 theme_override_fonts/font = ExtResource("6_tnybn")
 theme_override_font_sizes/font_size = 18
 text = "CREATE_ACC"
@@ -315,6 +322,7 @@ offset_right = 280.0
 offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"FloatingPanel"
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="WorldSelection" unique_id=1830473629]
@@ -332,6 +340,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"TitleDivider"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="WorldSelection/VBoxContainer" unique_id=1595606682]
 layout_mode = 2
@@ -360,6 +369,7 @@ offset_right = 280.0
 offset_bottom = 160.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"FloatingPanel"
 theme_override_styles/panel = SubResource("StyleBoxEmpty_q35d6")
 
 [node name="PanelRect" type="TextureRect" parent="CharacterSelection" unique_id=35002467]
@@ -383,6 +393,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"TitleDivider"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CharacterSelection/VBoxContainer" unique_id=1665792806]
 layout_mode = 2
@@ -453,6 +464,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"TitleDivider"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CharacterCreation/VBoxContainer" unique_id=1100261266]
 layout_mode = 2
@@ -548,6 +560,7 @@ custom_minimum_size = Vector2(260, 130)
 layout_mode = 2
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control" unique_id=1440170042]
+texture_filter = 1
 position = Vector2(0, -130)
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("6_g2eid")
@@ -634,6 +647,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(336, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"TitleDivider"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PopupPanel/VBoxContainer" unique_id=1311030769]
 layout_mode = 2
@@ -681,7 +695,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("5_opc3y")
 theme_override_font_sizes/font_size = 24
-text = "TINY MMO"
+text = "Ekonia Online"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="AlreadyConnectedPanel" unique_id=651861677]
@@ -731,129 +745,19 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "CHANGE"
 
-[node name="MoreButton" type="Button" parent="AlreadyConnectedPanel" unique_id=1729056277]
-layout_mode = 0
-offset_left = 890.0
-offset_top = 8.0
-offset_right = 952.0
-offset_bottom = 51.0
-text = "MORE"
-
-[node name="PanelContainer" type="PanelContainer" parent="AlreadyConnectedPanel" unique_id=1043121351]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -161.0
-offset_top = -231.0
-offset_right = 227.0
-offset_bottom = 215.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="VBoxContainer3" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer" unique_id=1031456788]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="VBoxContainer" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1616609707]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=885474027]
-layout_mode = 2
-text = "ACCOUNT"
-
-[node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer" unique_id=1942694599]
-layout_mode = 2
-text = "SETTINGS"
-
-[node name="HSeparator2" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1441440801]
-custom_minimum_size = Vector2(336, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="VBoxContainer3" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=777967777]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Label" type="Label" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1791518199]
-layout_mode = 2
-text = "COMMUNITY"
-
-[node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=582441869]
-layout_mode = 2
-text = "Discord"
-
-[node name="Button5" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1150752682]
-layout_mode = 2
-text = "Website"
-
-[node name="Button6" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer3" unique_id=1945047176]
-layout_mode = 2
-text = "PATCH_NOTES"
-
-[node name="HSeparator3" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1497185232]
-custom_minimum_size = Vector2(336, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=94306566]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 10
-alignment = 2
-
-[node name="Button3" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=1264677009]
-layout_mode = 2
-text = "LOGOUT"
-
-[node name="Button4" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3/VBoxContainer2" unique_id=464984533]
-layout_mode = 2
-text = "CLOSE_GAME"
-
-[node name="HSeparator4" type="HSeparator" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=1173479855]
-custom_minimum_size = Vector2(336, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="Button" type="Button" parent="AlreadyConnectedPanel/PanelContainer/VBoxContainer3" unique_id=2049791848]
-layout_mode = 2
-text = "BACK"
-
-[node name="SettingsButton" type="Button" parent="." unique_id=461701609]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -55.0
-offset_top = -56.0
-offset_right = -15.0
-offset_bottom = -16.0
-grow_horizontal = 0
-grow_vertical = 0
-text = "SETTINGS"
-
 [node name="BackButton" type="Button" parent="." unique_id=1060070352]
 visible = false
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -104.0
-offset_top = -52.0
-offset_right = 104.0
-offset_bottom = -12.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 57.0
+offset_bottom = 57.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_type_variation = &"Chip"
 theme_override_fonts/font = ExtResource("6_tnybn")
-text = "BACK"
+theme_override_font_sizes/font_size = 24
+text = "<"
 
 [node name="ConnectionInfo" type="Label" parent="." unique_id=911295128]
 layout_mode = 1
@@ -873,6 +777,114 @@ vertical_alignment = 3
 stream = ExtResource("10_q1aoo")
 volume_db = -12.0
 
+[node name="MoreButton" type="Button" parent="." unique_id=1729056277]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -57.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = 57.0
+grow_horizontal = 0
+theme_type_variation = &"Chip"
+icon = ExtResource("7_4oa66")
+icon_alignment = 1
+
+[node name="MoreBackdrop" type="ColorRect" parent="." unique_id=211781075]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="MoreMenu" type="PanelContainer" parent="." unique_id=1043121351]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -161.0
+offset_top = -231.0
+offset_right = 227.0
+offset_bottom = 215.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="MoreMenu" unique_id=1031456788]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MoreMenu/VBoxContainer3" unique_id=1616609707]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SettingsEntry" type="Button" parent="MoreMenu/VBoxContainer3/VBoxContainer" unique_id=1942694599]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="HSeparator2" type="HSeparator" parent="MoreMenu/VBoxContainer3" unique_id=1441440801]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="MoreMenu/VBoxContainer3" unique_id=777967777]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DiscordButton" type="Button" parent="MoreMenu/VBoxContainer3/VBoxContainer3" unique_id=582441869]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Discord"
+
+[node name="WebsiteButton" type="Button" parent="MoreMenu/VBoxContainer3/VBoxContainer3" unique_id=1150752682]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Website"
+
+[node name="HSeparator3" type="HSeparator" parent="MoreMenu/VBoxContainer3" unique_id=1497185232]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MoreMenu/VBoxContainer3" unique_id=94306566]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="LogoutButton" type="Button" parent="MoreMenu/VBoxContainer3/VBoxContainer2" unique_id=1264677009]
+unique_name_in_owner = true
+layout_mode = 2
+text = "LOGOUT"
+
+[node name="QuitButton" type="Button" parent="MoreMenu/VBoxContainer3/VBoxContainer2" unique_id=464984533]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CLOSE_GAME"
+
+[node name="HSeparator4" type="HSeparator" parent="MoreMenu/VBoxContainer3" unique_id=1173479855]
+custom_minimum_size = Vector2(336, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="MoreBackButton" type="Button" parent="MoreMenu/VBoxContainer3" unique_id=2049791848]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BACK"
+
+[node name="VersionLabel" type="Label" parent="MoreMenu/VBoxContainer3" unique_id=1503192261]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.5)
+layout_mode = 2
+horizontal_alignment = 1
+
 [node name="HTTPRequest" type="HTTPRequest" parent="." unique_id=1237181825]
 accept_gzip = false
 timeout = 7.0
@@ -889,5 +901,4 @@ layout_mode = 1
 [connection signal="pressed" from="CharacterCreation/VBoxContainer/VBoxContainer/CreateButton" to="." method="_on_create_character_button_pressed"]
 [connection signal="pressed" from="AlreadyConnectedPanel/ContinueButton" to="." method="_on_continue_button_pressed"]
 [connection signal="pressed" from="AlreadyConnectedPanel/ChangeButton" to="." method="_on_change_button_pressed"]
-[connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]

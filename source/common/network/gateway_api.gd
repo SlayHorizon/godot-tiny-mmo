@@ -13,6 +13,16 @@ const KEY_CHAR_ID: String = "c-id"
 const KEY_CLIENT_VERSION: String = "c-v"
 
 
+## Auth/gateway error codes (server → client). Kept here so client and server
+## agree on the numbers; the client maps them to localized text in GatewayError.
+## Anything not listed falls back to a generic "please try again" on the client.
+const ERR_GENERIC: int = 1
+const ERR_ACCOUNT_CREATE_FAILED: int = 30
+const ERR_BAD_CREDENTIALS: int = 50
+const ERR_ALREADY_CONNECTED: int = 51
+const ERR_RATE_LIMITED: int = 60
+
+
 ## This build's version, from project.godot's application/config/version. Same
 ## call returns the client's version on the client and the server's on the server.
 static func game_version() -> String:

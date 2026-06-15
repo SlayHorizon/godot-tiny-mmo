@@ -8,6 +8,12 @@ signal response_received(request_id: int, response: Dictionary)
 
 var worlds_info: Dictionary
 
+## True only while the WebSocket up to the master is established. The HTTP server
+## checks this before forwarding a request — at cold start (multi-instance launch)
+## the HTTP listener is up before this link is, and firing an RPC at an absent
+## master throws ERR_CONNECTION_ERROR.
+var master_connected: bool = false
+
 
 func _ready() -> void:
 	var configuration: Dictionary = ConfigFileUtils.load_section(
@@ -24,16 +30,19 @@ func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 
 
 func _on_connection_succeeded() -> void:
+	master_connected = true
 	print("Successfully connected to the Gateway Manager as %d!" % multiplayer.get_unique_id())
 
 
 func _on_connection_failed() -> void:
+	master_connected = false
 	print("Failed to connect to the Gateway Manager as Gateway.")
 	# Try to reconnect.
 	get_tree().create_timer(15.0).timeout.connect(_ready)
 
 
 func _on_server_disconnected() -> void:
+	master_connected = false
 	print("Gateway Manager disconnected.")
 	# Try to reconnect.
 	get_tree().create_timer(15.0).timeout.connect(_ready)

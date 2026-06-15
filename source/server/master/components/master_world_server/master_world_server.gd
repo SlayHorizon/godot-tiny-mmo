@@ -28,6 +28,10 @@ func _on_peer_connected(peer_id: int) -> void:
 func _on_peer_disconnected(peer_id: int) -> void:
 	var dropped: Dictionary = connected_worlds.get(peer_id, {})
 	connected_worlds.erase(peer_id)
+	# Push the updated roster to every gateway so their cached world list (served
+	# at /v1/worlds) drops the dead world. Connect already broadcasts (see
+	# fetch_server_info); without this, a stopped world would linger in selection.
+	gateway_manager.update_worlds_info.rpc(get_public_worlds())
 	print("World: %d is disconnected from WorldManager." % peer_id)
 	var world_name: String = str(dropped.get("info", {}).get("name", "world#%d" % peer_id))
 	DiscordNotifier.notify_world_disconnected(world_name)
@@ -39,9 +43,28 @@ func fetch_server_info(info: Dictionary) -> void:
 	connected_worlds[game_server_id] = info
 	# Stamp connect time so the dashboard can show "connected for X minutes".
 	connected_worlds[game_server_id]["connected_at"] = int(Time.get_unix_time_from_system())
-	gateway_manager.update_worlds_info.rpc(connected_worlds)
+	gateway_manager.update_worlds_info.rpc(get_public_worlds())
 	var world_name: String = str(info.get("info", {}).get("name", "world#%d" % game_server_id))
 	DiscordNotifier.notify_world_connected(world_name)
+
+
+## Client-safe view of the live worlds: name / motd / pvp only. The full roster
+## (connected_worlds) also holds each world's address, port and heartbeat snapshot
+## (player rosters, chat tail, server logs) — that must never reach a game client,
+## so every world-list payload (login/list responses + gateway broadcasts) is
+## projected through here. The raw roster stays server-side for handoff/dashboard.
+func get_public_worlds() -> Dictionary:
+	var out: Dictionary = {}
+	for world_id: int in connected_worlds:
+		var info: Dictionary = connected_worlds[world_id].get("info", {})
+		out[world_id] = {
+			"info": {
+				"name": info.get("name", ""),
+				"motd": info.get("motd", ""),
+				"pvp": info.get("pvp", false),
+			}
+		}
+	return out
 
 
 ## Periodic snapshot push from each world. Replaces the live numbers on the

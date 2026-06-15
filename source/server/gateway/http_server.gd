@@ -42,6 +42,11 @@ func _ready() -> void:
 		&"/v1/account/create",
 		handle_account_creation
 	)
+	router.register_route(
+		HTTPClient.Method.METHOD_POST,
+		&"/v1/worlds",
+		handle_worlds
+	)
 	server.listen(8088, "127.0.0.1")
 	
 	gateway_manager_client.response_received.connect(
@@ -63,9 +68,15 @@ func create_session(account: Dictionary) -> String:
 
 
 func send_request(action: String, data: Dictionary, timeout_sec: float = 5.0) -> Dictionary:
+	# The link up to the master may not be established yet at cold start. Bail with
+	# a connection error rather than firing an RPC at an absent peer (which throws
+	# ERR_CONNECTION_ERROR); the client treats this as retryable.
+	if not gateway_manager_client.master_connected:
+		return {"error": Error.ERR_TIMEOUT, "msg": "gateway not ready"}
+
 	var request_id: int = next_request_id
 	next_request_id += 1
-	
+
 	var request: NetRequest = NetRequest.new()
 	request.token_id = data.get(GatewayAPI.KEY_TOKEN_ID, 0)
 	pending_requests[request_id] = request
@@ -95,7 +106,20 @@ func _on_gateway_manager_client_response_received(request_id: int, response: Dic
 	request.resolve(response)
 
 
+# Per-IP throttle for the brute-forceable / spammable auth endpoints. __ip__ is the
+# real client even behind Caddy — the HTTP addon reads the X-Real-IP header Caddy
+# stamps (header_up X-Real-IP {remote_host}), falling back to the socket host. So
+# loopback stays exempt only for local multi-instance testing (no proxy header).
+func _rate_ok(payload: Dictionary, endpoint: StringName, max_calls: int, window_ms: int) -> bool:
+	var ip: String = str(payload.get("__ip__", ""))
+	if ip.is_empty() or ip == "127.0.0.1" or ip == "::1":
+		return true
+	return AuthRateLimiter.allow(ip, endpoint, max_calls, window_ms)
+
+
 func handle_login(payload: Dictionary) -> Dictionary:
+	if not _rate_ok(payload, &"login", 10, 60000):
+		return {"error": GatewayAPI.ERR_RATE_LIMITED}
 	if not payload.has_all(
 		[
 			GatewayAPI.KEY_ACCOUNT_USERNAME,
@@ -120,6 +144,8 @@ func handle_login(payload: Dictionary) -> Dictionary:
 
 
 func handle_guest(payload: Dictionary) -> Dictionary:
+	if not _rate_ok(payload, &"guest", 5, 60000):
+		return {"error": GatewayAPI.ERR_RATE_LIMITED}
 	var result: Dictionary = await send_request("guest", payload)
 	var error: Error = result.get("error", 0)
 	if error != OK:
@@ -193,7 +219,34 @@ func handle_world_enter(payload: Dictionary) -> Dictionary:
 	return response
 
 
+## Cheap world-list refresh: served straight from the gateway's cached roster
+## (the master broadcasts it on every world connect/disconnect), so no master
+## round-trip per refresh. Used by the client's "Update" button and the
+## empty-state auto-retry.
+func handle_worlds(_payload: Dictionary) -> Dictionary:
+	return {"w": _public_worlds(gateway_manager_client.worlds_info)}
+
+
+## Whitelist only what a world card needs. The cached roster also carries each
+## world's address, port and full heartbeat snapshot (player rosters, chat tail,
+## server logs) — never ship those to a game client.
+func _public_worlds(raw: Dictionary) -> Dictionary:
+	var out: Dictionary = {}
+	for world_id: Variant in raw:
+		var info: Dictionary = raw[world_id].get("info", {})
+		out[world_id] = {
+			"info": {
+				"name": info.get("name", ""),
+				"motd": info.get("motd", ""),
+				"pvp": info.get("pvp", false),
+			}
+		}
+	return out
+
+
 func handle_account_creation(payload: Dictionary) -> Dictionary:
+	if not _rate_ok(payload, &"account_create", 5, 300000):
+		return {"error": GatewayAPI.ERR_RATE_LIMITED}
 	if not payload.has_all(
 		[
 			GatewayAPI.KEY_ACCOUNT_USERNAME,

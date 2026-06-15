@@ -21,7 +21,7 @@ func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 
 func _on_peer_connected(peer_id: int) -> void:
 	print("Gateway: %d is connected to GatewayManager." % peer_id)
-	update_worlds_info.rpc_id(peer_id, world_manager.connected_worlds)
+	update_worlds_info.rpc_id(peer_id, world_manager.get_public_worlds())
 
 
 func _on_peer_disconnected(peer_id: int) -> void:
@@ -97,9 +97,9 @@ func login_request(username: String, password: String) -> Dictionary:
 	)
 
 	if not account:
-		return {"error": 50}
+		return {"error": GatewayAPI.ERR_BAD_CREDENTIALS}
 	elif account.peer_id:
-		return {"error": 51, "msg": "This account is already connected."}
+		return {"error": GatewayAPI.ERR_ALREADY_CONNECTED, "msg": "This account is already connected."}
 
 	authentication_manager.active_accounts[account.username] = account
 
@@ -116,7 +116,7 @@ func login_request(username: String, password: String) -> Dictionary:
 		"id": account.id,
 		"world_name": account.last_world_name,
 		"character_id": account.last_character_id,
-		"w": world_manager.connected_worlds
+		"w": world_manager.get_public_worlds()
 	}
 
 
@@ -125,13 +125,13 @@ func create_account_request(username: String, password: String, is_guest: bool) 
 	var return_data: Dictionary
 	var result: AccountResource = authentication_manager.create_account(username, password, is_guest)
 	if result == null:
-		result_code = 30
+		result_code = GatewayAPI.ERR_ACCOUNT_CREATE_FAILED
 		return_data = {"error": result_code, "msg": "Couldn't create account."}
 	else:
 		return_data = {
 			"name": result.username,
 			"id": result.id,
-			"w": world_manager.connected_worlds
+			"w": world_manager.get_public_worlds()
 		}
 	return return_data
 
@@ -145,10 +145,10 @@ func create_player_character_request(
 ) -> void:
 	var account: AccountResource = authentication_manager.account_collection.collection.get(username)
 	if not account:
-		gateway_response.rpc_id(gateway_id, request_id, {"error": 50, "msg": "account not found."})
+		gateway_response.rpc_id(gateway_id, request_id, {"error": GatewayAPI.ERR_BAD_CREDENTIALS, "msg": "account not found."})
 		return
 	if not world_manager.connected_worlds.has(world_id):
-		gateway_response.rpc_id(gateway_id, request_id, {"error": 50, "msg": "world not found."})
+		gateway_response.rpc_id(gateway_id, request_id, {"error": GatewayAPI.ERR_BAD_CREDENTIALS, "msg": "world not found."})
 		return
 	world_manager.create_player_character_request.rpc_id(
 		world_id, gateway_id, request_id, account.username, character_data
@@ -168,7 +168,7 @@ func request_player_characters(gateway_id: int, request_id: int, username: Strin
 			username,
 		)
 	else:
-		gateway_response.rpc_id(gateway_id, request_id, {"error": 50, "msg": "account not found or world."})
+		gateway_response.rpc_id(gateway_id, request_id, {"error": GatewayAPI.ERR_BAD_CREDENTIALS, "msg": "account not found or world."})
 
 
 func request_enter_world(gateway_id: int, request_id: int, username: String, world_id: int, character_id: int) -> void:

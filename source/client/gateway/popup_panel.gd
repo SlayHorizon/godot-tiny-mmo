@@ -18,6 +18,8 @@ func confirm_message(message: String) -> void:
 	rich_text_label.text = message
 	confirm_button.show()
 	show()
+	# Put focus on OK so keyboard/gamepad players can dismiss it without a mouse.
+	confirm_button.grab_focus()
 	await confirm_button.pressed
 	hide()
 

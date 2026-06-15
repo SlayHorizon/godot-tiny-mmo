@@ -21,14 +21,10 @@ func _ready() -> void:
 	load_account_collection()
 
 
-# Consider using more complex and safer token generator for your own project
+# Cryptographically-secure random token (256 bits, hex-encoded → 64 chars). Used
+# for world-handoff auth tokens and guest passwords; both need to be unguessable.
 func generate_random_token() -> String:
-	var token_length: int = randi_range(7, 13)
-	var characters: String = "abcdefghijklmnopqrstuvwxyz#$-+0123456789"
-	var token: String = ""
-	for i in range(token_length):
-		token += characters[randi()% len(characters)]
-	return token
+	return Crypto.new().generate_random_bytes(32).hex_encode()
 
 
 func create_account(username: String, password: String, is_guest: bool) -> AccountResource:
@@ -42,8 +38,9 @@ func create_account(username: String, password: String, is_guest: bool) -> Accou
 	if is_guest:
 		username = "guest%d" % account_id
 		password = generate_random_token()
+	# Store only a salted, key-stretched hash — never the plaintext password.
 	var new_account: AccountResource = AccountResource.new()
-	new_account.init(account_id, username, password)
+	new_account.init(account_id, username, PasswordHasher.hash_password(password))
 	account_collection.collection[username] = new_account
 	# Save on disk should only occur at specific times.
 	# Temporary work around for debug purpose.
@@ -75,6 +72,6 @@ func validate_credentials(username: String, password: String) -> AccountResource
 	var account: AccountResource = null
 	if account_collection.collection.has(username):
 		account = account_collection.collection[username]
-		if account.password == password:
+		if PasswordHasher.verify(password, account.password):
 			return account
 	return null
