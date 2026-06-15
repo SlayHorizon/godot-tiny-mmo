@@ -5,25 +5,35 @@
 [resource]
 script = ExtResource("1_714ml")
 content_name = &"shops"
-version = 1780249202
-next_id = 6
+version = 1781372920
+next_id = 8
 entries = Array[Dictionary]([{
-&"hash": "c7a06591261def7e53794221db41c7d636ef9b4bafbf27427aef5b96c6183026",
+&"hash": "54a1c110f2b08f065be7b1f5a3e9a9057ad18f61a3d5cfab4da566d904ca372c",
+&"id": 6,
+&"path": "res://source/common/gameplay/shops/resources/bone_shop.tres",
+&"slug": &"bone_shop"
+}, {
+&"hash": "2a00663b96bcee69d6744bf1325a4cea4910d364483c1b0d1e6c868b9829021e",
 &"id": 4,
 &"path": "res://source/common/gameplay/shops/resources/miras_apothecary.tres",
 &"slug": &"miras_apothecary"
 }, {
-&"hash": "ae9319081d74b3b7fd53846d55e75f2ae5d1a2f7dd26c749f6b54756e53dac08",
+&"hash": "2bcca6ffaaea83541ca69c96874fffaf8b2f17a491715cf1d4251ba083f8e280",
 &"id": 5,
 &"path": "res://source/common/gameplay/shops/resources/quarry_counter.tres",
 &"slug": &"quarry_counter"
+}, {
+&"hash": "1542991cb823809bd891d358e3ce2231482f3869f29ddad993fd7cac835c1fa4",
+&"id": 7,
+&"path": "res://source/common/gameplay/shops/resources/rustic_shop.tres",
+&"slug": &"rustic_shop"
 }, {
 &"hash": "da3660646163531b8dac88b105367036c7c2b113387e336c6f8bd382b74fc29c",
 &"id": 2,
 &"path": "res://source/common/gameplay/shops/resources/sell_shop.tres",
 &"slug": &"sell_shop"
 }, {
-&"hash": "1ef001c5801ecc1619f5c2e80e1c97fa51f34cafe7db69cd7860084ecc30bf5d",
+&"hash": "c9d55adbd92b7ca68aaf02a83456dde144f5ee7277fe5d2e226dddbc8c34786c",
 &"id": 3,
 &"path": "res://source/common/gameplay/shops/resources/start_shop.tres",
 &"slug": &"start_shop"

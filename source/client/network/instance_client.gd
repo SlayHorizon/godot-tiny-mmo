@@ -41,6 +41,47 @@ static func _on_combat_hit_static(payload: Dictionary) -> void:
 	current._on_combat_hit(payload)
 
 
+## A channel started somewhere nearby — attach its cast aura to the casting
+## player (every client, so you see allies/enemies channel too). The local
+## caster's root + move-cancel is handled separately in LocalPlayer.
+static func _on_channel_start(payload: Dictionary) -> void:
+	if current == null:
+		return
+	var player: Player = current.players_by_peer_id.get(int(payload.get("p", 0)), null)
+	if player == null:
+		return
+	var existing: Node = player.get_node_or_null(^"ChannelVisual")
+	if existing != null:
+		existing.queue_free()
+	var visual: ChannelVisual = ChannelVisual.new()
+	visual.name = "ChannelVisual"
+	visual.duration = float(payload.get("d", 6.0))
+	visual.radius = float(payload.get("r", 60.0))
+	visual.kind = StringName(payload.get("k", &"heal_aura"))
+	player.add_child(visual)
+	# The wielded weapon strikes its channel stance (the hammer plants + floats).
+	# Recall isn't a weapon channel, so the weapon stays neutral for it.
+	if StringName(payload.get("k", &"heal_aura")) != &"recall":
+		var weapon: Weapon = player.equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
+		if weapon != null:
+			weapon.set_channeling_pose(true)
+
+
+## Channel ended (completed, cancelled, caster died) — drop the aura.
+static func _on_channel_end(payload: Dictionary) -> void:
+	if current == null:
+		return
+	var player: Player = current.players_by_peer_id.get(int(payload.get("p", 0)), null)
+	if player == null:
+		return
+	var visual: Node = player.get_node_or_null(^"ChannelVisual")
+	if visual != null:
+		visual.queue_free()
+	var weapon: Weapon = player.equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
+	if weapon != null:
+		weapon.set_channeling_pose(false)
+
+
 ## Guard so we only subscribe ONCE per process — Client lives in the
 ## autoload and outlives any InstanceClient, so re-subscribing on every
 ## instance switch would either pile up callables or churn unsubscribe
@@ -53,6 +94,8 @@ func _ready() -> void:
 	if not _subscribed:
 		Client.subscribe(&"action.perform", _on_action_performed)
 		Client.subscribe(&"combat.hit", _on_combat_hit_static)
+		Client.subscribe(&"channel.start", _on_channel_start)
+		Client.subscribe(&"channel.end", _on_channel_end)
 		_subscribed = true
 
 	synchronizer_manager = StateSynchronizerManagerClient.new()

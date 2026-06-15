@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dtcix7ijvii74"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/orc/orc_death.png" id="1_death"]
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_idle"]
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/orc/orc_run.png" id="3_run"]
+[ext_resource type="Texture2D" uid="uid://c6dbfiimophs6" path="res://assets/sprites/characters/orc/orc_death.png" id="1_death"]
+[ext_resource type="Texture2D" uid="uid://s7p21dfmgjcn" path="res://assets/sprites/characters/orc/orc_idle.png" id="2_idle"]
+[ext_resource type="Texture2D" uid="uid://d0t8pv6k6o8kx" path="res://assets/sprites/characters/orc/orc_run.png" id="3_run"]
 
 [sub_resource type="AtlasTexture" id="Atlas_death_0"]
 atlas = ExtResource("1_death")

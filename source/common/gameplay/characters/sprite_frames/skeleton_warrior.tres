@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://ckldb3p6vdl3b"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/skeleton_warrior/skeleton_warrior_death.png" id="1_death"]
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/skeleton_warrior/skeleton_warrior_idle.png" id="2_idle"]
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/skeleton_warrior/skeleton_warrior_run.png" id="3_run"]
+[ext_resource type="Texture2D" uid="uid://pj6rlmby8jub" path="res://assets/sprites/characters/skeleton_warrior/skeleton_warrior_death.png" id="1_death"]
+[ext_resource type="Texture2D" uid="uid://cfhsn838f4sfk" path="res://assets/sprites/characters/skeleton_warrior/skeleton_warrior_idle.png" id="2_idle"]
+[ext_resource type="Texture2D" uid="uid://dhwryibqkjj23" path="res://assets/sprites/characters/skeleton_warrior/skeleton_warrior_run.png" id="3_run"]
 
 [sub_resource type="AtlasTexture" id="Atlas_death_0"]
 atlas = ExtResource("1_death")

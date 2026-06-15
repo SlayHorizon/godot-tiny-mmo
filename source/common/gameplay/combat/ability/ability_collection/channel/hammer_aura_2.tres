@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="HealingAuraAbility" format=3 uid="uid://brqrilhkjp0h7"]
+
+[ext_resource type="Script" uid="uid://65vini7oytjw" path="res://source/common/gameplay/combat/ability/ability_collection/channel/healing_aura_ability.gd" id="1_aura"]
+
+[resource]
+script = ExtResource("1_aura")
+heal_per_tick = 4.0
+channel_duration_s = 12.0
+mana_per_tick = 7.0
+radius = 75.0
+name = "Healing Aura II"
+cooldown = 25.0
+metadata/slug = &"hammer_aura_2"
+metadata/id = 21

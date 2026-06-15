@@ -20,7 +20,14 @@ func data_request_handler(
 	if not item:
 		return {}
 
-	if item is GearItem and item.can_equip(player):
+	# Gear that exists but can't be equipped: tell the player WHY instead of a
+	# silent no-op (a too-high required_level is the usual culprit).
+	if item is GearItem and not item.can_equip(player):
+		if player.player_resource.level < item.required_level:
+			return {"ok": false, "reason": "level", "level": item.required_level}
+		return {"ok": false, "reason": "cant_equip"}
+
+	if item is GearItem:
 		# Combat lock — but WEAPONS stay swappable mid-fight (sword for melee,
 		# bow for range is core play). Only armor/rings/etc. are locked so you
 		# can't re-spec defenses under pressure.

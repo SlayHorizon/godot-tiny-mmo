@@ -84,6 +84,10 @@ func _on_item_action_result(result: Dictionary) -> void:
 			Toaster.toast("Can't change gear in combat (weapons only).")
 		"cooldown":
 			Toaster.toast("That's still on cooldown.")
+		"level":
+			Toaster.toast("Requires level %d to equip." % int(result.get("level", 0)))
+		"cant_equip":
+			Toaster.toast("You can't equip that.")
 
 
 func _is_equipped(item: Item) -> bool:

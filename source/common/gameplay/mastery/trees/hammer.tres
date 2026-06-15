@@ -1,11 +1,14 @@
-[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3 uid="uid://d2gneg5bc2u4f"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
-[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
-[ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres" id="4_crush"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/shockwave.tres" id="5_shock"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/earthshatter.tres" id="6_quake"]
+[ext_resource type="Script" uid="uid://cx1btl22f4mft" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" uid="uid://dmdvxcrsmfmo2" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" uid="uid://gyi8xgqc77tg" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres" id="4_crush"]
+[ext_resource type="Resource" uid="uid://bsuq8ff81jp1j" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/shockwave.tres" id="5_shock"]
+[ext_resource type="Resource" uid="uid://dgl30qvju04pa" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/earthshatter.tres" id="6_quake"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura.tres" id="7_aura1"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_2.tres" id="8_aura2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_3.tres" id="9_aura3"]
 
 [sub_resource type="Resource" id="Node_crush"]
 script = ExtResource("2_node")
@@ -13,7 +16,6 @@ id = &"hammer_crush"
 node_name = "Crushing Blow"
 description = "A wind-up slam that hits everything around you for massive damage. Mount it in your hammer's special slot."
 branch = &"domination"
-tier = 1
 ability = ExtResource("4_crush")
 
 [sub_resource type="Resource" id="Node_shock"]
@@ -45,12 +47,10 @@ id = &"hammer_bulwark"
 node_name = "Bulwark"
 description = "+6 armor while wielding a hammer."
 branch = &"resolve"
-tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_armor_bulwark")])
 
 [sub_resource type="Resource" id="Mod_hp_juggernaut"]
 script = ExtResource("3_mod")
-stat_name = "health_max"
 value = 20.0
 
 [sub_resource type="Resource" id="Node_juggernaut"]
@@ -73,11 +73,38 @@ id = &"hammer_momentum"
 node_name = "Momentum"
 description = "+10 move speed while wielding a hammer — shrug off its weight and keep advancing."
 branch = &"inspiration"
-tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ms_momentum")])
+
+[sub_resource type="Resource" id="Node_aura1"]
+script = ExtResource("2_node")
+id = &"hammer_aura"
+node_name = "Healing Aura"
+description = "Plant your hammer and channel a healing aura, mending you and nearby allies over a few seconds. You're rooted while it holds — moving cancels it. Mount it in a special slot."
+branch = &"inspiration"
+ability = ExtResource("7_aura1")
+
+[sub_resource type="Resource" id="Node_aura2"]
+script = ExtResource("2_node")
+id = &"hammer_aura_2"
+node_name = "Healing Aura II"
+description = "A stronger, wider healing channel. Weight 2."
+branch = &"inspiration"
+tier = 2
+ability = ExtResource("8_aura2")
+upgrades = &"hammer_aura"
+
+[sub_resource type="Resource" id="Node_aura3"]
+script = ExtResource("2_node")
+id = &"hammer_aura_3"
+node_name = "Healing Aura III"
+description = "The fullest sustain — a broad aura that heals you and your allies for a long, steady channel. Weight 3."
+branch = &"inspiration"
+tier = 3
+ability = ExtResource("9_aura3")
+upgrades = &"hammer_aura_2"
 
 [resource]
 script = ExtResource("1_tree")
 category = &"hammer"
 display_name = "Hammer"
-nodes = Array[ExtResource("2_node")]([SubResource("Node_crush"), SubResource("Node_shock"), SubResource("Node_quake"), SubResource("Node_bulwark"), SubResource("Node_juggernaut"), SubResource("Node_momentum")])
+nodes = Array[ExtResource("2_node")]([SubResource("Node_crush"), SubResource("Node_shock"), SubResource("Node_quake"), SubResource("Node_bulwark"), SubResource("Node_juggernaut"), SubResource("Node_momentum"), SubResource("Node_aura1"), SubResource("Node_aura2"), SubResource("Node_aura3")])

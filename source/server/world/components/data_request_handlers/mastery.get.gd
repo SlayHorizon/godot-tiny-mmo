@@ -32,4 +32,12 @@ func data_request_handler(
 			"spent": (entry.get("spent", {}) as Dictionary).keys(),
 			"loadout": (resource.ability_loadout.get(String(category), []) as Array).duplicate(),
 		}
-	return {"ok": true, "masteries": out, "cap": PlayerResource.MASTERY_LEVEL_CAP}
+
+	# The currently-wielded weapon's category + capacity (= "power" budget for
+	# the special slots), so the panel can show how much of it the loadout uses.
+	var wielded: Dictionary = {"category": "", "capacity": 0}
+	var weapon_item: WeaponItem = player.equipment_component.equipped_items.get(&"weapon", null) as WeaponItem
+	if weapon_item != null and not weapon_item.category.is_empty():
+		wielded = {"category": String(weapon_item.category), "capacity": weapon_item.capacity}
+
+	return {"ok": true, "masteries": out, "cap": PlayerResource.MASTERY_LEVEL_CAP, "wielded": wielded}

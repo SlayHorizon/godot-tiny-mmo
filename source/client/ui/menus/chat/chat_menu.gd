@@ -203,10 +203,10 @@ var _chat_toggle: Button
 
 func _build_chat_toggle() -> void:
 	_chat_toggle = Button.new()
-	_chat_toggle.text = "💬"
-	_chat_toggle.custom_minimum_size = Vector2(34, 34)
+	_chat_toggle.text = "Chat"
+	_chat_toggle.custom_minimum_size = Vector2(52, 32)
 	_chat_toggle.focus_mode = Control.FOCUS_NONE
-	_chat_toggle.tooltip_text = "Chat  (Enter to type)"
+	_chat_toggle.tooltip_text = "Open chat  (Enter to type)"
 	_chat_toggle.position = Vector2(10, 218)
 	_chat_toggle.pressed.connect(_on_chat_toggle_pressed)
 	add_child(_chat_toggle)

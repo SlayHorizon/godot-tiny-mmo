@@ -159,6 +159,16 @@ func propagate_rpc(callable: Callable, instance_id: String = "") -> void:
 			callable.rpc_id(peer_id)
 
 
+## Recall payoff (called via ServerHub from RecallAbility.channel_complete): send
+## [param player] home to the town hub. Delegates to the InstanceManager by peer,
+## which resolves the current instance authoritatively and reuses the warper/jail
+## travel path.
+func recall_player(player: Player) -> void:
+	if player == null or player.player_resource == null:
+		return
+	instance_manager.recall_player(int(player.player_resource.current_peer_id))
+
+
 @rpc("any_peer", "call_remote", "reliable", 1)
 func _data_request(
 	request_id: int,

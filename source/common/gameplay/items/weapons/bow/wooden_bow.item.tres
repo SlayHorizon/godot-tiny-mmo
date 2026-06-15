@@ -20,6 +20,7 @@ metadata/_custom_type_script = "uid://cvggwjkht4km4"
 
 [resource]
 script = ExtResource("5_ts60e")
+category = &"bow"
 right_hand_scene = ExtResource("4_x4sqe")
 slot = ExtResource("6_j3qvs")
 base_modifiers = Array[ExtResource("3_10omy")]([SubResource("Resource_ibcoj"), SubResource("Mod_ad_bow")])

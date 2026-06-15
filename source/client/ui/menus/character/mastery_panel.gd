@@ -27,6 +27,9 @@ const BRANCH_COLORS: Dictionary[StringName, Color] = {
 ## Per-category server state: category (String) -> {level, xp, xp_to_next,
 ## points, spent: Array, loadout: String}.
 var _state: Dictionary
+## The wielded weapon's {category, capacity} — the "power" budget the loadout
+## must fit within. Empty category = no weapon (or no mastery weapon) equipped.
+var _wielded: Dictionary = {}
 var _selected: String = ""
 
 var _row_container: VBoxContainer
@@ -94,6 +97,7 @@ func _refresh() -> void:
 
 func _on_mastery_received(data: Dictionary) -> void:
 	_state = data.get("masteries", {})
+	_wielded = data.get("wielded", {})
 	_rebuild_rows()
 	if _selected == "" or MasteryService.tree_for(StringName(_selected)) == null:
 		_selected = ""
@@ -214,6 +218,28 @@ func _rebuild_details() -> void:
 		status.add_theme_font_size_override(&"font_size", 12)
 		_details_root.add_child(status)
 
+	# --- Power line, two modes ---
+	#  1. wielding a weapon of THIS category → "used / capacity" (red if over).
+	#  2. otherwise → just the loadout's total power, so the player still sees
+	#     what this loadout would demand of a weapon.
+	var cap: int = _wielded_capacity()
+	var used: int = _loadout_power_used(info.get("loadout", []), tree)
+	if cap >= 0 or used > 0:
+		var power: Label = Label.new()
+		power.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		power.add_theme_font_size_override(&"font_size", 12)
+		power.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		if cap < 0:
+			power.text = "Loadout power: %d  (equip a %s to channel it)" % [used, display.to_lower()]
+			power.add_theme_color_override(&"font_color", Color(0.7, 0.72, 0.78))
+		elif used > cap:
+			power.text = "Weapon power: %d / %d — over capacity, the heaviest ability won't channel" % [used, cap]
+			power.add_theme_color_override(&"font_color", Color(1.0, 0.55, 0.4))
+		else:
+			power.text = "Weapon power: %d / %d used" % [used, cap]
+			power.add_theme_color_override(&"font_color", Color(0.7, 0.85, 1.0))
+		_details_root.add_child(power)
+
 	# --- Branches (single scroll) ---
 	var scroll: ScrollContainer = ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -258,6 +284,18 @@ func _make_node_row(node: MasteryNode, info: Dictionary) -> Control:
 	var points: int = int(info.get("points", 0))
 	var required_level: int = int(MasteryService.TIER_UNLOCK_LEVEL.get(node.tier, 1))
 
+	# Upgrade-chain state: a superseded tier (a higher one in its chain is owned)
+	# isn't separately equippable, and a chain node can only be LEARNED once its
+	# lower tier is owned.
+	var tree: MasteryTreeResource = MasteryService.tree_for(StringName(_selected))
+	var owned_set: Dictionary = {}
+	for owned_id in info.get("spent", []):
+		owned_set[String(owned_id)] = true
+	var superseded: bool = node.ability != null and tree != null and MasteryService.is_superseded(tree, owned_set, node)
+	var prereq_id: String = String(node.upgrades)
+	var prereq_owned: bool = prereq_id.is_empty() or owned_set.has(prereq_id)
+	var prereq_name: String = _node_display_name(prereq_id) if not prereq_id.is_empty() else ""
+
 	var panel: PanelContainer = PanelContainer.new()
 	var margin: MarginContainer = MarginContainer.new()
 	margin.add_theme_constant_override(&"margin_left", 8)
@@ -275,9 +313,13 @@ func _make_node_row(node: MasteryNode, info: Dictionary) -> Control:
 	name_vbox.add_theme_constant_override(&"separation", 0)
 	hbox.add_child(name_vbox)
 
-	var kind: String = "ability" if node.ability != null else "passive"
+	# Abilities show their POWER cost (= weight the weapon must channel);
+	# passives are always-on, so no power.
 	var name_label: Label = Label.new()
-	name_label.text = "%s  —  T%d %s" % [node.node_name, node.tier, kind]
+	if node.ability != null:
+		name_label.text = "%s  —  Power %d" % [node.node_name, node.tier]
+	else:
+		name_label.text = "%s  —  Passive" % node.node_name
 	name_vbox.add_child(name_label)
 
 	var desc_label: Label = Label.new()
@@ -287,7 +329,16 @@ func _make_node_row(node: MasteryNode, info: Dictionary) -> Control:
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_vbox.add_child(desc_label)
 
-	if owned and node.ability != null:
+	if owned and node.ability != null and superseded:
+		# A lower tier you've already upgraded past — kept for the record but
+		# no longer the move you wield.
+		var up_label: Label = Label.new()
+		up_label.text = "Upgraded"
+		up_label.add_theme_font_size_override(&"font_size", 11)
+		up_label.add_theme_color_override(&"font_color", Color(0.6, 0.62, 0.7))
+		up_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		hbox.add_child(up_label)
+	elif owned and node.ability != null:
 		# Inline (not tooltip-only — hover is easy to miss) capacity warning.
 		if _too_heavy_for_wielded(node):
 			var heavy_label: Label = Label.new()
@@ -320,9 +371,13 @@ func _make_node_row(node: MasteryNode, info: Dictionary) -> Control:
 		hbox.add_child(active_label)
 	else:
 		var learn_button: Button = Button.new()
-		learn_button.custom_minimum_size = Vector2(96, 38)
+		learn_button.custom_minimum_size = Vector2(110, 38)
 		learn_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		if level < required_level:
+		if not prereq_owned:
+			# Chain progression — must learn the lower tier first.
+			learn_button.text = "Needs %s" % prereq_name
+			learn_button.disabled = true
+		elif level < required_level:
 			learn_button.text = "Lv %d" % required_level
 			learn_button.disabled = true
 		else:
@@ -370,13 +425,18 @@ func _open_slot_picker(node_id: String) -> void:
 	var picks: Array = _current_picks()
 	var entries: PackedStringArray = PackedStringArray()
 	for i: int in SLOT_KEYS.size():
-		var occupant: String = _node_display_name(str(picks[i])) if not str(picks[i]).is_empty() else "empty"
+		var occ_id: String = str(picks[i])
+		var occupant: String = "empty"
+		if not occ_id.is_empty():
+			occupant = "%s (Power %d)" % [_node_display_name(occ_id), _node_power(occ_id)]
 		entries.append("Slot %d (%s)  —  %s" % [i + 1, SLOT_KEYS[i], occupant])
+	var title: String = "Place %s (Power %d) on which slot?" % [_node_display_name(node_id), _node_power(node_id)]
+	var cap: int = _wielded_capacity()
+	if cap >= 0:
+		title += "\nYour weapon channels up to %d power." % cap
 	var host: Control = (owner as Control) if owner is Control else self
 	_picker_overlay = SlotPickerOverlay.open(
-		host,
-		"Place %s on which slot?" % _node_display_name(node_id),
-		entries,
+		host, title, entries,
 		func(slot: int) -> void: _send_loadout_with(node_id, slot)
 	)
 
@@ -394,6 +454,13 @@ func _send_loadout_with(node_id: String, slot: int) -> void:
 		picks[slot] = node_id
 	while not picks.is_empty() and str(picks[picks.size() - 1]).is_empty():
 		picks.pop_back()
+	# Warn (but still store) if the new loadout overruns the wielded weapon's
+	# power — the heaviest pick mounts inert until a weapon that can channel it.
+	var cap: int = _wielded_capacity()
+	if cap >= 0 and slot >= 0:
+		var used: int = _loadout_power_used(picks, MasteryService.tree_for(StringName(_selected)))
+		if used > cap:
+			Toaster.toast("Not enough weapon power (%d / %d). Equip a higher-tier weapon to channel it all." % [used, cap])
 	Client.request_data(
 		&"mastery.loadout",
 		_on_loadout_result,
@@ -421,9 +488,45 @@ func _node_display_name(node_id: String) -> String:
 	return node_id
 
 
+## An ability node's power cost (= tier = the weight a weapon must channel).
+func _node_power(node_id: String) -> int:
+	var tree: MasteryTreeResource = MasteryService.tree_for(StringName(_selected))
+	if tree != null:
+		var node: MasteryNode = tree.get_node_by_id(StringName(node_id))
+		if node != null:
+			return node.tier
+	return 0
+
+
+## The wielded weapon's power capacity IF it matches the viewed category, else
+## -1 (no weapon of this category in hand — capacity is meaningless to show).
+func _wielded_capacity() -> int:
+	if str(_wielded.get("category", "")) == _selected:
+		return int(_wielded.get("capacity", 0))
+	return -1
+
+
+## Total power the loadout picks consume (sum of their tiers; "" holes skipped).
+func _loadout_power_used(picks: Array, tree: MasteryTreeResource) -> int:
+	if tree == null:
+		return 0
+	var total: int = 0
+	for pick in picks:
+		var id: String = str(pick)
+		if id.is_empty():
+			continue
+		var node: MasteryNode = tree.get_node_by_id(StringName(id))
+		if node != null:
+			total += node.tier
+	return total
+
+
 func _on_loadout_result(data: Dictionary) -> void:
-	if str(data.get("reason", "")) == "in_match":
-		Toaster.toast("You can't swap abilities during a match.")
+	match str(data.get("reason", "")):
+		"in_match":
+			Toaster.toast("You can't swap abilities during a match.")
+		"same_chain":
+			Toaster.toast("That's the same move as another slot — only one tier of it at a time.")
 	_refresh()
 
 

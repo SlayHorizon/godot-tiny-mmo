@@ -14,6 +14,11 @@ extends GearItem
 
 @export var left_hand_scene: PackedScene
 
+## Optional per-skin nudge for the in-hand sprite, when a skin's art sits
+## differently than the type scene's default (e.g. a taller blade). ZERO =
+## use the scene's placement as-is. See Weapon.apply_skin.
+@export var sprite_offset: Vector2 = Vector2.ZERO
+
 
 func equip(character: Character) -> void:
 	super.equip(character)
@@ -23,6 +28,9 @@ func equip(character: Character) -> void:
 		right_hand_weapon.character = character
 		character.equipment_component.mounted_nodes[slot.key] = right_hand_weapon
 		character.right_hand_spot.add_child(right_hand_weapon)
+		# Skin the in-hand sprite from this item's icon, so one type-scene
+		# (sword.tscn) serves every sword skin (fire, rustic, ...).
+		right_hand_weapon.apply_skin(item_icon, sprite_offset)
 	
 	if left_hand_scene:
 		var left_hand_weapon: Weapon = left_hand_scene.instantiate()

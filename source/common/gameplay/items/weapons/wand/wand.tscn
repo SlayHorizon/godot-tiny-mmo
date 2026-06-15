@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://dkope8a17ojkl"]
 
 [ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_base"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="5_tex"]
 [ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="2_ability"]
 [ext_resource type="Resource" uid="uid://drk5hevqk5hv0" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_bolt.tres" id="3_bolt"]
-[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="5_tex"]
 
 [node name="Weapon" unique_id=772204932 instance=ExtResource("1_base")]
 abilities = Array[ExtResource("2_ability")]([ExtResource("3_bolt")])
 
-[node name="WeaponSprite" parent="." index="0"]
+[node name="WeaponSprite" parent="." index="0" unique_id=2118713155]
 position = Vector2(-6, -26)
 rotation = 1.5707964
 texture = ExtResource("5_tex")

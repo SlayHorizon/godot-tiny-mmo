@@ -41,6 +41,7 @@ func data_request_handler(
 	var spent: Dictionary = entry.get("spent", {})
 
 	var validated: Array = []
+	var seen_chains: Dictionary = {} # chain root -> true: one tier of a move max
 	for pick in picks:
 		var node_id: String = str(pick)
 		if node_id.is_empty():
@@ -53,7 +54,14 @@ func data_request_handler(
 			return {"ok": false, "reason": "unknown_node"}
 		if not spent.has(node_id):
 			return {"ok": false, "reason": "not_owned"}
-		validated.append(node_id)
+		# A signature move occupies ONE slot — can't slot two tiers of it.
+		var root: String = String(MasteryService.chain_root_of(tree, node))
+		if seen_chains.has(root):
+			return {"ok": false, "reason": "same_chain"}
+		seen_chains[root] = true
+		# Normalize to the highest owned tier so what's stored == what fires
+		# (you always wield your best).
+		validated.append(String(MasteryService.best_owned_id(tree, spent, node)))
 
 	# Trailing holes carry no information — trim so "cleared everything"
 	# stores as no entry at all.

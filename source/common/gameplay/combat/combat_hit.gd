@@ -105,3 +105,20 @@ static func _same_guild_no_spar(source: Node, body: Node) -> bool:
 	if src_guild <= 0 or src_guild != tgt_guild:
 		return false
 	return not SparringService.can_spar_damage(source as Player, body as Player)
+
+
+## True if [param healer] may HEAL [param target]: spar teammates while either is
+## in a match (so you can't heal across a duel or buff a fighter from the
+## sidelines), guildmates otherwise — the same definition the team-colored health
+## bars use. THE single source of truth for "who is a heal ally": HealBolt and the
+## channeled HealingAuraAbility both defer here so the rule can't drift. Whether
+## the caster heals THEMSELF is the caller's call (both treat self as always valid).
+static func is_heal_ally(healer: Player, target: Player) -> bool:
+	if healer == null or target == null:
+		return false
+	if healer.player_resource == null or target.player_resource == null:
+		return false
+	if healer.player_resource.in_match or target.player_resource.in_match:
+		return SparringService.are_spar_teammates(healer, target)
+	var guild: int = healer.player_resource.active_guild_id
+	return guild > 0 and guild == target.player_resource.active_guild_id

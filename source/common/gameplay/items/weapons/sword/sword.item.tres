@@ -12,6 +12,7 @@ region = Rect2(0, 0, 16, 48)
 
 [resource]
 script = ExtResource("2_weapon_item")
+category = &"sword"
 right_hand_scene = ExtResource("1_sword_scene")
 slot = ExtResource("3_slot")
 item_name = &"Sword"

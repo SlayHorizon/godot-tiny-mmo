@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://40jxvc14a1wh"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://bl4x3jlsvt3jq" path="res://assets/sprites/items/weapons/bone/bone.png" id="2_tex"]
+[ext_resource type="PackedScene" uid="uid://ivb4cdjfwbtx" path="res://source/common/gameplay/items/weapons/hammer/hammer.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_item"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_slot"]
+
+[sub_resource type="Resource" id="Mod_ad"]
+script = ExtResource("1_mod")
+stat_name = "ad"
+value = 4.0
+
+[sub_resource type="Resource" id="Mod_ms"]
+script = ExtResource("1_mod")
+stat_name = "move_speed"
+value = -5.0
+
+[sub_resource type="Resource" id="Mod_haste"]
+script = ExtResource("1_mod")
+stat_name = "ability_haste"
+value = 6.0
+
+[sub_resource type="AtlasTexture" id="Atlas_bone_hammer"]
+atlas = ExtResource("2_tex")
+region = Rect2(16, 16, 16, 32)
+
+[resource]
+script = ExtResource("4_item")
+category = &"hammer"
+right_hand_scene = ExtResource("3_scene")
+slot = ExtResource("5_slot")
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ad"), SubResource("Mod_ms"), SubResource("Mod_haste")])
+item_name = &"Bone Maul"
+item_icon = SubResource("Atlas_bone_hammer")
+description = "Hollow bone keeps it light — swings come faster and it slows you less, but it lands softer than iron."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/slug = &"hammer_bone.item"
+metadata/id = 81

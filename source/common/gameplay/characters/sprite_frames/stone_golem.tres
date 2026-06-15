@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://c45uyyneimrpk"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/stone_golem/stone_golem_death.png" id="1_death"]
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/stone_golem/stone_golem_idle.png" id="2_idle"]
-[ext_resource type="Texture2D" path="res://assets/sprites/characters/stone_golem/stone_golem_run.png" id="3_run"]
+[ext_resource type="Texture2D" uid="uid://073l5co66dd0" path="res://assets/sprites/characters/stone_golem/stone_golem_death.png" id="1_death"]
+[ext_resource type="Texture2D" uid="uid://dfmva5rnms18" path="res://assets/sprites/characters/stone_golem/stone_golem_idle.png" id="2_idle"]
+[ext_resource type="Texture2D" uid="uid://bxyk38slssw8d" path="res://assets/sprites/characters/stone_golem/stone_golem_run.png" id="3_run"]
 
 [sub_resource type="AtlasTexture" id="Atlas_death_0"]
 atlas = ExtResource("1_death")

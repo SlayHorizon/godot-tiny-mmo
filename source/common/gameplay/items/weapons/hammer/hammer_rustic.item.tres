@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://bob6a10f1tu10"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_b5lkq"]
+[ext_resource type="Texture2D" uid="uid://d0226i8o2vv53" path="res://assets/sprites/items/weapons/rustic/rustic.png" id="2_b5lkq"]
+[ext_resource type="PackedScene" uid="uid://ivb4cdjfwbtx" path="res://source/common/gameplay/items/weapons/hammer/hammer.tscn" id="3_253qg"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_4jxpk"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_g4no1"]
+
+[sub_resource type="Resource" id="Mod_ad_hammer"]
+script = ExtResource("1_b5lkq")
+stat_name = "ad"
+value = 11.0
+
+[sub_resource type="Resource" id="Mod_ms_hammer"]
+script = ExtResource("1_b5lkq")
+stat_name = "move_speed"
+value = -10.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_urfkj"]
+atlas = ExtResource("2_b5lkq")
+region = Rect2(16, 80, 16, 48)
+
+[resource]
+script = ExtResource("4_4jxpk")
+category = &"hammer"
+capacity = 2
+right_hand_scene = ExtResource("3_253qg")
+slot = ExtResource("5_g4no1")
+required_level = 5
+base_modifiers = Array[ExtResource("1_b5lkq")]([SubResource("Mod_ad_hammer"), SubResource("Mod_ms_hammer")])
+item_name = &"Rustic Maul"
+item_icon = SubResource("AtlasTexture_urfkj")
+description = "A heavy, iron-banded maul. Rugged and dependable — solid enough to channel a second technique."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/slug = &"hammer_rustic.item"
+metadata/id = 78

@@ -30,7 +30,7 @@ func _on_body_entered(body: Node2D) -> void:
 		queue_free()
 		return
 	var target: Player = body as Player
-	if not _is_heal_ally(source as Player, target):
+	if not CombatHit.is_heal_ally(source as Player, target):
 		return # fly past non-allies, keep looking for a friend
 	var sc: StatsComponent = target.stats_component
 	var hp: float = sc.get_stat(Stat.HEALTH)
@@ -39,17 +39,6 @@ func _on_body_entered(body: Node2D) -> void:
 		sc.set_stat(Stat.HEALTH, hp + healed)
 		_broadcast_heal(target, healed)
 	queue_free()
-
-
-## Spar teammates while a match is involved (so you can't heal across a duel or
-## buff a fighter from outside), guildmates otherwise.
-func _is_heal_ally(healer: Player, target: Player) -> bool:
-	if healer.player_resource == null or target.player_resource == null:
-		return false
-	if healer.player_resource.in_match or target.player_resource.in_match:
-		return SparringService.are_spar_teammates(healer, target)
-	var guild: int = healer.player_resource.active_guild_id
-	return guild > 0 and guild == target.player_resource.active_guild_id
 
 
 ## Green floating "+N" over the healed ally, for everyone in the instance —

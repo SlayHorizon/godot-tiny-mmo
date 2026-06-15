@@ -67,6 +67,9 @@ static func spend(resource: PlayerResource, category: StringName, node_id: Strin
 		return {"ok": false, "reason": "owned"}
 	if int(entry["level"]) < int(TIER_UNLOCK_LEVEL.get(node.tier, 1)):
 		return {"ok": false, "reason": "tier_locked"}
+	# Upgrade chains learn in order: you must own the tier this one replaces.
+	if not node.upgrades.is_empty() and not spent.has(String(node.upgrades)):
+		return {"ok": false, "reason": "needs_lower"}
 	if available_points(entry, tree) < node.tier:
 		return {"ok": false, "reason": "no_points"}
 	spent[String(node_id)] = true
@@ -100,18 +103,91 @@ static func effective_special_ids(resource: PlayerResource, weapon_item: WeaponI
 	var entry: Dictionary = resource.masteries.get(weapon_item.category, {})
 	var spent: Dictionary = entry.get("spent", {})
 	var budget: int = weapon_item.capacity
+	var used_chains: Dictionary = {} # chain root id -> true (never mount a chain twice)
 	for pick in picks:
 		var resolved: int = 0
 		var node_id: String = str(pick)
 		if not node_id.is_empty() and spent.has(node_id):
-			var node: MasteryNode = tree.get_node_by_id(StringName(node_id))
-			if node != null and node.ability != null and node.tier <= budget:
-				var ability_id: int = int(node.ability.get_meta(&"id", 0))
-				if ability_id > 0:
-					resolved = ability_id
-					budget -= node.tier
+			var picked: MasteryNode = tree.get_node_by_id(StringName(node_id))
+			if picked != null and picked.ability != null:
+				# A "signature move" always fires at your HIGHEST owned tier,
+				# regardless of which tier you originally slotted.
+				var node: MasteryNode = _best_owned_in_chain(tree, spent, picked)
+				var root: String = String(_chain_root_id(tree, node))
+				if node.ability != null and node.tier <= budget and not used_chains.has(root):
+					var ability_id: int = int(node.ability.get_meta(&"id", 0))
+					if ability_id > 0:
+						resolved = ability_id
+						budget -= node.tier
+						used_chains[root] = true
 		out.append(resolved)
 	return out
+
+
+## The base (lowest) node of [param node]'s upgrade chain — follow `upgrades`
+## down until a node with none. Standalone abilities return themselves.
+static func _chain_root_id(tree: MasteryTreeResource, node: MasteryNode) -> StringName:
+	var cur: MasteryNode = node
+	while cur != null and not cur.upgrades.is_empty():
+		var lower: MasteryNode = tree.get_node_by_id(cur.upgrades)
+		if lower == null:
+			break
+		cur = lower
+	return cur.id if cur != null else node.id
+
+
+## The highest-tier OWNED ability node in [param node]'s chain (so an equipped
+## slot resolves to your best). Falls back to [param node] itself.
+static func _best_owned_in_chain(tree: MasteryTreeResource, spent: Dictionary, node: MasteryNode) -> MasteryNode:
+	var root: StringName = _chain_root_id(tree, node)
+	var best: MasteryNode = node
+	for n: MasteryNode in tree.nodes:
+		if n.ability == null or not spent.has(String(n.id)):
+			continue
+		if _chain_root_id(tree, n) == root and n.tier > best.tier:
+			best = n
+	return best
+
+
+## True when a higher-tier node in [param node]'s chain is owned — i.e. this
+## node has been upgraded past and is no longer the one you wield.
+static func is_superseded(tree: MasteryTreeResource, spent: Dictionary, node: MasteryNode) -> bool:
+	if node.ability == null:
+		return false
+	return _best_owned_in_chain(tree, spent, node).tier > node.tier
+
+
+## The chain root id for a node — exposed for the loadout handler's dedupe and
+## the panel's grouping.
+static func chain_root_of(tree: MasteryTreeResource, node: MasteryNode) -> StringName:
+	return _chain_root_id(tree, node)
+
+
+## The id of the highest owned tier in [param node]'s chain — the loadout
+## handler normalizes picks to this so what's STORED matches what FIRES.
+static func best_owned_id(tree: MasteryTreeResource, spent: Dictionary, node: MasteryNode) -> StringName:
+	return _best_owned_in_chain(tree, spent, node).id
+
+
+## Rewrites a category's equipped loadout so each pick points at the highest
+## owned tier of its chain. Call after LEARNING an upgrade so an equipped lower
+## tier bumps up to the one you just unlocked (the slot keeps its key — the
+## move just gets stronger). No-op for non-chain picks.
+static func normalize_loadout(resource: PlayerResource, category: StringName) -> void:
+	if resource == null or not resource.ability_loadout.has(String(category)):
+		return
+	var tree: MasteryTreeResource = tree_for(category)
+	if tree == null:
+		return
+	var spent: Dictionary = (resource.masteries.get(category, {}) as Dictionary).get("spent", {})
+	var picks: Array = resource.ability_loadout[String(category)]
+	for i: int in picks.size():
+		var id: String = str(picks[i])
+		if id.is_empty():
+			continue
+		var node: MasteryNode = tree.get_node_by_id(StringName(id))
+		if node != null and node.ability != null and spent.has(id):
+			picks[i] = String(best_owned_id(tree, spent, node))
 
 
 ## Re-derives everything mastery contributes to a live player: the synced

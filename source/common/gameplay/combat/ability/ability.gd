@@ -17,6 +17,35 @@ extends Resource
 ## weapon right after use.
 @export var mana_cost: int = 0
 
+## --- Combat juice (read by weapon visuals like the hammer slam) ---
+## Camera kick for the WIELDER when this lands (0 none … ~0.3 light, ~0.9 huge).
+@export_group("Impact")
+@export var impact_shake: float = 0.0
+## Shockwave-ring radius. KEEP IT EQUAL TO THE HITBOX so the ring reads as the
+## real reach (hammer arc = 32; a bigger ability should also enlarge its arc).
+@export var impact_reach: float = 0.0
+## Debris particle count on impact (0 = none; a basic tap ~4, a T3 nuke ~26).
+@export var impact_particles: int = 0
+## Shockwave ring / flash tint. Warm gold by default; a heavy T3 can run hotter.
+## (Kept distinct from the future RED cast-telegraph, which is a pre-hit danger
+## zone — impact rings are post-hit, so they never read as "dodge this".)
+@export var impact_color: Color = Color(1.0, 0.92, 0.55, 0.9)
+## Concentric ripples on impact — escalate per tier (1 basic … 3 ultimate).
+@export var impact_rings: int = 1
+@export_group("")
+
+## Roots the wielder's MOVEMENT this long while performing (commit to the
+## swing — heavier attacks plant you harder). 0 = free to move. Client-side,
+## reusing the movement lock; long weapon cooldowns mean it never feels sticky.
+@export var root_s: float = 0.0
+
+## Wind-up before the hit lands (a telegraphed heavy ability). 0 = instant.
+## During the cast a danger telegraph fills, the wielder is rooted (set root_s
+## to match), and the DAMAGE is delayed to land with the visual — so targets
+## can step out of the zone. Read by MeleeSwingAbility (delay + telegraph) and
+## the weapon visual (wind-up length).
+@export var cast_time_s: float = 0.0
+
 ## Two-phase abilities (charge weapons) set this true in _init: use_ability is
 ## the PRESS (begin charging) and release_ability the RELEASE (fire). The weapon
 ## applies cooldown + mana on the completing phase only. Single-phase abilities

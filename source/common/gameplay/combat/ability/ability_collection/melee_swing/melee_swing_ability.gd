@@ -31,6 +31,11 @@ extends AbilityResource
 @export var slow_amount: float = 0.0
 @export var slow_duration_s: float = 0.0
 
+## Overrides the arc scene's hitbox radius (0 = keep the scene default). Lets a
+## "devastating" T3 swing actually hit a bigger area than the basic swing while
+## reusing the same arc scene — pair it with a matching [member impact_reach].
+@export var arc_radius: float = 0.0
+
 
 func use_ability(user: Entity, direction: Vector2) -> void:
 	# Animation runs on every peer (client AND server) so the swing reads
@@ -39,19 +44,44 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 	if user is Character:
 		(user as Character).play_action_animation(swing_animation)
 
-	# Hitbox + damage are server-authoritative. Clients trust the server's
-	# combat.hit broadcast for damage feedback (numbers, future flash/sound).
-	# GameMode is static so it works inside Resources (which don't have a
-	# multiplayer property of their own).
-	if not GameMode.is_world_server():
+	# Telegraphed heavy swing: show the danger zone on clients while the wind-up
+	# plays, and DELAY the damage so it lands with the visual (targets can step
+	# out). The weapon's wind-up length matches cast_time_s.
+	if cast_time_s > 0.0:
+		if GameMode.is_client():
+			_spawn_telegraph(user, direction)
+		if GameMode.is_world_server() and user != null:
+			user.get_tree().create_timer(cast_time_s).timeout.connect(_fire_arc.bind(user, direction))
 		return
 
-	if arc_scene == null or user == null:
+	# Hitbox + damage are server-authoritative. Clients trust the server's
+	# combat.hit broadcast for damage feedback (numbers, flash, sound).
+	if not GameMode.is_world_server():
+		return
+	_fire_arc(user, direction)
+
+
+## Spawns the actual damage hitbox. Split out so a telegraphed swing can defer
+## it past the wind-up. Server-only; guards against a caster freed/killed mid-cast.
+func _fire_arc(user: Entity, direction: Vector2) -> void:
+	if not GameMode.is_world_server() or not is_instance_valid(user):
+		return
+	if user is Character and (user as Character).is_dead:
+		return
+	if arc_scene == null:
 		return
 	var arc: MeleeArc = arc_scene.instantiate()
 	arc.source = user if user is Character else null
 	arc.slow_amount = slow_amount
 	arc.slow_duration_s = slow_duration_s
+	# Optional bigger hitbox for heavy swings — duplicate the shape so we resize
+	# THIS arc only, never the shared CircleShape2D sub-resource.
+	if arc_radius > 0.0:
+		var shape_node: CollisionShape2D = arc.get_node_or_null(^"CollisionShape2D")
+		if shape_node != null and shape_node.shape is CircleShape2D:
+			var circle: CircleShape2D = shape_node.shape.duplicate()
+			circle.radius = arc_radius
+			shape_node.shape = circle
 	# A swing deals ad_ratio × the wielder's AD (base + Strength + gear), so both
 	# leveling and a better weapon raise every hit.
 	var ad: float = (user as Character).stats_component.get_stat(Stat.AD) if user is Character else 0.0
@@ -60,3 +90,16 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 	arc.global_position = user.global_position + dir_norm * spawn_offset
 	arc.rotation = dir_norm.angle()
 	user.get_parent().add_child(arc)
+
+
+## Client-visual danger marker shown during a telegraphed swing's wind-up, at
+## the strike point and sized to the hitbox so what's marked is what hits.
+func _spawn_telegraph(user: Entity, direction: Vector2) -> void:
+	if user == null or user.get_parent() == null:
+		return
+	var dir_norm: Vector2 = direction.normalized() if direction != Vector2.ZERO else Vector2.RIGHT
+	var tele: CastTelegraph = CastTelegraph.new()
+	tele.radius = arc_radius if arc_radius > 0.0 else 32.0
+	tele.duration = cast_time_s
+	user.get_parent().add_child(tele)
+	tele.global_position = user.global_position + dir_norm * spawn_offset

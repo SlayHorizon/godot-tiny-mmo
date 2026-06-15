@@ -28,6 +28,31 @@ var _base_ability_count: int = 1
 @onready var weapon_sprite: Sprite2D = $WeaponSprite
 
 
+## Drives the in-hand sprite from the equipped item's ICON, so a weapon SKIN
+## (fire / rustic / ...) is pure item data — NO per-skin scene. The icon is an
+## AtlasTexture (same sheet + region the inventory shows), so the in-hand
+## sprite always matches the icon by construction. PLACEMENT (offset, centered,
+## flip) stays from the weapon-TYPE scene; [param extra_offset] nudges a skin
+## whose art sits differently (a taller blade). Client-only — pure visual.
+func apply_skin(icon: Texture2D, extra_offset: Vector2 = Vector2.ZERO) -> void:
+	if not GameMode.is_client() or weapon_sprite == null or icon is not AtlasTexture:
+		return
+	var atlas: AtlasTexture = icon as AtlasTexture
+	weapon_sprite.texture = atlas.atlas
+	weapon_sprite.region_enabled = true
+	weapon_sprite.region_rect = atlas.region
+	weapon_sprite.position += extra_offset
+
+
+## Visual hook for a CHANNELED ability (healing aura, future recall): enter/exit
+## a "stance" pose while the channel holds. Base does nothing; weapons with a
+## distinctive channel look (the hammer planted, swollen, floating) override it.
+## Called on EVERY client for the casting player via InstanceClient on the
+## channel.start / channel.end push, so the stance shows on allies/enemies too.
+func set_channeling_pose(_active: bool) -> void:
+	pass
+
+
 func _ready() -> void:
 	if hand and character:
 		hand.type = character.hand_type

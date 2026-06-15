@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://dl7ria3hsmvco"]
+
+[ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="1_jny5i"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="1_shop"]
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="2_entry"]
+[ext_resource type="Resource" uid="uid://bqwbdldhjhxcq" path="res://source/common/gameplay/items/weapons/sword/sword_bone.item.tres" id="3_sword"]
+[ext_resource type="Resource" uid="uid://40jxvc14a1wh" path="res://source/common/gameplay/items/weapons/hammer/hammer_bone.item.tres" id="4_hammer"]
+[ext_resource type="Resource" uid="uid://dmwwy1l2pyvar" path="res://source/common/gameplay/items/weapons/wand/wand_bone.item.tres" id="5_wand"]
+
+[sub_resource type="Resource" id="Entry_bone_sword"]
+script = ExtResource("2_entry")
+item = ExtResource("3_sword")
+price = 8
+
+[sub_resource type="Resource" id="Entry_bone_maul"]
+script = ExtResource("2_entry")
+item = ExtResource("4_hammer")
+price = 8
+
+[sub_resource type="Resource" id="Entry_bone_wand"]
+script = ExtResource("2_entry")
+item = ExtResource("5_wand")
+price = 10
+
+[resource]
+script = ExtResource("1_shop")
+shop_name = "Bonecarver"
+entries = Array[ExtResource("2_entry")]([SubResource("Entry_bone_sword"), SubResource("Entry_bone_maul"), SubResource("Entry_bone_wand")])
+trades = 0
+metadata/slug = &"bone_shop"
+metadata/id = 6

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RecallAbility" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/combat/ability/ability_collection/channel/recall_ability.gd" id="1_recall"]
+
+[resource]
+script = ExtResource("1_recall")
+name = "Recall"
+cooldown = 0.0
+mana_cost = 0
+channel_duration_s = 5.0
+tick_interval_s = 0.25
+radius = 40.0
+mana_per_tick = 0.0
+cancel_on_damage = true
+visual_kind = &"recall"

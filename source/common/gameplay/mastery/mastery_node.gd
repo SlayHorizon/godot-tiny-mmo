@@ -18,3 +18,10 @@ extends Resource
 @export_range(1, 3) var tier: int = 1
 @export var ability: AbilityResource
 @export var passive_modifiers: Array[StatModifier]
+
+## Upgrade chain: the id of the lower-tier node this one REPLACES (empty = a
+## standalone ability or the chain's root). A "signature move" is a chain — you
+## must own the lower tier to learn the next, you can't equip two tiers of the
+## same chain, and an equipped slot always resolves to your HIGHEST owned tier.
+## See docs/mastery.md and MasteryService chain helpers.
+@export var upgrades: StringName

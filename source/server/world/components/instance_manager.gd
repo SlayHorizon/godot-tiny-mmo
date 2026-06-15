@@ -7,6 +7,9 @@ const GLOBAL_COMMANDS_PATH: String = "res://source/server/world/components/chat_
 ## Name of the InstanceResource used as the jail. Create a .tres with
 ## instance_name = "jail" to enable the jail system.
 const JAIL_INSTANCE_NAME: String = "jail"
+## Town hub the universal Recall sends players to (an InstanceResource's
+## instance_name). Change this to repoint recall at a different home map.
+const RECALL_INSTANCE_NAME: String = "Overworld"
 
 var loading_instances: Dictionary[InstanceResource, ServerInstance]
 var instance_collection: Dictionary[String, InstanceResource]
@@ -135,6 +138,31 @@ func _on_player_entered_warper(player: Player, current_instance: ServerInstance,
 			)
 	else:
 		return
+
+
+## Recall travel: send the peer to the town hub (RECALL_INSTANCE_NAME) at its
+## default spawn (index 0). A faithful copy of send_player_to_jail — resolve the
+## current instance authoritatively, charge the hub if it isn't live yet, then
+## switch. Rolling our own current-instance lookup is what crashed recall before.
+func recall_player(peer_id: int) -> void:
+	var res: InstanceResource = instance_collection.get(RECALL_INSTANCE_NAME, null)
+	if res == null:
+		return
+	var current_inst: ServerInstance = find_instance_for_peer(peer_id)
+	if current_inst == null:
+		return
+	var player: Player = current_inst.get_player(peer_id)
+	if player == null:
+		return
+	# Already in the hub — recall still yanks you to its spawn point (the hub is a
+	# big map), via the same same-instance teleport /goto uses.
+	if current_inst.instance_resource == res:
+		teleport_peer_to(peer_id, current_inst, current_inst.instance_map.get_spawn_position(0))
+		return
+	if res.charged_instances.is_empty():
+		queue_charge_instance(res, player_switch_instance.bind(0, player, current_inst))
+	else:
+		player_switch_instance(res.get_instance(), 0, player, current_inst)
 
 
 func queue_charge_instance(instance_resource: InstanceResource, callback: Callable) -> void:

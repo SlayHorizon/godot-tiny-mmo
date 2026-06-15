@@ -4,14 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://bl4x3jlsvt3jq" path="res://assets/sprites/items/weapons/bone/bone.png" id="2_33udu"]
 [ext_resource type="PackedScene" uid="uid://c4mlxpbwyc1tw" path="res://source/common/gameplay/characters/components/hand/hand.tscn" id="3_ydnw2"]
 
-[node name="Weapon" type="Node2D"]
+[node name="Weapon" type="Node2D" unique_id=1498533445]
 script = ExtResource("1_aiw52")
 
-[node name="WeaponSprite" type="Sprite2D" parent="."]
+[node name="WeaponSprite" type="Sprite2D" parent="." unique_id=2118713155]
 texture = ExtResource("2_33udu")
 offset = Vector2(0, -15)
 flip_h = true
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 48)
 
-[node name="Hand" parent="." instance=ExtResource("3_ydnw2")]
+[node name="Hand" parent="." unique_id=1234710360 instance=ExtResource("3_ydnw2")]

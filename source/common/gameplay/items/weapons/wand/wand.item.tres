@@ -17,6 +17,7 @@ region = Rect2(80, 0, 32, 16)
 
 [resource]
 script = ExtResource("4_weapon_item")
+category = &"wand"
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
 base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap_wand")])

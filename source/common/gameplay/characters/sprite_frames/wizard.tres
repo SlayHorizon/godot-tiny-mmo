@@ -1,7 +1,32 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://v5y6komavnpb"]
 
 [ext_resource type="Texture2D" uid="uid://clh1sced2xnyq" path="res://assets/sprites/characters/wizard/wizard_idle.png" id="1_31uvx"]
+[ext_resource type="Texture2D" uid="uid://bgla5dm5us5xw" path="res://assets/sprites/characters/wizard/wizard_death.png" id="1_37qxn"]
 [ext_resource type="Texture2D" uid="uid://c14m3v210kxi6" path="res://assets/sprites/characters/wizard/wizard_run.png" id="2_6x4qy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n7kf3"]
+atlas = ExtResource("1_37qxn")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kiymb"]
+atlas = ExtResource("1_37qxn")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_40j7j"]
+atlas = ExtResource("1_37qxn")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3qpei"]
+atlas = ExtResource("1_37qxn")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m0qsc"]
+atlas = ExtResource("1_37qxn")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ap4jn"]
+atlas = ExtResource("1_37qxn")
+region = Rect2(320, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ncaqt"]
 atlas = ExtResource("1_31uvx")
@@ -45,7 +70,25 @@ region = Rect2(320, 0, 64, 64)
 
 [resource]
 animations = [{
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n7kf3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kiymb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_40j7j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3qpei")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m0qsc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ap4jn")
+}],
 "loop": true,
 "name": &"death",
 "speed": 5.0

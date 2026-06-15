@@ -19,6 +19,7 @@ ability = ExtResource("4_multi")
 [sub_resource type="Resource" id="Node_venom"]
 script = ExtResource("2_node")
 id = &"bow_venom"
+upgrades = &"bow_multishot"
 node_name = "Venom Shot"
 description = "A charged shot that poisons the target, dealing damage over 4 seconds. Weight 2."
 branch = &"domination"
@@ -28,6 +29,7 @@ ability = ExtResource("5_venom")
 [sub_resource type="Resource" id="Node_storm"]
 script = ExtResource("2_node")
 id = &"bow_arrowstorm"
+upgrades = &"bow_venom"
 node_name = "Arrow Storm"
 description = "Charge and unleash a wide volley of seven arrows. Weight 3."
 branch = &"domination"

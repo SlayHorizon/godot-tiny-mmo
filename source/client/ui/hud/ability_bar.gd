@@ -13,9 +13,10 @@ extends HBoxContainer
 const SLOT_KEYS: Array[String] = ["LMB", "Q", "E"]
 const TILE_SIZE: Vector2 = Vector2(52, 52)
 const MANA_SHORT_TINT: Color = Color(0.55, 0.62, 0.85)
+const CHANNEL_GLOW: Color = Color(0.45, 1.0, 0.55)
 
 var _weapon: Weapon
-## Per-tile lookups: {"ability", "button", "sweep", "cd_label"}.
+## Per-tile lookups: {"ability", "button", "sweep", "cd_label", "glow"}.
 var _tiles: Array[Dictionary] = []
 
 
@@ -69,6 +70,14 @@ func _add_tile(index: int, ability: AbilityResource) -> void:
 		tile.modulate.a = 0.35 # empty loadout slot (null hole) — key hint only
 	add_child(tile)
 
+	# Channel glow — first child so the key/mana labels render on top of it.
+	var glow: ColorRect = ColorRect.new()
+	glow.color = Color(CHANNEL_GLOW, 0.0)
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	glow.visible = false
+	tile.add_child(glow)
+	glow.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
 	var key_label: Label = Label.new()
 	key_label.text = SLOT_KEYS[index] if index < SLOT_KEYS.size() else str(index + 1)
 	key_label.add_theme_font_size_override(&"font_size", 9)
@@ -105,7 +114,7 @@ func _add_tile(index: int, ability: AbilityResource) -> void:
 		mana_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tile.add_child(mana_label)
 
-	_tiles.append({"ability": ability, "button": tile, "sweep": sweep, "cd_label": cd_label})
+	_tiles.append({"ability": ability, "button": tile, "sweep": sweep, "cd_label": cd_label, "glow": glow})
 
 
 func _process(_delta: float) -> void:
@@ -113,14 +122,32 @@ func _process(_delta: float) -> void:
 		return
 	var character: Character = ClientState.local_player
 	var now: float = Time.get_ticks_msec() / 1000.0
+	# What we're channeling (if anything) — read off the local player, which lives
+	# inside the instance's multiplayer context (the HUD doesn't, so it can't ask).
+	var channeling_name: String = ClientState.local_player.channeling_ability_name
 	for tile_info: Dictionary in _tiles:
 		var ability: AbilityResource = tile_info["ability"]
 		if ability == null:
 			continue
-		var cooldown: float = ability.effective_cooldown(character)
-		var remaining: float = maxf(0.0, cooldown - (now - ability.last_action_time))
 		var sweep: ColorRect = tile_info["sweep"]
 		var cd_label: Label = tile_info["cd_label"]
+		var button: Button = tile_info["button"]
+		var glow: ColorRect = tile_info["glow"]
+		# Channeling: light the tile and HIDE the cooldown until the channel ends.
+		# The cooldown clock already started at press (mark_used), so when the
+		# channel finishes the sweep just reveals the remaining time — exactly the
+		# "active glow now, cooldown after" read.
+		if not channeling_name.is_empty() and ability.name == channeling_name:
+			sweep.visible = false
+			cd_label.visible = false
+			button.modulate = Color.WHITE
+			glow.visible = true
+			var pulse: float = 0.5 + 0.5 * sin(now * 6.0)
+			glow.color = Color(CHANNEL_GLOW, 0.15 + 0.2 * pulse)
+			continue
+		glow.visible = false
+		var cooldown: float = ability.effective_cooldown(character)
+		var remaining: float = maxf(0.0, cooldown - (now - ability.last_action_time))
 		if remaining > 0.05 and cooldown > 0.0:
 			sweep.visible = true
 			sweep.offset_top = -TILE_SIZE.y * clampf(remaining / cooldown, 0.0, 1.0)
@@ -130,7 +157,6 @@ func _process(_delta: float) -> void:
 			sweep.visible = false
 			cd_label.visible = false
 		# Mana-short tint: the press would be refused, say so before the click.
-		var button: Button = tile_info["button"]
 		if ability.mana_cost > 0 and character.stats_component.get_stat(Stat.MANA) < ability.mana_cost:
 			button.modulate = MANA_SHORT_TINT
 		else:

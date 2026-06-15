@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://dw5hj55lha5ld"]
+
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="1_shop"]
+[ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="1_yeyhk"]
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="2_entry"]
+[ext_resource type="Resource" uid="uid://b6rg0f7dgtrn0" path="res://source/common/gameplay/items/weapons/sword/sword_rustic.item.tres" id="3_sword"]
+[ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="4_hammer"]
+
+[sub_resource type="Resource" id="Entry_rustic_sword"]
+script = ExtResource("2_entry")
+item = ExtResource("3_sword")
+price = 55
+
+[sub_resource type="Resource" id="Entry_rustic_maul"]
+script = ExtResource("2_entry")
+item = ExtResource("4_hammer")
+price = 65
+
+[resource]
+script = ExtResource("1_shop")
+shop_name = "Forge Smith"
+entries = Array[ExtResource("2_entry")]([SubResource("Entry_rustic_sword"), SubResource("Entry_rustic_maul")])
+trades = 0
+metadata/slug = &"rustic_shop"
+metadata/id = 7

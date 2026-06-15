@@ -19,6 +19,7 @@ ability = ExtResource("4_spin")
 [sub_resource type="Resource" id="Node_cripple"]
 script = ExtResource("2_node")
 id = &"sword_cripple"
+upgrades = &"sword_spin"
 node_name = "Crippling Strike"
 description = "A vicious strike that slows the target for 2 seconds. The game's first crowd-control tool. Weight 2."
 branch = &"domination"
@@ -28,6 +29,7 @@ ability = ExtResource("5_cripple")
 [sub_resource type="Resource" id="Node_storm"]
 script = ExtResource("2_node")
 id = &"sword_bladestorm"
+upgrades = &"sword_cripple"
 node_name = "Bladestorm"
 description = "An explosive spinning flurry that devastates everything around you. Weight 3."
 branch = &"domination"

@@ -148,12 +148,26 @@ func _add_bag_button(_slot_uid: int, item_id: int, item: Item, quantity: int) ->
 	inventory_grid.add_child(button)
 
 
+## A weapon's "power" (ability-slot capacity) + level gate, shown right on the
+## NAME line (not buried in the scrollable description) so it's visible without
+## scrolling and never needs a description rewrite. Empty for non-weapons.
+func _weapon_name_suffix(item: Item) -> String:
+	if item is WeaponItem:
+		var weapon: WeaponItem = item as WeaponItem
+		var parts: PackedStringArray = PackedStringArray()
+		parts.append("Power %d" % weapon.capacity)
+		if weapon.required_level > 0:
+			parts.append("Lv %d" % weapon.required_level)
+		return "    (%s)" % "  ·  ".join(parts)
+	return ""
+
+
 func _on_bag_item_pressed(item_id: int, item: Item) -> void:
 	_selected_gear_slot = &""
 	_selected_item = item
 	_selected_item_id = item_id
 	detail_icon.texture = item.item_icon
-	detail_name.text = str(item.item_name)
+	detail_name.text = str(item.item_name) + _weapon_name_suffix(item)
 	detail_description.text = item.description
 	if item is GearItem or item is WeaponItem:
 		action_button.text = "Equip"
@@ -183,7 +197,7 @@ func _on_gear_slot_pressed(slot_button: GearSlotButton) -> void:
 	_selected_item = item
 	_selected_item_id = item_id
 	detail_icon.texture = item.item_icon
-	detail_name.text = str(item.item_name)
+	detail_name.text = str(item.item_name) + _weapon_name_suffix(item)
 	detail_description.text = item.description
 	action_button.text = "Unequip"
 	action_button.disabled = false
@@ -253,6 +267,12 @@ func _surface_item_rejection(result: Array) -> bool:
 			return true
 		"cooldown":
 			Toaster.toast("That's still on cooldown.")
+			return true
+		"level":
+			Toaster.toast("Requires level %d to equip." % int(payload.get("level", 0)))
+			return true
+		"cant_equip":
+			Toaster.toast("You can't equip that.")
 			return true
 	return false
 

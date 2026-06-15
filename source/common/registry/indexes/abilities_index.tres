@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1781337582
-next_id = 20
+version = 1781544805
+next_id = 23
 entries = Array[Dictionary]([{
 &"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
 &"id": 12,
@@ -32,6 +32,21 @@ entries = Array[Dictionary]([{
 &"id": 2,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres",
 &"slug": &"wand_heal"
+}, {
+&"hash": "49d36ee71f08eb10ded225fcdf8192cefe45379984e08f6dec90c2f817559a02",
+&"id": 20,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura.tres",
+&"slug": &"hammer_aura"
+}, {
+&"hash": "b41ac2b510dae5e6b6a78e665ed13b8632a72d31ce33cf36f484310230e06686",
+&"id": 21,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_2.tres",
+&"slug": &"hammer_aura_2"
+}, {
+&"hash": "c983965258a8d7d09116f2ab8872e8a5608ab2b97cc41e5005328c994645dc1b",
+&"id": 22,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_3.tres",
+&"slug": &"hammer_aura_3"
 }, {
 &"hash": "979e3836ded66f65dff84541b04e51ec96b65c3d6475bdcb4466181d9dc1a6b9",
 &"id": 15,
@@ -63,22 +78,22 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crippling_strike.tres",
 &"slug": &"crippling_strike"
 }, {
-&"hash": "efc70a5b7fe019aa2272b9f409df03c2e32b03bc40efe8a83b2df990f75bf748",
+&"hash": "ad636b7cd4cc446a0a95ff9fd59bd72e3be92c3bf266cc3153e5f52c75ffa91c",
 &"id": 11,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres",
 &"slug": &"crushing_blow"
 }, {
-&"hash": "1462e4e552681a2f6fb48d33c1009dcadae81e7256976f706f1d22e6504c877f",
+&"hash": "9c34ec734ad78015b64767d8538dcd367524e80410deba9d6e52542141b7b8e3",
 &"id": 18,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/earthshatter.tres",
 &"slug": &"earthshatter"
 }, {
-&"hash": "c5be3e15d1189dad907284c0e054dcffa2460148167e3087e92a153edf765ed6",
+&"hash": "1ba82a429e5f41dd7436d2527d7b82f4ed9a2ea081a7899e53bd257faa207493",
 &"id": 5,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/hammer_slam.tres",
 &"slug": &"hammer_slam"
 }, {
-&"hash": "1fa640a93fd7026df42c25605d46251ca06b1ad171c1c455361d3de967a3d48c",
+&"hash": "d6eec44c656cb1b601115cdcaab6f92beef2d30736a8ecdf0025146910562879",
 &"id": 19,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/shockwave.tres",
 &"slug": &"shockwave"

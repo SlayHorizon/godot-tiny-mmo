@@ -75,7 +75,6 @@ var _skin_name_label: Label
 
 
 func _ready() -> void:
-	await get_tree().create_timer(2.0).timeout
 	menu_stack.append(main_panel)
 	back_button.hide()
 

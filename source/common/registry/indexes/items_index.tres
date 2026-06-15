@@ -5,15 +5,15 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1781291553
-next_id = 77
+version = 1781372914
+next_id = 84
 entries = Array[Dictionary]([{
 &"hash": "39482c65b2b821790313c848a2b006b977b0441bdd76ad1d84205629097c994e",
 &"id": 74,
 &"path": "res://source/common/gameplay/items/consumables/focus_tonic.tres",
 &"slug": &"focus_tonic"
 }, {
-&"hash": "3a0b58d921a3a952e987899aee2490d722290623015e3810abc37f5146cf5a00",
+&"hash": "590fc5aac969be880a7859bedb14f19dc276c685086cb004dadfa842c2a55498",
 &"id": 67,
 &"path": "res://source/common/gameplay/items/consumables/greater_health_potion.tres",
 &"slug": &"greater_health_potion"
@@ -28,7 +28,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/consumables/mana_potion.tres",
 &"slug": &"mana_potion"
 }, {
-&"hash": "7a4344d318656633c0d391119ac543990305a060b90dab573be9fd84a3c968d5",
+&"hash": "c50e0c9930589b3fe72d0348d8205c6ad64e56674bd5aa7130523c9e8619dfd7",
 &"id": 68,
 &"path": "res://source/common/gameplay/items/consumables/minor_health_potion.tres",
 &"slug": &"minor_health_potion"
@@ -298,7 +298,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres",
 &"slug": &"wooden_bow.item"
 }, {
-&"hash": "c96994eb5a649e376349d370f879091624a50c0568f46a8911da9bae72b40414",
+&"hash": "ceeb0d37288f09fa96ec33e849e7e25076b5007950e2cf2add5863411b670262",
 &"id": 43,
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn",
 &"slug": &"wooden_bow"
@@ -323,12 +323,27 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/hammer/hammer.tscn",
 &"slug": &"hammer"
 }, {
-&"hash": "f0decf14527c8e5cad44fce70efb0db9f24d8e62075ca776787a6282b46c49f8",
+&"hash": "0f0d9c818098ea1528d70b9d559a047b51fadf7bdbc9898a4c305f38401ee28c",
+&"id": 81,
+&"path": "res://source/common/gameplay/items/weapons/hammer/hammer_bone.item.tres",
+&"slug": &"hammer_bone.item"
+}, {
+&"hash": "fbda81b5d278319d55461470f89287ff621162a09a50d2568754ae4a708967d8",
+&"id": 77,
+&"path": "res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres",
+&"slug": &"hammer_fire.item"
+}, {
+&"hash": "d2c93155bf068f22137cab515258a02ef1c7582ca94d113e5f4ac4c587192938",
+&"id": 78,
+&"path": "res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres",
+&"slug": &"hammer_rustic.item"
+}, {
+&"hash": "bfa26f37793f4e44449d0069390e2dd9fbea53d676483fd661a73183228a9a0c",
 &"id": 65,
 &"path": "res://source/common/gameplay/items/weapons/sword/sword.item.tres",
 &"slug": &"sword.item"
 }, {
-&"hash": "dfbe6e7984d0c9d4845f406bd2b34909e302f480e8214390895518ca35b2b718",
+&"hash": "4b9fb381cf29ef2aa0617422346dc569439b3f14b8a2c6fae46bfab953c22090",
 &"id": 47,
 &"path": "res://source/common/gameplay/items/weapons/sword/sword.tscn",
 &"slug": &"sword"
@@ -337,6 +352,21 @@ entries = Array[Dictionary]([{
 &"id": 48,
 &"path": "res://source/common/gameplay/items/weapons/sword/sword_animations.tres",
 &"slug": &"sword_animations"
+}, {
+&"hash": "c52a4f277b76db599f6ac57d60b8ea6dd71d31683d0650ae1c3d52aef425a3a6",
+&"id": 82,
+&"path": "res://source/common/gameplay/items/weapons/sword/sword_bone.item.tres",
+&"slug": &"sword_bone.item"
+}, {
+&"hash": "7cad321be9af0cf4c7c660a676d4af22ebc39d5ea1097a201d8733adc83016b3",
+&"id": 79,
+&"path": "res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres",
+&"slug": &"sword_fire.item"
+}, {
+&"hash": "4b0f36bfd42afd6e18fff58ea69fd0f206730356742a2cd4f28a86211488f84e",
+&"id": 80,
+&"path": "res://source/common/gameplay/items/weapons/sword/sword_rustic.item.tres",
+&"slug": &"sword_rustic.item"
 }, {
 &"hash": "0e68df74995b103151d66dbb65816e6bae83078156aff19d2a7bda3d45027a81",
 &"id": 52,
@@ -348,12 +378,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/tools/sickle.tres",
 &"slug": &"sickle"
 }, {
-&"hash": "c18e55be6e5f299e8d895ccc28f0998dd2f30324f2acfcaee1a8a234f52a79cf",
+&"hash": "abcb39cce393449590ba354adf00718a5a720c22551d5c2f653b405ed9297dc2",
 &"id": 70,
 &"path": "res://source/common/gameplay/items/weapons/wand/bolt.tscn",
 &"slug": &"bolt"
 }, {
-&"hash": "257062cf1188b9d84ae60c3dc1fc1d9184d547176767bea991af27219fd2bd46",
+&"hash": "88316b85ab90c843f87e05146018056329892bf1c868362503ee0d50c58ee8f1",
 &"id": 71,
 &"path": "res://source/common/gameplay/items/weapons/wand/heal_bolt.tscn",
 &"slug": &"heal_bolt"
@@ -363,7 +393,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/wand/wand.item.tres",
 &"slug": &"wand.item"
 }, {
-&"hash": "cbf35483320f102442907bf91c5385a35f4e0c9757922ecee444c2c169b66151",
+&"hash": "f22acfa33225c809ee218da3e9cf9116eced11a63a00416bf763c275bb36d444",
 &"id": 73,
 &"path": "res://source/common/gameplay/items/weapons/wand/wand.tscn",
 &"slug": &"wand"
@@ -372,6 +402,11 @@ entries = Array[Dictionary]([{
 &"id": 76,
 &"path": "res://source/common/gameplay/items/weapons/wand/wand_bandit.item.tres",
 &"slug": &"wand_bandit.item"
+}, {
+&"hash": "beebe3d64e9277683cc4fbaa5683ecbca8a27cc1dd2fa802015244c96a18687d",
+&"id": 83,
+&"path": "res://source/common/gameplay/items/weapons/wand/wand_bone.item.tres",
+&"slug": &"wand_bone.item"
 }])
 scan_path = "res://source/common/gameplay/items"
 filters = PackedStringArray("*.tres", "*.tscn")

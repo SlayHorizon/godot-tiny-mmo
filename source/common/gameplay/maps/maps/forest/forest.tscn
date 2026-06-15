@@ -6,6 +6,26 @@
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="4_vtg6w"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="5_3a2x5"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="6_1fctu"]
+[ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="7_w1xny"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="8_7q6hy"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="9_8w7oy"]
+[ext_resource type="Resource" uid="uid://dl7ria3hsmvco" path="res://source/common/gameplay/shops/resources/bone_shop.tres" id="10_qrw5n"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="11_iihld"]
+[ext_resource type="SpriteFrames" uid="uid://cigcsxa2gubl" path="res://source/common/gameplay/characters/sprite_frames/skeleton_mage.tres" id="12_q7qsh"]
+
+[sub_resource type="Resource" id="Resource_twffw"]
+script = ExtResource("9_8w7oy")
+shop = ExtResource("10_qrw5n")
+metadata/_custom_type_script = "uid://bpo804060rk5t"
+
+[sub_resource type="Resource" id="Resource_q5le7"]
+script = ExtResource("11_iihld")
+npc_id = 111
+npc_name = "Bonecarver"
+skin = ExtResource("12_q7qsh")
+greeting = "I'am skeleton, I sell skeleton stuff -.-"
+interactions = Array[ExtResource("8_7q6hy")]([SubResource("Resource_twffw")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="Overworld" type="Node2D" unique_id=1329999157 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -58,3 +78,7 @@ position = Vector2(2716, 1878)
 scale = Vector2(2.6800008, 8.67999)
 target_instance = ExtResource("6_1fctu")
 target_id = 7
+
+[node name="NPC" parent="." unique_id=1922057613 instance=ExtResource("7_w1xny")]
+position = Vector2(2477.7087, 1734.8141)
+npc_resource = SubResource("Resource_q5le7")

@@ -12,6 +12,8 @@
 [ext_resource type="Resource" uid="uid://b64q6sv46brpr" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres" id="9_ca6k6"]
 [ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="9_y1msh"]
 [ext_resource type="Resource" uid="uid://f0urxop3y64l" path="res://source/common/gameplay/items/weapons/sword/sword.item.tres" id="10_kyjwk"]
+[ext_resource type="Resource" uid="uid://b6rg0f7dgtrn0" path="res://source/common/gameplay/items/weapons/sword/sword_rustic.item.tres" id="12_6r5rp"]
+[ext_resource type="Resource" uid="uid://wp3akqcd3x2h" path="res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres" id="13_o7ypm"]
 
 [sub_resource type="Resource" id="Resource_lhqif"]
 script = ExtResource("1_dqht8")
@@ -67,10 +69,22 @@ item = ExtResource("6_6r5rp")
 price = 6
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
+[sub_resource type="Resource" id="Resource_je10t"]
+script = ExtResource("1_dqht8")
+item = ExtResource("12_6r5rp")
+price = 5
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_y1msh"]
+script = ExtResource("1_dqht8")
+item = ExtResource("13_o7ypm")
+price = 5
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [resource]
 script = ExtResource("9_y1msh")
 shop_name = "Starter Shop"
-entries = Array[ExtResource("1_dqht8")]([SubResource("Resource_lhqif"), SubResource("Resource_kyjwk"), SubResource("Resource_6r5rp"), SubResource("Resource_o7ypm"), SubResource("Entry_cloth_hood"), SubResource("Entry_cloth_vest"), SubResource("Entry_old_boots"), SubResource("Entry_leather_jacket"), SubResource("Entry_copper_ring")])
+entries = Array[ExtResource("1_dqht8")]([SubResource("Resource_lhqif"), SubResource("Resource_kyjwk"), SubResource("Resource_6r5rp"), SubResource("Resource_o7ypm"), SubResource("Entry_cloth_hood"), SubResource("Entry_cloth_vest"), SubResource("Entry_old_boots"), SubResource("Entry_leather_jacket"), SubResource("Entry_copper_ring"), SubResource("Resource_je10t"), SubResource("Resource_y1msh")])
 trades = 0
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"start_shop"

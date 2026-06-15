@@ -6,19 +6,28 @@
 [ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_gevim"]
 [ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_vucvx"]
 
+[sub_resource type="Resource" id="Mod_ad_rustic"]
+script = ExtResource("1_10w3u")
+stat_name = "ad"
+value = 6.0
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_ct1ie"]
 atlas = ExtResource("2_10w3u")
 region = Rect2(0, 0, 16, 64)
 
 [resource]
 script = ExtResource("4_gevim")
+category = &"sword"
+capacity = 2
 right_hand_scene = ExtResource("3_sgh8v")
 slot = ExtResource("5_vucvx")
-item_name = &"Sword"
+required_level = 5
+base_modifiers = Array[ExtResource("1_10w3u")]([SubResource("Mod_ad_rustic")])
+item_name = &"Rustic Sword"
 item_icon = SubResource("AtlasTexture_ct1ie")
-description = "A simple iron sword. Swing close, swing fast."
+description = "A rugged, well-forged blade — sturdier than your first sword, solid enough to channel a second technique."
 can_trade = true
 can_sell = true
 stack_limit = 1
-metadata/slug = &"sword.item"
-metadata/id = 65
+metadata/slug = &"sword_rustic.item"
+metadata/id = 80

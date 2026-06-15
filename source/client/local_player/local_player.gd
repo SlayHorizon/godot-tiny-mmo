@@ -53,6 +53,11 @@ func _ready() -> void:
 	# Generic server-driven root (consuming a potion, future cast times): no
 	# teleport, just freeze movement + actions for the pushed duration.
 	Client.subscribe(&"player.freeze", _on_freeze)
+	# Channeling (healing aura, future recall): when OUR channel starts we root in
+	# place; pressing a move key cancels it. Other players' channels only show
+	# their aura (handled in InstanceClient) — these handlers ignore them.
+	Client.subscribe(&"channel.start", _on_channel_start)
+	Client.subscribe(&"channel.end", _on_channel_end)
 
 
 ## The local player's own over-head HP bar reads as "self" (green), never
@@ -115,6 +120,75 @@ func _on_freeze(payload: Dictionary) -> void:
 		_movement_lock_until_ms = maxi(_movement_lock_until_ms, Time.get_ticks_msec() + ms)
 
 
+# --- Channeling (healing aura, future recall) ---
+## True while WE are mid-channel: rooted, actions suppressed, a move key cancels.
+## Deliberately NOT the movement lock — that zeroes input, which would make the
+## move-to-cancel impossible to detect.
+var _channeling: bool = false
+## Safety net so a dropped channel.end can't strand us rooted forever.
+var _channel_until_ms: int = 0
+## Name of the ability WE'RE channeling (empty = none). The ability bar reads
+## this off the local player — the HUD lives outside the instance's multiplayer
+## context, so it can't identify "us" via get_unique_id; LocalPlayer can.
+var channeling_ability_name: String = ""
+
+
+func _on_channel_start(payload: Dictionary) -> void:
+	if int(payload.get("p", -1)) != multiplayer.get_unique_id():
+		return # someone else's channel — InstanceClient draws their aura, we don't root
+	_channeling = true
+	channeling_ability_name = String(payload.get("an", ""))
+	_channel_until_ms = Time.get_ticks_msec() + int(float(payload.get("d", 6.0)) * 1000.0) + 750
+
+
+func _on_channel_end(payload: Dictionary) -> void:
+	if int(payload.get("p", -1)) != multiplayer.get_unique_id():
+		return
+	_channeling = false
+	channeling_ability_name = ""
+
+
+## Tell the server to stop our channel (it pushes channel.end back, which also
+## clears the flag — calling this just unroots us a frame early, locally).
+func _cancel_channel() -> void:
+	_channeling = false
+	channeling_ability_name = ""
+	if InstanceClient.current != null:
+		Client.request_data(&"channel.cancel", Callable(), {}, InstanceClient.current.name)
+
+
+## Locally roots movement for [param seconds] — heavy attacks plant you while
+## you swing (commitment + readability). Reuses the same movement lock, so it
+## also blocks re-attacking for that window; fine because the weapons that use
+## it have long cooldowns. Called client-side from the weapon on the wielder.
+func freeze_movement(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	_movement_lock_until_ms = maxi(_movement_lock_until_ms, Time.get_ticks_msec() + int(seconds * 1000.0))
+
+
+# --- Camera shake (combat juice) ---
+## Current trauma (0..1). Shake offset is trauma², so it eases out smoothly and
+## a big hit doesn't snap to a hard stop. Decays a bit each frame.
+var _trauma: float = 0.0
+const SHAKE_DECAY: float = 3.5      ## trauma per second bled off
+const SHAKE_MAX_OFFSET: float = 9.0 ## pixels at full trauma
+
+## Adds a kick of camera shake (additive, clamped). Call from a weapon's own
+## visual when its hit lands — e.g. the hammer slam. [param amount] ~0.3 light,
+## ~0.6 heavy.
+func shake_camera(amount: float) -> void:
+	_trauma = clampf(_trauma + amount, 0.0, 1.0)
+
+
+func _process(delta: float) -> void:
+	if _trauma <= 0.0:
+		return
+	_trauma = maxf(0.0, _trauma - SHAKE_DECAY * delta)
+	var shake: float = _trauma * _trauma * SHAKE_MAX_OFFSET
+	camera_2d.offset = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * shake
+
+
 func _physics_process(delta: float) -> void:
 	process_input()
 	process_movement()
@@ -123,7 +197,7 @@ func _physics_process(delta: float) -> void:
 
 
 func process_movement() -> void:
-	if _dead or Time.get_ticks_msec() < _movement_lock_until_ms:
+	if _dead or _channeling or Time.get_ticks_msec() < _movement_lock_until_ms:
 		velocity = Vector2.ZERO
 		return
 	# Read the server-synced MOVE_SPEED stat so AGILITY (and speed gear) actually
@@ -143,7 +217,25 @@ func process_input() -> void:
 	input_direction = controller.get_move_direction()
 	look_direction = controller.get_look_direction()
 	action_input = controller.is_attack_pressed()
-	
+
+	# Recall (B): a universal channel anyone can start — ask the server to begin
+	# it. Not while already channeling (re-press is ignored; cancel by moving).
+	if Input.is_action_just_pressed(&"player_recall") and not _channeling and InstanceClient.current != null:
+		Client.request_data(&"recall.start", Callable(), {}, InstanceClient.current.name)
+
+	# Channeling: rooted (process_movement zeroes velocity). A move key CANCELS
+	# the channel and frees us from this frame on; otherwise suppress all actions
+	# so an attack can't interrupt it. Safety-clear if the end push was lost.
+	if _channeling:
+		if Time.get_ticks_msec() > _channel_until_ms:
+			_channeling = false
+			channeling_ability_name = ""
+		elif input_direction != Vector2.ZERO:
+			_cancel_channel()
+		else:
+			action_input = false
+			return
+
 	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):
 		Client.request_data(&"action.perform", Callable(),
@@ -163,6 +255,11 @@ func process_animation(delta: float) -> void:
 
 
 func update_hand_pivot(delta: float) -> void:
+	# Channeling plants you in a fixed stance — the weapon holds its angle rather
+	# than swivelling to the cursor (a planted hammer that still tracked aim would
+	# look wrong). The pose itself is the weapon's set_channeling_pose.
+	if _channeling:
+		return
 	var to_flip: int = -1 if flipped else 1
 	var look_angle: float = atan2(look_direction.y, look_direction.x * to_flip)
 	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_angle, delta * hand_pivot_speed)
