@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://hcfiu2vpqr3u"]
+[gd_scene format=3 uid="uid://hcfiu2vpqr3u"]
 
 [ext_resource type="Script" uid="uid://cjqrkmohwgdql" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.gd" id="1_ppv3d"]
 [ext_resource type="Texture2D" uid="uid://da32oaudh5aew" path="res://assets/sprites/environment/environment_objects/spike_trap.png" id="2_pl2kf"]
@@ -79,6 +79,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"open",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_p6sbt")
 }, {
 "duration": 0.9,
@@ -101,15 +109,15 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7sfpt"]
 size = Vector2(16, 16)
 
-[node name="ActivableDoor" type="StaticBody2D"]
+[node name="ActivableDoor" type="StaticBody2D" unique_id=930488926]
 collision_layer = 4
 script = ExtResource("1_ppv3d")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=678723567]
 texture_filter = 1
 position = Vector2(0, -8)
 sprite_frames = SubResource("SpriteFrames_8y88c")
-animation = &"closed"
+animation = &"open"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=598167749]
 shape = SubResource("RectangleShape2D_7sfpt")

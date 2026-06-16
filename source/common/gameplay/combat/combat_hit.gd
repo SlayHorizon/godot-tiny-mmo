@@ -49,15 +49,12 @@ static func try_damage(source: Character, body: Node2D, damage: float, damage_ty
 	if source is not Player and body is not Player:
 		return Result.IGNORED
 
-	# Player-vs-player only lands in PvP zones — exception for a live sparring match.
-	if body is Player and source is Player and not (body as Player).is_pvp():
-		if not SparringService.can_spar_damage(source as Player, body as Player):
+	# Player-vs-player: one allegiance + zone + spar gate (see can_damage). Allies
+	# never land (guild friendly-fire, spar teammates); a live duel uses spar
+	# rules; otherwise open-world PvP needs a PvP zone.
+	if source is Player and body is Player:
+		if not can_damage(source as Player, body as Player):
 			return Result.IGNORED
-
-	# Guild friendly fire: members tagged into the same guild don't damage each
-	# other, except in a live sparring match (a consented duel still lands).
-	if _same_guild_no_spar(source, body):
-		return Result.IGNORED
 
 	body.take_damage(damage, source, damage_type)
 	return Result.DAMAGED
@@ -91,34 +88,43 @@ static func overlapping_bodies(hitbox: Area2D) -> Array[Node2D]:
 	return out
 
 
-static func _same_guild_no_spar(source: Node, body: Node) -> bool:
-	if source is not Player or body is not Player:
+## THE single allegiance check: are these two players ALLIES? Resolved by context,
+## highest priority first — a live spar match (teammates only; opponents are NOT
+## allies), [future: a shared co-op instance group], otherwise guild. Open-world
+## allegiance is purely guild, which is what keeps basing/PvP free of the
+## party-vs-guild paradox. Used for healing (HealBolt, HealingAuraAbility) AND,
+## inverted, by the damage gate (can_damage), so the rule can never drift apart.
+##
+## Server-side: reads player_resource (null client-side for remotes → not allied).
+## The client health-bar TINT is a parallel peer-id mirror in
+## Player._apply_team_bar_color; when a group context ships, sync it there too.
+static func are_allied(a: Player, b: Player) -> bool:
+	if a == null or b == null:
 		return false
-	# Projectiles run this on the client too (visual stop), where a Player's
-	# server-owned player_resource can be null — guard rather than deref-crash.
-	var src_res: PlayerResource = (source as Player).player_resource
-	var tgt_res: PlayerResource = (body as Player).player_resource
-	if src_res == null or tgt_res == null:
+	if a == b:
+		return true
+	if a.player_resource == null or b.player_resource == null:
 		return false
-	var src_guild: int = src_res.active_guild_id
-	var tgt_guild: int = tgt_res.active_guild_id
-	if src_guild <= 0 or src_guild != tgt_guild:
-		return false
-	return not SparringService.can_spar_damage(source as Player, body as Player)
+	if a.player_resource.in_match or b.player_resource.in_match:
+		return SparringService.are_spar_teammates(a, b)
+	# Co-op group (dungeon) — groupmates are allies regardless of guild.
+	if GroupService.are_grouped(int(a.player_resource.current_peer_id), int(b.player_resource.current_peer_id)):
+		return true
+	var guild: int = a.player_resource.active_guild_id
+	return guild > 0 and guild == b.player_resource.active_guild_id
 
 
-## True if [param healer] may HEAL [param target]: spar teammates while either is
-## in a match (so you can't heal across a duel or buff a fighter from the
-## sidelines), guildmates otherwise — the same definition the team-colored health
-## bars use. THE single source of truth for "who is a heal ally": HealBolt and the
-## channeled HealingAuraAbility both defer here so the rule can't drift. Whether
-## the caster heals THEMSELF is the caller's call (both treat self as always valid).
-static func is_heal_ally(healer: Player, target: Player) -> bool:
-	if healer == null or target == null:
+## Whether [param source] may damage [param target] (player-vs-player only). Allies
+## never land a hit; a live spar match defers to the duel rules (opponents in the
+## same match, friendly-fire off, countdown over); otherwise it's open-world PvP,
+## allowed only when the target is in a PvP zone. NPC / flag / environment cases
+## are resolved in try_damage before this is reached.
+static func can_damage(source: Player, target: Player) -> bool:
+	if source == null or target == null or source == target:
 		return false
-	if healer.player_resource == null or target.player_resource == null:
+	if are_allied(source, target):
 		return false
-	if healer.player_resource.in_match or target.player_resource.in_match:
-		return SparringService.are_spar_teammates(healer, target)
-	var guild: int = healer.player_resource.active_guild_id
-	return guild > 0 and guild == target.player_resource.active_guild_id
+	if source.player_resource != null and target.player_resource != null \
+			and (source.player_resource.in_match or target.player_resource.in_match):
+		return SparringService.can_spar_damage(source, target)
+	return target.is_pvp()

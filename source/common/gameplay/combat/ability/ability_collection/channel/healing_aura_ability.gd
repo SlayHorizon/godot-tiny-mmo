@@ -17,8 +17,8 @@ func channel_tick(caster: Character) -> void:
 	if not GameMode.is_world_server() or not is_instance_valid(caster):
 		return
 	# Always heal the channeler; then every living ALLY within radius. "Ally" is
-	# the shared CombatHit.is_heal_ally rule (spar teammates in a match, guildmates
-	# otherwise) — same definition the wand heal + team health-bars use, so it's
+	# the shared CombatHit.are_allied rule (spar teammates in a match, guildmates
+	# otherwise) — the same definition the wand heal + damage gate use, so it's
 	# correct in cross-guild spar teams and never tops up an enemy. Mobs aren't
 	# Player nodes, so the type filter excludes them too.
 	_heal(caster)
@@ -33,7 +33,7 @@ func channel_tick(caster: Character) -> void:
 		var target: Character = node as Character
 		if target.is_dead:
 			continue
-		if not CombatHit.is_heal_ally(caster as Player, node as Player):
+		if not CombatHit.are_allied(caster as Player, node as Player):
 			continue
 		if caster.global_position.distance_to(target.global_position) <= radius:
 			_heal(target)

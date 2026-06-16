@@ -36,7 +36,7 @@
 [ext_resource type="Resource" uid="uid://dlgfcyxce1v1y" path="res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres" id="24_bauih"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
-[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/training_dummy.tres" id="26_gf85t"]
+[ext_resource type="Resource" uid="uid://d16ou2ymbmlhi" path="res://source/common/gameplay/characters/npc/types/training_dummy.tres" id="26_gf85t"]
 [ext_resource type="Resource" uid="uid://ca6hdigffs5j3" path="res://source/common/gameplay/quests/resources/fungus_trouble.tres" id="26_n81rr"]
 [ext_resource type="Resource" uid="uid://bj4t6nwwxtmh6" path="res://source/common/gameplay/quests/resources/wolves_at_the_ranch.tres" id="27_ikkk2"]
 [ext_resource type="Resource" uid="uid://c43oawxmbygiq" path="res://source/common/gameplay/characters/npc/types/wolf.tres" id="27_v4qho"]
@@ -54,6 +54,7 @@
 [ext_resource type="Script" uid="uid://beeyftaqtiwe3" path="res://source/common/gameplay/characters/npc/interactions/attribute_reset_interaction.gd" id="47_48jqa"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="48_bauih"]
 [ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="48_y0w5p"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/dungeon/dungeon_master.tscn" id="56_iqd18"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bauih"]
 normal = Vector2(1, 0)
@@ -611,3 +612,14 @@ npc_resource = SubResource("Resource_6hgwb")
 [node name="NPC" parent="." unique_id=1229291857 instance=ExtResource("39_hs4x2")]
 position = Vector2(1390, 746)
 npc_resource = SubResource("Resource_x11ol")
+
+[node name="DungeonMaster" parent="." unique_id=53258361 instance=ExtResource("56_iqd18")]
+position = Vector2(1451.0513, 826.4009)
+master_id = 1
+
+[node name="Label" type="Label" parent="DungeonMaster" unique_id=708947411]
+offset_left = -11.05127
+offset_top = -10.400879
+offset_right = 11.94873
+offset_bottom = 10.599121
+text = "DG"

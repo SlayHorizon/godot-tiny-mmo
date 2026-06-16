@@ -25,6 +25,9 @@ extends Resource
 ## Sprite the NPC renders with. Keep this on the resource so a re-skin is a
 ## one-file change.
 @export var skin: SpriteFrames
+## Visual size multiplier — a boss reads BIGGER. Scales the SPRITE only, never the
+## collision / attack reach (a scaled node can't close to melee range). 1.0 = normal.
+@export var visual_scale: float = 1.0
 
 @export_group("Combat")
 @export var max_health: float = 50.0
@@ -60,6 +63,10 @@ extends Resource
 ## bigger for open-field mobs that need to allow comfortable ranged
 ## engagement. ~300 default = bow at full draw + a bit of breathing room.
 @export var max_distance_from_spawn: int = 300
+## Whether the mob leashes home past max_distance_from_spawn. False = it COMMITS
+## and fights to the death — bosses (a world boss in the open field, or a dungeon
+## boss) and trash in bounded dungeon rooms.
+@export var leashes: bool = true
 
 ## Aggro radius. The mob "sees" any player inside this circle and engages
 ## (when chase_on_area is true) — or pack-mates that hear an ally's
@@ -73,4 +80,8 @@ extends Resource
 @export var xp_reward: int = 25
 ## Seconds before respawn after death.
 @export var respawn_delay: float = 5.0
+## Whether the mob respawns at all. False = SINGLE-LIFE — the body is removed
+## instead of returning (dungeon mobs, one-off event bosses). A mob with no
+## xp_reward AND no loot grants nothing on death (the natural "shadow" trash).
+@export var respawns: bool = true
 @export var loot: Array[LootDrop]

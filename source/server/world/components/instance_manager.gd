@@ -126,7 +126,7 @@ func _on_player_entered_warper(player: Player, current_instance: ServerInstance,
 	var instance_resource: InstanceResource = warper.target_instance
 	if not instance_resource:
 		return
-	
+
 	if instance_resource.can_join_instance(player, instance_index):
 		target_instance = instance_resource.get_instance()
 		if target_instance:
@@ -187,6 +187,9 @@ func player_switch_instance(
 		current_instance.despawn_player(peer_id, false)
 	else:
 		return
+	# Leaving a dungeon-run instance drops you from its group (dissolves it when
+	# empty). No-op for ordinary warps/recall/jail.
+	DungeonService.on_player_left(peer_id, current_instance)
 	charge_new_instance.rpc_id(
 		peer_id,
 		target_instance.instance_resource.map_path,

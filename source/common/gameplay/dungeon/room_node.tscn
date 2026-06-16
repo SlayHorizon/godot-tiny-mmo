@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/dungeon/room_node.gd" id="1_room"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_room"]
+size = Vector2(160, 128)
+
+[node name="RoomNode" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("1_room")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_room")

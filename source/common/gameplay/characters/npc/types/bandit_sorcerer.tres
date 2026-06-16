@@ -30,3 +30,4 @@ xp_reward = 30
 respawn_delay = 30.0
 loot = Array[ExtResource("1_e3utq")]([SubResource("Drop_bandit_wand")])
 metadata/slug = &"bandit_sorcerer"
+metadata/id = 8

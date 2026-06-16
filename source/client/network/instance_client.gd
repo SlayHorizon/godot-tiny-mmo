@@ -82,6 +82,21 @@ static func _on_channel_end(payload: Dictionary) -> void:
 		weapon.set_channeling_pose(false)
 
 
+## A dungeon room sealed or opened — toggle its doors on every client. Movement is
+## client-authoritative, so the collision change must happen here, not on the
+## server. The push carries the door node paths (relative to the map); the server
+## picks which doors. (The doors are authored into the map, so they already exist
+## on the client — we just flip them.)
+static func _on_dungeon_room(payload: Dictionary) -> void:
+	if current == null or current.instance_map == null:
+		return
+	var is_open: bool = not bool(payload.get("sealed", false))
+	for door_path: String in payload.get("doors", []):
+		var door: Node = current.instance_map.get_node_or_null(NodePath(door_path))
+		if door != null and door.has_method(&"set_open"):
+			door.set_open(is_open)
+
+
 ## Guard so we only subscribe ONCE per process — Client lives in the
 ## autoload and outlives any InstanceClient, so re-subscribing on every
 ## instance switch would either pile up callables or churn unsubscribe
@@ -96,6 +111,7 @@ func _ready() -> void:
 		Client.subscribe(&"combat.hit", _on_combat_hit_static)
 		Client.subscribe(&"channel.start", _on_channel_start)
 		Client.subscribe(&"channel.end", _on_channel_end)
+		Client.subscribe(&"dungeon.room", _on_dungeon_room)
 		_subscribed = true
 
 	synchronizer_manager = StateSynchronizerManagerClient.new()

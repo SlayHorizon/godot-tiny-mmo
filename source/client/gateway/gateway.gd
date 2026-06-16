@@ -435,7 +435,8 @@ func _finish_intro() -> void:
 		_intro_tween.kill()
 	_intro_tween = null
 	for element: CanvasItem in _intro_elements:
-		element.modulate.a = 1.0
+		if is_instance_valid(element):
+			element.modulate.a = 1.0
 	if theme is GatewayTheme and (theme as GatewayTheme).background:
 		_apply_theme_background((theme as GatewayTheme).background)
 

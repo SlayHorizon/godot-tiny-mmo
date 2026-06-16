@@ -111,6 +111,21 @@ var mr: float = 0.0
 ## (an archer in a melee camp) without touching the shared .tres.
 @export var weapon: WeaponItem
 var xp_reward: int = 25
+## peer_id -> total damage dealt this life (cleared on respawn). Drives the
+## participation reward split — see RewardService.
+var _contributors: Dictionary[int, float] = {}
+## Whether this mob respawns after death (driven by enemy_data.respawns). False =
+## single-life: the body is removed, no return (dungeon mobs, one-off bosses).
+var respawns: bool = true
+
+## Emitted on death, server-side. The CONTEXT that spawned the mob wires the
+## consequence — a dungeon connects its boss's `died` → clear; a world-boss event
+## connects it → its own handler. Keeps death-consequences OUT of the mob class.
+signal died(killer: Character)
+
+## Leash radius used to mean "infinite" — set when enemy_data.leashes is false so
+## the mob commits and fights to the death instead of walking home.
+const NO_LEASH_DISTANCE: int = 1_000_000
 ## Seconds before a killed enemy respawns at its spawn point.
 var respawn_delay: float = 5.0
 var loot: Array[LootDrop]
@@ -166,6 +181,11 @@ func _apply_enemy_data() -> void:
 	move_speed = enemy_data.move_speed
 	distance_to_attack = enemy_data.distance_to_attack
 	max_distance_from_spawn = enemy_data.max_distance_from_spawn
+	respawns = enemy_data.respawns
+	# A non-leashing mob (bosses; trash in bounded dungeon rooms) commits — an
+	# effectively-infinite leash so the distance check never walks it home.
+	if not enemy_data.leashes:
+		max_distance_from_spawn = NO_LEASH_DISTANCE
 	detection_radius = enemy_data.detection_radius
 	chase_on_area = enemy_data.chase_on_area
 	lunge_range = enemy_data.lunge_range
@@ -178,6 +198,11 @@ func _apply_enemy_data() -> void:
 		# animated_sprite (from Character) is @onready — already assigned by the
 		# time _ready (and therefore this) runs.
 		animated_sprite.sprite_frames = enemy_data.skin
+	# Visual size (a boss reads bigger) — SPRITE only, never the node (a scaled
+	# node inflates collision so it can't reach melee range). Applied on both
+	# server + client since enemy_data resolves on both.
+	if enemy_data.visual_scale != 1.0:
+		animated_sprite.scale *= enemy_data.visual_scale
 
 var container: ReplicatedPropsContainer
 var enemy_state: EnemyState = EnemyState.IDLE
@@ -762,8 +787,8 @@ func die(killer: Character) -> void:
 	# Keep possible_targets so players still standing in the area are re-acquired on
 	# respawn (body_entered won't re-fire for someone who never left).
 	_respawn_at_ms = Time.get_ticks_msec() + int(respawn_delay * 1000.0)
-	if killer is Player:
-		_reward_killer(killer)
+	RewardService.distribute(self, _contributors, killer)
+	died.emit(killer)
 
 
 ## Server-side override that:
@@ -784,6 +809,13 @@ func take_damage(amount: float, attacker: Character = null, damage_type: StringN
 	if not GameMode.is_world_server():
 		super.take_damage(amount, attacker, damage_type)
 		return
+
+	# Participation: tally each player's damage BEFORE applying it, so a killing
+	# blow is already counted when super → die() distributes the reward.
+	if not is_dead and amount > 0.0 and attacker is Player and (attacker as Player).player_resource != null:
+		var contributor_peer: int = int((attacker as Player).player_resource.current_peer_id)
+		if contributor_peer > 0:
+			_contributors[contributor_peer] = _contributors.get(contributor_peer, 0.0) + amount
 
 	var was_alive: bool = not is_dead
 	var pre_h: float = 0.0
@@ -837,9 +869,10 @@ func _abandon_target() -> void:
 func _process_death() -> void:
 	if Time.get_ticks_msec() < _respawn_at_ms:
 		return
-	# Guild defenders are single-life: once the death animation has lingered,
-	# remove them from the world (no respawn) through the container.
-	if owner_guild_id > 0:
+	# Single-life mobs — guild defenders AND any enemy_data.respawns == false
+	# (dungeon mobs, one-off bosses) — despawn instead of respawning. All are
+	# dynamic props.
+	if owner_guild_id > 0 or not respawns:
 		container.despawn_dynamic(_prop_id)
 		return
 	if DEBUG_NPC:
@@ -873,84 +906,11 @@ func _process_death() -> void:
 		printerr("NPC %s respawn: HEALTH wrote=%f got=%f HEALTH_MAX=%f — zombie forming" % [enemy_type, hmax, post_h, stats_component.get_stat(Stat.HEALTH_MAX)])
 	is_dead = false
 	enemy_state = EnemyState.IDLE
+	_contributors.clear() # fresh life — past damage no longer counts for rewards
 	if DEBUG_NPC:
 		printerr("[SRV NPC %s] _process_death respawn END: HP=%.1f is_dead=%s state=%d" % [
 			enemy_type, stats_component.get_stat(Stat.HEALTH), is_dead, enemy_state
 		])
-
-
-## Grants xp + loot to the killing player and pushes feedback to their client.
-func _reward_killer(killer: Player) -> void:
-	var resource: PlayerResource = killer.player_resource
-	if resource == null:
-		return
-
-	var level_before: int = resource.level
-	var progress: Dictionary = resource.add_experience(xp_reward)
-	var loot_gained: Array = _roll_loot()
-	for entry: Dictionary in loot_gained:
-		Inventory.add_item(resource.inventory, int(entry["id"]), int(entry["amount"]))
-
-	# Weapon mastery: practicing a category = killing with it. Same xp number
-	# as the character grant — one tuning knob per mob (docs/mastery.md).
-	var mastery: Dictionary = {}
-	var weapon_item: WeaponItem = killer.equipment_component.equipped_items.get(&"weapon", null) as WeaponItem
-	if weapon_item != null and not weapon_item.category.is_empty():
-		mastery = resource.add_mastery_xp(weapon_item.category, xp_reward)
-
-	var peer_id: int = int(resource.current_peer_id)
-	if peer_id > 0:
-		ServerHub.current.data_push.rpc_id(peer_id, &"combat.reward", {
-			"enemy_type": enemy_type,
-			"xp": xp_reward,
-			"level": int(progress.get("level", 1)),
-			"levels_gained": int(progress.get("levels_gained", 0)),
-			"points_gained": int(progress.get("points_gained", 0)),
-			"experience": resource.experience,
-			"xp_to_next": resource.level_xp_to_next(),
-			"loot": loot_gained,
-			"mastery": mastery,
-		})
-
-	# Quest KILL progress for this enemy type.
-	var instance: Node = ServerHub.current.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
-	var quest_updates: Array = QuestService.on_kill(resource, enemy_type, peer_id, instance)
-	if peer_id > 0 and not quest_updates.is_empty():
-		ServerHub.current.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
-
-	# Daily quest KILL progress. Silent counter — no per-kill toast (would spam).
-	DailyQuestService.on_kill(resource, enemy_type)
-
-	# Basing: if the kill happened inside a territory the killer's guild owns,
-	# credit the 200-kill Glory counter. No-op for solo or out-of-territory kills.
-	BasingService.on_pve_kill(killer)
-
-	# Leaderboard: every PvE kill counts toward the killer's daily/weekly/total
-	# PvE rankings (independent from the basing kill counter).
-	LeaderboardService.record_pve_kill(killer)
-
-	# Level-milestone unlock messages — fire any per-level quest notifications
-	# that crossed in this XP grant.
-	if int(progress.get("levels_gained", 0)) > 0:
-		var inst: Node = ServerHub.current.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
-		LevelMilestoneService.on_levels_gained(resource, level_before, int(progress.get("level", 1)), inst)
-
-
-## Rolls each loot entry; returns [{ "id", "amount", "name" }, ...].
-func _roll_loot() -> Array:
-	var out: Array = []
-	for drop: LootDrop in loot:
-		if drop == null or drop.item == null:
-			continue
-		if randf() <= drop.chance:
-			var amount: int = randi_range(drop.min_amount, drop.max_amount)
-			if amount > 0:
-				out.append({
-					"id": int(drop.item.get_meta(&"id", 0)),
-					"amount": amount,
-					"name": str(drop.item.item_name),
-				})
-	return out
 
 
 ## If npc is engaged (chasing or attacking), stops and starts returning to

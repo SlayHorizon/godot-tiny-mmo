@@ -95,6 +95,10 @@ func _apply_team_bar_color() -> void:
 	if Character.spar_ally_peers.has(peer):
 		set_health_bar_fill(BAR_COLOR_ALLY)
 		return
+	# Co-op groupmates read as allies regardless of guild (dungeon context).
+	if Character.group_peers.has(peer):
+		set_health_bar_fill(BAR_COLOR_ALLY)
+		return
 	var same_guild: bool = active_guild_id > 0 and active_guild_id == Character.local_viewer_guild_id
 	set_health_bar_fill(BAR_COLOR_ALLY if same_guild else BAR_COLOR_HOSTILE)
 

@@ -30,7 +30,7 @@ func _on_body_entered(body: Node2D) -> void:
 		queue_free()
 		return
 	var target: Player = body as Player
-	if not CombatHit.is_heal_ally(source as Player, target):
+	if not CombatHit.are_allied(source as Player, target):
 		return # fly past non-allies, keep looking for a friend
 	var sc: StatsComponent = target.stats_component
 	var hp: float = sc.get_stat(Stat.HEALTH)

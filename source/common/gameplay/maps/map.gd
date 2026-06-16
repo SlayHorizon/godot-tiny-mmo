@@ -68,6 +68,8 @@ var trade_tables: Dictionary[int, TradeTable]
 var territory_flags: Dictionary[int, TerritoryFlag]
 ## master_id -> DuelMaster NPC. The server queues sparring through these.
 var duel_masters: Dictionary[int, DuelMaster]
+## master_id -> DungeonMaster lobby station. The server queues dungeon runs here.
+var dungeon_masters: Dictionary[int, DungeonMaster]
 
 
 func _ready() -> void:
@@ -93,6 +95,8 @@ func _ready() -> void:
 			territory_flags[child.flag_id] = child
 		elif child is DuelMaster:
 			duel_masters[child.master_id] = child
+		elif child is DungeonMaster:
+			dungeon_masters[child.master_id] = child
 
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
@@ -137,6 +141,10 @@ func get_territory_flag(flag_id: int) -> TerritoryFlag:
 ## The duel master with this id in this map, or null.
 func get_duel_master(master_id: int) -> DuelMaster:
 	return duel_masters.get(master_id)
+
+
+func get_dungeon_master(master_id: int) -> DungeonMaster:
+	return dungeon_masters.get(master_id)
 
 
 func override_map_rules(instance_resource: InstanceResource) -> void:

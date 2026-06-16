@@ -63,6 +63,11 @@ static var local_viewer_guild_id: int = 0
 static var spar_ally_peers: Array = []
 static var spar_opponent_peers: Array = []
 
+## Peer ids of the local player's CURRENT co-op group (empty when not grouped) —
+## the dungeon allegiance, mirrored client-side from the group.roster push, same
+## pattern as spar peers. Groupmates read as allies regardless of guild.
+static var group_peers: Array = []
+
 
 func _ready() -> void:
 	if multiplayer.is_server():

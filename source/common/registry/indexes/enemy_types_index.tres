@@ -5,40 +5,60 @@
 [resource]
 script = ExtResource("1_b6pq3")
 content_name = &"enemy_types"
-version = 1780644784
-next_id = 8
+version = 1781641301
+next_id = 12
 entries = Array[Dictionary]([{
 &"hash": "13cdb97439c7b17eccc91bbbe5c4b0dc86be858a2c2ecbf6b19408a37be4b33f",
 &"id": 1,
 &"path": "res://source/common/gameplay/characters/npc/types/bandit.tres",
 &"slug": &"bandit"
 }, {
-&"hash": "59a083a84ae2002862914e62f515b7fd99bbae2eb421e4b653b39d727ce32d3f",
+&"hash": "450128ffd078d95fc50f245270861fb3d16bca248ea63a64005d034fd1aafb21",
 &"id": 2,
 &"path": "res://source/common/gameplay/characters/npc/types/bandit_captain.tres",
 &"slug": &"bandit_captain"
 }, {
-&"hash": "29476cf07a39f23d5e25803b6d824dbd0a17c695bf7a8f19b711477d401b0a0e",
+&"hash": "eb94902284770507ba55b8f3309b0ac64df9bf9630e4696db9c656f74d1d3b18",
+&"id": 8,
+&"path": "res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres",
+&"slug": &"bandit_sorcerer"
+}, {
+&"hash": "774ccd6530eda53aef8a6aea26a629348518803280c54aa144d371e435412cc4",
+&"id": 9,
+&"path": "res://source/common/gameplay/characters/npc/types/dungeon_boss.tres",
+&"slug": &"dungeon_boss"
+}, {
+&"hash": "75f07f016c120db9b093c2e96c75c6732792a653092f237db638ddfd9ec601de",
 &"id": 3,
 &"path": "res://source/common/gameplay/characters/npc/types/fungus.tres",
 &"slug": &"fungus"
 }, {
-&"hash": "449f8421ed204c7490698b6a1fda8f1de3869458c244afc303dff8d52ca75d31",
+&"hash": "9f6d38d9a000b4ed346e44f41b14223165557800b8ca86b83f0595d4d08bca9e",
 &"id": 4,
 &"path": "res://source/common/gameplay/characters/npc/types/goblin.tres",
 &"slug": &"goblin"
 }, {
-&"hash": "9268456fe1c7cb204dac53227f8bb2cca4ca092433f5c04a9798b08e00af8d49",
+&"hash": "695143f4194e6e767c4494846b7b27c0ad8ba2f266782e4da9c9ec2987cb68f2",
 &"id": 5,
 &"path": "res://source/common/gameplay/characters/npc/types/iron_golem.tres",
 &"slug": &"iron_golem"
 }, {
-&"hash": "5553fd80e5b350e4949415716dff1333d7836f63a5cb049e34ab885d4853d9a0",
+&"hash": "87db45ebb291c675c305585d7f1531fcf8d8932adcdd4f32c7521ea9a14be94f",
 &"id": 6,
 &"path": "res://source/common/gameplay/characters/npc/types/iron_warlord.tres",
 &"slug": &"iron_warlord"
 }, {
-&"hash": "fe6913d593e6891672d3eb46e2ecee514690deb69779c946f2b905a22456ce4b",
+&"hash": "3b593e38faa3284122412bf41d1b55b56a2c0938eb6024f9dfdc1049d61f06eb",
+&"id": 10,
+&"path": "res://source/common/gameplay/characters/npc/types/shadow_grunt.tres",
+&"slug": &"shadow_grunt"
+}, {
+&"hash": "8e41d043b7a9ca436b6c2328142b4d6d62cf48029094374a759017eaa770a5e6",
+&"id": 11,
+&"path": "res://source/common/gameplay/characters/npc/types/training_dummy.tres",
+&"slug": &"training_dummy"
+}, {
+&"hash": "7737653eefe09cf005bf32b54895bd99966e2860ac90d89a5b2950b893d07eaf",
 &"id": 7,
 &"path": "res://source/common/gameplay/characters/npc/types/wolf.tres",
 &"slug": &"wolf"

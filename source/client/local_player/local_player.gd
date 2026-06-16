@@ -58,6 +58,13 @@ func _ready() -> void:
 	# their aura (handled in InstanceClient) — these handlers ignore them.
 	Client.subscribe(&"channel.start", _on_channel_start)
 	Client.subscribe(&"channel.end", _on_channel_end)
+	# Co-op group roster (dungeons): mirror our groupmate peer ids so their health
+	# bars tint as allies. Same pattern as the sparring team push.
+	Client.subscribe(&"group.roster", _on_group_roster)
+	# Dungeon cleared (final room down) — show the recap; the server returns the
+	# party to town after a short timer (the recap auto-closes with it).
+	Client.subscribe(&"dungeon.cleared", func(payload: Dictionary) -> void:
+		ClientState.open_menu_requested.emit(&"dungeon_recap", payload))
 
 
 ## The local player's own over-head HP bar reads as "self" (green), never
@@ -97,6 +104,17 @@ func _on_sparring_match_state(payload: Dictionary) -> void:
 	else:
 		Character.spar_ally_peers = []
 		Character.spar_opponent_peers = []
+	var map: Node = get_parent()
+	if map != null:
+		for child: Node in map.get_children():
+			if child.has_method(&"_apply_team_bar_color"):
+				child.call(&"_apply_team_bar_color")
+
+
+## Co-op group roster push — set our groupmate peer ids and re-tint everyone in
+## the map so their health bars flip to ally immediately (same as spar teams).
+func _on_group_roster(payload: Dictionary) -> void:
+	Character.group_peers = payload.get("members", [])
 	var map: Node = get_parent()
 	if map != null:
 		for child: Node in map.get_children():
