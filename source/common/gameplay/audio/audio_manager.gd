@@ -12,6 +12,12 @@ extends Node
 @export_range(0.0, 1.0, 0.001) var sound_volume: float = 1.0:
 	set(value): set_sfx_volume(value)
 
+# Music fades IN from this floor, not true silence (-80 dB). Anything below ~-40 dB
+# is inaudible, so fading from -80 wastes the first chunk of a long fade crawling
+# through silence ("the music starts 10 s late"). -30 dB is a faint-but-audible
+# start that rises smoothly across the whole duration.
+const MUSIC_FADE_IN_FLOOR_DB: float = -30.0
+
 var _tweens: Dictionary[AudioStreamPlayer, Tween]
 var _cached_sounds: Dictionary[String, AudioStream]
 var _pending_music: PendingMusic
@@ -24,6 +30,15 @@ func _ready() -> void:
 	assert(is_instance_valid(music_player), "No valid music player.")
 	assert(is_instance_valid(ui_player), "No valid ui player.")
 	assert(is_instance_valid(sfx_player), "No valid sfx player.")
+
+	# Multi-instance testing: silence the extra editor clients so sounds don't stack
+	# (set per-instance args in Debug ▸ Customize Run Instances). --mute = everything;
+	# --no-sfx = UI + spatial SFX only (music kept). Matches the --id arg convention.
+	var args: Dictionary = CmdlineUtils.get_parsed_args()
+	if args.has("mute"):
+		AudioServer.set_bus_mute(AudioServer.get_bus_index(&"Master"), true)
+	elif args.has("no-sfx"):
+		AudioServer.set_bus_mute(AudioServer.get_bus_index(&"Sound"), true)
 
 	ui_player.play()
 	ClientState.settings.setting_changed.connect(_on_setting_changed)
@@ -136,7 +151,9 @@ func fade_volume(player: AudioStreamPlayer, to_volume: float, duration: float = 
 		"volume_db",
 		to_volume,
 		duration
-	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN if is_fading_out else Tween.EASE_OUT)
+	# Fade IN linearly so a long fade rises evenly the whole way; fade OUT keeps the
+	# gentle sine curve.
+	).set_trans(Tween.TRANS_SINE if is_fading_out else Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN if is_fading_out else Tween.EASE_OUT)
 
 	tween.finished.connect(_on_fade_finished.bind(player, is_fading_out), CONNECT_ONE_SHOT)
 	_tweens[player] = tween
@@ -146,7 +163,7 @@ func _start_music() -> void:
 	if not _pending_music: return
 
 	music_player.stream = _pending_music.stream
-	music_player.volume_db = -80
+	music_player.volume_db = MUSIC_FADE_IN_FLOOR_DB
 	music_player.play(_pending_music.at_position)
 	fade_volume(music_player, _pending_music.volume, _pending_music.fade_duration)
 	_pending_music = null

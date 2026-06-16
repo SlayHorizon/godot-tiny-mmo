@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://drh48n51habmy" path="res://assets/sprites/gui/gateway/icon_more.png" id="7_4oa66"]
 [ext_resource type="PackedScene" uid="uid://dgpsxb4qq1hex" path="res://source/client/ui/menus/settings/settings_menu.tscn" id="7_g2eid"]
 [ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/popup_panel.gd" id="9_4rdug"]
-[ext_resource type="AudioStream" uid="uid://xxr4otrq1cg0" path="res://assets/audio/music/ekonia-main-theme.wav" id="10_q1aoo"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q35d6"]
 
@@ -765,17 +764,12 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
-offset_top = -54.0
-offset_right = 140.0
+offset_top = -66.0
+offset_right = 230.0
 offset_bottom = -9.0
 grow_vertical = 0
 text = "NO_CON_YET"
-horizontal_alignment = 3
-vertical_alignment = 3
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=359148188]
-stream = ExtResource("10_q1aoo")
-volume_db = -12.0
+vertical_alignment = 1
 
 [node name="MoreButton" type="Button" parent="." unique_id=1729056277]
 unique_name_in_owner = true

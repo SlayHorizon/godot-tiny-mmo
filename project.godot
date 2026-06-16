@@ -32,6 +32,7 @@ buses/default_bus_layout="uid://6a8ehqx05sqs"
 ClientState="*res://source/client/autoload/client_state.gd"
 Client="*res://source/client/autoload/client.tscn"
 Toaster="*res://source/client/autoload/toaster.gd"
+Transition="*res://source/client/autoload/transition.gd"
 
 [debug]
 

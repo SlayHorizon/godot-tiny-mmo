@@ -40,6 +40,8 @@ static func humanize(response: Dictionary) -> String:
 				return TranslationServer.translate("ERR_RATE_LIMITED")
 			GatewayAPI.ERR_ACCOUNT_CREATE_FAILED:
 				return TranslationServer.translate("ERR_ACCOUNT_CREATE_FAILED")
+			GatewayAPI.ERR_OUTDATED_VERSION:
+				return TranslationServer.translate("ERR_OUTDATED")
 			Error.ERR_TIMEOUT:
 				return TranslationServer.translate("ERR_CONNECTION")
 			_:

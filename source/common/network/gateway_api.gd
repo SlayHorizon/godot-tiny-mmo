@@ -21,6 +21,9 @@ const ERR_ACCOUNT_CREATE_FAILED: int = 30
 const ERR_BAD_CREDENTIALS: int = 50
 const ERR_ALREADY_CONNECTED: int = 51
 const ERR_RATE_LIMITED: int = 60
+## Client build doesn't match the server's. The boot handshake (and login) return
+## this so the client can show a hard "please update" instead of letting them in.
+const ERR_OUTDATED_VERSION: int = 70
 
 
 ## This build's version, from project.godot's application/config/version. Same
@@ -68,6 +71,12 @@ static func guest() -> String:
 
 static func worlds() -> String:
 	return get_endpoint("/v1/worlds")
+
+
+## Lightweight boot healthcheck (no auth): is the gateway reachable + master up, and
+## does this build match the server's? Called before the gateway shows any menu.
+static func handshake() -> String:
+	return get_endpoint("/v1/handshake")
 
 
 static func account_create() -> String:

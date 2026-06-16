@@ -8,6 +8,10 @@ var account_name: String
 var session_id: String
 var local_id: String
 
+# True once the boot handshake confirms the gateway is reachable — drives the
+# Connected / Offline half of the ConnectionInfo status line.
+var _server_online: bool = false
+
 var current_world_id: int
 var current_character_id: int
 var selected_skin_id: int = 1
@@ -24,6 +28,16 @@ var _focus_nav: bool = false
 # Device-aware focus ring (the theme's Button focus style is intentionally empty,
 # which hides focus from mouse users — we draw our own only in _focus_nav mode).
 var _focus_highlight: Panel
+# Boot intro ("the menu assembles") — a one-shot Tween, editor-disabled + skippable.
+var _intro_tween: Tween
+# Boot "Connecting…" — a centered, pulsing label (no panel), code-built like
+# Toaster/Transition. Shown during the handshake, dropped on reveal.
+var _connecting_label: Label
+var _connecting_pulse: Tween
+# Elements the current intro is fading in — for the skip-snap.
+var _intro_elements: Array[CanvasItem] = []
+# The subtle backdrop zoom is a one-time boot flourish, not a per-transition tic.
+var _booted: bool = false
 
 # --- Gateway palettes (theme resources) ------------------------------------
 # Each gateway_*.tres in THEME_DIR is a GatewayTheme carrying its palette + the
@@ -46,6 +60,20 @@ var current_theme: StringName = DEFAULT_PALETTE
 # yet → that button is disabled rather than opening a dead link.
 const LINK_WEBSITE: String = "https://ekoniaonline.com"
 const LINK_DISCORD: String = "https://discord.gg/QE5JwpFzgK"
+
+# Soft, organic foley placeholders, routed through the shared AudioManager's
+# polyphonic UI player (Sound bus, volume-bound to settings). Swap the files in
+# assets/audio/sfx/ui/ to retune the feel without touching code.
+const SFX_CLICK: String = "res://assets/audio/sfx/ui/ui_click.wav"
+const SFX_BACK: String = "res://assets/audio/sfx/ui/ui_back.wav"
+const SFX_HOVER: String = "res://assets/audio/sfx/ui/ui_hover.wav"
+const SFX_REVEAL: String = "res://assets/audio/sfx/ui/ui_reveal.wav"
+const MUSIC_GATEWAY: String = "res://assets/audio/music/ekonia-main-theme.wav"
+
+# Release-stage tag shown after the build number in the ConnectionInfo line
+# ("Connected · Ekonia 0.2.0 - Alpha"). The version itself comes live from
+# project.godot via GatewayAPI.game_version(), so it never drifts from the build.
+const BUILD_STAGE: String = "Alpha"
 
 # The persistent top-right "More" menu. Its nodes live in the scene (root-level,
 # unique-named); only the dynamic wiring is in code. See _wire_more_menu.
@@ -75,6 +103,13 @@ var _skin_name_label: Label
 
 
 func _ready() -> void:
+	# During boot, show only a centered "Connecting…" over the backdrop — the menu and
+	# the corner chrome (More / ConnectionInfo) stay hidden until the handshake passes,
+	# so nothing flashes before we know the gateway's reachable + our build matches.
+	main_panel.hide()
+	%MoreButton.hide()
+	$ConnectionInfo.hide()
+	_show_connecting()
 	menu_stack.append(main_panel)
 	back_button.hide()
 
@@ -89,6 +124,8 @@ func _ready() -> void:
 	_setup_focus_highlight()
 	_setup_password_fields()
 	_wire_more_menu()
+	_wire_button_sounds()  # static + character-creation buttons exist by now
+	_start_gateway_music()
 	_load_gateway_themes()
 	_apply_gateway_theme(_pick_startup_palette())
 	# Live-apply a palette picked in the Settings menu (the gateway's own $Settings
@@ -97,10 +134,170 @@ func _ready() -> void:
 
 	local_id = CmdlineUtils.get_parsed_args().get("id", "")
 
+	await get_tree().create_timer(1.5).timeout
+
+	# Boot gate: confirm the gateway is reachable + our build matches before any menu
+	# shows. Blocks (update) or retries on failure; else resumes or reveals the menu.
+	if not await _boot_handshake():
+		return
+	# Keep "Connecting…" up through sign-in; the reveal (menu or resume) ends boot.
 	if not await try_auto_login():
-		popup_panel.hide()
-		$MainPanel.show()
-		$MainPanel/VBoxContainer/VBoxContainer/LoginButton.grab_focus()
+		_reveal_main_menu()
+
+
+## Confirm the gateway is reachable + this build matches the server before showing
+## any menu. Loops on "can't reach" (Retry); on a version mismatch it shows a hard
+## "update required" block and returns false. Returns true once the gateway's good.
+func _boot_handshake() -> bool:
+	while true:
+		_show_connecting()
+		var response: Dictionary = await _request_handshake()
+		# Editor "Run Multiple Instances": gateway/master may still be booting, so ride
+		# out pure connection / not-ready errors. Exported clients skip this.
+		var attempts: int = 0
+		while OS.has_feature("editor") and GatewayError.is_connection_error(response) and attempts < 20:
+			attempts += 1
+			await get_tree().create_timer(0.25).timeout
+			response = await _request_handshake()
+
+		if response.get("ok") == true:
+			_server_online = true  # gateway reachable + build OK
+			_refresh_connection_info()
+			return true
+		_hide_connecting()  # an error popup takes over from here
+		var error: Variant = response.get("error")
+		if (error is int or error is float) and int(error) == GatewayAPI.ERR_OUTDATED_VERSION:
+			_block_outdated(str(response.get("msg", "")))
+			return false
+		# Gateway / master unreachable → message + Retry; the press loops us around.
+		await popup_panel.confirm_message(tr("ERR_CANT_REACH"), &"CANT_REACH_TITLE", &"RETRY")
+	return false  # unreachable — the loop only exits via the returns above
+
+
+func _request_handshake() -> Dictionary:
+	return await do_request(
+		HTTPClient.Method.METHOD_POST,
+		GatewayAPI.handshake(),
+		{GatewayAPI.KEY_CLIENT_VERSION: GatewayAPI.game_version()}
+	)
+
+
+## Centered "Connecting…" over the backdrop during boot — a plain pulsing label (no
+## panel), up from the first frame so the player sees we're connecting immediately.
+func _show_connecting() -> void:
+	if _connecting_label == null:
+		_connecting_label = Label.new()
+		_connecting_label.text = tr("CONNECTING")
+		# Fill the whole screen and center the text inside it, so the label stays
+		# dead-center no matter how long the string is (PRESET_CENTER sizes to the
+		# text at preset time, drifting off-center when the text changes).
+		_connecting_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_connecting_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_connecting_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_connecting_label.add_theme_font_size_override(&"font_size", 22)
+		_connecting_label.add_theme_color_override(&"font_color", Color(0.929, 0.894, 0.820))
+		_connecting_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(_connecting_label)
+	_connecting_label.show()
+	_connecting_label.modulate.a = 1.0
+	if _connecting_pulse == null or not _connecting_pulse.is_valid():
+		_connecting_pulse = create_tween().set_loops()
+		_connecting_pulse.tween_property(_connecting_label, "modulate:a", 0.55, 0.8).set_trans(Tween.TRANS_SINE)
+		_connecting_pulse.tween_property(_connecting_label, "modulate:a", 1.0, 0.8).set_trans(Tween.TRANS_SINE)
+
+
+## Drop the connecting label (kills its pulse).
+func _hide_connecting() -> void:
+	if _connecting_pulse and _connecting_pulse.is_valid():
+		_connecting_pulse.kill()
+	if _connecting_label:
+		_connecting_label.hide()
+
+
+# --- UI sound --------------------------------------------------------------
+
+## Play a UI cue through the shared AudioManager. No-op when audio isn't up (a
+## headless/test client frees it), so callers never have to null-check.
+func _play_ui(path: String, pitch: float = 1.0) -> void:
+	if is_instance_valid(Client) and Client.audio_manager:
+		Client.audio_manager.play_ui_sound(path, pitch)
+
+
+func _play_click() -> void:
+	_play_ui(SFX_CLICK)
+
+
+func _play_back() -> void:
+	_play_ui(SFX_BACK)
+
+
+func _play_hover() -> void:
+	_play_ui(SFX_HOVER)
+
+
+## Start the looping main theme from the gateway (the menu owns the boot music, not
+## the networking root). Muted in the editor so it doesn't replay every iteration —
+## exports hear it; for multi-client testing silence extras with --mute / --no-sfx.
+func _start_gateway_music() -> void:
+	if not (is_instance_valid(Client) and Client.audio_manager):
+		return
+	Client.audio_manager.play_music.call_deferred("res://assets/audio/music/angevin.mp3", 0.0, 0.0, 15.0)
+
+
+## Hover on keyboard/gamepad focus, but only while actually driving by focus — a
+## mouse click also grabs focus, and we don't want that to double the click cue.
+func _on_focus_hover() -> void:
+	if _focus_nav:
+		_play_hover()
+
+
+## Give every button a soft click on press (Back gets the distinct "back" cue) and
+## a quiet hover. Runtime-built cards wire themselves in their factories
+## (add_world_card / the character-card loop), since those buttons don't exist yet
+## at boot. Idempotent — safe to call repeatedly on the same button.
+func _wire_button_sounds() -> void:
+	for node: Node in find_children("*", "Button", true, false):
+		_wire_button_audio(node as Button, node == back_button)
+
+
+func _wire_button_audio(button: Button, is_back: bool = false) -> void:
+	if button == null:
+		return
+	var press: Callable = _play_back if is_back else _play_click
+	if not button.pressed.is_connected(press):
+		button.pressed.connect(press)
+	if not button.mouse_entered.is_connected(_play_hover):  # pointer hover
+		button.mouse_entered.connect(_play_hover)
+	if not button.focus_entered.is_connected(_on_focus_hover):  # keyboard/gamepad
+		button.focus_entered.connect(_on_focus_hover)
+
+
+## Hard block for an outdated client: nothing's playable on a mismatched build, so
+## loop a non-dismissable "please update" (each press opens the download page).
+func _block_outdated(detail: String) -> void:
+	var message: String = detail if not detail.is_empty() else tr("ERR_OUTDATED")
+	while true:
+		await popup_panel.confirm_message(message, &"UPDATE_TITLE", &"UPDATE")
+		OS.shell_open(LINK_WEBSITE)
+
+
+## Reveal the main menu (no saved session): show it, focus the first action, then
+## play the cosmetic intro.
+func _reveal_main_menu() -> void:
+	_end_boot()
+	$MainPanel.show()
+	$MainPanel/VBoxContainer/VBoxContainer/LoginButton.grab_focus()
+	# show() + _play_intro() run in the same frame, so the welcome elements never
+	# render at full alpha first — the staggered fade-in IS the reveal.
+	_play_intro(_screen_elements(main_panel))
+
+
+## Boot's done (menu or resume about to show): drop the connecting label and bring
+## back the corner chrome (More / ConnectionInfo) that stayed hidden during connect.
+func _end_boot() -> void:
+	_hide_connecting()
+	%MoreButton.show()
+	$ConnectionInfo.show()
 
 
 func handle_success_login(d: Dictionary) -> void:
@@ -122,14 +319,12 @@ func handle_success_login(d: Dictionary) -> void:
 
 	populate_worlds(worlds)
 
+	_end_boot()
+	fill_connection_info(account_name, account_id)
 	if is_last_world_online:
 		$AlreadyConnectedPanel/ContinueButton.text = tr("CONTINUE_WORLD_ACC") % [last_world_name, account_name]
-		popup_panel.hide()
 		_show($AlreadyConnectedPanel, false)
 	else:
-		popup_panel.hide()
-		$MainPanel.show()
-		fill_connection_info(account_name, account_id)
 		_show($WorldSelection, false)
 
 
@@ -171,6 +366,7 @@ func do_request(
 
 
 func _show(next: Control, can_back: bool = true) -> void:
+	_hide_connecting()  # a real screen is appearing → connecting is done
 	if menu_stack.size():
 		menu_stack.back().hide()
 	if not can_back:
@@ -182,12 +378,76 @@ func _show(next: Control, can_back: bool = true) -> void:
 	# non-mouse player always has somewhere to navigate from.
 	if _focus_nav:
 		_focus_first_in(next)
+	_play_intro(_screen_elements(next))  # staggered fade-in on every forward transition
+
+
+# --- Boot intro ------------------------------------------------------------
+
+## Cosmetic "assembles into place" reveal for ANY screen: a staggered fade-in of the
+## given elements (+ a one-time backdrop zoom on the first boot reveal). Cut short by
+## any input. Never gates interactivity — pure decoration over already-shown nodes.
+func _play_intro(elements: Array[CanvasItem]) -> void:
+	_finish_intro()  # snap any in-flight intro to done first (fast navigation)
+	_intro_elements = elements
+	for element: CanvasItem in elements:
+		element.modulate.a = 0.0
+
+	_intro_tween = create_tween().set_parallel(true)
+	_intro_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	if not _booted:  # the subtle backdrop zoom is a one-time boot flourish
+		_booted = true
+		_play_ui(SFX_REVEAL)  # soft "menu assembles" cue, once per session
+		var background: Sprite2D = $Background
+		var cover: Vector2 = background.scale
+		background.scale = cover * 1.06
+		_intro_tween.tween_property(background, "scale", cover, 1.2)
+	var delay: float = 0.0
+	for element: CanvasItem in elements:
+		_intro_tween.tween_property(element, "modulate:a", 1.0, 0.4).set_delay(delay)
+		delay += 0.08
+
+
+## Generic: the visual elements to stagger-fade for a screen — its title, divider,
+## and buttons / cards. Uses the panel's content column (its first VBoxContainer if
+## it has one, else the panel itself) and flattens one level of button/card rows so
+## they stagger individually. Replaces the old per-screen hardcoded lists, so every
+## screen (world / character select, character creation, …) animates for free.
+func _screen_elements(panel: Control) -> Array[CanvasItem]:
+	var column: Node = panel
+	for child: Node in panel.get_children():
+		if child is VBoxContainer:
+			column = child
+			break
+	var elements: Array[CanvasItem] = []
+	for child: Node in column.get_children():
+		if child is BoxContainer:  # a row/column of buttons or cards → stagger its items
+			for item: Node in child.get_children():
+				if item is CanvasItem and (item as CanvasItem).visible:
+					elements.append(item as CanvasItem)
+		elif child is CanvasItem and (child as CanvasItem).visible:
+			elements.append(child as CanvasItem)
+	return elements
+
+
+## Snap the intro to its finished state (on any input, or if it never ran).
+func _finish_intro() -> void:
+	if _intro_tween and _intro_tween.is_valid():
+		_intro_tween.kill()
+	_intro_tween = null
+	for element: CanvasItem in _intro_elements:
+		element.modulate.a = 1.0
+	if theme is GatewayTheme and (theme as GatewayTheme).background:
+		_apply_theme_background((theme as GatewayTheme).background)
 
 
 # _input (not _unhandled_input): when a control has focus the GUI consumes
 # navigation events, so they'd never reach _unhandled_input. We only observe the
 # device here — we don't swallow navigation.
 func _input(event: InputEvent) -> void:
+	# Any press cuts the cosmetic intro short (without consuming the event).
+	if _intro_tween and _intro_tween.is_valid() and event.is_pressed():
+		_finish_intro()
+
 	# Keyboard or gamepad → focus-nav mode; mouse/touch → pointer mode. Guarded on
 	# transitions so this stays cheap despite per-frame mouse-motion / stick events.
 	if (event is InputEventKey and (event as InputEventKey).pressed) \
@@ -253,10 +513,13 @@ func _on_login_login_button_pressed() -> void:
 		login_button.disabled = false
 		return
 
-	popup_panel.display_waiting_popup()
+	login_panel.hide()  # hide the form so the label sits over the backdrop, not the menu
+	_show_connecting()
 	var response: Dictionary = await request_login(username, password)
 	if response.has("error"):
+		_hide_connecting()
 		await popup_panel.confirm_message(GatewayError.humanize(response))
+		login_panel.show()
 		login_button.disabled = false
 		return
 
@@ -268,12 +531,12 @@ func _on_login_login_button_pressed() -> void:
 	populate_worlds(response.get("w", {}))
 	fill_connection_info(response["name"], response["id"])
 
-	popup_panel.hide()
 	_show($WorldSelection, false)
 
 
 func _on_guest_button_pressed() -> void:
-	popup_panel.display_waiting_popup()
+	main_panel.hide()  # hide the menu so the label sits over the backdrop, not the menu
+	_show_connecting()
 
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
@@ -281,7 +544,9 @@ func _on_guest_button_pressed() -> void:
 		{}
 	)
 	if d.has("error"):
+		_hide_connecting()
 		await popup_panel.confirm_message(GatewayError.humanize(d))
+		main_panel.show()
 		return
 
 	session_id = d.get("session_id", 0)
@@ -289,13 +554,12 @@ func _on_guest_button_pressed() -> void:
 	fill_connection_info(d.get("name", ""), d.get("id", 0))
 	populate_worlds(d.get("w", {}))
 
-	popup_panel.hide()
 	_show($WorldSelection, false)
 
 
 func _on_world_selected(world_id: int) -> void:
 	$WorldSelection.hide()
-	popup_panel.display_waiting_popup()
+	_show_connecting()
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
 		GatewayAPI.world_characters(),
@@ -307,6 +571,7 @@ func _on_world_selected(world_id: int) -> void:
 		}
 	)
 	if d.has("error"):
+		_hide_connecting()
 		await popup_panel.confirm_message(GatewayError.humanize(d))
 		$WorldSelection.show()
 		return
@@ -326,6 +591,7 @@ func _on_world_selected(world_id: int) -> void:
 		# clear every prior connection so re-entering doesn't stack duplicates.
 		for conn: Dictionary in button.pressed.get_connections():
 			button.pressed.disconnect(conn["callable"])
+		_wire_button_audio(button)  # re-add click+hover: the clear above dropped pressed
 		# Slot index tracks the button position directly (the old manual counter
 		# skipped its increment on `continue`, desyncing every later slot).
 		if slot_index < character_ids.size():
@@ -349,7 +615,7 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 
 	$CharacterSelection.hide()
 	$BackButton.hide()
-	popup_panel.display_waiting_popup()
+	_show_connecting()  # plain label, not a panel — the Transition cover takes over
 
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
@@ -362,12 +628,13 @@ func _on_character_selected(world_id: int, character_id: int) -> void:
 		}
 	)
 	if d.has("error"):
+		_hide_connecting()
 		await popup_panel.confirm_message(GatewayError.humanize(d))
 		$CharacterSelection.show()
 		$BackButton.show()
 		return
 
-	Client.connect_to_server(d["address"], d["port"], d["auth-token"])
+	Transition.start_world_load(d["address"], d["port"], d["auth-token"], $Background.texture)
 	queue_free.call_deferred()
 
 
@@ -426,7 +693,7 @@ func _on_create_character_button_pressed() -> void:
 		$CharacterCreation.show()
 		return
 
-	popup_panel.display_waiting_popup()
+	_show_connecting()  # plain label, not a panel — the Transition cover takes over
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
 		GatewayAPI.world_create_char(),
@@ -441,16 +708,13 @@ func _on_create_character_button_pressed() -> void:
 		}
 	)
 	if d.has("error"):
+		_hide_connecting()
 		await popup_panel.confirm_message(GatewayError.humanize(d))
 		create_button.disabled = false
 		$CharacterCreation.show()
 		return
 
-	Client.connect_to_server(
-		d["address"],
-		d["port"],
-		d["auth-token"]
-	)
+	Transition.start_world_load(d["address"], d["port"], d["auth-token"], $Background.texture)
 	queue_free.call_deferred()
 
 
@@ -474,7 +738,7 @@ func create_account() -> void:
 		return
 	
 	$CreateAccountPanel.hide()
-	popup_panel.display_waiting_popup()
+	_show_connecting()
 
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
@@ -485,6 +749,7 @@ func create_account() -> void:
 		}
 	)
 	if d.has("error"):
+		_hide_connecting()
 		await popup_panel.confirm_message(GatewayError.humanize(d))
 		$CreateAccountPanel.show()
 		return
@@ -495,7 +760,6 @@ func create_account() -> void:
 	fill_connection_info(d["name"], d["id"])
 	populate_worlds(d.get("w", {}))
 	
-	popup_panel.hide()
 	_show($WorldSelection, false)
 
 
@@ -591,10 +855,20 @@ func _poll_worlds_while_empty() -> void:
 func fill_connection_info(_account_name: String, _account_id: int) -> void:
 	account_name = _account_name
 	account_id = _account_id
-	# Player-facing connection status — confirms we reached the backend. Drops the
-	# account-ID, which was dev-only debug. (Initial "Not connected yet" is in the
-	# scene and stays until the first successful response.)
-	$ConnectionInfo.text = tr("CONNECTED_AS") % account_name
+	_refresh_connection_info()
+
+
+## The bottom-left status line, two rows: "<Connected/Offline> · <account / not logged
+## in>" then "Ekonia <version> <stage>". Built in one place so the build version is
+## ALWAYS shown — logged in or not. Version is live from project.godot (never drifts
+## from the handshake gate); the account-ID (old dev-only debug) is intentionally gone.
+func _refresh_connection_info() -> void:
+	var status: String = tr("STATUS_ONLINE") if _server_online else tr("STATUS_OFFLINE")
+	var who: String = account_name if not account_name.is_empty() else tr("NOT_LOGGED_IN")
+	var game: String = str(ProjectSettings.get_setting("application/config/name", "Ekonia"))
+	$ConnectionInfo.text = "%s · %s\n%s %s %s" % [
+		status, who, game, GatewayAPI.game_version(), BUILD_STAGE
+	]
 
 
 func add_world_card(world_info: Dictionary, world_id: int) -> Button:
@@ -603,6 +877,7 @@ func add_world_card(world_info: Dictionary, world_id: int) -> Button:
 	var button: Button = Button.new()
 	button.custom_minimum_size = Vector2(150.0, 250.0)
 	button.pressed.connect(_on_world_selected.bind(world_id))
+	_wire_button_audio(button)
 	# Styled by the gateway theme's default Button (inherited) — no per-card call.
 
 	var text_label: RichTextLabel = RichTextLabel.new()
@@ -630,7 +905,7 @@ func add_world_card(world_info: Dictionary, world_id: int) -> Button:
 
 func _on_continue_button_pressed() -> void:
 	$AlreadyConnectedPanel.hide()
-	popup_panel.display_waiting_popup()
+	_show_connecting()  # plain label, not a panel — the Transition cover takes over
 	var d: Dictionary = await do_request(
 		HTTPClient.Method.METHOD_POST,
 		GatewayAPI.world_enter(),
@@ -642,11 +917,12 @@ func _on_continue_button_pressed() -> void:
 		}
 	)
 	if d.has("error"):
+		_hide_connecting()
 		await popup_panel.confirm_message(GatewayError.humanize(d))
 		$AlreadyConnectedPanel.show()
 		return
 
-	Client.connect_to_server(d["address"], d["port"], d["auth-token"])
+	Transition.start_world_load(d["address"], d["port"], d["auth-token"], $Background.texture)
 	queue_free.call_deferred()
 
 
@@ -715,6 +991,8 @@ func _logout() -> void:
 	if FileAccess.file_exists(file_path):
 		DirAccess.remove_absolute(file_path)
 	session_id = ""  # clears the active session → More's Logout hides again
+	account_name = ""  # back to "not logged in" in the status line
+	_refresh_connection_info()
 	_set_more_open(false)
 	# Logout can be triggered from any screen (world/character select, character
 	# creation, …), so hide them all — not just the resume panel — before returning
@@ -730,18 +1008,6 @@ func _logout() -> void:
 	back_button.hide()
 	if _focus_nav:
 		_focus_first_in(main_panel)
-
-
-#func _on_swap_theme_button_toggled(toggled_on: bool) -> void:
-	#if not $AudioStreamPlayer.playing:
-	#	$AudioStreamPlayer.play()
-	#if toggled_on:
-	#	$Background.texture = preload("uid://cfihbj71a4y35")
-	#	Client.theme = preload("uid://c2nr0o8v7vb75")
-	#else:
-	#	$Background.texture = preload("uid://cn5blfyqokda6")
-	#	Client.theme = preload("uid://cf1ayo3dckj67")
-	#theme = Client.theme
 
 
 func _on_back_button_pressed() -> void:
@@ -1048,9 +1314,7 @@ func try_auto_login() -> bool:
 	var username: String = refresh_token.get_slice("\n", 0)
 	var password: String = refresh_token.get_slice("\n", 1)
 
-	$MainPanel.hide()
-	popup_panel.display_waiting_popup()
-
+	# The "Connecting…" label from boot stays up through sign-in — no panel flicker.
 	var response: Dictionary = await request_login(username, password)
 
 	# In the editor, "Run Multiple Instances" boots gateway/master/world AND the

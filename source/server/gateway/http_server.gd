@@ -47,6 +47,11 @@ func _ready() -> void:
 		&"/v1/worlds",
 		handle_worlds
 	)
+	router.register_route(
+		HTTPClient.Method.METHOD_POST,
+		&"/v1/handshake",
+		handle_handshake
+	)
 	server.listen(8088, "127.0.0.1")
 	
 	gateway_manager_client.response_received.connect(
@@ -117,6 +122,32 @@ func _rate_ok(payload: Dictionary, endpoint: StringName, max_calls: int, window_
 	return AuthRateLimiter.allow(ip, endpoint, max_calls, window_ms)
 
 
+## Exact-match version gate (server build == client build). Returns {} when OK, else
+## {error: ERR_OUTDATED_VERSION, msg}. Shared by login + the boot handshake so the
+## two never drift.
+func _check_version(payload: Dictionary) -> Dictionary:
+	var server_version: String = GatewayAPI.game_version()
+	var client_version: String = str(payload.get(GatewayAPI.KEY_CLIENT_VERSION, ""))
+	if client_version == server_version:
+		return {}
+	var have: String = client_version if not client_version.is_empty() else "unknown"
+	return {
+		"error": GatewayAPI.ERR_OUTDATED_VERSION,
+		"msg": "Outdated game version — please update. (server %s, you have %s)" % [server_version, have],
+	}
+
+
+## Boot healthcheck (no auth): the gateway client calls this before showing any menu.
+## OK only when the build matches AND the master link is up (so a login would land).
+func handle_handshake(payload: Dictionary) -> Dictionary:
+	var version_check: Dictionary = _check_version(payload)
+	if not version_check.is_empty():
+		return version_check
+	if not gateway_manager_client.master_connected:
+		return {"error": Error.ERR_TIMEOUT, "msg": "gateway not ready"}
+	return {"ok": true}
+
+
 func handle_login(payload: Dictionary) -> Dictionary:
 	if not _rate_ok(payload, &"login", 10, 60000):
 		return {"error": GatewayAPI.ERR_RATE_LIMITED}
@@ -127,13 +158,10 @@ func handle_login(payload: Dictionary) -> Dictionary:
 		]
 	):
 		return {"error": "invalid_payload"}
-	# Version gate: reject a client whose build doesn't match this server's, so an
-	# outdated player gets a clear update prompt instead of cryptic failures later.
-	var server_version: String = GatewayAPI.game_version()
-	var client_version: String = str(payload.get(GatewayAPI.KEY_CLIENT_VERSION, ""))
-	if client_version != server_version:
-		var have: String = client_version if not client_version.is_empty() else "unknown"
-		return {"error": "Outdated game version — please update. (server %s, you have %s)" % [server_version, have]}
+	# Version gate (shared with the boot handshake) — reject a mismatched build.
+	var version_check: Dictionary = _check_version(payload)
+	if not version_check.is_empty():
+		return version_check
 	var result: Dictionary = await send_request("login", payload)
 	var error: Error = result.get("error", 0)
 	if error != OK:

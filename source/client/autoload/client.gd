@@ -27,12 +27,6 @@ func _enter_tree() -> void:
 		queue_free()
 
 
-func _ready() -> void:
-	if OS.has_feature("editor"):
-		audio_manager.set_music_volume(0.0)
-	audio_manager.call_deferred("play_music", "res://assets/audio/music/ekonia-main-theme.wav", 0.0, 0.0, 5.0)
-
-
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 	api.connected_to_server.connect(_on_connection_succeeded)
 	api.connection_failed.connect(_on_connection_failed)

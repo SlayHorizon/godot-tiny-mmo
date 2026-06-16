@@ -13,15 +13,19 @@ func display_waiting_popup(text: String = "WAITING") -> void:
 	show()
 
 
-func confirm_message(message: String) -> void:
-	title_label.text = tr("PLEASE_CONFIRM")
+func confirm_message(message: String, title: StringName = &"PLEASE_CONFIRM", button: StringName = &"") -> void:
+	title_label.text = tr(title)
 	rich_text_label.text = message
+	var original_button: String = confirm_button.text
+	if button != &"":
+		confirm_button.text = tr(button)
 	confirm_button.show()
 	show()
 	# Put focus on OK so keyboard/gamepad players can dismiss it without a mouse.
 	confirm_button.grab_focus()
 	await confirm_button.pressed
 	hide()
+	confirm_button.text = original_button  # restore so other callers aren't affected
 
 
 func show_reconnect_popup(seconds: int = 10) -> void:

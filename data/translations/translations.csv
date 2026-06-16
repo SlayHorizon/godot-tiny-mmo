@@ -24,6 +24,17 @@ COMMUNITY,Community,Comunidade,Comunidad
 PATCH_NOTES,Patch notes,Notas de atualização,Notas de actualización
 LOGOUT,Log out,Sair,Salir
 CLOSE_GAME,Close game,Fechar jogo,Cerrar el juego
+CONNECTING,Connecting to Ekonia…,Conectando ao Ekonia…,Conectando a Ekonia…
+SERVER_ONLINE,Connected · Ekonia,Conectado · Ekonia,Conectado · Ekonia
+STATUS_ONLINE,Connected,Conectado,Conectado
+STATUS_OFFLINE,Offline,Offline,Sin conexión
+NOT_LOGGED_IN,Not logged in,Não autenticado,No autenticado
+CANT_REACH_TITLE,Connection,Conexão,Conexión
+ERR_CANT_REACH,Couldn't reach Ekonia. Check your connection and retry.,Não foi possível conectar ao Ekonia. Verifique sua conexão e tente novamente.,No se pudo conectar a Ekonia. Verifica tu conexión e inténtalo de nuevo.
+RETRY,Retry,Tentar novamente,Reintentar
+UPDATE_TITLE,Update required,Atualização necessária,Actualización requerida
+UPDATE,Update,Atualizar,Actualizar
+ERR_OUTDATED,Your game is out of date. Please update to keep playing.,Seu jogo está desatualizado. Atualize para continuar jogando.,Tu juego está desactualizado. Actualiza para seguir jugando.
 WELCOME_TINY_MMO,Welcome to Tiny MMO!,Bem vindo ao Tiny MMO!,¡Bienvenido a Tiny MMO!
 RECONNECT_POPUP,No world available.\nTrying again in \n%d\n%s,Nenhum mundo disponível.\nTentando novamente em \n%d\n%s,No hay mundos disponibles. Reintentando en \n%d\n%s
 CONTINUE_WORLD_ACC,Continue\n%s - %s,Continue\n%s - %s,Continúa\n%s - %s
