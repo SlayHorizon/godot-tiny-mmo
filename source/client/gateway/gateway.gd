@@ -241,7 +241,7 @@ func _play_hover() -> void:
 func _start_gateway_music() -> void:
 	if not (is_instance_valid(Client) and Client.audio_manager):
 		return
-	Client.audio_manager.play_music.call_deferred("res://assets/audio/music/angevin.mp3", 0.0, 0.0, 15.0)
+	Client.audio_manager.play_music.call_deferred("res://assets/audio/music/angevin.mp3", 0.0, 0.0, 5.0)
 
 
 ## Hover on keyboard/gamepad focus, but only while actually driving by focus — a

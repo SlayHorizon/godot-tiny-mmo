@@ -29,14 +29,14 @@ func remaining_seconds() -> int:
 static func apply(
 	victim: Character,
 	from: Character,
-	kind: StringName,
+	effect_kind: StringName,
 	dps: float,
 	duration_s: float,
 	type: StringName = CombatHit.DAMAGE_MAGIC
 ) -> void:
 	if victim == null or not victim.multiplayer.is_server() or dps <= 0.0:
 		return
-	var node_name: String = "DoT_%s" % kind
+	var node_name: String = "DoT_%s" % effect_kind
 	var existing: DamageOverTime = victim.get_node_or_null(NodePath(node_name)) as DamageOverTime
 	if existing != null:
 		existing.source = from
@@ -45,7 +45,7 @@ static func apply(
 		return
 	var dot: DamageOverTime = DamageOverTime.new()
 	dot.name = node_name
-	dot.kind = kind
+	dot.kind = effect_kind
 	dot.source = from
 	dot.damage_per_tick = dps
 	dot.damage_type = type

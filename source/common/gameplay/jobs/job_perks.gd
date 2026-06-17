@@ -87,7 +87,8 @@ extends Resource
 func earned_points(level: int) -> int:
 	if perk_every_levels <= 0:
 		return 0
-	return level / perk_every_levels
+	@warning_ignore("integer_division")
+	return level / perk_every_levels # floored on purpose — N levels per perk point
 
 
 func spent_points(player_perks: Dictionary) -> int:

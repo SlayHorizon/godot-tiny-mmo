@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://cwkhk34nscblr"]
+
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_k0xw0"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="2_50xk0"]
+[ext_resource type="Resource" uid="uid://dl7ria3hsmvco" path="res://source/common/gameplay/shops/resources/bone_shop.tres" id="3_nf104"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="4_gsvox"]
+[ext_resource type="SpriteFrames" uid="uid://cigcsxa2gubl" path="res://source/common/gameplay/characters/sprite_frames/skeleton_mage.tres" id="5_rdenb"]
+
+[sub_resource type="Resource" id="Resource_twffw"]
+script = ExtResource("2_50xk0")
+shop = ExtResource("3_nf104")
+metadata/_custom_type_script = "uid://bpo804060rk5t"
+
+[resource]
+script = ExtResource("4_gsvox")
+npc_id = 111
+npc_name = "Bonecarver"
+skin = ExtResource("5_rdenb")
+greeting = "I'am skeleton, I sell skeleton stuff -.-"
+interactions = Array[ExtResource("1_k0xw0")]([SubResource("Resource_twffw")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"

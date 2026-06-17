@@ -388,7 +388,10 @@ func _set_golds(value: int) -> void:
 
 ## Authorize opening the shop (gold + contents come from elsewhere).
 func _request_open() -> void:
-	var result: Array = await Client.request_data_await(&"shop.open", {"shop_id": _shop_id})
+	# Target the player's CURRENT instance — without it the server falls back to the
+	# default (overworld) instance, where a non-overworld shop isn't registered, so
+	# the auth fails and the menu closes (the "opens for a second then vanishes" bug).
+	var result: Array = await Client.request_data_await(&"shop.open", {"shop_id": _shop_id}, InstanceClient.current.name)
 	if result[1] != OK:
 		return
 	if not result[0].get("ok", false):
@@ -438,7 +441,8 @@ func _buy() -> void:
 	action_button.disabled = true
 	var result: Array = await Client.request_data_await(
 		&"shop.buy.item",
-		{"shop_id": _shop_id, "id": _selected_slot.item_id, "amount": amount}
+		{"shop_id": _shop_id, "id": _selected_slot.item_id, "amount": amount},
+		InstanceClient.current.name
 	)
 	if result[1] != OK or not result[0].get("ok", false):
 		_refresh_buy_action()
@@ -457,7 +461,8 @@ func _sell() -> void:
 	action_button.disabled = true
 	var result: Array = await Client.request_data_await(
 		&"shop.sell.item",
-		{"shop_id": _shop_id, "slot_uid": slot_uid, "amount": amount}
+		{"shop_id": _shop_id, "slot_uid": slot_uid, "amount": amount},
+		InstanceClient.current.name
 	)
 	if result[1] != OK or not result[0].get("ok", false):
 		action_button.disabled = false
@@ -479,7 +484,8 @@ func _trade() -> void:
 	action_button.disabled = true
 	var result: Array = await Client.request_data_await(
 		&"shop.trade.item",
-		{"shop_id": _shop_id, "trade_index": trade_index, "bundles": bundles}
+		{"shop_id": _shop_id, "trade_index": trade_index, "bundles": bundles},
+		InstanceClient.current.name
 	)
 	if result[1] != OK or not result[0].get("ok", false):
 		action_button.disabled = false

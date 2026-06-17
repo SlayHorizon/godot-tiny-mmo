@@ -33,6 +33,7 @@
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="18_077qd"]
 [ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="19_077qd"]
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="19_n81rr"]
+[ext_resource type="Resource" uid="uid://dlgfcyxce1v1y" path="res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres" id="24_bauih"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="24_f4w4m"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="25_m4n4e"]
 [ext_resource type="Resource" uid="uid://ca6hdigffs5j3" path="res://source/common/gameplay/quests/resources/fungus_trouble.tres" id="26_n81rr"]
@@ -51,7 +52,9 @@
 [ext_resource type="Script" uid="uid://beeyftaqtiwe3" path="res://source/common/gameplay/characters/npc/interactions/attribute_reset_interaction.gd" id="47_48jqa"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="48_bauih"]
 [ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="48_y0w5p"]
-[ext_resource type="PackedScene" path="res://source/common/gameplay/dungeon/dungeon_master.tscn" id="56_iqd18"]
+[ext_resource type="Resource" uid="uid://dhdjy3c4ufju0" path="res://source/common/gameplay/characters/npc/npcs/starter_merchant.tres" id="54_iqd18"]
+[ext_resource type="Resource" uid="uid://ditnocjiqmbsu" path="res://source/common/gameplay/maps/instance/instance_collection/dungeon/dungeon.tres" id="56_cm7qm"]
+[ext_resource type="Script" uid="uid://b36k3ordtiw1u" path="res://source/common/gameplay/characters/npc/interactions/dungeon_interaction.gd" id="56_iqd18"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bauih"]
 normal = Vector2(1, 0)
@@ -99,15 +102,15 @@ greeting = "Hello I'am the old man here what can I do for you?"
 interactions = Array[ExtResource("34_ckska")]([SubResource("Resource_dnrtu"), SubResource("Resource_agjut"), SubResource("Resource_gf85t")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
-[sub_resource type="Resource" id="Resource_udfpp"]
-script = ExtResource("39_gf85t")
-shop = ExtResource("19_n81rr")
-metadata/_custom_type_script = "uid://bpo804060rk5t"
+[sub_resource type="Resource" id="Resource_5aef6"]
+script = ExtResource("56_iqd18")
+dungeon = ExtResource("56_cm7qm")
+metadata/_custom_type_script = "uid://b36k3ordtiw1u"
 
-[sub_resource type="Resource" id="Resource_x11ol"]
+[sub_resource type="Resource" id="Resource_3ilum"]
 script = ExtResource("41_v4qho")
-npc_name = "Merchant"
-interactions = Array[ExtResource("34_ckska")]([SubResource("Resource_udfpp")])
+npc_name = "DungeonKeeper"
+interactions = Array[ExtResource("34_ckska")]([SubResource("Resource_5aef6")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="NOverworld" type="Node2D" unique_id=1304922757 node_paths=PackedStringArray("replicated_props_container")]
@@ -399,6 +402,7 @@ offset_right = 43.397217
 offset_bottom = 28.24353
 
 [node name="ZonePatch2D" type="Node2D" parent="." unique_id=167804232]
+visible = false
 script = ExtResource("12_bhe7f")
 mode_override = 1
 default_tint = false
@@ -577,17 +581,10 @@ npc_resource = SubResource("Resource_cm7qm")
 position = Vector2(1568, 867)
 npc_resource = SubResource("Resource_6hgwb")
 
-[node name="NPC" parent="." unique_id=1229291857 instance=ExtResource("39_hs4x2")]
+[node name="StarterMerchant" parent="." unique_id=1229291857 instance=ExtResource("39_hs4x2")]
 position = Vector2(1390, 746)
-npc_resource = SubResource("Resource_x11ol")
+npc_resource = ExtResource("54_iqd18")
 
-[node name="DungeonMaster" parent="." unique_id=53258361 instance=ExtResource("56_iqd18")]
-position = Vector2(1451.0513, 826.4009)
-master_id = 1
-
-[node name="Label" type="Label" parent="DungeonMaster" unique_id=708947411]
-offset_left = -11.05127
-offset_top = -10.400879
-offset_right = 11.94873
-offset_bottom = 10.599121
-text = "DG"
+[node name="DungeonMaster" parent="." unique_id=1961457955 instance=ExtResource("39_hs4x2")]
+position = Vector2(1412.8022, 825.29675)
+npc_resource = SubResource("Resource_3ilum")
