@@ -4,5 +4,5 @@ extends DataRequestHandler
 
 
 func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictionary) -> Dictionary:
-	var master_id: int = int(args.get("master_id", 0))
-	return DungeonService.lobby_status(instance, peer_id, master_id)
+	var station: String = str(args.get("station", ""))
+	return DungeonService.lobby_status(instance, peer_id, station)

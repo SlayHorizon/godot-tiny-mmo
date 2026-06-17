@@ -14,6 +14,7 @@ const CATEGORIES: Array = [
 	{"id": "combat", "label": "Combat"},
 	{"id": "progression", "label": "Progression"},
 	{"id": "guild", "label": "Guild"},
+	{"id": "dungeon", "label": "Dungeons"},
 ]
 const DOMAINS: Array = [
 	{
@@ -42,6 +43,9 @@ const DOMAINS: Array = [
 	{"id": "arena", "label": "Arena Wins", "category": "combat", "board_id": "arena_wins", "periods": []},
 	{"id": "level", "label": "Highest Level", "category": "progression", "board_id": "level", "periods": []},
 	{"id": "gold",  "label": "Richest", "category": "progression", "board_id": "gold", "periods": []},
+	# Dungeon fastest-clear boards (Hard only). board_id is "dungeon:<instance_name>";
+	# scores are SECONDS shown as m:ss (lower is better). One entry per ranked dungeon.
+	{"id": "dungeon_main", "label": "Fastest Clear (Hard)", "category": "dungeon", "board_id": "dungeon:Dungeon", "periods": []},
 ]
 
 const RANK_COLORS: Dictionary = {
@@ -234,14 +238,15 @@ func _apply_response(response: Dictionary) -> void:
 	_status_label.text = "Top %d" % entries.size()
 
 	var is_player_board: bool = str(DOMAINS[_domain_idx]["id"]) != "guilds"
+	var is_time: bool = _current_board_id().begins_with("dungeon:") # score is seconds, show m:ss
 	for i: int in entries.size():
-		_entries_box.add_child(_make_entry_row(i + 1, entries[i], is_player_board))
+		_entries_box.add_child(_make_entry_row(i + 1, entries[i], is_player_board, is_time))
 
 
 ## A ranked row: rank (top-3 medal-coloured) + name + score. Player rows are
 ## clickable: a player row opens that player's profile, a guild row opens that
 ## guild in the guild menu (even if you're not a member).
-func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool) -> Control:
+func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool, is_time: bool = false) -> Control:
 	var hbox: HBoxContainer = HBoxContainer.new()
 	hbox.add_theme_constant_override(&"separation", 10)
 	hbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -268,7 +273,7 @@ func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool) ->
 	hbox.add_child(name_label)
 
 	var score_label: Label = Label.new()
-	score_label.text = str(entry.get("score", 0))
+	score_label.text = _format_score(int(entry.get("score", 0)), is_time)
 	score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	score_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.45))
 	score_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -282,6 +287,14 @@ func _make_entry_row(rank_num: int, entry: Dictionary, is_player_board: bool) ->
 	else:
 		button.pressed.connect(_on_guild_entry_pressed.bind(str(entry.get("name", ""))))
 	return button
+
+
+## A count board shows the raw number; a time board (dungeon clear) shows m:ss.
+func _format_score(score: int, is_time: bool) -> String:
+	if not is_time:
+		return str(score)
+	@warning_ignore("integer_division")
+	return "%d:%02d" % [score / 60, score % 60]
 
 
 func _on_entry_pressed(player_id: int) -> void:

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://dhdjy3c4ufju0"]
+
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_nmd86"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="2_kq45a"]
+[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="3_cn5qi"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="4_gnyxw"]
+
+[sub_resource type="Resource" id="Resource_udfpp"]
+script = ExtResource("2_kq45a")
+shop = ExtResource("3_cn5qi")
+metadata/_custom_type_script = "uid://bpo804060rk5t"
+
+[resource]
+script = ExtResource("4_gnyxw")
+npc_name = "Starter Merchant"
+interactions = Array[ExtResource("1_nmd86")]([SubResource("Resource_udfpp")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"

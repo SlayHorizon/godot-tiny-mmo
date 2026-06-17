@@ -1,20 +1,10 @@
-[gd_scene format=3 uid="uid://dxhvri4c04md1"]
+[gd_scene load_steps=2 format=3 uid="uid://dxhvri4c04md1"]
 
 [ext_resource type="Script" uid="uid://c4128apkuenpw" path="res://source/common/gameplay/maps/components/interactable_marker.gd" id="1_script"]
 
-[node name="InteractableMarker" type="Node2D" unique_id=1116914763]
+[node name="InteractableMarker" type="Node2D"]
 script = ExtResource("1_script")
 
-[node name="Label" type="Label" parent="." unique_id=1310849289]
+[node name="Sprite" type="Sprite2D" parent="."]
+texture_filter = 1
 z_index = 200
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 24
-text = "DIALOG"
-horizontal_alignment = 1
-vertical_alignment = 1

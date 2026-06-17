@@ -11,13 +11,9 @@ extends Area2D
 ## _push_seal — movement is client-authoritative, so the collision change must
 ## happen on each client).
 
-## The last room — clearing it clears the dungeon (pushes dungeon.cleared).
+## The last room — clearing it clears the dungeon (pushes dungeon.cleared). The
+## reward lives on the run's DungeonResource now, not here.
 @export var final_room: bool = false
-## The run's completion reward (gold + loot), granted to every clearing player.
-## Only meaningful on the final_room; leave null for non-final rooms.
-@export var reward: DungeonReward
-## The richer reward for a HARD run. Falls back to [member reward] if left null.
-@export var hard_reward: DungeonReward
 ## Doors this room SEALS when the encounter starts and OPENS when it clears (e.g.
 ## the gate onward). Author them as ActivableDoor nodes anywhere in the map, set
 ## their starts_open = true (so the party can walk in before the seal), and list
@@ -80,7 +76,13 @@ func _activate() -> void:
 	if container == null:
 		push_warning("RoomNode '%s': map has no ReplicatedPropsContainer — no mobs." % name)
 		return
-	var hard: bool = DungeonService.is_hard_run(map.get_parent()) # RoomNode → Map → ServerInstance
+	var instance: Node = map.get_parent() # RoomNode → Map → ServerInstance
+	var hard: bool = DungeonService.is_hard_run(instance)
+	# Hard-mode multipliers come off the dungeon's resource (fall back to the
+	# service defaults if it isn't a DungeonResource).
+	var dres: DungeonResource = instance.instance_resource as DungeonResource if instance != null else null
+	var hp_mult: float = dres.hard_health_mult if dres != null else DungeonService.HARD_HEALTH_MULT
+	var dmg_mult: float = dres.hard_damage_mult if dres != null else DungeonService.HARD_DAMAGE_MULT
 	for child: Node in get_children():
 		if child is SpawnMarker and (child as SpawnMarker).enemy_type != null:
 			var marker: SpawnMarker = child
@@ -97,12 +99,12 @@ func _activate() -> void:
 						or (npc != null and npc.enemy_data != null and npc.enemy_data.is_boss)
 				make_dungeon_mob(mob, is_boss)
 				if hard and npc != null:
-					npc.apply_difficulty(DungeonService.HARD_HEALTH_MULT, DungeonService.HARD_DAMAGE_MULT)
+					npc.apply_difficulty(hp_mult, dmg_mult)
 				if is_boss and npc != null:
 					var brain: BossController = BossController.new()
 					brain.boss = npc
 					if hard:
-						brain.slam_damage *= DungeonService.HARD_DAMAGE_MULT
+						brain.slam_damage *= dmg_mult
 					npc.add_child(brain)
 				_alive += 1
 				mob.died.connect(func(_killer: Character) -> void: _on_mob_died())
@@ -142,11 +144,7 @@ func _clear() -> void:
 	if final_room:
 		var instance: Node = get_parent().get_parent() # RoomNode → Map → ServerInstance
 		if instance != null:
-			# Richer reward on Hard (falls back to the normal one if none authored).
-			var chosen: DungeonReward = reward
-			if DungeonService.is_hard_run(instance) and hard_reward != null:
-				chosen = hard_reward
-			DungeonService.on_dungeon_cleared(instance, chosen)
+			DungeonService.on_dungeon_cleared(instance) # reward read off the run's resource
 
 
 ## Tell every client in this instance to seal (or open) this room's doors.

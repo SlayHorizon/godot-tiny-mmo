@@ -57,9 +57,9 @@ var mineables: Dictionary[StringName, MineableNode]
 ## nodes placed in this map (mirrors shops). The server resolves/verifies the station
 ## a player crafts at, rather than trusting a client-sent id.
 var crafting_stations: Dictionary[int, CraftingStationResource]
-## giver_id -> quest source: a legacy QuestGiver node OR a QuestInteraction
-## component on an NPC. Both expose `quests` + `giver_name` (duck-typed by the
-## quest handlers). The server resolves offered quests (never a client-sent list).
+## giver_id -> quest source: a QuestInteraction on an NPC (registered by its
+## register()). Exposes `quests` + `giver_name`, read by the quest handlers. The
+## server resolves offered quests (never a client-sent list).
 var quest_givers: Dictionary[int, Object]
 ## table_id -> TradeTable node. The server holds each table's trade session.
 var trade_tables: Dictionary[int, TradeTable]
@@ -81,14 +81,10 @@ func _ready() -> void:
 		if child is Warper:
 			var warper_id: int = child.warper_id
 			warpers[warper_id] = child
-		elif child is ShopInteractable and child.shop:
-			shops[int(child.shop.get_meta(&"id", 0))] = child.shop
 		elif child is MineableNode:
 			mineables[child.name] = child
 		elif child is CraftingStation and child.station:
 			crafting_stations[int(child.station.get_meta(&"id", 0))] = child.station
-		elif child is QuestGiver:
-			quest_givers[child.giver_id] = child
 		elif child is TradeTable:
 			trade_tables[child.table_id] = child
 		elif child is TerritoryFlag:

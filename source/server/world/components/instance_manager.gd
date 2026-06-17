@@ -187,9 +187,11 @@ func player_switch_instance(
 		current_instance.despawn_player(peer_id, false)
 	else:
 		return
-	# Leaving a dungeon-run instance drops you from its group (dissolves it when
-	# empty). No-op for ordinary warps/recall/jail.
+	# Leaving an instance: drop the peer from a dungeon run (dissolves the group
+	# when empty) and from any spar queue. Both no-op for an ordinary warp by
+	# someone not in a run/queue.
 	DungeonService.on_player_left(peer_id, current_instance)
+	SparringService.on_player_left(peer_id, current_instance)
 	charge_new_instance.rpc_id(
 		peer_id,
 		target_instance.instance_resource.map_path,

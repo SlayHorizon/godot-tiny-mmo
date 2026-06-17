@@ -1,9 +1,15 @@
-[gd_resource type="Resource" script_class="InstanceResource" format=3 uid="uid://ditnocjiqmbsu"]
+[gd_resource type="Resource" script_class="DungeonResource" format=3 uid="uid://ditnocjiqmbsu"]
 
-[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_yll11"]
+[ext_resource type="Script" uid="uid://i1qmy82mdrm8" path="res://source/common/gameplay/dungeon/dungeon_resource.gd" id="1_dres"]
+[ext_resource type="Resource" uid="uid://8byl713ves8w" path="res://source/common/gameplay/dungeon/dungeon_reward_v1.tres" id="2_reward"]
+[ext_resource type="Resource" path="res://source/common/gameplay/dungeon/dungeon_reward_hard.tres" id="3_hard"]
 
 [resource]
-script = ExtResource("1_yll11")
+script = ExtResource("1_dres")
+description = "A sealed gauntlet of rooms ending in a warlord. Clear every room to escape with the loot."
+recommended_level = 5
+reward = ExtResource("2_reward")
+hard_reward = ExtResource("3_hard")
 instance_name = &"Dungeon"
 map_path = "uid://bvpi2a6j7k8s0"
 metadata/slug = &"dungeon"

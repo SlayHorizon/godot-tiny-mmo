@@ -8,12 +8,17 @@ extends CanvasLayer
 ## How many toasts can be on screen at once (oldest is dropped past this).
 const MAX_TOASTS: int = 5
 
-## Extra dwell time (seconds) granted per additional toast on screen, so
-## bursts (e.g. a quest turn-in: title + XP + gold + level-up at once) stay
-## readable instead of flashing past in one shared 2s window.
-const EXTRA_DWELL_PER_STACKED: float = 0.8
+## A repeat of the same coalesce key within this window merges into the existing
+## card (bumps a ×N counter + pulses it) instead of spawning a new one. After this
+## much silence the next event opens a fresh card.
+const COALESCE_WINDOW_MS: int = 6000
 
 var _container: VBoxContainer
+
+## Active coalescable toasts, keyed by a content-stable string (e.g. "kill:goblin",
+## "mine:Iron Ore"). { key: { "panel", "vbox", "count": int, "last_ms": int } }.
+## Cleared when the card frees (tree_exited).
+var _active: Dictionary = {}
 
 
 func _ready() -> void:
@@ -44,7 +49,7 @@ func toast(text: String, duration: float = 2.0) -> void:
 
 	var panel: PanelContainer = _make_toast(text)
 	_container.add_child(panel)
-	_kick_dwell(duration)
+	_restart_dwell(panel, duration)
 
 
 ## Show a multi-line card: bold-ish title + a list of sub-lines. Use when
@@ -65,16 +70,88 @@ func toast_group(title: String, lines: PackedStringArray, duration: float = 2.0)
 
 	var panel: PanelContainer = _make_group_toast(title, lines)
 	_container.add_child(panel)
-	_kick_dwell(duration)
+	_restart_dwell(panel, duration)
 
 
-## Scale dwell with the stack so a burst stays readable, then reset every
-## visible toast's tween to this new dwell — older ones get extended too.
-func _kick_dwell(base_duration: float) -> void:
-	var stack_size: int = _container.get_child_count()
-	var dwell: float = base_duration + maxf(0.0, (stack_size - 1) * EXTRA_DWELL_PER_STACKED)
-	for sibling: Node in _container.get_children():
-		_restart_dwell(sibling as Control, dwell)
+## Coalescing card for high-frequency events (kills, gather yields, quest
+## progress). A repeat of [param key] within COALESCE_WINDOW_MS updates the SAME
+## card — refreshes its lines, bumps a ×N counter into the title, and pulses it —
+## instead of stacking another card. Empty key = no coalescing (falls back to a
+## normal grouped card). This is what stops a pack of mobs / a vein of ore from
+## flooding the screen.
+func toast_feed(key: String, title: String, lines: PackedStringArray, duration: float = 2.0) -> void:
+	if _container == null:
+		return
+	if key.is_empty():
+		toast_group(title, lines, duration)
+		return
+
+	var now: int = Time.get_ticks_msec()
+	if _active.has(key):
+		var entry: Dictionary = _active[key]
+		var existing: PanelContainer = entry.get("panel")
+		if is_instance_valid(existing) and now - int(entry.get("last_ms", 0)) <= COALESCE_WINDOW_MS:
+			entry["count"] = int(entry.get("count", 1)) + 1
+			entry["last_ms"] = now
+			_render_feed(entry["vbox"], title, lines, int(entry["count"]))
+			_pulse(existing)
+			_restart_dwell(existing, duration)
+			return
+		_active.erase(key) # stale / freed — open a fresh card
+
+	while _container.get_child_count() >= MAX_TOASTS:
+		var oldest: Node = _container.get_child(0)
+		_container.remove_child(oldest)
+		oldest.queue_free()
+
+	var panel: PanelContainer = _make_panel_shell()
+	var vbox: VBoxContainer = VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override(&"separation", 2)
+	(panel.get_child(0) as MarginContainer).add_child(vbox)
+	_render_feed(vbox, title, lines, 1)
+	# Drop our registry entry when this card frees, so the next event opens fresh.
+	panel.tree_exited.connect(func() -> void:
+		if (_active.get(key, {}) as Dictionary).get("panel") == panel:
+			_active.erase(key))
+	_container.add_child(panel)
+	_active[key] = {"panel": panel, "vbox": vbox, "count": 1, "last_ms": now}
+	_restart_dwell(panel, duration)
+
+
+## (Re)render a feed card's content into its vbox: a title carrying the ×N count
+## (hidden at 1) plus the event's lines. Reused on create and on every repeat —
+## the panel node stays the same so its dwell + pulse tweens survive.
+func _render_feed(vbox: VBoxContainer, title: String, lines: PackedStringArray, count: int) -> void:
+	for child: Node in vbox.get_children():
+		vbox.remove_child(child)
+		child.queue_free()
+
+	var title_label: Label = Label.new()
+	title_label.text = title + (" ×%d" % count if count > 1 else "")
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.add_theme_font_size_override(&"font_size", 15)
+	title_label.add_theme_color_override(&"font_color", Color(1, 0.95, 0.75, 1))
+	vbox.add_child(title_label)
+
+	for line: String in lines:
+		if line.is_empty():
+			continue
+		var sub: Label = Label.new()
+		sub.text = line
+		sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		sub.add_theme_color_override(&"font_color", Color(0.88, 0.88, 0.9, 1))
+		vbox.add_child(sub)
+
+
+## A short scale bump — the "it happened again" feedback on a coalesced card.
+## Independent of the fade/dwell tween (touches scale only, never modulate:a).
+func _pulse(panel: Control) -> void:
+	panel.pivot_offset = panel.size / 2.0
+	var tween: Tween = create_tween()
+	tween.tween_property(panel, ^"scale", Vector2(1.08, 1.08), 0.09)
+	tween.tween_property(panel, ^"scale", Vector2.ONE, 0.09)
+
 
 ## Cancel any in-flight tween on this panel and start a fresh fade-in / dwell /
 ## fade-out sequence. Idempotent — calling repeatedly just keeps shifting the

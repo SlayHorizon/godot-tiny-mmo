@@ -37,6 +37,21 @@ static func record_pvp_kill(killer: Character) -> void:
 		BasingService.record_guild_kill(killer_player.player_resource.active_guild_id)
 
 
+## Record a dungeon clear time (seconds) — keeps the player's BEST (lowest) per
+## dungeon in lb_stats["dungeon_best"]. The "dungeon:<name>" board ranks these
+## ASCENDING (fastest first). Data-only (lb_stats JSON), no schema change. Called
+## for HARD clears only — the fixed hand-designed course is the fair race.
+static func record_dungeon_clear(player: Player, dungeon_name: String, seconds: int) -> void:
+	if player == null or player.player_resource == null or seconds <= 0:
+		return
+	var stats: Dictionary = player.player_resource.lb_stats
+	var best: Dictionary = stats.get("dungeon_best", {})
+	var prev: int = int(best.get(dungeon_name, 0))
+	if prev == 0 or seconds < prev:
+		best[dungeon_name] = seconds
+		stats["dungeon_best"] = best
+
+
 # --- Server-side: top-N ---
 
 ## board ids:
@@ -54,6 +69,8 @@ static func top_n(world_server: Node, board: String, limit: int) -> Array:
 
 	if board.begins_with("glory_"):
 		return _top_n_guild(world_server, board, limit)
+	if board.begins_with("dungeon:"):
+		return _top_n_dungeon(world_server, board.substr(8), limit)
 	return _top_n_player(world_server, board, limit)
 
 
@@ -189,6 +206,44 @@ static func _top_n_player(world_server: Node, board: String, limit: int) -> Arra
 			return a["score"] > b["score"]
 		return a["sub"] > b["sub"]
 	)
+	return scored.slice(0, limit)
+
+
+## Fastest-clear board for one dungeon. Score = best clear SECONDS, ranked
+## ASCENDING (lower is better) — the inverse of the kill/level boards. Live players
+## override their stale DB row, same as _top_n_player.
+static func _top_n_dungeon(world_server: Node, dungeon_name: String, limit: int) -> Array:
+	var db = world_server.database.store.db
+	db.query("SELECT player_id, display_name, stats_json FROM players;")
+	var rows: Array = db.query_result.duplicate()
+
+	var live_by_player_id: Dictionary = {}
+	for peer_id: int in world_server.connected_players:
+		var p: PlayerResource = world_server.connected_players[peer_id]
+		if p != null:
+			live_by_player_id[p.player_id] = p
+
+	var scored: Array = []
+	for row: Dictionary in rows:
+		var player_id: int = int(row.get("player_id", 0))
+		var live: PlayerResource = live_by_player_id.get(player_id)
+		var stats: Dictionary
+		var display_name: String
+		if live != null:
+			stats = live.lb_stats
+			display_name = live.display_name
+		else:
+			var parsed: Variant = JSON.parse_string(str(row.get("stats_json", "{}")))
+			stats = parsed if parsed is Dictionary else {}
+			display_name = str(row.get("display_name", "?"))
+		var best: Variant = stats.get("dungeon_best", {})
+		if best is not Dictionary:
+			continue
+		var seconds: int = int((best as Dictionary).get(dungeon_name, 0))
+		if seconds <= 0:
+			continue
+		scored.append({"id": player_id, "name": display_name, "score": seconds, "sub": 0})
+	scored.sort_custom(func(a, b): return a["score"] < b["score"]) # fastest first
 	return scored.slice(0, limit)
 
 

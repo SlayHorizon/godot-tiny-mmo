@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://b7ty7yxpd32u2"]
+
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_i3jo1"]
+[ext_resource type="Resource" uid="uid://ditnocjiqmbsu" path="res://source/common/gameplay/maps/instance/instance_collection/dungeon/dungeon.tres" id="2_35bs7"]
+[ext_resource type="Script" uid="uid://b36k3ordtiw1u" path="res://source/common/gameplay/characters/npc/interactions/dungeon_interaction.gd" id="3_0ftqf"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="4_cjldb"]
+
+[sub_resource type="Resource" id="Resource_5aef6"]
+script = ExtResource("3_0ftqf")
+dungeon = ExtResource("2_35bs7")
+metadata/_custom_type_script = "uid://b36k3ordtiw1u"
+
+[resource]
+script = ExtResource("4_cjldb")
+npc_name = "DungeonKeeper"
+interactions = Array[ExtResource("1_i3jo1")]([SubResource("Resource_5aef6")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"

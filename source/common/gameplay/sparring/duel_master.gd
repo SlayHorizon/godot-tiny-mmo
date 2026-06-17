@@ -1,5 +1,5 @@
 class_name DuelMaster
-extends Area2D
+extends Interactable
 ## Clickable spar STATION. Its teams are SparTeam child nodes, and each team's
 ## Marker2D children are its spawn slots — so the station's shape is authored
 ## entirely in the editor: two SparTeams with 1 marker each = 1v1; 2+2 = 2v2;
@@ -25,15 +25,13 @@ extends Area2D
 
 
 func _ready() -> void:
+	menu_name = &"sparring"
+	menu_arg = master_id
+	super._ready()
 	if master_id <= 0:
 		push_warning("DuelMaster '%s' has master_id=%d. Set a unique positive id in the inspector or it'll fail every lookup." % [name, master_id])
 	if multiplayer.is_server() and teams().size() < 2:
 		push_warning("DuelMaster '%s' has %d usable team(s) — add SparTeam children with at least one Marker2D each." % [name, teams().size()])
-	if multiplayer.is_server():
-		input_pickable = false
-		return
-	input_pickable = true
-	input_event.connect(_on_input_event)
 
 
 ## Usable teams, in child order. A SparTeam with no Marker2D children can never
@@ -44,14 +42,3 @@ func teams() -> Array[SparTeam]:
 		if child is SparTeam and (child as SparTeam).capacity() > 0:
 			out.append(child)
 	return out
-
-
-func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	var clicked: bool = (
-		(event is InputEventMouseButton
-			and event.button_index == MOUSE_BUTTON_LEFT
-			and event.pressed)
-		or (event is InputEventScreenTouch and event.pressed)
-	)
-	if clicked:
-		ClientState.open_menu_requested.emit(&"sparring", master_id)

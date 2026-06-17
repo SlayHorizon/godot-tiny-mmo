@@ -1,27 +1,21 @@
 class_name DungeonMaster
 extends Area2D
-## Clickable dungeon LOBBY station — place it in the entrance map. Click → opens
-## the dungeon lobby menu; players queue up, then Start sends the WHOLE group into
-## a fresh PRIVATE instance of [member dungeon_name] (DungeonService.start_run).
-## Solo is allowed (a Solo button, or pressing Start alone). Mirrors DuelMaster.
+## LEGACY dungeon station. The NEW, meaningful way to offer a dungeon is a
+## dungeon-keeper NPC with a DungeonInteraction (a real character) — see
+## DungeonInteraction. This node is kept so existing entrance scenes keep working:
+## it holds the dungeon and opens the lobby identified by its own NODE NAME (no
+## manual id; the server resolves the station by name + range-checks its position).
 ##
-## Setup: place as a direct child of a Map; give it a unique positive master_id
-## and a CollisionShape2D (the click target). Its own position is the lobby anchor
-## (players must be within range to queue, and it's where the dungeon's "in front
-## of the entrance" feel comes from).
+## Setup: place as a direct child of a Map with a CollisionShape2D (the click
+## target) and assign the [member dungeon]. Its position is the lobby anchor.
 
-@export var master_id: int = 0
-## Shown as the lobby title.
-@export var master_name: String = "Dungeon"
-## instance_name of the dungeon InstanceResource this station runs (e.g. "Dungeon").
-@export var dungeon_name: String = "Dungeon"
-## Max party size for a single run.
-@export var party_size: int = 4
+## The dungeon this station runs.
+@export var dungeon: DungeonResource
 
 
 func _ready() -> void:
-	if master_id <= 0:
-		push_warning("DungeonMaster '%s' has master_id=%d — set a unique positive id." % [name, master_id])
+	if dungeon == null:
+		push_warning("DungeonMaster '%s' has no dungeon resource assigned." % name)
 	if multiplayer.is_server():
 		input_pickable = false
 		return
@@ -37,4 +31,4 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> voi
 		or (event is InputEventScreenTouch and event.pressed)
 	)
 	if clicked:
-		ClientState.open_menu_requested.emit(&"dungeon", master_id)
+		ClientState.open_menu_requested.emit(&"dungeon", name) # station id = node name

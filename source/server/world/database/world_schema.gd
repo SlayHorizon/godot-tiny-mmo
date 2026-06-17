@@ -18,6 +18,9 @@ static func ensure_schema(db: SQLite) -> void:
 	if version < 3:
 		_migration_v3(db)
 		_set_schema_version(db, 3)
+	if version < 4:
+		_migration_v4(db)
+		_set_schema_version(db, 4)
 
 
 static func _migration_v1(db: SQLite) -> void:
@@ -57,9 +60,6 @@ static func _migration_v1(db: SQLite) -> void:
 		# claimed}, ...], "refresh_at_ms": unix-ms of next UTC midnight}.
 		# Reroll happens lazily on board interaction.
 		"dailies_json": {"data_type": "text", "not_null": true},
-		# Soft dungeon lockout: {dungeon_name: unix-seconds of last completion
-		# reward}. A re-clear inside the dungeon's window grants nothing.
-		"dungeon_lockouts_json": {"data_type": "text", "not_null": true},
 
 		# Guild IDs (nullable for players without a guild)
 		"active_guild_id": {"data_type": "int", "not_null": false},
@@ -124,6 +124,14 @@ static func _migration_v2(db: SQLite) -> void:
 static func _migration_v3(db: SQLite) -> void:
 	if not _column_exists(db, "players", "mastery_json"):
 		db.query("ALTER TABLE players ADD COLUMN mastery_json TEXT NOT NULL DEFAULT '{}';")
+
+
+## v4: soft dungeon lockout. One JSON blob per player: {dungeon_key -> unix-seconds
+## of the last completion reward}. A re-clear inside the dungeon's window grants no
+## reward (you can still run it to help). Added via ALTER — no DB wipe needed.
+static func _migration_v4(db: SQLite) -> void:
+	if not _column_exists(db, "players", "dungeon_lockouts_json"):
+		db.query("ALTER TABLE players ADD COLUMN dungeon_lockouts_json TEXT NOT NULL DEFAULT '{}';")
 
 
 static func _column_exists(db: SQLite, table: String, column: String) -> bool:

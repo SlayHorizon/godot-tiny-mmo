@@ -36,6 +36,12 @@ func open_database() -> void:
 	# db.verbosity_level = SQLite.VerbosityLevel.NORMAL
 
 	db.open_db()
+	# Durability + concurrency. WAL lets the live backup byte-copy run alongside
+	# writes without tearing (backup_database assumes this) and survives a crash
+	# mid-write; NORMAL is the standard safe+fast sync level under WAL. PRAGMAs are
+	# connection settings, not schema — no migration / wipe.
+	db.query("PRAGMA journal_mode=WAL;")
+	db.query("PRAGMA synchronous=NORMAL;")
 
 
 func close_database() -> void:

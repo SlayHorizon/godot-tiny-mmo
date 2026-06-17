@@ -73,6 +73,9 @@ func _on_peer_disconnected(peer_id: int) -> void:
 	# Sparring: if mid-match, end it before we tear down so the survivor gets
 	# the win + teleport instead of being stranded in the arena.
 	SparringService.on_peer_disconnected(peer_id)
+	# Dungeon: sweep them from any lobby queue / live run so the group + run maps
+	# don't keep a phantom member (and the private instance can free when empty).
+	DungeonService.on_peer_disconnected(peer_id)
 	# Drop rate-limit counters so a reconnect starts with a clean window.
 	RateLimiter.forget(peer_id)
 

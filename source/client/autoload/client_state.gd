@@ -94,8 +94,11 @@ func _ready() -> void:
 	Client.subscribe(&"combat.reward", _on_combat_reward)
 	Client.subscribe(&"mining.gather_result", _on_gather_result)
 	Client.subscribe(&"quest.update", func(data: Dictionary):
-		for message: String in data.get("messages", []):
-			Toaster.toast(message)
+		# One push can carry several messages ("Quest complete" + "Title unlocked").
+		# Show them as ONE card, not a card per message (that was the worst spam).
+		var msgs: PackedStringArray = PackedStringArray(data.get("messages", []))
+		if not msgs.is_empty():
+			Toaster.toast_group("Quest", msgs)
 	)
 
 	settings.load_file()
@@ -118,23 +121,30 @@ func _on_combat_reward(data: Dictionary) -> void:
 		lines.append("+%d XP" % xp)
 	for entry: Dictionary in data.get("loot", []):
 		lines.append("Looted %d %s" % [int(entry.get("amount", 1)), str(entry.get("name", "item"))])
+	# Level-up + mastery are rare, high-value one-offs: give them their OWN card so
+	# a stream of coalescing kills can't refresh the moment away.
+	var big: PackedStringArray = PackedStringArray()
 	if int(data.get("levels_gained", 0)) > 0:
-		lines.append("Level %d! +%d attribute points" % [int(data.get("level", 1)), int(data.get("points_gained", 0))])
-
-	# Weapon mastery: announce the FIRST practice and each level-up (per-kill
-	# xp itself stays silent — too spammy).
+		big.append("Level %d! +%d attribute points" % [int(data.get("level", 1)), int(data.get("points_gained", 0))])
 	var mastery: Dictionary = data.get("mastery", {})
 	if bool(mastery.get("started", false)):
-		lines.append("%s Mastery begun! +1 mastery point (Character > Mastery)" % str(mastery.get("category", "")).capitalize())
+		big.append("%s Mastery begun! +1 mastery point (Character > Mastery)" % str(mastery.get("category", "")).capitalize())
 	elif bool(mastery.get("leveled_up", false)):
-		lines.append("%s Mastery Lv %d! +1 mastery point" % [
+		big.append("%s Mastery Lv %d! +1 mastery point" % [
 			str(mastery.get("category", "")).capitalize(),
 			int(mastery.get("level", 1)),
 		])
+	if not big.is_empty():
+		Toaster.toast_group("Level Up!" if int(data.get("levels_gained", 0)) > 0 else "Mastery", big)
 
 	if lines.is_empty() and enemy_type.is_empty():
 		return  # Nothing to show.
-	Toaster.toast_group(title, lines)
+	# Repeated kills coalesce into one "Defeated a Goblin ×N" card; quest/basing
+	# reward turn-ins (no enemy_type) are rare one-offs on the big lane.
+	if enemy_type.is_empty():
+		Toaster.toast_group(title, lines)
+	else:
+		Toaster.toast_feed("kill:" + enemy_type, title, lines)
 
 
 ## Server-pushed harvest result. Re-uses the gather_succeeded signal +
@@ -195,13 +205,16 @@ func _on_gather_result(data: Dictionary) -> void:
 	if grants_v is Array:
 		for grant: Dictionary in grants_v:
 			lines.append("+%d %s XP" % [int(grant.get("xp", 0)), str(grant.get("job", "")).capitalize()])
+	# Level-up / perk = one-off → its own card; the yield body coalesces per ore.
+	var big: PackedStringArray = PackedStringArray()
 	if data.get("leveled_up", false):
-		var job: String = str(data.get("job", "mining")).capitalize()
-		lines.append("%s — Level %d!" % [job, int(data.get("level", 1))])
+		big.append("%s — Level %d!" % [str(data.get("job", "mining")).capitalize(), int(data.get("level", 1))])
 	if int(data.get("perk_points_gained", 0)) > 0:
-		lines.append("Perk point available — spend in Character → Jobs.")
+		big.append("Perk point available — spend in Character → Jobs.")
+	if not big.is_empty():
+		Toaster.toast_group("Level Up!", big)
 
-	Toaster.toast_group(title, lines)
+	Toaster.toast_feed("mine:" + str(data.get("ore_name", "ore")), title, lines)
 
 
 ## Look up the MineableNode the result is about and push the new progress +

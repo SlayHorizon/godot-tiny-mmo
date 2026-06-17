@@ -195,6 +195,26 @@ static func on_player_died_in_match(loser: Player, _killer: Character) -> void:
 ## Sweep a disconnecting peer out of any queue, and treat an in-match disconnect
 ## as a death (their team may now be eliminated).
 static func on_peer_disconnected(peer_id: int) -> void:
+	_sweep_queues(peer_id)
+	var mkey: String = str(_peer_to_match.get(peer_id, ""))
+	if mkey.is_empty() or not _matches.has(mkey):
+		return
+	(_matches[mkey]["alive"] as Dictionary)[peer_id] = false
+	_peer_to_match.erase(peer_id)
+	_check_elimination(mkey)
+
+
+## Leaving the instance (warp / recall) drops the peer from any spar QUEUE — the
+## same hygiene dungeon's on_player_left does. A mid-match fighter can't warp out
+## (fight_zone + the in_match lock), and a real disconnect goes through
+## on_peer_disconnected, so sweeping the queue is all that's needed here. Wired
+## from InstanceManager.player_switch_instance.
+static func on_player_left(peer_id: int, _instance: Node) -> void:
+	_sweep_queues(peer_id)
+
+
+## Drop a peer from every spar queue and refresh the affected stations' rosters.
+static func _sweep_queues(peer_id: int) -> void:
 	var ws: Node = ServerHub.current
 	for key: String in _queues.keys():
 		var queue: Array = _queues[key]
@@ -214,13 +234,6 @@ static func on_peer_disconnected(peer_id: int) -> void:
 				if instance != null and instance.instance_map != null:
 					master = instance.instance_map.get_duel_master(parts[1].to_int())
 				_broadcast_queue(instance, master, queue)
-
-	var mkey: String = str(_peer_to_match.get(peer_id, ""))
-	if mkey.is_empty() or not _matches.has(mkey):
-		return
-	(_matches[mkey]["alive"] as Dictionary)[peer_id] = false
-	_peer_to_match.erase(peer_id)
-	_check_elimination(mkey)
 
 
 # --- internals --------------------------------------------------------------

@@ -97,4 +97,10 @@ static func _broadcast_roster(group_id: int) -> void:
 static func _push_roster_to(peer_id: int, members: Array) -> void:
 	if ServerHub.current == null:
 		return
+	# Skip a peer that's already gone from the network table — a disconnecting
+	# player triggers leave()→here, but they've left get_peers() by the time the
+	# peer_disconnected signal fires, so the RPC would throw "unknown peer ID".
+	var mp: MultiplayerAPI = ServerHub.current.multiplayer
+	if mp == null or not mp.has_multiplayer_peer() or peer_id not in mp.get_peers():
+		return
 	ServerHub.current.data_push.rpc_id(peer_id, &"group.roster", {"members": members})
