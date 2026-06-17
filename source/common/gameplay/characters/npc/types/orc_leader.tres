@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://c2htgqm6nf3t5"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_3a3qb"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_1jsux"]
+[ext_resource type="SpriteFrames" uid="uid://bq1hdbyh6phhr" path="res://source/common/gameplay/characters/sprite_frames/orc_warrior.tres" id="3_3a3qb"]
+[ext_resource type="Resource" uid="uid://dclt4rvqc51ri" path="res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres" id="4_1jsux"]
+
+[resource]
+script = ExtResource("2_1jsux")
+enemy_type = &"orc_leader"
+display_name = "Orc Leader"
+skin = ExtResource("3_3a3qb")
+weapon = ExtResource("4_1jsux")
+metadata/_custom_type_script = "uid://swk8b8q32qv2"
+metadata/slug = &"orc_leader"
+metadata/id = 13
