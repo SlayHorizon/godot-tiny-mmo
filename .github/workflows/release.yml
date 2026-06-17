@@ -24,6 +24,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Info - server-class references in client-shipped code
+        run: |
+          set -euo pipefail
+          # Since the stub-generating export plugin (tinymmo export_plugin.gd),
+          # naming server classes in common//client/ is SUPPORTED on client
+          # exports — stubs are injected at export time. This step is
+          # informational only (it lists the references that depend on the stub
+          # plugin staying enabled); it never fails the build.
+          CLASSES=$(grep -rh '^class_name ' source/server/ --include='*.gd' | sed 's/^class_name \([A-Za-z0-9_]*\).*/\1/' | sort -u | paste -sd'|')
+          echo "Server-only classes: $CLASSES"
+          grep -rEn "^[^#]*\b($CLASSES)\b" source/common/ source/client/ --include='*.gd' \
+            && echo "::notice::The references above rely on the server-class stub export plugin." \
+            || echo "No server-class references in client-shipped code."
+
       - name: Download slim export templates (latest successful build)
         env:
           GH_TOKEN: ${{ github.token }}
