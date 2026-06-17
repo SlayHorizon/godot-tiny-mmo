@@ -13,6 +13,11 @@ extends Area2D
 
 ## The last room — clearing it clears the dungeon (pushes dungeon.cleared).
 @export var final_room: bool = false
+## The run's completion reward (gold + loot), granted to every clearing player.
+## Only meaningful on the final_room; leave null for non-final rooms.
+@export var reward: DungeonReward
+## The richer reward for a HARD run. Falls back to [member reward] if left null.
+@export var hard_reward: DungeonReward
 ## Doors this room SEALS when the encounter starts and OPENS when it clears (e.g.
 ## the gate onward). Author them as ActivableDoor nodes anywhere in the map, set
 ## their starts_open = true (so the party can walk in before the seal), and list
@@ -75,6 +80,7 @@ func _activate() -> void:
 	if container == null:
 		push_warning("RoomNode '%s': map has no ReplicatedPropsContainer — no mobs." % name)
 		return
+	var hard: bool = DungeonService.is_hard_run(map.get_parent()) # RoomNode → Map → ServerInstance
 	for child: Node in get_children():
 		if child is SpawnMarker and (child as SpawnMarker).enemy_type != null:
 			var marker: SpawnMarker = child
@@ -84,7 +90,20 @@ func _activate() -> void:
 				{"enemy_type_slug": _slug_of(marker.enemy_type)}
 			)
 			if mob != null:
-				_make_dungeon_mob(mob, marker.boss)
+				# Boss = the marker says so OR the enemy type is itself a boss (so a
+				# dungeon_boss just works, no per-marker flag to forget).
+				var npc: HostileNpc = mob as HostileNpc
+				var is_boss: bool = marker.boss \
+						or (npc != null and npc.enemy_data != null and npc.enemy_data.is_boss)
+				make_dungeon_mob(mob, is_boss)
+				if hard and npc != null:
+					npc.apply_difficulty(DungeonService.HARD_HEALTH_MULT, DungeonService.HARD_DAMAGE_MULT)
+				if is_boss and npc != null:
+					var brain: BossController = BossController.new()
+					brain.boss = npc
+					if hard:
+						brain.slam_damage *= DungeonService.HARD_DAMAGE_MULT
+					npc.add_child(brain)
 				_alive += 1
 				mob.died.connect(func(_killer: Character) -> void: _on_mob_died())
 	_push_seal(true) # seal the room behind the party — the fight is on
@@ -97,8 +116,8 @@ func _activate() -> void:
 ## it's the boss — drop nothing (the payoff is completing the dungeon, not farming
 ## trash). Server-side overrides applied after the spawn's _ready. NB: replace the
 ## loot array with a fresh one — never clear it in place, it's shared with the
-## EnemyTypeResource.
-static func _make_dungeon_mob(mob: Node, is_boss: bool) -> void:
+## EnemyTypeResource. Shared with BossController (it stamps its summoned adds).
+static func make_dungeon_mob(mob: Node, is_boss: bool) -> void:
 	mob.respawns = false
 	mob.max_distance_from_spawn = HostileNpc.NO_LEASH_DISTANCE
 	if not is_boss:
@@ -123,7 +142,11 @@ func _clear() -> void:
 	if final_room:
 		var instance: Node = get_parent().get_parent() # RoomNode → Map → ServerInstance
 		if instance != null:
-			DungeonService.on_dungeon_cleared(instance)
+			# Richer reward on Hard (falls back to the normal one if none authored).
+			var chosen: DungeonReward = reward
+			if DungeonService.is_hard_run(instance) and hard_reward != null:
+				chosen = hard_reward
+			DungeonService.on_dungeon_cleared(instance, chosen)
 
 
 ## Tell every client in this instance to seal (or open) this room's doors.

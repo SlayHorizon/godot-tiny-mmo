@@ -65,6 +65,12 @@ func _ready() -> void:
 	# party to town after a short timer (the recap auto-closes with it).
 	Client.subscribe(&"dungeon.cleared", func(payload: Dictionary) -> void:
 		ClientState.open_menu_requested.emit(&"dungeon_recap", payload))
+	# Dungeon entered — a soft welcome toast so the run doesn't start abruptly.
+	Client.subscribe(&"dungeon.entered", func(payload: Dictionary) -> void:
+		Toaster.toast_group(
+			"Entered %s" % str(payload.get("dungeon", "the dungeon")),
+			PackedStringArray(["Clear each room — defeat the boss to escape."]),
+			4.0))
 
 
 ## The local player's own over-head HP bar reads as "self" (green), never

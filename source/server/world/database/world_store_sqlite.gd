@@ -55,6 +55,7 @@ func save_player(player: PlayerResource) -> void:
 		"quests": player.daily_quests,
 		"refresh_at_ms": player.dailies_refresh_at_ms,
 	})
+	var dungeon_lockouts_json: String = JSON.stringify(player.dungeon_lockouts)
 
 	var joined_guild_ids_json: String = JSON.stringify(player.joined_guild_ids)
 
@@ -62,9 +63,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, server_roles_json, stats_json, titles_json, dailies_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, server_roles_json, stats_json, titles_json, dailies_json, dungeon_lockouts_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -89,6 +90,7 @@ func save_player(player: PlayerResource) -> void:
 			stats_json,
 			titles_json,
 			dailies_json,
+			dungeon_lockouts_json,
 
 			player.active_guild_id,
 			joined_guild_ids_json,
@@ -300,6 +302,9 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 		var quests_v: Variant = (dailies_v as Dictionary).get("quests", [])
 		player.daily_quests = quests_v if quests_v is Array else []
 		player.dailies_refresh_at_ms = int((dailies_v as Dictionary).get("refresh_at_ms", 0))
+
+	var lockouts_v: Variant = JSON.parse_string(str(row.get("dungeon_lockouts_json", "{}")))
+	player.dungeon_lockouts = lockouts_v if lockouts_v is Dictionary else {}
 
 	player.active_guild_id = int(row.get("active_guild_id", 0))
 

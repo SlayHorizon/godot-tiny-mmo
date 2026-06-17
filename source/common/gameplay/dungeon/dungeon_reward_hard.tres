@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DungeonReward" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/dungeon/dungeon_reward.gd" id="1_reward"]
+
+[resource]
+script = ExtResource("1_reward")
+gold_min = 150
+gold_max = 300
+lockout_hours = 23.0

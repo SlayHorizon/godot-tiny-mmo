@@ -10,9 +10,14 @@
 [ext_resource type="Resource" uid="uid://b30ybcv0ulinq" path="res://source/common/gameplay/characters/npc/types/goblin.tres" id="8_tbf5q"]
 [ext_resource type="Resource" uid="uid://bimbu2uuwn1k" path="res://source/common/gameplay/characters/npc/types/dungeon_boss.tres" id="9_fd8n7"]
 [ext_resource type="PackedScene" uid="uid://hcfiu2vpqr3u" path="res://source/common/gameplay/maps/props/doors/activable_door/activable_door.tscn" id="10_qjuf2"]
+[ext_resource type="Resource" uid="uid://8byl713ves8w" path="res://source/common/gameplay/dungeon/dungeon_reward_v1.tres" id="10_tbf5q"]
+[ext_resource type="Resource" path="res://source/common/gameplay/dungeon/dungeon_reward_hard.tres" id="11_vg8fn"]
+[ext_resource type="Script" uid="uid://l36xm046ums0" path="res://source/common/gameplay/dungeon/dungeon_exit.gd" id="12_fd8n7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vg8fn"]
 size = Vector2(200, 200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uvnp4"]
 
 [node name="Dungeon" type="Node2D" unique_id=727994213 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -148,6 +153,8 @@ enemy_type = ExtResource("8_tbf5q")
 position = Vector2(-104.84679, -341.29123)
 script = ExtResource("6_phpfy")
 final_room = true
+reward = ExtResource("10_tbf5q")
+hard_reward = ExtResource("11_vg8fn")
 metadata/_custom_type_script = "uid://trwnxb3wdk15"
 metadata/_edit_group_ = true
 
@@ -165,3 +172,18 @@ enemy_type = ExtResource("8_tbf5q")
 [node name="SpawnMarker4" parent="RoomNode2" unique_id=97806441 instance=ExtResource("7_qjuf2")]
 position = Vector2(1.9491119, -89.53012)
 enemy_type = ExtResource("9_fd8n7")
+
+[node name="DungeonExit" type="Area2D" parent="." unique_id=1581863240]
+position = Vector2(-55.37982, 53.348602)
+script = ExtResource("12_fd8n7")
+metadata/_custom_type_script = "uid://l36xm046ums0"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DungeonExit" unique_id=1092364355]
+shape = SubResource("RectangleShape2D_uvnp4")
+
+[node name="Label" type="Label" parent="DungeonExit" unique_id=554752781]
+offset_left = -16.620178
+offset_top = -13.348602
+offset_right = 23.379822
+offset_bottom = 7.6513977
+text = "EXIT"

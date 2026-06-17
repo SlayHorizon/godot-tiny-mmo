@@ -6,7 +6,8 @@ extends Marker2D
 ## different enemy types) = a mixed pack — author the whole encounter by hand.
 
 @export var enemy_type: EnemyTypeResource
-## Mark the room's BOSS here. A boss keeps its loot/XP (the kill payoff) and its
-## enemy_data visual_scale (it reads big); trash drops nothing — the reward is
-## completing the dungeon, not farming. Either way it won't respawn or leash.
+## Optional OVERRIDE to force any enemy type to behave as the room's boss (gets a
+## BossController, keeps its loot). Usually leave false — a boss-type enemy
+## (EnemyTypeResource.is_boss, e.g. dungeon_boss) is already treated as a boss.
+## Trash drops nothing; the reward is completing the dungeon, not farming.
 @export var boss: bool = false

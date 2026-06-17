@@ -17,7 +17,7 @@ func open(data: Dictionary) -> void:
 	_title("Dungeon Cleared!")
 	_line(str(data.get("dungeon", "Dungeon")), Color(0.8, 0.85, 1.0), 16)
 	_line("Completion time: %ds" % int(data.get("seconds", 0)))
-	_line("Reward: kill loot + a completion bonus")  # placeholder until the end-chest
+	_render_reward(data.get("reward", {}) as Dictionary)
 	var eject: int = int(data.get("eject_in", 15))
 	_line("Returning to town in ~%ds…" % eject, Color(0.7, 0.74, 0.82))
 
@@ -30,6 +30,29 @@ func open(data: Dictionary) -> void:
 	# Auto-close when the party is sent home.
 	if eject > 0:
 		get_tree().create_timer(float(eject)).timeout.connect(hide, CONNECT_ONE_SHOT)
+
+
+## Render the reward block from the server payload: a gold + item list on a
+## payout, or a "come back later" note when the soft daily lockout suppressed it.
+func _render_reward(reward: Dictionary) -> void:
+	if reward.is_empty():
+		return
+	if bool(reward.get("locked", false)):
+		var hours: int = int(ceil(float(reward.get("available_in", 0)) / 3600.0))
+		_line("Already cleared today — reward in ~%dh" % maxi(hours, 1), Color(0.86, 0.7, 0.5))
+		return
+	_line("Rewards", Color(1.0, 0.92, 0.55), 15)
+	var gold: int = int(reward.get("gold", 0))
+	if gold > 0:
+		_line("%d gold" % gold, Color(1.0, 0.86, 0.4))
+	for entry: Variant in reward.get("items", []):
+		if entry is Dictionary:
+			_line("%s ×%d" % [
+				str((entry as Dictionary).get("name", "?")),
+				int((entry as Dictionary).get("amount", 1)),
+			], Color(0.8, 0.9, 0.8))
+	if gold <= 0 and (reward.get("items", []) as Array).is_empty():
+		_line("(no drops this time)", Color(0.7, 0.74, 0.82))
 
 
 func _build_shell() -> void:

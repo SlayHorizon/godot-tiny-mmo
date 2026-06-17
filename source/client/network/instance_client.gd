@@ -97,6 +97,12 @@ static func _on_dungeon_room(payload: Dictionary) -> void:
 			door.set_open(is_open)
 
 
+## Left a dungeon run (exit NPC or recall) — confirm it. Subscribed statically so
+## the push lands even mid instance-switch (a per-instance node would be torn down).
+static func _on_dungeon_left(payload: Dictionary) -> void:
+	Toaster.toast("Left %s." % str(payload.get("dungeon", "the dungeon")))
+
+
 ## Guard so we only subscribe ONCE per process — Client lives in the
 ## autoload and outlives any InstanceClient, so re-subscribing on every
 ## instance switch would either pile up callables or churn unsubscribe
@@ -112,6 +118,7 @@ func _ready() -> void:
 		Client.subscribe(&"channel.start", _on_channel_start)
 		Client.subscribe(&"channel.end", _on_channel_end)
 		Client.subscribe(&"dungeon.room", _on_dungeon_room)
+		Client.subscribe(&"dungeon.left", _on_dungeon_left)
 		_subscribed = true
 
 	synchronizer_manager = StateSynchronizerManagerClient.new()

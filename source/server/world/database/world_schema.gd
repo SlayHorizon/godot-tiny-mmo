@@ -57,6 +57,9 @@ static func _migration_v1(db: SQLite) -> void:
 		# claimed}, ...], "refresh_at_ms": unix-ms of next UTC midnight}.
 		# Reroll happens lazily on board interaction.
 		"dailies_json": {"data_type": "text", "not_null": true},
+		# Soft dungeon lockout: {dungeon_name: unix-seconds of last completion
+		# reward}. A re-clear inside the dungeon's window grants nothing.
+		"dungeon_lockouts_json": {"data_type": "text", "not_null": true},
 
 		# Guild IDs (nullable for players without a guild)
 		"active_guild_id": {"data_type": "int", "not_null": false},

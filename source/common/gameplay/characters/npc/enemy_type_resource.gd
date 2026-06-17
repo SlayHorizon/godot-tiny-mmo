@@ -28,6 +28,9 @@ extends Resource
 ## Visual size multiplier — a boss reads BIGGER. Scales the SPRITE only, never the
 ## collision / attack reach (a scaled node can't close to melee range). 1.0 = normal.
 @export var visual_scale: float = 1.0
+## A BOSS type. A dungeon RoomNode gives any boss-type mob it spawns a BossController
+## (phases, telegraphed slam, enrage) and keeps its loot — no per-marker flag needed.
+@export var is_boss: bool = false
 
 @export_group("Combat")
 @export var max_health: float = 50.0

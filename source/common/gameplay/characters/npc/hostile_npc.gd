@@ -203,6 +203,19 @@ func _apply_enemy_data() -> void:
 	# server + client since enemy_data resolves on both.
 	if enemy_data.visual_scale != 1.0:
 		animated_sprite.scale *= enemy_data.visual_scale
+		# A big sprite swallows the head-bar — lift it clear of the enlarged sprite
+		# and scale it up so a boss reads as a boss. Scale around the bar's own
+		# centre so it stays horizontally centred over the mob.
+		if has_node(^"ProgressBar"):
+			var bar: Control = $ProgressBar
+			var lift: float = 55.0 * (enemy_data.visual_scale - 1.0)
+			bar.offset_top -= lift
+			bar.offset_bottom -= lift
+			bar.pivot_offset = Vector2(
+				(bar.offset_right - bar.offset_left) * 0.5,
+				(bar.offset_bottom - bar.offset_top) * 0.5
+			)
+			bar.scale = Vector2.ONE * enemy_data.visual_scale
 
 var container: ReplicatedPropsContainer
 var enemy_state: EnemyState = EnemyState.IDLE
@@ -393,6 +406,14 @@ func _find_targets() -> void:
 	if targeted_player: return
 	if enemy_state == EnemyState.RETURNING or enemy_state == EnemyState.DEAD: return
 
+	# Self-heal the cached list against the physics truth first: a player who never
+	# LEFT the area after we dropped them is invisible to us otherwise. stop_chase
+	# erases the old target, and body_entered only fires on a boundary CROSSING — so
+	# a player we de-aggroed (leash, respawn) while they stood in range never gets
+	# re-added. That's the long-standing "can't re-aggro by standing there, but
+	# hitting me works (take_damage sets the target directly)" bug.
+	_resync_possible_targets()
+
 	# First living player still in range (skips dead/freed entries). Re-acquires
 	# players who were already inside the area after a respawn.
 	for candidate: Player in possible_targets:
@@ -400,6 +421,17 @@ func _find_targets() -> void:
 			targeted_player = candidate
 			enemy_state = EnemyState.CHASE
 			return
+
+
+## Fold any player currently overlapping our detection area back into
+## possible_targets. Additions only — body_exited handles removals. Cheap (a
+## handful of bodies) and only runs while we're hunting (no target, not returning).
+func _resync_possible_targets() -> void:
+	if detection_area == null:
+		return
+	for body: Node2D in detection_area.get_overlapping_bodies():
+		if body is Player and _is_hostile_to(body) and not possible_targets.has(body):
+			possible_targets.append(body)
 
 
 ## Defenders are hostile to everyone EXCEPT players tagged into their owning
@@ -487,7 +519,7 @@ func _process_lunging() -> void:
 	# takes the hit (once per lunge). Per-tick distance check is sweep-safe —
 	# at ~5px of travel per physics tick the radius can't tunnel past a player.
 	var damage: float = stats_component.get_stat(Stat.AD)
-	for candidate: Player in possible_targets:
+	for candidate: Player in _strike_candidates():
 		if _lunge_hit.has(candidate.get_instance_id()):
 			continue
 		if _is_target_valid(candidate) and _is_hostile_to(candidate) \
@@ -676,12 +708,25 @@ func _process_attack() -> void:
 			_perform_melee_attack()
 
 
+## Players this mob can strike right now: everyone the detection area is tracking,
+## PLUS its active target. take_damage can set targeted_player WITHOUT a
+## body_entered (a player who re-engaged after respawning inside our detection
+## radius — so body_entered never re-fires — or a sniper from beyond it), and
+## stop_chase erases the old target from possible_targets on a respawn-teleport.
+## Without folding the target back in, the mob would telegraph but never connect.
+func _strike_candidates() -> Array[Player]:
+	var candidates: Array[Player] = possible_targets.duplicate()
+	if targeted_player != null and not candidates.has(targeted_player):
+		candidates.append(targeted_player)
+	return candidates
+
+
 ## A swing: telegraph it on clients (red circle) and damage every living player within
 ## melee range (a small AoE), each mitigated by their armor in take_damage.
 func _perform_melee_attack() -> void:
 	container.queue_op(_prop_id, "rp_attack", [float(distance_to_attack)])
 	var damage: float = stats_component.get_stat(Stat.AD)
-	for candidate: Player in possible_targets:
+	for candidate: Player in _strike_candidates():
 		if _is_target_valid(candidate) \
 				and _is_hostile_to(candidate) \
 				and global_position.distance_to(candidate.global_position) <= distance_to_attack:
@@ -695,6 +740,25 @@ func rp_attack(radius: float) -> void:
 	var telegraph: AttackTelegraph = AttackTelegraph.new()
 	telegraph.radius = radius
 	add_child(telegraph)
+
+
+## Replay one of this npc's rp_ visual methods on every client. Lets an external
+## orchestrator (a BossController) drive the body's telegraphs without reaching
+## into its private prop id. Server-side; no-op if not yet baked into a container.
+func replicate_visual(method: StringName, args: Array) -> void:
+	if container != null:
+		container.queue_op(_prop_id, method, args)
+
+
+## Scale this mob's combat stats for a harder run (dungeon Hard mode): multiply max
+## health (and refill to it) + attack power. Generic — any spawner can call it after
+## the mob's data has been applied.
+func apply_difficulty(health_mult: float, damage_mult: float) -> void:
+	var max_h: float = stats_component.get_stat(Stat.HEALTH_MAX) * health_mult
+	stats_component.set_stat(Stat.HEALTH_MAX, max_h)
+	stats_component.set_stat(Stat.HEALTH, max_h)
+	stats_component.set_stat(Stat.AD, stats_component.get_stat(Stat.AD) * damage_mult)
+	stats_component.set_stat(Stat.AP, stats_component.get_stat(Stat.AP) * damage_mult)
 
 
 ## Fires the equipped weapon's ability at the target. The server spawns the real

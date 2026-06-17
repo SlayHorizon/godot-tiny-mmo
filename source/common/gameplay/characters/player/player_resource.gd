@@ -109,6 +109,11 @@ const BASE_STATS: Dictionary[StringName, float] = {
 @export var daily_quests: Array
 @export var dailies_refresh_at_ms: int
 
+## Soft dungeon lockout: dungeon_name -> unix-SECONDS of the last completion
+## reward. A clear within the dungeon's lockout window grants no reward (you can
+## still run it to help a group). Persisted as dungeon_lockouts_json.
+@export var dungeon_lockouts: Dictionary = {}
+
 # Profile
 @export var profile_status: String = "Hello I'am new!"
 @export var profile_animation: String = "idle"

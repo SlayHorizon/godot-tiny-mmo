@@ -7,4 +7,5 @@ extends DataRequestHandler
 func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictionary) -> Dictionary:
 	var master_id: int = int(args.get("master_id", 0))
 	var action: String = str(args.get("action", "join"))
-	return DungeonService.handle_lobby_request(instance, peer_id, master_id, action)
+	var hard: bool = bool(args.get("hard", false))
+	return DungeonService.handle_lobby_request(instance, peer_id, master_id, action, hard)

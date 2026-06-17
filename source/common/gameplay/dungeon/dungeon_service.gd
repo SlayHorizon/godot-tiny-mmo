@@ -18,10 +18,26 @@ static var _instance_to_group: Dictionary[String, int] = {}
 static var _lobbies: Dictionary[String, Array] = {}
 # group_id -> run start (ticks_msec), for the completion time in the recap.
 static var _run_start_ms: Dictionary[int, int] = {}
+# group_ids currently being auto-ejected after a CLEAR — so on_player_left can tell
+# a voluntary leave (toast "Left X") from the post-clear eject (recap covers it).
+static var _ejecting: Dictionary[int, bool] = {}
+# group_id -> whether this run is HARD (scaled mobs, richer reward, separate lockout).
+static var _run_hard: Dictionary[int, bool] = {}
 
 const QUEUE_RANGE: float = 120.0
 ## Seconds the recap stays up before the party is auto-sent home.
 const EJECT_DELAY_S: float = 15.0
+## Hard-mode stat multipliers, applied to every mob a Hard run spawns.
+const HARD_HEALTH_MULT: float = 2.0
+const HARD_DAMAGE_MULT: float = 1.5
+
+
+## Is the run living in [param instance] a Hard one? Read by RoomNode when it spawns
+## mobs (to scale them) and picks the reward.
+static func is_hard_run(instance: Node) -> bool:
+	if instance == null:
+		return false
+	return _run_hard.get(_instance_to_group.get(str(instance.name), 0), false)
 
 
 # --- lobby (matchmaking at a DungeonMaster station) -------------------------
@@ -29,7 +45,7 @@ const EJECT_DELAY_S: float = 15.0
 ## Join / leave / start / solo a dungeon lobby (dungeon.queue handler). Mirrors
 ## the spar queue, minus teams: one shared queue per station, Start launches the
 ## whole queue into a private run, Solo launches just the caller. Server-only.
-static func handle_lobby_request(instance: Node, peer_id: int, master_id: int, action: String) -> Dictionary:
+static func handle_lobby_request(instance: Node, peer_id: int, master_id: int, action: String, hard: bool = false) -> Dictionary:
 	if instance == null or instance.instance_map == null:
 		return {"ok": false, "reason": "no_map"}
 	var master: DungeonMaster = instance.instance_map.get_dungeon_master(master_id)
@@ -63,7 +79,7 @@ static func handle_lobby_request(instance: Node, peer_id: int, master_id: int, a
 			queue.erase(peer_id)
 			_lobbies[key] = queue
 			_broadcast_lobby(instance, master, queue)
-			start_run([peer_id], master.dungeon_name)
+			start_run([peer_id], master.dungeon_name, hard)
 			return {"ok": true, "started": true}
 		"start":
 			# Launch the whole queue (or just the caller if the queue is empty).
@@ -72,7 +88,7 @@ static func handle_lobby_request(instance: Node, peer_id: int, master_id: int, a
 				party.append(peer_id)
 			_lobbies.erase(key)
 			_broadcast_lobby(instance, master, [])
-			start_run(party, master.dungeon_name)
+			start_run(party, master.dungeon_name, hard)
 			return {"ok": true, "started": true}
 		_:
 			return {"ok": false, "reason": "bad_action"}
@@ -125,7 +141,7 @@ static func _lobby_key(instance_name: String, master_id: int) -> String:
 ## Begin a run for [param peers] (solo = one peer; the lobby passes a full group).
 ## Charges a FRESH private instance of [param dungeon_name] — NOT the shared
 ## charged copy — and moves the group in once it's loaded. Server-only.
-static func start_run(peers: Array, dungeon_name: String) -> void:
+static func start_run(peers: Array, dungeon_name: String, hard: bool = false) -> void:
 	if ServerHub.current == null or peers.is_empty():
 		return
 	var instance_manager: Node = ServerHub.current.instance_manager
@@ -140,6 +156,7 @@ static func start_run(peers: Array, dungeon_name: String) -> void:
 		return
 	var group_id: int = GroupService.create_group(members, members[0])
 	_run_start_ms[group_id] = Time.get_ticks_msec()
+	_run_hard[group_id] = hard
 	# Private instance: prepare a fresh one directly. We can't use
 	# queue_charge_instance — it dedupes by resource, but every group needs its
 	# OWN copy. prepare_instance appends it to charged_instances on ready, and
@@ -167,6 +184,19 @@ static func _enter_run(group_id: int, members: Array) -> void:
 		if player != null:
 			instance_manager.player_switch_instance(instance, 0, player, current)
 
+	# Welcome toast — delayed so it lands after the client finishes loading the new
+	# instance (the switch is still in flight this frame). Soft entry, not a wall of
+	# mobs out of nowhere.
+	var dungeon_name: String = "the dungeon"
+	if instance.instance_resource != null:
+		dungeon_name = str(instance.instance_resource.instance_name)
+	ServerHub.current.get_tree().create_timer(1.5).timeout.connect(
+		func() -> void:
+			for peer: int in GroupService.members_of(group_id):
+				ServerHub.current.data_push.rpc_id(peer, &"dungeon.entered", {"dungeon": dungeon_name}),
+		CONNECT_ONE_SHOT
+	)
+
 
 ## A player left a dungeon-run instance (exit warp, or any switch out of it). Drop
 ## them from the run; when the run empties, dissolve the group — the now-empty
@@ -179,33 +209,50 @@ static func on_player_left(peer_id: int, left_instance: Node) -> void:
 	var group_id: int = _instance_to_group.get(key, 0)
 	if group_id == 0:
 		return # not a dungeon run — ordinary warp/recall/jail
+	# Confirm a VOLUNTARY leave (exit NPC / recall). The post-clear auto-eject is
+	# flagged in _ejecting and skipped here — its recap already says it all.
+	if not _ejecting.get(group_id, false) and ServerHub.current != null:
+		var dungeon_name: String = "the dungeon"
+		if left_instance.instance_resource != null:
+			dungeon_name = str(left_instance.instance_resource.instance_name)
+		ServerHub.current.data_push.rpc_id(peer_id, &"dungeon.left", {"dungeon": dungeon_name})
 	GroupService.leave(peer_id)
 	if GroupService.members_of(group_id).is_empty():
 		_runs.erase(group_id)
 		_instance_to_group.erase(key)
 		_run_start_ms.erase(group_id)
+		_ejecting.erase(group_id)
+		_run_hard.erase(group_id)
 
 
-## The final room cleared — the run is COMPLETE. Push the recap (dungeon name +
-## completion time) to the group, then after EJECT_DELAY_S send everyone home and
+## The final room cleared — the run is COMPLETE. Grant each member their reward
+## (honoring the soft daily lockout), push a per-member recap (dungeon name,
+## completion time, what they got), then after EJECT_DELAY_S send everyone home and
 ## let the group dissolve. Called from RoomNode (final_room). Server-only.
-static func on_dungeon_cleared(instance: Node) -> void:
+static func on_dungeon_cleared(instance: Node, reward: DungeonReward = null) -> void:
 	if instance == null or ServerHub.current == null:
 		return
 	var group_id: int = _instance_to_group.get(str(instance.name), 0)
 	if group_id == 0:
 		return
 	var start_ms: int = _run_start_ms.get(group_id, Time.get_ticks_msec())
+	var seconds: int = int((Time.get_ticks_msec() - start_ms) / 1000.0)
+	var hard: bool = _run_hard.get(group_id, false)
 	var dungeon_name: String = "Dungeon"
 	if instance.instance_resource != null:
 		dungeon_name = str(instance.instance_resource.instance_name)
-	var recap: Dictionary = {
-		"dungeon": dungeon_name,
-		"seconds": int((Time.get_ticks_msec() - start_ms) / 1000.0),
-		"eject_in": int(EJECT_DELAY_S),
-	}
+	# Hard runs get a separate daily lockout (clear Normal AND Hard each per day) and
+	# a tagged recap label.
+	var lockout_key: String = dungeon_name + (" (Hard)" if hard else "")
+	var label: String = dungeon_name + (" — Hard" if hard else "")
 	for peer: int in GroupService.members_of(group_id):
-		ServerHub.current.data_push.rpc_id(peer, &"dungeon.cleared", recap)
+		var player: Player = instance.get_player(peer) as Player # all members are in this run
+		ServerHub.current.data_push.rpc_id(peer, &"dungeon.cleared", {
+			"dungeon": label,
+			"seconds": seconds,
+			"eject_in": int(EJECT_DELAY_S),
+			"reward": _grant_reward(player, lockout_key, reward),
+		})
 	# Linger on the recap, then send the party home; on_player_left dissolves the
 	# group as each one leaves.
 	ServerHub.current.get_tree().create_timer(EJECT_DELAY_S).timeout.connect(
@@ -213,9 +260,45 @@ static func on_dungeon_cleared(instance: Node) -> void:
 	)
 
 
+## Grant one player their completion reward, honoring the soft daily lockout, and
+## return the recap summary for their client: {gold, items:[{name, amount}]} on a
+## payout, or {locked: true, available_in: <seconds>} if they already collected it
+## within the window. Items land in their (server-authoritative) inventory; the
+## client sees them on its next inventory.get — same as mob loot.
+static func _grant_reward(player: Player, lockout_key: String, reward: DungeonReward) -> Dictionary:
+	if player == null or player.player_resource == null or reward == null:
+		return {}
+	var resource: PlayerResource = player.player_resource
+	var now_s: int = int(Time.get_unix_time_from_system())
+	var window_s: int = int(reward.lockout_hours * 3600.0)
+	var last_s: int = int(resource.dungeon_lockouts.get(lockout_key, 0))
+	if window_s > 0 and now_s - last_s < window_s:
+		return {"locked": true, "available_in": window_s - (now_s - last_s)}
+
+	var gold: int = 0
+	if reward.gold_max > 0:
+		gold = randi_range(reward.gold_min, reward.gold_max)
+		if gold > 0 and Economy.gold_id() > 0:
+			Inventory.add_item(resource.inventory, Economy.gold_id(), gold)
+
+	var items: Array = []
+	for drop: LootDrop in reward.loot:
+		if drop == null or drop.item == null:
+			continue
+		if randf() <= drop.chance:
+			var amount: int = randi_range(drop.min_amount, drop.max_amount)
+			if amount > 0:
+				Inventory.add_item(resource.inventory, int(drop.item.get_meta(&"id", 0)), amount)
+				items.append({"name": str(drop.item.item_name), "amount": amount})
+
+	resource.dungeon_lockouts[lockout_key] = now_s
+	return {"gold": gold, "items": items}
+
+
 static func _eject_run(group_id: int) -> void:
 	if ServerHub.current == null:
 		return
+	_ejecting[group_id] = true # this leave is the cleared eject, not a voluntary bail
 	var instance_manager: Node = ServerHub.current.instance_manager
 	for peer: int in GroupService.members_of(group_id).duplicate():
 		instance_manager.recall_player(peer) # → town hub; on_player_left dissolves the group

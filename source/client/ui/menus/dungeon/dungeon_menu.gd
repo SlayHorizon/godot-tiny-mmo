@@ -8,6 +8,8 @@ extends Control
 var _master_id: int = 0
 var _master_name: String = "Dungeon"
 var _queued: bool = false
+## Hard mode for this launch (the starter's pick decides the run).
+var _hard: bool = false
 
 var _content: VBoxContainer
 
@@ -105,6 +107,13 @@ func _render(data: Dictionary) -> void:
 		empty.modulate.a = 0.4
 		_content.add_child(empty)
 
+	var hard_toggle: CheckButton = CheckButton.new()
+	hard_toggle.text = "Hard Mode"
+	hard_toggle.button_pressed = _hard
+	hard_toggle.tooltip_text = "Tougher mobs and boss, richer reward. Separate daily lockout."
+	hard_toggle.toggled.connect(func(on: bool) -> void: _hard = on)
+	_content.add_child(hard_toggle)
+
 	var buttons: HBoxContainer = HBoxContainer.new()
 	buttons.add_theme_constant_override(&"separation", 10)
 	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -129,7 +138,7 @@ func _button(text: String, callback: Callable) -> Button:
 func _send(action: String) -> void:
 	Client.request_data(
 		&"dungeon.queue", _apply_state,
-		{"master_id": _master_id, "action": action},
+		{"master_id": _master_id, "action": action, "hard": _hard},
 		InstanceClient.current.name if InstanceClient.current else ""
 	)
 

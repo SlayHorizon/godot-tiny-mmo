@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="DungeonReward" format=3 uid="uid://8byl713ves8w"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_4t1it"]
+[ext_resource type="Script" uid="uid://dm6elylcxek00" path="res://source/common/gameplay/dungeon/dungeon_reward.gd" id="1_reward"]
+
+[resource]
+script = ExtResource("1_reward")
+gold_min = 50
+gold_max = 120
+lockout_hours = 23.0
