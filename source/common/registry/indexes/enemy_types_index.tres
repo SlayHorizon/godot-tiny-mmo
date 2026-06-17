@@ -5,10 +5,10 @@
 [resource]
 script = ExtResource("1_b6pq3")
 content_name = &"enemy_types"
-version = 1781641301
-next_id = 12
+version = 1781723642
+next_id = 15
 entries = Array[Dictionary]([{
-&"hash": "13cdb97439c7b17eccc91bbbe5c4b0dc86be858a2c2ecbf6b19408a37be4b33f",
+&"hash": "0f7692fa28c71a93eae39bf87e219718c99c3776b16052b1b135a2ddf406443a",
 &"id": 1,
 &"path": "res://source/common/gameplay/characters/npc/types/bandit.tres",
 &"slug": &"bandit"
@@ -23,7 +23,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres",
 &"slug": &"bandit_sorcerer"
 }, {
-&"hash": "774ccd6530eda53aef8a6aea26a629348518803280c54aa144d371e435412cc4",
+&"hash": "cf66be5869da188d850caf67ad6beb8da754c79b6420902f81e04b775c281bb1",
 &"id": 9,
 &"path": "res://source/common/gameplay/characters/npc/types/dungeon_boss.tres",
 &"slug": &"dungeon_boss"
@@ -48,7 +48,22 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/npc/types/iron_warlord.tres",
 &"slug": &"iron_warlord"
 }, {
-&"hash": "3b593e38faa3284122412bf41d1b55b56a2c0938eb6024f9dfdc1049d61f06eb",
+&"hash": "0022848451ee3335e5175fe83d584ca755faa0e8e396fedbb27b98f9eae13d84",
+&"id": 12,
+&"path": "res://source/common/gameplay/characters/npc/types/orc.tres",
+&"slug": &"orc"
+}, {
+&"hash": "2eb600adf5f2c1984adb37096afce35faf1adfa46e0b894c87beab3f5a86d183",
+&"id": 13,
+&"path": "res://source/common/gameplay/characters/npc/types/orc_leader.tres",
+&"slug": &"orc_leader"
+}, {
+&"hash": "a15ee6582fc656685a976c755bc6799733009c7fca21f7565686c1bedc796d00",
+&"id": 14,
+&"path": "res://source/common/gameplay/characters/npc/types/orc_rogue.tres",
+&"slug": &"orc_rogue"
+}, {
+&"hash": "37d49722fa22d4186f5523d2911305c04541de32a49c1f984b42cfc48bd25eb8",
 &"id": 10,
 &"path": "res://source/common/gameplay/characters/npc/types/shadow_grunt.tres",
 &"slug": &"shadow_grunt"
