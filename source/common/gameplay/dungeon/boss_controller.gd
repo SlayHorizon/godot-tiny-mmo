@@ -10,8 +10,12 @@ extends Node
 ##
 ## RoomNode attaches one to a boss marker's mob on spawn. Server-only: it frees
 ## itself anywhere else (and since it's added AFTER the dynamic spawn, clients never
-## receive it). Tuning lives here as plain defaults for now — promote to a resource
-## on SpawnMarker if bosses need per-fight knobs.
+## receive it). Tuning is data-driven from the body's EnemyTypeResource (the vars
+## below are fallbacks that mirror the resource defaults — see _load_config).
+
+## Extra seconds the body stays planted AFTER a slam lands — sells the weight and
+## stops the boss snapping straight back into a chase.
+const SLAM_RECOVER_S: float = 0.25
 
 ## Enrage when the body drops to this fraction of max HP.
 var enrage_at_health_fraction: float = 0.5
@@ -41,7 +45,27 @@ func _ready() -> void:
 	if not multiplayer.is_server() or boss == null:
 		queue_free()
 		return
+	_load_config()
 	_next_slam_ms = Time.get_ticks_msec() + int(slam_interval_s * 1000.0)
+
+
+## Pull tuning from the body's EnemyTypeResource so each boss is configured in
+## data. The var defaults mirror the resource defaults, so a boss whose .tres
+## leaves the Boss group untouched behaves exactly as before.
+func _load_config() -> void:
+	var d: EnemyTypeResource = boss.enemy_data
+	if d == null:
+		return
+	enrage_at_health_fraction = d.enrage_health_fraction
+	slam_radius = d.slam_radius
+	slam_windup_s = d.slam_windup_s
+	slam_damage = d.slam_damage
+	slam_interval_s = d.slam_interval_s
+	enraged_slam_interval_s = d.enraged_slam_interval_s
+	add_enemy_slug = d.add_enemy_slug
+	add_count = d.add_count
+	add_spread_px = d.add_spread_px
+	enrage_speed_mult = d.enrage_speed_mult
 
 
 func _physics_process(_delta: float) -> void:
@@ -67,11 +91,17 @@ func _health_fraction() -> float:
 func _slam() -> void:
 	_casting = true
 	var center: Vector2 = boss.global_position
-	boss.replicate_visual(&"rp_lunge_telegraph", [center, slam_radius, slam_windup_s])
+	# Commit the body: hold position through the wind-up + a short recovery so it
+	# doesn't stroll out of its own danger ring while the slam resolves.
+	boss.action_root_until_ms = Time.get_ticks_msec() + int((slam_windup_s + SLAM_RECOVER_S) * 1000.0)
+	# Filling telegraph (clock-wedge countdown) — players read WHEN it lands.
+	boss.replicate_visual(&"rp_cast_telegraph", [center, slam_radius, slam_windup_s])
 	await get_tree().create_timer(slam_windup_s).timeout
 	if not is_instance_valid(boss) or boss.is_dead:
 		_casting = false
 		return
+	# Impact: the ground burst + damage everyone still standing in the ring.
+	boss.replicate_visual(&"rp_slam_impact", [center, slam_radius])
 	var instance: Node = _instance()
 	if instance != null:
 		for peer_id: int in instance.players_by_peer_id:
@@ -90,7 +120,20 @@ func _enrage() -> void:
 	_enraged = true
 	boss.move_speed = int(boss.move_speed * enrage_speed_mult)
 	_next_slam_ms = Time.get_ticks_msec() + int(enraged_slam_interval_s * 1000.0)
+	_announce_enrage()
 	_summon_adds.call_deferred() # spawn_dynamic toggles collision — defer out of the physics step
+
+
+## Phase 2 is loud: a ground burst on the body + a danger banner & camera shake to
+## everyone in the room, so the escalation reads instead of "suddenly more enemies
+## and a faster boss" with no visible cause.
+func _announce_enrage() -> void:
+	var instance: Node = _instance()
+	if instance == null:
+		return
+	boss.replicate_visual(&"rp_slam_impact", [boss.global_position, slam_radius * 0.8])
+	for peer_id: int in instance.players_by_peer_id:
+		ServerHub.current.data_push.rpc_id(peer_id, &"boss.enrage", {"name": boss.display_name})
 
 
 func _summon_adds() -> void:

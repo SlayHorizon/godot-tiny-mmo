@@ -13,6 +13,10 @@ const MAX_TOASTS: int = 5
 ## much silence the next event opens a fresh card.
 const COALESCE_WINDOW_MS: int = 6000
 
+## Sentinel for toast()'s optional font color — alpha 0 means "leave the theme
+## default", any opaque color tints the label.
+const NO_TINT: Color = Color(0, 0, 0, 0)
+
 var _container: VBoxContainer
 
 ## Active coalescable toasts, keyed by a content-stable string (e.g. "kill:goblin",
@@ -37,7 +41,7 @@ func _ready() -> void:
 	add_child(_container)
 
 
-func toast(text: String, duration: float = 2.0) -> void:
+func toast(text: String, duration: float = 2.0, font_color: Color = NO_TINT) -> void:
 	if _container == null:
 		return
 
@@ -47,7 +51,7 @@ func toast(text: String, duration: float = 2.0) -> void:
 		_container.remove_child(oldest)
 		oldest.queue_free()
 
-	var panel: PanelContainer = _make_toast(text)
+	var panel: PanelContainer = _make_toast(text, font_color)
 	_container.add_child(panel)
 	_restart_dwell(panel, duration)
 
@@ -171,11 +175,13 @@ func _restart_dwell(panel: Control, dwell: float) -> void:
 	panel.set_meta(&"tween", tween)
 
 
-func _make_toast(text: String) -> PanelContainer:
+func _make_toast(text: String, font_color: Color = NO_TINT) -> PanelContainer:
 	var panel: PanelContainer = _make_panel_shell()
 	var label: Label = Label.new()
 	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if font_color.a > 0.0:
+		label.add_theme_color_override(&"font_color", font_color)
 	(panel.get_child(0) as MarginContainer).add_child(label)
 	return panel
 

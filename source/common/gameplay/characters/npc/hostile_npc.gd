@@ -312,10 +312,23 @@ func _apply_ally_bar_tint() -> void:
 		($ProgressBar as CanvasItem).show() # ally guards stay visible
 
 
+## Server-set: while this timestamp is in the future the body holds position — a
+## BossController commits it to a telegraphed cast instead of strolling out of its
+## own danger ring. Generic, like the lunge windup's root but driven from outside
+## the state machine.
+var action_root_until_ms: int = 0
+
+
 func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 	if not multiplayer.is_server():
+		return
+
+	# Rooted for a telegraphed cast: hold position. DEAD still processes so death
+	# isn't deferred behind the wind-up.
+	if enemy_state != EnemyState.DEAD and Time.get_ticks_msec() < action_root_until_ms:
+		velocity = Vector2.ZERO
 		return
 
 	match enemy_state:
@@ -553,6 +566,37 @@ func rp_lunge_telegraph(to_position: Vector2, radius: float, duration: float) ->
 	add_child(telegraph)
 	telegraph.global_position = global_position
 	telegraph.line_to = to_position - global_position
+
+
+## Client-visual: a FILLING danger ring (CastTelegraph) for a telegraphed boss
+## slam — it fills + sweeps a clock-wedge over [param duration] so players read
+## exactly when the hit lands, then vanishes as the impact takes over. World-
+## pinned at the cast origin (the boss is rooted during the wind-up anyway).
+func rp_cast_telegraph(center: Vector2, radius: float, duration: float) -> void:
+	if multiplayer.is_server():
+		return
+	var tele: CastTelegraph = CastTelegraph.new()
+	tele.radius = radius
+	tele.duration = duration
+	tele.top_level = true
+	add_child(tele)
+	tele.global_position = center
+
+
+## Client-visual: the ground shockwave (SlamImpact) when a boss slam lands —
+## expanding rings + debris radiating from the impact point. The "already
+## happened" counterpart to the filling cast telegraph.
+func rp_slam_impact(center: Vector2, radius: float) -> void:
+	if multiplayer.is_server():
+		return
+	var impact: SlamImpact = SlamImpact.new()
+	impact.max_radius = radius
+	impact.color = Color(1.0, 0.5, 0.3, 0.9)
+	impact.debris = 8
+	impact.ring_count = 2
+	impact.top_level = true
+	add_child(impact)
+	impact.global_position = center
 
 
 func _process_animations() -> void:
@@ -840,7 +884,7 @@ func die(killer: Character) -> void:
 	if DEBUG_NPC:
 		printerr("[SRV NPC %s] die() killer=%s HP=%.1f state→DEAD respawn_in=%.1fs" % [
 			enemy_type,
-			killer.name if killer else "null",
+			String(killer.name) if killer else "null",
 			stats_component.get_stat(Stat.HEALTH),
 			respawn_delay
 		])
@@ -887,7 +931,7 @@ func take_damage(amount: float, attacker: Character = null, damage_type: StringN
 		pre_h = stats_component.get_stat(Stat.HEALTH)
 		printerr("[SRV NPC %s] take_damage(%.1f) pre: HP=%.1f is_dead=%s state=%d attacker=%s" % [
 			enemy_type, amount, pre_h, is_dead, enemy_state,
-			attacker.name if attacker else "null"
+			String(attacker.name) if attacker else "null"
 		])
 
 	super.take_damage(amount, attacker, damage_type)

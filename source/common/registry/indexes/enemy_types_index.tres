@@ -6,7 +6,7 @@
 script = ExtResource("1_b6pq3")
 content_name = &"enemy_types"
 version = 1781723642
-next_id = 15
+next_id = 16
 entries = Array[Dictionary]([{
 &"hash": "0f7692fa28c71a93eae39bf87e219718c99c3776b16052b1b135a2ddf406443a",
 &"id": 1,
@@ -77,6 +77,10 @@ entries = Array[Dictionary]([{
 &"id": 7,
 &"path": "res://source/common/gameplay/characters/npc/types/wolf.tres",
 &"slug": &"wolf"
+}, {
+&"id": 15,
+&"path": "res://source/common/gameplay/characters/npc/types/world_boss.tres",
+&"slug": &"world_boss"
 }])
 scan_path = "res://source/common/gameplay/characters/npc/types"
 filters = PackedStringArray("*.tres", "*.tscn")

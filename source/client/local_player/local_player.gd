@@ -1,6 +1,12 @@
 class_name LocalPlayer
 extends Player
 
+## Toast tint for the SAFE <-> PvP zone-crossing notice — red warns of danger,
+## green signals protection. Defined locally because ZonePatch2D (which owns the
+## canonical zone colors) is an @tool node that's stripped from client exports.
+const PVP_TOAST_COLOR: Color = Color(1.0, 0.5, 0.45)
+const SAFE_TOAST_COLOR: Color = Color(0.55, 0.95, 0.6)
+
 
 ## Fallback move speed until the synced MOVE_SPEED stat arrives. Actual movement
 ## reads the stat (see process_movement) so AGILITY / gear speed bonuses apply.
@@ -15,6 +21,11 @@ var action_input: bool = false
 ## teleport is applied locally (position is client-authoritative).
 var _dead: bool = false
 var _respawn_position: Vector2
+
+## Last-seen PvP state, so the zone-crossing toast fires only on the SAFE<->PVP
+## edge. zone_flags is server-authoritative (synced via correction); we just
+## watch the value flip rather than adding another network message.
+var _was_pvp: bool = false
 
 var fid_position: int
 var fid_flipped: int
@@ -32,7 +43,10 @@ func _ready() -> void:
 	ClientState.local_player_ready.emit(self)
 	
 	super._ready()
-	
+
+	# Seed the zone-crossing baseline so we don't toast for the spawn state.
+	_was_pvp = is_pvp()
+
 	fid_position = PathRegistry.id_of(":position")
 	fid_flipped = PathRegistry.id_of(":flipped")
 	fid_anim = PathRegistry.id_of(":anim")
@@ -71,6 +85,11 @@ func _ready() -> void:
 			"Entered %s" % str(payload.get("dungeon", "the dungeon")),
 			PackedStringArray(["Clear each room — defeat the boss to escape."]),
 			4.0))
+	# Boss enrage (dungeon phase 2): a red banner + camera shake so the escalation
+	# reads — see BossController._announce_enrage.
+	Client.subscribe(&"boss.enrage", func(payload: Dictionary) -> void:
+		Toaster.toast("%s enrages!" % str(payload.get("name", "The boss")), 3.0, PVP_TOAST_COLOR)
+		shake_camera(0.6))
 
 
 ## The local player's own over-head HP bar reads as "self" (green), never
@@ -218,6 +237,22 @@ func _physics_process(delta: float) -> void:
 	process_movement()
 	process_animation(delta)
 	process_synchronization()
+	_notify_zone_transition()
+
+
+## Toast when we cross the SAFE <-> PvP boundary. zone_flags is synced from the
+## server (StateSynchronizerManagerServer.update_zone_flags_for_entity), so the
+## bit simply flips under us as we move — we watch it rather than adding a
+## dedicated push. Local-player only: remote players never run this.
+func _notify_zone_transition() -> void:
+	var now_pvp: bool = is_pvp()
+	if now_pvp == _was_pvp:
+		return
+	_was_pvp = now_pvp
+	if now_pvp:
+		Toaster.toast("Entered a PvP zone — other players can attack you here.", 3.0, PVP_TOAST_COLOR)
+	else:
+		Toaster.toast("Back in a safe zone — you're protected from other players.", 3.0, SAFE_TOAST_COLOR)
 
 
 func process_movement() -> void:

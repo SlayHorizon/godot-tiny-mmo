@@ -45,9 +45,11 @@ func _refresh_progression() -> void:
 ## Shows the death overlay with a per-second countdown until the server respawns us.
 func _on_player_died(data: Dictionary) -> void:
 	var seconds: int = int(ceil(float(data.get("respawn_in", 2.5))))
+	var killed_by: String = str(data.get("killed_by", ""))
+	var headline: String = "Slain by %s" % killed_by if not killed_by.is_empty() else "You died"
 	death_screen.visible = true
 	for remaining: int in range(seconds, 0, -1):
-		death_label.text = "You died\nRespawning in %d..." % remaining
+		death_label.text = "%s\nRespawning in %d..." % [headline, remaining]
 		await get_tree().create_timer(1.0).timeout
 		if not is_instance_valid(self):
 			return

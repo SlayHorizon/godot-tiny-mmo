@@ -103,9 +103,9 @@ func _activate() -> void:
 				if is_boss and npc != null:
 					var brain: BossController = BossController.new()
 					brain.boss = npc
+					npc.add_child(brain) # _ready() loads slam_damage from enemy_data...
 					if hard:
-						brain.slam_damage *= dmg_mult
-					npc.add_child(brain)
+						brain.slam_damage *= dmg_mult # ...so scale it AFTER that load
 				_alive += 1
 				mob.died.connect(func(_killer: Character) -> void: _on_mob_died())
 	_push_seal(true) # seal the room behind the party — the fight is on

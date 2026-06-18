@@ -27,10 +27,10 @@ const RESPAWN_DELAY: float = 3.0
 ## client teleports itself to the spawn (see LocalPlayer); the server only owns HP/state.
 ## Staying dead during the delay also makes nearby enemies drop aggro (they ignore dead
 ## targets) instead of trailing the corpse.
-func die(_killer: Character) -> void:
+func die(killer: Character) -> void:
 	# Leaderboard: credit the killer if this was a player-vs-player kill. NPC
 	# killers are filtered out inside record_pvp_kill.
-	LeaderboardService.record_pvp_kill(_killer)
+	LeaderboardService.record_pvp_kill(killer)
 
 	# Default spawn = map's spawn point.
 	var spawn_position: Vector2 = Vector2.ZERO
@@ -45,13 +45,18 @@ func die(_killer: Character) -> void:
 		var sparring_pos: Vector2 = SparringService.return_position_for(self)
 		if sparring_pos != Vector2.ZERO:
 			spawn_position = sparring_pos
-		SparringService.on_player_died_in_match(self, _killer)
+		SparringService.on_player_died_in_match(self, killer)
 
 	var peer_id: int = int(player_resource.current_peer_id)
 	if peer_id > 0:
+		# Death-screen attribution. Every Character carries a display_name (the
+		# player's character name, or the enemy's EnemyTypeResource name); empty
+		# means an unattributed death (environment, or the source already freed).
+		var killed_by: String = killer.display_name if is_instance_valid(killer) else ""
 		ServerHub.current.data_push.rpc_id(peer_id, &"player.died", {
 			"respawn_in": RESPAWN_DELAY,
 			"spawn": spawn_position,
+			"killed_by": killed_by,
 		})
 
 	await get_tree().create_timer(RESPAWN_DELAY).timeout

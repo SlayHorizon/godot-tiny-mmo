@@ -88,3 +88,24 @@ extends Resource
 ## xp_reward AND no loot grants nothing on death (the natural "shadow" trash).
 @export var respawns: bool = true
 @export var loot: Array[LootDrop]
+
+
+@export_group("Boss")
+## Phase 2: enrage when HP drops to this fraction of max (speeds the body up,
+## summons adds, slams faster). Only read for an is_boss type that a dungeon
+## RoomNode has given a BossController.
+@export var enrage_health_fraction: float = 0.5
+## Telegraphed slam: danger-ring radius (px), the wind-up players get to step out
+## of it, and the damage dealt to anyone still inside when it lands.
+@export var slam_radius: float = 110.0
+@export var slam_windup_s: float = 1.1
+@export var slam_damage: float = 45.0
+## Seconds between slams — phase 1, then the faster enraged cadence.
+@export var slam_interval_s: float = 6.0
+@export var enraged_slam_interval_s: float = 3.5
+## On enrage: summon this many of this enemy slug, spread around the boss.
+@export var add_enemy_slug: StringName = &"shadow_grunt"
+@export var add_count: int = 2
+@export var add_spread_px: float = 48.0
+## Move-speed multiplier applied to the body on enrage (it chases harder).
+@export var enrage_speed_mult: float = 1.3
