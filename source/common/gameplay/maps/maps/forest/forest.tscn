@@ -9,13 +9,17 @@
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="6_1fctu"]
 [ext_resource type="Resource" uid="uid://cwkhk34nscblr" path="res://source/common/gameplay/characters/npc/npcs/bone_carver.tres" id="6_1iruy"]
 [ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="6_8w7oy"]
+[ext_resource type="Resource" uid="uid://f0urxop3y64l" path="res://source/common/gameplay/items/weapons/sword/sword.item.tres" id="7_q7qsh"]
 [ext_resource type="Resource" uid="uid://dlgfcyxce1v1y" path="res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres" id="7_qrw5n"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="7_w1xny"]
 [ext_resource type="Resource" uid="uid://jo7v7jfc54kp" path="res://source/common/gameplay/characters/npc/types/bandit_captain.tres" id="8_iihld"]
 [ext_resource type="Resource" uid="uid://dc8nipyrsctj3" path="res://source/common/gameplay/characters/npc/types/orc.tres" id="9_q7qsh"]
+[ext_resource type="Resource" uid="uid://dspsv5pyhjuwi" path="res://source/common/gameplay/items/weapons/wand/wand.item.tres" id="9_twffw"]
 [ext_resource type="Resource" uid="uid://kv8okerw0aig" path="res://source/common/gameplay/characters/npc/types/orc_rogue.tres" id="10_twffw"]
+[ext_resource type="Resource" uid="uid://wp3akqcd3x2h" path="res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres" id="11_1vpp3"]
 [ext_resource type="Resource" uid="uid://c2htgqm6nf3t5" path="res://source/common/gameplay/characters/npc/types/orc_leader.tres" id="11_q5le7"]
 [ext_resource type="Resource" uid="uid://dclt4rvqc51ri" path="res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres" id="12_1vpp3"]
+[ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="14_1vpp3"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_w1xny"]
 normal = Vector2(-1, 0)
@@ -111,7 +115,7 @@ metadata/_custom_type_script = "uid://wq8klpndipnu"
 position = Vector2(1957, 1290)
 debug_draw_ranges = false
 enemy_data = ExtResource("6_8w7oy")
-weapon = null
+weapon = ExtResource("7_q7qsh")
 
 [node name="Bandit2" parent="ReplicatedPropsContainer" unique_id=831851949 instance=ExtResource("5_8w7oy")]
 position = Vector2(1960, 1466)
@@ -141,7 +145,7 @@ weapon = null
 position = Vector2(1197, 1278)
 debug_draw_ranges = false
 enemy_data = ExtResource("7_qrw5n")
-weapon = null
+weapon = ExtResource("9_twffw")
 
 [node name="BanditSorcerer3" parent="ReplicatedPropsContainer" unique_id=1133600666 instance=ExtResource("5_8w7oy")]
 position = Vector2(1605, 1132)
@@ -153,13 +157,13 @@ weapon = null
 position = Vector2(1564, 1457)
 debug_draw_ranges = false
 enemy_data = ExtResource("7_qrw5n")
-weapon = null
+weapon = ExtResource("9_twffw")
 
 [node name="BanditCaptain" parent="ReplicatedPropsContainer" unique_id=88209517 instance=ExtResource("5_8w7oy")]
 position = Vector2(1140, 1086)
 debug_draw_ranges = false
 enemy_data = ExtResource("8_iihld")
-weapon = null
+weapon = ExtResource("11_1vpp3")
 
 [node name="Orc" parent="ReplicatedPropsContainer" unique_id=199883312 instance=ExtResource("5_8w7oy")]
 position = Vector2(551, 1354)
@@ -183,7 +187,7 @@ weapon = null
 position = Vector2(877, 751)
 debug_draw_ranges = false
 enemy_data = ExtResource("10_twffw")
-weapon = null
+weapon = ExtResource("14_1vpp3")
 
 [node name="OrcRogue2" parent="ReplicatedPropsContainer" unique_id=571800620 instance=ExtResource("5_8w7oy")]
 position = Vector2(691, 597)
@@ -192,13 +196,13 @@ enemy_data = ExtResource("10_twffw")
 weapon = null
 
 [node name="OrcRogue3" parent="ReplicatedPropsContainer" unique_id=458547116 instance=ExtResource("5_8w7oy")]
-position = Vector2(985, 610)
+position = Vector2(1208, 773)
 debug_draw_ranges = false
 enemy_data = ExtResource("10_twffw")
 weapon = null
 
 [node name="OrcRogue4" parent="ReplicatedPropsContainer" unique_id=277527912 instance=ExtResource("5_8w7oy")]
-position = Vector2(1179, 603)
+position = Vector2(1307, 604)
 debug_draw_ranges = false
 enemy_data = ExtResource("10_twffw")
 weapon = null

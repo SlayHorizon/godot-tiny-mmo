@@ -5,20 +5,20 @@
 [resource]
 script = ExtResource("1_b6pq3")
 content_name = &"enemy_types"
-version = 1781723642
+version = 1781834279
 next_id = 16
 entries = Array[Dictionary]([{
-&"hash": "0f7692fa28c71a93eae39bf87e219718c99c3776b16052b1b135a2ddf406443a",
+&"hash": "60afd66f27b57b313cc440d2bfeb704b5462e3bb841fd9621f99de6bf177f82c",
 &"id": 1,
 &"path": "res://source/common/gameplay/characters/npc/types/bandit.tres",
 &"slug": &"bandit"
 }, {
-&"hash": "450128ffd078d95fc50f245270861fb3d16bca248ea63a64005d034fd1aafb21",
+&"hash": "7aa8fe6db48d635a553f85e2e53ec988d5fda2416cc044a90f08427814b1456a",
 &"id": 2,
 &"path": "res://source/common/gameplay/characters/npc/types/bandit_captain.tres",
 &"slug": &"bandit_captain"
 }, {
-&"hash": "eb94902284770507ba55b8f3309b0ac64df9bf9630e4696db9c656f74d1d3b18",
+&"hash": "e830b0e5671b1c549984264989aca8f0ef462406739931301ad8496a19b38bb4",
 &"id": 8,
 &"path": "res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres",
 &"slug": &"bandit_sorcerer"
@@ -28,12 +28,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/npc/types/dungeon_boss.tres",
 &"slug": &"dungeon_boss"
 }, {
-&"hash": "75f07f016c120db9b093c2e96c75c6732792a653092f237db638ddfd9ec601de",
+&"hash": "df2da44993feb820b62b9b70f33bb441904eeccddcb5de7f5b3eed1a3431610f",
 &"id": 3,
 &"path": "res://source/common/gameplay/characters/npc/types/fungus.tres",
 &"slug": &"fungus"
 }, {
-&"hash": "9f6d38d9a000b4ed346e44f41b14223165557800b8ca86b83f0595d4d08bca9e",
+&"hash": "7bc823d6bbebbae3b2f346432f4d7f07cdb8d5f8011807dc566fcaa6132fb567",
 &"id": 4,
 &"path": "res://source/common/gameplay/characters/npc/types/goblin.tres",
 &"slug": &"goblin"
@@ -48,22 +48,22 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/npc/types/iron_warlord.tres",
 &"slug": &"iron_warlord"
 }, {
-&"hash": "0022848451ee3335e5175fe83d584ca755faa0e8e396fedbb27b98f9eae13d84",
+&"hash": "9ca9d5056ef73c7874fa710c282dbad7e6caba9c5930d263269e87b7a786a4d9",
 &"id": 12,
 &"path": "res://source/common/gameplay/characters/npc/types/orc.tres",
 &"slug": &"orc"
 }, {
-&"hash": "2eb600adf5f2c1984adb37096afce35faf1adfa46e0b894c87beab3f5a86d183",
+&"hash": "0af4b085fde4b29750bfcb9fbb7e3928fbb9736842b3382f925f938dbe57d06c",
 &"id": 13,
 &"path": "res://source/common/gameplay/characters/npc/types/orc_leader.tres",
 &"slug": &"orc_leader"
 }, {
-&"hash": "a15ee6582fc656685a976c755bc6799733009c7fca21f7565686c1bedc796d00",
+&"hash": "bab487b534ea9aac5981129fee70eccf1bb7d09edb22ffe675975d268418cf53",
 &"id": 14,
 &"path": "res://source/common/gameplay/characters/npc/types/orc_rogue.tres",
 &"slug": &"orc_rogue"
 }, {
-&"hash": "37d49722fa22d4186f5523d2911305c04541de32a49c1f984b42cfc48bd25eb8",
+&"hash": "40bfb2e9835f71be512bc5e5d877b589175dc1b70acd5d4ae56fd2d93b9f0183",
 &"id": 10,
 &"path": "res://source/common/gameplay/characters/npc/types/shadow_grunt.tres",
 &"slug": &"shadow_grunt"
@@ -73,11 +73,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/npc/types/training_dummy.tres",
 &"slug": &"training_dummy"
 }, {
-&"hash": "7737653eefe09cf005bf32b54895bd99966e2860ac90d89a5b2950b893d07eaf",
+&"hash": "83ee7f4f4f868fae7c4ccde60d16f27185362af7674ccfc14e343751d9243412",
 &"id": 7,
 &"path": "res://source/common/gameplay/characters/npc/types/wolf.tres",
 &"slug": &"wolf"
 }, {
+&"hash": "d204fd41cd84646de51a20f2fff68235e51386c1396310d4dc7d2249d8c5642e",
 &"id": 15,
 &"path": "res://source/common/gameplay/characters/npc/types/world_boss.tres",
 &"slug": &"world_boss"

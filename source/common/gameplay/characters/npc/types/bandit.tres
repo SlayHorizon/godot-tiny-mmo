@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="3_cop"]
 [ext_resource type="Resource" uid="uid://b7vknj4kmauhs" path="res://source/common/gameplay/items/materials/leather.tres" id="4_leather"]
 [ext_resource type="SpriteFrames" uid="uid://cm2d0tro8bmkh" path="res://source/common/gameplay/characters/sprite_frames/bandit_scout.tres" id="5_852w6"]
+[ext_resource type="Resource" uid="uid://f0urxop3y64l" path="res://source/common/gameplay/items/weapons/sword/sword.item.tres" id="6_wjqol"]
 
 [sub_resource type="Resource" id="Drop_leather"]
 script = ExtResource("2_loot")
@@ -23,11 +24,14 @@ enemy_type = &"bandit"
 display_name = "Highway Bandit"
 skin = ExtResource("5_852w6")
 max_health = 100.0
-attack_damage = 12.0
+attack_damage = 15.0
 armor = 5.0
-move_speed = 45
+weapon = ExtResource("6_wjqol")
+move_speed = 60
+max_distance_from_spawn = 200
 chase_on_area = true
-respawn_delay = 30.0
+xp_reward = 10
+respawn_delay = 20.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_leather"), SubResource("Drop_copper")])
 metadata/slug = &"bandit"
 metadata/id = 1

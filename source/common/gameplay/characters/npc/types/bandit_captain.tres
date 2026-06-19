@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://yknmxceq6mdh" path="res://source/common/gameplay/items/materials/captain_tag.tres" id="3_tag"]
 [ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="4_cop_bar"]
 [ext_resource type="SpriteFrames" uid="uid://cjvpbhojuaqq" path="res://source/common/gameplay/characters/sprite_frames/bandit_fighter.tres" id="5_a7j0n"]
+[ext_resource type="Resource" uid="uid://wp3akqcd3x2h" path="res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres" id="6_avcwm"]
 
 [sub_resource type="Resource" id="Drop_tag"]
 script = ExtResource("2_loot")
@@ -21,15 +22,17 @@ script = ExtResource("1_script")
 enemy_type = &"bandit_captain"
 display_name = "Bandit Captain"
 skin = ExtResource("5_a7j0n")
-max_health = 300.0
-attack_damage = 18.0
-attack_cooldown = 1.6
+max_health = 250.0
+attack_damage = 25.0
 armor = 8.0
-move_speed = 50
-distance_to_attack = 22
-max_distance_from_spawn = 350
+weapon = ExtResource("6_avcwm")
+lunge_range = 100.0
+lunge_cooldown = 3.0
+move_speed = 80
+distance_to_attack = 25
+max_distance_from_spawn = 200
 chase_on_area = true
-xp_reward = 170
+xp_reward = 30
 respawn_delay = 120.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_tag"), SubResource("Drop_copper_bar")])
 metadata/slug = &"bandit_captain"
