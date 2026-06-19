@@ -1,9 +1,10 @@
 name: Build slim export templates
 
-# Compiles size-stripped Godot export templates for Web / Windows / Linux and
-# uploads them as downloadable artifacts. SLOW (~20-40 min) and expensive, so it
-# runs on demand only — trigger it once now, then again only when you bump the
-# Godot version. The fast per-release export workflow reuses these artifacts.
+# Compiles size-stripped Godot export templates for Web / Windows / Linux /
+# Android and uploads them as downloadable artifacts. SLOW (~20-40 min) and
+# expensive, so it runs on demand only — trigger it once now, then again only
+# when you bump the Godot version. The fast per-release export workflow reuses
+# these artifacts.
 on:
   workflow_dispatch:
 
@@ -29,6 +30,14 @@ jobs:
             scons: "platform=windows target=template_release arch=x86_64 use_mingw=yes vulkan=no use_volk=no d3d12=no"
           - name: web
             scons: "platform=web target=template_release threads=no"
+          # Android: arm64 only (covers essentially every phone since ~2017).
+          # The generic "Compile template" step builds the RELEASE lib with this
+          # line; an Android-only step then builds the debug lib and runs Godot's
+          # gradle task to assemble android_release.apk / android_debug.apk /
+          # android_source.zip. Add armeabi-v7a / x86_64 here + in the assemble
+          # step + in the export preset if you ever need those ABIs.
+          - name: android
+            scons: "platform=android target=template_release arch=arm64 production=yes"
     steps:
       - name: Checkout game repo (for ci/custom.py)
         uses: actions/checkout@v4
@@ -66,17 +75,66 @@ jobs:
           # CI for the 4.6.3-stable tag. Bump this in lockstep when you upgrade Godot.
           version: 4.0.11
 
+      - name: Set up JDK 17 (Android)
+        if: matrix.name == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK + NDK (Android)
+        if: matrix.name == 'android'
+        run: |
+          set -euo pipefail
+          SDK="$ANDROID_SDK_ROOT"
+          # Godot pins an exact NDK in its gradle config — read it from the cloned
+          # source so this never drifts when you bump GODOT_REF (VERIFY on the
+          # first run: if scons can't find the NDK, this grep is what to check).
+          NDK_VERSION=$(grep -oP 'ndkVersion\s*=\s*"\K[^"]+' godot/platform/android/java/app/config.gradle)
+          echo "Godot ${GODOT_REF} wants NDK $NDK_VERSION"
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" "build-tools;35.0.0" "platforms;android-35" "ndk;$NDK_VERSION" >/dev/null
+          echo "ANDROID_NDK_ROOT=$SDK/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+
       - name: Compile template
         working-directory: godot
         run: scons ${{ matrix.scons }} -j"$(nproc)" verbose=no progress=no
 
+      - name: Build debug lib + assemble Android templates (Android)
+        if: matrix.name == 'android'
+        working-directory: godot
+        run: |
+          set -euo pipefail
+          # generateGodotTemplates packages BOTH the debug and release libs into
+          # the apk/source templates, so the debug arch has to exist too.
+          scons platform=android target=template_debug arch=arm64 production=yes -j"$(nproc)" verbose=no progress=no
+          cd platform/android/java
+          ./gradlew generateGodotTemplates
+          echo "---- assembled ----"
+          ls -lah ../../../bin
+
       - name: Stage built binaries
+        if: matrix.name != 'android'
         run: |
           mkdir -p out
           # Copy only the files directly in bin/ (the template binaries). Skip the
           # obj/ build-cache subdirectory — cp without -r errors on it (exit 1)
           # even after copying the real binaries, which is what broke this before.
           find godot/bin -maxdepth 1 -type f -exec cp -v {} out/ \;
+          echo "---- produced ----"
+          ls -lah out
+
+      - name: Stage Android templates (Android)
+        if: matrix.name == 'android'
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          # Only the three files the editor installs as Android templates — leave
+          # the raw .aar / .so build outputs behind.
+          cp -v godot/bin/android_source.zip  out/
+          cp -v godot/bin/android_release.apk out/
+          cp -v godot/bin/android_debug.apk   out/
           echo "---- produced ----"
           ls -lah out
 

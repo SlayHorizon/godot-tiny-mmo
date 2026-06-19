@@ -1,9 +1,13 @@
 name: Release clients to itch.io
 
-# Tag a release (e.g. `git tag v0.2.0 && git push --tags`) → exports the three
+# Tag a release (e.g. `git tag v0.2.0 && git push --tags`) → exports the four
 # game clients with the slim templates and pushes them to itch.io via butler.
 # Server deploy is a separate workflow (deploy-server.yml) on purpose — this one
 # never touches the live server, so it's safe to run often.
+#
+# Android is opt-in: every Android step is gated on the ANDROID_KEYSTORE_BASE64
+# secret being set. Until you add it (see docs/release_pipeline.md), the
+# Windows/Linux/Web release runs exactly as before — Android is simply skipped.
 on:
   push:
     tags: ["v*"]
@@ -41,6 +45,9 @@ jobs:
       - name: Download slim export templates (latest successful build)
         env:
           GH_TOKEN: ${{ github.token }}
+          # `secrets.X != ''` evaluates to the string "true"/"false" — exposing
+          # the BOOLEAN, never the secret value, so this is safe in a run block.
+          HAS_ANDROID: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         run: |
           set -euo pipefail
           RUN_ID=$(gh run list --workflow=build-templates.yml --status=success \
@@ -53,8 +60,15 @@ jobs:
           gh run download "$RUN_ID" --name godot-template-linux   --dir tpl/linux
           gh run download "$RUN_ID" --name godot-template-windows --dir tpl/windows
           gh run download "$RUN_ID" --name godot-template-web     --dir tpl/web
+          if [ "$HAS_ANDROID" = "true" ]; then
+            gh run download "$RUN_ID" --name godot-template-android --dir tpl/android
+          else
+            echo "::notice::ANDROID_KEYSTORE_BASE64 not set — skipping Android template + export."
+          fi
 
       - name: Install templates where Godot expects them
+        env:
+          HAS_ANDROID: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         run: |
           set -euo pipefail
           DEST="$HOME/.local/share/godot/export_templates/${GODOT_VERSION_DIR}"
@@ -63,6 +77,11 @@ jobs:
           cp tpl/linux/godot.linuxbsd.template_release.x86_64        "$DEST/linux_release.x86_64"
           cp tpl/windows/godot.windows.template_release.x86_64.exe   "$DEST/windows_release_x86_64.exe"
           cp tpl/web/godot.web.template_release.wasm32.nothreads.zip "$DEST/web_nothreads_release.zip"
+          if [ "$HAS_ANDROID" = "true" ]; then
+            cp tpl/android/android_release.apk "$DEST/android_release.apk"
+            cp tpl/android/android_debug.apk   "$DEST/android_debug.apk"
+            cp tpl/android/android_source.zip  "$DEST/android_source.zip"
+          fi
           ls -lah "$DEST"
 
       - name: Fetch headless Godot editor ${{ env.GODOT_REF }}
@@ -75,6 +94,53 @@ jobs:
           chmod +x godot
           ./godot --headless --version
 
+      # ---- Android toolchain (only when the keystore secret is configured) ----
+
+      - name: Set up JDK 17 (Android signing/export)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK (apksigner + zipalign)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        run: |
+          set -euo pipefail
+          SDK="$ANDROID_SDK_ROOT"
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" \
+            "platform-tools" "build-tools;35.0.0" "platforms;android-35" >/dev/null
+
+      - name: Point Godot at the Android SDK + JDK (headless editor settings)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        run: |
+          set -euo pipefail
+          # Headless Godot reads the Android SDK / JDK paths from editor settings.
+          # A minimal file with just these two keys is enough; Godot fills the
+          # rest with defaults on load. (VERIFY on first run: if Godot reports an
+          # "invalid Android SDK path", confirm this filename — Godot 4 uses
+          # editor_settings-4.tres — and that both paths exist.)
+          mkdir -p "$HOME/.config/godot"
+          cat > "$HOME/.config/godot/editor_settings-4.tres" <<EOF
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "$ANDROID_SDK_ROOT"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          EOF
+
+      - name: Decode release keystore
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          echo "Wrote keystore ($(stat -c%s "$RUNNER_TEMP/release.keystore") bytes)"
+
+      # ------------------------------------------------------------------------
+
       - name: Import project (warm the .godot cache)
         run: |
           # Cold-start import first — exporting on a fresh checkout otherwise
@@ -82,15 +148,28 @@ jobs:
           ./godot --headless --path . --import || true
 
       - name: Export clients
+        env:
+          # Godot reads these for release signing when the preset's keystore
+          # fields are empty — exactly so the keystore never lives in the repo.
+          # Empty when the secret is unset; the Android export is guarded below.
+          GODOT_ANDROID_KEYSTORE_RELEASE_PATH: ${{ runner.temp }}/release.keystore
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: ${{ secrets.ANDROID_KEYSTORE_USER }}
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
-          mkdir -p exports/windows exports/linux exports/web
+          mkdir -p exports/windows exports/linux exports/web exports/android
           ./godot --headless --path . --export-release "Windows" exports/windows/ekonia_online.exe
           ./godot --headless --path . --export-release "Linux"   exports/linux/ekonia_online.x86_64
           ./godot --headless --path . --export-release "Web"     exports/web/index.html
+          if [ -f "$RUNNER_TEMP/release.keystore" ]; then
+            ./godot --headless --path . --export-release "Android" exports/android/ekonia.apk
+          else
+            echo "Android keystore not configured — skipping Android export."
+          fi
           chmod +x exports/linux/ekonia_online.x86_64
           echo "---- export sizes ----"
           du -sh exports/windows exports/linux exports/web
+          [ -f exports/android/ekonia.apk ] && du -sh exports/android || true
 
       - name: Install butler
         run: |
@@ -108,4 +187,7 @@ jobs:
           ./butler push exports/windows "${ITCH_GAME}:windows"
           ./butler push exports/linux   "${ITCH_GAME}:linux"
           ./butler push exports/web     "${ITCH_GAME}:web"
+          if [ -f exports/android/ekonia.apk ]; then
+            ./butler push exports/android "${ITCH_GAME}:android"
+          fi
           ./butler status "${ITCH_GAME}"

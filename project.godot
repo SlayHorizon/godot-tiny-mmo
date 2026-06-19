@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Ekonia"
-config/version="0.6.2"
+config/version="0.6.7"
 run/main_scene="res://source/common/main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="slayhorizon"
@@ -179,8 +179,8 @@ player_recall={
 
 [input_devices]
 
-pointing/emulate_touch_from_mouse=true
 pointing/emulate_mouse_from_touch=false
+pointing/emulate_mouse_from_touch.mobile=true
 
 [internationalization]
 
@@ -191,3 +191,4 @@ locale/translations=PackedStringArray("res://data/translations/translations.en_U
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
