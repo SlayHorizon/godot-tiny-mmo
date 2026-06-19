@@ -20,11 +20,15 @@ func data_request_handler(
 		)
 	else:
 		result = "Command not found."
-	WorldServer.curr.data_push.rpc_id(
-		peer_id,
-		&"chat.message",
-		{"text": result, "name": "Server", "id": 1}
-	)
+	# A command that does its own player-facing messaging (e.g. /worldboss announces
+	# server-wide) returns "" to skip this echo — otherwise the admin gets a near-
+	# duplicate "Server" line right after the announcement. Errors still come back here.
+	if not result.is_empty():
+		WorldServer.curr.data_push.rpc_id(
+			peer_id,
+			&"chat.message",
+			{"text": result, "name": "Server", "id": 1}
+		)
 	return {command_name: args}
 
 

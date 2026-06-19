@@ -101,7 +101,7 @@ func stop_music(fade_out_duration: float = 1.0) -> void:
 ## Load and play sound from the given path.
 ## If the resource was previously loaded, it will be retrieved from cache.
 func play_ui_sound(sound_path: String, pitch: float = 1.0) -> bool:
-	return play_ui_sound_stream(_get_sound(sound_path))
+	return play_ui_sound_stream(_get_sound(sound_path), pitch)
 
 
 ## Play sound using the given [AudioStream].

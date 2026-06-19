@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_lu85o"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="2_o3drh"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_tsfw3"]
+[ext_resource type="AudioStream" uid="uid://i5okndex8es" path="res://assets/audio/music/village.ogg" id="2_x51h1"]
 [ext_resource type="Script" uid="uid://ci85a5o8s0jex" path="res://source/common/gameplay/maps/components/fade_occluder_layer.gd" id="3_bauih"]
 [ext_resource type="PackedScene" uid="uid://c80j8qa1y1t2f" path="res://source/common/gameplay/maps/maps/guild_outpost_base/outside_building.tscn" id="3_bhe7f"]
 [ext_resource type="PackedScene" uid="uid://bm5002tcxs41l" path="res://source/common/gameplay/maps/maps/misc_buildings/house.tscn" id="3_naiac"]
@@ -120,6 +121,7 @@ aoi_cell_size = Vector2i(220, 220)
 aoi_visible_radius_cells = 1
 preview_aoi = false
 replicated_props_container = NodePath("ReplicatedPropsContainer")
+music = ExtResource("2_x51h1")
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 metadata/_edit_horizontal_guides_ = [744.0]
 
@@ -338,9 +340,11 @@ position = Vector2(1314, 865)
 
 [node name="GuildHouse" parent="." unique_id=1783528862 instance=ExtResource("2_o3drh")]
 position = Vector2(1323, 688)
-scale = Vector2(2.6774926, 1.173247)
 target_instance = ExtResource("11_4kwnu")
 warper_id = 1
+
+[node name="CollisionShape2D" parent="GuildHouse" index="0" unique_id=129914296]
+position = Vector2(-3, -8)
 
 [node name="TradeHouse" parent="." unique_id=1613866376 instance=ExtResource("2_o3drh")]
 position = Vector2(1832, 986)
@@ -588,3 +592,5 @@ npc_resource = ExtResource("54_iqd18")
 [node name="DungeonMaster" parent="." unique_id=1961457955 instance=ExtResource("39_hs4x2")]
 position = Vector2(1412.8022, 825.29675)
 npc_resource = SubResource("Resource_3ilum")
+
+[editable path="GuildHouse"]

@@ -68,7 +68,7 @@ const SFX_CLICK: String = "res://assets/audio/sfx/ui/ui_click.wav"
 const SFX_BACK: String = "res://assets/audio/sfx/ui/ui_back.wav"
 const SFX_HOVER: String = "res://assets/audio/sfx/ui/ui_hover.wav"
 const SFX_REVEAL: String = "res://assets/audio/sfx/ui/ui_reveal.wav"
-const MUSIC_GATEWAY: String = "res://assets/audio/music/ekonia-main-theme.wav"
+const MUSIC_GATEWAY: String = "res://assets/audio/music/angevin.ogg"
 
 # Release-stage tag shown after the build number in the ConnectionInfo line
 # ("Connected · Ekonia 0.2.0 - Alpha"). The version itself comes live from
@@ -241,7 +241,7 @@ func _play_hover() -> void:
 func _start_gateway_music() -> void:
 	if not (is_instance_valid(Client) and Client.audio_manager):
 		return
-	Client.audio_manager.play_music.call_deferred("res://assets/audio/music/angevin.mp3", 0.0, 0.0, 5.0)
+	Client.audio_manager.play_music.call_deferred(MUSIC_GATEWAY, 0.0, 0.0, 5.0)
 
 
 ## Hover on keyboard/gamepad focus, but only while actually driving by focus — a

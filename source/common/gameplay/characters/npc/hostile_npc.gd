@@ -639,6 +639,9 @@ func _process_synchronization() -> void:
 ## new take_damage path that auto-engages doesn't help when the attacker
 ## stops shooting and walks off without ever entering the detection ring.
 func _process_idle_regen() -> void:
+	# Committed mobs (bosses) don't regen — their HP holds until the fight resumes.
+	if _is_committed():
+		return
 	var hmax: float = stats_component.get_stat(Stat.HEALTH_MAX)
 	var current_h: float = stats_component.get_stat(Stat.HEALTH)
 	if current_h >= hmax:
@@ -969,9 +972,18 @@ func take_damage(amount: float, attacker: Character = null, damage_type: StringN
 
 
 ## Drops the current target and heads home (used when the target dies or is lost).
+## A committed mob (enemy_data.leashes == false: bosses + world bosses) never leashes
+## home and never regenerates — it holds its current HP and just idles in place when it
+## loses its target, re-aggroing via _find_targets the moment a player is back in reach.
+## You can't reset a boss by dying or running off; with nobody around it simply idles.
+## (Distance-leashing mobs keep the normal march-home + regen.)
+func _is_committed() -> bool:
+	return enemy_data != null and not enemy_data.leashes
+
+
 func _abandon_target() -> void:
 	targeted_player = null
-	enemy_state = EnemyState.RETURNING
+	enemy_state = EnemyState.IDLE if _is_committed() else EnemyState.RETURNING
 
 
 func _process_death() -> void:
@@ -1027,6 +1039,6 @@ func _process_death() -> void:
 ## possible_targets / target cleanup.
 func stop_chase() -> void:
 	if enemy_state != EnemyState.CHASE and enemy_state != EnemyState.ATTACK: return
-	enemy_state = EnemyState.RETURNING
+	enemy_state = EnemyState.IDLE if _is_committed() else EnemyState.RETURNING
 	possible_targets.erase(targeted_player)
 	targeted_player = null

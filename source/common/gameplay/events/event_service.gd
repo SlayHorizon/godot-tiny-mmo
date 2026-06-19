@@ -54,8 +54,37 @@ static func start_world_boss(instance: ServerInstance, spawn_container: Replicat
 	_event_instance = instance
 	boss.died.connect(_on_world_boss_died)
 
-	_announce("A world boss has risen: %s! Rally and bring it down — everyone who fights shares the spoils." % boss.display_name)
-	return "World boss '%s' spawned." % boss.display_name
+	# Server-wide rally — name WHERE it is so players can actually find it.
+	var where: String = "the world"
+	if instance != null and instance.instance_resource != null:
+		where = String(instance.instance_resource.instance_name)
+	_announce("A world boss has risen in %s: %s! Rally and bring it down — everyone who fights shares the spoils." % [where, boss.display_name])
+	return "" # success — the server-wide announce IS the admin's confirmation (skip the echo)
+
+
+## Admin abort: dispel the active world boss WITHOUT distributing rewards (use when a
+## fight bugs out). A real kill still rewards everyone via RewardService. Server-only.
+static func end_world_boss() -> String:
+	if not is_instance_valid(_active_boss):
+		return "No world boss is active."
+	var boss: HostileNpc = _active_boss
+	var boss_name: String = boss.display_name
+	_active_boss = null # clear first so the died handler can't also fire
+
+	# Remove the body cleanly (replicated to clients). Despawn does NOT emit `died`,
+	# so no rewards are handed out — this is an abort, not a kill.
+	if boss.container != null:
+		var child_id: int = boss.container.child_id_of_node(boss)
+		if child_id >= 0:
+			boss.container.despawn_dynamic(child_id)
+		else:
+			boss.queue_free()
+	else:
+		boss.queue_free()
+
+	_announce("%s has been dispelled by an admin." % boss_name)
+	_event_instance = null
+	return "" # success — the dispel announce above is the confirmation (skip the echo)
 
 
 ## Boss down: the rewards were already split by RewardService inside

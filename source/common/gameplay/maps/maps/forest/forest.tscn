@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_5atd4"]
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_3pcnk"]
+[ext_resource type="AudioStream" uid="uid://d3x02k8rxue5y" path="res://assets/audio/music/lost_woods.ogg" id="2_7mrv4"]
 [ext_resource type="PackedScene" uid="uid://us4f0lvc42t5" path="res://source/common/gameplay/maps/maps/misc_buildings/goblin_shaman_house.tscn" id="3_1iruy"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="4_vtg6w"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="5_3a2x5"]
@@ -33,6 +34,7 @@ aoi_visible_radius_cells = 1
 preview_aoi = false
 aoi_test_point = Vector2(900, 0)
 replicated_props_container = NodePath("ReplicatedPropsContainer")
+music = ExtResource("2_7mrv4")
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
 [node name="World_tiles" type="Node2D" parent="." unique_id=471749141]

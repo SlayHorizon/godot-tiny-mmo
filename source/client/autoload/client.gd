@@ -18,8 +18,12 @@ var theme: Theme:
 			theme = load(ProjectSettings.get_setting("gui/theme/custom", "res://source/client/ui/themes/theme_navy.tres"))
 		return theme
 
+## Crossfade duration when area music changes on entering a new instance/map.
+const MUSIC_CROSSFADE_S: float = 1.5
+
 @onready var world_clock: WorldClock = $WorldClock
 @onready var audio_manager: AudioManager = $AudioManager
+@onready var instance_manager: InstanceManagerClient = $InstanceManager
 
 
 func _enter_tree() -> void:
@@ -59,10 +63,25 @@ func _on_connection_succeeded() -> void:
 	peer_id = multiplayer.get_unique_id()
 	is_connected_to_server = true
 
-	audio_manager.stop_music(5.0) ## Just for example might remove later.
+	# Area music: crossfade to each map's track as the player enters it. Connect once
+	# (idempotent across reconnects). Replaces the old stop_music placeholder — the area
+	# track now takes over from the gateway music instead of fading to silence.
+	if not instance_manager.instance_changed.is_connected(_on_instance_changed):
+		instance_manager.instance_changed.connect(_on_instance_changed)
 
 	if OS.has_feature("debug"):
 		DisplayServer.window_set_title("Client - %d" % peer_id)
+
+
+## Crossfade to the new instance's map music. Maps without a `music` set keep whatever
+## is already playing, so the world never snaps to silence (a small building inherits
+## the overworld track, etc.). See InstanceManagerClient.instance_changed.
+func _on_instance_changed(instance: InstanceClient) -> void:
+	if instance == null or instance.instance_map == null:
+		return
+	var track: AudioStream = instance.instance_map.music
+	if track != null:
+		audio_manager.play_music_stream(track, 0.0, 0.0, MUSIC_CROSSFADE_S)
 
 
 func _on_connection_failed() -> void:

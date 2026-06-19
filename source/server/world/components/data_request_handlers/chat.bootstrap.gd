@@ -19,11 +19,8 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 
 	var all: Array = []
 
-	# World (instance/global_0)
-	all.append_array(chat_service.get_channel_history(ChatConstants.CHANNEL_WORLD, limit))
-
-	# Personal system log (sys:<player_id>)
-	all.append_array(chat_service.get_system_history(player.player_id, limit))
+	# World + system chat are ephemeral (live-only) — nothing to replay on join.
+	# Only guild + DM keep history.
 
 	# Guild (guild:<guild_id>) only if player is in a guild
 	var guild_id: int = int(player.active_guild_id)

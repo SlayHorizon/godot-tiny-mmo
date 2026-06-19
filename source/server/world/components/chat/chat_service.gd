@@ -94,15 +94,6 @@ func handle_send_dm(
 	return {}
 
 
-func get_channel_history(channel: int, limit: int) -> Array:
-	if store == null:
-		return []
-
-	var convo_id: String = ChatConstants.channel_conversation_id(channel)
-	var rows: Array = store.fetch_last(convo_id, limit)
-	return _rows_to_payload(rows, convo_id, {"channel": channel})
-
-
 func get_dm_history(self_id: int, other_id: int, limit: int) -> Array:
 	if store == null:
 		return []
@@ -124,14 +115,13 @@ func get_guild_history(guild_id: int, limit: int) -> Array:
 
 
 func _handle_send_world(instance: ServerInstance, player: PlayerResource, text: String) -> Dictionary:
-	# Current behavior: broadcast to everyone in the same instance/map.
-	return _persist_and_broadcast_to_instance(
+	# Broadcast to everyone in the same instance/map. World chat is EPHEMERAL and
+	# live-only — never written to SQLite, never replayed on join.
+	return _broadcast_world_to_instance(
 		instance,
 		player,
 		ChatConstants.CHANNEL_WORLD,
 		ChatConstants.channel_conversation_id(ChatConstants.CHANNEL_WORLD),
-		"global",
-		"{}",
 		text
 	)
 
@@ -200,23 +190,27 @@ func _handle_send_guild(instance: ServerInstance, player: PlayerResource, text: 
 const RECENT_MAX: int = 100
 var recent_channel_messages: Array = []
 
+## World (public) + System chat are EPHEMERAL and LIVE-ONLY — never written to SQLite
+## and never replayed on join (zone chat in every MMO starts from when you arrive; a
+## newly-joined player just sees messages from here on). Guild + DM keep their DB
+## history. These monotonic counters mint ids for the unpersisted messages — unique
+## within each conversation, which is how the client keys them.
+var _world_msg_seq: int = 0
+var _system_msg_seq: int = 0
 
-func _persist_and_broadcast_to_instance(
+
+## World (public) chat: broadcast LIVE to everyone in the instance — no persistence,
+## no scrollback (live-only, like zone chat in any MMO). Manual peer loop (not
+## propagate_rpc) so we can skip recipients who've blocked the sender.
+func _broadcast_world_to_instance(
 	instance: ServerInstance,
 	player: PlayerResource,
 	channel: int,
 	convo_id: String,
-	convo_type: String,
-	meta_json: String,
 	text: String
 ) -> Dictionary:
-	if store == null:
-		return {"error": 3, "ok": false, "message": "Chat store not initialized."}
-
-	store.ensure_conversation(convo_id, convo_type, meta_json)
-
 	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
-	var saved: Dictionary = store.insert_message(convo_id, now_ms, player.player_id, player.display_name, text)
+	_world_msg_seq += 1
 
 	var ws_world: WorldServer = instance.world_server
 	var world_guild_name: String = ""
@@ -232,13 +226,11 @@ func _persist_and_broadcast_to_instance(
 		"peer_id": player.current_peer_id,
 		"title": player.display_title,
 		"guild_name": world_guild_name,
-		"msg_id": int(saved.get("msg_id", 0)),
+		"msg_id": _world_msg_seq,
 		"time_ms": now_ms,
 	}
 
-	# Record an enriched copy for the admin dashboard — pulls fields the
-	# clients don't need (account name, instance name) so a moderator can
-	# disambiguate two players with the same display name.
+	# Enriched copy for the admin dashboard tail (account + instance for mod context).
 	var enriched: Dictionary = pushed.duplicate()
 	enriched["account"] = player.account_name
 	enriched["channel_name"] = _channel_name(channel)
@@ -247,8 +239,6 @@ func _persist_and_broadcast_to_instance(
 		enriched["instance"] = instance.instance_resource.instance_name
 	_record_recent(enriched)
 
-	# Manual peer loop instead of propagate_rpc — we need to skip recipients
-	# who have the sender blocked, and propagate_rpc has no filter hook.
 	var ws_broadcast: WorldServer = instance.world_server
 	for peer_id: int in instance.connected_peers:
 		var recipient: PlayerResource = ws_broadcast.connected_players.get(peer_id)
@@ -307,50 +297,30 @@ func _rows_to_payload(rows: Array, conversation_id: String, extra: Dictionary) -
 	return out
 
 
-func get_system_history(player_id: int, limit: int) -> Array:
-	if store == null:
-		return []
-	if player_id <= 0:
-		return []
-
-	var convo_id: String = ChatConstants.system_conversation_id(player_id)
-	var rows: Array = store.fetch_last(convo_id, limit)
-
-	return _rows_to_payload(rows, convo_id, {"channel": ChatConstants.CHANNEL_SYSTEM})
-
-
+## Send a one-off SYSTEM notice (MOTD, mute/jail/broadcast, level unlock, world-boss
+## announce, ...) to one online player. EPHEMERAL like world chat — system notices are
+## never persisted, so the per-player system log can't pile up dozens of stale MOTDs
+## across logins. A player offline when one fires simply doesn't get it; these are
+## courtesy messages (enforcement like mute/jail is applied server-side anyway).
 func push_system_to_player(instance: ServerInstance, player_id: int, text: String) -> void:
-	if store == null:
-		return
-
-	var convo_id: String = ChatConstants.system_conversation_id(player_id)
-	store.ensure_conversation(convo_id, "system", "{\"player_id\":%d}" % player_id)
-
-	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
-	var saved: Dictionary = store.insert_message(
-		convo_id,
-		now_ms,
-		ChatConstants.SYSTEM_SENDER_ID,
-		ChatConstants.SYSTEM_SENDER_NAME,
-		text
-	)
-
-	var pushed: Dictionary = {
-		"conversation_id": convo_id,
-		"channel": ChatConstants.CHANNEL_SYSTEM,
-		"text": text,
-		"name": ChatConstants.SYSTEM_SENDER_NAME,
-		"id": ChatConstants.SYSTEM_SENDER_ID,
-		"msg_id": int(saved.get("msg_id", 0)),
-		"time_ms": now_ms,
-	}
-
-	# instance is just a handle to the WorldServer for peer-id lookup; some
-	# callers (e.g. BasingService scheduled ticks) don't have a per-instance
-	# context, so fall back to WorldServer.curr when null.
+	# instance is just a handle to the WorldServer for peer-id lookup; some callers
+	# (e.g. BasingService scheduled ticks) have no per-instance context, so fall back
+	# to WorldServer.curr when null.
 	var ws: WorldServer = instance.world_server if instance != null else WorldServer.curr
 	if ws == null:
 		return
 	var peer_id: int = int(ws.player_id_to_peer_id.get(player_id, 0))
-	if peer_id > 0:
-		WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", pushed)
+	if peer_id <= 0:
+		return # offline — system notices aren't stored, so there's nothing to deliver
+
+	_system_msg_seq += 1
+	var pushed: Dictionary = {
+		"conversation_id": ChatConstants.system_conversation_id(player_id),
+		"channel": ChatConstants.CHANNEL_SYSTEM,
+		"text": text,
+		"name": ChatConstants.SYSTEM_SENDER_NAME,
+		"id": ChatConstants.SYSTEM_SENDER_ID,
+		"msg_id": _system_msg_seq,
+		"time_ms": int(Time.get_unix_time_from_system() * 1000.0),
+	}
+	WorldServer.curr.data_push.rpc_id(peer_id, &"chat.message", pushed)
