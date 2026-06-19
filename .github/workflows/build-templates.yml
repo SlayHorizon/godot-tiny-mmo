@@ -110,6 +110,18 @@ jobs:
           "$SDKMANAGER" "platform-tools" "build-tools;$BUILD_TOOLS" "platforms;android-$TARGET_SDK" "ndk;$NDK_VERSION"
           echo "ANDROID_NDK_ROOT=$SDK/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
 
+      - name: Install Swappy frame-pacing lib (Android)
+        if: matrix.name == 'android'
+        working-directory: godot
+        run: |
+          set -eo pipefail
+          # Godot 4.x REQUIRES the Swappy frame-pacing library for Android or scons
+          # aborts (the exact error this fixes). This downloads + installs it into
+          # thirdparty/. Fallback if this download ever fails: append `swappy=no` to
+          # BOTH Android scons lines (the matrix one + the debug build below) —
+          # builds, but Godot then guarantees frame-pacing stutter on Android.
+          python3 misc/scripts/install_swappy_android.py
+
       - name: Compile template
         working-directory: godot
         run: scons ${{ matrix.scons }} -j"$(nproc)" verbose=no progress=no

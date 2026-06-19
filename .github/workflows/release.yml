@@ -42,12 +42,28 @@ jobs:
             && echo "::notice::The references above rely on the server-class stub export plugin." \
             || echo "No server-class references in client-shipped code."
 
+      - name: Detect Android config
+        id: android
+        # `secrets` is NOT allowed in `if:` conditions (GitHub limitation), but it
+        # IS allowed in a step's `env`. So read it here ONCE into a plain output
+        # flag, and gate every Android step on steps.android.outputs.enabled.
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -n "${ANDROID_KEYSTORE_BASE64:-}" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Android keystore configured — Android will build + ship."
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANDROID_KEYSTORE_BASE64 not set — Android skipped (Win/Linux/Web unaffected)."
+          fi
+
       - name: Download slim export templates (latest successful build)
         env:
           GH_TOKEN: ${{ github.token }}
-          # `secrets.X != ''` evaluates to the string "true"/"false" — exposing
-          # the BOOLEAN, never the secret value, so this is safe in a run block.
-          HAS_ANDROID: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+          # "true"/"false" from the detect step above — never the secret itself.
+          HAS_ANDROID: ${{ steps.android.outputs.enabled }}
         run: |
           set -euo pipefail
           RUN_ID=$(gh run list --workflow=build-templates.yml --status=success \
@@ -68,7 +84,7 @@ jobs:
 
       - name: Install templates where Godot expects them
         env:
-          HAS_ANDROID: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+          HAS_ANDROID: ${{ steps.android.outputs.enabled }}
         run: |
           set -euo pipefail
           DEST="$HOME/.local/share/godot/export_templates/${GODOT_VERSION_DIR}"
@@ -97,14 +113,14 @@ jobs:
       # ---- Android toolchain (only when the keystore secret is configured) ----
 
       - name: Set up JDK 17 (Android signing/export)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: steps.android.outputs.enabled == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Set up Android SDK (apksigner + zipalign)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: steps.android.outputs.enabled == 'true'
         run: |
           set -eo pipefail
           SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
@@ -115,7 +131,7 @@ jobs:
             "platform-tools" "build-tools;36.1.0" "platforms;android-36"
 
       - name: Point Godot at the Android SDK + JDK (headless editor settings)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: steps.android.outputs.enabled == 'true'
         run: |
           set -euo pipefail
           # Headless Godot reads the Android SDK / JDK paths from editor settings.
@@ -133,7 +149,7 @@ jobs:
           EOF
 
       - name: Decode release keystore
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        if: steps.android.outputs.enabled == 'true'
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
