@@ -57,6 +57,27 @@
             </table>
           </div>
         </div>
+
+        <!-- Accounts -->
+        <div class="card">
+          <div class="card-head">
+            <h2>Accounts</h2>
+            <span class="muted small" id="accountsMeta">—</span>
+          </div>
+          <div class="row" style="margin-bottom: 10px;">
+            <input id="accountFilter" class="input" placeholder="Filter by username or id…" />
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>ID</th><th>Username</th><th>Last world</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="accountsBody">
+                <tr><td colspan="4" class="muted center">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- WORLD DETAIL view: scoped to one world -->
@@ -196,6 +217,23 @@
         <div class="row">
           <button id="masterLogsClose" class="btn ghost">Close</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Account password reset modal -->
+    <div id="resetPwModal" class="modal hidden">
+      <div class="modal-card">
+        <h3 id="resetPwTitle">Reset password</h3>
+        <label class="field-label">New password</label>
+        <div class="row" style="margin-bottom: 8px;">
+          <input id="resetPwInput" type="text" placeholder="New password" autocomplete="off" spellcheck="false" style="flex: 1; min-width: 0;" />
+          <button id="resetPwToggle" type="button" class="btn ghost small">Hide</button>
+        </div>
+        <div class="row">
+          <button id="resetPwConfirm" class="btn primary">Reset</button>
+          <button id="resetPwCancel" class="btn ghost">Cancel</button>
+        </div>
+        <p id="resetPwErr" class="err"></p>
       </div>
     </div>
   </section>

@@ -26,6 +26,7 @@
 [ext_resource type="Resource" uid="uid://dclt4rvqc51ri" path="res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres" id="12_1vpp3"]
 [ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="14_1vpp3"]
 [ext_resource type="PackedScene" path="res://source/common/gameplay/lighting/firefly.tscn" id="26_4tbu3"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/lighting/campfire.tscn" id="27_o3pwt"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_w1xny"]
 normal = Vector2(-1, 0)
@@ -253,3 +254,6 @@ position = Vector2(1744.4976, 1340.1512)
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=162990447]
 color = Color(0.48452926, 0.48452926, 0.6262097, 1)
+
+[node name="Campfire" parent="." unique_id=1909922708 instance=ExtResource("27_o3pwt")]
+position = Vector2(2520, 1784)

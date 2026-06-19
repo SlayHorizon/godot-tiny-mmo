@@ -162,6 +162,7 @@ async function refreshCurrent() {
   if (!(await refreshStatus())) return;
   if (view === "home") {
     await refreshWorldsList();
+    await refreshAccounts();
   } else if (view === "world") {
     // Worlds list gives us the header stats; sub-tab fetches scoped data.
     await refreshWorldHeader();
@@ -211,6 +212,67 @@ async function refreshWorldsList() {
       </tr>
     `;
   }).join("");
+}
+
+// ---------- HOME — accounts ----------
+
+let lastAccounts = [];
+let resetPwUsername = "";
+
+async function refreshAccounts() {
+  const r = await api("/v1/accounts");
+  if (!r.ok) return;
+  lastAccounts = r.accounts || [];
+  renderAccounts();
+}
+
+function renderAccounts() {
+  const filter = ($("accountFilter").value || "").toLowerCase();
+  const rows = filter
+    ? lastAccounts.filter(a =>
+        String(a.username || "").toLowerCase().includes(filter) ||
+        String(a.id).includes(filter))
+    : lastAccounts;
+  $("accountsMeta").textContent = `${rows.length} account${rows.length === 1 ? "" : "s"}${filter ? ` (of ${lastAccounts.length})` : ""}`;
+  const body = $("accountsBody");
+  if (rows.length === 0) {
+    body.innerHTML = `<tr><td colspan="4" class="muted center">${filter ? "No matches." : "No accounts."}</td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(a => `
+    <tr>
+      <td class="small muted">${esc(a.id)}</td>
+      <td><strong>${esc(a.username)}</strong></td>
+      <td class="small">${esc(a.last_world_name || "—")}</td>
+      <td class="actions">
+        <button class="btn small" data-acct-reset="${esc(a.username)}">Reset password</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function openResetPw(username) {
+  resetPwUsername = username;
+  $("resetPwTitle").textContent = `Reset password — ${username}`;
+  $("resetPwInput").value = "";
+  $("resetPwErr").textContent = "";
+  // Default to visible — you're setting a value, not typing your own secret,
+  // so confirming exactly what you pasted matters more than masking.
+  $("resetPwInput").type = "text";
+  $("resetPwToggle").textContent = "Hide";
+  $("resetPwModal").classList.remove("hidden");
+  $("resetPwInput").focus();
+}
+
+function closeResetPw() { $("resetPwModal").classList.add("hidden"); resetPwUsername = ""; }
+
+async function confirmResetPw() {
+  const pw = $("resetPwInput").value;
+  if (!pw) { $("resetPwErr").textContent = "Password can't be empty."; return; }
+  const r = await api("/v1/accounts/reset_password", { username: resetPwUsername, new_password: pw });
+  if (!r.ok) { $("resetPwErr").textContent = `Failed: ${r.error || "unknown"}`; return; }
+  closeResetPw();
+  alert(`Password reset for "${r.username}".`);
 }
 
 // ---------- WORLD header ----------
@@ -637,6 +699,26 @@ $("playersBody").addEventListener("click", (e) => {
 });
 
 $("playerFilter").addEventListener("input", renderPlayers);
+
+$("accountFilter").addEventListener("input", renderAccounts);
+$("accountsBody").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-acct-reset]");
+  if (!btn) return;
+  openResetPw(btn.dataset.acctReset);
+});
+$("resetPwConfirm").onclick = confirmResetPw;
+$("resetPwCancel").onclick = closeResetPw;
+$("resetPwToggle").onclick = () => {
+  const inp = $("resetPwInput");
+  const reveal = inp.type === "password";
+  inp.type = reveal ? "text" : "password";
+  $("resetPwToggle").textContent = reveal ? "Hide" : "Show";
+};
+$("resetPwInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") confirmResetPw();
+  if (e.key === "Escape") closeResetPw();
+});
+
 $("chatChannelFilter").addEventListener("change", renderChat);
 $("chatTextFilter").addEventListener("input", renderChat);
 

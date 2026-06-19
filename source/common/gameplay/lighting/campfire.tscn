@@ -1,0 +1,97 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/lighting/campfire.gd" id="1_campfire"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/structures/stations/bonfire/bonfire_02_sheet.png" id="2_base"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/structures/stations/bonfire/fire_01_sheet.png" id="3_fire"]
+[ext_resource type="Texture2D" path="res://source/common/gameplay/lighting/light_radial.tres" id="4_glow"]
+
+[sub_resource type="AtlasTexture" id="Atlas_base_0"]
+atlas = ExtResource("2_base")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_base_1"]
+atlas = ExtResource("2_base")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_base_2"]
+atlas = ExtResource("2_base")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_base_3"]
+atlas = ExtResource("2_base")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="Atlas_fire_0"]
+atlas = ExtResource("3_fire")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="Atlas_fire_1"]
+atlas = ExtResource("3_fire")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="Atlas_fire_2"]
+atlas = ExtResource("3_fire")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="Atlas_fire_3"]
+atlas = ExtResource("3_fire")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_base"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_base_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_base_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_base_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_base_3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 7.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fire"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_fire_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_fire_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_fire_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_fire_3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 7.0
+}]
+
+[node name="Campfire" type="Node2D"]
+script = ExtResource("1_campfire")
+
+[node name="Base" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_base")
+autoplay = "default"
+
+[node name="Fire" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -10)
+sprite_frames = SubResource("SpriteFrames_fire")
+autoplay = "default"
+
+[node name="Light" type="PointLight2D" parent="."]
+position = Vector2(0, -6)
+texture = ExtResource("4_glow")
+color = Color(1, 0.62, 0.37, 1)
+energy = 1.1
+texture_scale = 1.5

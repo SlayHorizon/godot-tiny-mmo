@@ -20,6 +20,8 @@ extends "res://addons/httpserver/http_server.gd"
 ##   POST /v1/players/kick        — body {world_id, player_id}
 ##   POST /v1/players/grant       — body {world_id, player_id, role}
 ##   POST /v1/players/revoke      — body {world_id, player_id, role}
+##   GET  /v1/accounts            — registered accounts (id/username, no password)
+##   POST /v1/accounts/reset_password — body {username, new_password}
 ##
 ## Auth
 ##   Bearer token in either header `Authorization: Bearer <token>` or query
@@ -66,6 +68,8 @@ func _ready() -> void:
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/kick",      _handle_player_kick)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/grant",     _handle_player_grant)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/revoke",    _handle_player_revoke)
+	router.register_route(HTTPClient.Method.METHOD_GET,  &"/v1/accounts",                _handle_accounts)
+	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/accounts/reset_password", _handle_account_reset_password)
 
 	server.listen(PORT, BIND_ADDRESS)
 	ServerLog.info("Dashboard listening on %s:%d" % [BIND_ADDRESS, PORT])
@@ -309,6 +313,48 @@ func _handle_player_revoke(payload: Dictionary) -> Dictionary:
 	if not world_manager.tell_world_to_revoke_role(world_id, player_id, role):
 		return {"ok": false, "error": "unknown_world"}
 	return {"ok": true}
+
+
+# --- Account endpoints ---
+
+## Lists registered accounts (id + username + last world) so the dashboard can
+## show who exists. Deliberately returns NO password material.
+func _handle_accounts(payload: Dictionary) -> Dictionary:
+	if not _check_auth(payload):
+		return _unauthorized()
+	var rows: Array = []
+	for username: Variant in authentication_manager.account_collection.collection:
+		var account: AccountResource = authentication_manager.account_collection.collection[username]
+		if account == null:
+			continue
+		rows.append({
+			"id": account.id,
+			"username": account.username,
+			"last_world_name": account.last_world_name,
+		})
+	rows.sort_custom(func(a, b): return str(a["username"]) < str(b["username"]))
+	return {"ok": true, "accounts": rows}
+
+
+## Resets an account's password to a new value, hashed with the SAME
+## PasswordHasher the login path uses (so it verifies). Runs inside the master
+## process against the live in-memory collection, so it takes effect for the
+## next login immediately — and persists to disk right away.
+func _handle_account_reset_password(payload: Dictionary) -> Dictionary:
+	if not _check_auth(payload):
+		return _unauthorized()
+	var username: String = str(payload.get("username", "")).strip_edges().to_lower()
+	var new_password: String = str(payload.get("new_password", ""))
+	if username.is_empty() or new_password.is_empty():
+		return {"ok": false, "error": "bad_args"}
+	var collection: Dictionary = authentication_manager.account_collection.collection
+	if not collection.has(username):
+		return {"ok": false, "error": "account_not_found"}
+	var account: AccountResource = collection[username]
+	account.password = PasswordHasher.hash_password(new_password)
+	authentication_manager.save_account_collection()
+	ServerLog.info("Dashboard: reset password for account '%s' (id %d)." % [account.username, account.id])
+	return {"ok": true, "username": account.username, "id": account.id}
 
 
 # --- auth helpers ---
