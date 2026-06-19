@@ -334,7 +334,7 @@ collision_mask = 7
 shape = SubResource("WorldBoundaryShape2D_bauih")
 
 [node name="Spawn" parent="." unique_id=906857745 instance=ExtResource("2_o3drh")]
-position = Vector2(1329, 839)
+position = Vector2(1314, 865)
 
 [node name="GuildHouse" parent="." unique_id=1783528862 instance=ExtResource("2_o3drh")]
 position = Vector2(1323, 688)

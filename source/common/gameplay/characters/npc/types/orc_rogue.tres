@@ -3,12 +3,23 @@
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_knvur"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_xmfpj"]
 [ext_resource type="SpriteFrames" uid="uid://q0781507yc0n" path="res://source/common/gameplay/characters/sprite_frames/orc_rogue.tres" id="3_knvur"]
+[ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="4_xmfpj"]
 
 [resource]
 script = ExtResource("2_xmfpj")
 enemy_type = &"orc_rogue"
 display_name = "Orc Rogue"
 skin = ExtResource("3_knvur")
+max_health = 150.0
+attack_damage = 20.0
+attack_cooldown = 1.2
+armor = 6.0
+weapon = ExtResource("4_xmfpj")
+move_speed = 70
+max_distance_from_spawn = 200
+chase_on_area = true
+xp_reward = 20
+respawn_delay = 20.0
 metadata/_custom_type_script = "uid://swk8b8q32qv2"
 metadata/slug = &"orc_rogue"
 metadata/id = 14
