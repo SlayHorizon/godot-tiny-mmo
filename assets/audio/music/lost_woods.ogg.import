@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/lost_woods.ogg-50202a6f6d5869f62d984ac5917596
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0

@@ -47,6 +47,11 @@ enum ZoneModifiers {
 ## the instance (see Client._on_instance_changed). Leave empty to keep whatever track
 ## is already playing — e.g. a small building inherits the overworld's music.
 @export var music: AudioStream
+## Ambient weather overlays applied when the local player enters this map. Each entry is
+## one stacked effect, so a map can run several at once (e.g. leaves + cloud shadows +
+## fog). Empty = clear skies. Driven by the same instance hook as [member music]. See
+## WeatherLayer.
+@export var weather: Array[WeatherResource]
 
 var warpers: Dictionary[int, Warper]
 ## shop registry id -> ShopResource, gathered from the merchant nodes placed in this

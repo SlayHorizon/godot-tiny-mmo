@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="WeatherResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/weather/weather_resource.gd" id="1_weather"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/fx/leaf.png" id="2_leaf"]
+
+[resource]
+script = ExtResource("1_weather")
+texture = ExtResource("2_leaf")
+h_frames = 6
+color = Color(1, 1, 1, 0.9)
+amount = 28
+lifetime = 7.0
+fall_speed = 60.0
+wind = 32.0
+spread_degrees = 40.0
+scale_min = 1.3
+scale_max = 2.5
+spin_degrees = 130.0

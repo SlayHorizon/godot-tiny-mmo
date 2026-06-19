@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/shadow_temple.ogg-7c9a532feb45eb1b1a7bc09d72e
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0

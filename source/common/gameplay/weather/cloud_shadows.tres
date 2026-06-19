@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeatherResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/weather/weather_resource.gd" id="1_weather"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/fx/cloud.png" id="2_cloud"]
+
+[resource]
+script = ExtResource("1_weather")
+texture = ExtResource("2_cloud")
+h_frames = 1
+emit_mode = 1
+color = Color(0.13, 0.14, 0.2, 0.16)
+amount = 3
+lifetime = 28.0
+fall_speed = 2.0
+wind = 8.0
+spread_degrees = 8.0
+scale_min = 3.0
+scale_max = 5.5
+spin_degrees = 0.0

@@ -58,6 +58,7 @@ static func start_world_boss(instance: ServerInstance, spawn_container: Replicat
 	var where: String = "the world"
 	if instance != null and instance.instance_resource != null:
 		where = String(instance.instance_resource.instance_name)
+	# (The combat music cue is fired by the boss's own BossController on spawn.)
 	_announce("A world boss has risen in %s: %s! Rally and bring it down — everyone who fights shares the spoils." % [where, boss.display_name])
 	return "" # success — the server-wide announce IS the admin's confirmation (skip the echo)
 
@@ -83,6 +84,9 @@ static func end_world_boss() -> String:
 		boss.queue_free()
 
 	_announce("%s has been dispelled by an admin." % boss_name)
+	# Abort = boss removed without a death, so the brain's victory cue never fires —
+	# tell clients to drop the combat track and return to area music.
+	BossController.push_boss_music(_event_instance, "end")
 	_event_instance = null
 	return "" # success — the dispel announce above is the confirmation (skip the echo)
 
@@ -91,6 +95,7 @@ static func end_world_boss() -> String:
 ## HostileNpc.die(), so here we just trumpet the win server-wide and clear the slot.
 static func _on_world_boss_died(_killer: Character) -> void:
 	var boss_name: String = _active_boss.display_name if is_instance_valid(_active_boss) else "The world boss"
+	# (The victory sting is fired by the boss's own BossController on its death signal.)
 	_announce("%s has fallen! The spoils are shared among all who fought it." % boss_name)
 	_active_boss = null
 	_event_instance = null

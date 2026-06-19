@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/lighting/firefly.gd" id="1_firefly"]
+[ext_resource type="Texture2D" path="res://source/common/gameplay/lighting/light_radial.tres" id="2_glow"]
+
+[node name="Firefly" type="Node2D"]
+script = ExtResource("1_firefly")
+
+[node name="Glow" type="Sprite2D" parent="."]
+texture = ExtResource("2_glow")
+scale = Vector2(0.12, 0.12)
+modulate = Color(1, 1, 0.7, 0.9)
+
+[node name="Light" type="PointLight2D" parent="."]
+texture = ExtResource("2_glow")
+color = Color(0.85, 1, 0.55, 1)
+energy = 0.8
+texture_scale = 0.8

@@ -24,7 +24,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_e5kiw")
 initial_panel = NodePath("MainContainer/HBoxContainer/General")
-nav_panels = [NodePath("MainContainer/HBoxContainer/General"), NodePath("MainContainer/HBoxContainer/ControlsSettings")]
+nav_panels = [NodePath("MainContainer/HBoxContainer/General"), NodePath("MainContainer/HBoxContainer/GraphicsSettings"), NodePath("MainContainer/HBoxContainer/ControlsSettings")]
 metadata/_custom_type_script = "uid://bbkmu4fwfxs4p"
 metadata/_edit_vertical_guides_ = [-66.0]
 
@@ -56,7 +56,7 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="MainContainer" unique_id=338758405]
 layout_mode = 2
 
-[node name="Sidebar" type="Control" parent="MainContainer/HBoxContainer" unique_id=866616009 node_paths=PackedStringArray("navigator", "close_button", "gameplay_panel", "gameplay_button", "controls_panel", "controls_button")]
+[node name="Sidebar" type="Control" parent="MainContainer/HBoxContainer" unique_id=866616009 node_paths=PackedStringArray("navigator", "close_button", "gameplay_panel", "gameplay_button", "graphics_panel", "graphics_button", "controls_panel", "controls_button")]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 script = ExtResource("2_e5kiw")
@@ -64,6 +64,8 @@ navigator = NodePath("../../..")
 close_button = NodePath("ButtonsContainer/CloseButton")
 gameplay_panel = NodePath("../General")
 gameplay_button = NodePath("ButtonsContainer/VBoxContainer/General")
+graphics_panel = NodePath("../GraphicsSettings")
+graphics_button = NodePath("ButtonsContainer/VBoxContainer/Graphics")
 controls_panel = NodePath("../ControlsSettings")
 controls_button = NodePath("ButtonsContainer/VBoxContainer/Controls")
 
@@ -90,6 +92,15 @@ theme_override_font_sizes/font_size = 20
 toggle_mode = true
 button_group = ExtResource("3_ds323")
 text = "General"
+alignment = 0
+
+[node name="Graphics" type="Button" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer/VBoxContainer" unique_id=700000020]
+layout_mode = 2
+theme_type_variation = &"FlatButton"
+theme_override_font_sizes/font_size = 20
+toggle_mode = true
+button_group = ExtResource("3_ds323")
+text = "Graphics"
 alignment = 0
 
 [node name="Controls" type="OptionButton" parent="MainContainer/HBoxContainer/Sidebar/ButtonsContainer/VBoxContainer" unique_id=1636196681]
@@ -235,6 +246,40 @@ text = "SettingName"
 script = ExtResource("8_x8gi7")
 setting_section = &"gateway"
 setting_property = &"randomize"
+controller = NodePath(".")
+
+[node name="GraphicsSettings" type="PanelContainer" parent="MainContainer/HBoxContainer" unique_id=700000010]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_8ix7g")
+script = ExtResource("3_8ix7g")
+metadata/_custom_type_script = "uid://c437u84bullo2"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/HBoxContainer/GraphicsSettings" unique_id=700000013]
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+scroll_hint_mode = 1
+tile_scroll_hint = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer/GraphicsSettings/ScrollContainer" unique_id=700000014]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="MainContainer/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=700000015]
+layout_mode = 2
+text = "Graphics"
+
+[node name="WeatherEffects" type="CheckButton" parent="MainContainer/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=700000016 node_paths=PackedStringArray("controller")]
+layout_mode = 2
+text = "SettingName"
+script = ExtResource("8_x8gi7")
+setting_section = &"general"
+setting_property = &"weather_effects"
 controller = NodePath(".")
 
 [node name="ControlsSettings" type="PanelContainer" parent="MainContainer/HBoxContainer" unique_id=394050120 node_paths=PackedStringArray("input_type_title", "settings_containers")]

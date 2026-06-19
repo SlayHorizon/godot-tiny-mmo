@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeatherResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/weather/weather_resource.gd" id="1_weather"]
+[ext_resource type="Texture2D" path="res://assets/sprites/environment/fx/rain.png" id="2_rain"]
+
+[resource]
+script = ExtResource("1_weather")
+texture = ExtResource("2_rain")
+h_frames = 1
+emit_mode = 0
+color = Color(0.72, 0.81, 1.0, 0.55)
+amount = 110
+lifetime = 1.6
+fall_speed = 650.0
+wind = 45.0
+spread_degrees = 6.0
+scale_min = 1.5
+scale_max = 3.0
+spin_degrees = 0.0

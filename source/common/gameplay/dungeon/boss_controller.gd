@@ -47,6 +47,26 @@ func _ready() -> void:
 		return
 	_load_config()
 	_next_slam_ms = Time.get_ticks_msec() + int(slam_interval_s * 1000.0)
+	# Boss-event music is driven by the boss's own lifecycle — automatic for EVERY boss
+	# (world + dungeon both attach this brain): the combat track on spawn, the victory
+	# sting on death. An admin abort (boss removed WITHOUT dying) is cued as "end" by
+	# EventService. Client side: Client._on_boss_music. boss.container is wired by now
+	# (spawn_dynamic returned before our parent attached us), so _instance() resolves.
+	push_boss_music(_instance(), "fight")
+	boss.died.connect(_on_boss_died_music)
+
+
+## Server → clients: a boss-event music cue (fight / victory / end) for everyone in
+## [param instance]. Static so EventService can fire "end" on an admin abort too.
+static func push_boss_music(instance: Node, state: String) -> void:
+	if instance == null or ServerHub.current == null:
+		return
+	for peer_id: int in instance.players_by_peer_id:
+		ServerHub.current.data_push.rpc_id(peer_id, &"boss.music", {"state": state})
+
+
+func _on_boss_died_music(_killer: Character) -> void:
+	push_boss_music(_instance(), "victory")
 
 
 ## Pull tuning from the body's EnemyTypeResource so each boss is configured in

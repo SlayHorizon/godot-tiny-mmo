@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="WeatherResource" format=3 uid="uid://cd7ydr2udch4b"]
+
+[ext_resource type="Script" uid="uid://d1d13k1qevc02" path="res://source/common/gameplay/weather/weather_resource.gd" id="1_weather"]
+[ext_resource type="Texture2D" uid="uid://x3dj50jks264" path="res://assets/sprites/environment/fx/fog.png" id="2_fog"]
+
+[resource]
+script = ExtResource("1_weather")
+texture = ExtResource("2_fog")
+emit_mode = 1
+color = Color(1, 1, 1, 0.1)
+amount = 5
+lifetime = 32.0
+fall_speed = 1.0
+wind = 6.0
+spread_degrees = 4.0
+scale_min = 1.5
+scale_max = 2.5
+spin_degrees = 0.0

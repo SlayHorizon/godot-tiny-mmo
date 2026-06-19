@@ -4,12 +4,16 @@
 [ext_resource type="TileSet" uid="uid://bm6rosvdjjdcd" path="res://source/common/gameplay/maps/tilesets/forest_tileset.tres" id="2_3pcnk"]
 [ext_resource type="AudioStream" uid="uid://d3x02k8rxue5y" path="res://assets/audio/music/lost_woods.ogg" id="2_7mrv4"]
 [ext_resource type="PackedScene" uid="uid://us4f0lvc42t5" path="res://source/common/gameplay/maps/maps/misc_buildings/goblin_shaman_house.tscn" id="3_1iruy"]
+[ext_resource type="Resource" path="res://source/common/gameplay/weather/leaves.tres" id="3_pyxru"]
+[ext_resource type="Script" uid="uid://d1d13k1qevc02" path="res://source/common/gameplay/weather/weather_resource.gd" id="3_vs2bv"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="4_vtg6w"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="5_3a2x5"]
+[ext_resource type="Resource" uid="uid://cd7ydr2udch4b" path="res://source/common/gameplay/weather/fog.tres" id="5_4tbu3"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="5_8w7oy"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="6_1fctu"]
 [ext_resource type="Resource" uid="uid://cwkhk34nscblr" path="res://source/common/gameplay/characters/npc/npcs/bone_carver.tres" id="6_1iruy"]
 [ext_resource type="Resource" uid="uid://dlwfkoirmhmse" path="res://source/common/gameplay/characters/npc/types/bandit.tres" id="6_8w7oy"]
+[ext_resource type="Resource" path="res://source/common/gameplay/weather/rain.tres" id="6_o3pwt"]
 [ext_resource type="Resource" uid="uid://f0urxop3y64l" path="res://source/common/gameplay/items/weapons/sword/sword.item.tres" id="7_q7qsh"]
 [ext_resource type="Resource" uid="uid://dlgfcyxce1v1y" path="res://source/common/gameplay/characters/npc/types/bandit_sorcerer.tres" id="7_qrw5n"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="7_w1xny"]
@@ -21,6 +25,7 @@
 [ext_resource type="Resource" uid="uid://c2htgqm6nf3t5" path="res://source/common/gameplay/characters/npc/types/orc_leader.tres" id="11_q5le7"]
 [ext_resource type="Resource" uid="uid://dclt4rvqc51ri" path="res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres" id="12_1vpp3"]
 [ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="14_1vpp3"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/lighting/firefly.tscn" id="26_4tbu3"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_w1xny"]
 normal = Vector2(-1, 0)
@@ -35,6 +40,7 @@ preview_aoi = false
 aoi_test_point = Vector2(900, 0)
 replicated_props_container = NodePath("ReplicatedPropsContainer")
 music = ExtResource("2_7mrv4")
+weather = Array[ExtResource("3_vs2bv")]([ExtResource("3_pyxru"), ExtResource("5_4tbu3"), ExtResource("6_o3pwt")])
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
 [node name="World_tiles" type="Node2D" parent="." unique_id=471749141]
@@ -232,3 +238,18 @@ position = Vector2(2703.0002, 1878)
 scale = Vector2(1.48, 8.68)
 target_instance = ExtResource("6_1fctu")
 target_id = 7
+
+[node name="Firefly" parent="." unique_id=624259893 instance=ExtResource("26_4tbu3")]
+position = Vector2(2175.4849, 1643.9712)
+
+[node name="Firefly2" parent="." unique_id=1678599767 instance=ExtResource("26_4tbu3")]
+position = Vector2(2340.3862, 1946.2885)
+
+[node name="Firefly3" parent="." unique_id=728222431 instance=ExtResource("26_4tbu3")]
+position = Vector2(1830.8793, 1829.1604)
+
+[node name="Firefly4" parent="." unique_id=1971786500 instance=ExtResource("26_4tbu3")]
+position = Vector2(1744.4976, 1340.1512)
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=162990447]
+color = Color(0.48452926, 0.48452926, 0.6262097, 1)

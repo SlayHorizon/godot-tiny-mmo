@@ -2,22 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bq0ci85i7euf5"
-path.s3tc="res://.godot/imported/cloudy_skybox_0.png-07c73180c4043e70da3b9f659b011bd3.s3tc.ctex"
-path.etc2="res://.godot/imported/cloudy_skybox_0.png-07c73180c4043e70da3b9f659b011bd3.etc2.ctex"
+uid="uid://ynx8jblwlk5q"
+path="res://.godot/imported/leaf.png-109ab297e866e7e208f77f6356f19326.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc", "etc2_astc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/skyboxes/cloudy_skybox_0.png"
-dest_files=["res://.godot/imported/cloudy_skybox_0.png-07c73180c4043e70da3b9f659b011bd3.s3tc.ctex", "res://.godot/imported/cloudy_skybox_0.png-07c73180c4043e70da3b9f659b011bd3.etc2.ctex"]
+source_file="res://assets/sprites/environment/fx/leaf.png"
+dest_files=["res://.godot/imported/leaf.png-109ab297e866e7e208f77f6356f19326.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -25,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -39,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1
