@@ -85,16 +85,29 @@ jobs:
       - name: Set up Android SDK + NDK (Android)
         if: matrix.name == 'android'
         run: |
-          set -euo pipefail
-          SDK="$ANDROID_SDK_ROOT"
-          # Godot pins an exact NDK in its gradle config — read it from the cloned
-          # source so this never drifts when you bump GODOT_REF (VERIFY on the
-          # first run: if scons can't find the NDK, this grep is what to check).
-          NDK_VERSION=$(grep -oP 'ndkVersion\s*=\s*"\K[^"]+' godot/platform/android/java/app/config.gradle)
-          echo "Godot ${GODOT_REF} wants NDK $NDK_VERSION"
-          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
-          "$SDK/cmdline-tools/latest/bin/sdkmanager" \
-            "platform-tools" "build-tools;35.0.0" "platforms;android-35" "ndk;$NDK_VERSION" >/dev/null
+          set -eo pipefail
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          if [ -z "$SDK" ] || [ ! -d "$SDK" ]; then
+            echo "::error::Android SDK not found (ANDROID_SDK_ROOT/ANDROID_HOME unset)."
+            exit 1
+          fi
+          SDKMANAGER="$SDK/cmdline-tools/latest/bin/sdkmanager"
+          CFG=godot/platform/android/java/app/config.gradle
+          # Godot pins these in config.gradle as `key : 'value'` (COLON + SINGLE
+          # quotes; targetSdk is a bare int). Derive all three with sed so a Godot
+          # bump needs no edits here, with the 4.6.3 values as fallback. (sed -E is
+          # portable — the earlier grep -P assumed `key = "value"` AND needs a
+          # UTF-8 locale; both bit us. The ^[[:space:]]* anchor avoids matching
+          # androidTargetSdk when we want targetSdk.)
+          NDK_VERSION=$(sed -nE "s/^[[:space:]]*ndkVersion[[:space:]]*[:=][[:space:]]*['\"]([^'\"]+).*/\1/p" "$CFG" 2>/dev/null | head -n1 || true)
+          BUILD_TOOLS=$(sed -nE "s/^[[:space:]]*buildTools[[:space:]]*[:=][[:space:]]*['\"]([^'\"]+).*/\1/p" "$CFG" 2>/dev/null | head -n1 || true)
+          TARGET_SDK=$(sed -nE "s/^[[:space:]]*targetSdk[[:space:]]*[:=][[:space:]]*([0-9]+).*/\1/p" "$CFG" 2>/dev/null | head -n1 || true)
+          NDK_VERSION="${NDK_VERSION:-29.0.14206865}"
+          BUILD_TOOLS="${BUILD_TOOLS:-36.1.0}"
+          TARGET_SDK="${TARGET_SDK:-36}"
+          echo "Godot ${GODOT_REF}: NDK $NDK_VERSION, build-tools $BUILD_TOOLS, platform android-$TARGET_SDK"
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" "platform-tools" "build-tools;$BUILD_TOOLS" "platforms;android-$TARGET_SDK" "ndk;$NDK_VERSION"
           echo "ANDROID_NDK_ROOT=$SDK/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
 
       - name: Compile template

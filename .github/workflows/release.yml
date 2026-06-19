@@ -106,11 +106,13 @@ jobs:
       - name: Set up Android SDK (apksigner + zipalign)
         if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         run: |
-          set -euo pipefail
-          SDK="$ANDROID_SDK_ROOT"
+          set -eo pipefail
+          SDK="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          # Match GODOT_REF's platform/android/java/app/config.gradle
+          # (buildTools / targetSdk): 4.6.3 → build-tools 36.1.0, android-36.
           "$SDK/cmdline-tools/latest/bin/sdkmanager" \
-            "platform-tools" "build-tools;35.0.0" "platforms;android-35" >/dev/null
+            "platform-tools" "build-tools;36.1.0" "platforms;android-36"
 
       - name: Point Godot at the Android SDK + JDK (headless editor settings)
         if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
