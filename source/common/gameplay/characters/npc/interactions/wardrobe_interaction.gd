@@ -9,7 +9,7 @@ extends NPCInteraction
 func menu_entry(_npc: Node) -> Dictionary:
 	return {
 		"label": _label_or("Wardrobe"),
-		"icon": _icon_or("👕"),
+		"icon": _icon_or(""),
 		"menu": &"wardrobe",
 		"arg": null,
 	}

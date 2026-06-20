@@ -10,6 +10,10 @@ const JAIL_INSTANCE_NAME: String = "jail"
 ## Town hub the universal Recall sends players to (an InstanceResource's
 ## instance_name). Change this to repoint recall at a different home map.
 const RECALL_INSTANCE_NAME: String = "Overworld"
+## Social hub players spawn at on every login AFTER their first (the tavern / guild house).
+## A brand-new character's first-ever login starts in the jail cell instead — see
+## _on_peer_connected.
+const TAVERN_INSTANCE_NAME: String = "GuildHouse"
 
 var loading_instances: Dictionary[InstanceResource, ServerInstance]
 var instance_collection: Dictionary[String, InstanceResource]
@@ -91,24 +95,32 @@ func _on_peer_connected(peer_id: int) -> void:
 				jail_inst.awaiting_peers[peer_id] = {}
 				return
 
-	var last_instance: InstanceResource = instance_collection.get(player_resource.current_instance, null)
+	# First-ever login? current_instance can't tell us — it's in-memory only (set on spawn,
+	# shown on the dashboard, but never written to the DB). Instead read three values that ARE
+	# persisted: a pristine new character is level 1 with zero experience and zero banked
+	# playtime. Anything past that means they've played before — level/experience catch any
+	# progression, played_seconds (banked into lb_stats on every disconnect) catches a character
+	# that walked out of the cell without gaining XP. First login → the jail cell (lore:
+	# condemned by the Capital; NOT JailList-jailed, so the cell's warper lets them walk straight
+	# out — no lock, no forced tutorial). Every later login → the tavern (guild house) hub.
+	var played_seconds: int = int(player_resource.lb_stats.get("played_seconds", 0))
+	var is_first_login: bool = player_resource.level <= 1 and player_resource.experience <= 0 and played_seconds <= 0
+	var target_name: String = JAIL_INSTANCE_NAME if is_first_login else TAVERN_INSTANCE_NAME
+	var target_res: InstanceResource = instance_collection.get(target_name, null)
+	if target_res != null:
+		var target_inst: ServerInstance
+		if target_res.charged_instances.is_empty():
+			target_inst = charge_instance(target_res)
+		else:
+			target_inst = target_res.get_instance(0)
+		if target_inst != null:
+			charge_new_instance.rpc_id(peer_id, target_res.map_path, target_inst.name)
+			target_inst.awaiting_peers[peer_id] = {} # {} = the map's default spawn point (index 0)
+			return
 
-	if not last_instance or last_instance.spawn_override == InstanceResource.SpawnOverride.WORLD:
-		charge_new_instance.rpc_id(peer_id, default_instance.map_path, default_instance.charged_instances[0].name)
-		return
-
-	match last_instance.spawn_override:
-		InstanceResource.SpawnOverride.DEFAULT:
-			var instance: ServerInstance
-			if last_instance.charged_instances.is_empty():
-				instance = charge_instance(last_instance)
-			else:
-				instance = last_instance.get_instance(0)
-			charge_new_instance.rpc_id(peer_id, last_instance.map_path, instance.name)
-			instance.awaiting_peers[peer_id] = {"target_position": player_resource.last_position}
-		InstanceResource.SpawnOverride.ENTRY:
-			# TO DO
-			charge_new_instance.rpc_id(peer_id, default_instance.map_path, default_instance.charged_instances[0].name)
+	# Fallback: the tavern/jail map is missing or mid-load — land in the default overworld so
+	# we never strand the player in a black void.
+	charge_new_instance.rpc_id(peer_id, default_instance.map_path, default_instance.charged_instances[0].name)
 
 
 func _on_player_entered_warper(player: Player, current_instance: ServerInstance, warper: Warper) -> void:

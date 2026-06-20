@@ -13,6 +13,6 @@ func menu_entry(_npc: Node) -> Dictionary:
 		return {}
 	return {
 		"label": _label_or("Talk"),
-		"icon": _icon_or("💬"),
+		"icon": _icon_or(""),
 		"lines": lines,
 	}

@@ -13,7 +13,7 @@ func menu_entry(npc: Node) -> Dictionary:
 		return {}
 	return {
 		"label": _label_or("Enter dungeon"),
-		"icon": _icon_or("⚔"),
+		"icon": _icon_or(""),
 		"menu": &"dungeon",
 		"arg": String(npc.name), # the station id is the node name (auto, no manual id)
 	}

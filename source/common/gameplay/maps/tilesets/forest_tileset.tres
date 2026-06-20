@@ -1912,8 +1912,8 @@ texture = ExtResource("3_wueue")
 9:102/0 = 0
 
 [resource]
-physics_layer_0/collision_layer = 7
-physics_layer_0/collision_mask = 7
+physics_layer_0/collision_layer = 2
+physics_layer_0/collision_mask = 0
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Dirt"
 terrain_set_0/terrain_0/color = Color(0.80569506, 0.42761603, 0, 1)

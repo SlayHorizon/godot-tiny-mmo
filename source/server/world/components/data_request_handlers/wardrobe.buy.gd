@@ -29,4 +29,9 @@ func data_request_handler(
 		return {"ok": false, "reason": "no_gold"}
 
 	pr.owned_skins.append(skin_id)
-	return {"ok": true, "skin_id": skin_id, "owned": Array(pr.owned_skins)}
+	return {
+		"ok": true,
+		"skin_id": skin_id,
+		"owned": Array(pr.owned_skins),
+		"gold": Inventory.count(pr.inventory, Economy.gold_id()),
+	}

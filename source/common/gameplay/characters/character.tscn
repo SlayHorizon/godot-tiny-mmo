@@ -216,7 +216,6 @@ bg_color = Color(0.6, 0.6, 0.6, 0.521569)
 bg_color = Color(0.694118, 0.101961, 0.14902, 0.705882)
 
 [node name="Character" type="CharacterBody2D" unique_id=1802487765]
-y_sort_enabled = true
 texture_filter = 1
 collision_mask = 2
 script = ExtResource("1_uqmoo")
@@ -253,7 +252,6 @@ position = Vector2(0, -3)
 shape = SubResource("RectangleShape2D_3w1m3")
 
 [node name="HandOffset" type="Node2D" parent="." unique_id=2126751317]
-z_index = 1
 position = Vector2(0, -10)
 
 [node name="HandPivot" type="Node2D" parent="HandOffset" unique_id=1721209134]

@@ -25,6 +25,7 @@ var _lines: Array = []
 var _line_index: int = 0
 var _typing: bool = false
 
+var _box: PanelContainer
 var _name_label: Label
 var _text: RichTextLabel
 var _options: VBoxContainer
@@ -56,7 +57,9 @@ func _build() -> void:
 	box.offset_right = -300
 	box.offset_top = -132
 	box.offset_bottom = -28
+	box.grow_vertical = Control.GROW_DIRECTION_BEGIN # taller text grows the box UP; bottom stays put
 	add_child(box)
+	_box = box
 
 	var pad: MarginContainer = MarginContainer.new()
 	pad.add_theme_constant_override(&"margin_left", 18)
@@ -78,7 +81,8 @@ func _build() -> void:
 	_text = RichTextLabel.new()
 	_text.bbcode_enabled = true
 	_text.scroll_active = false
-	_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_text.fit_content = true # report the full text height so the box can grow to fit it
+	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(_text)
 
 	# Options: right side, vertical, big touch targets, bottom-aligned.
@@ -158,6 +162,7 @@ func _on_continue() -> void:
 
 func _set_text(bbcode: String) -> void:
 	_text.text = bbcode
+	_fit_box.call_deferred() # grow the box to the new text once it's laid out at its width
 	_text.visible_ratio = 0.0
 	_typing = true
 	if _type_tween != null and _type_tween.is_valid():
@@ -181,3 +186,15 @@ func _clear_options() -> void:
 	for child: Node in _options.get_children():
 		_options.remove_child(child)
 		child.queue_free()
+
+
+## Grow the text box upward to fit the current text. The bottom edge stays pinned (the box is
+## already at the screen bottom); only the top moves up. Deferred from _set_text so the
+## RichTextLabel has laid out at its wrapped width before we read its content height.
+func _fit_box() -> void:
+	if _box == null or _text == null:
+		return
+	var content_h: float = _text.get_content_height()
+	# name label (~22) + vbox separation (6) + text + box padding (12 top + 12 bottom).
+	var needed: float = 22.0 + 6.0 + content_h + 24.0
+	_box.offset_top = _box.offset_bottom - maxf(needed, 104.0)

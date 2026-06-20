@@ -314,8 +314,8 @@ weapon = null
 
 [node name="Barrier" type="StaticBody2D" parent="." unique_id=980724632]
 position = Vector2(-9, 1305)
-collision_layer = 7
-collision_mask = 7
+collision_layer = 2
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Barrier" unique_id=1219811025]
 position = Vector2(-47, -1)

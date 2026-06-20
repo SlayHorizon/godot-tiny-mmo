@@ -15,21 +15,28 @@ var _skins: Array[int] = []
 var _owned: Dictionary[int, bool] = {}
 var _idx: int = 0
 var _anim: StringName = &"run"
+var _gold: int = 0
 
 var _preview: AnimatedSprite2D
 var _name_label: Label
 var _status_label: Label
 var _action_button: Button
+var _gold_label: Label
 var _anim_buttons: Dictionary[StringName, Button] = {}
 
 
 func _ready() -> void:
 	build_shell("Wardrobe")
+	_build_gold_display()
 	_skins = PlayerSkins.ids()
 	_build_layout()
 	visibility_changed.connect(func() -> void:
 		if visible:
 			_on_shown())
+	# The HUD instantiates this menu already-visible, then calls show() (a no-op while visible),
+	# so visibility_changed does NOT fire on the very first open. Load once here so the gold
+	# balance + the equipped-skin preview appear immediately instead of only after a reopen.
+	_on_shown.call_deferred()
 
 
 func _build_layout() -> void:
@@ -111,6 +118,34 @@ func _build_layout() -> void:
 	col.add_child(_action_button)
 
 
+# --- Gold ---
+
+## Gold balance in the shell header (icon + amount), like the shop. Sourced from the server
+## (wardrobe.state / wardrobe.buy) so the shown balance can't drift from what's actually charged.
+func _build_gold_display() -> void:
+	var gold_icon: TextureRect = TextureRect.new()
+	gold_icon.custom_minimum_size = Vector2(20, 20)
+	gold_icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	gold_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var gold: Item = ContentRegistryHub.load_by_id(&"items", Economy.gold_id())
+	if gold != null:
+		gold_icon.texture = gold.item_icon
+	_gold_label = Label.new()
+	_gold_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.45))
+	_gold_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	header_right.add_child(gold_icon)
+	header_right.add_child(_gold_label)
+	# Sit the gold left of the Close button (build_shell added Close first).
+	header_right.move_child(gold_icon, 0)
+	header_right.move_child(_gold_label, 1)
+
+
+func _set_gold(value: int) -> void:
+	_gold = value
+	if _gold_label != null:
+		_gold_label.text = "%d" % value
+
+
 # --- Data ---
 
 func _on_shown() -> void:
@@ -126,6 +161,7 @@ func _on_state(data: Dictionary) -> void:
 	_owned.clear()
 	for id_v: Variant in data.get("owned", []):
 		_owned[int(id_v)] = true
+	_set_gold(int(data.get("gold", 0)))
 	# Open on the skin you're currently wearing.
 	var equipped_idx: int = _skins.find(_equipped_id())
 	_idx = equipped_idx if equipped_idx >= 0 else 0
@@ -194,8 +230,9 @@ func _update_action() -> void:
 		_status_label.text = "Owned."
 	else:
 		_action_button.text = "Buy — %d gold" % SKIN_COST
-		_action_button.disabled = false
-		_status_label.text = "Locked."
+		var can_afford: bool = _gold >= SKIN_COST
+		_action_button.disabled = not can_afford
+		_status_label.text = "Locked." if can_afford else "Not enough gold (%d needed)." % SKIN_COST
 
 
 func _on_action_pressed() -> void:
@@ -217,6 +254,7 @@ func _on_bought(data: Dictionary, skin_id: int) -> void:
 		_update_action()
 		return
 	_owned[skin_id] = true
+	_set_gold(int(data.get("gold", _gold)))
 	# Buying auto-equips the skin you were previewing.
 	Client.request_data(&"wardrobe.equip", _on_equipped.bind(skin_id), {"skin_id": skin_id}, String(InstanceClient.current.name))
 

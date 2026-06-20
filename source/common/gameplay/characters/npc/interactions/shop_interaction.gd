@@ -11,7 +11,7 @@ func menu_entry(_npc: Node) -> Dictionary:
 		return {}
 	return {
 		"label": _label_or("Shop"),
-		"icon": _icon_or("🛒"),
+		"icon": _icon_or(""),
 		"menu": &"shop",
 		"arg": int(shop.get_meta(&"id", 0)),
 	}

@@ -224,8 +224,8 @@ weapon = ExtResource("12_1vpp3")
 
 [node name="Barrier" type="StaticBody2D" parent="." unique_id=1532527436]
 position = Vector2(2726, 1877)
-collision_layer = 7
-collision_mask = 7
+collision_layer = 2
+collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Barrier" unique_id=1512457089]
 shape = SubResource("WorldBoundaryShape2D_w1xny")

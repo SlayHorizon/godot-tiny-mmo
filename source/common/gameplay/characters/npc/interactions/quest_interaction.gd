@@ -20,7 +20,7 @@ func menu_entry(npc: Node) -> Dictionary:
 		return {}
 	return {
 		"label": _label_or("Quests"),
-		"icon": _icon_or("❗"),
+		"icon": _icon_or(""),
 		"menu": &"quest",
 		"arg": owner.npc_id,
 	}

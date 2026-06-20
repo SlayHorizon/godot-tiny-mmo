@@ -12,4 +12,8 @@ func data_request_handler(
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
 	if not player:
 		return {"ok": false}
-	return {"ok": true, "owned": Array(player.player_resource.owned_skins)}
+	return {
+		"ok": true,
+		"owned": Array(player.player_resource.owned_skins),
+		"gold": Inventory.count(player.player_resource.inventory, Economy.gold_id()),
+	}
