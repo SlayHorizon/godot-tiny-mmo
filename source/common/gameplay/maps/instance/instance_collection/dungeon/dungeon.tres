@@ -6,8 +6,8 @@
 
 [resource]
 script = ExtResource("1_dres")
-description = "A sealed gauntlet of rooms ending in a warlord. Clear every room to escape with the loot."
-recommended_level = 5
+description = "A dark cave filled with bones. Clear every room to escape with the loot."
+recommended_level = 8
 reward = ExtResource("2_reward")
 hard_reward = ExtResource("3_hard")
 instance_name = &"Dungeon"

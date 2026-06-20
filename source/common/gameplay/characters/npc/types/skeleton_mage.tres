@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://0un5gdgkhaf3"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_4ocig"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_q12sl"]
+[ext_resource type="SpriteFrames" uid="uid://cigcsxa2gubl" path="res://source/common/gameplay/characters/sprite_frames/skeleton_mage.tres" id="3_q12sl"]
+[ext_resource type="Resource" uid="uid://dmwwy1l2pyvar" path="res://source/common/gameplay/items/weapons/wand/wand_bone.item.tres" id="4_xt0dc"]
+
+[resource]
+script = ExtResource("2_q12sl")
+enemy_type = &"skeleton_mage"
+display_name = "Skeleton Mage"
+skin = ExtResource("3_q12sl")
+visual_scale = 2.0
+is_boss = true
+max_health = 250.0
+attack_damage = 15.0
+mr = 5.0
+weapon = ExtResource("4_xt0dc")
+lunge_range = 150.0
+move_speed = 90
+distance_to_attack = 25
+max_distance_from_spawn = 100
+leashes = false
+chase_on_area = true
+xp_reward = 15
+respawns = false
+enrage_health_fraction = 0.3
+slam_windup_s = 1.5
+slam_damage = 25.0
+slam_interval_s = 10.0
+enraged_slam_interval_s = 8.0
+add_enemy_slug = &"skeleton"
+metadata/_custom_type_script = "uid://swk8b8q32qv2"
+metadata/slug = &"skeleton_mage"
+metadata/id = 17

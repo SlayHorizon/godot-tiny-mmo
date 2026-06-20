@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://jklqfwwhsv5w"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_1080s"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_c1a6p"]
+[ext_resource type="SpriteFrames" uid="uid://der3cejmcffl7" path="res://source/common/gameplay/characters/sprite_frames/skeleton.tres" id="3_c1a6p"]
+
+[resource]
+script = ExtResource("2_c1a6p")
+enemy_type = &"skeleton"
+display_name = "Skeleton"
+skin = ExtResource("3_c1a6p")
+max_health = 100.0
+attack_damage = 10.0
+attack_cooldown = 2.0
+mr = 2.0
+move_speed = 90
+distance_to_attack = 18
+max_distance_from_spawn = 100
+leashes = false
+chase_on_area = true
+xp_reward = 15
+respawns = false
+metadata/_custom_type_script = "uid://swk8b8q32qv2"
+metadata/slug = &"skeleton"
+metadata/id = 16

@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://b4b2xa8ndnhn8"]
+
+[ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="1_442m2"]
+[ext_resource type="Resource" uid="uid://wj3mr4iqepu7" path="res://source/common/gameplay/items/currencies/gold.tres" id="2_277it"]
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="3_hhhqo"]
+[ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="4_ph35l"]
+[ext_resource type="Resource" uid="uid://cd4yooe27ja23" path="res://source/common/gameplay/items/consumables/greater_health_potion.tres" id="5_7hhe3"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="6_1d18i"]
+
+[sub_resource type="Resource" id="Resource_a2v62"]
+script = ExtResource("3_hhhqo")
+item = ExtResource("4_ph35l")
+price = 10
+currency_item = ExtResource("2_277it")
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_atp0p"]
+script = ExtResource("3_hhhqo")
+item = ExtResource("5_7hhe3")
+price = 20
+currency_item = ExtResource("2_277it")
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[resource]
+script = ExtResource("6_1d18i")
+shop_name = "Lost Soul Shop"
+currency_item = ExtResource("2_277it")
+entries = Array[ExtResource("3_hhhqo")]([SubResource("Resource_a2v62"), SubResource("Resource_atp0p")])
+trades = 0
+metadata/_custom_type_script = "uid://bsed5oxrf1q15"
+metadata/slug = &"lost_soul_shop"
+metadata/id = 8

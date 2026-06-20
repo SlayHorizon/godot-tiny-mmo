@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_b6pq3")
 content_name = &"enemy_types"
-version = 1781834279
-next_id = 16
+version = 1781997130
+next_id = 20
 entries = Array[Dictionary]([{
 &"hash": "60afd66f27b57b313cc440d2bfeb704b5462e3bb841fd9621f99de6bf177f82c",
 &"id": 1,
@@ -67,6 +67,26 @@ entries = Array[Dictionary]([{
 &"id": 10,
 &"path": "res://source/common/gameplay/characters/npc/types/shadow_grunt.tres",
 &"slug": &"shadow_grunt"
+}, {
+&"hash": "19202851911cf7cc81bdb8aa59391efda72266c201c130b368819d66f165663c",
+&"id": 16,
+&"path": "res://source/common/gameplay/characters/npc/types/skeleton.tres",
+&"slug": &"skeleton"
+}, {
+&"hash": "8b39d3958739e061d9bc702ae294e5aa49898d3f0515b008a0e2ab2549caa0c2",
+&"id": 17,
+&"path": "res://source/common/gameplay/characters/npc/types/skeleton_mage.tres",
+&"slug": &"skeleton_mage"
+}, {
+&"hash": "5d0b36b14a1bca8ce763368e18d3114edbc4ef5404f91adc164b6327ad522eaa",
+&"id": 18,
+&"path": "res://source/common/gameplay/characters/npc/types/skeleton_rogue.tres",
+&"slug": &"skeleton_rogue"
+}, {
+&"hash": "a5b164dcda9e6d9874fc89d2b3f05b3d3a783ea8ad73eef64b89028974f6cc14",
+&"id": 19,
+&"path": "res://source/common/gameplay/characters/npc/types/skeleton_warrior.tres",
+&"slug": &"skeleton_warrior"
 }, {
 &"hash": "8e41d043b7a9ca436b6c2328142b4d6d62cf48029094374a759017eaa770a5e6",
 &"id": 11,

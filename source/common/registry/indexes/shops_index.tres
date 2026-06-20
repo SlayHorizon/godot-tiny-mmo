@@ -5,13 +5,18 @@
 [resource]
 script = ExtResource("1_714ml")
 content_name = &"shops"
-version = 1781372920
-next_id = 8
+version = 1781995497
+next_id = 9
 entries = Array[Dictionary]([{
 &"hash": "54a1c110f2b08f065be7b1f5a3e9a9057ad18f61a3d5cfab4da566d904ca372c",
 &"id": 6,
 &"path": "res://source/common/gameplay/shops/resources/bone_shop.tres",
 &"slug": &"bone_shop"
+}, {
+&"hash": "fd77518fc82cd1a245b3da4f3b96720e4370ce661d41ecb776a1e710a0f6d199",
+&"id": 8,
+&"path": "res://source/common/gameplay/shops/resources/lost_soul_shop.tres",
+&"slug": &"lost_soul_shop"
 }, {
 &"hash": "2a00663b96bcee69d6744bf1325a4cea4910d364483c1b0d1e6c868b9829021e",
 &"id": 4,
@@ -33,7 +38,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/shops/resources/sell_shop.tres",
 &"slug": &"sell_shop"
 }, {
-&"hash": "c9d55adbd92b7ca68aaf02a83456dde144f5ee7277fe5d2e226dddbc8c34786c",
+&"hash": "1c42592c0de35e2dacd05232d87ce6c6dc144d22260dcd709f248a309448ea62",
 &"id": 3,
 &"path": "res://source/common/gameplay/shops/resources/start_shop.tres",
 &"slug": &"start_shop"

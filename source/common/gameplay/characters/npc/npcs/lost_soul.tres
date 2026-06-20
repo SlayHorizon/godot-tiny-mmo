@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://dcmvccg0con6x"]
+
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_iita0"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="2_sy65p"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="3_63gk8"]
+[ext_resource type="Resource" uid="uid://b4b2xa8ndnhn8" path="res://source/common/gameplay/shops/resources/lost_soul_shop.tres" id="4_v2nbh"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="5_3pw6e"]
+[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="6_t1jho"]
+
+[sub_resource type="Resource" id="Resource_8au6g"]
+script = ExtResource("2_sy65p")
+lines = Array[String](["I got lost here after a expedition with my guild mates.", "After walking too much between these mines we got lost.", "I don't even remember when this happened.", "Just hope they're all fine.", "I've see lot of skeletons around here.", "If you going futher these caves", "Consider buying some of my health potions."])
+label_override = "Talk"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
+[sub_resource type="Resource" id="Resource_sqgvj"]
+script = ExtResource("3_63gk8")
+shop = ExtResource("4_v2nbh")
+label_override = "Shop"
+metadata/_custom_type_script = "uid://bpo804060rk5t"
+
+[resource]
+script = ExtResource("5_3pw6e")
+npc_name = "Lost Soul"
+skin = ExtResource("6_t1jho")
+greeting = "OH! Wow a adventurer. How could i help you buddy?"
+interactions = Array[ExtResource("1_iita0")]([SubResource("Resource_8au6g"), SubResource("Resource_sqgvj")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
