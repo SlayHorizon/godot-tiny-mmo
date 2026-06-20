@@ -56,6 +56,7 @@ var _next_regen_ms: int
 
 
 func _ready() -> void:
+	collision_layer = PhysicsLayers.HARVESTABLE # pick/sickle arcs target this to gather
 	if data == null:
 		push_warning("MineableNode '%s' has no data resource assigned." % name)
 		return

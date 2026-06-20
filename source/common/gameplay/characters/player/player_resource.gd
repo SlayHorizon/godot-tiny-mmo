@@ -83,6 +83,12 @@ const BASE_STATS: Dictionary[StringName, float] = {
 ## persisted (JSON column on the players row, see world_store_sqlite.gd).
 @export var blocked_ids: PackedInt64Array
 
+## Skins this character has purchased and may switch between (skin ids from the `sprites`
+## registry). The currently EQUIPPED one is [member skin_id]; this is everything owned. The
+## creation skin is seeded on character creation and backfilled on load, so the equipped
+## skin is always in here. Persisted as owned_skins_json (mirrors [member friends]).
+@export var owned_skins: PackedInt64Array
+
 ## Leaderboard counters with rolling day/week buckets. Keys:
 ## pvp_kills_day/week/total, pve_kills_day/week/total, lb_bucket_day_ms, lb_bucket_week_ms.
 ## Owned and rolled over by LeaderboardService.

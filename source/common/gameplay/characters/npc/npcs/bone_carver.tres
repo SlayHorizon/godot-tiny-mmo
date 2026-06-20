@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_k0xw0"]
 [ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="2_50xk0"]
 [ext_resource type="Resource" uid="uid://dl7ria3hsmvco" path="res://source/common/gameplay/shops/resources/bone_shop.tres" id="3_nf104"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_50xk0"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="4_gsvox"]
 [ext_resource type="SpriteFrames" uid="uid://cigcsxa2gubl" path="res://source/common/gameplay/characters/sprite_frames/skeleton_mage.tres" id="5_rdenb"]
 
@@ -11,11 +12,17 @@ script = ExtResource("2_50xk0")
 shop = ExtResource("3_nf104")
 metadata/_custom_type_script = "uid://bpo804060rk5t"
 
+[sub_resource type="Resource" id="Resource_nf104"]
+script = ExtResource("4_50xk0")
+lines = Array[String](["I had a name once. A number after... like you'll have. Now, mostly, I have inventory", "hey promise the fresh ones they'll go free when the war's won. I've outlasted three wars. Do the arithmetic.", "Buy, or don't. The dead aren't in a hurry."])
+label_override = "Talk about yourself"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
 [resource]
 script = ExtResource("4_gsvox")
 npc_id = 111
 npc_name = "Bonecarver"
 skin = ExtResource("5_rdenb")
-greeting = "I'am skeleton, I sell skeleton stuff -.-"
-interactions = Array[ExtResource("1_k0xw0")]([SubResource("Resource_twffw")])
+greeting = "Don't flinch. You'll wear this face too, you keep dying like you mean it or like [i]they[/i] mean it. I went out past counting and came back… economical. Bone's honest, at least. Buy something."
+interactions = Array[ExtResource("1_k0xw0")]([SubResource("Resource_twffw"), SubResource("Resource_nf104")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"

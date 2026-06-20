@@ -15,9 +15,11 @@ class_name BasingService
 ## the faster cadence makes the economy run hot.
 const TERRITORY_TICK_SECONDS: float = 5.0 * 60.0
 const TERRITORY_TICK_SG: int = 1
-## Kills made inside an owned territory by a member of the owning guild count
-## toward this milestone. On every hit, +1 SG is granted and the counter rolls
-## down.
+## PvP kills by a guilded member (anywhere — NOT territory-gated) count toward this
+## milestone: every KILLS_PER_GLORY such kills grants the guild +1 SG and rolls the counter
+## down. Credited from LeaderboardService.record_pvp_kill via credit_glory_kill. (Was
+## "kills inside an owned territory", but a base can span multiple instances so an Area2D
+## footprint can't cover it — global PvP is the working model.)
 const KILLS_PER_GLORY: int = 200
 ## "10 SG => 3 EG" conversion ratio.
 const EG_PER_10_SG: int = 3
@@ -132,22 +134,27 @@ static func grant_sg(guild: Guild, amount: int) -> void:
 		guild.eternal_glory = eg_target
 
 
-## Hook called from HostileNpc._reward_killer. If the killing player's guild
-## owns a territory that contains them at this moment, credit one tick of the
-## 200-kill milestone. Solo (guildless) kills are ignored.
-static func on_pve_kill(killer: Player) -> void:
-	if killer == null or killer.player_resource == null:
-		return
-	var guild_id: int = killer.player_resource.active_guild_id
+## Credit one PvP kill toward [param guild_id]'s glory milestone (global — not territory-
+## gated). Every KILLS_PER_GLORY kills grants +1 SG and rolls the counter down. Called from
+## LeaderboardService.record_pvp_kill for any guilded killer; a guildless kill passes
+## guild_id 0 and no-ops here.
+static func credit_glory_kill(guild_id: int) -> void:
 	if guild_id <= 0:
 		return
-	var instance_map: Map = killer.get_parent() as Map
-	if instance_map == null:
+	var ws: Node = ServerHub.current
+	if ws == null:
 		return
-	var owned: TerritoryFlag = _find_owned_territory_containing(instance_map, guild_id, killer)
-	if owned == null:
+	var guild: Guild = ws.database.get_guild(guild_id)
+	if guild == null:
 		return
-	_credit_kill(guild_id)
+	guild.kill_counter_for_glory += 1
+	@warning_ignore("integer_division")
+	var grants: int = guild.kill_counter_for_glory / KILLS_PER_GLORY
+	if grants > 0:
+		guild.kill_counter_for_glory -= grants * KILLS_PER_GLORY
+		grant_sg(guild, grants)
+		_announce_milestone(ws, guild, grants)
+	ws.database.save_guild(guild)
 
 
 ## Iterate every charged flag across every instance and grant TERRITORY_TICK_SG
@@ -191,32 +198,6 @@ static func tick_all_territories(world_server: Node) -> void:
 
 
 # --- internals ---
-
-static func _find_owned_territory_containing(instance_map: Map, guild_id: int, body: Node2D) -> TerritoryFlag:
-	for flag: TerritoryFlag in instance_map.territory_flags.values():
-		if flag.owner_guild_id == guild_id and flag.is_body_in_territory(body):
-			return flag
-	return null
-
-
-static func _credit_kill(guild_id: int) -> void:
-	var ws: Node = ServerHub.current
-	if ws == null:
-		return
-	var guild: Guild = ws.database.get_guild(guild_id)
-	if guild == null:
-		return
-	guild.kill_counter_for_glory += 1
-	# Multiple grants in a single call would be unusual (one kill = one credit)
-	# but the math handles it: integer division, then roll the counter down.
-	@warning_ignore("integer_division")
-	var grants: int = guild.kill_counter_for_glory / KILLS_PER_GLORY
-	if grants > 0:
-		guild.kill_counter_for_glory -= grants * KILLS_PER_GLORY
-		grant_sg(guild, grants)
-		_announce_milestone(ws, guild, grants)
-	ws.database.save_guild(guild)
-
 
 static func _announce_tick(ws: Node, guild: Guild, sg_gained: int) -> void:
 	if ws.chat_service == null or sg_gained <= 0:

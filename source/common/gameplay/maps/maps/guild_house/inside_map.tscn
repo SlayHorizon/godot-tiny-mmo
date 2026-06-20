@@ -7,11 +7,33 @@
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="5_5ghuf"]
 [ext_resource type="Resource" uid="uid://xqiyftqpcl1q" path="res://source/common/gameplay/maps/instance/instance_collection/jail.tres" id="5_domtg"]
 [ext_resource type="Script" uid="uid://dp7km3l8yaot3" path="res://source/common/gameplay/quests/quest_board.gd" id="6_ag5d4"]
+[ext_resource type="Resource" uid="uid://cx1parqqaupb5" path="res://source/common/gameplay/characters/npc/npcs/hall_keeper.tres" id="9_aldlr"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="9_fjcme"]
 [ext_resource type="Resource" uid="uid://dhdjy3c4ufju0" path="res://source/common/gameplay/characters/npc/npcs/starter_merchant.tres" id="9_lkcla"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="10_subvk"]
+[ext_resource type="Resource" uid="uid://b7ty7yxpd32u2" path="res://source/common/gameplay/characters/npc/npcs/dungeon_keeper.tres" id="11_aldlr"]
+[ext_resource type="Script" uid="uid://beeyftaqtiwe3" path="res://source/common/gameplay/characters/npc/interactions/attribute_reset_interaction.gd" id="17_j3473"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="19_kqnsa"]
+[ext_resource type="Script" uid="uid://bfh4whbd72q65" path="res://source/common/gameplay/characters/npc/interactions/wardrobe_interaction.gd" id="24_8uqpf"]
+[ext_resource type="SpriteFrames" uid="uid://ckldb3p6vdl3b" path="res://source/common/gameplay/characters/sprite_frames/skeleton_warrior.tres" id="25_7whis"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5v2ol"]
 size = Vector2(80, 50)
+
+[sub_resource type="Resource" id="Resource_1whb7"]
+script = ExtResource("24_8uqpf")
+metadata/_custom_type_script = "uid://bfh4whbd72q65"
+
+[sub_resource type="Resource" id="Resource_whj3q"]
+script = ExtResource("17_j3473")
+metadata/_custom_type_script = "uid://beeyftaqtiwe3"
+
+[sub_resource type="Resource" id="Resource_luj30"]
+script = ExtResource("19_kqnsa")
+npc_name = "Horizon"
+skin = ExtResource("25_7whis")
+interactions = Array[ExtResource("9_fjcme")]([SubResource("Resource_1whb7"), SubResource("Resource_whj3q")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="Guild_house_inside" type="Node2D" unique_id=108008123]
 y_sort_enabled = true
@@ -61,6 +83,22 @@ position = Vector2(10, -23)
 tile_map_data = PackedByteArray("AAD/////AwAMAAoAAAA=")
 tile_set = ExtResource("3_cwf2m")
 
-[node name="NPC" parent="." unique_id=1922057613 instance=ExtResource("10_subvk")]
+[node name="VillageElder" parent="." unique_id=1922057613 instance=ExtResource("10_subvk")]
+position = Vector2(120, -248)
+collision_mask = 6
+npc_resource = ExtResource("9_aldlr")
+
+[node name="Bartender" parent="." unique_id=1287523434 instance=ExtResource("10_subvk")]
 position = Vector2(-97, -221)
+collision_mask = 6
 npc_resource = ExtResource("9_lkcla")
+
+[node name="DungeonMaster" parent="." unique_id=1763540222 instance=ExtResource("10_subvk")]
+position = Vector2(-8, -408)
+collision_mask = 6
+npc_resource = ExtResource("11_aldlr")
+
+[node name="Horizon" parent="." unique_id=1934967353 instance=ExtResource("10_subvk")]
+position = Vector2(-312, -184)
+collision_mask = 6
+npc_resource = SubResource("Resource_luj30")

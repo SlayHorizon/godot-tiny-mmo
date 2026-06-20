@@ -27,10 +27,12 @@ var _scanned: bool = false
 
 
 func _ready() -> void:
+	collision_mask = PhysicsLayers.COMBAT_TARGET_MASK
 	if not GameMode.is_world_server():
 		set_physics_process(false)
 	else:
 		body_entered.connect(_on_body_entered)
+		area_entered.connect(_on_body_entered) # catch walk-in HurtBox areas too
 
 	var t: Timer = Timer.new()
 	t.wait_time = lifetime
@@ -56,8 +58,9 @@ func _on_body_entered(body: Node2D) -> void:
 		return
 	_hit_bodies.append(body)
 	var result: CombatHit.Result = CombatHit.try_damage(source if source is Character else null, body, damage)
-	# Slow rides a LANDED hit only (not a blocked wall or an ignored ally), and
-	# only on Players — the first negative status buff in the game, applied via
-	# the same BuffService that handles potions.
-	if result == CombatHit.Result.DAMAGED and slow_amount > 0.0 and slow_duration_s > 0.0 and body is Player:
-		BuffService.apply(body as Player, Stat.MOVE_SPEED, -slow_amount, slow_duration_s)
+	# Slow rides a LANDED hit on a Player only. `body` may be a HurtBox area — resolve to its
+	# owner for the type check (the first negative status buff, via the same BuffService potions use).
+	if result == CombatHit.Result.DAMAGED and slow_amount > 0.0 and slow_duration_s > 0.0:
+		var struck: Node = (body as HurtBox).character if body is HurtBox else body
+		if struck is Player:
+			BuffService.apply(struck as Player, Stat.MOVE_SPEED, -slow_amount, slow_duration_s)

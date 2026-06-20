@@ -21,6 +21,9 @@ static func ensure_schema(db: SQLite) -> void:
 	if version < 4:
 		_migration_v4(db)
 		_set_schema_version(db, 4)
+	if version < 5:
+		_migration_v5(db)
+		_set_schema_version(db, 5)
 
 
 static func _migration_v1(db: SQLite) -> void:
@@ -132,6 +135,14 @@ static func _migration_v3(db: SQLite) -> void:
 static func _migration_v4(db: SQLite) -> void:
 	if not _column_exists(db, "players", "dungeon_lockouts_json"):
 		db.query("ALTER TABLE players ADD COLUMN dungeon_lockouts_json TEXT NOT NULL DEFAULT '{}';")
+
+
+## v5: owned skins for the wardrobe. JSON array of skin ids the player has purchased (the
+## equipped one is players.skin_id). Added via ALTER — no DB wipe. Defaults to '[]';
+## existing players backfill their current skin_id on load (see _row_to_player).
+static func _migration_v5(db: SQLite) -> void:
+	if not _column_exists(db, "players", "owned_skins_json"):
+		db.query("ALTER TABLE players ADD COLUMN owned_skins_json TEXT NOT NULL DEFAULT '[]';")
 
 
 static func _column_exists(db: SQLite, table: String, column: String) -> bool:

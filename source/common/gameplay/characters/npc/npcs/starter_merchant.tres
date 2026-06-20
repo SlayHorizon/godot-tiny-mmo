@@ -4,14 +4,22 @@
 [ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="2_kq45a"]
 [ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="3_cn5qi"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="4_gnyxw"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_kq45a"]
 
 [sub_resource type="Resource" id="Resource_udfpp"]
 script = ExtResource("2_kq45a")
 shop = ExtResource("3_cn5qi")
 metadata/_custom_type_script = "uid://bpo804060rk5t"
 
+[sub_resource type="Resource" id="Resource_cn5qi"]
+script = ExtResource("4_kq45a")
+lines = Array[String](["I sell to anyone with coin and a pulse. You've got the one, at least."])
+label_override = "Talk about yourself"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
 [resource]
 script = ExtResource("4_gnyxw")
 npc_name = "Starter Merchant"
-interactions = Array[ExtResource("1_nmd86")]([SubResource("Resource_udfpp")])
+greeting = "You're new-lit, so I'll keep it plain: this lot keeps you alive past the gate, that lot doesn't. Coin first, questions never."
+interactions = Array[ExtResource("1_nmd86")]([SubResource("Resource_udfpp"), SubResource("Resource_cn5qi")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"

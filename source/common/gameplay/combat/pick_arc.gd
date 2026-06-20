@@ -28,6 +28,7 @@ var _scanned: bool = false
 
 
 func _ready() -> void:
+	collision_mask = PhysicsLayers.HARVEST_TARGET_MASK
 	if GameMode.is_world_server():
 		body_entered.connect(_on_body_entered)
 		area_entered.connect(_on_area_entered)

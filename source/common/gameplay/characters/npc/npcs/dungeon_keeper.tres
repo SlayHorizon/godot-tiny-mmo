@@ -3,7 +3,14 @@
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_i3jo1"]
 [ext_resource type="Resource" uid="uid://ditnocjiqmbsu" path="res://source/common/gameplay/maps/instance/instance_collection/dungeon/dungeon.tres" id="2_35bs7"]
 [ext_resource type="Script" uid="uid://b36k3ordtiw1u" path="res://source/common/gameplay/characters/npc/interactions/dungeon_interaction.gd" id="3_0ftqf"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_35bs7"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="4_cjldb"]
+
+[sub_resource type="Resource" id="Resource_0ftqf"]
+script = ExtResource("4_35bs7")
+lines = Array[String](["What's down there isn't beasts. It's less than that, shapes the dark throws off. Kill the big one and the rest go out like snuffed candles.", "Plenty go down. Most come up. 'Most' is carrying that sentence."])
+label_override = "What's down there?"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 
 [sub_resource type="Resource" id="Resource_5aef6"]
 script = ExtResource("3_0ftqf")
@@ -13,5 +20,6 @@ metadata/_custom_type_script = "uid://b36k3ordtiw1u"
 [resource]
 script = ExtResource("4_cjldb")
 npc_name = "DungeonKeeper"
-interactions = Array[ExtResource("1_i3jo1")]([SubResource("Resource_5aef6")])
+greeting = "Feel that cold coming up the steps? That's a deep pocket. The dark gets [i]thick[/i] down there, and it doesn't die easy. Take a group, or take the long way home. I just keep the door."
+interactions = Array[ExtResource("1_i3jo1")]([SubResource("Resource_0ftqf"), SubResource("Resource_5aef6")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"

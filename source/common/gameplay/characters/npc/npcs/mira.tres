@@ -22,6 +22,7 @@ quests = Array[ExtResource("5_questres")]([ExtResource("8_herbs"), ExtResource("
 [sub_resource type="Resource" id="Resource_un32s"]
 script = ExtResource("8_hg6wj")
 lines = Array[String](["I've run this apothecary thirty years.", "Folk say my brews taste of swamp water — they're not wrong.", "Now then, was there something you needed?"])
+label_override = "Talk about yourself"
 metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 
 [resource]
@@ -29,5 +30,5 @@ script = ExtResource("1_npcres")
 npc_id = 4
 npc_name = "Mira"
 skin = ExtResource("7_wizard")
-greeting = "[wave]Welcome, dear.[/wave] I'm [color=#d8a]Mira[/color] — folk say my brews taste of swamp water."
+greeting = "[wave]Welcome, dear.[/wave] I'm [color=#d8a]Mira[/color], folk say my brews taste of swamp water.  They're not wrong. Here to learn the herbs, or just to buy?"
 interactions = Array[ExtResource("2_npcint")]([SubResource("ShopInteraction_mira"), SubResource("QuestInteraction_mira"), SubResource("Resource_un32s")])

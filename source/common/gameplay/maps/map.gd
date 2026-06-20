@@ -52,6 +52,17 @@ enum ZoneModifiers {
 ## fog). Empty = clear skies. Driven by the same instance hook as [member music]. See
 ## WeatherLayer.
 @export var weather: Array[WeatherResource]
+@export_group("Camera limits")
+## Per-edge camera clamp (world px), mirroring Camera2D's own limit_* properties. On entry
+## the local player's camera is clamped to whichever edges you set, so it never pans past the
+## map into black. Each edge defaults to ±10,000,000 (effectively unbounded), so set ONLY the
+## sides you want — e.g. camera_limit_left = -32 stops the camera at x = -32 and leaves the
+## rest free. We use multiple TileMapLayers, so these are authored per map (not auto-derived).
+## See LocalPlayer._apply_camera_limits.
+@export var camera_limit_left: int = -10000000
+@export var camera_limit_top: int = -10000000
+@export var camera_limit_right: int = 10000000
+@export var camera_limit_bottom: int = 10000000
 
 var warpers: Dictionary[int, Warper]
 ## shop registry id -> ShopResource, gathered from the merchant nodes placed in this

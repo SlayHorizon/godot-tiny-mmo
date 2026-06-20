@@ -13,7 +13,7 @@ item = ExtResource("2_tag")
 [resource]
 script = ExtResource("3_quest")
 quest_name = "A Captain's Tag"
-description = "Take the bandit captain's tag to the captain of the city watch. He'll want to see it himself before he believes the job's done."
+description = "Take the bandit captain's tag to the watch. They'll want to see it before they believe it's done."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_have_tag")])
 min_level = 10
 turn_in_giver_id = 5

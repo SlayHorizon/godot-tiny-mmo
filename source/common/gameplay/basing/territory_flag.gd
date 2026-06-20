@@ -14,8 +14,8 @@ extends StaticBody2D
 ##   - Set `flag_id` (must be unique across the project — used as DB primary key).
 ##   - Set `territory_name` (display string).
 ##   - Add a CollisionShape2D child (so arrows can hit it).
-##   - Wire the @export slots (banner / health_bar / territory_zone / grace_label)
-##     to the children you want. All optional — leave any unset to skip that feature.
+##   - Wire the @export slots (banner / health_bar / grace_label) to the children you
+##     want. All optional — leave any unset to skip that feature.
 
 const GRACE_MS: int = 2 * 60 * 1000
 const MAX_HP: float = 500.0
@@ -66,12 +66,6 @@ const PALETTE: PackedColorArray = [
 ## Label shown only during the post-capture immunity window, with a m:ss countdown.
 @export var grace_label: Label
 
-@export_group("Gameplay")
-## Area2D defining the base footprint — kills inside it by the owning guild's
-## members count toward the Glory milestone. If unset, the flag has no surrounding
-## base zone and kill credits are skipped (the territory tick still works).
-@export var territory_zone: Area2D
-
 # Server-authoritative state. On clients these mirror what server pushed.
 var hp: float = MAX_HP
 var owner_guild_id: int = 0
@@ -103,6 +97,7 @@ var _state_initialized: bool = false
 
 
 func _ready() -> void:
+	collision_layer = PhysicsLayers.FLAG # attacks target this for capture (not the player body's layer)
 	if multiplayer.is_server():
 		set_process(false) # No client visuals to tick on the server.
 		_load_state_from_db()
@@ -340,15 +335,6 @@ func _server_instance() -> Node:
 			return n
 		n = n.get_parent()
 	return null
-
-
-## True if [param body] is inside this flag's territory zone (the @export
-## `territory_zone` Area2D). Returns false when no zone is wired — useful for
-## tests, where the flag still captures but doesn't generate kill credits.
-func is_body_in_territory(body: Node2D) -> bool:
-	if territory_zone == null:
-		return false
-	return territory_zone.overlaps_body(body)
 
 
 # --- Client-side: state sync + visuals ---

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://df8ykjq6jvwb7"]
+
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_tf42x"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="2_n1fd0"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="3_llnij"]
+
+[sub_resource type="Resource" id="Resource_lw3op"]
+script = ExtResource("2_n1fd0")
+lines = Array[String](["Your salvation is your redemption.", "Your craft is death.", "Your pledge is eternal service.", "Until humanity win."])
+label_override = "Tell my pledge"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
+[resource]
+script = ExtResource("3_llnij")
+npc_name = "Charter Clerk"
+greeting = "Up already? Good... hold still. …Number's assigned. Your name's your own business; the Charter doesn't need it. You're a Hero now: you work the frontier till the war's won, and then you're free. Stairs are behind you. Mind the step."
+interactions = Array[ExtResource("1_tf42x")]([SubResource("Resource_lw3op")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"

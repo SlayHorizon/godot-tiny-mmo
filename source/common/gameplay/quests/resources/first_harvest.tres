@@ -14,7 +14,7 @@ required_amount = 10
 [resource]
 script = ExtResource("3_quest")
 quest_name = "First Harvest"
-description = "Mira will train you in herblore if you can prove the patience for it. Gather ten healing herbs and bring them in."
+description = "Mira will teach you the herbs, if you've the patience. Gather 10 healing herbs and bring them in."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_herb_10")])
 min_level = 1
 reward_xp = 90

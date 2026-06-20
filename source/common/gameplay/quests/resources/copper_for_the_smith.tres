@@ -14,7 +14,7 @@ required_amount = 5
 [resource]
 script = ExtResource("3_quest")
 quest_name = "Copper for the Smith"
-description = "The smith is filling a contract for the city guard. Bring him five copper bars — mine the ore and smelt it yourself, or buy them off another player. Doesn't matter how, just deliver."
+description = "The smith's filling a contract for the guard. Bring him 5 copper bars — forge them or buy them, he won't ask. Just deliver."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_copper_5")])
 min_level = 14
 reward_xp = 360

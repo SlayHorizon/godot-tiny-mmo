@@ -13,7 +13,7 @@ item = ExtResource("2_hood")
 [resource]
 script = ExtResource("3_quest")
 quest_name = "A Tailored Hood"
-description = "Craft one cloth hood. The tailor wants to see your stitch — the seam's where the apprentices give themselves away."
+description = "Craft 1 cloth hood. The tailor wants to see your stitch — the seam's where apprentices give themselves away."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_craft_hood")])
 min_level = 10
 reward_xp = 240

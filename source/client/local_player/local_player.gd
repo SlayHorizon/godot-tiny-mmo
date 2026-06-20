@@ -7,6 +7,11 @@ extends Player
 const PVP_TOAST_COLOR: Color = Color(1.0, 0.5, 0.45)
 const SAFE_TOAST_COLOR: Color = Color(0.55, 0.95, 0.6)
 
+## Godot Camera2D's default (effectively unbounded) limit magnitude — restored on maps
+## that define no camera_limits so a previous map's bounds don't linger.
+const CAMERA_LIMIT_MIN: int = -10000000
+const CAMERA_LIMIT_MAX: int = 10000000
+
 
 ## Fallback move speed until the synced MOVE_SPEED stat arrives. Actual movement
 ## reads the stat (see process_movement) so AGILITY / gear speed bonuses apply.
@@ -54,6 +59,12 @@ func _ready() -> void:
 	
 	_apply_settings()
 	ClientState.settings.setting_changed.connect(_on_settings_changed)
+	# Clamp the camera to each map's authored bounds (no black borders past the edge). The
+	# local player persists across maps (InstanceClient reuses it), so re-apply on every
+	# instance change — plus once now for the map we spawned into.
+	Client.instance_manager.instance_changed.connect(_on_instance_changed_camera_limits)
+	if InstanceClient.current != null:
+		_apply_camera_limits(InstanceClient.current.instance_map)
 	Client.subscribe(&"player.died", _on_player_died)
 	# Sparring: explicit teleport push at match start (to spawn) and end (back
 	# to the duel master). State-sync deltas alone can't move the LocalPlayer
@@ -339,6 +350,38 @@ func process_synchronization() -> void:
 
 func set_camera_zoom(zoom: Vector2) -> void:
 	camera_2d.zoom = zoom
+
+
+func _on_instance_changed_camera_limits(instance: InstanceClient) -> void:
+	_apply_camera_limits(instance.instance_map if instance != null else null)
+
+
+## Clamp the camera to [param map]'s per-edge limits. Each edge defaults to ±CAMERA_LIMIT
+## (unbounded), so a map that sets none leaves the camera free — and re-applying on every map
+## change naturally clears a previous map's clamps. Called on spawn and on each map change.
+func _apply_camera_limits(map: Map) -> void:
+	if map == null:
+		camera_2d.limit_left = CAMERA_LIMIT_MIN
+		camera_2d.limit_top = CAMERA_LIMIT_MIN
+		camera_2d.limit_right = CAMERA_LIMIT_MAX
+		camera_2d.limit_bottom = CAMERA_LIMIT_MAX
+		return
+	camera_2d.limit_left = map.camera_limit_left
+	camera_2d.limit_top = map.camera_limit_top
+	camera_2d.limit_right = map.camera_limit_right
+	camera_2d.limit_bottom = map.camera_limit_bottom
+
+
+## Chat composing gate: while a chat field is focused, kill ALL player input (move, aim,
+## attack) so typing on mobile doesn't drive the sticks or fire the weapon, and WASD on
+## desktop types instead of moving. Releasing player_shoot clears any stick-latched attack
+## so it doesn't keep firing once input is re-enabled. (Complements _has_gui_focus, which
+## already gates the polling path — this also stops InputComponent from pressing the attack
+## action in the first place.)
+func set_input_active(active: bool) -> void:
+	controller.enabled = active
+	if not active:
+		Input.action_release(&"player_shoot")
 
 
 func _apply_settings() -> void:

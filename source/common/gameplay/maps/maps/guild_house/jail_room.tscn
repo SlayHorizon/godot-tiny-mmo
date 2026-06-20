@@ -4,6 +4,26 @@
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/gameplay/maps/tilesets/dungeon_tileset.tres" id="2_ln6fr"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="3_sxpnr"]
 [ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/guild_house/guild_house.tres" id="4_adxh6"]
+[ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="5_ukoid"]
+[ext_resource type="Resource" uid="uid://df8ykjq6jvwb7" path="res://source/common/gameplay/characters/npc/npcs/charter_clerk.tres" id="6_31n01"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="6_ruchx"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="7_31n01"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="8_26gsj"]
+[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="9_rj7ca"]
+
+[sub_resource type="Resource" id="Resource_iej2c"]
+script = ExtResource("7_31n01")
+lines = Array[String](["..."])
+label_override = "What happened to you ?"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
+[sub_resource type="Resource" id="Resource_j8n1e"]
+script = ExtResource("8_26gsj")
+npc_name = "Arya"
+skin = ExtResource("9_rj7ca")
+greeting = "I swear I didn't do anything..."
+interactions = Array[ExtResource("6_ruchx")]([SubResource("Resource_iej2c")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="JailRoom" type="Node2D" unique_id=288046526]
 y_sort_enabled = true
@@ -30,3 +50,12 @@ tile_set = ExtResource("2_ln6fr")
 position = Vector2(320, 184)
 target_instance = ExtResource("4_adxh6")
 target_id = 1
+
+[node name="CharterClerk" parent="." unique_id=1922057613 instance=ExtResource("5_ukoid")]
+position = Vector2(328.8266, 87.64915)
+npc_resource = ExtResource("6_31n01")
+
+[node name="Arya" parent="." unique_id=998185704 instance=ExtResource("5_ukoid")]
+position = Vector2(42.087494, 71.73455)
+collision_mask = 6
+npc_resource = SubResource("Resource_j8n1e")

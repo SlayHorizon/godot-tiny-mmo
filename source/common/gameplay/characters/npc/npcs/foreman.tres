@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://dicfbsg4ycah2"]
+
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_8t7eq"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_k7rws"]
+[ext_resource type="Resource" uid="uid://b7f4m4sicoieb" path="res://source/common/gameplay/quests/resources/apprentice_miner.tres" id="3_l5mxs"]
+[ext_resource type="Resource" uid="uid://dhvcbtyb5eppi" path="res://source/common/gameplay/quests/resources/the_iron_vein.tres" id="4_okvei"]
+[ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="5_xe7rs"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="6_jttbe"]
+[ext_resource type="Resource" uid="uid://bi2jj0kxe7md8" path="res://source/common/gameplay/shops/resources/quarry_counter.tres" id="7_1wqnn"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="8_ahdq6"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="9_otpy6"]
+
+[sub_resource type="Resource" id="Resource_x51h1"]
+script = ExtResource("5_xe7rs")
+quests = Array[ExtResource("2_k7rws")]([ExtResource("3_l5mxs"), ExtResource("4_okvei")])
+metadata/_custom_type_script = "uid://dka1daj2vrhn"
+
+[sub_resource type="Resource" id="Resource_iqd18"]
+script = ExtResource("6_jttbe")
+shop = ExtResource("7_1wqnn")
+metadata/_custom_type_script = "uid://bpo804060rk5t"
+
+[sub_resource type="Resource" id="Resource_82tnh"]
+script = ExtResource("8_ahdq6")
+lines = Array[String](["I run this quarry. Iron, mostly, and whatever else the rock gives up.", "Vein's always running thin. Always. Dig faster, or go hungry."])
+label_override = "Talk about yourself"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
+[resource]
+script = ExtResource("9_otpy6")
+npc_id = 10
+npc_name = "Foreman"
+greeting = "If you're here to gawk, the quarry's that way and so's the gate. If you want honest coin, I've veins need clearing and not enough backs to do it. Pick up a pick."
+interactions = Array[ExtResource("1_8t7eq")]([SubResource("Resource_x51h1"), SubResource("Resource_iqd18"), SubResource("Resource_82tnh")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"

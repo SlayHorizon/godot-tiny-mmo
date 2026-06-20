@@ -13,7 +13,7 @@ metadata/_custom_type_script = "uid://dqadrvvwt3ig2"
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Camp Cleanup"
-description = "With the captain dead, his lieutenants scattered to the bandit camp. Clear eight of them out — the city watch is paying per head."
+description = "With the captain dead, his men scattered to the camp. Clear 8. The watch pays per head."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_bandits")])
 min_level = 12
 reward_xp = 330

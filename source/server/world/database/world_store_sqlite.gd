@@ -44,6 +44,7 @@ func save_player(player: PlayerResource) -> void:
 
 	var friends_json: String = JSON.stringify(player.friends)
 	var blocked_ids_json: String = JSON.stringify(player.blocked_ids)
+	var owned_skins_json: String = JSON.stringify(player.owned_skins)
 	var server_roles_json: String = JSON.stringify(player.server_roles)
 	var stats_json: String = JSON.stringify(player.lb_stats)
 	var titles_json: String = JSON.stringify({
@@ -63,9 +64,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, server_roles_json, stats_json, titles_json, dailies_json, dungeon_lockouts_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, owned_skins_json, server_roles_json, stats_json, titles_json, dailies_json, dungeon_lockouts_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -86,6 +87,7 @@ func save_player(player: PlayerResource) -> void:
 			quests_json,
 			friends_json,
 			blocked_ids_json,
+			owned_skins_json,
 			server_roles_json,
 			stats_json,
 			titles_json,
@@ -113,6 +115,8 @@ func create_player_character(account_name: String, character_data: Dictionary) -
 		str(character_data.get("name", "Player")),
 		int(character_data.get("skin", 1))
 	)
+	# The chosen creation skin is owned from the start, so it's equippable in the wardrobe.
+	player.owned_skins = PackedInt64Array([player.skin_id])
 
 	# Starting kit: ONE potion + gold, no weapon — a fresh character's first
 	# decision is choosing a weapon at the starter shop (sword / bow / wand /
@@ -283,6 +287,13 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 
 	var blocked_v: Variant = JSON.parse_string(str(row.get("blocked_ids_json", "[]")))
 	player.blocked_ids = PackedInt64Array(blocked_v if blocked_v is Array else [])
+
+	var owned_skins_v: Variant = JSON.parse_string(str(row.get("owned_skins_json", "[]")))
+	player.owned_skins = PackedInt64Array(owned_skins_v if owned_skins_v is Array else [])
+	# The equipped skin is always owned — backfills existing players (pre-wardrobe) and any
+	# row whose blob drifted, so the wardrobe never shows your current look as locked.
+	if not player.owned_skins.has(player.skin_id):
+		player.owned_skins.append(player.skin_id)
 
 	player.server_roles = JSON.parse_string(str(row.get("server_roles_json", "{}"))) as Dictionary
 

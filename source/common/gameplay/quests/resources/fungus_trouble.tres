@@ -12,7 +12,7 @@ required_amount = 3
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Fungus Trouble"
-description = "Fungus have been crawling out of the meadow again. Thin them out — three of them should do."
+description = "Fungus crawling out of the meadow again. Clear 3; the rest will take the hint."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_slime")])
 reward_xp = 50
 reward_gold = 2

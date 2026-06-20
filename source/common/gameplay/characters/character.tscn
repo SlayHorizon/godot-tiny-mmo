@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://gl2cwrrfvlkh" path="res://source/common/gameplay/combat/components/stats_component.gd" id="6_fg3fs"]
 [ext_resource type="Script" uid="uid://cibbkjmyj3j2x" path="res://source/common/gameplay/characters/player/display_name_label.gd" id="8_pypn5"]
 [ext_resource type="Script" uid="uid://bu62r4mj8ohfc" path="res://source/common/gameplay/combat/components/equipment_component.gd" id="8_wql3f"]
+[ext_resource type="Script" uid="uid://cx1u5k6vq5st4" path="res://source/common/gameplay/characters/hurt_box.gd" id="9_hurt"]
 
 [sub_resource type="Animation" id="Animation_pypn5"]
 length = 0.001
@@ -203,7 +204,7 @@ transitions = ["Start", "OnFoot", SubResource("AnimationNodeStateMachineTransiti
 graph_offset = Vector2(13.9791, -42)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
-size = Vector2(16, 26)
+size = Vector2(16, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eyotc"]
 size = Vector2(16, 32)
@@ -217,7 +218,7 @@ bg_color = Color(0.694118, 0.101961, 0.14902, 0.705882)
 [node name="Character" type="CharacterBody2D" unique_id=1802487765]
 y_sort_enabled = true
 texture_filter = 1
-collision_mask = 6
+collision_mask = 2
 script = ExtResource("1_uqmoo")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1369636222]
@@ -248,7 +249,7 @@ speed_scale = 1.5
 offset = Vector2(0, -30)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1897743854]
-position = Vector2(0, -11)
+position = Vector2(0, -3)
 shape = SubResource("RectangleShape2D_3w1m3")
 
 [node name="HandOffset" type="Node2D" parent="." unique_id=2126751317]
@@ -270,7 +271,7 @@ metadata/_edit_group_ = true
 [node name="LeftRig" type="Node2D" parent="HandOffset/HandPivot" unique_id=1047543413]
 
 [node name="HurtBox" type="Area2D" parent="." unique_id=1315204681]
-visible = false
+script = ExtResource("9_hurt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=257403909]
 position = Vector2(0, -16)

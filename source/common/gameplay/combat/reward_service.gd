@@ -86,7 +86,6 @@ static func _reward(player: Player, npc: HostileNpc) -> void:
 		ServerHub.current.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
 
 	DailyQuestService.on_kill(resource, npc.enemy_type)
-	BasingService.on_pve_kill(player)
 	LeaderboardService.record_pve_kill(player)
 
 	if int(progress.get("levels_gained", 0)) > 0:

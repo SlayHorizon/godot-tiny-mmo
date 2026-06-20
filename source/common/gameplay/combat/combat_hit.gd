@@ -5,11 +5,11 @@ class_name CombatHit
 ## with TARGET_MASK and call try_damage" — it can't forget the flag path or the
 ## friendly-fire gate the way each hitbox used to re-implement them.
 
-## Collision mask every combat hitbox should use (Area2D.collision_mask): the
-## layers holding combatants, territory flags, and solid environment. Authored
-## scenes (melee_arc.tscn / pick_arc.tscn) already use 7; projectiles set it from
-## here so they all detect the same things.
-const TARGET_MASK: int = 7
+## Collision mask every combat hitbox uses (Area2D.collision_mask): hurtboxes (damage) +
+## territory flags (capture) + world (block). NOT character bodies — those are navigation
+## only, so attacks hit the body-sized HurtBox instead. See PhysicsLayers + docs/combat_layers.md.
+## Projectiles read this; melee arcs set their mask from PhysicsLayers in their own _ready.
+const TARGET_MASK: int = PhysicsLayers.COMBAT_TARGET_MASK
 
 ## Damage types. Physical is mitigated by ARMOR, magic by MR — pass the right
 ## one to try_damage (melee/arrows default to physical; wand bolts send magic).
@@ -29,7 +29,11 @@ enum Result {
 ## ignores the result and lets the damage land. Server-authoritative — call only
 ## where damage is owned (the hitboxes already gate on multiplayer.is_server()).
 static func try_damage(source: Character, body: Node2D, damage: float, damage_type: StringName = DAMAGE_PHYSICAL) -> Result:
-	if body == source:
+	# Combat hitboxes detect a character's HurtBox area (not its navigation body) — resolve
+	# the hurtbox to its owning Character so the target rules below work unchanged.
+	if body is HurtBox:
+		body = (body as HurtBox).character
+	if body == null or body == source:
 		return Result.IGNORED
 
 	# Flags: a guilded player damages them directly (capture system); anyone else
@@ -80,7 +84,7 @@ static func overlapping_bodies(hitbox: Area2D) -> Array[Node2D]:
 	params.transform = shape_node.global_transform
 	params.collision_mask = hitbox.collision_mask
 	params.collide_with_bodies = true
-	params.collide_with_areas = false
+	params.collide_with_areas = true # also catch HurtBox areas (the hit target), not just bodies
 	for hit: Dictionary in space.intersect_shape(params, 16):
 		var collider: Object = hit.get("collider")
 		if collider is Node2D:

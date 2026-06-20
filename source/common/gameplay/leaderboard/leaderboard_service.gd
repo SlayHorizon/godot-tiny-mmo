@@ -35,6 +35,9 @@ static func record_pvp_kill(killer: Character) -> void:
 	_increment(killer_player.player_resource, "pvp_kills")
 	if killer_player.player_resource.active_guild_id > 0:
 		BasingService.record_guild_kill(killer_player.player_resource.active_guild_id)
+		# Glory: a guilded member's PvP kill feeds the 200-kill SG milestone (global, not
+		# territory-gated — bases can span several instances, so no Area2D can cover them).
+		BasingService.credit_glory_kill(killer_player.player_resource.active_guild_id)
 
 
 ## Record a dungeon clear time (seconds) — keeps the player's BEST (lowest) per

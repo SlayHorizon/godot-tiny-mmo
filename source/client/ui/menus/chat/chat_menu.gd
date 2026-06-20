@@ -149,6 +149,12 @@ func _ready() -> void:
 	full_feed_message_edit.focus_entered.connect(_on_chat_input_focus_changed.bind(true))
 	full_feed_message_edit.focus_exited.connect(_on_chat_input_focus_changed.bind(false))
 
+	# Mobile: lift the chat above the on-screen keyboard while composing in the full feed
+	# (its input is at the screen bottom; the peek input sits up top and stays visible).
+	full_feed_message_edit.focus_entered.connect(func() -> void: set_process(true))
+	full_feed_message_edit.focus_exited.connect(_reset_keyboard_lift)
+	set_process(false)
+
 	_public_label_world = world_chat_button.text
 	_public_label_team = team_chat_button.text
 	_public_label_guild = guild_chat_button.text
@@ -195,6 +201,29 @@ func _apply_input_mode() -> void:
 	peek_feed.mouse_filter = filter
 	peek_feed_text_display.mouse_filter = filter
 	peek_feed_message_edit.visible = touch or peek_feed_message_edit.has_focus()
+
+
+## Mobile keyboard lift: while composing in the full feed on a touch device, shift the
+## whole chat up by the on-screen keyboard's height so the bottom input field isn't hidden
+## behind it. _process runs only while that field is focused (enabled on focus_entered);
+## the keyboard animates in, so we poll its height each frame. NOTE: needs on-device tuning
+## — if the lift is off, the keyboard height may need scaling by the content/stretch factor.
+func _process(_delta: float) -> void:
+	if ClientState.input_type != InputComponent.InputType.TOUCH or not full_feed_message_edit.has_focus():
+		_reset_keyboard_lift()
+		return
+	_set_keyboard_lift(float(DisplayServer.virtual_keyboard_get_height()))
+
+
+func _set_keyboard_lift(px: float) -> void:
+	offset_top = -px
+	offset_bottom = -px
+
+
+func _reset_keyboard_lift() -> void:
+	offset_top = 0.0
+	offset_bottom = 0.0
+	set_process(false)
 
 
 ## The one deliberate chat click-target on every platform: a small bubble
@@ -1163,6 +1192,9 @@ func _set_typing_state(should_be_typing: bool) -> void:
 	# indicator on others but not yourself.
 	if ClientState.local_player != null and is_instance_valid(ClientState.local_player):
 		ClientState.local_player.set_typing(actually_typing)
+		# Kill player input while composing so the sticks/keys don't move or attack —
+		# fixes mobile "I keep attacking with the stick while the keyboard is up".
+		ClientState.local_player.set_input_active(not actually_typing)
 
 
 func _on_chat_typing(payload: Dictionary) -> void:

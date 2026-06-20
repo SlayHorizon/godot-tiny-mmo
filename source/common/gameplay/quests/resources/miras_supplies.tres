@@ -21,7 +21,7 @@ required_amount = 3
 [resource]
 script = ExtResource("4_quest")
 quest_name = "Mira's Supplies"
-description = "Mira's brewing a tonic for the city watch — four wolf hides and three more herbs. Bring them all in one trip if you can."
+description = "Mira's brewing a tonic for the watch — 4 wolf hides and 3 more herbs. One trip, if you can manage it."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_hide_4"), SubResource("Obj_herb_3")])
 min_level = 6
 reward_xp = 140

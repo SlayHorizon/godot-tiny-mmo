@@ -33,6 +33,9 @@ func _ready() -> void:
 	# own visual (take_damage is server-gated, so the client deals none).
 	collision_mask = CombatHit.TARGET_MASK
 	body_entered.connect(_on_body_entered)
+	# HurtBox is an Area2D — route it through the same handler (CombatHit resolves it to the
+	# owning Character). Walls/flags still arrive via body_entered.
+	area_entered.connect(_on_body_entered)
 	if not multiplayer.is_server():
 		var vosn := VisibleOnScreenNotifier2D.new()
 		vosn.screen_exited.connect(queue_free)

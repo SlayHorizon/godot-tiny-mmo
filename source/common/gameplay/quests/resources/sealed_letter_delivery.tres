@@ -13,7 +13,7 @@ item = ExtResource("2_letter")
 [resource]
 script = ExtResource("3_quest")
 quest_name = "A Sealed Letter"
-description = "The tailor hands you a wax-sealed letter. \"Take this to the cartographer in the next town, would you? Be quick — and don't open it.\""
+description = "The tailor hands you a wax-sealed letter. \"To the cartographer in the next town. Be quick — and don't open it.\""
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_have_letter")])
 min_level = 3
 turn_in_giver_id = 2

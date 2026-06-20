@@ -45,9 +45,9 @@ func absorb(incoming: float) -> float:
 
 func _ready() -> void:
 	_hp_left = block_hp
-	# Layer 1 = "combatant" layer that projectile hitboxes detect; empty mask so
-	# the wall itself never initiates a collision. Movement (mask 6) ignores it.
-	collision_layer = 1
+	# On the WORLD layer (like real walls) so projectile hitboxes (which mask world) still
+	# stop on it; empty mask so the wall itself never initiates a collision.
+	collision_layer = PhysicsLayers.WORLD
 	collision_mask = 0
 	z_index = -1 # behind characters
 

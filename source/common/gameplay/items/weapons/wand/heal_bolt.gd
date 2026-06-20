@@ -15,8 +15,11 @@ var heal_amount: float = 0.0
 func _on_body_entered(body: Node2D) -> void:
 	if body == source:
 		return
+	# Combat hitboxes detect the HurtBox area now — resolve it to its owning Character.
+	if body is HurtBox:
+		body = (body as HurtBox).character
 	# Walls / doors / flags stop the bolt; non-player characters don't block it.
-	if body is not Character:
+	if body == null or body is not Character:
 		queue_free()
 		return
 	if body is not Player:

@@ -85,10 +85,8 @@ const BUILD_STAGE: String = "Alpha"
 # Character-creation skin picker — Prev/Next cycle through these (the big centre
 # preview shows the current one). Curated player-appropriate sprites; add slugs to
 # offer more starter looks.
-const PLAYER_SKINS: PackedStringArray = [
-	"knight", "rogue", "wizard", "bandit_fighter", "bandit_scout",
-	"bandit_sorcerer", "bandit_tracker", "goblin",
-]
+## Player skins available at creation — the shared curated list (also drives the wardrobe).
+const PLAYER_SKINS: PackedStringArray = PlayerSkins.SLUGS
 var _skin_index: int = 0
 var _skin_preview: AnimatedSprite2D
 var _skin_name_label: Label
