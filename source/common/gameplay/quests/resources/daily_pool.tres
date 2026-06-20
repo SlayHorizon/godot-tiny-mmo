@@ -12,7 +12,7 @@
 [sub_resource type="Resource" id="T_kill_slime"]
 script = ExtResource("1_tmpl")
 template_id = 1
-enemy_type = &"slime"
+enemy_type = &"fungus"
 required_amount = 3
 max_level = 10
 
