@@ -6,6 +6,7 @@
 
 [resource]
 script = ExtResource("1_dres")
+display_name = "The Dark Cave"
 description = "A dark cave filled with bones. Clear every room to escape with the loot."
 recommended_level = 8
 reward = ExtResource("2_reward")

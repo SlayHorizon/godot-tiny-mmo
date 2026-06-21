@@ -1,12 +1,12 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://c8js7nliy8mpq"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/dungeon/dungeon_exit.gd" id="1_de"]
+[ext_resource type="Script" uid="uid://l36xm046ums0" path="res://source/common/gameplay/dungeon/dungeon_exit.gd" id="1_de"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_de"]
 size = Vector2(24, 24)
 
-[node name="DungeonExit" type="Area2D"]
+[node name="DungeonExit" type="Area2D" unique_id=1934106487]
 script = ExtResource("1_de")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=898773709]
 shape = SubResource("RectangleShape2D_de")

@@ -114,11 +114,22 @@ func load_map(map_path: String) -> void:
 func _on_player_entered_interaction_area(player: Player, interaction_area: InteractionArea) -> void:
 	if player.has_recently_teleported():
 		return
-	if interaction_area is Warper:
+	if interaction_area is Warper and interaction_area.target_instance:
 		player_entered_warper.emit.call_deferred(player, self, interaction_area)
 	if interaction_area is Teleporter:
+		var teleporter: Teleporter = interaction_area
+		# No target = an unconfigured teleporter, or the landing end of a ONE-WAY pair (leave the
+		# destination teleporter's target empty to make it a plain arrival spot). No-op instead of
+		# crashing on a null deref.
+		if teleporter.target == null:
+			return
 		player.mark_just_teleported()
-		player.state_synchronizer.set_by_path(^":position", interaction_area.target.global_position)
+		var dest: Vector2 = teleporter.target.global_position
+		player.state_synchronizer.set_by_path(^":position", dest)
+		# The teleported client OWNS its LocalPlayer position, so a state delta alone won't move it
+		# (it overwrites with its own input next frame). Push the explicit player.teleport that
+		# teleport_peer_to / recall use so the client actually snaps to the destination.
+		WorldServer.curr.data_push.rpc_id(player.name.to_int(), &"player.teleport", {"position": dest})
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)

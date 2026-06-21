@@ -186,6 +186,16 @@ pointing/emulate_mouse_from_touch.mobile=true
 
 locale/translations=PackedStringArray("res://data/translations/translations.en_US.translation", "res://data/translations/translations.es_ES.translation", "res://data/translations/translations.pt_BR.translation")
 
+[layer_names]
+
+2d_physics/layer_1="character_body"
+2d_physics/layer_2="world"
+2d_physics/layer_3="hurtbox"
+2d_physics/layer_4="pickup"
+2d_physics/layer_5="flag"
+2d_physics/layer_6="harvestable"
+2d_physics/layer_7="interactable"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0

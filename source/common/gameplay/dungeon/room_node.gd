@@ -11,6 +11,10 @@ extends Area2D
 ## _push_seal — movement is client-authoritative, so the collision change must
 ## happen on each client).
 
+## Beat between sealing the room and the mobs materializing — the "doors slam, here it comes"
+## telegraph reads far better than an instant pop.
+const SPAWN_DELAY_S: float = 0.7
+
 ## The last room — clearing it clears the dungeon (pushes dungeon.cleared). The
 ## reward lives on the run's DungeonResource now, not here.
 @export var final_room: bool = false
@@ -76,6 +80,12 @@ func _activate() -> void:
 	if container == null:
 		push_warning("RoomNode '%s': map has no ReplicatedPropsContainer — no mobs." % name)
 		return
+	# Seal the party in FIRST, then a short beat before the mobs materialize — the "doors slam,
+	# here it comes" telegraph reads far better than spawning the instant the trigger fires.
+	_push_seal(true)
+	await get_tree().create_timer(SPAWN_DELAY_S).timeout
+	if not is_instance_valid(self) or not is_inside_tree():
+		return # instance torn down during the beat (party wiped / disconnected)
 	var instance: Node = map.get_parent() # RoomNode → Map → ServerInstance
 	var hard: bool = DungeonService.is_hard_run(instance)
 	# Hard-mode multipliers come off the dungeon's resource (fall back to the
@@ -108,7 +118,10 @@ func _activate() -> void:
 						brain.slam_damage *= dmg_mult # ...so scale it AFTER that load
 				_alive += 1
 				mob.died.connect(func(_killer: Character) -> void: _on_mob_died())
-	_push_seal(true) # seal the room behind the party — the fight is on
+				if npc != null:
+					# Client fade/scale-in. An OP (not spawn init — the wire drops init), so it
+					# lands on the prop after it exists on every client. See docs.
+					npc.replicate_visual(&"rp_materialize", [])
 	if _alive == 0:
 		_clear() # empty encounter authored — clear immediately
 

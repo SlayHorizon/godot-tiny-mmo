@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="3_63gk8"]
 [ext_resource type="Resource" uid="uid://b4b2xa8ndnhn8" path="res://source/common/gameplay/shops/resources/lost_soul_shop.tres" id="4_v2nbh"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="5_3pw6e"]
+[ext_resource type="Script" uid="uid://dk2y0vafqc2ds" path="res://source/common/gameplay/characters/npc/interactions/menu_interaction.gd" id="5_sy65p"]
 [ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="6_t1jho"]
 
 [sub_resource type="Resource" id="Resource_8au6g"]
@@ -19,10 +20,16 @@ shop = ExtResource("4_v2nbh")
 label_override = "Shop"
 metadata/_custom_type_script = "uid://bpo804060rk5t"
 
+[sub_resource type="Resource" id="Resource_63gk8"]
+script = ExtResource("5_sy65p")
+menu = &"dungeon_exit"
+arg = "0"
+label_override = "Exit Dungeon"
+
 [resource]
 script = ExtResource("5_3pw6e")
 npc_name = "Lost Soul"
 skin = ExtResource("6_t1jho")
 greeting = "OH! Wow a adventurer. How could i help you buddy?"
-interactions = Array[ExtResource("1_iita0")]([SubResource("Resource_8au6g"), SubResource("Resource_sqgvj")])
+interactions = Array[ExtResource("1_iita0")]([SubResource("Resource_8au6g"), SubResource("Resource_sqgvj"), SubResource("Resource_63gk8")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"

@@ -32,6 +32,8 @@ func _ready() -> void:
 		var map: Map = _find_map()
 		if map != null:
 			for interaction: NPCInteraction in npc_resource.interactions:
+				if interaction == null:
+					continue # empty array slot (a designer added a slot but no resource) — skip, don't crash
 				interaction.register(map, self)
 		return
 
@@ -116,6 +118,8 @@ func _open_interactions() -> void:
 		return
 	var entries: Array = []
 	for interaction: NPCInteraction in npc_resource.interactions:
+		if interaction == null:
+			continue # empty array slot — skip
 		var entry: Dictionary = interaction.menu_entry(self)
 		if not entry.is_empty():
 			entries.append(entry)

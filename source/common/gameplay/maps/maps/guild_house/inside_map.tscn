@@ -94,7 +94,7 @@ collision_mask = 6
 npc_resource = ExtResource("9_lkcla")
 
 [node name="DungeonMaster" parent="." unique_id=1763540222 instance=ExtResource("10_subvk")]
-position = Vector2(-8, -408)
+position = Vector2(257.96518, -146.62369)
 collision_mask = 6
 npc_resource = ExtResource("11_aldlr")
 

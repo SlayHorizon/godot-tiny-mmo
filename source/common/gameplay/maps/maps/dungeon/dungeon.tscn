@@ -85,12 +85,15 @@ metadata/_custom_type_script = "uid://wq8klpndipnu"
 
 [node name="Room1Door" parent="ReplicatedPropsContainer" unique_id=930488926 instance=ExtResource("10_qjuf2")]
 position = Vector2(30, -328)
+starts_open = true
 
 [node name="Room1Door2" parent="ReplicatedPropsContainer" unique_id=1083139597 instance=ExtResource("10_qjuf2")]
 position = Vector2(46, -328)
+starts_open = true
 
 [node name="Room1Door3" parent="ReplicatedPropsContainer" unique_id=344298851 instance=ExtResource("10_qjuf2")]
 position = Vector2(62, -328)
+starts_open = true
 
 [node name="Room1Door4" parent="ReplicatedPropsContainer" unique_id=367758405 instance=ExtResource("10_qjuf2")]
 position = Vector2(407, -363)

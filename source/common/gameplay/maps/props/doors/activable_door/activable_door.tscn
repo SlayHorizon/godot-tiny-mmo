@@ -110,7 +110,7 @@ animations = [{
 size = Vector2(16, 16)
 
 [node name="ActivableDoor" type="StaticBody2D" unique_id=930488926]
-collision_layer = 4
+collision_layer = 2
 script = ExtResource("1_ppv3d")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=678723567]

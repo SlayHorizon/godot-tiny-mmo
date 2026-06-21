@@ -789,6 +789,27 @@ func rp_attack(radius: float) -> void:
 	add_child(telegraph)
 
 
+## Client-visual: fade + scale the mob in on spawn so dungeon-room encounters "materialize"
+## instead of popping in. Fired by the spawner via replicate_visual right after spawn_dynamic —
+## an OP (not spawn init, which the wire doesn't carry to clients; see docs/replicated_props_vfx.md).
+## Ops apply after the spawn, so the prop exists here; the pair sync sets its position the same
+## frame, so the fade renders at the spawn spot.
+func rp_materialize() -> void:
+	if multiplayer.is_server():
+		return
+	# DIAGNOSTIC: flash the whole mob bright RED, then tween back to normal over 0.6s.
+	#  - If you SEE the mobs flash red → modulate works, so the real fade is fine (just too subtle).
+	#  - If you DON'T see red → something resets modulate every frame (the override we're hunting).
+	# The +0.15s print shows the live value: red≈(1,0.15,0.15) = it held; white = overridden.
+	var nm: String = name
+	modulate = Color(1.0, 0.15, 0.15, 1.0)
+	get_tree().create_timer(0.15).timeout.connect(func() -> void:
+		if is_instance_valid(self):
+			print("[CLIENT rp_mat] %s @+0.15s modulate=%s" % [nm, modulate]))
+	var tween: Tween = create_tween()
+	tween.tween_property(self, ^"modulate", Color.WHITE, 0.6)
+
+
 ## Replay one of this npc's rp_ visual methods on every client. Lets an external
 ## orchestrator (a BossController) drive the body's telegraphs without reaching
 ## into its private prop id. Server-side; no-op if not yet baked into a container.
