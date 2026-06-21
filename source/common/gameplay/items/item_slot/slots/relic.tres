@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemSlot" format=3 uid="uid://dp67jicqi8ovy"]
 
 [ext_resource type="Script" uid="uid://e40odrowquc8" path="res://source/common/gameplay/items/item_slot/item_slot.gd" id="1_dhxlw"]
+[ext_resource type="Texture2D" uid="uid://lp1m5y2l70mw" path="res://assets/sprites/items/icons/mystic/Inventory_10.png" id="1_u8pqf"]
 [ext_resource type="Script" uid="uid://b31ll8nrh57dx" path="res://source/common/gameplay/items/item_slot/item_slot_unlock_rule.gd" id="2_v4jea"]
 
 [sub_resource type="Resource" id="Resource_u8pqf"]
@@ -14,6 +15,7 @@ script = ExtResource("1_dhxlw")
 key = &"relic"
 display_name = "Relic"
 unlock_rule = SubResource("Resource_u8pqf")
+icon = ExtResource("1_u8pqf")
 metadata/_custom_type_script = "uid://e40odrowquc8"
 metadata/slug = &"relic"
 metadata/id = 37

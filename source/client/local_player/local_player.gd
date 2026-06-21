@@ -90,6 +90,9 @@ func _ready() -> void:
 	# party to town after a short timer (the recap auto-closes with it).
 	Client.subscribe(&"dungeon.cleared", func(payload: Dictionary) -> void:
 		ClientState.open_menu_requested.emit(&"dungeon_recap", payload))
+	# Dungeon FAILED (hardcore wipe — revive pool spent): same recap menu, "failed" variant.
+	Client.subscribe(&"dungeon.failed", func(payload: Dictionary) -> void:
+		ClientState.open_menu_requested.emit(&"dungeon_recap", payload))
 	# Dungeon entered — a soft welcome toast so the run doesn't start abruptly.
 	Client.subscribe(&"dungeon.entered", func(payload: Dictionary) -> void:
 		Toaster.toast_group(

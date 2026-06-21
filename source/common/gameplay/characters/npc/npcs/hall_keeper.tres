@@ -9,8 +9,8 @@
 [ext_resource type="Resource" uid="uid://dd7tu8yrec3ie" path="res://source/common/gameplay/quests/resources/camp_cleanup.tres" id="7_151lf"]
 [ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="8_46dxw"]
 [ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="10_dc8vo"]
+[ext_resource type="SpriteFrames" uid="uid://b1gu2vklfnvb5" path="res://source/common/gameplay/characters/sprite_frames/scholar_director.tres" id="11_b8ym4"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="11_dtmro"]
-[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="12_ucywk"]
 
 [sub_resource type="Resource" id="Resource_dnrtu"]
 script = ExtResource("8_46dxw")
@@ -31,7 +31,7 @@ metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 script = ExtResource("11_dtmro")
 npc_id = 100
 npc_name = "Hall Keeper"
-skin = ExtResource("12_ucywk")
+skin = ExtResource("11_b8ym4")
 greeting = "You've the look of the fresh made, still blinking, not sure what you're for. Work's the cure for that, only one I ever found. Board's on the wall. I'll point you at the jobs that won't get you killed your first day out."
 interactions = Array[ExtResource("1_wfiou")]([SubResource("Resource_dnrtu"), SubResource("Resource_gf85t"), SubResource("Resource_wfiou")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"

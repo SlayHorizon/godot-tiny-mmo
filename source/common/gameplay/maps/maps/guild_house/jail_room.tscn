@@ -46,10 +46,14 @@ y_sort_enabled = true
 tile_map_data = PackedByteArray("AAABAAEAAQAGAAQAAAADAAEAAQAGAAQAAAABAAAAAQAGAAIAAAADAAAAAQAGAAIAAAAHAAAAAQAGAAIAAAAHAAEAAQAGAAQAAAAJAAAAAQAGAAIAAAAJAAEAAQAGAAQAAAANAAAAAQAGAAIAAAANAAEAAQAGAAQAAAAPAAAAAQAGAAIAAAAPAAEAAQAGAAQAAAAUAAEAAQAHAAIAAAAUAAIAAQAIAAwAAAABAAsAAQAEAAAAAAABAAoAAQAMAAEAAAADAAsAAQANAAEAAAAFAAYAAQAFAA0AAAALAAYAAQAFAA0AAAARAAYAAQAFAA0AAAA=")
 tile_set = ExtResource("2_ln6fr")
 
-[node name="Warper" parent="." unique_id=1661700341 instance=ExtResource("3_sxpnr")]
+[node name="Spawn" parent="." unique_id=1661700341 instance=ExtResource("3_sxpnr")]
 position = Vector2(320, 184)
 target_instance = ExtResource("4_adxh6")
+warper_id = 1
 target_id = 1
+
+[node name="WarperTavern" parent="." unique_id=1414716116 instance=ExtResource("3_sxpnr")]
+position = Vector2(134.74481, 133.8377)
 
 [node name="CharterClerk" parent="." unique_id=1922057613 instance=ExtResource("5_ukoid")]
 position = Vector2(328.8266, 87.64915)

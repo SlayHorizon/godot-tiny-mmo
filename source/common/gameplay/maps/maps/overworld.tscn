@@ -322,7 +322,7 @@ position = Vector2(-47, -1)
 shape = SubResource("WorldBoundaryShape2D_bauih")
 
 [node name="Spawn" parent="." unique_id=906857745 instance=ExtResource("21_81rgi")]
-position = Vector2(479.69937, 971.7388)
+position = Vector2(190.08585, 1116.4324)
 
 [node name="GuildHouse" parent="." unique_id=1783528862 instance=ExtResource("21_81rgi")]
 position = Vector2(1323, 688)
@@ -356,6 +356,7 @@ position = Vector2(-32, 1304)
 scale = Vector2(1.4800009, 8.67999)
 target_instance = ExtResource("27_iavpv")
 warper_id = 7
+target_id = 1
 
 [node name="TerritoryFlag" type="StaticBody2D" parent="." unique_id=1211345834 node_paths=PackedStringArray("banner", "health_bar", "grace_label")]
 position = Vector2(1324, 236)

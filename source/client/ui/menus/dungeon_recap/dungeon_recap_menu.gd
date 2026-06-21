@@ -1,8 +1,8 @@
 extends Control
-## Shown when a dungeon run is COMPLETED — dungeon name, completion time, reward,
-## and a note that the party is being returned to town. Opened via
-## open_menu_requested(&"dungeon_recap", recap_dict). Auto-closes when the server
-## ejects the party (after eject_in seconds), or on Close.
+## Shown when a dungeon run ENDS — CLEARED (name, time, reward) or FAILED (a hardcore
+## wipe: name, time survived, no reward). The payload's "failed" flag picks the variant.
+## Opened via open_menu_requested(&"dungeon_recap", recap_dict). Auto-closes when the
+## server ejects the party (after eject_in seconds), or on Close.
 
 var _content: VBoxContainer
 
@@ -12,12 +12,20 @@ func _ready() -> void:
 
 
 func open(data: Dictionary) -> void:
-	_build_shell()
+	var failed: bool = bool(data.get("failed", false))
+	_build_shell(failed)
 
-	_title("Dungeon Cleared!")
-	_line(str(data.get("dungeon", "Dungeon")), Color(0.8, 0.85, 1.0), 16)
-	_line("Completion time: %ds" % int(data.get("seconds", 0)))
-	_render_reward(data.get("reward", {}) as Dictionary)
+	if failed:
+		_title("Run Failed", Color(1.0, 0.45, 0.4))
+		_line(str(data.get("dungeon", "Dungeon")), Color(0.86, 0.8, 0.82), 16)
+		_line("Survived: %ds" % int(data.get("seconds", 0)))
+		_line("The party has fallen — no reward.", Color(0.92, 0.58, 0.52))
+	else:
+		_title("Dungeon Cleared!")
+		_line(str(data.get("dungeon", "Dungeon")), Color(0.8, 0.85, 1.0), 16)
+		_line("Completion time: %ds" % int(data.get("seconds", 0)))
+		_render_reward(data.get("reward", {}) as Dictionary)
+
 	var eject: int = int(data.get("eject_in", 15))
 	_line("Returning to town in ~%ds…" % eject, Color(0.7, 0.74, 0.82))
 
@@ -55,12 +63,13 @@ func _render_reward(reward: Dictionary) -> void:
 		_line("(no drops this time)", Color(0.7, 0.74, 0.82))
 
 
-func _build_shell() -> void:
+func _build_shell(failed: bool = false) -> void:
 	for child: Node in get_children():
 		child.queue_free()
 	var backdrop: ColorRect = ColorRect.new()
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	backdrop.color = Color(0.03, 0.05, 0.09, 0.78)
+	# A dark-red wash for a wipe, the usual dark-blue for a clear.
+	backdrop.color = Color(0.11, 0.03, 0.04, 0.80) if failed else Color(0.03, 0.05, 0.09, 0.78)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(backdrop)
 
@@ -84,11 +93,11 @@ func _build_shell() -> void:
 	pad.add_child(_content)
 
 
-func _title(text: String) -> void:
+func _title(text: String, color: Color = Color(1.0, 0.92, 0.55)) -> void:
 	var label: Label = Label.new()
 	label.text = text
 	label.add_theme_font_size_override(&"font_size", 22)
-	label.add_theme_color_override(&"font_color", Color(1.0, 0.92, 0.55))
+	label.add_theme_color_override(&"font_color", color)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_content.add_child(label)
 

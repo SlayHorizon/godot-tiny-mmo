@@ -34,6 +34,9 @@ func _ready() -> void:
 	# Sparring countdown — big centered text fired each second by the server.
 	Client.subscribe(&"sparring.countdown", _on_sparring_countdown)
 
+	# Dungeon run HUD (live clock + revive pool) — self-contained; shows itself on dungeon.hud pushes.
+	add_child(DungeonHud.new())
+
 
 ## Fetch the current level/xp once (e.g. on spawn / map change).
 func _refresh_progression() -> void:

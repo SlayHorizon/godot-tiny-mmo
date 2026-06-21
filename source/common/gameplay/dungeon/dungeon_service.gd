@@ -23,6 +23,9 @@ static var _run_start_ms: Dictionary[int, int] = {}
 static var _ejecting: Dictionary[int, bool] = {}
 # group_id -> whether this run is HARD (scaled mobs, richer reward, separate lockout).
 static var _run_hard: Dictionary[int, bool] = {}
+# group_id -> shared revive pool left (HARD runs only). Each death spends one; the death that finds
+# it empty FAILS the whole run. Sized one-per-member, or SOLO_REVIVES for a lone runner.
+static var _run_revives: Dictionary[int, int] = {}
 
 # Private ROOMS (the Browse tab) — pre-run lobbies a player creates + shares, kept
 # alongside the implicit public queue. room_id -> { leader, members: Array[peer],
@@ -39,6 +42,11 @@ const ROOM_CODE_LEN: int = 2
 const QUEUE_RANGE: float = 120.0
 ## Seconds the recap stays up before the party is auto-sent home.
 const EJECT_DELAY_S: float = 15.0
+## Seconds the "RUN FAILED" recap shows before a wiped party is sent home. Long enough to read the
+## recap; kept > RESPAWN_DELAY so any teammate mid-death-countdown respawns before the eject.
+const FAIL_EJECT_DELAY_S: float = 6.0
+## Revives a SOLO hardcore run gets. A party run gets one per member instead (see start_run).
+const SOLO_REVIVES: int = 4
 ## Hard-mode stat multipliers, applied to every mob a Hard run spawns.
 const HARD_HEALTH_MULT: float = 2.0
 const HARD_DAMAGE_MULT: float = 1.5
@@ -390,6 +398,9 @@ static func start_run(peers: Array, dungeon: DungeonResource, hard: bool = false
 	var group_id: int = GroupService.create_group(members, members[0])
 	_run_start_ms[group_id] = Time.get_ticks_msec()
 	_run_hard[group_id] = hard
+	# Hardcore: a shared revive pool — one per party member, or SOLO_REVIVES for a lone runner.
+	if hard:
+		_run_revives[group_id] = SOLO_REVIVES if members.size() <= 1 else members.size()
 	# Private instance: prepare a fresh one directly. We can't use
 	# queue_charge_instance — it dedupes by resource, but every group needs its
 	# OWN copy. prepare_instance appends it to charged_instances on ready, and
@@ -416,6 +427,7 @@ static func _enter_run(group_id: int, members: Array) -> void:
 		var player: Player = current.get_player(peer) as Player
 		if player != null:
 			instance_manager.player_switch_instance(instance, 0, player, current)
+			player.restore_full() # enter a run topped up (HP + mana), spar-style — saves potions
 
 	# Welcome toast — delayed so it lands after the client finishes loading the new
 	# instance (the switch is still in flight this frame). Soft entry, not a wall of
@@ -426,7 +438,8 @@ static func _enter_run(group_id: int, members: Array) -> void:
 	ServerHub.current.get_tree().create_timer(1.5).timeout.connect(
 		func() -> void:
 			for peer: int in GroupService.members_of(group_id):
-				ServerHub.current.data_push.rpc_id(peer, &"dungeon.entered", {"dungeon": dungeon_name}),
+				ServerHub.current.data_push.rpc_id(peer, &"dungeon.entered", {"dungeon": dungeon_name})
+			_push_hud(group_id),
 		CONNECT_ONE_SHOT
 	)
 
@@ -449,6 +462,8 @@ static func on_player_left(peer_id: int, left_instance: Node) -> void:
 		if left_instance.instance_resource != null:
 			dungeon_name = str(left_instance.instance_resource.instance_name)
 		ServerHub.current.data_push.rpc_id(peer_id, &"dungeon.left", {"dungeon": dungeon_name})
+	if ServerHub.current != null:
+		ServerHub.current.data_push.rpc_id(peer_id, &"dungeon.hud", {"active": false}) # leaver's HUD off
 	GroupService.leave(peer_id)
 	if GroupService.members_of(group_id).is_empty():
 		_runs.erase(group_id)
@@ -456,6 +471,7 @@ static func on_player_left(peer_id: int, left_instance: Node) -> void:
 		_run_start_ms.erase(group_id)
 		_ejecting.erase(group_id)
 		_run_hard.erase(group_id)
+		_run_revives.erase(group_id)
 
 
 ## The final room cleared — the run is COMPLETE. Grant each member their reward
@@ -468,6 +484,7 @@ static func on_dungeon_cleared(instance: Node) -> void:
 	var group_id: int = _instance_to_group.get(str(instance.name), 0)
 	if group_id == 0:
 		return
+	_hide_hud(group_id) # the run clock stops on clear; the recap shows the final time
 	var start_ms: int = _run_start_ms.get(group_id, Time.get_ticks_msec())
 	var seconds: int = int((Time.get_ticks_msec() - start_ms) / 1000.0)
 	var hard: bool = _run_hard.get(group_id, false)
@@ -540,6 +557,94 @@ static func _grant_reward(player: Player, lockout_key: String, reward: DungeonRe
 	return {"gold": gold, "items": items}
 
 
+## A player died inside a run. HARD runs draw from a shared revive pool: spend one and respawn as
+## usual, or — if it's already empty — FAIL the run (the whole party is revived + sent home, no
+## reward). Returns true if the run FAILED, so the caller (Player.die) skips its normal respawn.
+## Normal runs and non-dungeon deaths return false (respawn freely). Server-only.
+static func register_dungeon_death(player: Node) -> bool:
+	if player == null or player.player_resource == null:
+		return false
+	var group_id: int = GroupService.group_of(int(player.player_resource.current_peer_id))
+	if group_id == 0 or not _runs.has(group_id) or not _run_hard.get(group_id, false):
+		return false # not a hardcore dungeon run — free respawn
+	var revives: int = _run_revives.get(group_id, 0)
+	if revives > 0:
+		_run_revives[group_id] = revives - 1
+		var left: int = revives - 1
+		_notify_party(group_id, "A hero has fallen — %d revive%s left." % [left, "" if left == 1 else "s"])
+		_push_hud(group_id) # refresh the HUD revive count for the party
+		return false # respawn at the dungeon entrance as usual
+	_fail_run(group_id)
+	return true # pool exhausted — run over
+
+
+## The revive pool is spent and someone died: the run FAILS. Revive everyone (so they arrive home
+## alive), tell them, then eject to town after a short beat. No reward. Server-only.
+static func _fail_run(group_id: int) -> void:
+	if ServerHub.current == null or _ejecting.get(group_id, false):
+		return
+	_ejecting[group_id] = true # mark the eject non-voluntary (no "Left X" toast in on_player_left)
+	_hide_hud(group_id) # stop the run clock immediately, ahead of the eject delay
+	var instance: Node = _runs.get(group_id, null)
+	var dungeon_name: String = "the dungeon"
+	if instance != null and instance.instance_resource != null:
+		dungeon_name = str(instance.instance_resource.instance_name)
+	var seconds: int = int(_elapsed_s(group_id)) # how long the party survived, for the recap
+	for peer: int in GroupService.members_of(group_id):
+		var player: Player = null
+		if instance != null:
+			player = instance.get_player(peer) as Player
+		if player != null:
+			player.revive() # arrive home alive, not a corpse
+		ServerHub.current.data_push.rpc_id(peer, &"dungeon.failed", {"failed": true, "dungeon": dungeon_name, "seconds": seconds, "eject_in": int(FAIL_EJECT_DELAY_S)})
+	_notify_party(group_id, "The party has fallen — the run failed. Returning to town…")
+	ServerHub.current.get_tree().create_timer(FAIL_EJECT_DELAY_S).timeout.connect(
+		func() -> void: _eject_run(group_id), CONNECT_ONE_SHOT
+	)
+
+
+## A system chat line to every member still in the run (revive count, run-failed notice).
+static func _notify_party(group_id: int, message: String) -> void:
+	if ServerHub.current == null:
+		return
+	var instance: Node = _runs.get(group_id, null)
+	if instance == null:
+		return
+	for peer: int in GroupService.members_of(group_id):
+		var player: Player = instance.get_player(peer) as Player
+		if player != null and player.player_resource != null:
+			ServerHub.current.chat_service.push_system_to_player(instance, player.player_resource.player_id, message)
+
+
+## Push the live run HUD (clock baseline + revive count) to every member. has_pool=false on a Normal
+## run, so the client shows just the clock.
+static func _push_hud(group_id: int) -> void:
+	if ServerHub.current == null:
+		return
+	var payload: Dictionary = {
+		"active": true,
+		"elapsed_s": _elapsed_s(group_id),
+		"has_pool": _run_hard.get(group_id, false),
+		"revives": _run_revives.get(group_id, 0),
+	}
+	for peer: int in GroupService.members_of(group_id):
+		ServerHub.current.data_push.rpc_id(peer, &"dungeon.hud", payload)
+
+
+## Tell every member to hide the run HUD (the run cleared or failed).
+static func _hide_hud(group_id: int) -> void:
+	if ServerHub.current == null:
+		return
+	for peer: int in GroupService.members_of(group_id):
+		ServerHub.current.data_push.rpc_id(peer, &"dungeon.hud", {"active": false})
+
+
+## Seconds since this run began (server clock) — the HUD clock baseline.
+static func _elapsed_s(group_id: int) -> float:
+	var start_ms: int = _run_start_ms.get(group_id, Time.get_ticks_msec())
+	return float(Time.get_ticks_msec() - start_ms) / 1000.0
+
+
 ## Sweep a disconnecting peer out of any dungeon lobby queue AND out of a live run
 ## (dissolving the group when it empties), mirroring SparringService. Without this
 ## a mid-run crash leaves a phantom in the group/lobby and a never-freed run map.
@@ -576,6 +681,7 @@ static func on_peer_disconnected(peer_id: int) -> void:
 			_run_start_ms.erase(group_id)
 			_ejecting.erase(group_id)
 			_run_hard.erase(group_id)
+			_run_revives.erase(group_id)
 
 
 static func _eject_run(group_id: int) -> void:
@@ -583,5 +689,10 @@ static func _eject_run(group_id: int) -> void:
 		return
 	_ejecting[group_id] = true # this leave is the cleared eject, not a voluntary bail
 	var instance_manager: Node = ServerHub.current.instance_manager
+	var instance: Node = _runs.get(group_id, null)
 	for peer: int in GroupService.members_of(group_id).duplicate():
+		if instance != null: # leave the run topped up (HP + mana), symmetric with the entry refill
+			var player: Player = instance.get_player(peer) as Player
+			if player != null:
+				player.restore_full()
 		instance_manager.recall_player(peer) # → town hub; on_player_left dissolves the group

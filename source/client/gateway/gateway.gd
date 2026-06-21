@@ -82,11 +82,10 @@ const BUILD_STAGE: String = "Alpha"
 @onready var _more_logout: Button = %LogoutButton
 
 
-# Character-creation skin picker — Prev/Next cycle through these (the big centre
-# preview shows the current one). Curated player-appropriate sprites; add slugs to
-# offer more starter looks.
-## Player skins available at creation — the shared curated list (also drives the wardrobe).
-const PLAYER_SKINS: PackedStringArray = PlayerSkins.SLUGS
+# Character-creation skin picker — Prev/Next cycle through the whole roster (the big centre
+# preview shows the current one). Sourced from PlayerSkins (every `sprites` entry), so new
+# art appears here automatically — no list to maintain. Populated in prepare_character_creation_menu.
+var _skin_ids: Array[int] = []
 var _skin_index: int = 0
 var _skin_preview: AnimatedSprite2D
 var _skin_name_label: Label
@@ -1230,6 +1229,7 @@ func request_enter_world() -> Dictionary:
 
 
 func prepare_character_creation_menu() -> void:
+	_skin_ids = PlayerSkins.ids()
 	_skin_preview = $CharacterCreation/VBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/CenterContainer/Control/AnimatedSprite2D
 	_skin_preview.play(&"run")
 
@@ -1276,28 +1276,26 @@ func prepare_character_creation_menu() -> void:
 
 ## Cycle the starter skin by +1 / -1 (wraps around the roster).
 func _cycle_skin(delta: int) -> void:
-	if PLAYER_SKINS.is_empty():
+	if _skin_ids.is_empty():
 		return
-	_apply_skin(wrapi(_skin_index + delta, 0, PLAYER_SKINS.size()))
+	_apply_skin(wrapi(_skin_index + delta, 0, _skin_ids.size()))
 
 
 ## Apply a skin by index — set selected_skin_id, update the preview + name label.
 func _apply_skin(index: int) -> void:
-	if index < 0 or index >= PLAYER_SKINS.size():
+	if index < 0 or index >= _skin_ids.size():
 		return
-	var slug: String = PLAYER_SKINS[index]
-	var frames: SpriteFrames = ContentRegistryHub.load_by_slug(&"sprites", slug) as SpriteFrames
+	var skin_id: int = _skin_ids[index]
+	var frames: SpriteFrames = ContentRegistryHub.load_by_id(&"sprites", skin_id) as SpriteFrames
 	if not frames:
 		return
 	_skin_index = index
-	selected_skin_id = ContentRegistryHub.id_from_slug(&"sprites", slug)
-	if selected_skin_id == 0:
-		selected_skin_id = 1
+	selected_skin_id = skin_id
 	if _skin_preview:
 		_skin_preview.sprite_frames = frames
 		_skin_preview.play(&"run")
 	if _skin_name_label:
-		_skin_name_label.text = slug.capitalize()
+		_skin_name_label.text = PlayerSkins.display_name(skin_id)
 
 
 # Ideally we must not save credentials locally even if crypted,

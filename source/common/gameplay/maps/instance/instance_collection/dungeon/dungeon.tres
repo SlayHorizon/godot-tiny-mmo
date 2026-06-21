@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://i1qmy82mdrm8" path="res://source/common/gameplay/dungeon/dungeon_resource.gd" id="1_dres"]
 [ext_resource type="Resource" uid="uid://8byl713ves8w" path="res://source/common/gameplay/dungeon/dungeon_reward_v1.tres" id="2_reward"]
-[ext_resource type="Resource" path="res://source/common/gameplay/dungeon/dungeon_reward_hard.tres" id="3_hard"]
+[ext_resource type="Resource" uid="uid://dbmkuja8ck2pr" path="res://source/common/gameplay/dungeon/dungeon_reward_hard.tres" id="3_hard"]
 
 [resource]
 script = ExtResource("1_dres")

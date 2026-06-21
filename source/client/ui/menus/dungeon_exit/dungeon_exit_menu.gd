@@ -37,7 +37,7 @@ func open(_arg: Variant = null) -> void:
 func _on_leave() -> void:
 	Client.request_data(
 		&"dungeon.leave", func(_response: Dictionary) -> void: hide(),
-		{}, InstanceClient.current.name if InstanceClient.current else ""
+		{}, String(InstanceClient.current.name) if InstanceClient.current else ""
 	)
 
 

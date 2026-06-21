@@ -1,0 +1,171 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cguofoiw5svvs"]
+
+[ext_resource type="Texture2D" uid="uid://dgm3eieo7c047" path="res://assets/sprites/characters/scholar_cataloguer/scholar_cataloguer_death.png" id="1_death"]
+[ext_resource type="Texture2D" uid="uid://hpua2aujpw74" path="res://assets/sprites/characters/scholar_cataloguer/scholar_cataloguer_hit.png" id="2_hit"]
+[ext_resource type="Texture2D" uid="uid://c3lgclaif2exp" path="res://assets/sprites/characters/scholar_cataloguer/scholar_cataloguer_idle.png" id="3_idle"]
+[ext_resource type="Texture2D" uid="uid://cpdr8qrwyy1me" path="res://assets/sprites/characters/scholar_cataloguer/scholar_cataloguer_run.png" id="4_run"]
+
+[sub_resource type="AtlasTexture" id="Atlas_death_0"]
+atlas = ExtResource("1_death")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_death_1"]
+atlas = ExtResource("1_death")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_death_2"]
+atlas = ExtResource("1_death")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_death_3"]
+atlas = ExtResource("1_death")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_death_4"]
+atlas = ExtResource("1_death")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_death_5"]
+atlas = ExtResource("1_death")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_hit_0"]
+atlas = ExtResource("2_hit")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_hit_1"]
+atlas = ExtResource("2_hit")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_hit_2"]
+atlas = ExtResource("2_hit")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_hit_3"]
+atlas = ExtResource("2_hit")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_idle_0"]
+atlas = ExtResource("3_idle")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_idle_1"]
+atlas = ExtResource("3_idle")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_idle_2"]
+atlas = ExtResource("3_idle")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_idle_3"]
+atlas = ExtResource("3_idle")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_0"]
+atlas = ExtResource("4_run")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_1"]
+atlas = ExtResource("4_run")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_2"]
+atlas = ExtResource("4_run")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_3"]
+atlas = ExtResource("4_run")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_4"]
+atlas = ExtResource("4_run")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_5"]
+atlas = ExtResource("4_run")
+region = Rect2(320, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_death_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_death_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_death_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_death_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_death_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_death_5")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_hit_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_hit_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_hit_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_hit_3")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_idle_3")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_run_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_5")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
+metadata/slug = &"scholar_cataloguer"
+metadata/id = 27

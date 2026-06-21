@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="DungeonReward" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="DungeonReward" format=3 uid="uid://dbmkuja8ck2pr"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/dungeon/dungeon_reward.gd" id="1_reward"]
+[ext_resource type="Script" uid="uid://dm6elylcxek00" path="res://source/common/gameplay/dungeon/dungeon_reward.gd" id="1_reward"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_vx42b"]
 
 [resource]
 script = ExtResource("1_reward")
 gold_min = 150
-gold_max = 300
+gold_max = 220
 lockout_hours = 23.0

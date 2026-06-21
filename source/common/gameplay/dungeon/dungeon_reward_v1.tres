@@ -5,6 +5,6 @@
 
 [resource]
 script = ExtResource("1_reward")
-gold_min = 50
-gold_max = 120
+gold_min = 40
+gold_max = 80
 lockout_hours = 23.0

@@ -24,7 +24,7 @@ item = ExtResource("4_potion")
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Find Your Footing"
-description = "New-made, and no use to anyone yet — work fixes that. Mira keeps the apothecary, the Foreman runs the quarry. Introduce yourself to either; they'll start you."
+description = "New-made, and no use to anyone yet: work fixes that. Mira keeps the apothecary, the Foreman runs the quarry. Introduce yourself to either; they'll start you."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_visit_mira"), SubResource("Obj_visit_foreman")])
 completion = 1
 auto_complete = true

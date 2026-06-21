@@ -20,6 +20,9 @@ func _init() -> void:
 
 ## Seconds the player stays down before a no-penalty respawn at the map spawn point.
 const RESPAWN_DELAY: float = 3.0
+## Grace window after respawn where the player can't traverse warpers — the map spawn point can sit
+## on a warper (e.g. forest↔overworld), and without this the first step off re-warps the player.
+const RESPAWN_WARP_GRACE_MS: int = 2000
 
 
 ## On death: tell the client (death screen + countdown + where to respawn), wait, then
@@ -31,6 +34,11 @@ func die(killer: Character) -> void:
 	# Leaderboard: credit the killer if this was a player-vs-player kill. NPC
 	# killers are filtered out inside record_pvp_kill.
 	LeaderboardService.record_pvp_kill(killer)
+
+	# Hardcore dungeon: a death spends a shared revive. If the pool's empty the whole run fails —
+	# DungeonService revives + ejects the party to town, so skip the normal respawn here.
+	if DungeonService.register_dungeon_death(self):
+		return
 
 	# Default spawn = map's spawn point.
 	var spawn_position: Vector2 = Vector2.ZERO
@@ -63,7 +71,23 @@ func die(killer: Character) -> void:
 	if not is_instance_valid(self):
 		return # left the game while down
 
+	revive()
+	# The respawn lands on the map spawn point, which may sit on a warper — lock warper traversal
+	# briefly so stepping off doesn't immediately warp the player (their idea; mirrors spawn_player).
+	mark_just_teleported(RESPAWN_WARP_GRACE_MS)
+
+
+## Top HP and mana back to full (does NOT touch the dead flag). The dungeon enter/exit refill uses it
+## to save players a few potions, spar-style; revive() builds on it for respawns.
+func restore_full() -> void:
 	stats_component.set_stat(Stat.HEALTH, stats_component.get_stat(Stat.HEALTH_MAX))
+	stats_component.set_stat(Stat.MANA, stats_component.get_stat(Stat.MANA_MAX))
+
+
+## Restore to full (HP + mana) and clear the dead flag. Shared by the normal respawn and the
+## dungeon-fail eject (DungeonService revives the party so they arrive home alive, not as corpses).
+func revive() -> void:
+	restore_full()
 	is_dead = false
 
 

@@ -12,10 +12,10 @@
 [ext_resource type="Resource" uid="uid://dhdjy3c4ufju0" path="res://source/common/gameplay/characters/npc/npcs/starter_merchant.tres" id="9_lkcla"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="10_subvk"]
 [ext_resource type="Resource" uid="uid://b7ty7yxpd32u2" path="res://source/common/gameplay/characters/npc/npcs/dungeon_keeper.tres" id="11_aldlr"]
+[ext_resource type="SpriteFrames" uid="uid://dlopdt61exewy" path="res://source/common/gameplay/characters/sprite_frames/scholar_researcher.tres" id="16_aldlr"]
 [ext_resource type="Script" uid="uid://beeyftaqtiwe3" path="res://source/common/gameplay/characters/npc/interactions/attribute_reset_interaction.gd" id="17_j3473"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="19_kqnsa"]
 [ext_resource type="Script" uid="uid://bfh4whbd72q65" path="res://source/common/gameplay/characters/npc/interactions/wardrobe_interaction.gd" id="24_8uqpf"]
-[ext_resource type="SpriteFrames" uid="uid://ckldb3p6vdl3b" path="res://source/common/gameplay/characters/sprite_frames/skeleton_warrior.tres" id="25_7whis"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5v2ol"]
 size = Vector2(80, 50)
@@ -31,7 +31,7 @@ metadata/_custom_type_script = "uid://beeyftaqtiwe3"
 [sub_resource type="Resource" id="Resource_luj30"]
 script = ExtResource("19_kqnsa")
 npc_name = "Horizon"
-skin = ExtResource("25_7whis")
+skin = ExtResource("16_aldlr")
 interactions = Array[ExtResource("9_fjcme")]([SubResource("Resource_1whb7"), SubResource("Resource_whj3q")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
@@ -67,6 +67,7 @@ position = Vector2(247.99998, -246)
 scale = Vector2(1.76, 1)
 target_instance = ExtResource("5_domtg")
 warper_id = 1
+target_id = 1
 
 [node name="QuestBoard" type="Area2D" parent="." unique_id=440578225]
 position = Vector2(-267, -419)

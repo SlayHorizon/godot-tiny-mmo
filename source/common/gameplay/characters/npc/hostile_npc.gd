@@ -38,6 +38,10 @@ const RETURN_REGEN_RATE: float = 0.25
 ## means a mob recovers from a missed snipe over 5-10 seconds.
 const IDLE_REGEN_RATE: float = 0.05
 
+## A mob holds still (AI suspended via action_root_until_ms) for this long on spawn / respawn so the
+## summon burst reads on a still body instead of a mob blinking in mid-stride.
+const SPAWN_FREEZE_S: float = 0.5
+
 
 
 ## Toggle in the inspector to render the leash + detection rings around
@@ -294,6 +298,11 @@ func _ready() -> void:
 	stats_component.set_stat(Stat.AP, attack_damage)
 	stats_component.set_stat(Stat.ARMOR, armor)
 	stats_component.set_stat(Stat.MR, mr)
+
+	# Push the full initial state (position especially) in the SPAWN tick, so a freshly-spawned mob
+	# is placed correctly on clients immediately instead of sitting at the container origin until
+	# its first physics frame. Without this, a spawn VFX fired right after spawn lands at (0,0).
+	_process_synchronization()
 
 
 func _on_local_guild_changed(_new_id: int) -> void:
@@ -789,25 +798,15 @@ func rp_attack(radius: float) -> void:
 	add_child(telegraph)
 
 
-## Client-visual: fade + scale the mob in on spawn so dungeon-room encounters "materialize"
-## instead of popping in. Fired by the spawner via replicate_visual right after spawn_dynamic —
-## an OP (not spawn init, which the wire doesn't carry to clients; see docs/replicated_props_vfx.md).
-## Ops apply after the spawn, so the prop exists here; the pair sync sets its position the same
-## frame, so the fade renders at the spawn spot.
-func rp_materialize() -> void:
+## Client-visual: a SpawnEffect summon burst centered on this mob — fired on spawn + respawn so an
+## appearing mob has presence instead of popping in. A SEPARATE node (renders fine), not a tween on
+## the mob's own sprite (which doesn't render — see docs/replicated_props_vfx.md).
+func rp_spawn_effect() -> void:
 	if multiplayer.is_server():
 		return
-	# DIAGNOSTIC: flash the whole mob bright RED, then tween back to normal over 0.6s.
-	#  - If you SEE the mobs flash red → modulate works, so the real fade is fine (just too subtle).
-	#  - If you DON'T see red → something resets modulate every frame (the override we're hunting).
-	# The +0.15s print shows the live value: red≈(1,0.15,0.15) = it held; white = overridden.
-	var nm: String = name
-	modulate = Color(1.0, 0.15, 0.15, 1.0)
-	get_tree().create_timer(0.15).timeout.connect(func() -> void:
-		if is_instance_valid(self):
-			print("[CLIENT rp_mat] %s @+0.15s modulate=%s" % [nm, modulate]))
-	var tween: Tween = create_tween()
-	tween.tween_property(self, ^"modulate", Color.WHITE, 0.6)
+	add_child(SpawnEffect.new())
+
+
 
 
 ## Replay one of this npc's rp_ visual methods on every client. Lets an external
@@ -1048,6 +1047,12 @@ func _process_death() -> void:
 	is_dead = false
 	enemy_state = EnemyState.IDLE
 	_contributors.clear() # fresh life — past damage no longer counts for rewards
+	# Push the respawn position NOW (the freeze below skips the normal per-frame sync) so the spawn
+	# FX lands on the mob at its spawn point, not at wherever it happened to die.
+	_process_synchronization()
+	# Summon burst + brief hold so a respawned mob phases in instead of blinking + instantly chasing.
+	action_root_until_ms = Time.get_ticks_msec() + int(SPAWN_FREEZE_S * 1000.0)
+	replicate_visual(&"rp_spawn_effect", [])
 	if DEBUG_NPC:
 		printerr("[SRV NPC %s] _process_death respawn END: HP=%.1f is_dead=%s state=%d" % [
 			enemy_type, stats_component.get_stat(Stat.HEALTH), is_dead, enemy_state

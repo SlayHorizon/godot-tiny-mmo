@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3 uid="uid://b01pd5rjpddik"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
-[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
-[ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres" id="4_multi"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/venom_shot.tres" id="5_venom"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres" id="6_storm"]
+[ext_resource type="Script" uid="uid://cx1btl22f4mft" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" uid="uid://dmdvxcrsmfmo2" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" uid="uid://2v85op0ttfga" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres" id="4_multi"]
+[ext_resource type="Resource" uid="uid://b85pgtif6blf8" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/venom_shot.tres" id="5_venom"]
+[ext_resource type="Resource" uid="uid://b12to6pnwc2sj" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres" id="6_storm"]
 
 [sub_resource type="Resource" id="Node_multishot"]
 script = ExtResource("2_node")
@@ -13,32 +13,30 @@ id = &"bow_multishot"
 node_name = "Multishot"
 description = "Charge and loose a fan of three arrows. Mount it in your bow's special slot."
 branch = &"domination"
-tier = 1
 ability = ExtResource("4_multi")
 
 [sub_resource type="Resource" id="Node_venom"]
 script = ExtResource("2_node")
 id = &"bow_venom"
-upgrades = &"bow_multishot"
 node_name = "Venom Shot"
 description = "A charged shot that poisons the target, dealing damage over 4 seconds. Weight 2."
 branch = &"domination"
 tier = 2
 ability = ExtResource("5_venom")
+upgrades = &"bow_multishot"
 
 [sub_resource type="Resource" id="Node_storm"]
 script = ExtResource("2_node")
 id = &"bow_arrowstorm"
-upgrades = &"bow_venom"
 node_name = "Arrow Storm"
 description = "Charge and unleash a wide volley of seven arrows. Weight 3."
 branch = &"domination"
 tier = 3
 ability = ExtResource("6_storm")
+upgrades = &"bow_venom"
 
 [sub_resource type="Resource" id="Mod_hp_survival"]
 script = ExtResource("3_mod")
-stat_name = "health_max"
 value = 12.0
 
 [sub_resource type="Resource" id="Node_survival"]
@@ -47,7 +45,6 @@ id = &"bow_survival"
 node_name = "Survival Instinct"
 description = "+12 max health while wielding a bow."
 branch = &"resolve"
-tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_survival")])
 
 [sub_resource type="Resource" id="Mod_ms_lightstep"]
@@ -61,7 +58,6 @@ id = &"bow_lightstep"
 node_name = "Light Step"
 description = "+6 move speed while wielding a bow — stay out of reach."
 branch = &"inspiration"
-tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ms_lightstep")])
 
 [sub_resource type="Resource" id="Mod_haste_hawkeye"]

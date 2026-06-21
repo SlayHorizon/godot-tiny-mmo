@@ -42,6 +42,7 @@ aoi_test_point = Vector2(900, 0)
 replicated_props_container = NodePath("ReplicatedPropsContainer")
 music = ExtResource("2_7mrv4")
 weather = Array[ExtResource("3_vs2bv")]([ExtResource("3_pyxru"), ExtResource("5_4tbu3"), ExtResource("6_o3pwt")])
+camera_limit_right = 2720
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
 [node name="World_tiles" type="Node2D" parent="." unique_id=471749141]
@@ -238,13 +239,14 @@ npc_resource = ExtResource("6_1iruy")
 position = Vector2(2703.0002, 1878)
 scale = Vector2(1.48, 8.68)
 target_instance = ExtResource("6_1fctu")
+warper_id = 1
 target_id = 7
 
 [node name="Firefly" parent="." unique_id=624259893 instance=ExtResource("26_4tbu3")]
 position = Vector2(2175.4849, 1643.9712)
 
 [node name="Firefly2" parent="." unique_id=1678599767 instance=ExtResource("26_4tbu3")]
-position = Vector2(2340.3862, 1946.2885)
+position = Vector2(2307.6711, 1980.0938)
 
 [node name="Firefly3" parent="." unique_id=728222431 instance=ExtResource("26_4tbu3")]
 position = Vector2(1830.8793, 1829.1604)
@@ -257,3 +259,6 @@ color = Color(0.48452926, 0.48452926, 0.6262097, 1)
 
 [node name="Campfire" parent="." unique_id=1909922708 instance=ExtResource("27_o3pwt")]
 position = Vector2(2520, 1784)
+
+[node name="RespawnPoint" parent="." unique_id=1414716116 instance=ExtResource("5_3a2x5")]
+position = Vector2(2457.2495, 1784.071)

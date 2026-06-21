@@ -217,6 +217,7 @@ func _render_action_bar(profile: Dictionary, is_self: bool) -> void:
 	message_button.visible = not is_self
 	friend_button.visible = not is_self
 	invite_guild_button.visible = profile.get("can_guild_invite", false)
+	invite_guild_button.disabled = not profile.get("can_guild_invite", false)
 
 	var is_friend: bool = profile.get("friend", false)
 	friend_button.text = "Remove friend" if is_friend else "Add friend"
@@ -244,10 +245,12 @@ func _render_action_bar(profile: Dictionary, is_self: bool) -> void:
 
 		if invite_guild_button.pressed.is_connected(_on_invite_guild_button_pressed):
 			invite_guild_button.pressed.disconnect(_on_invite_guild_button_pressed)
-		invite_guild_button.pressed.connect(
-			_on_invite_guild_button_pressed.bind(target_id),
-			CONNECT_ONE_SHOT
-		)
+		
+		if profile.get("can_guild_invite", false):
+			invite_guild_button.pressed.connect(
+				_on_invite_guild_button_pressed.bind(target_id),
+				CONNECT_ONE_SHOT
+			)
 
 
 func _show_more_popup() -> void:

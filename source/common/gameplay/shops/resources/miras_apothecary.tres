@@ -17,6 +17,12 @@ item = ExtResource("5_herb")
 amount = 5
 payout = 4
 
+[sub_resource type="Resource" id="Resource_lmg0x"]
+script = ExtResource("1_entry")
+item = ExtResource("7_qf0tq")
+price = 5
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [sub_resource type="Resource" id="Resource_2ggpu"]
 script = ExtResource("1_entry")
 item = ExtResource("4_hrjyu")
@@ -35,10 +41,10 @@ item = ExtResource("6_qf0tq")
 price = 10
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
-[sub_resource type="Resource" id="Resource_lmg0x"]
+[sub_resource type="Resource" id="Resource_7j1dx"]
 script = ExtResource("1_entry")
-item = ExtResource("7_qf0tq")
-price = 5
+item = ExtResource("9_lmg0x")
+price = 3
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
 [sub_resource type="Resource" id="Resource_ko3yj"]
@@ -47,16 +53,10 @@ item = ExtResource("8_a0r3b")
 price = 8
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
-[sub_resource type="Resource" id="Resource_7j1dx"]
-script = ExtResource("1_entry")
-item = ExtResource("9_lmg0x")
-price = 3
-metadata/_custom_type_script = "uid://vvxt3lf10cxb"
-
 [resource]
 script = ExtResource("3_shop")
 shop_name = "Mira's Apothecary"
-entries = Array[ExtResource("1_entry")]([SubResource("Resource_2ggpu"), SubResource("Entry_potion"), SubResource("Resource_a0r3b"), SubResource("Resource_lmg0x"), SubResource("Resource_ko3yj"), SubResource("Resource_7j1dx")])
+entries = Array[ExtResource("1_entry")]([SubResource("Resource_lmg0x"), SubResource("Resource_2ggpu"), SubResource("Entry_potion"), SubResource("Resource_a0r3b"), SubResource("Resource_7j1dx"), SubResource("Resource_ko3yj")])
 accepted_trades = Array[ExtResource("2_trade")]([SubResource("Trade_herb_bundle")])
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"miras_apothecary"
