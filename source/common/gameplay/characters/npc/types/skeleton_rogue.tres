@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://by21dlek30vjf"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_v3str"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_arlp1"]
+[ext_resource type="SpriteFrames" uid="uid://df4q7hml46ro0" path="res://source/common/gameplay/characters/sprite_frames/skeleton_rogue.tres" id="3_v3str"]
+[ext_resource type="Resource" uid="uid://40jxvc14a1wh" path="res://source/common/gameplay/items/weapons/hammer/hammer_bone.item.tres" id="4_v3str"]
+
+[resource]
+script = ExtResource("2_arlp1")
+enemy_type = &"skeleton_rogue"
+display_name = "Skeleton Rogue"
+skin = ExtResource("3_v3str")
+visual_scale = 1.5
+max_health = 150.0
+attack_damage = 15.0
+armor = 5.0
+weapon = ExtResource("4_v3str")
+move_speed = 70
+max_distance_from_spawn = 100
+leashes = false
+chase_on_area = true
+respawns = false
+metadata/_custom_type_script = "uid://swk8b8q32qv2"
+metadata/slug = &"skeleton_rogue"
+metadata/id = 18
