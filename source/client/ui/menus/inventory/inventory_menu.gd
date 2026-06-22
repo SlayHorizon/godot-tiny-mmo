@@ -24,6 +24,8 @@ var wallet_amount: Label
 ## "Hotkey" button in the detail strip (created next to ActionButton at
 ## runtime) — assigns the selected bag item to a HUD quick slot.
 var hotkey_button: Button
+## Crisp pixel preview mounted onto %DetailIcon (used as a sizing host; its own texture stays null).
+var _detail_pixel: TextureRect
 @onready var equipment_slots: GridContainer = %EquipmentSlots
 @onready var relic_slots: GridContainer = %RelicSlots
 @onready var all_tab: Button = %AllTab
@@ -42,6 +44,8 @@ func _ready() -> void:
 	# Wrap the authored body in the shared menu shell (banner header + card).
 	build_shell("Inventory", $MainBody)
 	_build_wallet()
+	detail_icon.texture = null  # %DetailIcon is now just a sizing host for the crisp pixel preview
+	_detail_pixel = PixelIcon.mount(detail_icon)
 
 	all_tab.pressed.connect(_set_category.bind(Category.ALL))
 	gear_tab.pressed.connect(_set_category.bind(Category.GEAR))
@@ -135,9 +139,8 @@ func _passes_category(item: Item) -> bool:
 func _add_bag_button(_slot_uid: int, item_id: int, item: Item, quantity: int) -> void:
 	var button: Button = Button.new()
 	button.custom_minimum_size = Vector2(64, 64)
-	button.icon = item.item_icon
-	button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	button.expand_icon = true
+	button.clip_contents = true
+	PixelIcon.mount(button, item.item_icon)
 	if quantity > 1:
 		var qty: Label = Label.new()
 		qty.text = "x%d" % quantity
@@ -166,7 +169,7 @@ func _on_bag_item_pressed(item_id: int, item: Item) -> void:
 	_selected_gear_slot = &""
 	_selected_item = item
 	_selected_item_id = item_id
-	detail_icon.texture = item.item_icon
+	PixelIcon.set_art(_detail_pixel, item.item_icon)
 	detail_name.text = str(item.item_name) + _weapon_name_suffix(item)
 	detail_description.text = item.description
 	if item is GearItem or item is WeaponItem:
@@ -196,7 +199,7 @@ func _on_gear_slot_pressed(slot_button: GearSlotButton) -> void:
 	_selected_gear_slot = key
 	_selected_item = item
 	_selected_item_id = item_id
-	detail_icon.texture = item.item_icon
+	PixelIcon.set_art(_detail_pixel, item.item_icon)
 	detail_name.text = str(item.item_name) + _weapon_name_suffix(item)
 	detail_description.text = item.description
 	action_button.text = "Unequip"
@@ -208,7 +211,7 @@ func _clear_detail() -> void:
 	_selected_item = null
 	_selected_item_id = 0
 	_selected_gear_slot = &""
-	detail_icon.texture = null
+	PixelIcon.set_art(_detail_pixel, null)
 	detail_name.text = "Select an item"
 	detail_description.text = ""
 	action_button.disabled = true
@@ -328,9 +331,9 @@ func _refresh_equipment_slots() -> void:
 func _set_gear_icon(gear_button: GearSlotButton, item_id: int) -> void:
 	if item_id > 0:
 		var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
-		gear_button.icon = item.item_icon if item else gear_button.gear_slot.icon
+		gear_button.set_item_icon(item.item_icon if item else gear_button.gear_slot.icon)
 	else:
-		gear_button.icon = gear_button.gear_slot.icon
+		gear_button.set_item_icon(gear_button.gear_slot.icon)
 
 
 func _get_equipped_ids() -> Array:

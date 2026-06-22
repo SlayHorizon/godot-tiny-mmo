@@ -39,7 +39,7 @@ var _title_label: Label
 func build_shell(title_text: String = "", body: Control = null) -> void:
 	var background: ColorRect = ColorRect.new()
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	background.color = Color(0.04, 0.05, 0.08, 0.85)
+	background.color = Color(0.04, 0.05, 0.08, 0.5)
 	add_child(background)
 
 	var margin: MarginContainer = MarginContainer.new()

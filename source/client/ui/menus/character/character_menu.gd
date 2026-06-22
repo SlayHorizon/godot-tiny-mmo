@@ -1,6 +1,6 @@
 extends Control
 ## Character window shell. A banner header holds the window title on the left,
-## the Stats / Jobs / Quests toggle tabs in the centre, and a Close button on
+## the Stats / Jobs / Mastery toggle tabs in the centre, and a Close button on
 ## the right. Selecting a tab swaps which content panel is visible; each panel
 ## self-drives its own data (stats watch the local player, jobs/quests fetch
 ## from the server when shown).
@@ -9,13 +9,11 @@ extends Control
 	&"stats": %StatsTab,
 	&"jobs": %JobsTab,
 	&"mastery": %MasteryTab,
-	&"quests": %QuestsTab,
 }
 @onready var _panels: Dictionary[StringName, Control] = {
 	&"stats": %StatsContent,
 	&"jobs": %JobsContent,
 	&"mastery": %MasteryContent,
-	&"quests": %QuestsContent,
 }
 
 var _current: StringName = &"stats"

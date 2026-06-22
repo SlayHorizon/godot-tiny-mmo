@@ -100,15 +100,16 @@ func stop_music(fade_out_duration: float = 1.0) -> void:
 
 ## Load and play sound from the given path.
 ## If the resource was previously loaded, it will be retrieved from cache.
-func play_ui_sound(sound_path: String, pitch: float = 1.0) -> bool:
-	return play_ui_sound_stream(_get_sound(sound_path), pitch)
+func play_ui_sound(sound_path: String, pitch: float = 1.0, volume_db: float = 0.0) -> bool:
+	return play_ui_sound_stream(_get_sound(sound_path), pitch, volume_db)
 
 
-## Play sound using the given [AudioStream].
-func play_ui_sound_stream(sound: AudioStream, pitch: float = 1.0) -> bool:
+## Play sound using the given [AudioStream]. [volume_db] trims THIS cue under the bus volume
+## (e.g. -6 for a softer click) without touching the player/settings volume.
+func play_ui_sound_stream(sound: AudioStream, pitch: float = 1.0, volume_db: float = 0.0) -> bool:
 	if not sound: return false
 	var playback: AudioStreamPlaybackPolyphonic = ui_player.get_stream_playback()
-	playback.play_stream(sound, 0, 0, pitch)
+	playback.play_stream(sound, 0, volume_db, pitch)
 	return true
 
 #endregion

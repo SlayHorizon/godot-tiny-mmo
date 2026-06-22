@@ -322,7 +322,7 @@ position = Vector2(-47, -1)
 shape = SubResource("WorldBoundaryShape2D_bauih")
 
 [node name="Spawn" parent="." unique_id=906857745 instance=ExtResource("21_81rgi")]
-position = Vector2(190.08585, 1116.4324)
+position = Vector2(1316.8181, 812.63635)
 
 [node name="GuildHouse" parent="." unique_id=1783528862 instance=ExtResource("21_81rgi")]
 position = Vector2(1323, 688)

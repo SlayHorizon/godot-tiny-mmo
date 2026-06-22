@@ -15,6 +15,11 @@ var menus: Dictionary[StringName, Control]
 @onready var death_screen: ColorRect = $DeathScreen
 @onready var death_label: Label = $DeathScreen/Label
 
+## UI-sound: button text that gets the softer "back" cue instead of the click.
+const BACK_BUTTON_LABELS: Array[String] = ["Close", "Back", "Cancel"]
+## Menu open fade-in duration. Kept short + subtle on purpose (a soft arrival, not a flourish).
+const MENU_FADE_S: float = 0.10
+
 
 func _ready() -> void:
 	notification_button.visible = false
@@ -36,6 +41,11 @@ func _ready() -> void:
 
 	# Dungeon run HUD (live clock + revive pool) — self-contained; shows itself on dungeon.hud pushes.
 	add_child(DungeonHud.new())
+
+	# UI sound: wire every Button under the HUD to tap/hover cues (menus build theirs lazily, so also
+	# watch node_added). The gateway has its own wiring; this is scoped to the in-game HUD subtree.
+	_wire_subtree(self)
+	get_tree().node_added.connect(_on_node_added)
 
 
 ## Fetch the current level/xp once (e.g. on spawn / map change).
@@ -99,6 +109,7 @@ func display_menu(menu_name: StringName, arg: Variant = null) -> void:
 		sub_menu.add_child(new_menu)
 		menus[menu_name] = new_menu
 	menus[menu_name].show()
+	_animate_menu_open(menus[menu_name])
 	if arg != null and menus[menu_name].has_method(&"open"):
 		menus[menu_name].open(arg)
 
@@ -174,3 +185,46 @@ func _on_sparring_countdown(payload: Dictionary) -> void:
 		label.modulate.a = 1.0
 		_countdown_tween = null
 	)
+
+
+# --- UI sound + menu motion ------------------------------------------------
+
+func _play_click() -> void:
+	UISound.click()
+
+
+func _play_back() -> void:
+	UISound.back()
+
+
+func _play_hover() -> void:
+	UISound.hover()
+
+
+## Give a button press + hover cues (idempotent). Close/Back/Cancel buttons get the softer back cue.
+func _wire_button(button: Button) -> void:
+	if not (button.pressed.is_connected(_play_click) or button.pressed.is_connected(_play_back)):
+		var press: Callable = _play_back if button.text in BACK_BUTTON_LABELS else _play_click
+		button.pressed.connect(press)
+	if not button.mouse_entered.is_connected(_play_hover):
+		button.mouse_entered.connect(_play_hover)
+
+
+## Wire every Button currently under [root].
+func _wire_subtree(root: Node) -> void:
+	for b: Node in root.find_children("*", "Button", true, false):
+		_wire_button(b as Button)
+
+
+## Any Button added under the HUD later (lazily-built menus) gets wired automatically.
+func _on_node_added(node: Node) -> void:
+	if node is Button and is_ancestor_of(node):
+		_wire_button(node as Button)
+
+
+## Fade a just-shown menu in + play the reveal cue, so menus arrive with a little motion + sound
+## instead of snapping on. Open only — close stays an instant hide for now.
+func _animate_menu_open(menu: Control) -> void:
+	UISound.reveal()
+	menu.modulate.a = 0.0
+	create_tween().tween_property(menu, ^"modulate:a", 1.0, MENU_FADE_S)

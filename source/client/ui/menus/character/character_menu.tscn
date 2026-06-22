@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://dm4es1smo6nxw" path="res://source/client/ui/menus/inventory/stats_panel.gd" id="3_stats"]
 [ext_resource type="Script" uid="uid://blh63bbqvk7pv" path="res://source/client/ui/menus/inventory/attributes_panel.gd" id="4_attr"]
 [ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="5_jobs"]
-[ext_resource type="Script" uid="uid://cxlsj3ekiy453" path="res://source/client/ui/menus/character/quest_log_panel.gd" id="6_quest"]
 [ext_resource type="Script" path="res://source/client/ui/menus/character/mastery_panel.gd" id="7_mastery"]
 
 [node name="Character" type="Control" unique_id=1903605425]
@@ -23,7 +22,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.04, 0.05, 0.08, 0.85)
+color = Color(0.04, 0.05, 0.08, 0.5)
 
 [node name="Margin" type="MarginContainer" parent="." unique_id=45795561]
 layout_mode = 1
@@ -93,14 +92,6 @@ layout_mode = 2
 theme_type_variation = &"HeaderTab"
 toggle_mode = true
 text = "Mastery"
-
-[node name="QuestsTab" type="Button" parent="Margin/Card/Pad/Root/HeaderBar/TabBar" unique_id=1496356662]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(96, 0)
-layout_mode = 2
-theme_type_variation = &"HeaderTab"
-toggle_mode = true
-text = "Quests"
 
 [node name="RightBox" type="HBoxContainer" parent="Margin/Card/Pad/Root/HeaderBar" unique_id=1364567951]
 layout_mode = 2
@@ -258,9 +249,3 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 script = ExtResource("7_mastery")
-
-[node name="QuestsContent" type="VBoxContainer" parent="Margin/Card/Pad/Root/Content" unique_id=1496784281]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-script = ExtResource("6_quest")

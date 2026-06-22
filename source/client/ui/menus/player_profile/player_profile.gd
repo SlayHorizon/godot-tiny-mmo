@@ -277,7 +277,7 @@ func _show_more_popup() -> void:
 	var popup_h: int = int(more_popup.size.y)
 	var anchor_x: float = more_button.global_position.x + more_button.size.x - more_popup.size.x
 	var anchor_y: float = more_button.global_position.y - popup_h - 4.0
-	more_popup.position = Vector2i(anchor_x, anchor_y)
+	more_popup.position = Vector2i(roundi(anchor_x), roundi(anchor_y))
 	more_popup.popup()
 
 
