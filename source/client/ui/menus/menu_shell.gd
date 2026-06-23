@@ -36,7 +36,7 @@ var _title_label: Label
 
 ## Builds the shell as children of `self`. If [param body] is given it's
 ## reparented into the card's content area. Call once from the menu's `_ready`.
-func build_shell(title_text: String = "", body: Control = null) -> void:
+func build_shell(title_text: String = "", body: Control = null, fullscreen: bool = false) -> void:
 	var background: ColorRect = ColorRect.new()
 	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	background.color = Color(0.04, 0.05, 0.08, 0.5)
@@ -44,13 +44,21 @@ func build_shell(title_text: String = "", body: Control = null) -> void:
 
 	var margin: MarginContainer = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override(&"margin_left", 28)
-	margin.add_theme_constant_override(&"margin_right", 28)
-	margin.add_theme_constant_override(&"margin_top", 22)
-	margin.add_theme_constant_override(&"margin_bottom", 22)
+	# Content-heavy menus pass fullscreen=true for a thin outer inset (near edge-to-edge); small dialogs
+	# keep a roomy floating margin. Per-menu opt-in so we convert them one at a time.
+	var outer: int = 12 if fullscreen else 28
+	var outer_tb: int = 12 if fullscreen else 22
+	margin.add_theme_constant_override(&"margin_left", outer)
+	margin.add_theme_constant_override(&"margin_right", outer)
+	margin.add_theme_constant_override(&"margin_top", outer_tb)
+	margin.add_theme_constant_override(&"margin_bottom", outer_tb)
 	add_child(margin)
 
 	var card: PanelContainer = PanelContainer.new()
+	if fullscreen:
+		# Full-screen menus drop the card frame — content sits straight on the dim full-rect backdrop
+		# (world faint behind), not in an inset floating panel. The dim ColorRect IS the "background".
+		card.add_theme_stylebox_override(&"panel", StyleBoxEmpty.new())
 	margin.add_child(card)
 
 	var pad: MarginContainer = MarginContainer.new()

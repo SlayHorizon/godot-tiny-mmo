@@ -4,7 +4,7 @@
 [ext_resource type="ButtonGroup" uid="uid://dnri86skakd1g" path="res://source/client/ui/menus/settings/components/remap_group.tres" id="2_q6ujg"]
 
 [node name="SettingRemap" type="HBoxContainer" unique_id=1702750502 node_paths=PackedStringArray("setting_label", "controller")]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 48)
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2

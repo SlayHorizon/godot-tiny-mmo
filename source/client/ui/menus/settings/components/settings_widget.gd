@@ -19,6 +19,8 @@ extends Control
 @export var setting_label: Label
 ## Controller used to set values. can be a button or slider.
 @export var controller: Control
+## Optional explicit row label. If empty, the label is derived from setting_property.
+@export var label_override: String
 
 @export_group("Slider Settings")
 ## Set min value, used if controller is a slider.
@@ -34,7 +36,7 @@ func _ready() -> void:
 	_load_defaults()
 
 	if is_instance_valid(setting_label):
-		setting_label.text = setting_property.replace("_", " ").capitalize()
+		setting_label.text = label_override if not label_override.is_empty() else setting_property.replace("_", " ").capitalize()
 
 	if controller is Slider:
 		controller.drag_ended.connect(_on_setting_changed)
@@ -59,7 +61,8 @@ func _load_defaults() -> void:
 	if value == null: return
 
 	if controller is Button: 
-		controller.text = setting_property.replace("_", " ").capitalize()
+		if not is_instance_valid(setting_label):
+			controller.text = setting_property.replace("_", " ").capitalize()
 		controller.set_pressed_no_signal(value)
 
 	elif controller is Slider:

@@ -1,0 +1,59 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://source/client/ui/menus/settings/components/settings_widget.gd" id="1_swidget"]
+
+[node name="SettingToggle" type="HBoxContainer" node_paths=PackedStringArray("setting_label", "controller")]
+custom_minimum_size = Vector2(0, 48)
+script = ExtResource("1_swidget")
+setting_label = NodePath("Label/SettingName")
+controller = NodePath("Controller/Switch")
+
+[node name="Label" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="Label"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.08)
+
+[node name="SettingName" type="Label" parent="Label"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 16
+text = "SettingName"
+vertical_alignment = 1
+
+[node name="Controller" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="Controller"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.15)
+
+[node name="Switch" type="CheckButton" parent="Controller"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2

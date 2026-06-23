@@ -68,7 +68,7 @@ folder_colors={
 
 [gui]
 
-theme/custom="uid://cf1ayo3dckj67"
+theme/custom="res://source/client/ui/themes/theme_horizon.tres"
 
 [input]
 

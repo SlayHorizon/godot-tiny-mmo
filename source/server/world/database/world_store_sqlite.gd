@@ -57,6 +57,7 @@ func save_player(player: PlayerResource) -> void:
 		"refresh_at_ms": player.dailies_refresh_at_ms,
 	})
 	var dungeon_lockouts_json: String = JSON.stringify(player.dungeon_lockouts)
+	var redeemed_codes_json: String = JSON.stringify(player.redeemed_codes)
 
 	var joined_guild_ids_json: String = JSON.stringify(player.joined_guild_ids)
 
@@ -64,9 +65,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, owned_skins_json, server_roles_json, stats_json, titles_json, dailies_json, dungeon_lockouts_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, owned_skins_json, server_roles_json, stats_json, titles_json, dailies_json, dungeon_lockouts_json, redeemed_codes_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -93,6 +94,7 @@ func save_player(player: PlayerResource) -> void:
 			titles_json,
 			dailies_json,
 			dungeon_lockouts_json,
+			redeemed_codes_json,
 
 			player.active_guild_id,
 			joined_guild_ids_json,
@@ -294,6 +296,9 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 	# row whose blob drifted, so the wardrobe never shows your current look as locked.
 	if not player.owned_skins.has(player.skin_id):
 		player.owned_skins.append(player.skin_id)
+
+	var redeemed_codes_v: Variant = JSON.parse_string(str(row.get("redeemed_codes_json", "[]")))
+	player.redeemed_codes = PackedStringArray(redeemed_codes_v if redeemed_codes_v is Array else [])
 
 	player.server_roles = JSON.parse_string(str(row.get("server_roles_json", "{}"))) as Dictionary
 

@@ -4,7 +4,7 @@
 
 [node name="SettingSlider" type="HBoxContainer" unique_id=1203277285 node_paths=PackedStringArray("setting_label", "controller")]
 clip_contents = true
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 48)
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2

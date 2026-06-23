@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://d1q3d0rf4tsle" path="res://source/client/ui/menus/character/jobs_panel.gd" id="5_jobs"]
 [ext_resource type="Script" path="res://source/client/ui/menus/character/mastery_panel.gd" id="7_mastery"]
 
+[sub_resource type="StyleBoxEmpty" id="SBE_card"]
+
 [node name="Character" type="Control" unique_id=1903605425]
 layout_mode = 3
 anchors_preset = 15
@@ -31,13 +33,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 28
-theme_override_constants/margin_top = 22
-theme_override_constants/margin_right = 28
-theme_override_constants/margin_bottom = 22
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="Card" type="PanelContainer" parent="Margin" unique_id=1062589325]
 layout_mode = 2
+theme_override_styles/panel = SubResource("SBE_card")
 
 [node name="Pad" type="MarginContainer" parent="Margin/Card" unique_id=970754355]
 layout_mode = 2

@@ -387,14 +387,15 @@ func _on_message_button_pressed(target_id: int) -> void:
 # ---------------------------------------------------------------------------
 
 func _build_edit_ui() -> void:
-	var overlay: CenterContainer = CenterContainer.new()
+	var overlay: MarginContainer = MarginContainer.new()
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	for side: String in ["left", "right", "top", "bottom"]:
+		overlay.add_theme_constant_override("margin_" + side, 20)
 	overlay.hide()
 	add_child(overlay)
 
 	_edit_panel = PanelContainer.new()
-	_edit_panel.custom_minimum_size = Vector2(420, 560)
 	_edit_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	overlay.add_child(_edit_panel)
 	_edit_panel.set_meta(&"overlay", overlay)
@@ -404,9 +405,14 @@ func _build_edit_ui() -> void:
 		margin.add_theme_constant_override("margin_" + side, 16)
 	_edit_panel.add_child(margin)
 
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	margin.add_child(scroll)
+
 	var vbox: VBoxContainer = VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	vbox.add_theme_constant_override(&"separation", 10)
-	margin.add_child(vbox)
+	scroll.add_child(vbox)
 
 	var header: Label = Label.new()
 	header.text = "Edit Profile"
@@ -444,15 +450,10 @@ func _build_edit_ui() -> void:
 	_trophies_counter.self_modulate = COLOR_DIM
 	trophy_header.add_child(_trophies_counter)
 
-	var trophies_scroll: ScrollContainer = ScrollContainer.new()
-	trophies_scroll.custom_minimum_size = Vector2(0, 110)
-	trophies_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	vbox.add_child(trophies_scroll)
-
 	_trophies_container = VBoxContainer.new()
 	_trophies_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_trophies_container.add_theme_constant_override(&"separation", 2)
-	trophies_scroll.add_child(_trophies_container)
+	vbox.add_child(_trophies_container)
 
 	var button_row: HBoxContainer = HBoxContainer.new()
 	button_row.add_theme_constant_override(&"separation", 12)

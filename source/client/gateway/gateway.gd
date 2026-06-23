@@ -39,22 +39,15 @@ var _intro_elements: Array[CanvasItem] = []
 # The subtle backdrop zoom is a one-time boot flourish, not a per-transition tic.
 var _booted: bool = false
 
-# --- Gateway palettes (theme resources) ------------------------------------
-# Each gateway_*.tres in THEME_DIR is a GatewayTheme carrying its palette + the
-# baked styleboxes + its backdrop. We scan the folder, pick one (saved pref /
-# default / random), and assign it to `theme` — inheritance styles the whole
-# subtree. Swapping palette = reassigning `theme`. The per-node looks (panel /
-# button / divider variations) are set in gateway.tscn, not here.
-const THEME_DIR: String = "res://source/client/ui/themes/gateway/"
-const DEFAULT_PALETTE: StringName = &"horizon"
-# Palette preference lives in the shared client settings (ClientState.settings)
-# under section [gateway] — not a private file. Seeded in client_default_settings.cfg.
+# --- Gateway palettes -------------------------------------------------------
+# Palettes live in ThemePalettes (the shared registry: slug list + styling theme + login backdrop +
+# accent). We pick one (saved pref / default / random) and assign its styling Theme to `theme` —
+# inheritance styles the whole subtree. The per-node looks (panel / button / divider variations) are set
+# in gateway.tscn, not here. Palette preference lives in the shared client settings under [gateway].
 const _SETTINGS_SECTION: StringName = &"gateway"
 const _SETTING_PALETTE: StringName = &"palette"
 const _SETTING_RANDOMIZE: StringName = &"randomize"
-var _themes: Dictionary[StringName, GatewayTheme] = {}
-var _theme_order: Array[StringName] = []
-var current_theme: StringName = DEFAULT_PALETTE
+var current_theme: StringName = ThemePalettes.DEFAULT
 
 # Community / support links opened by the global "More" menu. Empty = not provided
 # yet → that button is disabled rather than opening a dead link.
@@ -123,7 +116,6 @@ func _ready() -> void:
 	_wire_more_menu()
 	_wire_button_sounds()  # static + character-creation buttons exist by now
 	_start_gateway_music()
-	_load_gateway_themes()
 	_apply_gateway_theme(_pick_startup_palette())
 	# Live-apply a palette picked in the Settings menu (the gateway's own $Settings
 	# overlay shows the same dropdown) — no relaunch needed.
@@ -434,8 +426,7 @@ func _finish_intro() -> void:
 	for element: CanvasItem in _intro_elements:
 		if is_instance_valid(element):
 			element.modulate.a = 1.0
-	if theme is GatewayTheme and (theme as GatewayTheme).background:
-		_apply_theme_background((theme as GatewayTheme).background)
+	_apply_theme_background(ThemePalettes.backdrop(current_theme))
 
 
 # _input (not _unhandled_input): when a control has focus the GUI consumes
@@ -1067,51 +1058,24 @@ func _process(_delta: float) -> void:
 
 
 # --- Gateway theming -------------------------------------------------------
-# A GatewayTheme resource per palette carries the whole look (its palette + the
-# baked styleboxes + the backdrop). Assigning it to `theme` styles the entire
-# subtree by inheritance, so we only (1) tag a few nodes with a theme_type_variation
-# for their non-default look and (2) swap `theme` to change palette. No per-node
-# style walking — a new screen can't fall off-palette. Authoring lives in the
-# .tres themselves (inspector + "Rebuild styleboxes") or generate_gateway_themes.gd.
-
-## Scan the themes folder into _themes / _theme_order (sorted by palette name).
-func _load_gateway_themes() -> void:
-	var dir: DirAccess = DirAccess.open(THEME_DIR)
-	if dir == null:
-		push_error("Gateway themes folder missing: " + THEME_DIR)
-		return
-	for file: String in dir.get_files():
-		# Exported text resources are listed with a trailing ".remap"; load the
-		# real .tres path (load() resolves the remap transparently).
-		var file_name: String = file.trim_suffix(".remap")
-		if not file_name.ends_with(".tres"):
-			continue
-		var res: Resource = load(THEME_DIR + file_name)
-		if res is GatewayTheme:
-			# Key by filename slug so it always matches GatewayTheme.list_palettes()
-			# (what the Settings dropdown stores), regardless of palette_name.
-			var key: StringName = StringName(file_name.trim_prefix("gateway_").trim_suffix(".tres"))
-			_themes[key] = res
-			_theme_order.append(key)
-	_theme_order.sort()
+# Palettes come from ThemePalettes (slug → styling theme + login backdrop + accent). Assigning the
+# styling Theme to `theme` styles the whole subtree by inheritance; per-node looks (panel / button /
+# divider variations) are tagged in gateway.tscn. Swapping palette = reassign `theme` + backdrop + ring.
 
 
-## Assign a palette: swap `theme` (restyles everything by inheritance), update the
-## backdrop, retint the focus ring. Falls back to the first theme if unknown.
+## Assign a palette: swap to its SHARED styling theme (the same one the in-game UI uses, so a theme fix
+## lands in both contexts), update the backdrop, retint the focus ring. Falls back to the default.
 func _apply_gateway_theme(palette: StringName) -> void:
-	if not _themes.has(palette):
-		if _theme_order.is_empty():
-			push_error("No gateway themes loaded.")
-			return
-		palette = _theme_order[0]
+	if not ThemePalettes.has(palette):
+		palette = ThemePalettes.DEFAULT
 	current_theme = palette
-	var gt: GatewayTheme = _themes[palette]
-	theme = gt
-	_apply_theme_background(gt.background)
+	theme = ThemePalettes.theme(palette)
+	_apply_theme_background(ThemePalettes.backdrop(palette))
 	if _focus_highlight:
 		var ring: StyleBoxFlat = _focus_highlight.get_theme_stylebox(&"panel") as StyleBoxFlat
 		if ring:
-			ring.border_color = Color(gt.active.r, gt.active.g, gt.active.b, 0.9)
+			var accent: Color = ThemePalettes.accent(palette)
+			ring.border_color = Color(accent.r, accent.g, accent.b, 0.9)
 
 
 ## Scale the backdrop sprite to cover 960x540, centred.
@@ -1130,15 +1094,14 @@ func _apply_theme_background(tex: Texture2D) -> void:
 ## Pick the startup palette from the shared client settings: an explicit saved
 ## choice, a random one each launch (opt-in), or the default.
 func _pick_startup_palette() -> StringName:
+	var palettes: Array[StringName] = ThemePalettes.list()
 	if ClientState.settings.get_value(_SETTINGS_SECTION, _SETTING_RANDOMIZE) == true \
-			and not _theme_order.is_empty():
-		return _theme_order[randi() % _theme_order.size()]
+			and not palettes.is_empty():
+		return palettes[randi() % palettes.size()]
 	var saved: Variant = ClientState.settings.get_value(_SETTINGS_SECTION, _SETTING_PALETTE)
-	if (saved is String or saved is StringName) and _themes.has(StringName(saved)):
+	if (saved is String or saved is StringName) and ThemePalettes.has(StringName(saved)):
 		return StringName(saved)
-	if _themes.has(DEFAULT_PALETTE):
-		return DEFAULT_PALETTE
-	return _theme_order[0] if not _theme_order.is_empty() else DEFAULT_PALETTE
+	return ThemePalettes.DEFAULT
 
 
 ## Live-apply a palette change made in the Settings menu so the gateway re-themes
@@ -1152,10 +1115,11 @@ func _on_settings_changed(section: StringName, property: StringName, value: Vari
 ## saved preference is owned by the Settings menu. The real palette choice for
 ## players is the [gateway] setting (default: randomize a new one each launch).
 func _cycle_theme() -> void:
-	if _theme_order.is_empty():
+	var palettes: Array[StringName] = ThemePalettes.list()
+	if palettes.is_empty():
 		return
-	var i: int = _theme_order.find(current_theme)
-	_apply_gateway_theme(_theme_order[(i + 1) % _theme_order.size()])
+	var i: int = palettes.find(current_theme)
+	_apply_gateway_theme(palettes[(i + 1) % palettes.size()])
 
 
 # --- Password fields ------------------------------------------------------

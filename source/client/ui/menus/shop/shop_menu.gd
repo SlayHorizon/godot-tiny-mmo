@@ -45,7 +45,7 @@ func _ready() -> void:
 	_gold_id = Economy.gold_id()
 	_currency_id = _gold_id
 	# Wrap the authored Body in the shared menu shell (banner header + card).
-	build_shell("Shop", $Body)
+	build_shell("Shop", $Body, true)
 	_build_header()
 
 	buy_tab.pressed.connect(_set_mode.bind(Mode.BUY))

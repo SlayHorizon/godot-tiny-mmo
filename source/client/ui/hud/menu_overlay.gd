@@ -27,7 +27,7 @@ const MENU_ENTRIES: Array[Dictionary] = [
 	# — World — (a House / Island tile will slot in here)
 	{"label": "Map"}, {"label": "Shop"}, {"label": "Bestiary"}, {"label": "House"},
 	# — Info / system —
-	{"label": "News"}, {"label": "Help"}, {"label": "Redeem"},
+	{"label": "News"}, {"label": "Help"}, {"label": "Redeem", "menu": "redeem"},
 	{"label": "Settings",    "menu": "settings",    "icon": ""},
 ]
 

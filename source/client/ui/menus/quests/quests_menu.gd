@@ -7,7 +7,7 @@ const QUEST_LOG_PANEL: GDScript = preload("res://source/client/ui/menus/characte
 
 
 func _ready() -> void:
-	build_shell("Quests")
+	build_shell("Quests", null, true)
 	var panel: VBoxContainer = QUEST_LOG_PANEL.new()
 	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.add_child(panel)

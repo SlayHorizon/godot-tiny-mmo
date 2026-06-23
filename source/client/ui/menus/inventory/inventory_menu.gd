@@ -42,7 +42,7 @@ var _detail_pixel: TextureRect
 func _ready() -> void:
 	_gold_id = Economy.gold_id()
 	# Wrap the authored body in the shared menu shell (banner header + card).
-	build_shell("Inventory", $MainBody)
+	build_shell("Inventory", $MainBody, true)
 	_build_wallet()
 	detail_icon.texture = null  # %DetailIcon is now just a sizing host for the crisp pixel preview
 	_detail_pixel = PixelIcon.mount(detail_icon)

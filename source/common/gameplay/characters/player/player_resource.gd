@@ -120,6 +120,11 @@ const BASE_STATS: Dictionary[StringName, float] = {
 ## still run it to help a group). Persisted as dungeon_lockouts_json.
 @export var dungeon_lockouts: Dictionary = {}
 
+## Redeem codes this character has already claimed (upper-cased code strings).
+## Per-character by design — see docs/redeem_codes.md. Persisted as
+## redeemed_codes_json. Stops re-claiming the same code on this character.
+@export var redeemed_codes: PackedStringArray
+
 # Profile
 @export var profile_status: String = "Hello I'am new!"
 @export var profile_animation: String = "idle"

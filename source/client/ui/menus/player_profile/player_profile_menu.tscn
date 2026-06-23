@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://2dnwg3gkbaeg" path="res://source/client/ui/menus/player_profile/player_profile.gd" id="1_script"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_default_skin"]
 
+[sub_resource type="StyleBoxEmpty" id="SBE_card"]
+
 [node name="PlayerProfile" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -19,19 +21,23 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05, 0.06, 0.1, 0.7)
+color = Color(0.05, 0.06, 0.1, 0.5)
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="Card" type="PanelContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(780, 480)
 layout_mode = 2
+theme_override_styles/panel = SubResource("SBE_card")
 
 [node name="CardMargin" type="MarginContainer" parent="CenterContainer/Card"]
 layout_mode = 2
@@ -171,12 +177,6 @@ theme_override_constants/v_separation = 6
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="BackButton" type="Button" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(108, 40)
-layout_mode = 2
-text = "BACK"
-
 [node name="ActionSpacer" type="Control" parent="CenterContainer/Card/CardMargin/VBox/ActionBar"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -209,4 +209,15 @@ text = "⋯"
 [node name="MorePopup" type="PopupMenu" parent="CenterContainer/Card/CardMargin/VBox/ActionBar/MoreButton"]
 unique_name_in_owner = true
 
-[connection signal="pressed" from="CenterContainer/Card/CardMargin/VBox/ActionBar/BackButton" to="." method="_on_close_pressed"]
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -88.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 56.0
+grow_horizontal = 0
+text = "Close"
+
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_pressed"]

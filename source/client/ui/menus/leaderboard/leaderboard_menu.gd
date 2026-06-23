@@ -69,7 +69,7 @@ var _period_buttons: Array[Button]
 
 
 func _ready() -> void:
-	build_shell("Leaderboard")
+	build_shell("Leaderboard", null, true)
 	_build_layout()
 	visibility_changed.connect(func() -> void:
 		if visible:

@@ -24,6 +24,9 @@ static func ensure_schema(db: SQLite) -> void:
 	if version < 5:
 		_migration_v5(db)
 		_set_schema_version(db, 5)
+	if version < 6:
+		_migration_v6(db)
+		_set_schema_version(db, 6)
 
 
 static func _migration_v1(db: SQLite) -> void:
@@ -143,6 +146,14 @@ static func _migration_v4(db: SQLite) -> void:
 static func _migration_v5(db: SQLite) -> void:
 	if not _column_exists(db, "players", "owned_skins_json"):
 		db.query("ALTER TABLE players ADD COLUMN owned_skins_json TEXT NOT NULL DEFAULT '[]';")
+
+
+## v6: per-character redeemed codes (see docs/redeem_codes.md). JSON array of
+## upper-cased code strings the character has already claimed. Added via ALTER —
+## no DB wipe. Defaults to '[]'.
+static func _migration_v6(db: SQLite) -> void:
+	if not _column_exists(db, "players", "redeemed_codes_json"):
+		db.query("ALTER TABLE players ADD COLUMN redeemed_codes_json TEXT NOT NULL DEFAULT '[]';")
 
 
 static func _column_exists(db: SQLite, table: String, column: String) -> bool:

@@ -34,7 +34,7 @@ var _external_view: bool = false
 
 
 func _ready() -> void:
-	build_shell("Guild")
+	build_shell("Guild", null, true)
 	_build_layout()
 	visibility_changed.connect(func() -> void:
 		if visible:

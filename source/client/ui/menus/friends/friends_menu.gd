@@ -11,7 +11,7 @@ var _list: VBoxContainer
 
 
 func _ready() -> void:
-	build_shell("Friends")
+	build_shell("Friends", null, true)
 
 	# content is a MarginContainer (sizes every child to the same rect), so all the
 	# pieces go in ONE VBox — otherwise the scroll list overlaps and covers the
@@ -134,10 +134,10 @@ func _fill_search_results(payload: Dictionary) -> void:
 
 ## A clickable player row: name (+ optional dim subtitle like the @account) and
 ## an online/offline suffix. Opens the player's profile on click.
-func _add_row(player_id: int, name: String, subtitle: String, is_online: bool) -> void:
+func _add_row(player_id: int, display_name: String, subtitle: String, is_online: bool) -> void:
 	if player_id <= 0:
 		return
-	var label: String = name
+	var label: String = display_name
 	if not subtitle.is_empty():
 		label += "   %s" % subtitle
 	label += "    %s" % ("● Online" if is_online else "Offline")

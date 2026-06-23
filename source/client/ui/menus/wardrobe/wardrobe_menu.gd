@@ -26,7 +26,7 @@ var _anim_buttons: Dictionary[StringName, Button] = {}
 
 
 func _ready() -> void:
-	build_shell("Wardrobe")
+	build_shell("Wardrobe", null, true)
 	_build_gold_display()
 	_skins = PlayerSkins.ids()
 	_build_layout()

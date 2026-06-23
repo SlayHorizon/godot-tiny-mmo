@@ -25,7 +25,7 @@ var _tab_buttons: Dictionary[StringName, Button] = {}
 
 
 func _ready() -> void:
-	build_shell("Dungeon")
+	build_shell("Dungeon", null, true)
 	Client.subscribe(&"dungeon.lobby.update", _on_lobby_update)
 	Client.subscribe(&"dungeon.room.update", _on_room_update)
 	_build_layout()
@@ -381,10 +381,10 @@ func _add_roster(vbox: VBoxContainer, title: String, members: Array, capacity: i
 			vbox.add_child(slot)
 
 
-func _info_line(text: String, color: Color, size: int) -> Label:
+func _info_line(text: String, color: Color, font_size: int) -> Label:
 	var label: Label = Label.new()
 	label.text = text
-	label.add_theme_font_size_override(&"font_size", size)
+	label.add_theme_font_size_override(&"font_size", font_size)
 	label.add_theme_color_override(&"font_color", color)
 	_info_box.add_child(label)
 	return label
