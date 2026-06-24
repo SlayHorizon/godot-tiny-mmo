@@ -12,7 +12,7 @@ required_amount = 3
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Iron at the Gate"
-description = "Iron's woken in the old fort and started walking. The warden wants 3 of them down before they reach the road. Bring the ore they leak — proof enough."
+description = "Put down 3 iron golems before they reach the road. Iron's woken in the old fort and started walking. The ore they leak is proof enough for the warden."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_golems")])
 min_level = 16
 reward_xp = 540

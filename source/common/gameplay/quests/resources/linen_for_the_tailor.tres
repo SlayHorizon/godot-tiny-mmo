@@ -14,7 +14,7 @@ required_amount = 5
 [resource]
 script = ExtResource("3_quest")
 quest_name = "Linen for the Tailor"
-description = "The tailor's short on cloth. Goblins carry bolts of linen — put 5 down and bring it back."
+description = "The tailor's short on cloth. Goblins carry bolts of linen, so put 5 down and bring it back."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_linen_5")])
 min_level = 1
 reward_xp = 70

@@ -10,6 +10,9 @@ extends Character
 ## (which drives the shared name label).
 
 const MARKER_SCENE: PackedScene = preload("res://source/common/gameplay/maps/components/interactable_marker.tscn")
+## Max distance (px) the local player can be from the NPC and still interact, so
+## you can't talk to or shop with an NPC from across the map.
+const INTERACT_RANGE: float = 90.0
 
 @export var npc_resource: NPCResource
 
@@ -109,13 +112,33 @@ func _on_clicked(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 			and event.pressed)
 		or (event is InputEventScreenTouch and event.pressed)
 	)
-	if clicked:
+	if not clicked:
+		return
+	if _player_in_range():
 		_open_interactions()
+	else:
+		# A too-far tap shouldn't be a silent no-op, so nudge the player closer.
+		Toaster.toast("You're too far away.")
+
+
+## True when the local player is close enough to interact. Clicks from too far are
+## silently ignored, so you have to walk up to the NPC (this also underpins the
+## "rooted while talking" model). Null-safe before the local player exists.
+func _player_in_range() -> bool:
+	var lp: LocalPlayer = ClientState.local_player
+	if lp == null or not is_instance_valid(lp):
+		return false
+	return global_position.distance_to(lp.global_position) <= INTERACT_RANGE
 
 
 func _open_interactions() -> void:
 	if npc_resource == null:
 		return
+	# Talking to a quest-giver NPC counts as "visiting" it — advance any
+	# "talk to NPC X" objective server-side (fire-and-forget; the server pushes
+	# quest.update if anything changed). Pure shop/flavor NPCs (npc_id 0) skip it.
+	if npc_id > 0 and InstanceClient.current != null:
+		Client.request_data(&"npc.interact", func(_r: Dictionary) -> void: pass, {"npc": npc_id}, InstanceClient.current.name)
 	var entries: Array = []
 	for interaction: NPCInteraction in npc_resource.interactions:
 		if interaction == null:

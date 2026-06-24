@@ -228,6 +228,18 @@ func set_quest_turned_in(quest_id: int) -> void:
 		quests[quest_id]["state"] = &"turned_in"
 
 
+## Whether the "ready to turn in" nudge has been pushed for this quest, so a
+## passive (COLLECT/inventory) completion toasts exactly once instead of on every
+## tracker refresh. Persisted inside the quests blob; defaults false.
+func quest_ready_notified(quest_id: int) -> bool:
+	return bool((quests.get(quest_id, {}) as Dictionary).get("ready_notified", false))
+
+
+func set_quest_ready_notified(quest_id: int, value: bool) -> void:
+	if quests.has(quest_id):
+		quests[quest_id]["ready_notified"] = value
+
+
 func add_experience(amount: int) -> Dictionary:
 	if amount <= 0:
 		return {"level": level, "experience": experience, "levels_gained": 0, "points_gained": 0}

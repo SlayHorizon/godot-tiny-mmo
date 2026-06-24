@@ -36,4 +36,9 @@ func data_request_handler(
 	# Add one at a time so stackable items merge and non-stackable get separate slots.
 	for i: int in amount:
 		Inventory.add_item(inventory, item_id, 1)
+
+	# Silent quest refresh: a bought item may satisfy a "Bring N item" (COLLECT)
+	# objective, which has no advance event of its own. Empty messages = no toast,
+	# just a HUD tracker re-fetch.
+	WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": []})
 	return {"ok": true}

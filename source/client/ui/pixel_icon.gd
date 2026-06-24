@@ -33,6 +33,16 @@ static func set_art(icon: TextureRect, texture: Texture2D) -> void:
 		(fit as Callable).call_deferred()
 
 
+## Adopt a Button's editor-assigned icon as a crisp mounted glyph: reads [member Button.icon], mounts it
+## via [method mount], then clears the native icon so it's drawn once — crisply. Lets a scene assign the
+## glyph in the editor (visible there, nothing loaded in code) while runtime renders it sharp. Returns the
+## TextureRect for later [method set_art].
+static func from_button(button: Button) -> TextureRect:
+	var tex: Texture2D = button.icon
+	button.icon = null
+	return mount(button, tex)
+
+
 static func _fit(host: Control, icon: TextureRect) -> void:
 	if not is_instance_valid(host) or not is_instance_valid(icon) or not icon.is_inside_tree():
 		return

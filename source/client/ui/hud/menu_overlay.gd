@@ -21,13 +21,14 @@ const MENU_ENTRIES: Array[Dictionary] = [
 	{"label": "Inventory",   "menu": "inventory",   "icon": ""},
 	# — Social —
 	{"label": "Friends",     "menu": "friends",     "icon": ""},
+	{"label": "Mail",        "menu": "mail",        "icon": ""},
 	{"label": "Guild",       "menu": "guild",       "icon": ""},
 	{"label": "Leaderboard", "menu": "leaderboard", "icon": ""},
 	{"label": "Achievements"},
 	# — World — (a House / Island tile will slot in here)
 	{"label": "Map"}, {"label": "Shop"}, {"label": "Bestiary"}, {"label": "House"},
 	# — Info / system —
-	{"label": "News"}, {"label": "Help"}, {"label": "Redeem", "menu": "redeem"},
+	{"label": "Help"}, {"label": "Redeem", "menu": "redeem"},
 	{"label": "Settings",    "menu": "settings",    "icon": ""},
 ]
 
@@ -38,14 +39,17 @@ const GRID_COLUMNS: int = 4
 ## this one line: "res://assets/sprites/ui/menu_icons/" (flat) or ".../menu_icons_shadow/" (shadow).
 const ICON_DIR: String = "res://assets/sprites/ui/menu_icons_shadow/"
 
-## Right-dock geometry (px from the screen's right edge). The card slides in from PANEL_SLIDE further
-## right while fading. Wide enough that 4 columns give bigger ~square tiles with room for long labels.
+## Right-dock geometry (px from the screen's right edge). Full-height panel flush to top/right/bottom
+## (mirrors the left-docked chat); slides in from PANEL_SLIDE further right while fading. Wide enough that
+## 4 columns give bigger ~square tiles with room for long labels.
 const PANEL_OFFSET_LEFT: float = -456.0
-const PANEL_OFFSET_RIGHT: float = -12.0
+const PANEL_OFFSET_RIGHT: float = 0.0
 const PANEL_SLIDE: float = 48.0
 
-var _panel: PanelContainer
+var _panel: Control
 var _tween: Tween
+# The Mail tile's label, captured at build so open() can badge it with the unread count.
+var _mail_label: Label
 # Semi-transparent tile backgrounds (built once, shared) — they blend with the see-through panel;
 # hover/pressed brighten for feedback.
 var _tile_normal: StyleBoxFlat
@@ -70,26 +74,38 @@ func _build() -> void:
 			close())
 	add_child(dim)
 
-	# Right-docked card. Semi-transparent so the world reads faintly behind it (gameplay-menu direction).
-	_panel = PanelContainer.new()
+	# Right-docked, full-height side panel (no floating card) so it reads consistently with the chat.
+	_panel = Control.new()
 	_panel.anchor_left = 1.0
 	_panel.anchor_right = 1.0
 	_panel.anchor_top = 0.0
 	_panel.anchor_bottom = 1.0
 	_panel.offset_left = PANEL_OFFSET_LEFT
 	_panel.offset_right = PANEL_OFFSET_RIGHT
-	_panel.offset_top = 12.0
-	_panel.offset_bottom = -12.0
-	var panel_style: StyleBoxFlat = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.06, 0.078, 0.117, 0.84)
-	panel_style.set_corner_radius_all(8)
-	panel_style.set_border_width_all(1)
-	panel_style.border_color = Color(0.16, 0.2, 0.28, 0.7)
-	panel_style.set_content_margin_all(4)
-	_panel.add_theme_stylebox_override(&"panel", panel_style)
+	_panel.offset_top = 0.0
+	_panel.offset_bottom = 0.0
 	add_child(_panel)
 
+	# Full-bleed backdrop: dark + opaque anchored at the RIGHT (screen) edge, fading lighter and more
+	# transparent toward the centre where the panel meets empty screen. Mirrors the chat on the opposite
+	# side. LINEAR-filtered (a smooth gradient, not pixel art; icons keep the project's NEAREST default).
+	var grad: Gradient = Gradient.new()
+	grad.offsets = PackedFloat32Array([0.0, 1.0])
+	grad.colors = PackedColorArray([Color(0.07, 0.075, 0.09, 0.95), Color(0.13, 0.14, 0.16, 0.35)])
+	var grad_tex: GradientTexture2D = GradientTexture2D.new()
+	grad_tex.gradient = grad
+	grad_tex.fill_from = Vector2(1.0, 0.5)
+	grad_tex.fill_to = Vector2(0.0, 0.5)
+	var grad_rect: TextureRect = TextureRect.new()
+	grad_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	grad_rect.texture = grad_tex
+	grad_rect.stretch_mode = TextureRect.STRETCH_SCALE
+	grad_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	grad_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_panel.add_child(grad_rect)
+
 	var margin: MarginContainer = MarginContainer.new()
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side: String in ["left", "right", "top", "bottom"]:
 		margin.add_theme_constant_override("margin_" + side, 12)
 	_panel.add_child(margin)
@@ -155,6 +171,8 @@ func _make_tile(entry: Dictionary) -> Button:
 	# Label pinned across the bottom, centered.
 	var label: Label = Label.new()
 	label.text = str(entry["label"])
+	if str(entry["label"]) == "Mail":
+		_mail_label = label
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -207,6 +225,7 @@ func _on_entry_pressed(menu_name: String) -> void:
 ## Slide the card in from the right edge + fade. Clearly reads as "opened" (a plain alpha fade was too
 ## subtle). Kills any in-flight tween so a fast re-open/close can't fight itself.
 func open() -> void:
+	_refresh_mail_badge()
 	if _tween != null and _tween.is_valid():
 		_tween.kill()
 	show()
@@ -230,3 +249,16 @@ func close() -> void:
 	_tween.tween_property(_panel, ^"offset_left", PANEL_OFFSET_LEFT + PANEL_SLIDE, 0.16)
 	_tween.tween_property(_panel, ^"offset_right", PANEL_OFFSET_RIGHT + PANEL_SLIDE, 0.16)
 	_tween.chain().tween_callback(hide)
+
+
+## Fetch the unread-mail count and badge the Mail tile ("Mail (N)" / "Mail").
+## Called on each launcher open, so the badge stays fresh without any login/push
+## wiring — opening a mail closes the launcher, and reopening it re-fetches.
+func _refresh_mail_badge() -> void:
+	if _mail_label == null or InstanceClient.current == null:
+		return
+	var result: Array = await Client.request_data_await(&"mail.unread_count", {}, String(InstanceClient.current.name))
+	if not is_instance_valid(_mail_label):
+		return
+	var count: int = int((result[0] as Dictionary).get("count", 0)) if result[1] == OK else 0
+	_mail_label.text = "Mail (%d)" % count if count > 0 else "Mail"

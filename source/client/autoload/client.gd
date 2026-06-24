@@ -12,12 +12,6 @@ var is_connected_to_server: bool = false:
 
 var authentication_token: String
 
-var theme: Theme:
-	get:
-		if not theme:
-			theme = load(ProjectSettings.get_setting("gui/theme/custom", "res://source/client/ui/themes/theme_navy.tres"))
-		return theme
-
 ## Crossfade duration when area music changes on entering a new instance/map.
 const MUSIC_CROSSFADE_S: float = 1.5
 ## Boss-event tracks (client assets): a looping combat track + a one-shot victory sting.

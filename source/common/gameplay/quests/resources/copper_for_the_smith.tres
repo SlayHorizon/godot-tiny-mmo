@@ -14,7 +14,7 @@ required_amount = 5
 [resource]
 script = ExtResource("3_quest")
 quest_name = "Copper for the Smith"
-description = "The smith's filling a contract for the watch. Bring him 5 copper bars — forge them or buy them, he won't ask. Just deliver."
+description = "Bring the smith 5 copper bars for a watch contract. Forge them or buy them, he won't ask. Just deliver."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_copper_5")])
 min_level = 14
 reward_xp = 360

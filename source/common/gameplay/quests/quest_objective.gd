@@ -35,11 +35,14 @@ func target_key() -> Variant:
 func describe() -> String:
 	match type:
 		Type.KILL:
-			return "Defeat %d %s" % [required_amount, String(enemy_type).capitalize()]
+			return "Defeat %s" % String(enemy_type).capitalize()
 		Type.COLLECT:
-			return "Collect %d %s" % [required_amount, str(item.item_name) if item else "?"]
+			# "Bring", not "Collect": COLLECT items are consumed and handed to the
+			# giver on turn-in (see QuestService.apply_turn_in), so it's a delivery,
+			# not a gather. (Daily COLLECT is NOT consumed — it keeps "Collect".)
+			return "Bring %s" % (str(item.item_name) if item else "?")
 		Type.CRAFT:
-			return "Craft %d %s" % [required_amount, str(item.item_name) if item else "?"]
+			return "Craft %s" % (str(item.item_name) if item else "?")
 		Type.VISIT:
 			var who: String = target_giver_name if not target_giver_name.is_empty() else "the indicated person"
 			return "Speak with %s" % who

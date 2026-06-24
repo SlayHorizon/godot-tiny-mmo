@@ -5,6 +5,7 @@ extends Node
 var database_path: String
 var db: SQLite
 var store: WorldStoreSqlite
+var mail_store: MailStore
 
 
 func start_database(world_info: Dictionary) -> void:
@@ -12,6 +13,7 @@ func start_database(world_info: Dictionary) -> void:
 	open_database()
 	WorldSchema.ensure_schema(db)
 	store = WorldStoreSqlite.new(db)
+	mail_store = MailStore.new(db)
 
 
 func configure_database(world_info: Dictionary) -> void:

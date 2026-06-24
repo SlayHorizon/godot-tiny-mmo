@@ -57,6 +57,10 @@ func data_request_handler(
 	var out: Array = []
 	for quest_id: int in quest_ids:
 		out.append(_quest_view(resource, int(quest_id), resources_by_id.get(quest_id), inventory))
+
+	# Toast any quest that just became turn-in-able via a passive COLLECT fill
+	# (inventory changes fire no advance event). Latches so it only toasts once.
+	QuestService.notify_passive_ready(resource, peer_id)
 	return {"giver": giver_id, "giver_name": giver_name, "quests": out}
 
 
@@ -67,13 +71,21 @@ func _quest_view(resource: PlayerResource, quest_id: int, quest_ref: QuestResour
 	if quest == null:
 		return {"id": quest_id, "name": "?", "objectives": []}
 
+	# A turned-in quest is locked done — for COLLECT, don't recompute the count from
+	# live inventory (items were consumed at turn-in), which would otherwise read e.g.
+	# "8/10" after the player spends the leftover stack. Show every objective met.
+	var turned_in: bool = resource.quest_state(quest_id) == &"turned_in"
+
 	var objectives: Array = []
 	for i: int in quest.objectives.size():
 		var objective: QuestObjective = quest.objectives[i]
 		objectives.append({
 			"desc": objective.describe(),
-			"count": QuestService.objective_count(resource, quest_id, i, objective, inventory),
+			"count": objective.required_amount if turned_in else QuestService.objective_count(resource, quest_id, i, objective, inventory),
 			"required": objective.required_amount,
+			# VISIT objectives are single-fire; the "(0/1)" counter reads clumsily,
+			# so the client hides it on non-countable (VISIT) rows.
+			"countable": objective.type != QuestObjective.Type.VISIT,
 		})
 
 	return {
@@ -81,7 +93,7 @@ func _quest_view(resource: PlayerResource, quest_id: int, quest_ref: QuestResour
 		"name": quest.quest_name,
 		"description": quest.description,
 		"state": String(resource.quest_state(quest_id)), # "" / "active" / "turned_in"
-		"complete": QuestService.is_complete(resource, quest_id, inventory),
+		"complete": turned_in or QuestService.is_complete(resource, quest_id, inventory),
 		"objectives": objectives,
 		"reward_xp": quest.reward_xp,
 		"reward_gold": quest.reward_gold,

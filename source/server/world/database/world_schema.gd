@@ -27,6 +27,9 @@ static func ensure_schema(db: SQLite) -> void:
 	if version < 6:
 		_migration_v6(db)
 		_set_schema_version(db, 6)
+	if version < 7:
+		_migration_v7(db)
+		_set_schema_version(db, 7)
 
 
 static func _migration_v1(db: SQLite) -> void:
@@ -154,6 +157,32 @@ static func _migration_v5(db: SQLite) -> void:
 static func _migration_v6(db: SQLite) -> void:
 	if not _column_exists(db, "players", "redeemed_codes_json"):
 		db.query("ALTER TABLE players ADD COLUMN redeemed_codes_json TEXT NOT NULL DEFAULT '[]';")
+
+
+## v7: mailbox — see docs/mailbox.md. `mail` holds content once (recipient_id = 0
+## means broadcast to everyone in this world); `mail_state` holds per-player
+## read/claimed/deleted flags, created lazily. Two tables so a broadcast is one
+## row with per-player state. Added via _create_table_if_missing — no DB wipe.
+static func _migration_v7(db: SQLite) -> void:
+	_create_table_if_missing(db, "mail", {
+		"mail_id": {"data_type": "int", "primary_key": true, "not_null": true, "auto_increment": true},
+		"recipient_id": {"data_type": "int", "not_null": true}, # 0 = broadcast to all in this world
+		"sender_name": {"data_type": "text", "not_null": true},
+		"subject": {"data_type": "text", "not_null": true},
+		"body": {"data_type": "text", "not_null": true},
+		"attachments_json": {"data_type": "text", "not_null": true},
+		"created_at_ms": {"data_type": "int", "not_null": true}
+	})
+	db.query("CREATE INDEX IF NOT EXISTS idx_mail_recipient ON mail(recipient_id, created_at_ms DESC);")
+
+	_create_table_if_missing(db, "mail_state", {
+		"player_id": {"data_type": "int", "not_null": true},
+		"mail_id": {"data_type": "int", "not_null": true},
+		"read_at_ms": {"data_type": "int", "not_null": false},
+		"claimed_at_ms": {"data_type": "int", "not_null": false},
+		"deleted_at_ms": {"data_type": "int", "not_null": false}
+	})
+	db.query("CREATE UNIQUE INDEX IF NOT EXISTS idx_mail_state_pk ON mail_state(player_id, mail_id);")
 
 
 static func _column_exists(db: SQLite, table: String, column: String) -> bool:

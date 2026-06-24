@@ -7,9 +7,8 @@
 [resource]
 script = ExtResource("1_quest")
 quest_name = "The Duel Master Calls"
-description = "The Duel Master's heard you can fight. He's at the arena. Go show him."
+description = "Find the Duel Master at the arena. He's heard you can fight, so go show him."
 min_level = 5
-unlock_message = "[Duel Master] Heard you can swing steel. Come to the arena — nobody stays dead there. First match's free."
 turn_in_giver_id = 8
 reward_xp = 40
 grant_title = "Promising Brawler"

@@ -1,4 +1,8 @@
 class_name ServerHub
+
+## SlayHorizon: DEPRECATED NOW WE USE PLUGIN EXPORT SO STRIP SERVER CONTENT
+## THIS SCRIPT SHOULD BE REMOVED IMO AND PROJECT REFACTORED TO NOT USE IT ANYMORE
+
 ## Indirection handle for the live server runtime. Common-side code that needs
 ## to call into server behaviour (data_push, propagate_rpc, instance lookups,
 ## etc.) goes through ServerHub.current instead of importing concrete classes

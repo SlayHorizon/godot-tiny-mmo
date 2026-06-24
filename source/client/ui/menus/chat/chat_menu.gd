@@ -38,6 +38,15 @@ const TIMESTAMP_DIVIDER_GAP_MS: int = 10 * 60 * 1000
 
 const BOOTSTRAP_LIMIT: int = 50
 const HISTORY_LIMIT: int = 50
+
+## How far the full-feed content slides in (px from the left) on open, matched to the menu overlay's
+## slide so both panels animate consistently.
+const FULL_FEED_SLIDE: float = 48.0
+
+## HUD chat-toggle icons: the plain message glyph, swapped for the exclamation variant while an unread
+## DM is waiting. Public/guild/system are ambient + shown in the peek, so they deliberately don't badge it.
+const CHAT_ICON: Texture2D = preload("res://assets/sprites/ui/menu_icons_shadow/16px/message.png")
+const CHAT_ICON_UNREAD: Texture2D = preload("res://assets/sprites/ui/menu_icons_shadow/16px/message_exclamation.png")
 #endregion
 
 
@@ -69,7 +78,7 @@ var mute_peek_world: bool = false
 ## How long the peek feed stays fully visible before the fade animation
 ## starts. 0 = "never fade" (peek stays until dismissed). Persisted to
 ## ClientState.settings under chat / peek_fade_seconds.
-var peek_fade_seconds: int = 3
+var peek_fade_seconds: int = 5
 ## Client-only override for the local player's name color in chat (peek +
 ## full feed). Empty string = use the default hashed color. Pure vanity, not
 ## shipped to other clients. Persisted to ClientState.settings under
@@ -81,6 +90,8 @@ var _public_label_team: String = "Team"
 var _public_label_guild: String = "Guild"
 
 var fade_out_tween: Tween
+var _full_feed_tween: Tween
+var _chat_toggle_icon: TextureRect
 #endregion
 
 
@@ -112,14 +123,14 @@ var fade_out_tween: Tween
 @onready var settings_button: Button = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer/SettingsButton
 
 # Settings panel nodes — laid out in chat_menu.tscn under ChatPanel/VBoxContainer2/SettingsPanel.
-@onready var settings_panel: VBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel
-@onready var settings_blocked_list: VBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/BlockedScroll/BlockedList
-@onready var settings_blocked_empty: Label = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/BlockedScroll/BlockedList/EmptyLabel
-@onready var settings_peek_show_world: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekShowWorld
-@onready var settings_peek_show_dm: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekShowDM
-@onready var settings_peek_show_system: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekShowSystem
-@onready var settings_peek_fade_option: OptionButton = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekFadeRow/PeekFadeOption
-@onready var settings_name_color_row: HBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/NameColorRow
+@onready var settings_panel: ScrollContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel
+@onready var settings_blocked_list: VBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/BlockedScroll/BlockedList
+@onready var settings_blocked_empty: Label = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/BlockedScroll/BlockedList/EmptyLabel
+@onready var settings_peek_show_world: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/PeekShowWorld
+@onready var settings_peek_show_dm: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/PeekShowDM
+@onready var settings_peek_show_system: CheckBox = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/PeekShowSystem
+@onready var settings_peek_fade_option: OptionButton = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/PeekFadeRow/PeekFadeOption
+@onready var settings_name_color_row: HBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/NameColorRow
 
 @onready var full_feed_input_row: HBoxContainer = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HBoxContainer2
 @onready var full_feed_sep_above_input: HSeparator = $FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/HSeparator2
@@ -179,6 +190,9 @@ func _ready() -> void:
 
 	peek_feed.show()
 	full_feed.hide()
+	# Also start the fade countdown at spawn, so the initial (empty) peek doesn't linger forever waiting
+	# for the first message to trigger it.
+	_start_peek_fade()
 
 	_build_chat_toggle()
 	_apply_input_mode()
@@ -232,13 +246,13 @@ var _chat_toggle: Button
 
 func _build_chat_toggle() -> void:
 	_chat_toggle = Button.new()
-	_chat_toggle.text = "Chat"
-	_chat_toggle.custom_minimum_size = Vector2(52, 32)
+	_chat_toggle.custom_minimum_size = Vector2(40, 40)
 	_chat_toggle.focus_mode = Control.FOCUS_NONE
 	_chat_toggle.tooltip_text = "Open chat  (Enter to type)"
 	_chat_toggle.position = Vector2(10, 218)
 	_chat_toggle.pressed.connect(_on_chat_toggle_pressed)
 	add_child(_chat_toggle)
+	_chat_toggle_icon = PixelIcon.mount(_chat_toggle, CHAT_ICON)
 	# The bubble is the OPENER — the full panel has its own Close button, so
 	# hide it while the panel is up (it drew on top of the panel otherwise).
 	full_feed.visibility_changed.connect(func() -> void:
@@ -251,7 +265,7 @@ func _on_chat_toggle_pressed() -> void:
 		_on_close_button_pressed()
 		return
 	peek_feed.hide()
-	full_feed.show()
+	_show_full_feed()
 	_sync_channel_buttons()
 	_update_public_button_labels()
 	_refresh_full_feed()
@@ -368,7 +382,9 @@ func _on_chat_message(message: Dictionary) -> void:
 
 	var is_viewing: bool = full_feed.visible and (current_conversation_id == convo_id or current_conversation_id == ALL_CONVERSATION_ID)
 
-	if not is_history and not is_self and current_conversation_id != convo_id:
+	# Count as unread when we're NOT actually looking at it — is_viewing already folds in
+	# full_feed.visible, so a closed feed (even on the last-opened DM) correctly badges new messages.
+	if not is_history and not is_self and not is_viewing:
 		_inc_unread(convo_id)
 
 	if not is_history and _should_show_in_peek(convo_id):
@@ -425,7 +441,7 @@ func _on_peek_feed_gui_input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		peek_feed.hide()
-		full_feed.show()
+		_show_full_feed()
 
 		_sync_channel_buttons()
 		_update_public_button_labels()
@@ -438,7 +454,8 @@ func _on_peek_feed_gui_input(event: InputEvent) -> void:
 func _on_close_button_pressed() -> void:
 	peek_feed.show()
 	_reset_peek_view()
-	full_feed.hide()
+	_start_peek_fade()
+	_hide_full_feed()
 
 
 func _reset_peek_view() -> void:
@@ -456,6 +473,34 @@ func _start_peek_fade() -> void:
 		return
 	fade_out_timer.wait_time = float(peek_fade_seconds)
 	fade_out_timer.start()
+
+
+## Open the full feed with a slide-in-from-left + fade, mirroring the right-side menu overlay so both
+## read as deliberately "opened" rather than popping in. Kills any in-flight tween for fast re-toggles.
+func _show_full_feed() -> void:
+	# Navigating to any channel/DM always lands on the feed, never a stale Chat-options view.
+	_set_settings_open(false)
+	# Already open (e.g. switching channels from the sidebar) — don't replay the slide.
+	if full_feed.visible:
+		return
+	if _full_feed_tween != null and _full_feed_tween.is_valid():
+		_full_feed_tween.kill()
+	full_feed.visible = true
+	full_feed.modulate.a = 0.0
+	full_feed_content.position.x = -FULL_FEED_SLIDE
+	_full_feed_tween = create_tween().set_parallel(true).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	_full_feed_tween.tween_property(full_feed, ^"modulate:a", 1.0, 0.18)
+	_full_feed_tween.tween_property(full_feed_content, ^"position:x", 0.0, 0.18)
+
+
+## The open effect in reverse: slide back out to the left + fade, THEN hide.
+func _hide_full_feed() -> void:
+	if _full_feed_tween != null and _full_feed_tween.is_valid():
+		_full_feed_tween.kill()
+	_full_feed_tween = create_tween().set_parallel(true).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	_full_feed_tween.tween_property(full_feed, ^"modulate:a", 0.0, 0.16)
+	_full_feed_tween.tween_property(full_feed_content, ^"position:x", -FULL_FEED_SLIDE, 0.16)
+	_full_feed_tween.chain().tween_callback(full_feed.hide)
 #endregion
 
 
@@ -587,7 +632,7 @@ func open_channel(channel: int) -> void:
 
 	_clear_unread(current_conversation_id)
 
-	full_feed.show()
+	_show_full_feed()
 	peek_feed.hide()
 
 	_ensure_conversation_exists(current_conversation_id)
@@ -611,7 +656,7 @@ func open_conversation(conversation_id: String) -> void:
 		if conversation_id.begins_with("global_"):
 			current_channel = int(conversation_id.replace("global_", ""))
 
-	full_feed.show()
+	_show_full_feed()
 	peek_feed.hide()
 
 	_sync_channel_buttons()
@@ -632,7 +677,7 @@ func open_dm(other_id: int) -> void:
 	_ensure_conversation_exists(current_conversation_id)
 	_ensure_dm_button(current_conversation_id, other_id)
 
-	full_feed.show()
+	_show_full_feed()
 	peek_feed.hide()
 
 	_sync_channel_buttons()
@@ -1026,6 +1071,7 @@ func _set_unread(convo_id: String, v: int) -> void:
 	unread_by_conversation[convo_id] = maxi(v, 0)
 	_update_dm_button_if_needed(convo_id)
 	_update_public_button_labels()
+	_update_chat_toggle_icon()
 
 
 func _inc_unread(convo_id: String) -> void:
@@ -1034,6 +1080,22 @@ func _inc_unread(convo_id: String) -> void:
 
 func _clear_unread(convo_id: String) -> void:
 	_set_unread(convo_id, 0)
+
+
+## True if any DM conversation has unread messages — drives the HUD toggle's exclamation icon. We badge
+## ONLY DMs (directed at the player); public/guild/system stream through the peek and would just be noise.
+func _has_unread_dm() -> bool:
+	for convo_id: String in unread_by_conversation:
+		if convo_id.begins_with("dm:") and unread_by_conversation[convo_id] > 0:
+			return true
+	return false
+
+
+## Swap the closed-state HUD toggle between the plain and exclamation chat glyphs based on unread DMs.
+func _update_chat_toggle_icon() -> void:
+	if not is_instance_valid(_chat_toggle_icon):
+		return
+	PixelIcon.set_art(_chat_toggle_icon, CHAT_ICON_UNREAD if _has_unread_dm() else CHAT_ICON)
 
 
 func _update_dm_button_if_needed(convo_id: String) -> void:
@@ -1443,15 +1505,22 @@ func _save_chat_setting(key: StringName, value: Variant) -> void:
 
 
 func _toggle_settings_panel() -> void:
-	var opening: bool = not settings_panel.visible
-	settings_panel.visible = opening
+	_set_settings_open(not settings_panel.visible)
+
+
+## Show/hide the Chat-options panel in place of the feed. Routing through one setter lets navigation
+## (opening any channel/DM via _show_full_feed) force it closed, so the sidebar buttons always land on
+## the feed instead of doing nothing while options are up.
+func _set_settings_open(open: bool) -> void:
+	settings_panel.visible = open
 	# Feed + separator + input row swap places with the settings panel — same
 	# chat-panel real estate, no overlay layering required.
-	full_feed_text_display.visible = not opening
-	full_feed_sep_above_input.visible = not opening
-	full_feed_input_row.visible = not opening
-	settings_button.text = "Back" if opening else "Settings"
-	if opening:
+	full_feed_text_display.visible = not open
+	full_feed_sep_above_input.visible = not open
+	full_feed_input_row.visible = not open
+	settings_button.text = "Back" if open else "Settings"
+	chat_title_label.text = "Chat options" if open else _title_for_current()
+	if open:
 		_refresh_block_list_request()
 
 

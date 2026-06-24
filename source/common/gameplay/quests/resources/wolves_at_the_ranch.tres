@@ -12,7 +12,7 @@ required_amount = 5
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Wolves at the Ranch"
-description = "The rancher's losing sheep. Put down 5 of the wolves and the pack should look elsewhere."
+description = "The rancher's losing sheep. Put down 5 wolves and the pack should look elsewhere."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_wolf")])
 min_level = 4
 reward_xp = 110

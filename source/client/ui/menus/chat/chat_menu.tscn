@@ -7,12 +7,12 @@ content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
 content_margin_bottom = 6.0
-bg_color = Color(0.0767404, 0.139002, 0.199102, 0.834)
+bg_color = Color(0.11, 0.12, 0.14, 0.834)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.156235, 0.282157, 0.307826, 1)
+border_color = Color(0.3, 0.32, 0.36, 1)
 border_blend = true
 corner_radius_top_left = 1
 corner_radius_top_right = 1
@@ -24,7 +24,7 @@ shadow_offset = Vector2(0, 2)
 
 [sub_resource type="Gradient" id="Gradient_s6uxj"]
 offsets = PackedFloat32Array(0, 1)
-colors = PackedColorArray(0.101960786, 0.133333, 0.207843, 0.95, 0.054902, 0.078431, 0.133333, 0.95)
+colors = PackedColorArray(0.13, 0.14, 0.16, 0.95, 0.07, 0.075, 0.09, 0.95)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture1D_oenax"]
 gradient = SubResource("Gradient_s6uxj")
@@ -39,8 +39,8 @@ content_margin_bottom = 10.0
 bg_color = Color(0.0779009, 0.107958, 0.156937, 0.0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jlimx"]
-bg_color = Color(0.182813, 0.347501, 0.381092, 0.6)
-border_color = Color(0.182813, 0.347501, 0.381092, 0.6)
+bg_color = Color(0.3, 0.32, 0.36, 0.6)
+border_color = Color(0.3, 0.32, 0.36, 0.6)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jlimx"]
 content_margin_left = 10.0
@@ -116,7 +116,7 @@ offset_right = -407.0
 offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0779009, 0.107958, 0.156937, 0.95)
+color = Color(0.11, 0.12, 0.14, 0.95)
 
 [node name="Control" type="MarginContainer" parent="FullFeed" unique_id=539554818]
 layout_mode = 0
@@ -199,7 +199,7 @@ text = "Close"
 [node name="Background" type="ColorRect" parent="FullFeed/Control/HBoxContainer" unique_id=915163827]
 custom_minimum_size = Vector2(2, 538)
 layout_mode = 2
-color = Color(0.182813, 0.347501, 0.381092, 0.7)
+color = Color(0.3, 0.32, 0.36, 0.7)
 
 [node name="VSeparator" type="VSeparator" parent="FullFeed/Control/HBoxContainer" unique_id=1769013706]
 visible = false
@@ -246,78 +246,83 @@ Hello
 "
 scroll_following = true
 
-[node name="SettingsPanel" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=1812037411]
+[node name="SettingsPanel" type="ScrollContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2" unique_id=1812037411]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SettingsContent" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="BlockedHeader" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037412]
+[node name="BlockedHeader" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037412]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "Blocked players"
 
-[node name="BlockedScroll" type="ScrollContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037413]
+[node name="BlockedScroll" type="ScrollContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037413]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="BlockedList" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/BlockedScroll" unique_id=1812037414]
+[node name="BlockedList" type="VBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/BlockedScroll" unique_id=1812037414]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="EmptyLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/BlockedScroll/BlockedList" unique_id=1812037415]
+[node name="EmptyLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/BlockedScroll/BlockedList" unique_id=1812037415]
 modulate = Color(1, 1, 1, 0.55)
 layout_mode = 2
 text = "No blocked players."
 
-[node name="SepNotif" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037416]
+[node name="SepNotif" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037416]
 layout_mode = 2
 
-[node name="NotifHeader" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037417]
+[node name="NotifHeader" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037417]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "Peek notifications"
 
-[node name="PeekShowWorld" type="CheckBox" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037418]
+[node name="PeekShowWorld" type="CheckBox" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037418]
 layout_mode = 2
 text = "Show world chat in peek"
 
-[node name="PeekShowDM" type="CheckBox" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037419]
+[node name="PeekShowDM" type="CheckBox" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037419]
 layout_mode = 2
 text = "Show DMs in peek"
 
-[node name="PeekShowSystem" type="CheckBox" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037420]
+[node name="PeekShowSystem" type="CheckBox" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037420]
 layout_mode = 2
 text = "Show system in peek"
 
-[node name="PeekFadeRow" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037421]
+[node name="PeekFadeRow" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037421]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="PeekFadeLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekFadeRow" unique_id=1812037422]
+[node name="PeekFadeLabel" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/PeekFadeRow" unique_id=1812037422]
 layout_mode = 2
 text = "Peek fade"
 
-[node name="PeekFadeOption" type="OptionButton" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/PeekFadeRow" unique_id=1812037423]
+[node name="PeekFadeOption" type="OptionButton" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent/PeekFadeRow" unique_id=1812037423]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SepColor" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037424]
+[node name="SepColor" type="HSeparator" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037424]
 layout_mode = 2
 
-[node name="NameColorHeader" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037425]
+[node name="NameColorHeader" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037425]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "Your name color"
 
-[node name="NameColorHint" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037426]
+[node name="NameColorHint" type="Label" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037426]
 modulate = Color(1, 1, 1, 0.55)
 layout_mode = 2
 text = "Visible only to you."
 
-[node name="NameColorRow" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel" unique_id=1812037427]
+[node name="NameColorRow" type="HBoxContainer" parent="FullFeed/Control/HBoxContainer/ChatPanel/VBoxContainer2/SettingsPanel/SettingsContent" unique_id=1812037427]
 layout_mode = 2
 theme_override_constants/separation = 6
 

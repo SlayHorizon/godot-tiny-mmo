@@ -36,8 +36,8 @@ func describe() -> String:
 	if not description.is_empty():
 		return description
 	match kind:
-		Kind.KILL: return "Defeat %d %s" % [required_amount, String(enemy_type).capitalize()]
-		Kind.COLLECT: return "Collect %d %s" % [required_amount, str(item.item_name) if item else "?"]
+		Kind.KILL: return "Defeat %s" % String(enemy_type).capitalize()
+		Kind.COLLECT: return "Collect %s" % (str(item.item_name) if item else "?")
 	return "?"
 
 

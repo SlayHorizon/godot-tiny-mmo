@@ -19,7 +19,7 @@ item = ExtResource("3_chest")
 [resource]
 script = ExtResource("4_quest")
 quest_name = "Master of the Forge"
-description = "Forge 1 iron helmet and 1 iron chestpiece. The smith keeps neither — they're yours. He just wants to watch you do it right."
+description = "Forge an iron helmet and an iron chestpiece. The smith keeps neither. They're yours, and he just wants to watch you do it right."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_craft_helm"), SubResource("Obj_craft_chest")])
 min_level = 16
 reward_xp = 600

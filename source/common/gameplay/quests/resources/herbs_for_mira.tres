@@ -14,7 +14,7 @@ required_amount = 3
 [resource]
 script = ExtResource("3_quest")
 quest_name = "Herbs for Mira"
-description = "Mira needs 3 healing herbs to restock. They grow in the clearings outside town — pick them by hand."
+description = "Mira needs 3 healing herbs to restock. They grow in the clearings outside town. Pick them by hand."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_herb_3")])
 min_level = 1
 reward_xp = 18

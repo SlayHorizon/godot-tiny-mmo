@@ -26,6 +26,12 @@ signal input_changed(input_type: InputComponent.InputType)
 
 var local_player: LocalPlayer
 var player_id: int
+## True while a blocking menu is open (NPC dialogue, shop, quest log, inventory).
+## While set, the local player's movement and actions are suppressed, so you can't
+## walk or fight with a menu up, and can't keep one open to act from afar. Only the
+## movement polling is gated. Raw key events still flow, so menu UI can use arrows
+## or stick for navigation later.
+var menu_open: bool = false
 ## Fired when the local player's tagged guild changes (login / tag / create /
 ## join / leave). Ally-aware visuals (e.g. guild guard health bars) listen so
 ## they re-evaluate without a relog.

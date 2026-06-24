@@ -147,26 +147,10 @@ func _on_redeem(field: LineEdit) -> void:
 	if bool(data.get("ok", false)):
 		var lines: PackedStringArray = PackedStringArray()
 		for r: Variant in (data.get("rewards", []) as Array):
-			lines.append(_describe(r as Dictionary))
+			lines.append(RewardFormat.describe(r as Dictionary))
 		_show_result_state(lines)
 	else:
 		_show_input_state(_humanize(str(data.get("reason", ""))))
-
-
-func _describe(reward: Dictionary) -> String:
-	var reward_name: String = str(reward.get("name", "Reward"))
-	var amount: int = int(reward.get("amount", 1))
-	match str(reward.get("type", "")):
-		"currency", "xp":
-			return "+%d %s" % [amount, reward_name]
-		"item":
-			return "%s ×%d" % [reward_name, amount] if amount > 1 else reward_name
-		"title":
-			return "Title: %s" % reward_name
-		"skin":
-			return "Cosmetic: %s" % reward_name
-		_:
-			return reward_name
 
 
 func _humanize(reason: String) -> String:

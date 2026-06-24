@@ -17,12 +17,18 @@ lines = Array[String](["..."])
 label_override = "What happened to you ?"
 metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 
+[sub_resource type="Resource" id="Resource_ruchx"]
+script = ExtResource("7_31n01")
+lines = Array[String](["Seriously ? Asking me that ?", "Well go out of there and talk to the Hall Keeper next to the door."])
+label_override = "Where can I get money ?"
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
 [sub_resource type="Resource" id="Resource_j8n1e"]
 script = ExtResource("8_26gsj")
 npc_name = "Arya"
 skin = ExtResource("9_rj7ca")
 greeting = "I swear I didn't do anything..."
-interactions = Array[ExtResource("6_ruchx")]([SubResource("Resource_iej2c")])
+interactions = Array[ExtResource("6_ruchx")]([SubResource("Resource_iej2c"), SubResource("Resource_ruchx")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="JailRoom" type="Node2D" unique_id=288046526]
@@ -60,6 +66,6 @@ position = Vector2(328.8266, 87.64915)
 npc_resource = ExtResource("6_31n01")
 
 [node name="Arya" parent="." unique_id=998185704 instance=ExtResource("5_ukoid")]
-position = Vector2(42.087494, 71.73455)
+position = Vector2(40, 64)
 collision_mask = 6
 npc_resource = SubResource("Resource_j8n1e")

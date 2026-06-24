@@ -17,7 +17,7 @@ item = ExtResource("2_tag")
 [resource]
 script = ExtResource("3_quest")
 quest_name = "The Bandit Captain"
-description = "The watch has had enough of the bandit captain working the crossroads. Put him down and bring back his tag — they want proof."
+description = "Kill the bandit captain at the crossroads and bring back his tag. The watch wants proof before they pay."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_captain"), SubResource("Obj_take_tag")])
 min_level = 8
 reward_xp = 220

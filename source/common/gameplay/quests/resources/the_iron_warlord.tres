@@ -11,7 +11,7 @@ enemy_type = &"iron_warlord"
 [resource]
 script = ExtResource("2_quest")
 quest_name = "The Iron Warlord"
-description = "He's holed up in the old fort — what's left of him. The iron took him years ago. Bring him down; what's on the body is yours."
+description = "Put down the Iron Warlord in the old fort. The iron took him years ago. Whatever's on the body is yours."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_warlord")])
 min_level = 18
 reward_xp = 800

@@ -28,6 +28,12 @@ func _ready() -> void:
 	hide()
 	ClientState.tracked_quest_changed.connect(func(_id: int): _refresh())
 	Client.subscribe(&"quest.update", func(_data: Dictionary): _refresh())
+	# COLLECT objectives track live inventory, which never fires quest.update on its
+	# own. Refresh on the two open-world item-gain pushes — loot (combat.reward) and
+	# gathering (mining.gather_result) — so a "Bring N item" objective climbs live
+	# instead of only updating when a menu is reopened.
+	Client.subscribe(&"combat.reward", func(_data: Dictionary): _refresh())
+	Client.subscribe(&"mining.gather_result", func(_data: Dictionary): _refresh())
 	ClientState.local_player_ready.connect(func(_lp: LocalPlayer): _refresh())
 	_refresh()
 
@@ -124,18 +130,22 @@ func _display(quest: Dictionary) -> void:
 		# isn't cluttered with paths the player chose not to take.
 		if any_mode and complete and not met:
 			continue
-		# In-progress ANY mode: drop an "— OR —" between alternatives so the
+		# In-progress ANY mode: drop an "OR" between alternatives so the
 		# player reads them as a choice rather than a checklist.
 		if any_mode and not complete and any_shown:
 			var or_label: Label = Label.new()
 			or_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			or_label.text = "— OR —"
+			or_label.text = "OR"
 			or_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			or_label.add_theme_color_override(&"font_color", Color(0.65, 0.75, 0.9))
 			_content.add_child(or_label)
 		var objective_label: Label = Label.new()
 		objective_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
+		# VISIT rows aren't counted — show a ✓ when done, not "(0/1)".
+		if bool(objective.get("countable", true)):
+			objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
+		else:
+			objective_label.text = "• %s%s" % [str(objective.get("desc", "")), "  ✓" if met else ""]
 		if met:
 			objective_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
 		_content.add_child(objective_label)

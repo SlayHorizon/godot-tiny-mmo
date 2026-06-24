@@ -56,10 +56,11 @@ func data_request_handler(
 	if recipe.xp_reward > 0:
 		progress = resource.add_skill_xp(station.profession, recipe.xp_reward)
 
-	# Quest CRAFT progress for this output item.
+	# Quest CRAFT progress for this output item. Push unconditionally: an empty
+	# messages array is a silent tracker refresh, so a "Bring N item" (COLLECT)
+	# objective reflects a freshly-crafted item live, not just on menu reopen.
 	var quest_updates: Array = QuestService.on_craft(resource, output_id, peer_id, instance)
-	if not quest_updates.is_empty():
-		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
+	WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
 
 	return {
 		"ok": true,

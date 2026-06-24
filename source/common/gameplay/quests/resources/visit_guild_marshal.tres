@@ -7,9 +7,8 @@
 [resource]
 script = ExtResource("1_quest")
 quest_name = "The Marshal's Invitation"
-description = "Marshal Veska wants a word. She's at the muster hall. Bring your wits."
+description = "Meet Marshal Veska at the muster hall. She wants a word, so bring your wits."
 min_level = 8
-unlock_message = "[Marshal Veska] You've made a name out there — more than the Charter gave you. Come to the hall. There's a banner that could use you."
 turn_in_giver_id = 9
 reward_xp = 40
 grant_title = "Hopeful Recruit"

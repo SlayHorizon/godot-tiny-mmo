@@ -223,23 +223,28 @@ func _rebuild_detail() -> void:
 	_detail_body.add_child(obj_header)
 
 	# ANY-mode quests (completion == 1) treat objectives as alternatives — an
-	# "— OR —" line between them reads them as a choice, not a checklist.
+	# "OR" line between them reads them as a choice, not a checklist.
 	var any_mode: bool = int(quest.get("completion", 0)) == 1
 	var objectives: Array = quest.get("objectives", [])
 	for i in objectives.size():
 		if any_mode and i > 0:
 			var or_label: Label = Label.new()
-			or_label.text = "— OR —"
+			or_label.text = "OR"
 			or_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			or_label.add_theme_color_override(&"font_color", Color(0.65, 0.75, 0.9))
 			_detail_body.add_child(or_label)
 		var objective: Dictionary = objectives[i]
 		var count: int = int(objective.get("count", 0))
 		var required: int = int(objective.get("required", 1))
+		var met: bool = count >= required
 		var objective_label: Label = Label.new()
-		objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
+		# VISIT rows aren't counted — show a ✓ when done, not "(0/1)".
+		if bool(objective.get("countable", true)):
+			objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
+		else:
+			objective_label.text = "• %s%s" % [str(objective.get("desc", "")), "  ✓" if met else ""]
 		objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		if count >= required:
+		if met:
 			objective_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
 		_detail_body.add_child(objective_label)
 

@@ -12,6 +12,8 @@
 [ext_resource type="Script" uid="uid://cvras2gvcldqx" path="res://source/client/ui/hud/trade_panel.gd" id="9_trade"]
 [ext_resource type="Script" uid="uid://b573js8q3lmn8" path="res://source/client/ui/hud/ability_bar.gd" id="10_abilitybar"]
 [ext_resource type="Script" uid="uid://5w3b2d61o6d8" path="res://source/client/ui/hud/status_bar.gd" id="11_statusbar"]
+[ext_resource type="Texture2D" uid="uid://dhos2s1jvvjqx" path="res://assets/sprites/ui/menu_icons_shadow/16px/three_dots_vertical.png" id="12_menuicon"]
+[ext_resource type="Texture2D" uid="uid://cw67l0l2tftac" path="res://assets/sprites/ui/menu_icons_shadow/16px/exclamation_mark.png" id="13_notificon"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
 bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
@@ -47,6 +49,20 @@ mouse_filter = 1
 
 [node name="Chat" parent="." unique_id=1820524604 instance=ExtResource("2_xs74v")]
 layout_mode = 1
+
+[node name="QuestTracker" type="PanelContainer" parent="." unique_id=1289632756]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -351.0
+offset_top = 9.0
+offset_right = -131.0
+offset_bottom = 37.0
+grow_horizontal = 0
+mouse_filter = 2
+script = ExtResource("8_qtrack")
 
 [node name="ItemSlots" type="Control" parent="." unique_id=1807845814]
 layout_mode = 1
@@ -235,7 +251,8 @@ custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-text = "!"
+icon = ExtResource("13_notificon")
+icon_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="MenuButton" type="Button" parent="MenuButtons/HBoxContainer" unique_id=948283629]
@@ -243,7 +260,8 @@ custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-text = "Menu"
+icon = ExtResource("12_menuicon")
+icon_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="MenuOverlay" type="Control" parent="." unique_id=1850870091]
@@ -332,21 +350,8 @@ text = "You died"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="QuestTracker" type="PanelContainer" parent="." unique_id=1289632756]
-custom_minimum_size = Vector2(220, 0)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -530.0
-offset_top = 10.0
-offset_right = -310.0
-offset_bottom = 38.0
-grow_horizontal = 0
-mouse_filter = 2
-script = ExtResource("8_qtrack")
-
 [node name="TradePanel" type="Control" parent="." unique_id=1478787724]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

@@ -67,7 +67,9 @@ static func _advance_matching(
 				# the "ready — return" line that'd confuse the player.
 				pending_auto_complete.append(quest)
 			else:
-				updates.append("✓ %s ready — return to the quest giver." % quest.quest_name)
+				# Latch so notify_passive_ready (the COLLECT path) doesn't re-toast this.
+				resource.set_quest_ready_notified(quest_id, true)
+				updates.append("✓ %s ready to turn in. Return to the quest giver." % quest.quest_name)
 	for quest: QuestResource in pending_auto_complete:
 		apply_turn_in(resource, quest, peer_id, instance)
 	return updates
@@ -171,3 +173,28 @@ static func is_complete(resource: PlayerResource, quest_id: int, inventory: Dict
 		elif quest.completion == QuestResource.Completion.ALL:
 			return false
 	return any_met
+
+
+## Pushes the "ready to turn in" toast for any active quest that became complete
+## via a passive path (COLLECT items now in the bag) that fires no advance event.
+## Latches per quest so a tracker refresh doesn't re-toast, and clears the latch
+## if the quest drops back below complete (items sold/lost). KILL/CRAFT/VISIT
+## completions are already latched by _advance_matching, so they're skipped here.
+static func notify_passive_ready(resource: PlayerResource, peer_id: int) -> void:
+	if peer_id <= 0:
+		return
+	for quest_id: int in resource.quests:
+		if resource.quest_state(quest_id) != &"active":
+			continue
+		var quest: QuestResource = QuestResource.load_quest(quest_id)
+		if quest == null or quest.auto_complete:
+			continue
+		var complete: bool = is_complete(resource, quest_id, resource.inventory)
+		var notified: bool = resource.quest_ready_notified(quest_id)
+		if complete and not notified:
+			resource.set_quest_ready_notified(quest_id, true)
+			ServerHub.current.data_push.rpc_id(peer_id, &"quest.update", {
+				"messages": ["✓ %s ready to turn in. Return to the quest giver." % quest.quest_name]
+			})
+		elif not complete and notified:
+			resource.set_quest_ready_notified(quest_id, false)

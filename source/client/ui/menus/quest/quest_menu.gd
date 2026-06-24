@@ -236,18 +236,25 @@ func _show_details(quest: Dictionary) -> void:
 func _make_objective_row(objective: Dictionary) -> Label:
 	var count: int = int(objective.get("count", 0))
 	var required: int = int(objective.get("required", 1))
+	var met: bool = count >= required
+	var desc: String = str(objective.get("desc", ""))
 	var row: Label = Label.new()
-	row.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
-	if count >= required:
+	# VISIT objectives aren't counted ("Speak with X") — show a ✓ when done rather
+	# than a clumsy "(0/1)". Countable rows (defeat/bring/craft) show "(c/r)".
+	if bool(objective.get("countable", true)):
+		row.text = "• %s (%d/%d)" % [desc, count, required]
+	else:
+		row.text = "• %s%s" % [desc, "  ✓" if met else ""]
+	if met:
 		row.add_theme_color_override(&"font_color", COLOR_OBJ_MET)
 	return row
 
 
-## Indented "— OR —" line slotted between objectives in ANY-mode quests so the
+## Indented "OR" line slotted between objectives in ANY-mode quests so the
 ## player reads them as alternatives rather than a checklist.
 func _make_or_separator() -> Label:
 	var label: Label = Label.new()
-	label.text = "— OR —"
+	label.text = "OR"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_color_override(&"font_color", COLOR_HINT)
 	return label

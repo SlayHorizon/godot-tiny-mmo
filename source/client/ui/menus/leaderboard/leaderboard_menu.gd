@@ -9,6 +9,10 @@ extends MenuShell
 ## leaderboard.top handler.
 
 const ROW_LIMIT: int = 20
+## Reuse a fetched board for this long before hitting the server again (open + tab-switch use the cache;
+## the Reload button forces a fresh fetch). Leaderboards don't change second-to-second, so this trims
+## redundant traffic without feeling stale.
+const CACHE_TTL_S: float = 30.0
 ## Categories group the board list on the left (like the jobs panel).
 const CATEGORIES: Array = [
 	{"id": "combat", "label": "Combat"},
@@ -20,17 +24,19 @@ const DOMAINS: Array = [
 	{
 		"id": "pvp", "label": "PvP Kills", "category": "combat",
 		"periods": [
-			{"id": "pvp_week",  "label": "This Week"},
-			{"id": "pvp_day",   "label": "Today"},
 			{"id": "pvp_total", "label": "All-Time"},
+			{"id": "pvp_week",  "label": "This Week"},
+			# Daily tab hidden: small player base makes it look empty. Uncomment to restore.
+			# {"id": "pvp_day", "label": "Today"},
 		],
 	},
 	{
 		"id": "pve", "label": "PvE Kills", "category": "combat",
 		"periods": [
-			{"id": "pve_week",  "label": "This Week"},
-			{"id": "pve_day",   "label": "Today"},
 			{"id": "pve_total", "label": "All-Time"},
+			{"id": "pve_week",  "label": "This Week"},
+			# Daily tab hidden: small player base makes it look empty. Uncomment to restore.
+			# {"id": "pve_day", "label": "Today"},
 		],
 	},
 	{
@@ -66,6 +72,9 @@ var _period_idx: int
 ## array's positions wouldn't line up with domain indices).
 var _domain_buttons: Dictionary[int, Button]
 var _period_buttons: Array[Button]
+## board_id -> {"data": Dictionary, "time": float unix-seconds}. Survives menu re-opens (the menu
+## instance persists), so rapid open/close + tab toggling reuse recent results instead of re-fetching.
+var _cache: Dictionary = {}
 
 
 func _ready() -> void:
@@ -136,10 +145,9 @@ func _build_layout() -> void:
 	header.add_child(_board_title)
 
 	var refresh: Button = Button.new()
-	refresh.text = "↻"
-	refresh.tooltip_text = "Refresh"
-	refresh.custom_minimum_size = Vector2(40, 0)
-	refresh.pressed.connect(_request)
+	refresh.text = "Reload"
+	refresh.tooltip_text = "Fetch the latest standings now"
+	refresh.pressed.connect(_request.bind(true))
 	header.add_child(refresh)
 
 	_period_bar = HBoxContainer.new()
@@ -214,17 +222,32 @@ func _current_board_id() -> String:
 # Data
 # ---------------------------------------------------------------------------
 
-func _request() -> void:
+## Fetch the current board, or reuse a recent cached result. [param force] (the Reload button) always
+## re-fetches. Open + tab-switches route through here too, so a fresh cache means no server hit on re-open.
+func _request(force: bool = false) -> void:
 	var board: String = _current_board_id()
 	if board.is_empty():
 		return
+	if not force and _cache.has(board):
+		var entry: Dictionary = _cache[board]
+		if Time.get_unix_time_from_system() - float(entry["time"]) < CACHE_TTL_S:
+			_apply_response(entry["data"])
+			return
 	_status_label.text = "Loading..."
 	Client.request_data(
 		&"leaderboard.top",
-		_apply_response,
+		_on_fetched.bind(board),
 		{"board": board, "limit": ROW_LIMIT},
 		String(InstanceClient.current.name) if InstanceClient.current else ""
 	)
+
+
+## Cache the fetched board, then render it only if it's still the one on screen (the player may have
+## switched boards while the request was in flight).
+func _on_fetched(response: Dictionary, board: String) -> void:
+	_cache[board] = {"data": response, "time": Time.get_unix_time_from_system()}
+	if board == _current_board_id():
+		_apply_response(response)
 
 
 func _apply_response(response: Dictionary) -> void:

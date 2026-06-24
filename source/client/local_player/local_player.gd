@@ -270,7 +270,7 @@ func _notify_zone_transition() -> void:
 
 
 func process_movement() -> void:
-	if _dead or _channeling or Time.get_ticks_msec() < _movement_lock_until_ms:
+	if _dead or _channeling or ClientState.menu_open or Time.get_ticks_msec() < _movement_lock_until_ms:
 		velocity = Vector2.ZERO
 		return
 	# Read the server-synced MOVE_SPEED stat so AGILITY (and speed gear) actually
@@ -282,7 +282,7 @@ func process_movement() -> void:
 
 
 func process_input() -> void:
-	if _dead or _has_gui_focus() or Time.get_ticks_msec() < _movement_lock_until_ms:
+	if _dead or _has_gui_focus() or ClientState.menu_open or Time.get_ticks_msec() < _movement_lock_until_ms:
 		input_direction = Vector2.ZERO
 		action_input = false
 		return

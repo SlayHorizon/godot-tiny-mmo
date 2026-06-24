@@ -9,6 +9,7 @@ var menus: Dictionary[StringName, Control]
 
 @onready var menu_overlay: Control = $MenuOverlay
 @onready var notification_button: Button = $MenuButtons/HBoxContainer/NotificationButton
+@onready var menu_button: Button = $MenuButtons/HBoxContainer/MenuButton
 @onready var twin_sticks: Control = $TwinSticks
 @onready var experience_bar: ProgressBar = $Resources/ExperienceBar
 @onready var experience_level_label: Label = $Resources/ExperienceBar/LevelLabel
@@ -24,6 +25,10 @@ const MENU_FADE_S: float = 0.10
 func _ready() -> void:
 	notification_button.visible = false
 	notification_button.disabled = true
+	# Adopt the buttons' editor-assigned .tscn icons as crisp mounted glyphs (integer-scaled to fit,
+	# whole-pixel centered) — visible in the scene, sharp at runtime.
+	PixelIcon.from_button(menu_button)
+	PixelIcon.from_button(notification_button)
 	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
 	ClientState.open_menu_requested.connect(_on_menu_requested)
@@ -97,6 +102,18 @@ func _on_submenu_visiblity_changed(menu: Control) -> void:
 		hide()
 	else:
 		show()
+	# Surface "a blocking menu is open" so LocalPlayer suppresses movement while any
+	# menu is up. Mobile's on-HUD sticks are already covered (the HUD hid above).
+	# Desktop keyboard movement needs this explicit gate.
+	ClientState.menu_open = _any_submenu_visible()
+
+
+## True if any display_menu submenu is currently visible.
+func _any_submenu_visible() -> bool:
+	for menu: Control in menus.values():
+		if menu.visible:
+			return true
+	return false
 
 
 func display_menu(menu_name: StringName, arg: Variant = null) -> void:

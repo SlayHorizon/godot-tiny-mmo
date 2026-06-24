@@ -12,10 +12,10 @@ required_amount = 3
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Fungus Trouble"
-description = "Fungus crawling out of the meadow again. Clear 3; the rest will take the hint."
+description = "Clear 3 fungus from the meadow. The rest will take the hint."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_slime")])
 reward_xp = 50
 reward_gold = 2
 metadata/_custom_type_script = "uid://c5p53get4ikl6"
-metadata/slug = &"slime_trouble"
+metadata/slug = &"fungus_trouble"
 metadata/id = 18

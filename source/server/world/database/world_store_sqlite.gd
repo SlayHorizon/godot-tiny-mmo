@@ -478,6 +478,16 @@ func get_guild_name(guild_id: int) -> String:
 	return str(db.query_result[0].get("guild_name", ""))
 
 
+## Every guild id in the DB (online + offline). Added for the admin Glory-reset command; the basing
+## tick only iterates flag-owning guilds, so a full enumeration was never needed before.
+func get_all_guild_ids() -> Array[int]:
+	db.query_with_bindings("SELECT guild_id FROM guilds;", [])
+	var ids: Array[int] = []
+	for row: Dictionary in db.query_result:
+		ids.append(int(row.get("guild_id", 0)))
+	return ids
+
+
 func get_guild_id_by_name(guild_name: String) -> int:
 	db.query_with_bindings(
 		"SELECT guild_id FROM guilds WHERE guild_name=?;",

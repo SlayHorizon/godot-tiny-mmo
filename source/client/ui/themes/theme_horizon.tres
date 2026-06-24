@@ -34,6 +34,12 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxEmpty" id="SB_toggle"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ugox0"]
 content_margin_left = 6.0
 content_margin_top = 6.0
@@ -121,6 +127,13 @@ corner_radius_bottom_left = 4
 color = Color(0.58, 0.82, 0.98, 0.4)
 grow_begin = 0.0
 grow_end = 0.0
+
+[sub_resource type="StyleBoxFlat" id="SB_xpfill"]
+bg_color = Color(0.58, 0.82, 0.98, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4i3do"]
 content_margin_left = 8.0
@@ -215,19 +228,6 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="SB_xpfill"]
-bg_color = Color(0.58, 0.82, 0.98, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxEmpty" id="SB_toggle"]
-content_margin_left = 8.0
-content_margin_top = 6.0
-content_margin_right = 8.0
-content_margin_bottom = 6.0
-
 [resource]
 Button/colors/font_color = Color(0.929, 0.894, 0.82, 1)
 Button/colors/font_focus_color = Color(0.929, 0.894, 0.82, 1)
@@ -237,6 +237,9 @@ Button/styles/focus = SubResource("StyleBoxFlat_3pd4s")
 Button/styles/hover = SubResource("StyleBoxFlat_3pd4s")
 Button/styles/normal = SubResource("StyleBoxFlat_ciurs")
 Button/styles/pressed = SubResource("StyleBoxFlat_3pd4s")
+CheckBox/colors/font_color = Color(0.929, 0.894, 0.82, 1)
+CheckBox/colors/font_hover_color = Color(0.929, 0.894, 0.82, 1)
+CheckBox/colors/font_pressed_color = Color(0.929, 0.894, 0.82, 1)
 CheckButton/colors/font_color = Color(0.929, 0.894, 0.82, 1)
 CheckButton/colors/font_hover_color = Color(0.929, 0.894, 0.82, 1)
 CheckButton/colors/font_pressed_color = Color(0.929, 0.894, 0.82, 1)
@@ -246,9 +249,6 @@ CheckButton/styles/hover = SubResource("SB_toggle")
 CheckButton/styles/hover_pressed = SubResource("SB_toggle")
 CheckButton/styles/normal = SubResource("SB_toggle")
 CheckButton/styles/pressed = SubResource("SB_toggle")
-CheckBox/colors/font_color = Color(0.929, 0.894, 0.82, 1)
-CheckBox/colors/font_hover_color = Color(0.929, 0.894, 0.82, 1)
-CheckBox/colors/font_pressed_color = Color(0.929, 0.894, 0.82, 1)
 Chip/base_type = &"Button"
 Chip/colors/font_color = Color(0.929, 0.894, 0.82, 1)
 Chip/colors/font_focus_color = Color(0.929, 0.894, 0.82, 1)
@@ -272,11 +272,11 @@ FrameButton/styles/pressed = SubResource("StyleBoxTexture_sibwv")
 HScrollBar/styles/grabber = SubResource("SB_grab")
 HScrollBar/styles/grabber_highlight = SubResource("SB_grab_hi")
 HScrollBar/styles/grabber_pressed = SubResource("SB_grab_hi")
+HScrollBar/styles/scroll = SubResource("SB_scroll")
+HSeparator/styles/separator = SubResource("StyleBoxLine_86hlc")
 HSlider/styles/grabber_area = SubResource("SB_xpfill")
 HSlider/styles/grabber_area_highlight = SubResource("SB_xpfill")
 HSlider/styles/slider = SubResource("SB_scroll")
-HScrollBar/styles/scroll = SubResource("SB_scroll")
-HSeparator/styles/separator = SubResource("StyleBoxLine_86hlc")
 Label/colors/font_color = Color(0.929, 0.894, 0.82, 1)
 Label/colors/font_shadow_color = Color(0, 0, 0, 0.7)
 Label/constants/shadow_offset_x = 0

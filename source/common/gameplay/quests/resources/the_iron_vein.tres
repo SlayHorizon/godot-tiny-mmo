@@ -14,7 +14,7 @@ required_amount = 10
 [resource]
 script = ExtResource("3_quest")
 quest_name = "The Iron Vein"
-description = "10 chunks of iron ore. The Foreman says the next vein's running thin — get to it before the rest of the crew."
+description = "Mine 10 iron ore for the Foreman. The vein's running thin, so get there before the rest of the crew."
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_iron_10")])
 min_level = 14
 reward_xp = 360
