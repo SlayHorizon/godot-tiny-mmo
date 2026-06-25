@@ -2,17 +2,17 @@
 
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_wd74x"]
-[ext_resource type="SpriteFrames" path="res://source/common/gameplay/characters/sprite_frames/rat_base.tres" id="3_wd74x"]
+[ext_resource type="SpriteFrames" uid="uid://bfxipsi8opukk" path="res://source/common/gameplay/characters/sprite_frames/rat_base.tres" id="3_wd74x"]
 
 [resource]
 script = ExtResource("1_script")
 enemy_type = &"rat_base"
 display_name = "Rat"
 skin = ExtResource("3_wd74x")
-max_health = 120.0
+max_health = 150.0
 attack_damage = 16.0
 attack_cooldown = 1.2
-move_speed = 70
+move_speed = 80
 distance_to_attack = 18
 max_distance_from_spawn = 200
 detection_radius = 100
