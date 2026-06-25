@@ -177,14 +177,14 @@ func begin_weapon_draw(item_id: int, slot_key: StringName, duration_ms: int = WE
 	_equip_cast_until_ms = Time.get_ticks_msec() + duration_ms
 	var peer: int = int(player_resource.current_peer_id)
 	if peer > 0:
-		WorldServer.curr.data_push.rpc_id(peer, &"equip.cast", {"ms": duration_ms, "id": item_id})
+		ServerHub.current.data_push.rpc_id(peer, &"equip.cast", {"ms": duration_ms, "id": item_id})
 	await get_tree().create_timer(float(duration_ms) / 1000.0).timeout
 	if not is_instance_valid(self) or _equip_cast_token != token or is_dead:
 		return
 	_equip_cast_until_ms = 0
 	_complete_weapon_draw(item_id, slot_key)
 	if peer > 0:
-		WorldServer.curr.data_push.rpc_id(peer, &"equip.done", {})
+		ServerHub.current.data_push.rpc_id(peer, &"equip.done", {})
 
 
 ## Server: the draw landed — do the real equip + inventory swap (the work the
