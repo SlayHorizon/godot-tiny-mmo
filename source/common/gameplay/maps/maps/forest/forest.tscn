@@ -134,43 +134,43 @@ enemy_data = ExtResource("6_8w7oy")
 weapon = null
 
 [node name="Bandit3" parent="ReplicatedPropsContainer" unique_id=1114632102 instance=ExtResource("5_8w7oy")]
-position = Vector2(1064, 1351)
+position = Vector2(1022, 1362)
 debug_draw_ranges = false
 enemy_data = ExtResource("6_8w7oy")
 weapon = null
 
 [node name="Bandit4" parent="ReplicatedPropsContainer" unique_id=1341111715 instance=ExtResource("5_8w7oy")]
-position = Vector2(1216, 1531)
+position = Vector2(1213, 1506)
 debug_draw_ranges = false
 enemy_data = ExtResource("6_8w7oy")
 weapon = null
 
 [node name="Bandit5" parent="ReplicatedPropsContainer" unique_id=302615048 instance=ExtResource("5_8w7oy")]
-position = Vector2(1353, 1604)
+position = Vector2(1438, 1651)
 debug_draw_ranges = false
 enemy_data = ExtResource("6_8w7oy")
 weapon = null
 
 [node name="BanditSorcerer" parent="ReplicatedPropsContainer" unique_id=1075097675 instance=ExtResource("5_8w7oy")]
-position = Vector2(1197, 1278)
-debug_draw_ranges = false
+position = Vector2(1335, 1583)
+debug_draw_ranges = true
 enemy_data = ExtResource("7_qrw5n")
 weapon = ExtResource("9_twffw")
 
 [node name="BanditSorcerer3" parent="ReplicatedPropsContainer" unique_id=1133600666 instance=ExtResource("5_8w7oy")]
-position = Vector2(1605, 1132)
+position = Vector2(1171, 1296)
 debug_draw_ranges = false
 enemy_data = ExtResource("7_qrw5n")
 weapon = null
 
 [node name="BanditSorcerer2" parent="ReplicatedPropsContainer" unique_id=1032328889 instance=ExtResource("5_8w7oy")]
-position = Vector2(1564, 1457)
+position = Vector2(1975, 1376)
 debug_draw_ranges = false
 enemy_data = ExtResource("7_qrw5n")
 weapon = ExtResource("9_twffw")
 
 [node name="BanditCaptain" parent="ReplicatedPropsContainer" unique_id=88209517 instance=ExtResource("5_8w7oy")]
-position = Vector2(1140, 1086)
+position = Vector2(1601, 1147)
 debug_draw_ranges = false
 enemy_data = ExtResource("8_iihld")
 weapon = ExtResource("11_1vpp3")
