@@ -347,6 +347,8 @@ class Settings:
 
 
 	func set_value(section: StringName, property: StringName, value: Variant) -> void:
+		if not data.has(section):
+			data[section] = {}
 		data[section][property] = value
 		setting_changed.emit(section, property, value)
 		save()

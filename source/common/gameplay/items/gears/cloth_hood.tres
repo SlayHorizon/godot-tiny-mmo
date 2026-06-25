@@ -15,10 +15,8 @@ metadata/_custom_type_script = "uid://cvggwjkht4km4"
 script = ExtResource("3_svf8l")
 slot = ExtResource("4_svf8l")
 base_modifiers = Array[ExtResource("1_ovkjn")]([SubResource("Resource_ssueg")])
-item_name = &"ClothHood"
+item_name = &"Cloth Hood"
 item_icon = ExtResource("2_v1jfi")
-description = "Clooth Hood.
-Increases 1 armor"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"cloth_hood"
 metadata/id = 11

@@ -9,7 +9,13 @@
 [sub_resource type="Resource" id="Mod_ap_wand"]
 script = ExtResource("1_tnje4")
 stat_name = "ap"
-value = 26.0
+value = 18.0
+
+[sub_resource type="Resource" id="Resource_koamn"]
+script = ExtResource("1_tnje4")
+stat_name = "move_speed"
+value = -5.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wand"]
 atlas = ExtResource("2_tnje4")
@@ -21,10 +27,10 @@ category = &"wand"
 capacity = 3
 right_hand_scene = ExtResource("3_d6o88")
 slot = ExtResource("5_t37d0")
-base_modifiers = Array[ExtResource("1_tnje4")]([SubResource("Mod_ap_wand")])
+base_modifiers = Array[ExtResource("1_tnje4")]([SubResource("Mod_ap_wand"), SubResource("Resource_koamn")])
 item_name = &"Rustic Wand"
 item_icon = SubResource("AtlasTexture_wand")
-description = "A crooked wand pried from a bandit sorcerer. Sturdy enough to channel two focuses at once (weight 3)."
+description = "A crooked wand pried from a bandit sorcerer."
 can_trade = true
 can_sell = true
 stack_limit = 1

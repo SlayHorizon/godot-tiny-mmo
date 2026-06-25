@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://p3ovgvrjyvvf"
-path="res://.godot/imported/run_sheet.png-83e96041ed69c392028b8f7cbbab1895.ctex"
+uid="uid://q74bgeaw141s"
+path="res://.godot/imported/rat_mage_run.png-de64b93a043c52126bd31bfdd0ddddda.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/characters/shadow_grunt/run_sheet.png"
-dest_files=["res://.godot/imported/run_sheet.png-83e96041ed69c392028b8f7cbbab1895.ctex"]
+source_file="res://assets/sprites/characters/rat_mage/rat_mage_run.png"
+dest_files=["res://.godot/imported/rat_mage_run.png-de64b93a043c52126bd31bfdd0ddddda.ctex"]
 
 [params]
 

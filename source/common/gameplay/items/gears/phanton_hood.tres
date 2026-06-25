@@ -22,9 +22,8 @@ script = ExtResource("3_cofwf")
 slot = ExtResource("4_y31c4")
 required_level = 20
 base_modifiers = Array[ExtResource("1_jp5ln")]([SubResource("Resource_cofwf"), SubResource("Resource_v435f")])
-item_name = &"PhantomHood"
-description = "Phantom hood
-increases 3 move speed and 2 magic res"
+item_name = &"Phantom Hood"
+description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"phanton_hood"
 metadata/id = 28

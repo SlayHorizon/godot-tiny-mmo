@@ -38,7 +38,9 @@ func _ready() -> void:
 	# Character level / xp bar.
 	Client.subscribe(&"combat.reward", _apply_progression)
 	Client.subscribe(&"player.died", _on_player_died)
-	ClientState.local_player_ready.connect(func(_lp: LocalPlayer): _refresh_progression())
+	ClientState.local_player_ready.connect(func(_lp: LocalPlayer):
+		_refresh_progression()
+		_maybe_show_welcome())
 	_refresh_progression()
 
 	# Sparring countdown — big centered text fired each second by the server.
@@ -58,6 +60,16 @@ func _refresh_progression() -> void:
 	if InstanceClient.current == null:
 		return
 	Client.request_data(&"progression.get", _apply_progression, {}, InstanceClient.current.name)
+
+
+## First-run welcome modal, shown once via a client settings flag (so per install, not per character).
+## Good enough for the alpha intro; the same guidance lives in the Help menu. Make it first-time-only with
+## a server flag later if existing players should skip it.
+func _maybe_show_welcome() -> void:
+	if ClientState.settings.get_value(&"onboarding", &"seen_welcome"):
+		return
+	ClientState.settings.set_value(&"onboarding", &"seen_welcome", true)
+	add_child(WelcomeScreen.new())
 
 
 ## Shows the death overlay with a per-second countdown until the server respawns us.
@@ -102,9 +114,13 @@ func _on_submenu_visiblity_changed(menu: Control) -> void:
 		hide()
 	else:
 		show()
-	# Surface "a blocking menu is open" so LocalPlayer suppresses movement while any
-	# menu is up. Mobile's on-HUD sticks are already covered (the HUD hid above).
-	# Desktop keyboard movement needs this explicit gate.
+
+
+## Suppress player movement whenever a blocking menu is up. Polled each frame (NOT
+## event-driven) so a menu-to-menu handoff (the NPC greeting closing as its Shop
+## opens) can't leave a one-frame gap where movement slips through. Mobile is already
+## covered (the HUD and its sticks hide above). This is the desktop-keyboard gate.
+func _process(_delta: float) -> void:
 	ClientState.menu_open = _any_submenu_visible()
 
 

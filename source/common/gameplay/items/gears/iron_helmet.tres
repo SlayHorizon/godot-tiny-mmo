@@ -21,9 +21,7 @@ script = ExtResource("3_lgbeq")
 slot = ExtResource("4_0f4gp")
 required_level = 10
 base_modifiers = Array[ExtResource("1_ciygg")]([SubResource("Resource_lgbeq"), SubResource("Resource_xesff")])
-item_name = &"IronHelmet"
-description = "Iron helmet
-Increases 4 armor and 2 health"
+item_name = &"Iron Helmet"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"iron_helmet"
 metadata/id = 19

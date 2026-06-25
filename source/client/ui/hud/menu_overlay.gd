@@ -8,28 +8,33 @@ extends Control
 ## folder under ui/menus/) + its menu scene, and drop a `<label>.png` (lowercased) into
 ## assets/sprites/ui/menu_icons/ — it auto-loads as the tile icon (see _make_tile). No PNG = label-only.
 
-## All launcher tiles in ONE ordered list, GROUPED by category (You / Social / World / Info) so related
-## menus sit together — one category per grid row at 4 columns. Each: label, the menu folder under
-## ui/menus/ to open ("" = the special own-profile entry; NO "menu" key = a dev-only placeholder with
-## no real target yet), + an optional icon texture path. Real entries always show; placeholders show
-## ONLY in editor runs, never in an export (see _build). Promote a placeholder by giving it a "menu".
+## All launcher tiles in ONE ordered list, GROUPED into rows of 4 by category (You / Social / World /
+## Other) so each grid row reads as one category. Each entry: a label, and the menu folder under
+## ui/menus/ to open ("" = the special own-profile entry; NO "menu" key = a placeholder with no target
+## yet, which toasts "coming soon"). Icons auto-load from ICON_DIR by lowercased label. Placeholders show
+## in exports too (a full, even grid beats a half-empty one); promote one to a real menu by adding "menu".
+## Reorder freely: the only rule is keep it 4 per category so the rows stay aligned.
 const MENU_ENTRIES: Array[Dictionary] = [
-	# — You —
-	{"label": "Profile",     "menu": "",            "icon": ""},
-	{"label": "Character",   "menu": "character",   "icon": ""},
-	{"label": "Quests",      "menu": "quests",      "icon": ""},
-	{"label": "Inventory",   "menu": "inventory",   "icon": ""},
-	# — Social —
-	{"label": "Friends",     "menu": "friends",     "icon": ""},
-	{"label": "Mail",        "menu": "mail",        "icon": ""},
-	{"label": "Guild",       "menu": "guild",       "icon": ""},
-	{"label": "Leaderboard", "menu": "leaderboard", "icon": ""},
+	# You
+	{"label": "Profile",     "menu": ""},
+	{"label": "Character",   "menu": "character"},
+	{"label": "Quests",      "menu": "quests"},
+	{"label": "Inventory",   "menu": "inventory"},
+	# Social
+	{"label": "Friends",     "menu": "friends"},
+	{"label": "Mail",        "menu": "mail"},
+	{"label": "Guild",       "menu": "guild"},
+	{"label": "Leaderboard", "menu": "leaderboard"},
+	# World
+	{"label": "Map"},
 	{"label": "Achievements"},
-	# — World — (a House / Island tile will slot in here)
-	{"label": "Map"}, {"label": "Shop"}, {"label": "Bestiary"}, {"label": "House"},
-	# — Info / system —
-	{"label": "Help"}, {"label": "Redeem", "menu": "redeem"},
-	{"label": "Settings",    "menu": "settings",    "icon": ""},
+	{"label": "Bestiary"},
+	{"label": "House"},
+	# Other + Settings
+	{"label": "Shop"},
+	{"label": "Help",        "menu": "help"},
+	{"label": "Redeem",      "menu": "redeem"},
+	{"label": "Settings",    "menu": "settings"},
 ]
 
 ## Tiles per row — 4, Genshin-style. Tiles are sized for TOUCH (mobile).
@@ -127,11 +132,10 @@ func _build() -> void:
 	grid.add_theme_constant_override(&"v_separation", 8)
 	scroll.add_child(grid)
 
-	# Real entries (with a "menu") always show; placeholders only in editor runs — never in an export.
-	var in_editor: bool = OS.has_feature("editor")
+	# Every tile shows, placeholders included, so the grid stays a full even 4-per-row block. Placeholders
+	# toast "coming soon" on tap (see _make_tile).
 	for entry: Dictionary in MENU_ENTRIES:
-		if entry.has("menu") or in_editor:
-			grid.add_child(_make_tile(entry))
+		grid.add_child(_make_tile(entry))
 
 	var close_button: Button = Button.new()
 	close_button.text = "Close"
@@ -140,17 +144,20 @@ func _build() -> void:
 	vbox.add_child(close_button)
 
 
-## Shared semi-transparent tile backgrounds so tiles match the see-through panel.
+## Shared tile cards: opaque enough to read as distinct against the gradient panel (the old 0.4-alpha
+## boxes melted into it), with a subtle light border, plus hover/pressed brightening for feedback.
 func _build_tile_styles() -> void:
-	_tile_normal = _tile_box(Color(0.14, 0.17, 0.24, 0.40))
-	_tile_hover = _tile_box(Color(0.22, 0.27, 0.37, 0.55))
-	_tile_pressed = _tile_box(Color(0.08, 0.10, 0.15, 0.65))
+	_tile_normal = _tile_box(Color(0.20, 0.23, 0.31, 0.88))
+	_tile_hover = _tile_box(Color(0.29, 0.34, 0.45, 0.95))
+	_tile_pressed = _tile_box(Color(0.13, 0.15, 0.20, 0.96))
 
 
 func _tile_box(c: Color) -> StyleBoxFlat:
 	var b: StyleBoxFlat = StyleBoxFlat.new()
 	b.bg_color = c
 	b.set_corner_radius_all(6)
+	b.set_border_width_all(1)
+	b.border_color = Color(0.45, 0.50, 0.62, 0.55)
 	return b
 
 

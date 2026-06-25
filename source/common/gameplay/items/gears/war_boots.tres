@@ -22,9 +22,8 @@ script = ExtResource("3_wfvtt")
 slot = ExtResource("4_n52fw")
 required_level = 15
 base_modifiers = Array[ExtResource("1_ujiew")]([SubResource("Resource_wfvtt"), SubResource("Resource_8nkdo")])
-item_name = &"WarBoots"
-description = "War boots
-Increases 3 move speed and 2 armor"
+item_name = &"War Boots"
+description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"war_boots"
 metadata/id = 34

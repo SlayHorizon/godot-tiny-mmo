@@ -7,7 +7,7 @@
 script = ExtResource("1_script")
 projectile_scene = ExtResource("2_bolt")
 ap_ratio = 1.2
-speed = 340.0
+speed = 300.0
 bolt_modulate = Color(0.45, 1, 0.55, 1)
 name = "Mending Bolt"
 cooldown = 3.0

@@ -38,6 +38,17 @@ func is_stackable() -> bool:
 	return stack_limit == 0 or stack_limit > 1
 
 
+## Human-readable stat lines for tooltips, auto-generated from the item's REAL data
+## (never from the hand-written description), so changing a stat never needs a copy
+## edit. Base items (materials, currency) have none. Subclasses override. Mirrors
+## QuestObjective.describe().
+## Each entry is {"text": String} plus a semantic tag the tooltip colours by:
+## either "stat": <Stat key> (a modifier) or "kind": &"weapon"/"level"/"heal"/
+## "mana"/"charges". The data layer stays presentation-free; colours live in the UI.
+func stat_lines() -> Array[Dictionary]:
+	return []
+
+
 @warning_ignore("unused_parameter")
 func can_use(player: Player) -> bool:
 	return false

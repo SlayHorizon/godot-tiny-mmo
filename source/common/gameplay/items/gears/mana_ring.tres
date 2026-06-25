@@ -15,9 +15,8 @@ metadata/_custom_type_script = "uid://cvggwjkht4km4"
 script = ExtResource("3_0uaa1")
 slot = ExtResource("4_3xawj")
 base_modifiers = Array[ExtResource("1_mwkql")]([SubResource("Resource_0uaa1")])
-item_name = &"ManaRing"
-description = "Mana ring
-Increases 8 mana"
+item_name = &"Mana Ring"
+description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"mana_ring"
 metadata/id = 23

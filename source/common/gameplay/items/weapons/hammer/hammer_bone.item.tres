@@ -11,11 +11,6 @@ script = ExtResource("1_mod")
 stat_name = "ad"
 value = 4.0
 
-[sub_resource type="Resource" id="Mod_ms"]
-script = ExtResource("1_mod")
-stat_name = "move_speed"
-value = -5.0
-
 [sub_resource type="Resource" id="Mod_haste"]
 script = ExtResource("1_mod")
 stat_name = "ability_haste"
@@ -30,10 +25,10 @@ script = ExtResource("4_item")
 category = &"hammer"
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
-base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ad"), SubResource("Mod_ms"), SubResource("Mod_haste")])
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ad"), SubResource("Mod_haste")])
 item_name = &"Bone Maul"
 item_icon = SubResource("Atlas_bone_hammer")
-description = "Hollow bone keeps it light — swings come faster and it slows you less, but it lands softer than iron."
+description = "Hollow bone keeps it light. Swings come faster and it slows you less, but it lands softer than iron."
 can_trade = true
 can_sell = true
 stack_limit = 1

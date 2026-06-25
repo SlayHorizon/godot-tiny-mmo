@@ -21,9 +21,8 @@ script = ExtResource("3_4xhba")
 slot = ExtResource("4_vqkcs")
 required_level = 20
 base_modifiers = Array[ExtResource("1_cwio5")]([SubResource("Resource_faayp"), SubResource("Resource_y4bmh")])
-item_name = &"PhantomCloak"
-description = "Phantom Cloak
-Increases 5 move speed and 10 health"
+item_name = &"Phantom Cloak"
+description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"phantom_cloak"
 metadata/id = 25

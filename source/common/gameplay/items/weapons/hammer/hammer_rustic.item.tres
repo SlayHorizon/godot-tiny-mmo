@@ -9,12 +9,12 @@
 [sub_resource type="Resource" id="Mod_ad_hammer"]
 script = ExtResource("1_b5lkq")
 stat_name = "ad"
-value = 11.0
+value = 10.0
 
 [sub_resource type="Resource" id="Mod_ms_hammer"]
 script = ExtResource("1_b5lkq")
 stat_name = "move_speed"
-value = -10.0
+value = -4.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_urfkj"]
 atlas = ExtResource("2_b5lkq")
@@ -30,7 +30,7 @@ required_level = 5
 base_modifiers = Array[ExtResource("1_b5lkq")]([SubResource("Mod_ad_hammer"), SubResource("Mod_ms_hammer")])
 item_name = &"Rustic Maul"
 item_icon = SubResource("AtlasTexture_urfkj")
-description = "A heavy, iron-banded maul. Rugged and dependable — solid enough to channel a second technique."
+description = "A heavy, iron-banded maul. Rugged and dependable."
 can_trade = true
 can_sell = true
 stack_limit = 1

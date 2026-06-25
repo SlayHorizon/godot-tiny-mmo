@@ -27,7 +27,7 @@ var slam_damage: float = 45.0
 var slam_interval_s: float = 6.0
 var enraged_slam_interval_s: float = 3.5
 ## Adds summoned the moment the boss enrages.
-var add_enemy_slug: StringName = &"shadow_grunt"
+var add_enemy_slug: StringName = &"rat_base"
 var add_count: int = 2
 var add_spread_px: float = 48.0
 ## Move-speed multiplier applied on enrage (the body chases harder).

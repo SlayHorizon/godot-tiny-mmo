@@ -22,6 +22,21 @@ extends Item
 @export var default_charges: int = 1
 
 
+func stat_lines() -> Array[Dictionary]:
+	var lines: Array[Dictionary] = []
+	if heal_amount > 0:
+		lines.append({"text": "Restores %d health" % heal_amount, "kind": &"heal"})
+	if mana_amount > 0:
+		lines.append({"text": "Restores %d mana" % mana_amount, "kind": &"mana"})
+	if buff_stat != &"" and not is_zero_approx(buff_amount) and buff_duration_s > 0.0:
+		var number: String = ("%+d" % int(buff_amount)) if is_equal_approx(buff_amount, roundf(buff_amount)) else ("%+.1f" % buff_amount)
+		var duration: String = ("%dm" % int(buff_duration_s / 60.0)) if buff_duration_s >= 60.0 else ("%ds" % int(buff_duration_s))
+		lines.append({"text": "%s %s for %s" % [number, Stat.display_name(buff_stat), duration], "stat": StringName(buff_stat)})
+	if default_charges > 1:
+		lines.append({"text": "%d charges" % default_charges, "kind": &"charges"})
+	return lines
+
+
 func can_use(character: Character) -> bool:
 	if character == null:
 		return false

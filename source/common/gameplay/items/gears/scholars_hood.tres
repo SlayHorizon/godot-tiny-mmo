@@ -21,9 +21,8 @@ script = ExtResource("3_0cqp5")
 slot = ExtResource("4_aftav")
 required_level = 15
 base_modifiers = Array[ExtResource("1_3bgrd")]([SubResource("Resource_0cqp5"), SubResource("Resource_fjkvb")])
-item_name = &"ScholarsHood"
-description = "Scholars hood
-Increased 5 health and 3 magic res"
+item_name = &"Scholar's Hood"
+description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"scholars_hood"
 metadata/id = 29

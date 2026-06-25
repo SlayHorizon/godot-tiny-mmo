@@ -9,12 +9,12 @@
 [sub_resource type="Resource" id="Mod_ad_hammer"]
 script = ExtResource("1_h4k0i")
 stat_name = "ad"
-value = 16.0
+value = 14.0
 
 [sub_resource type="Resource" id="Mod_ms_hammer"]
 script = ExtResource("1_h4k0i")
 stat_name = "move_speed"
-value = -12.0
+value = -6.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g2gxr"]
 atlas = ExtResource("2_h4k0i")
@@ -30,7 +30,7 @@ required_level = 10
 base_modifiers = Array[ExtResource("1_h4k0i")]([SubResource("Mod_ad_hammer"), SubResource("Mod_ms_hammer")])
 item_name = &"Magma Maul"
 item_icon = SubResource("AtlasTexture_g2gxr")
-description = "Forged in the heart of the fire, it glows with molten heat. Crushingly heavy — channels the mightiest blows."
+description = "Forged in the heart of the fire, it glows with molten heat. Crushingly heavy."
 can_trade = true
 can_sell = true
 stack_limit = 1

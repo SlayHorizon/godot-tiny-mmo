@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_script")
 projectile_scene = ExtResource("2_bolt")
-speed = 380.0
+speed = 330.0
 name = "Magic Bolt"
 cooldown = 1.5
 metadata/slug = &"wand_bolt"

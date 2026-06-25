@@ -22,9 +22,7 @@ script = ExtResource("3_csnru")
 slot = ExtResource("4_jueb3")
 required_level = 5
 base_modifiers = Array[ExtResource("1_pkgml")]([SubResource("Resource_csnru"), SubResource("Resource_grxnr")])
-item_name = &"LeatherJacket"
-description = "Leather jacket
-Increases 1 armor and 2 move speed"
+item_name = &"Leather Jacket"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"leather_jacket"
 metadata/id = 21

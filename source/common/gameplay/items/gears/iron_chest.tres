@@ -21,9 +21,7 @@ script = ExtResource("3_kf40l")
 slot = ExtResource("4_ti2ys")
 required_level = 10
 base_modifiers = Array[ExtResource("1_j43nu")]([SubResource("Resource_vw6an"), SubResource("Resource_ko5p2")])
-item_name = &"IronChestplate"
-description = "Iron chestplate
-Increases 5 armor and 5 health"
+item_name = &"Iron Chestplate"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"iron_chest"
 metadata/id = 18

@@ -15,7 +15,7 @@ class_name AttributeMap
 # --- Live physical attributes -------------------------------------------------
 
 const VITALITY: Dictionary[StringName, float] = {
-	Stat.HEALTH_MAX: 1.5,  # 60 all-in ≈ +90 HP (base 50 → 140, a real tank)
+	Stat.HEALTH_MAX: 2.0,  # 60 all-in ≈ +90 HP (base 50 → 140, a real tank)
 }
 
 const STRENGHT: Dictionary[StringName, float] = {
@@ -28,7 +28,7 @@ const STRENGHT: Dictionary[StringName, float] = {
 const AGILITY: Dictionary[StringName, float] = {
 	# Move speed scales GENTLY on purpose — doubling it would break kiting/PvP.
 	# ~60 pts ≈ +18 (90 → 108, +20%): a real edge, not a runaway.
-	Stat.MOVE_SPEED: 0.3,
+	Stat.MOVE_SPEED: 0.5,
 	# Haste shortens EVERY ability cooldown (attack speed for basics, CDR for
 	# specials — one stat, see AbilityResource). 60 pts ≈ +15% faster actions.
 	Stat.ABILITY_HASTE: 0.25,
@@ -39,6 +39,7 @@ const DEFENSE: Dictionary[StringName, float] = {
 	# this is self-balancing — it never makes you immortal. A little HP rides along
 	# so Defense reads as a bruiser pick, not pure mitigation.
 	Stat.ARMOR: 0.5,
+	Stat.MR: 0.5,
 	Stat.HEALTH_MAX: 0.5,
 }
 
@@ -55,10 +56,9 @@ const SPIRIT: Dictionary[StringName, float] = {
 	# Mirrors DEFENSE on the magic side: MR mitigates magic damage in take_damage
 	# with the same diminishing-returns curve as armor. Mana rides along so Spirit
 	# is also the "use your specials more often" stat — the support/sustain pick.
-	Stat.MR: 0.5,
-	Stat.MANA_MAX: 0.7,
+	Stat.MANA_MAX: 1.0,
 	# 60 pts ≈ +1.2/s on the 0.5 base — a dedicated Spirit build refills ~3× faster.
-	Stat.MANA_REGEN: 0.02,
+	Stat.MANA_REGEN: 0.1,
 }
 
 

@@ -268,7 +268,8 @@ func _on_row_pressed(slot: ShopSlot) -> void:
 	_selected_slot = slot
 	detail_icon.texture = slot.item.item_icon
 	detail_name_label.text = str(slot.item.item_name)
-	detail_description.text = slot.item.description
+	detail_description.bbcode_enabled = true
+	detail_description.text = ItemTooltip.body(slot.item)
 	quantity_row.visible = true
 	quantity_spinbox.set_value_no_signal(1)
 	_update_quantity_bounds()

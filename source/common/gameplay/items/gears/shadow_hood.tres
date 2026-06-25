@@ -22,9 +22,8 @@ script = ExtResource("3_vk5ij")
 slot = ExtResource("4_8e6f7")
 required_level = 10
 base_modifiers = Array[ExtResource("1_18axq")]([SubResource("Resource_vk5ij"), SubResource("Resource_fwnb3")])
-item_name = &"ShadowHood"
-description = "Shadow hood
-Increases 1 magic res and 4 armor"
+item_name = &"Shadow Hood"
+description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"shadow_hood"
 metadata/id = 30

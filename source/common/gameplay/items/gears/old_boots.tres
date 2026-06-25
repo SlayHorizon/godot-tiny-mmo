@@ -15,10 +15,8 @@ metadata/_custom_type_script = "uid://cvggwjkht4km4"
 script = ExtResource("3_uuvsg")
 slot = ExtResource("4_uuvsg")
 base_modifiers = Array[ExtResource("1_dat0y")]([SubResource("Resource_25v8v")])
-item_name = &"OldBoots"
+item_name = &"Old Boots"
 item_icon = ExtResource("2_2058t")
-description = "Old Boots
-Increases 1 move speed"
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"old_boots"
 metadata/id = 24

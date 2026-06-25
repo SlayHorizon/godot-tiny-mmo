@@ -15,10 +15,8 @@ metadata/_custom_type_script = "uid://cvggwjkht4km4"
 script = ExtResource("3_vytxe")
 slot = ExtResource("4_4t5re")
 base_modifiers = Array[ExtResource("1_3i6yl")]([SubResource("Resource_tkmpg")])
-item_name = &"ClothVest"
+item_name = &"Cloth Vest"
 item_icon = ExtResource("2_a336b")
-description = "Cloth Vest
-Increase 1 armor."
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"cloth_vest"
 metadata/id = 12

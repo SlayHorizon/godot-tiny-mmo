@@ -118,7 +118,8 @@ func _on_clicked(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 		_open_interactions()
 	else:
 		# A too-far tap shouldn't be a silent no-op, so nudge the player closer.
-		Toaster.toast("You're too far away.")
+		var who: String = display_name if not display_name.is_empty() else "them"
+		Toaster.toast("Too far from %s." % who)
 
 
 ## True when the local player is close enough to interact. Clicks from too far are

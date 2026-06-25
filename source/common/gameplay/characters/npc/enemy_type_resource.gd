@@ -104,7 +104,7 @@ extends Resource
 @export var slam_interval_s: float = 6.0
 @export var enraged_slam_interval_s: float = 3.5
 ## On enrage: summon this many of this enemy slug, spread around the boss.
-@export var add_enemy_slug: StringName = &"shadow_grunt"
+@export var add_enemy_slug: StringName = &"rat_base"
 @export var add_count: int = 2
 @export var add_spread_px: float = 48.0
 ## Move-speed multiplier applied to the body on enrage (it chases harder).

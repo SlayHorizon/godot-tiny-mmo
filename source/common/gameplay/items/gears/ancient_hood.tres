@@ -22,9 +22,8 @@ script = ExtResource("3_404ct")
 slot = ExtResource("4_pnpyg")
 required_level = 20
 base_modifiers = Array[ExtResource("1_ilcse")]([SubResource("Resource_404ct"), SubResource("Resource_guu3k")])
-item_name = &"AncientHood"
-description = "Ancient hood
-Increases 4 magic res and 2 mana"
+item_name = &"Ancient Hood"
+description = ""
 vendor_value = 5
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"ancient_hood"

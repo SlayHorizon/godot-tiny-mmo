@@ -20,6 +20,16 @@ extends GearItem
 @export var sprite_offset: Vector2 = Vector2.ZERO
 
 
+func stat_lines() -> Array[Dictionary]:
+	var lines: Array[Dictionary] = []
+	# Mastery weapons lead with type + ability-slot capacity ("Sword · Power 2/3").
+	# Tools (empty category) skip it. Then the inherited modifiers + level gate.
+	if not category.is_empty():
+		lines.append({"text": "%s · Power %d/3" % [String(category).capitalize(), capacity], "kind": &"weapon"})
+	lines.append_array(super())
+	return lines
+
+
 func equip(character: Character) -> void:
 	super.equip(character)
 
