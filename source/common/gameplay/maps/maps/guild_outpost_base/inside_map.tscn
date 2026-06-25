@@ -82,13 +82,13 @@ offset_right = 43.397217
 offset_bottom = 28.24353
 
 [node name="StairsTeleporter" parent="." unique_id=329194902 node_paths=PackedStringArray("target") instance=ExtResource("9_ohyyt")]
-position = Vector2(0, -211)
-scale = Vector2(3.4947982, 3.2896366)
+position = Vector2(0, -226)
+scale = Vector2(3.4947982, 0.72963667)
 target = NodePath("../StairsTeleporter2")
 
 [node name="StairsTeleporter2" parent="." unique_id=1467987462 node_paths=PackedStringArray("target") instance=ExtResource("9_ohyyt")]
-position = Vector2(1.9073486e-06, -928)
-scale = Vector2(3.8547988, 2.0096378)
+position = Vector2(1.9073486e-06, -919.00006)
+scale = Vector2(3.8547988, 0.44965732)
 target = NodePath("../StairsTeleporter")
 
 [node name="RightTeleporter" parent="." unique_id=1978347302 node_paths=PackedStringArray("target") instance=ExtResource("9_ohyyt")]
