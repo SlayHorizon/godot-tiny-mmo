@@ -36,3 +36,6 @@ func _ready() -> void:
 	# Clickable [url=...] links (Discord / website) open in the player's browser.
 	label.meta_clicked.connect(func(meta: Variant) -> void: OS.shell_open(str(meta)))
 	scroll.add_child(label)
+
+	# Drag the help text to scroll on touch/mouse; the label still receives link taps.
+	DragScroll.enable(scroll)

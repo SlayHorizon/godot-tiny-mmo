@@ -67,6 +67,19 @@ func get_public_worlds() -> Dictionary:
 	return out
 
 
+## Resolve a world's display name to its live peer id, or 0 if no world by that
+## name is currently connected. Character ids are per-world (each world has its
+## own DB), so a last-login kick must target the player's actual world by name —
+## broadcasting the id could boot a same-id character on a different world.
+func world_id_by_name(world_name: String) -> int:
+	if world_name.is_empty():
+		return 0
+	for world_id: int in connected_worlds:
+		if connected_worlds[world_id].get("info", {}).get("name", "") == world_name:
+			return world_id
+	return 0
+
+
 ## Periodic snapshot push from each world. Replaces the live numbers on the
 ## fetched info so the dashboard always reflects what the world is reporting.
 @rpc("any_peer")

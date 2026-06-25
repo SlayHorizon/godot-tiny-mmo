@@ -26,6 +26,7 @@ var _current_profile: Dictionary
 @onready var guild_label: Label = %GuildLabel
 @onready var title_label: Label = %TitleLabel
 @onready var account_label: Label = %AccountLabel
+@onready var description_scroll: ScrollContainer = $CenterContainer/Card/CardMargin/VBox/Body/RightPanel/RightMargin/RightVBox/DescriptionScroll
 @onready var description_text: RichTextLabel = %DescriptionText
 @onready var stats_list: VBoxContainer = %StatsList
 @onready var title_strip: HFlowContainer = %TitleStrip
@@ -53,6 +54,7 @@ var _trophy_checkboxes: Array[CheckBox]
 func _ready() -> void:
 	more_button.pressed.connect(_show_more_popup)
 	more_popup.id_pressed.connect(_on_more_item_pressed)
+	DragScroll.enable(description_scroll) # touch/mouse drag-to-scroll the details column
 
 
 func open_player_profile(player_id: int) -> void:

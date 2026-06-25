@@ -26,6 +26,7 @@ var _title_buttons: Dictionary[int, Button]
 
 @onready var title_label: Label = %TitleLabel
 @onready var title_list: VBoxContainer = %TitleList
+@onready var title_scroll: ScrollContainer = $Margin/Card/Pad/Root/Body/LeftPanel/LeftScroll
 @onready var detail_title: Label = %DetailTitle
 @onready var action_slot: HBoxContainer = %ActionSlot
 @onready var details_container: VBoxContainer = %DetailsContainer
@@ -82,6 +83,7 @@ func _build_title_list() -> void:
 		button.pressed.connect(_select_quest.bind(quest_id))
 		title_list.add_child(button)
 		_title_buttons[quest_id] = button
+	DragScroll.enable(title_scroll) # touch/mouse drag-scroll the quest list (flips fresh rows to PASS)
 
 
 func _make_title_row(quest: Dictionary) -> Button:

@@ -8,6 +8,7 @@ extends MenuShell
 var _search_field: LineEdit
 var _status: Label
 var _list: VBoxContainer
+var _scroll: ScrollContainer
 
 
 func _ready() -> void:
@@ -47,16 +48,16 @@ func _ready() -> void:
 	_status.visible = false
 	col.add_child(_status)
 
-	var scroll: ScrollContainer = ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_child(scroll)
+	_scroll = ScrollContainer.new()
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.add_child(_scroll)
 
 	_list = VBoxContainer.new()
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override(&"separation", 4)
-	scroll.add_child(_list)
+	_scroll.add_child(_list)
 
 	visibility_changed.connect(_on_visibility_changed)
 	if visible:
@@ -92,6 +93,8 @@ func fill_friend_list(payload: Dictionary) -> void:
 		var is_online: bool = friend_payload.get("online", false)
 		_add_row(int(friend_id), friend_name, "", is_online)
 
+	DragScroll.enable(_scroll) # touch/mouse drag-to-scroll the friends list
+
 
 # ---------------------------------------------------------------------------
 # Search
@@ -126,6 +129,8 @@ func _fill_search_results(payload: Dictionary) -> void:
 		if entry.get("friend", false):
 			subtitle = ("%s  · friend" % subtitle).strip_edges()
 		_add_row(int(entry.get("id", 0)), str(entry.get("name", "Unknown")), subtitle, entry.get("online", false))
+
+	DragScroll.enable(_scroll) # touch/mouse drag-to-scroll the search results
 
 
 # ---------------------------------------------------------------------------

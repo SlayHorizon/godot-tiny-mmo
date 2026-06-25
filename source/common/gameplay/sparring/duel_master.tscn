@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://crn8mflgu0qvy" path="res://source/common/gameplay/sparring/duel_master.gd" id="1_duelm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m5doe"]
-size = Vector2(16, 16)
+size = Vector2(16, 32)
 
 [node name="DuelMaster" type="Area2D" unique_id=601088349]
 script = ExtResource("1_duelm")

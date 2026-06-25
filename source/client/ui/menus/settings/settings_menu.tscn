@@ -291,6 +291,7 @@ tick_count = 4
 layout_mode = 2
 setting_section = &"general"
 setting_property = &"weather_effects"
+hide_on_web = true
 
 [node name="AppearanceLabel" type="Label" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer"]
 layout_mode = 2

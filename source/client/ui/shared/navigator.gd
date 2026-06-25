@@ -13,6 +13,10 @@ func _ready() -> void:
 	for panel: NavPanel in nav_panels:
 		panel.navigate_requested.connect(_on_navigate_requested)
 		panel.back_requested.connect(_on_back_requested)
+		# Each panel's static ScrollContainer becomes touch/mouse drag-scrollable (sliders unaffected).
+		var scroll: ScrollContainer = panel.find_child("ScrollContainer", true, false) as ScrollContainer
+		if scroll != null:
+			DragScroll.enable(scroll)
 		panel.hide()
 
 	if initial_panel:

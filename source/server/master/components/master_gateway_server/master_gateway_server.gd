@@ -99,7 +99,19 @@ func login_request(username: String, password: String) -> Dictionary:
 	if not account:
 		return {"error": GatewayAPI.ERR_BAD_CREDENTIALS}
 	elif account.peer_id:
-		return {"error": GatewayAPI.ERR_ALREADY_CONNECTED, "msg": "This account is already connected."}
+		# Last-login-wins. peer_id marks the account connected, but the ONLY thing
+		# that clears it is a world-side game-peer disconnect (player_disconnected).
+		# A drop during the world handoff (token issued, client never reached the
+		# world) or a world crash leaves no peer to disconnect, orphaning the flag —
+		# every later login is then refused forever (the reported permanent lockout).
+		# So don't refuse: boot any still-live session on the player's last world
+		# (character ids are per-world, so resolve the world by name first), then
+		# free the account and let this fresh login proceed.
+		var prev_world_id: int = world_manager.world_id_by_name(account.last_world_name)
+		if prev_world_id != 0:
+			world_manager.tell_world_to_kick(prev_world_id, account.last_character_id)
+		account.peer_id = 0
+		authentication_manager.active_accounts.erase(account.username)
 
 	authentication_manager.active_accounts[account.username] = account
 

@@ -128,6 +128,9 @@ func _rebuild_left() -> void:
 	_left_list.add_child(_make_left_action("+  Create guild", _show_create))
 	_left_list.add_child(_make_left_action("🔍  Browse", _show_browse))
 
+	# Touch/mouse drag-to-scroll for the joined-guilds list.
+	DragScroll.enable(_left_list.get_parent() as ScrollContainer)
+
 
 func _make_left_action(text: String, on_pressed: Callable) -> Button:
 	var btn: Button = Button.new()
@@ -383,6 +386,9 @@ func _fill_members(vbox: VBoxContainer, data: Dictionary) -> void:
 		hbox.add_child(name_label)
 
 		vbox.add_child(row)
+
+	# Touch/mouse drag-to-scroll for the member roster.
+	DragScroll.enable(vbox.get_parent() as ScrollContainer)
 
 
 func _on_member_clicked(member: Dictionary) -> void:

@@ -61,7 +61,7 @@ func _ready() -> void:
 	# duplicate on equip so each weapon instance owns its abilities outright.
 	for i: int in abilities.size():
 		if abilities[i] != null:
-			abilities[i] = abilities[i].duplicate()
+			abilities[i] = _own_ability(abilities[i])
 	_base_ability_count = abilities.size()
 	# Register this weapon's animation libraries on the wielder so ability
 	# swing_animation names ("weapon/sword.swing", ...) resolve. ONE loader for
@@ -71,6 +71,32 @@ func _ready() -> void:
 		for lib_name: StringName in animation_libraries:
 			if not character.animation_player.has_animation_library(lib_name):
 				character.animation_player.add_animation_library(lib_name, animation_libraries[lib_name])
+
+
+## Duplicate an ability so this weapon instance owns its per-use state, but TAG it
+## with its source path and RESTORE any cooldown the wielder banked for it — so
+## re-equipping a weapon can't wipe an in-progress cooldown (the swap-out-and-back
+## exploit reset every ability, even 20s ultimates). resource_path is the stable
+## key, captured before duplicate() blanks it; inline abilities with no path skip
+## persistence (per-instance, as before).
+func _own_ability(src: AbilityResource) -> AbilityResource:
+	var key: String = src.resource_path
+	var copy: AbilityResource = src.duplicate()
+	if not key.is_empty():
+		copy.set_meta(&"cooldown_key", key)
+		if character != null and character.ability_cooldowns.has(key):
+			copy.last_action_time = float(character.ability_cooldowns[key])
+	return copy
+
+
+## mark_used + bank the cooldown on the wielder so it survives a re-equip (see
+## _own_ability). Used at every ability use site instead of bare mark_used().
+func _stamp_cooldown(ability: AbilityResource) -> void:
+	ability.mark_used()
+	if character != null:
+		var key: String = String(ability.get_meta(&"cooldown_key", ""))
+		if not key.is_empty():
+			character.ability_cooldowns[key] = ability.last_action_time
 
 
 ## Mounts the mastery-chosen special abilities at their PICKED slot positions
@@ -96,8 +122,8 @@ func mount_specials(ability_ids: Array[int]) -> void:
 			continue # explicit empty slot — leave the null hole
 		var ability: AbilityResource = ContentRegistryHub.load_by_id(&"abilities", ids[i]) as AbilityResource
 		if ability != null:
-			# Same rule as _ready: each weapon instance owns its abilities outright.
-			abilities[_base_ability_count + i] = ability.duplicate()
+			# Same rule as _ready: own the instance outright, but keep its cooldown.
+			abilities[_base_ability_count + i] = _own_ability(ability)
 
 
 func try_perform_action(action_index: int, direction: Vector2) -> bool:
@@ -141,12 +167,12 @@ func perform_action(action_index: int, direction: Vector2, released: bool = fals
 		if not ability.has_release:
 			return
 		ability.release_ability(character, direction)
-		ability.mark_used()
+		_stamp_cooldown(ability)
 		_consume_mana(ability)
 	else:
 		ability.use_ability(character, direction)
 		if not ability.has_release:
-			ability.mark_used()
+			_stamp_cooldown(ability)
 			_consume_mana(ability)
 
 
@@ -169,7 +195,7 @@ func auto_attack(direction: Vector2) -> void:
 	if not ability.can_use(character):
 		return
 	ability.auto_use(character, direction)
-	ability.mark_used()
+	_stamp_cooldown(ability)
 	_consume_mana(ability)
 
 
@@ -190,6 +216,26 @@ func process_input(local_player: LocalPlayer) -> void:
 		_handle_slot_input(2, controller.is_special2_just_pressed(), controller.is_special2_just_released(), local_player)
 
 
+## Fire ability [param slot] directly from a touch ability-bar tap. Mirrors the
+## PRESS half of [method process_input]'s input poll (prediction + server send),
+## so a tap fires a single-phase ability and a press-and-hold starts charging a
+## two-phase one. Aim comes from [member LocalPlayer.look_direction] (the cached
+## stick aim), and going direct bypasses the input component's _ui_blocks_combat
+## gate — a finger ON the bar would otherwise read as "UI blocks combat".
+func press_slot(slot: int, local_player: LocalPlayer) -> void:
+	if local_player.is_equip_drawing():
+		return # abilities locked while drawing a weapon (the equip-cast)
+	if slot >= 0 and slot < abilities.size():
+		_handle_slot_input(slot, true, false, local_player)
+
+
+## RELEASE half of a touch ability-bar tap — fires a charged two-phase ability;
+## a no-op for single-phase ones. Pair with [method press_slot].
+func release_slot(slot: int, local_player: LocalPlayer) -> void:
+	if slot >= 0 and slot < abilities.size():
+		_handle_slot_input(slot, false, true, local_player)
+
+
 func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, local_player: LocalPlayer) -> void:
 	var ability: AbilityResource = abilities[slot]
 	if ability == null:
@@ -204,7 +250,7 @@ func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, loca
 			# limiter, which ate releases and bricked the bow).
 			ability.use_ability(character, Vector2.ZERO)
 		else:
-			ability.mark_used() # predictive — server cooldown stays authoritative
+			_stamp_cooldown(ability) # predictive — server cooldown stays authoritative
 		_send_action(slot, false, local_player)
 	# Independent `if` (NOT elif): a fast tap can press and release within the
 	# same frame — the release must still send or the shot never fires.

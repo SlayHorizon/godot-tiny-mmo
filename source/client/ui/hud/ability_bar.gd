@@ -18,10 +18,14 @@ const CHANNEL_GLOW: Color = Color(0.45, 1.0, 0.55)
 var _weapon: Weapon
 ## Per-tile lookups: {"ability", "button", "sweep", "cd_label", "glow"}.
 var _tiles: Array[Dictionary] = []
+## Touch makes tiles tappable (fire-on-tap); mouse/gamepad keep them click-through.
+var _touch_mode: bool = false
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_touch_mode = ClientState.input_type == InputComponent.InputType.TOUCH
+	ClientState.input_changed.connect(_on_input_changed)
 	ClientState.local_player_ready.connect(_on_local_player_ready)
 	if ClientState.local_player != null:
 		_on_local_player_ready(ClientState.local_player)
@@ -38,6 +42,29 @@ func _on_equipment_changed(slot: StringName, _item_id: int) -> void:
 	if slot == &"weapon" or slot == EquipmentComponent.SPECIAL_SLOT or slot == EquipmentComponent.SPECIAL_SLOT_2:
 		# Mounting happens in the same call stack — rebuild once it settles.
 		_rebuild.call_deferred()
+
+
+## Touch state flips when the player switches input device (mirrors the twin-stick
+## show/hide). Re-applies tap mode to live tiles so the bar becomes tappable the
+## moment touch is detected, no rebuild needed.
+func _on_input_changed(input_type: InputComponent.InputType) -> void:
+	var touch: bool = input_type == InputComponent.InputType.TOUCH
+	if touch == _touch_mode:
+		return
+	_touch_mode = touch
+	for tile_info: Dictionary in _tiles:
+		_apply_tap_mode(tile_info["button"] as Button)
+		var key_label: Label = tile_info.get("key_label")
+		if key_label != null:
+			key_label.visible = not _touch_mode
+
+
+## On touch, tiles accept taps (STOP) so a tap fires the ability; on mouse/gamepad
+## they stay IGNORE so the bar never eats a combat click (you use the keys there).
+## Firing goes straight through Weapon.press_slot, so it sidesteps the input
+## component's _ui_blocks_combat gate.
+func _apply_tap_mode(button: Button) -> void:
+	button.mouse_filter = Control.MOUSE_FILTER_STOP if _touch_mode else Control.MOUSE_FILTER_IGNORE
 
 
 func _rebuild() -> void:
@@ -59,7 +86,11 @@ func _add_tile(index: int, ability: AbilityResource) -> void:
 	tile.theme_type_variation = &"SlotButton" # match the consumable hotbar look
 	tile.custom_minimum_size = TILE_SIZE
 	tile.focus_mode = Control.FOCUS_NONE
-	tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_apply_tap_mode(tile)
+	# Connections only fire while the tile is tappable (STOP, i.e. touch); on
+	# IGNORE the button never receives input, so desktop is unaffected.
+	tile.button_down.connect(_on_tile_down.bind(index))
+	tile.button_up.connect(_on_tile_up.bind(index))
 	if ability != null and ability.icon != null:
 		tile.icon = ability.icon
 		tile.add_theme_constant_override(&"icon_max_width", 44)
@@ -84,6 +115,7 @@ func _add_tile(index: int, ability: AbilityResource) -> void:
 	key_label.add_theme_color_override(&"font_color", Color(0.75, 0.78, 0.85))
 	key_label.position = Vector2(4, 2)
 	key_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	key_label.visible = not _touch_mode # on touch the tap IS the input; the key hint is just noise
 	tile.add_child(key_label)
 
 	# set_anchors_AND_OFFSETS everywhere below: the anchors-only variant keeps
@@ -114,7 +146,27 @@ func _add_tile(index: int, ability: AbilityResource) -> void:
 		mana_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tile.add_child(mana_label)
 
-	_tiles.append({"ability": ability, "button": tile, "sweep": sweep, "cd_label": cd_label, "glow": glow})
+	_tiles.append({"ability": ability, "button": tile, "sweep": sweep, "cd_label": cd_label, "glow": glow, "key_label": key_label})
+
+
+## Touch tap → fire the slot directly (press half). Empty loadout slots (null
+## ability) and the no-weapon state are ignored.
+func _on_tile_down(index: int) -> void:
+	if _weapon == null or not is_instance_valid(_weapon) or ClientState.local_player == null:
+		return
+	if index < _tiles.size() and _tiles[index].get("ability") == null:
+		return
+	_weapon.press_slot(index, ClientState.local_player)
+
+
+## Touch release → release half (fires a charged two-phase ability; no-op for
+## single-phase). Pairs with [method _on_tile_down] so a held tap charges.
+func _on_tile_up(index: int) -> void:
+	if _weapon == null or not is_instance_valid(_weapon) or ClientState.local_player == null:
+		return
+	if index < _tiles.size() and _tiles[index].get("ability") == null:
+		return
+	_weapon.release_slot(index, ClientState.local_player)
 
 
 func _process(_delta: float) -> void:

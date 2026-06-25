@@ -59,9 +59,9 @@ func data_request_handler(
 		if seen_chains.has(root):
 			return {"ok": false, "reason": "same_chain"}
 		seen_chains[root] = true
-		# Normalize to the highest owned tier so what's stored == what fires
-		# (you always wield your best).
-		validated.append(String(MasteryService.best_owned_id(tree, spent, node)))
+		# Store the EXACT tier the player chose. They may deliberately channel a
+		# lighter tier of a chain to free weapon power for another ability.
+		validated.append(node_id)
 
 	# Trailing holes carry no information — trim so "cleared everything"
 	# stores as no entry at all.

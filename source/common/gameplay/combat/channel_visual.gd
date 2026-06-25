@@ -19,7 +19,7 @@ var _elapsed: float = 0.0
 func _ready() -> void:
 	# Aura/ground effects sit under the character; the recall cast bar sits above
 	# it (a head-height progress read, like the chat bubble's layer).
-	z_index = 5 if kind == &"recall" else -1
+	z_index = 5 if (kind == &"recall" or kind == &"equip") else -1
 	if kind == &"heal_aura":
 		_spawn_motes()
 
@@ -61,6 +61,8 @@ func _draw() -> void:
 	match kind:
 		&"recall":
 			_draw_recall()
+		&"equip":
+			_draw_equip()
 		_:
 			_draw_heal_aura()
 
@@ -80,6 +82,19 @@ func _draw_recall() -> void:
 	draw_rect(Rect2(top_left, Vector2(BAR_W, BAR_H)), Color(0.0, 0.0, 0.0, 0.6))
 	draw_rect(Rect2(top_left, Vector2(BAR_W * t, BAR_H)), Color(rune, 0.95))
 	draw_rect(Rect2(top_left, Vector2(BAR_W, BAR_H)), Color(rune, 0.55), false, 1.0)
+
+
+## A neutral amber draw bar over the head — the "drawing my weapon" read. No
+## ground runes (equipping isn't a grounded channel), just the timed fill.
+func _draw_equip() -> void:
+	var t: float = clampf(_elapsed / duration, 0.0, 1.0)
+	var col: Color = Color(1.0, 0.82, 0.35)
+	const BAR_W: float = 40.0
+	const BAR_H: float = 5.0
+	var top_left: Vector2 = Vector2(-BAR_W * 0.5, -52.0)
+	draw_rect(Rect2(top_left, Vector2(BAR_W, BAR_H)), Color(0.0, 0.0, 0.0, 0.6))
+	draw_rect(Rect2(top_left, Vector2(BAR_W * t, BAR_H)), Color(col, 0.95))
+	draw_rect(Rect2(top_left, Vector2(BAR_W, BAR_H)), Color(col, 0.55), false, 1.0)
 
 
 func _draw_heal_aura() -> void:

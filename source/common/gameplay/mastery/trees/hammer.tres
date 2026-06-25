@@ -26,6 +26,7 @@ description = "Slam the ground, damaging and slowing everyone around you for 1.5
 branch = &"domination"
 tier = 2
 ability = ExtResource("5_shock")
+upgrades = &"hammer_crush"
 
 [sub_resource type="Resource" id="Node_quake"]
 script = ExtResource("2_node")
@@ -35,6 +36,7 @@ description = "A devastating overhead blow that shatters the ground, hitting and
 branch = &"domination"
 tier = 3
 ability = ExtResource("6_quake")
+upgrades = &"hammer_shockwave"
 
 [sub_resource type="Resource" id="Mod_armor_bulwark"]
 script = ExtResource("3_mod")
@@ -71,7 +73,7 @@ value = 10.0
 script = ExtResource("2_node")
 id = &"hammer_momentum"
 node_name = "Momentum"
-description = "+10 move speed while wielding a hammer — shrug off its weight and keep advancing."
+description = "+10 move speed while wielding a hammer. Shrug off its weight and keep advancing."
 branch = &"inspiration"
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ms_momentum")])
 
@@ -79,7 +81,7 @@ passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ms_momentum")]
 script = ExtResource("2_node")
 id = &"hammer_aura"
 node_name = "Healing Aura"
-description = "Plant your hammer and channel a healing aura, mending you and nearby allies over a few seconds. You're rooted while it holds — moving cancels it. Mount it in a special slot."
+description = "Plant your hammer and channel a healing aura, mending you and nearby allies over a few seconds. You're rooted while it holds, and moving cancels it. Mount it in a special slot."
 branch = &"inspiration"
 ability = ExtResource("7_aura1")
 
@@ -97,7 +99,7 @@ upgrades = &"hammer_aura"
 script = ExtResource("2_node")
 id = &"hammer_aura_3"
 node_name = "Healing Aura III"
-description = "The fullest sustain — a broad aura that heals you and your allies for a long, steady channel. Weight 3."
+description = "The fullest sustain: a broad aura that heals you and your allies for a long, steady channel. Weight 3."
 branch = &"inspiration"
 tier = 3
 ability = ExtResource("9_aura3")

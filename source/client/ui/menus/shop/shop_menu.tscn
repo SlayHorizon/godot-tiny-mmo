@@ -54,11 +54,13 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+scroll_deadzone = 5
 
 [node name="ItemList" type="VBoxContainer" parent="Body/ListPanel/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 1
 theme_override_constants/separation = 4
 
 [node name="DetailPanel" type="PanelContainer" parent="Body"]

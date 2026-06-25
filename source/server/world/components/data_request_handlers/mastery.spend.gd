@@ -19,9 +19,8 @@ func data_request_handler(
 
 	var result: Dictionary = MasteryService.spend(player.player_resource, category, node_id)
 	if result.get("ok", false):
-		# Learning an upgrade bumps an equipped lower tier up to the new best,
-		# so the slot now shows + fires the move you just unlocked.
-		MasteryService.normalize_loadout(player.player_resource, category)
-		# A passive node bought while wielding the category applies right away.
+		# A passive bought while wielding the category applies right away. We do
+		# NOT auto-bump an equipped lower tier to the new one; the player chooses
+		# which tier of a chain to channel (see mastery.loadout).
 		MasteryService.refresh(player)
 	return result

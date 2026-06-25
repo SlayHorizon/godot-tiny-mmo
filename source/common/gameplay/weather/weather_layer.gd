@@ -24,6 +24,11 @@ const AREA_HALF_HEIGHT: float = 360.0
 ## Settings key gating the whole layer (false = no emitters spawned at all).
 const SETTING_SECTION: StringName = &"general"
 const SETTING_PROPERTY: StringName = &"weather_effects"
+## Native mobile keeps weather but with fewer particles per emitter: it's gl_compatibility
+## (CPU particles) on weaker hardware, so thin the counts while leaving desktop's full, lush
+## weather untouched. Web does NOT use this — weather is disabled outright there (see _ready),
+## because its single-threaded WASM can't absorb the CPU particle cost. Tune if mobile needs lighter.
+const CONSTRAINED_AMOUNT_SCALE: float = 0.45
 
 ## One live CPUParticles2D per active WeatherResource (effects stack).
 var _emitters: Array[CPUParticles2D] = []
@@ -31,6 +36,9 @@ var _emitters: Array[CPUParticles2D] = []
 var _weather: Array[WeatherResource] = []
 ## Mirror of the Settings toggle; when false no emitters exist (zero CPU cost).
 var _enabled: bool = true
+## Per-platform multiplier on each emitter's particle count (1.0 desktop, reduced on
+## web/mobile). Set once in _ready — the platform can't change at runtime.
+var _amount_scale: float = 1.0
 
 
 func _ready() -> void:
@@ -40,6 +48,19 @@ func _ready() -> void:
 		queue_free()
 		return
 	z_index = Z_INDEX
+	# Web is single-threaded (no SharedArrayBuffer on itch for broad browser support), so CPU
+	# particle simulation would fight all game logic on one thread. Weather is the heaviest
+	# tenant, so it's cut entirely there: the browser build is the "lite" version, and the
+	# download carries full weather. Stay fully inert — never spawn, never tick, and don't
+	# listen for the toggle (which is hidden on web anyway).
+	if OS.has_feature("web"):
+		_enabled = false
+		set_process(false)
+		return
+	# Native mobile is multi-core but still gl_compatibility on weaker hardware: keep the
+	# weather, just thin the per-emitter counts.
+	if OS.has_feature("mobile"):
+		_amount_scale = CONSTRAINED_AMOUNT_SCALE
 	var saved: Variant = ClientState.settings.get_value(SETTING_SECTION, SETTING_PROPERTY)
 	_enabled = true if saved == null else bool(saved)
 	ClientState.settings.setting_changed.connect(_on_setting_changed)
@@ -83,7 +104,7 @@ func _make_emitter(weather: WeatherResource) -> CPUParticles2D:
 	p.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
 	p.texture = weather.texture
 	p.color = weather.color
-	p.amount = maxi(1, weather.amount)
+	p.amount = maxi(1, int(round(weather.amount * _amount_scale)))
 	p.lifetime = maxf(0.1, weather.lifetime)
 	p.spread = weather.spread_degrees
 	# TOP_FALL rains down from a strip above the view, accelerating under gravity (leaves,

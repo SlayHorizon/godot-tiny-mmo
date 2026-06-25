@@ -33,6 +33,7 @@ var _detail_pixel: TextureRect
 @onready var consumables_tab: Button = %ConsumablesTab
 @onready var materials_tab: Button = %MaterialsTab
 @onready var inventory_grid: GridContainer = %InventoryGrid
+@onready var inventory_scroll: ScrollContainer = $MainBody/Body/BagPanel/MarginContainer/VBoxContainer/ScrollContainer
 @onready var detail_icon: TextureRect = %DetailIcon
 @onready var detail_name: Label = %DetailName
 @onready var detail_description: RichTextLabel = %DetailDescription
@@ -122,6 +123,7 @@ func _rebuild_grid() -> void:
 		if item == null or item.is_currency or not _passes_category(item):
 			continue
 		_add_bag_button(int(slot_uid_key), item_id, item, int(data.get("a", 1)))
+	DragScroll.enable(inventory_scroll) # touch/mouse drag-scroll the bag (flips fresh rows to PASS)
 
 
 func _passes_category(item: Item) -> bool:

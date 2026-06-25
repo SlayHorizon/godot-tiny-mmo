@@ -65,6 +65,7 @@ var _board_title: Label
 var _period_bar: HBoxContainer
 var _status_label: Label
 var _entries_box: VBoxContainer
+var _entries_scroll: ScrollContainer
 
 var _domain_idx: int
 var _period_idx: int
@@ -125,6 +126,8 @@ func _build_layout() -> void:
 			_domain_list.add_child(btn)
 			_domain_buttons[i] = btn
 
+	DragScroll.enable(left_scroll) # touch/mouse drag-to-scroll the domain list
+
 	# Right: title + period toggles + entries.
 	var right_col: VBoxContainer = VBoxContainer.new()
 	right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -158,16 +161,16 @@ func _build_layout() -> void:
 	_status_label.modulate = Color(1, 1, 1, 0.6)
 	right_col.add_child(_status_label)
 
-	var entries_scroll: ScrollContainer = ScrollContainer.new()
-	entries_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	entries_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	entries_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	right_col.add_child(entries_scroll)
+	_entries_scroll = ScrollContainer.new()
+	_entries_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_entries_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_entries_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_col.add_child(_entries_scroll)
 
 	_entries_box = VBoxContainer.new()
 	_entries_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_entries_box.add_theme_constant_override(&"separation", 4)
-	entries_scroll.add_child(_entries_box)
+	_entries_scroll.add_child(_entries_box)
 
 
 # ---------------------------------------------------------------------------
@@ -264,6 +267,7 @@ func _apply_response(response: Dictionary) -> void:
 	var is_time: bool = _current_board_id().begins_with("dungeon:") # score is seconds, show m:ss
 	for i: int in entries.size():
 		_entries_box.add_child(_make_entry_row(i + 1, entries[i], is_player_board, is_time))
+	DragScroll.enable(_entries_scroll) # touch/mouse drag-to-scroll the ranked entries
 
 
 ## A ranked row: rank (top-3 medal-coloured) + name + score. Player rows are

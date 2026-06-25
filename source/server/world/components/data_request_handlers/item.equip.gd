@@ -11,6 +11,11 @@ func data_request_handler(
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
 	if not player:
 		return {}
+	# No item actions during the death/respawn window. Abilities are already gated
+	# on is_dead (see recall.start.gd); consumables slipped through, letting players
+	# heal and chug potions while dead. Server-authoritative, mirrors the ability gate.
+	if player.is_dead:
+		return {}
 	var inventory: Dictionary = player.player_resource.inventory
 	# Must own the item to act on it.
 	if not Inventory.has_item(inventory, item_id):
@@ -34,6 +39,12 @@ func data_request_handler(
 		if player.is_in_combat() and item.slot.key != &"weapon":
 			return {"ok": false, "reason": "in_combat"}
 		var slot_key: StringName = item.slot.key
+		# Weapons DRAW over a short cast (anti fast-swap + RPG commitment): the real
+		# equip + inventory swap happen in begin_weapon_draw when the draw lands, and
+		# abilities stay locked until then. Other gear equips instantly.
+		if slot_key == &"weapon":
+			player.begin_weapon_draw(item_id, slot_key)
+			return {"ok": true}
 		var previous_id: int = int(player.equipment_component.slots.values.get(slot_key, 0))
 		if not player.equipment_component.equip_item(item_id):
 			return {}

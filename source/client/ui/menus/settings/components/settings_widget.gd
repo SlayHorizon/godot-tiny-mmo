@@ -21,6 +21,9 @@ extends Control
 @export var controller: Control
 ## Optional explicit row label. If empty, the label is derived from setting_property.
 @export var label_override: String
+## Hide this whole widget on web exports, for settings that don't apply there (e.g. a feature
+## disabled on web like weather). Desktop and mobile still show it.
+@export var hide_on_web: bool = false
 
 @export_group("Slider Settings")
 ## Set min value, used if controller is a slider.
@@ -32,6 +35,10 @@ extends Control
 
 
 func _ready() -> void:
+	# A web-disabled feature's toggle would be a no-op on web, so drop the row there entirely.
+	if hide_on_web and OS.has_feature("web"):
+		hide()
+		return
 	assert(is_instance_valid(controller), "settings: no controller selected.")
 	_load_defaults()
 

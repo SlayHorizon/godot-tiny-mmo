@@ -11,6 +11,10 @@ extends Resource
 
 @export var id: StringName
 @export var node_name: String
+## Tile art for the skill-tree node. Falls back to the ability's own icon
+## (ABILITY nodes carry one), then the node's initials — so missing art degrades
+## gracefully. Drop a ~26x26 pixel icon here; PixelIcon integer-scales it crisp.
+@export var icon: Texture2D
 @export_multiline var description: String
 ## &"offensive", &"defensive" or &"supportive" — pure UI grouping.
 @export var branch: StringName = &"offensive"

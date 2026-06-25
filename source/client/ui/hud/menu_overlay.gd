@@ -137,6 +137,9 @@ func _build() -> void:
 	for entry: Dictionary in MENU_ENTRIES:
 		grid.add_child(_make_tile(entry))
 
+	# Drag the tile grid to scroll on touch/mouse; tile taps still open their menus.
+	DragScroll.enable(scroll)
+
 	var close_button: Button = Button.new()
 	close_button.text = "Close"
 	close_button.custom_minimum_size = Vector2(0, 40)

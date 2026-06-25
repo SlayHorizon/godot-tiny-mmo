@@ -7,6 +7,7 @@ extends MenuShell
 ## See docs/mailbox.md.
 
 var _list: VBoxContainer
+var _list_scroll: ScrollContainer
 var _detail: VBoxContainer
 var _mails: Array = []
 var _selected_id: int = 0
@@ -40,15 +41,15 @@ func _build_layout() -> void:
 	split.add_theme_constant_override(&"separation", 12)
 	content.add_child(split)
 
-	var left_scroll: ScrollContainer = ScrollContainer.new()
-	left_scroll.custom_minimum_size = Vector2(280, 0)
-	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	split.add_child(left_scroll)
+	_list_scroll = ScrollContainer.new()
+	_list_scroll.custom_minimum_size = Vector2(280, 0)
+	_list_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_list_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	split.add_child(_list_scroll)
 	_list = VBoxContainer.new()
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override(&"separation", 4)
-	left_scroll.add_child(_list)
+	_list_scroll.add_child(_list)
 
 	# Right pane: header + scrolling body, with the action bar PINNED below it (a
 	# sibling, NOT inside the scroll) so Claim/Delete stay put for long mails.
@@ -96,6 +97,7 @@ func _rebuild_rows() -> void:
 		return
 	for mail: Dictionary in _mails:
 		_list.add_child(_make_row(mail))
+	DragScroll.enable(_list_scroll) # touch/mouse drag-to-scroll the inbox list
 
 
 func _make_row(mail: Dictionary) -> Button:

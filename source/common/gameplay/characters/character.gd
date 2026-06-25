@@ -28,6 +28,12 @@ var flipped: bool = false:
 var pivot: float = 0.0:
 	set = _set_pivot
 
+## Per-ability cooldown memory (resource_path -> last_action_time seconds), banked
+## by the weapon on use and restored when an ability is (re)mounted — so swapping a
+## weapon out and back can't wipe cooldowns. Transient (per session); each machine
+## keeps its own (server authoritative, the client mirrors it for prediction).
+var ability_cooldowns: Dictionary = {}
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hand_offset: Node2D = $HandOffset
 @onready var hand_pivot: Node2D = $HandOffset/HandPivot

@@ -131,6 +131,9 @@ func _rebuild_rows() -> void:
 		for entry: Array in buckets[cat]:
 			_add_row(entry[0], entry[1])
 
+	# Touch/mouse drag-to-scroll for the job list.
+	DragScroll.enable(_row_container.get_parent() as ScrollContainer)
+
 
 func _make_section_header(label_text: String) -> Label:
 	var header: Label = Label.new()

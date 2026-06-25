@@ -83,6 +83,10 @@ func _ready() -> void:
 	# their aura (handled in InstanceClient) — these handlers ignore them.
 	Client.subscribe(&"channel.start", _on_channel_start)
 	Client.subscribe(&"channel.end", _on_channel_end)
+	# Weapon equip-cast: a short draw where abilities are locked (movement + aim
+	# stay free) and a cast bar shows over our head. Server pushes start + done.
+	Client.subscribe(&"equip.cast", _on_equip_cast)
+	Client.subscribe(&"equip.done", _on_equip_done)
 	# Co-op group roster (dungeons): mirror our groupmate peer ids so their health
 	# bars tint as allies. Same pattern as the sparring team push.
 	Client.subscribe(&"group.roster", _on_group_roster)
@@ -224,6 +228,58 @@ func freeze_movement(seconds: float) -> void:
 	_movement_lock_until_ms = maxi(_movement_lock_until_ms, Time.get_ticks_msec() + int(seconds * 1000.0))
 
 
+# --- Weapon equip-cast (client) ---
+## True while drawing a weapon: abilities are locked (process_input + the touch
+## ability bar both read this), but movement + aim stay free. Set from equip.cast,
+## cleared on equip.done — or a safety timeout if that push is lost.
+var _equip_drawing: bool = false
+var _equip_draw_until_ms: int = 0
+var _equip_draw_token: int = 0
+var _equip_bar: ChannelVisual = null
+
+
+func _on_equip_cast(payload: Dictionary) -> void:
+	var ms: int = int(payload.get("ms", 500)) # fallback; the server always sends ms (= Player.WEAPON_DRAW_MS)
+	_equip_drawing = true
+	_equip_draw_until_ms = Time.get_ticks_msec() + ms
+	_equip_draw_token += 1
+	var token: int = _equip_draw_token
+	_show_equip_bar(float(ms) / 1000.0)
+	# Safety: clear if the equip.done push is lost, so we can't get stuck locked.
+	await get_tree().create_timer(float(ms) / 1000.0 + 0.6).timeout
+	if _equip_draw_token == token:
+		_clear_equip_draw()
+
+
+func _on_equip_done(_payload: Dictionary) -> void:
+	_equip_draw_token += 1 # invalidate the pending safety timeout
+	_clear_equip_draw()
+
+
+func _clear_equip_draw() -> void:
+	_equip_drawing = false
+	if is_instance_valid(_equip_bar):
+		_equip_bar.queue_free()
+	_equip_bar = null
+
+
+func _show_equip_bar(duration: float) -> void:
+	if is_instance_valid(_equip_bar):
+		_equip_bar.queue_free()
+	var bar: ChannelVisual = ChannelVisual.new()
+	bar.name = "EquipCastVisual"
+	bar.kind = &"equip"
+	bar.duration = maxf(0.1, duration)
+	add_child(bar)
+	_equip_bar = bar
+
+
+## True while a weapon draw is in flight — abilities are locked (the touch ability
+## bar and process_input both read this); movement + aim stay free.
+func is_equip_drawing() -> bool:
+	return _equip_drawing and Time.get_ticks_msec() < _equip_draw_until_ms
+
+
 # --- Camera shake (combat juice) ---
 ## Current trauma (0..1). Shake offset is trauma², so it eases out smoothly and
 ## a big hit doesn't snap to a hard stop. Decays a bit each frame.
@@ -290,6 +346,12 @@ func process_input() -> void:
 	input_direction = controller.get_move_direction()
 	look_direction = controller.get_look_direction()
 	action_input = controller.is_attack_pressed()
+
+	# Drawing a weapon: move + aim freely, but abilities are locked until the draw
+	# lands (the equip-cast commitment; the server gates action.perform too).
+	if is_equip_drawing():
+		action_input = false
+		return
 
 	# Recall (B): a universal channel anyone can start — ask the server to begin
 	# it. Not while already channeling (re-press is ignored; cancel by moving).

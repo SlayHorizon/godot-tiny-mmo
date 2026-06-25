@@ -13,6 +13,14 @@ var zone_flags: int = 0
 
 var teleport_lock_until_ms: int = 0
 
+## --- Weapon equip-cast (server-authoritative draw) ---
+## A weapon "draws" over WEAPON_DRAW_MS before it actually equips: abilities are
+## locked (the action.perform gate + the client lock) and the client shows a cast
+## bar, but movement stays free. A fresh draw replaces any in-progress one (token).
+const WEAPON_DRAW_MS: int = 500
+var _equip_cast_token: int = 0
+var _equip_cast_until_ms: int = 0
+
 
 func _init() -> void:
 	pass
@@ -147,6 +155,52 @@ func mark_just_teleported(cooldown_ms: int = 500) -> void:
 
 func has_recently_teleported() -> bool:
 	return Time.get_ticks_msec() < teleport_lock_until_ms
+
+
+# --- Weapon equip-cast ---
+
+## True while a weapon draw is in flight (server-authoritative). action.perform
+## reads this to refuse ability use mid-draw.
+func is_equip_casting() -> bool:
+	return Time.get_ticks_msec() < _equip_cast_until_ms
+
+
+## Server: begin drawing [param item_id] into the weapon slot. Pushes equip.cast
+## to the owner (cast bar + ability lock), then equips it for real after
+## [param duration_ms] via a token-guarded timer — a newer draw abandons this one.
+## Movement stays free throughout; only abilities are gated.
+func begin_weapon_draw(item_id: int, slot_key: StringName, duration_ms: int = WEAPON_DRAW_MS) -> void:
+	if not GameMode.is_world_server():
+		return
+	_equip_cast_token += 1
+	var token: int = _equip_cast_token
+	_equip_cast_until_ms = Time.get_ticks_msec() + duration_ms
+	var peer: int = int(player_resource.current_peer_id)
+	if peer > 0:
+		WorldServer.curr.data_push.rpc_id(peer, &"equip.cast", {"ms": duration_ms, "id": item_id})
+	await get_tree().create_timer(float(duration_ms) / 1000.0).timeout
+	if not is_instance_valid(self) or _equip_cast_token != token or is_dead:
+		return
+	_equip_cast_until_ms = 0
+	_complete_weapon_draw(item_id, slot_key)
+	if peer > 0:
+		WorldServer.curr.data_push.rpc_id(peer, &"equip.done", {})
+
+
+## Server: the draw landed — do the real equip + inventory swap (the work the
+## item.equip handler used to do inline for weapons). Bails if the item left the
+## inventory (consumed / dropped) during the draw.
+func _complete_weapon_draw(item_id: int, slot_key: StringName) -> void:
+	var inventory: Dictionary = player_resource.inventory
+	if not Inventory.has_item(inventory, item_id):
+		return
+	var previous_id: int = int(equipment_component.slots.values.get(slot_key, 0))
+	if not equipment_component.equip_item(item_id):
+		return
+	Inventory.remove_one_by_id(inventory, item_id)
+	if previous_id > 0:
+		Inventory.add_item(inventory, previous_id, 1)
+	player_resource.equipment[slot_key] = item_id
 
 
 #region Overhead chat

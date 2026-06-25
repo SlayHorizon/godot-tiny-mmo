@@ -13,6 +13,7 @@ var _profession_level: int = 1
 
 @onready var title_label: Label = %TitleLabel
 @onready var recipe_list: VBoxContainer = %RecipeList
+@onready var recipe_scroll: ScrollContainer = $CenterContainer/Card/MarginContainer/VBoxContainer/ScrollContainer
 
 
 func _ready() -> void:
@@ -74,6 +75,7 @@ func _build_list() -> void:
 		if recipe == null or recipe.output_item == null:
 			continue
 		recipe_list.add_child(_make_recipe_row(i, recipe))
+	DragScroll.enable(recipe_scroll) # touch/mouse drag-scroll the recipe list (flips fresh rows to PASS)
 
 
 func _make_recipe_row(index: int, recipe: CraftingRecipe) -> PanelContainer:

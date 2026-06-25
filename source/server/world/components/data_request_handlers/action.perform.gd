@@ -15,7 +15,11 @@ func data_request_handler(
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
 	if not player:
 		return {}
-	
+	# Abilities are locked while drawing a weapon (the equip-cast) — refuse so a
+	# fast weapon-swap can't act mid-draw.
+	if player.is_equip_casting():
+		return {}
+
 	var action_index: int = args.get("i", 0)
 	if action_index < 0:
 		return {} # negative indices would wrap weapon ability arrays — reject early

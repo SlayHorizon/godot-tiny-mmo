@@ -121,29 +121,29 @@ position = Vector2(446.14752, -239)
 npc_resource = SubResource("Resource_g5t2t")
 
 [node name="DuelMaster" parent="." unique_id=601088349 node_paths=PackedStringArray("fight_zone") instance=ExtResource("18_egdmy")]
-position = Vector2(448, -273)
+position = Vector2(448, -256)
 master_id = 1
 fight_zone = NodePath("Area2D")
 
 [node name="Area2D" type="Area2D" parent="DuelMaster" unique_id=1660179517]
-position = Vector2(0, -128)
+position = Vector2(0, -160)
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DuelMaster/Area2D" unique_id=19142993]
 shape = SubResource("RectangleShape2D_fjcme")
 
 [node name="SparTeam" type="Node2D" parent="DuelMaster" unique_id=1333064097]
+position = Vector2(0, -32)
 script = ExtResource("19_wfdll")
 metadata/_custom_type_script = "uid://c1nyyoow8f4tw"
-metadata/_edit_lock_ = true
 
 [node name="Marker2D" type="Marker2D" parent="DuelMaster/SparTeam" unique_id=1028553782]
 position = Vector2(-112, -128)
 
 [node name="SparTeam2" type="Node2D" parent="DuelMaster" unique_id=981813334]
+position = Vector2(0, -32)
 script = ExtResource("19_wfdll")
 metadata/_custom_type_script = "uid://c1nyyoow8f4tw"
-metadata/_edit_lock_ = true
 
 [node name="Marker2D" type="Marker2D" parent="DuelMaster/SparTeam2" unique_id=25025406]
 position = Vector2(112, -128)

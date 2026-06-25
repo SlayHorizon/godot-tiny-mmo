@@ -144,6 +144,9 @@ func _rebuild_list() -> void:
 		for quest: Dictionary in done:
 			_add_row(quest, false)
 
+	# Touch/mouse drag-to-scroll for the quest list.
+	DragScroll.enable(_list_vbox.get_parent() as ScrollContainer)
+
 
 func _make_header(text: String) -> Label:
 	var header: Label = Label.new()

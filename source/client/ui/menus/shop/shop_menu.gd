@@ -223,6 +223,10 @@ func _make_row(item: Item, middle_text: String, price: int) -> Button:
 	var row: Button = Button.new()
 	row.custom_minimum_size = Vector2(0, 64)
 	row.focus_mode = Control.FOCUS_ALL
+	# PASS (not the Button default STOP) lets a touch/mouse drag fall through to the
+	# ScrollContainer so the list drag-scrolls, while a tap still presses the row; the
+	# container's scroll_deadzone is what tells a tap from a drag.
+	row.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	var hbox: HBoxContainer = HBoxContainer.new()
 	hbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

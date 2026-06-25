@@ -67,9 +67,25 @@ func _refresh_progression() -> void:
 ## a server flag later if existing players should skip it.
 func _maybe_show_welcome() -> void:
 	if ClientState.settings.get_value(&"onboarding", &"seen_welcome"):
+		# Welcome already seen; a web player may still have the one-time web notice pending.
+		_maybe_show_web_notice()
 		return
 	ClientState.settings.set_value(&"onboarding", &"seen_welcome", true)
-	add_child(WelcomeScreen.new())
+	var welcome: WelcomeScreen = WelcomeScreen.new()
+	# Chain the web-only download notice so the two first-run modals never stack on screen.
+	welcome.tree_exited.connect(_maybe_show_web_notice, CONNECT_DEFERRED)
+	add_child(welcome)
+
+
+## One-time "you're on the web build, grab the download" nudge. Web only, shown once via a
+## client flag (per install, like the welcome modal). Edit the copy + URL in web_notice.gd.
+func _maybe_show_web_notice() -> void:
+	if not OS.has_feature("web"):
+		return
+	if ClientState.settings.get_value(&"onboarding", &"seen_web_notice"):
+		return
+	ClientState.settings.set_value(&"onboarding", &"seen_web_notice", true)
+	add_child(WebNotice.new())
 
 
 ## Shows the death overlay with a per-second countdown until the server respawns us.
@@ -109,8 +125,11 @@ func open_player_profile(player_id: int) -> void:
 	menus[&"player_profile"].open_player_profile(player_id)
 
 
-func _on_submenu_visiblity_changed(menu: Control) -> void:
-	if menu.visible:
+func _on_submenu_visiblity_changed(_menu: Control) -> void:
+	# Show the HUD only when NO submenu remains open. Closing a STACKED menu (e.g.
+	# the full-screen mastery tree over the character window) must not pop the HUD
+	# back up while another menu is still visible behind it.
+	if _any_submenu_visible():
 		hide()
 	else:
 		show()
