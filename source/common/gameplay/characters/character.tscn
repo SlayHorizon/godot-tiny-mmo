@@ -78,130 +78,82 @@ _data = {
 &"RESET": SubResource("Animation_pypn5")
 }
 
-[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_k3wew"]
-filter_enabled = true
-filters = ["HandOffset/HandPivot/LeftHandSpot:position", "HandOffset/HandPivot/LeftHandSpot:rotation"]
-
-[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_8hp20"]
-filter_enabled = true
-filters = ["HandOffset/HandPivot/LeftHandSpot:position", "HandOffset/HandPivot/LeftHandSpot:rotation", "HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation", "HandOffset:visible"]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7g734"]
-animation = &"weapon/bow.charge"
-
-[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_ln0ku"]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tjv5j"]
-animation = &"weapon/sword.swing"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nctyx"]
-animation = &"weapon/sword.left.idle"
-
-[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_d15ip"]
-filters = ["HandOffset/HandPivot/LeftHandSpot:position", "HandOffset/HandPivot/LeftHandSpot:rotation"]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_death"]
-animation = &"locomotion/death"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pypn5"]
-animation = &"locomotion/idle"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wq2ob"]
-animation = &"locomotion/run"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_pypn5"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wq2ob"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_k3wew"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_death_in"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_death_out"]
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_ln0ku"]
-states/End/position = Vector2(654, 24)
-states/Start/position = Vector2(270, -29)
-states/locomotion_death/node = SubResource("AnimationNodeAnimation_death")
-states/locomotion_death/position = Vector2(458, 260)
-states/locomotion_idle/node = SubResource("AnimationNodeAnimation_pypn5")
-states/locomotion_idle/position = Vector2(458, -29)
-states/locomotion_run/node = SubResource("AnimationNodeAnimation_wq2ob")
-states/locomotion_run/position = Vector2(458, 116)
-transitions = ["locomotion_idle", "locomotion_run", SubResource("AnimationNodeStateMachineTransition_pypn5"), "locomotion_run", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_wq2ob"), "Start", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_k3wew"), "locomotion_idle", "locomotion_death", SubResource("AnimationNodeStateMachineTransition_death_in"), "locomotion_run", "locomotion_death", SubResource("AnimationNodeStateMachineTransition_death_in"), "locomotion_death", "locomotion_idle", SubResource("AnimationNodeStateMachineTransition_death_out")]
-graph_offset = Vector2(8, -148.941)
+[sub_resource type="AnimationNodeAdd2" id="AnimationNodeAdd2_8hp20"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k3wew"]
-animation = &"weapon/bow.charge"
+animation = &"locomotion/death"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8hp20"]
+animation = &"locomotion/idle"
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_7g734"]
+input_0/name = "Idle"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "Walk"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
+input_2/name = "Death"
+input_2/auto_advance = false
+input_2/break_loop_at_end = false
+input_2/reset = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7g734"]
+animation = &"weapon/sword.swing"
+
+[sub_resource type="Curve" id="Curve_wq2ob"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_k3wew"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_wq2ob"]
+fadein_time = 0.05
+fadein_curve = SubResource("Curve_wq2ob")
+fadeout_time = 0.05
+fadeout_curve = SubResource("Curve_k3wew")
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dpqhx"]
-animation = &"weapon/sword.idle"
-
-[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_2wxx6"]
-filters = ["HandOffset/HandPivot/RightHandSpot/EmptyHand:position", "HandOffset/HandPivot/RightHandSpot/Sword:position", "HandOffset/HandPivot/RightHandSpot/Sword:rotation", "HandOffset/HandPivot/RightHandSpot/WoodenBow/Hand:visible", "HandOffset/HandPivot/RightHandSpot/WoodenBow/WeaponSprite:region_rect", "HandOffset/HandPivot/RightHandSpot:position", "HandOffset/HandPivot/RightHandSpot:rotation"]
-break_loop_at_end = true
+animation = &"locomotion/run"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ln0ku"]
-animation = &"weapon/bow.charge"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_d15ip"]
 animation = &"weapon/sword.idle"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_dpqhx"]
-advance_mode = 2
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_2wxx6"]
+graph_offset = Vector2(-576.9075, 359.40152)
+nodes/output/position = Vector2(460, 400)
+nodes/Walk/node = SubResource("AnimationNodeAnimation_dpqhx")
+nodes/Walk/position = Vector2(-460, 200)
+nodes/Idle/node = SubResource("AnimationNodeAnimation_8hp20")
+nodes/Idle/position = Vector2(-460, 20)
+nodes/PlayerAnimation/node = SubResource("AnimationNodeTransition_7g734")
+nodes/PlayerAnimation/position = Vector2(-35.16221, 131.02692)
+nodes/Death/node = SubResource("AnimationNodeAnimation_k3wew")
+nodes/Death/position = Vector2(-460, 380)
+nodes/Add2/node = SubResource("AnimationNodeAdd2_8hp20")
+nodes/Add2/position = Vector2(280, 360)
+nodes/WeaponIdle/node = SubResource("AnimationNodeAnimation_ln0ku")
+nodes/WeaponIdle/position = Vector2(-240, 580)
+nodes/ShotRequest/node = SubResource("AnimationNodeOneShot_wq2ob")
+nodes/ShotRequest/position = Vector2(40, 620)
+nodes/ShotAnimation/node = SubResource("AnimationNodeAnimation_7g734")
+nodes/ShotAnimation/position = Vector2(-260, 760)
+node_connections = [&"output", 0, &"Add2", &"PlayerAnimation", 0, &"Idle", &"PlayerAnimation", 1, &"Walk", &"PlayerAnimation", 2, &"Death", &"Add2", 0, &"PlayerAnimation", &"Add2", 1, &"ShotRequest", &"ShotRequest", 0, &"WeaponIdle", &"ShotRequest", 1, &"ShotAnimation"]
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2wxx6"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_65mbs"]
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_gvcre"]
-states/Start/position = Vector2(169, 92)
-states/weapon_charge/node = SubResource("AnimationNodeAnimation_ln0ku")
-states/weapon_charge/position = Vector2(408, 188)
-states/weapon_idle/node = SubResource("AnimationNodeAnimation_d15ip")
-states/weapon_idle/position = Vector2(413, 92)
-transitions = ["Start", "weapon_idle", SubResource("AnimationNodeStateMachineTransition_dpqhx"), "weapon_idle", "weapon_charge", SubResource("AnimationNodeStateMachineTransition_2wxx6"), "weapon_charge", "weapon_idle", SubResource("AnimationNodeStateMachineTransition_65mbs")]
-
-[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_65mbs"]
-graph_offset = Vector2(722.962, 825.874)
-nodes/output/position = Vector2(2280, 620)
-nodes/Blend2/node = SubResource("AnimationNodeBlend2_8hp20")
-nodes/Blend2/position = Vector2(1580, 680)
-"nodes/Blend2 2/node" = SubResource("AnimationNodeBlend2_k3wew")
-"nodes/Blend2 2/position" = Vector2(1820, 700)
-nodes/InteruptAnimation/node = SubResource("AnimationNodeAnimation_7g734")
-nodes/InteruptAnimation/position = Vector2(1040, -240)
-nodes/InteruptShot/node = SubResource("AnimationNodeOneShot_ln0ku")
-nodes/InteruptShot/position = Vector2(2040, 600)
-nodes/LeftAction/node = SubResource("AnimationNodeAnimation_tjv5j")
-nodes/LeftAction/position = Vector2(1040, 20)
-nodes/LeftIdle/node = SubResource("AnimationNodeAnimation_nctyx")
-nodes/LeftIdle/position = Vector2(1040, 280)
-nodes/LeftOneShot/node = SubResource("AnimationNodeOneShot_d15ip")
-nodes/LeftOneShot/position = Vector2(1360, -40)
-nodes/LocomotionSM/node = SubResource("AnimationNodeStateMachine_ln0ku")
-nodes/LocomotionSM/position = Vector2(1040, 540)
-nodes/RightAction/node = SubResource("AnimationNodeAnimation_k3wew")
-nodes/RightAction/position = Vector2(1040, 800)
-nodes/RightIdle/node = SubResource("AnimationNodeAnimation_dpqhx")
-nodes/RightIdle/position = Vector2(1040, 1060)
-nodes/RightOneShot/node = SubResource("AnimationNodeOneShot_2wxx6")
-nodes/RightOneShot/position = Vector2(1400, 860)
-nodes/WeaponSM/node = SubResource("AnimationNodeStateMachine_gvcre")
-nodes/WeaponSM/position = Vector2(750.49, 681.791)
-node_connections = [&"output", 0, &"InteruptShot", &"Blend2", 0, &"LocomotionSM", &"Blend2", 1, &"WeaponSM", &"InteruptShot", 0, &"Blend2", &"InteruptShot", 1, &"InteruptAnimation", &"LeftOneShot", 0, &"LeftIdle", &"LeftOneShot", 1, &"LeftAction", &"RightOneShot", 0, &"RightIdle", &"RightOneShot", 1, &"RightAction"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8hp20"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_vih0n"]
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_vih0n"]
+states/AnimationBlend/node = SubResource("AnimationNodeBlendTree_2wxx6")
+states/AnimationBlend/position = Vector2(411.9791, 84)
 states/End/position = Vector2(844, 84)
-states/OnFoot/node = SubResource("AnimationNodeBlendTree_65mbs")
-states/OnFoot/position = Vector2(526, 62)
 states/Start/position = Vector2(253, 84)
-transitions = ["Start", "OnFoot", SubResource("AnimationNodeStateMachineTransition_8hp20")]
-graph_offset = Vector2(13.9791, -42)
+transitions = ["Start", "AnimationBlend", SubResource("AnimationNodeStateMachineTransition_vih0n")]
+graph_offset = Vector2(-192.0209, -71)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3w1m3"]
 size = Vector2(16, 10)
@@ -228,17 +180,13 @@ libraries/weapon = ExtResource("3_8hp20")
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=244726595]
 tree_root = SubResource("AnimationNodeStateMachine_vih0n")
 anim_player = NodePath("../AnimationPlayer")
-parameters/OnFoot/Blend2/blend_amount = 1.0
-"parameters/OnFoot/Blend2 2/blend_amount" = 1.0
-parameters/OnFoot/InteruptShot/active = false
-parameters/OnFoot/InteruptShot/internal_active = false
-parameters/OnFoot/InteruptShot/request = 0
-parameters/OnFoot/LeftOneShot/active = false
-parameters/OnFoot/LeftOneShot/internal_active = false
-parameters/OnFoot/LeftOneShot/request = 0
-parameters/OnFoot/RightOneShot/active = false
-parameters/OnFoot/RightOneShot/internal_active = false
-parameters/OnFoot/RightOneShot/request = 0
+parameters/AnimationBlend/PlayerAnimation/current_state = "Idle"
+parameters/AnimationBlend/PlayerAnimation/transition_request = ""
+parameters/AnimationBlend/PlayerAnimation/current_index = 0
+parameters/AnimationBlend/Add2/add_amount = 1.0
+parameters/AnimationBlend/ShotRequest/active = false
+parameters/AnimationBlend/ShotRequest/internal_active = false
+parameters/AnimationBlend/ShotRequest/request = 0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1675562039]
 sprite_frames = ExtResource("2_pypn5")
@@ -246,6 +194,7 @@ animation = &"idle"
 frame_progress = 0.125846
 speed_scale = 1.5
 offset = Vector2(0, -30)
+metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1897743854]
 position = Vector2(0, -3)
@@ -270,11 +219,13 @@ metadata/_edit_group_ = true
 
 [node name="HurtBox" type="Area2D" parent="." unique_id=1315204681]
 script = ExtResource("9_hurt")
+metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=257403909]
 position = Vector2(0, -16)
 shape = SubResource("RectangleShape2D_eyotc")
 debug_color = Color(0.846048, 0.237298, 0.730831, 0.42)
+metadata/_edit_lock_ = true
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=1823295515]
 offset_left = -16.0
