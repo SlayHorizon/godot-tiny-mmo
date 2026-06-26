@@ -113,8 +113,8 @@ func server_propagate_time() -> void:
 		"night_start_hour": night_start_hour,
 	}
 	
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"get.server_time", data)
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"get.server_time", data)
 	)
 
 func check_is_day(hour: int = current_hour) -> bool:

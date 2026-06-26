@@ -167,10 +167,13 @@ func _on_bag_item_pressed(item_id: int, item: Item) -> void:
 	elif item is ConsumableItem:
 		action_button.text = "Use"
 		action_button.disabled = false
+	elif item.holdable:
+		action_button.text = "Hold"
+		action_button.disabled = false
 	else:
 		action_button.text = "—"
 		action_button.disabled = true
-	# Anything equip/usable can sit on a quick slot; materials can't.
+	# Anything you can equip / use / hold can sit on a quick slot.
 	hotkey_button.disabled = action_button.disabled
 
 
@@ -243,7 +246,7 @@ func _on_action_button_pressed() -> void:
 			_clear_detail()
 			fill_inventory()
 		return
-	if _selected_item_id > 0 and (_selected_item is GearItem or _selected_item is WeaponItem or _selected_item is ConsumableItem):
+	if _selected_item_id > 0 and (_selected_item is GearItem or _selected_item is WeaponItem or _selected_item.holdable):
 		var result: Array = await Client.request_data_await(&"item.equip", {"id": _selected_item_id}, InstanceClient.current.name)
 		if not _surface_item_rejection(result):
 			_clear_detail()

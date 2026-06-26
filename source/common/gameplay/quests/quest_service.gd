@@ -138,7 +138,7 @@ static func apply_turn_in(
 		quest_messages.append("Title unlocked: %s" % quest.grant_title)
 
 	if peer_id > 0:
-		ServerHub.current.data_push.rpc_id(peer_id, &"combat.reward", {
+		WorldServer.curr.data_push.rpc_id(peer_id, &"combat.reward", {
 			"xp": quest.reward_xp,
 			"level": int(progress.get("level", 1)),
 			"levels_gained": int(progress.get("levels_gained", 0)),
@@ -147,7 +147,7 @@ static func apply_turn_in(
 			"xp_to_next": resource.level_xp_to_next(),
 			"loot": loot,
 		})
-		ServerHub.current.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_messages})
+		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_messages})
 
 	if int(progress.get("levels_gained", 0)) > 0 and instance != null:
 		LevelMilestoneService.on_levels_gained(
@@ -193,7 +193,7 @@ static func notify_passive_ready(resource: PlayerResource, peer_id: int) -> void
 		var notified: bool = resource.quest_ready_notified(quest_id)
 		if complete and not notified:
 			resource.set_quest_ready_notified(quest_id, true)
-			ServerHub.current.data_push.rpc_id(peer_id, &"quest.update", {
+			WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {
 				"messages": ["✓ %s ready to turn in. Return to the quest giver." % quest.quest_name]
 			})
 		elif not complete and notified:

@@ -186,13 +186,13 @@ func _repair(amount: float) -> void:
 ## Juice: floating number over the flag on every hit (red damage / green heal),
 ## reusing the same combat.hit feedback path weapons use on characters.
 func _broadcast_hit(amount: float, is_heal: bool) -> void:
-	if amount <= 0.0 or ServerHub.current == null:
+	if amount <= 0.0 or WorldServer.curr == null:
 		return
 	var instance: Node = _server_instance()
 	if instance == null:
 		return
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"combat.hit", {
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"combat.hit", {
 			"amount": int(round(amount)),
 			"position": global_position,
 			"heal": is_heal,
@@ -220,12 +220,12 @@ func _capture(killer: Character) -> void:
 	var previous_id: int = owner_guild_id
 	var previous_name: String = owner_guild_name
 	owner_guild_id = new_owner_id
-	var owner_guild: Guild = ServerHub.current.database.store.get_guild(new_owner_id)
+	var owner_guild: Guild = WorldServer.curr.database.store.get_guild(new_owner_id)
 	owner_guild_name = owner_guild.guild_name if owner_guild != null else ""
 	owner_logo_id = owner_guild.logo_id if owner_guild != null else 0
 	grace_until_ms = Time.get_ticks_msec() + GRACE_MS
 
-	ServerHub.current.database.store.save_flag_state(
+	WorldServer.curr.database.store.save_flag_state(
 		flag_id, owner_guild_id, int(Time.get_unix_time_from_system() * 1000.0)
 	)
 	_announce_capture(killer as Player, previous_id, previous_name)
@@ -238,12 +238,12 @@ func _capture(killer: Character) -> void:
 # --- Server-side: helpers ---
 
 func _load_state_from_db() -> void:
-	var row: Dictionary = ServerHub.current.database.store.get_flag_state(flag_id)
+	var row: Dictionary = WorldServer.curr.database.store.get_flag_state(flag_id)
 	if row.is_empty():
 		return
 	owner_guild_id = int(row.get("owner_guild_id", 0))
 	if owner_guild_id > 0:
-		var owner_guild: Guild = ServerHub.current.database.store.get_guild(owner_guild_id)
+		var owner_guild: Guild = WorldServer.curr.database.store.get_guild(owner_guild_id)
 		owner_guild_name = owner_guild.guild_name if owner_guild != null else ""
 		owner_logo_id = owner_guild.logo_id if owner_guild != null else 0
 	# Grace from the persisted last_capture_ms — so a restart doesn't reset the
@@ -261,8 +261,8 @@ func _broadcast_state() -> void:
 	if instance == null:
 		return
 	var payload: Dictionary = _state_payload()
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"flag.update", payload),
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"flag.update", payload),
 		instance.name
 	)
 
@@ -290,7 +290,7 @@ func _state_payload() -> Dictionary:
 func _notify_under_attack() -> void:
 	if owner_guild_id <= 0:
 		return # Nothing to defend if it's unowned.
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null or ws.chat_service == null:
 		return
 	# Notify every online member of the holding guild, wherever they are.
@@ -312,7 +312,7 @@ func _notify_under_attack() -> void:
 
 
 func _announce_capture(killer: Player, previous_id: int, previous_name: String) -> void:
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null or ws.chat_service == null:
 		return
 	var killer_name: String = killer.player_resource.display_name if killer else "Someone"

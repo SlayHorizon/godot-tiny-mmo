@@ -15,8 +15,9 @@ func data_request_handler(
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
 	if not player:
 		return {}
-	# Abilities are locked while drawing a weapon (the equip-cast) — refuse so a
-	# fast weapon-swap can't act mid-draw.
+	# The hand item's abilities are locked mid-cast (the equip-cast). Refuse so a fast
+	# swap can't act mid-draw. (Whatever's in hand — weapon or potion — fires its own
+	# abilities[0] through this same path once the draw lands.)
 	if player.is_equip_casting():
 		return {}
 

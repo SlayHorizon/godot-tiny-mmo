@@ -5,8 +5,8 @@ class_name TradeService
 
 ## Broadcast a table's current state to all peers in the instance.
 static func broadcast(instance: Node, table: TradeTable) -> void:
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"trade.table", build_state(table)),
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"trade.table", build_state(table)),
 		instance.name
 	)
 

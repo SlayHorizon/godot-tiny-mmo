@@ -104,7 +104,7 @@ static func _on_world_boss_died(_killer: Character) -> void:
 ## System message to every connected player across all instances — a world event
 ## concerns the whole server. Same reach as /broadcast.
 static func _announce(text: String) -> void:
-	var ws: WorldServer = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null or _event_instance == null:
 		return
 	for peer_id: int in ws.connected_players:

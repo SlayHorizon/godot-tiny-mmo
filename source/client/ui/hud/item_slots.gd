@@ -55,14 +55,15 @@ func _trigger_slot(index: int) -> void:
 	var item: Item = item_shortcuts[index] if index < item_shortcuts.size() else null
 	if item == null:
 		return
-	# Toggle: pressing the key of gear you're WEARING unequips it (1 = sword
-	# on, 1 again = bare hands). Consumables never toggle — spamming the
-	# potion key must always drink.
-	if item is GearItem and _is_equipped(item):
+	# Toggle: tapping the slot of whatever you're HOLDING puts it away (1 = sword on,
+	# 1 again = bare hands; a held potion toggles the same way). Otherwise equip it to
+	# hand. Every hand item — weapon, potion, material — rides the &"weapon" slot.
+	if _is_equipped(item):
+		var slot_key: StringName = (item as GearItem).slot.key if item is GearItem else &"weapon"
 		Client.request_data(
 			&"item.unequip",
 			_on_item_action_result,
-			{"slot": (item as GearItem).slot.key},
+			{"slot": slot_key},
 			InstanceClient.current.name
 		)
 		return
@@ -91,9 +92,11 @@ func _on_item_action_result(result: Dictionary) -> void:
 
 
 func _is_equipped(item: Item) -> bool:
-	if ClientState.local_player == null or not item is GearItem:
+	if ClientState.local_player == null:
 		return false
-	var slot_key: StringName = (item as GearItem).slot.key
+	# Weapons/gear sit in their own slot; every other hand item (potions, materials)
+	# rides the &"weapon" hand slot. Either way: are we holding THIS exact item now?
+	var slot_key: StringName = (item as GearItem).slot.key if item is GearItem else &"weapon"
 	var equipped_id: int = int(ClientState.local_player.equipment_component.slots.values.get(slot_key, 0))
 	return equipped_id == int(item.get_meta(&"id", 0))
 

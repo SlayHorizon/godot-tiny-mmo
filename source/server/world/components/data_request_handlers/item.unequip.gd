@@ -26,7 +26,11 @@ func data_request_handler(
 		return {"ok": false, "reason": "in_combat"}
 
 	player.equipment_component.unequip(slot)
-	# Move the item back into the inventory.
-	Inventory.add_item(player.player_resource.inventory, item_id, 1)
+	# Return it to the bag only if it was bag-OWNED (gear/weapon). Consumables and
+	# materials are REFERENCED while held — they never left the bag, so re-adding
+	# would duplicate them.
+	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
+	if item is GearItem:
+		Inventory.add_item(player.player_resource.inventory, item_id, 1)
 	player.player_resource.equipment.erase(slot)
 	return {"ok": true}

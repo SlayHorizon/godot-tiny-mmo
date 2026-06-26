@@ -69,7 +69,7 @@ func die(killer: Character) -> void:
 		# player's character name, or the enemy's EnemyTypeResource name); empty
 		# means an unattributed death (environment, or the source already freed).
 		var killed_by: String = killer.display_name if is_instance_valid(killer) else ""
-		ServerHub.current.data_push.rpc_id(peer_id, &"player.died", {
+		WorldServer.curr.data_push.rpc_id(peer_id, &"player.died", {
 			"respawn_in": RESPAWN_DELAY,
 			"spawn": spawn_position,
 			"killed_by": killed_by,
@@ -165,11 +165,11 @@ func is_equip_casting() -> bool:
 	return Time.get_ticks_msec() < _equip_cast_until_ms
 
 
-## Server: begin drawing [param item_id] into the weapon slot. Pushes equip.cast
-## to the owner (cast bar + ability lock), then equips it for real after
-## [param duration_ms] via a token-guarded timer — a newer draw abandons this one.
-## Movement stays free throughout; only abilities are gated.
-func begin_weapon_draw(item_id: int, slot_key: StringName, duration_ms: int = WEAPON_DRAW_MS) -> void:
+## Server: draw [param item_id] into the HAND over the equip-cast (a short charge —
+## bar + ability lock, but move-free). On landing the hand slot becomes that item, so
+## it MOUNTS (weapon, potion, anything) through _on_slot_changed -> item.equip. A newer
+## draw abandons this one (token). Identical for every item type — the unified hand.
+func begin_hand_draw(item_id: int, duration_ms: int = WEAPON_DRAW_MS) -> void:
 	if not GameMode.is_world_server():
 		return
 	_equip_cast_token += 1
@@ -177,30 +177,43 @@ func begin_weapon_draw(item_id: int, slot_key: StringName, duration_ms: int = WE
 	_equip_cast_until_ms = Time.get_ticks_msec() + duration_ms
 	var peer: int = int(player_resource.current_peer_id)
 	if peer > 0:
-		ServerHub.current.data_push.rpc_id(peer, &"equip.cast", {"ms": duration_ms, "id": item_id})
+		WorldServer.curr.data_push.rpc_id(peer, &"equip.cast", {"ms": duration_ms, "id": item_id})
 	await get_tree().create_timer(float(duration_ms) / 1000.0).timeout
 	if not is_instance_valid(self) or _equip_cast_token != token or is_dead:
 		return
 	_equip_cast_until_ms = 0
-	_complete_weapon_draw(item_id, slot_key)
+	_complete_hand_draw(item_id)
 	if peer > 0:
-		ServerHub.current.data_push.rpc_id(peer, &"equip.done", {})
+		WorldServer.curr.data_push.rpc_id(peer, &"equip.done", {})
 
 
-## Server: the draw landed — do the real equip + inventory swap (the work the
-## item.equip handler used to do inline for weapons). Bails if the item left the
-## inventory (consumed / dropped) during the draw.
-func _complete_weapon_draw(item_id: int, slot_key: StringName) -> void:
+## Server: the draw landed — put [param item_id] in the HAND slot (it mounts via
+## _on_slot_changed) and reconcile the bag. A WEAPON (gear) moves bag<->hand; a
+## consumable / material is REFERENCED — it STAYS in the bag (you hold the stack and
+## consume from it), so only a previous WEAPON returns to the bag. Bails if the item
+## left the inventory during the draw.
+func _complete_hand_draw(item_id: int) -> void:
 	var inventory: Dictionary = player_resource.inventory
 	if not Inventory.has_item(inventory, item_id):
 		return
-	var previous_id: int = int(equipment_component.slots.values.get(slot_key, 0))
-	if not equipment_component.equip_item(item_id):
+	var item: Item = ContentRegistryHub.load_by_id(&"items", item_id)
+	if item == null:
 		return
-	Inventory.remove_one_by_id(inventory, item_id)
-	if previous_id > 0:
+	var previous_id: int = int(equipment_component.slots.values.get(&"weapon", 0))
+	var previous_is_gear: bool = previous_id > 0 \
+		and ContentRegistryHub.load_by_id(&"items", previous_id) is GearItem
+	equipment_component.set_hand(item_id)
+	# A WEAPON (gear) moves bag->hand: removed from the bag and PERSISTED as equipment.
+	# A consumable / material is REFERENCED — it stays in the bag, so it must NOT be
+	# persisted as equipment, or the relog / instance-change re-equip loop would
+	# equip_item()-fail on the non-gear id and add a DUPLICATE back to the bag.
+	if item is GearItem:
+		Inventory.remove_one_by_id(inventory, item_id)
+		player_resource.equipment[&"weapon"] = item_id
+	else:
+		player_resource.equipment.erase(&"weapon")
+	if previous_is_gear:
 		Inventory.add_item(inventory, previous_id, 1)
-	player_resource.equipment[slot_key] = item_id
 
 
 #region Overhead chat

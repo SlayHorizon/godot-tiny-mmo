@@ -8,7 +8,7 @@ class_name DungeonService
 ## v1 SLICE: solo entry via the entrance portal (the lobby that forms a multi-
 ## player group calls the SAME start_run with the group's peers — next chunk).
 ## No timer / scaling / lockout / shadow-mob authoring yet — see docs/dungeons.md.
-## Server-authoritative; common-side state via ServerHub like SparringService.
+## Server-authoritative; common-side state with direct WorldServer access like SparringService.
 
 # group_id -> the private dungeon ServerInstance (Node) running for that group.
 static var _runs: Dictionary[int, Node] = {}
@@ -195,7 +195,7 @@ static func _reward_summary(reward: DungeonReward) -> String:
 
 ## Push the live roster to everyone in the queue (so they see joins/leaves).
 static func _broadcast_lobby(instance: Node, station: String, dungeon: DungeonResource, queue: Array) -> void:
-	if ServerHub.current == null or dungeon == null:
+	if WorldServer.curr == null or dungeon == null:
 		return
 	var payload: Dictionary = {
 		"station": station,
@@ -203,7 +203,7 @@ static func _broadcast_lobby(instance: Node, station: String, dungeon: DungeonRe
 		"members": _names(instance, queue),
 	}
 	for peer: int in queue:
-		ServerHub.current.data_push.rpc_id(peer, &"dungeon.lobby.update", payload)
+		WorldServer.curr.data_push.rpc_id(peer, &"dungeon.lobby.update", payload)
 
 
 static func _names(instance: Node, peers: Array) -> Array:
@@ -309,8 +309,8 @@ static func _close_room(room_id: int, notify: bool) -> void:
 	_rooms.erase(room_id)
 	for peer: int in members:
 		_peer_to_room.erase(peer)
-		if notify and ServerHub.current != null:
-			ServerHub.current.data_push.rpc_id(peer, &"dungeon.room.update", {"closed": true})
+		if notify and WorldServer.curr != null:
+			WorldServer.curr.data_push.rpc_id(peer, &"dungeon.room.update", {"closed": true})
 
 
 static func _start_room(peer_id: int) -> Dictionary:
@@ -324,23 +324,23 @@ static func _start_room(peer_id: int) -> Dictionary:
 	var dungeon: DungeonResource = room["dungeon"]
 	var hard: bool = bool(room.get("hard", false))
 	# Tell the members (incl. waiting non-leaders) to close their menu, then launch.
-	if ServerHub.current != null:
+	if WorldServer.curr != null:
 		for peer: int in members:
-			ServerHub.current.data_push.rpc_id(peer, &"dungeon.room.update", {"started": true})
+			WorldServer.curr.data_push.rpc_id(peer, &"dungeon.room.update", {"started": true})
 	_close_room(room_id, false)
 	start_run(members, dungeon, hard)
 	return {"ok": true, "started": true}
 
 
 static func _broadcast_room(room_id: int) -> void:
-	if not _rooms.has(room_id) or ServerHub.current == null:
+	if not _rooms.has(room_id) or WorldServer.curr == null:
 		return
 	var room: Dictionary = _rooms[room_id]
-	var instance: Node = ServerHub.current.instance_manager.get_instance_server_by_id(str(room.get("instance_name", "")))
+	var instance: Node = WorldServer.curr.instance_manager.get_instance_server_by_id(str(room.get("instance_name", "")))
 	if instance == null:
 		return
 	for peer: int in (room["members"] as Array):
-		ServerHub.current.data_push.rpc_id(peer, &"dungeon.room.update", _room_snapshot(instance, room_id, peer))
+		WorldServer.curr.data_push.rpc_id(peer, &"dungeon.room.update", _room_snapshot(instance, room_id, peer))
 
 
 ## Drop a peer from this station's public queue (called when they enter a private
@@ -386,9 +386,9 @@ static func _gen_room_code() -> String:
 ## Charges a FRESH private instance of [param dungeon_name] — NOT the shared
 ## charged copy — and moves the group in once it's loaded. Server-only.
 static func start_run(peers: Array, dungeon: DungeonResource, hard: bool = false) -> void:
-	if ServerHub.current == null or peers.is_empty() or dungeon == null:
+	if WorldServer.curr == null or peers.is_empty() or dungeon == null:
 		return
-	var instance_manager: Node = ServerHub.current.instance_manager
+	var instance_manager: Node = WorldServer.curr.instance_manager
 	var members: Array = []
 	for p: Variant in peers:
 		if int(p) > 0:
@@ -417,9 +417,9 @@ static func start_run(peers: Array, dungeon: DungeonResource, hard: bool = false
 ## the map's authored RoomNodes drive the encounters as the party walks in.
 static func _enter_run(group_id: int, members: Array) -> void:
 	var instance: Node = _runs.get(group_id, null)
-	if instance == null or ServerHub.current == null:
+	if instance == null or WorldServer.curr == null:
 		return
-	var instance_manager: Node = ServerHub.current.instance_manager
+	var instance_manager: Node = WorldServer.curr.instance_manager
 	for peer: int in members:
 		var current: Node = instance_manager.find_instance_for_peer(peer)
 		if current == null:
@@ -435,10 +435,10 @@ static func _enter_run(group_id: int, members: Array) -> void:
 	var dungeon_name: String = "the dungeon"
 	if instance.instance_resource != null:
 		dungeon_name = str(instance.instance_resource.instance_name)
-	ServerHub.current.get_tree().create_timer(1.5).timeout.connect(
+	WorldServer.curr.get_tree().create_timer(1.5).timeout.connect(
 		func() -> void:
 			for peer: int in GroupService.members_of(group_id):
-				ServerHub.current.data_push.rpc_id(peer, &"dungeon.entered", {"dungeon": dungeon_name})
+				WorldServer.curr.data_push.rpc_id(peer, &"dungeon.entered", {"dungeon": dungeon_name})
 			_push_hud(group_id),
 		CONNECT_ONE_SHOT
 	)
@@ -457,13 +457,13 @@ static func on_player_left(peer_id: int, left_instance: Node) -> void:
 		return # not a dungeon run — ordinary warp/recall/jail
 	# Confirm a VOLUNTARY leave (exit NPC / recall). The post-clear auto-eject is
 	# flagged in _ejecting and skipped here — its recap already says it all.
-	if not _ejecting.get(group_id, false) and ServerHub.current != null:
+	if not _ejecting.get(group_id, false) and WorldServer.curr != null:
 		var dungeon_name: String = "the dungeon"
 		if left_instance.instance_resource != null:
 			dungeon_name = str(left_instance.instance_resource.instance_name)
-		ServerHub.current.data_push.rpc_id(peer_id, &"dungeon.left", {"dungeon": dungeon_name})
-	if ServerHub.current != null:
-		ServerHub.current.data_push.rpc_id(peer_id, &"dungeon.hud", {"active": false}) # leaver's HUD off
+		WorldServer.curr.data_push.rpc_id(peer_id, &"dungeon.left", {"dungeon": dungeon_name})
+	if WorldServer.curr != null:
+		WorldServer.curr.data_push.rpc_id(peer_id, &"dungeon.hud", {"active": false}) # leaver's HUD off
 	GroupService.leave(peer_id)
 	if GroupService.members_of(group_id).is_empty():
 		_runs.erase(group_id)
@@ -479,7 +479,7 @@ static func on_player_left(peer_id: int, left_instance: Node) -> void:
 ## completion time, what they got), then after EJECT_DELAY_S send everyone home and
 ## let the group dissolve. Called from RoomNode (final_room). Server-only.
 static func on_dungeon_cleared(instance: Node) -> void:
-	if instance == null or ServerHub.current == null:
+	if instance == null or WorldServer.curr == null:
 		return
 	var group_id: int = _instance_to_group.get(str(instance.name), 0)
 	if group_id == 0:
@@ -508,7 +508,7 @@ static func on_dungeon_cleared(instance: Node) -> void:
 		# reward lockout, so a reward-locked re-run can still set a faster record.
 		if hard and player != null:
 			LeaderboardService.record_dungeon_clear(player, dungeon_name, seconds)
-		ServerHub.current.data_push.rpc_id(peer, &"dungeon.cleared", {
+		WorldServer.curr.data_push.rpc_id(peer, &"dungeon.cleared", {
 			"dungeon": label,
 			"seconds": seconds,
 			"eject_in": int(EJECT_DELAY_S),
@@ -517,7 +517,7 @@ static func on_dungeon_cleared(instance: Node) -> void:
 	# (The victory sting is fired by the dungeon boss's own BossController on death.)
 	# Linger on the recap, then send the party home; on_player_left dissolves the
 	# group as each one leaves.
-	ServerHub.current.get_tree().create_timer(EJECT_DELAY_S).timeout.connect(
+	WorldServer.curr.get_tree().create_timer(EJECT_DELAY_S).timeout.connect(
 		func() -> void: _eject_run(group_id), CONNECT_ONE_SHOT
 	)
 
@@ -581,7 +581,7 @@ static func register_dungeon_death(player: Node) -> bool:
 ## The revive pool is spent and someone died: the run FAILS. Revive everyone (so they arrive home
 ## alive), tell them, then eject to town after a short beat. No reward. Server-only.
 static func _fail_run(group_id: int) -> void:
-	if ServerHub.current == null or _ejecting.get(group_id, false):
+	if WorldServer.curr == null or _ejecting.get(group_id, false):
 		return
 	_ejecting[group_id] = true # mark the eject non-voluntary (no "Left X" toast in on_player_left)
 	_hide_hud(group_id) # stop the run clock immediately, ahead of the eject delay
@@ -596,16 +596,16 @@ static func _fail_run(group_id: int) -> void:
 			player = instance.get_player(peer) as Player
 		if player != null:
 			player.revive() # arrive home alive, not a corpse
-		ServerHub.current.data_push.rpc_id(peer, &"dungeon.failed", {"failed": true, "dungeon": dungeon_name, "seconds": seconds, "eject_in": int(FAIL_EJECT_DELAY_S)})
+		WorldServer.curr.data_push.rpc_id(peer, &"dungeon.failed", {"failed": true, "dungeon": dungeon_name, "seconds": seconds, "eject_in": int(FAIL_EJECT_DELAY_S)})
 	_notify_party(group_id, "The party has fallen — the run failed. Returning to town…")
-	ServerHub.current.get_tree().create_timer(FAIL_EJECT_DELAY_S).timeout.connect(
+	WorldServer.curr.get_tree().create_timer(FAIL_EJECT_DELAY_S).timeout.connect(
 		func() -> void: _eject_run(group_id), CONNECT_ONE_SHOT
 	)
 
 
 ## A system chat line to every member still in the run (revive count, run-failed notice).
 static func _notify_party(group_id: int, message: String) -> void:
-	if ServerHub.current == null:
+	if WorldServer.curr == null:
 		return
 	var instance: Node = _runs.get(group_id, null)
 	if instance == null:
@@ -613,13 +613,13 @@ static func _notify_party(group_id: int, message: String) -> void:
 	for peer: int in GroupService.members_of(group_id):
 		var player: Player = instance.get_player(peer) as Player
 		if player != null and player.player_resource != null:
-			ServerHub.current.chat_service.push_system_to_player(instance, player.player_resource.player_id, message)
+			WorldServer.curr.chat_service.push_system_to_player(instance, player.player_resource.player_id, message)
 
 
 ## Push the live run HUD (clock baseline + revive count) to every member. has_pool=false on a Normal
 ## run, so the client shows just the clock.
 static func _push_hud(group_id: int) -> void:
-	if ServerHub.current == null:
+	if WorldServer.curr == null:
 		return
 	var payload: Dictionary = {
 		"active": true,
@@ -628,15 +628,15 @@ static func _push_hud(group_id: int) -> void:
 		"revives": _run_revives.get(group_id, 0),
 	}
 	for peer: int in GroupService.members_of(group_id):
-		ServerHub.current.data_push.rpc_id(peer, &"dungeon.hud", payload)
+		WorldServer.curr.data_push.rpc_id(peer, &"dungeon.hud", payload)
 
 
 ## Tell every member to hide the run HUD (the run cleared or failed).
 static func _hide_hud(group_id: int) -> void:
-	if ServerHub.current == null:
+	if WorldServer.curr == null:
 		return
 	for peer: int in GroupService.members_of(group_id):
-		ServerHub.current.data_push.rpc_id(peer, &"dungeon.hud", {"active": false})
+		WorldServer.curr.data_push.rpc_id(peer, &"dungeon.hud", {"active": false})
 
 
 ## Seconds since this run began (server clock) — the HUD clock baseline.
@@ -650,7 +650,7 @@ static func _elapsed_s(group_id: int) -> float:
 ## a mid-run crash leaves a phantom in the group/lobby and a never-freed run map.
 ## Wired from WorldServer._on_peer_disconnected.
 static func on_peer_disconnected(peer_id: int) -> void:
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	_leave_room(peer_id) # pending private room, if any
 	# Lobby queues — drop them and refresh the remaining queuers' rosters.
 	for key: String in _lobbies.keys():
@@ -685,10 +685,10 @@ static func on_peer_disconnected(peer_id: int) -> void:
 
 
 static func _eject_run(group_id: int) -> void:
-	if ServerHub.current == null:
+	if WorldServer.curr == null:
 		return
 	_ejecting[group_id] = true # this leave is the cleared eject, not a voluntary bail
-	var instance_manager: Node = ServerHub.current.instance_manager
+	var instance_manager: Node = WorldServer.curr.instance_manager
 	var instance: Node = _runs.get(group_id, null)
 	for peer: int in GroupService.members_of(group_id).duplicate():
 		if instance != null: # leave the run topped up (HP + mana), symmetric with the entry refill

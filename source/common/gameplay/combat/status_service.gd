@@ -13,7 +13,7 @@ static func sync(player: Player) -> void:
 	if player == null or player.player_resource == null:
 		return
 	var peer_id: int = int(player.player_resource.current_peer_id)
-	if peer_id <= 0 or ServerHub.current == null:
+	if peer_id <= 0 or WorldServer.curr == null:
 		return
 
 	var now: int = Time.get_ticks_msec()
@@ -39,7 +39,7 @@ static func sync(player: Player) -> void:
 				"remaining": (child as DamageOverTime).remaining_seconds(),
 			})
 
-	ServerHub.current.data_push.rpc_id(peer_id, &"status.sync", {
+	WorldServer.curr.data_push.rpc_id(peer_id, &"status.sync", {
 		"buffs": buffs,
 		"debuffs": debuffs,
 		"in_combat": player.is_in_combat(),

@@ -200,9 +200,10 @@ func take_damage(amount: float, attacker: Character = null, damage_type: StringN
 
 ## Wraps the combat.hit push so child classes (Player / NPC / future
 ## buildings) don't each have to know how to find their ServerInstance.
-## Goes via ServerHub so common/ doesn't import server-only types.
+## Pushes via WorldServer.curr (its static var is stubbed on client exports,
+## so common/ can reference it without importing server-only types).
 func _broadcast_hit_feedback(mitigated_amount: float) -> void:
-	if mitigated_amount <= 0.0 or ServerHub.current == null:
+	if mitigated_amount <= 0.0 or WorldServer.curr == null:
 		return
 	# Character is parented under Map, which is parented under ServerInstance.
 	# Walk up two steps to find the instance to scope the broadcast to. We
@@ -215,8 +216,8 @@ func _broadcast_hit_feedback(mitigated_amount: float) -> void:
 	var maybe_instance: Node = maybe_map.get_parent()
 	if maybe_instance == null:
 		return
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"combat.hit", {
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"combat.hit", {
 			"amount": int(round(mitigated_amount)),
 			"position": global_position,
 		}),

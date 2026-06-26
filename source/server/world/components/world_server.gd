@@ -144,11 +144,10 @@ var data_handlers: Dictionary[StringName, DataRequestHandler]
 
 
 func _ready() -> void:
+	# Publish the live world-server singleton. Common-side code reaches it as the
+	# typed `WorldServer.curr` (the export plugin stubs this static, so naming the
+	# class in common/ stays client-export-safe).
 	curr = self
-	# Publish ourselves into the common-side indirection slot so common scripts
-	# (player.gd, world_clock.gd, *_service.gd, ...) can call server methods
-	# without importing this class. Keeps client/web exports free of server/.
-	ServerHub.current = self
 
 
 ## If no instance_id is provided, will use all peers connected in the world.
@@ -162,7 +161,7 @@ func propagate_rpc(callable: Callable, instance_id: String = "") -> void:
 			callable.rpc_id(peer_id)
 
 
-## Recall payoff (called via ServerHub from RecallAbility.channel_complete): send
+## Recall payoff (called via WorldServer.curr from RecallAbility.channel_complete): send
 ## [param player] home to the town hub. Delegates to the InstanceManager by peer,
 ## which resolves the current instance authoritatively and reuses the warper/jail
 ## travel path.

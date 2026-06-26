@@ -231,14 +231,14 @@ func _push_seal(sealed: bool) -> void:
 		return
 	var map: Node = get_parent()
 	var instance: Node = map.get_parent() if map != null else null
-	if map == null or instance == null or ServerHub.current == null:
+	if map == null or instance == null or WorldServer.curr == null:
 		return
 	var paths: Array = []
 	for door: ActivableDoor in doors:
 		if door != null:
 			paths.append(String(map.get_path_to(door)))
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"dungeon.room", {"doors": paths, "sealed": sealed}),
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"dungeon.room", {"doors": paths, "sealed": sealed}),
 		instance.name
 	)
 

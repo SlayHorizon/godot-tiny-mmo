@@ -19,7 +19,7 @@ static func on_levels_gained(player_res: PlayerResource, old_level: int, new_lev
 		_load()
 	if new_level <= old_level:
 		return
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null or ws.chat_service == null:
 		return
 	for level: int in range(old_level + 1, new_level + 1):

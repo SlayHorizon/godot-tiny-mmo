@@ -125,7 +125,7 @@ func _complete_trade() -> void:
 		if is_instance_valid(participant):
 			var peer_id: int = int(participant.player_resource.current_peer_id)
 			if peer_id > 0:
-				ServerHub.current.data_push.rpc_id(peer_id, &"trade.result", {"ok": ok})
+				WorldServer.curr.data_push.rpc_id(peer_id, &"trade.result", {"ok": ok})
 
 
 ## Validates both offers against current inventories, then swaps atomically.

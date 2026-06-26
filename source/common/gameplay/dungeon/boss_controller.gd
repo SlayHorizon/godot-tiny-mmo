@@ -59,10 +59,10 @@ func _ready() -> void:
 ## Server → clients: a boss-event music cue (fight / victory / end) for everyone in
 ## [param instance]. Static so EventService can fire "end" on an admin abort too.
 static func push_boss_music(instance: Node, state: String) -> void:
-	if instance == null or ServerHub.current == null:
+	if instance == null or WorldServer.curr == null:
 		return
 	for peer_id: int in instance.players_by_peer_id:
-		ServerHub.current.data_push.rpc_id(peer_id, &"boss.music", {"state": state})
+		WorldServer.curr.data_push.rpc_id(peer_id, &"boss.music", {"state": state})
 
 
 func _on_boss_died_music(_killer: Character) -> void:
@@ -153,7 +153,7 @@ func _announce_enrage() -> void:
 		return
 	boss.replicate_visual(&"rp_slam_impact", [boss.global_position, slam_radius * 0.8])
 	for peer_id: int in instance.players_by_peer_id:
-		ServerHub.current.data_push.rpc_id(peer_id, &"boss.enrage", {"name": boss.display_name})
+		WorldServer.curr.data_push.rpc_id(peer_id, &"boss.enrage", {"name": boss.display_name})
 
 
 func _summon_adds() -> void:

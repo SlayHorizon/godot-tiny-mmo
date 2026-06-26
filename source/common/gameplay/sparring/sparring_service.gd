@@ -102,7 +102,7 @@ static func _start_match(instance: Node, master: DuelMaster, rosters: Array) -> 
 		"started_ms": now_ms, "pvp_enabled_at_ms": now_ms + PVP_ENABLE_DELAY_MS,
 	}
 
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	var all_peers: Array = []
 	var flat_all: Array = []
 	for r: Array in rosters:
@@ -159,7 +159,7 @@ static func _start_match(instance: Node, master: DuelMaster, rosters: Array) -> 
 
 
 static func _push_countdown(instance: Node, peers: Array, seconds_left: int) -> void:
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null:
 		return
 	var payload: Dictionary = (
@@ -215,7 +215,7 @@ static func on_player_left(peer_id: int, _instance: Node) -> void:
 
 ## Drop a peer from every spar queue and refresh the affected stations' rosters.
 static func _sweep_queues(peer_id: int) -> void:
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	for key: String in _queues.keys():
 		var queue: Array = _queues[key]
 		var was_queued: bool = false
@@ -295,7 +295,7 @@ static func _end_match(key: String, winner_index: int) -> void:
 			if _peer_to_match.get(peer) == key:
 				_peer_to_match.erase(peer)
 
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null:
 		return
 	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match_data["instance_name"]))
@@ -391,7 +391,7 @@ static func _teams_snapshot(master: DuelMaster, queue: Array) -> Dictionary:
 static func _team_label(team: SparTeam, index: int, peers: Array) -> String:
 	if not team.team_name.is_empty():
 		return team.team_name
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws != null:
 		for peer: int in peers:
 			var pr: PlayerResource = ws.connected_players.get(peer)
@@ -403,7 +403,7 @@ static func _team_label(team: SparTeam, index: int, peers: Array) -> String:
 
 
 static func _broadcast_queue(instance: Node, master: DuelMaster, queue: Array) -> void:
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null or instance == null or master == null:
 		return
 	var payload: Dictionary = _teams_snapshot(master, queue)
@@ -415,7 +415,7 @@ static func _broadcast_queue(instance: Node, master: DuelMaster, queue: Array) -
 
 
 static func _names(peers: Array) -> Array:
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	var out: Array = []
 	if ws == null:
 		return out
@@ -455,7 +455,7 @@ static func return_position_for(player: Player) -> Vector2:
 	if key.is_empty() or not _matches.has(key):
 		return Vector2.ZERO
 	var match_data: Dictionary = _matches[key]
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null or ws.instance_manager == null:
 		return Vector2.ZERO
 	var instance: Node = ws.instance_manager.get_instance_server_by_id(str(match_data["instance_name"]))

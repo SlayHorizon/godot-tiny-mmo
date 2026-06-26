@@ -74,10 +74,18 @@ func _rebuild() -> void:
 	_weapon = null
 	if ClientState.local_player == null:
 		return
+	# The hand's mounted node IS the source of truth — a weapon shows its abilities, a
+	# held consumable shows its one "drink" ability. No special case: equipment_changed
+	# on the &"weapon" slot rebuilds us for every hand change (weapon swap, potion, bare).
 	_weapon = ClientState.local_player.equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
 	if _weapon == null or not is_instance_valid(_weapon):
 		return
 	for i: int in _weapon.abilities.size():
+		# A null PRIMARY (slot 0) = a held non-weapon item (potion) whose action sits on
+		# the special slot. Don't render a dim empty "LMB" tile for it; null Q/E holes
+		# (truthful mastery labels) still show.
+		if i == 0 and _weapon.abilities[i] == null:
+			continue
 		_add_tile(i, _weapon.abilities[i])
 
 
@@ -154,7 +162,10 @@ func _add_tile(index: int, ability: AbilityResource) -> void:
 func _on_tile_down(index: int) -> void:
 	if _weapon == null or not is_instance_valid(_weapon) or ClientState.local_player == null:
 		return
-	if index < _tiles.size() and _tiles[index].get("ability") == null:
+	# Bounds + null-hole check against the abilities array (the source of truth) — NOT
+	# _tiles, which is packed by render order and desyncs from the ability index once a
+	# null primary slot is skipped (a held consumable's [null, drink]).
+	if index >= _weapon.abilities.size() or _weapon.abilities[index] == null:
 		return
 	_weapon.press_slot(index, ClientState.local_player)
 
@@ -164,7 +175,7 @@ func _on_tile_down(index: int) -> void:
 func _on_tile_up(index: int) -> void:
 	if _weapon == null or not is_instance_valid(_weapon) or ClientState.local_player == null:
 		return
-	if index < _tiles.size() and _tiles[index].get("ability") == null:
+	if index >= _weapon.abilities.size() or _weapon.abilities[index] == null:
 		return
 	_weapon.release_slot(index, ClientState.local_player)
 

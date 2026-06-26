@@ -70,7 +70,7 @@ static func spawn_defenders(flag: TerritoryFlag) -> void:
 	var container: ReplicatedPropsContainer = _flag_container(flag)
 	if container == null:
 		return
-	var guild: Guild = ServerHub.current.database.store.get_guild(flag.owner_guild_id)
+	var guild: Guild = WorldServer.curr.database.store.get_guild(flag.owner_guild_id)
 	if guild == null:
 		return
 	var count: int = GuildUpgrades.defender_count(guild)
@@ -141,7 +141,7 @@ static func grant_sg(guild: Guild, amount: int) -> void:
 static func credit_glory_kill(guild_id: int) -> void:
 	if guild_id <= 0:
 		return
-	var ws: Node = ServerHub.current
+	var ws: WorldServer = WorldServer.curr
 	if ws == null:
 		return
 	var guild: Guild = ws.database.get_guild(guild_id)

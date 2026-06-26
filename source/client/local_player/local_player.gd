@@ -75,9 +75,6 @@ func _ready() -> void:
 	# Staff teleports (/goto, /summon) within the same map: same problem as the
 	# sparring teleport — we must set position locally + freeze input briefly.
 	Client.subscribe(&"player.teleport", _on_teleport)
-	# Generic server-driven root (consuming a potion, future cast times): no
-	# teleport, just freeze movement + actions for the pushed duration.
-	Client.subscribe(&"player.freeze", _on_freeze)
 	# Channeling (healing aura, future recall): when OUR channel starts we root in
 	# place; pressing a move key cancels it. Other players' channels only show
 	# their aura (handled in InstanceClient) — these handlers ignore them.
@@ -173,14 +170,6 @@ func _on_teleport(payload: Dictionary) -> void:
 		_movement_lock_until_ms = Time.get_ticks_msec() + 500
 
 
-## Server-driven root with no teleport (potion sip, future cast times). The
-## movement-lock gate freezes both movement and actions for the duration.
-func _on_freeze(payload: Dictionary) -> void:
-	var ms: int = int(payload.get("ms", 0))
-	if ms > 0:
-		_movement_lock_until_ms = maxi(_movement_lock_until_ms, Time.get_ticks_msec() + ms)
-
-
 # --- Channeling (healing aura, future recall) ---
 ## True while WE are mid-channel: rooted, actions suppressed, a move key cancels.
 ## Deliberately NOT the movement lock — that zeroes input, which would make the
@@ -274,8 +263,9 @@ func _show_equip_bar(duration: float) -> void:
 	_equip_bar = bar
 
 
-## True while a weapon draw is in flight — abilities are locked (the touch ability
-## bar and process_input both read this); movement + aim stay free.
+## True while mid weapon-draw / drink-cast — abilities are locked (process_input +
+## the touch ability bar read this). A weapon draw stays move-free; a drink also
+## roots via the movement lock.
 func is_equip_drawing() -> bool:
 	return _equip_drawing and Time.get_ticks_msec() < _equip_draw_until_ms
 
@@ -347,8 +337,8 @@ func process_input() -> void:
 	look_direction = controller.get_look_direction()
 	action_input = controller.is_attack_pressed()
 
-	# Drawing a weapon: move + aim freely, but abilities are locked until the draw
-	# lands (the equip-cast commitment; the server gates action.perform too).
+	# Mid weapon-draw / drink-cast: abilities are locked (the server gates too). A
+	# weapon draw stays move-free; a drink roots via the movement lock above.
 	if is_equip_drawing():
 		action_input = false
 		return

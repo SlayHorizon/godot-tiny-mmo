@@ -159,11 +159,6 @@ var applied_mastery_passives: Array[Dictionary] = []
 ## Per-node gather cooldowns (node_id -> next-ready time in ms). Runtime only, not persisted.
 var gather_cooldowns: Dictionary
 
-## Consumable shared cooldowns (cooldown_category -> next-ready time in ms).
-## Runtime only — stops potion chain-chugging; resets on logout. See
-## ConsumableItem.shared_cooldown_ms.
-var consumable_cooldowns: Dictionary
-
 
 func init(
 	_player_id: int,

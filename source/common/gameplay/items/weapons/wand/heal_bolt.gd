@@ -43,15 +43,15 @@ func _resolve_hit(node: Node2D) -> CombatHit.Result:
 ## weapon damage and flag repairs use. Naming ServerInstance here is safe on client exports thanks
 ## to the stub-generating export plugin (addons/tinymmo/export_plugin/export_plugin.gd).
 func _broadcast_heal(target: Player, healed: float) -> void:
-	if ServerHub.current == null:
+	if WorldServer.curr == null:
 		return
 	var instance: Node = target.get_parent()
 	while instance != null and instance is not ServerInstance:
 		instance = instance.get_parent()
 	if instance == null:
 		return
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"combat.hit", {
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"combat.hit", {
 			"amount": int(round(healed)),
 			"position": target.global_position,
 			"heal": true,

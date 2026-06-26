@@ -118,13 +118,13 @@ func _heal_one(player: Player) -> void:
 		if mana < mana_max:
 			sc.set_stat(Stat.MANA, minf(mana_max, mana + heal_mana_per_tick))
 
-	if hp_gained < 1.0 or ServerHub.current == null:
+	if hp_gained < 1.0 or WorldServer.curr == null:
 		return
 	var map: Node = player.get_parent()
 	if map == null or map.get_parent() == null:
 		return
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"combat.hit", {
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"combat.hit", {
 			"amount": int(round(hp_gained)),
 			"position": player.global_position,
 			"heal": true,

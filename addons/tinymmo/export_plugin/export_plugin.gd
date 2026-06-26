@@ -136,11 +136,39 @@ func _generate_stub(path: String) -> String:
 		else:
 			out.append("const %s = %s" % [cname, var_to_str(value)])
 
-	# --- vars (untyped: this is what erases SQLite & friends from declarations) ---
+	# --- static vars (reflection lists these inconsistently vs consts/methods, so scan
+	# the source). Emit them TYPED — unlike the instance vars below — so common code can
+	# write `WorldServer.curr.method()` with full type-checking (the whole point of the
+	# stub: typed server references from anywhere, no ServerHub-style Node indirection).
+	# Defaults are stripped (they may call server-only code / preload excluded resources).
+	# Caveat: a static var typed as a server-only-dependency class (e.g. an SQLite handle)
+	# would re-name that type here — none exist today; revisit if one ever does.
+	var static_names: Dictionary = {}
+	for raw_line: String in script.source_code.split("\n", false):
+		var sline: String = raw_line.strip_edges()
+		if not sline.begins_with("static var "):
+			continue
+		var decl: String = sline.trim_prefix("static var ")
+		var hash_idx: int = decl.find("#")
+		if hash_idx != -1:
+			decl = decl.substr(0, hash_idx)
+		var eq_idx: int = decl.find("=")
+		if eq_idx != -1:
+			decl = decl.substr(0, eq_idx)
+		decl = decl.strip_edges().trim_suffix(":").strip_edges()
+		var var_name: String = decl.split(":")[0].strip_edges()
+		if var_name.is_empty() or static_names.has(var_name):
+			continue
+		static_names[var_name] = true
+		out.append("static var %s" % decl)
+
+	# --- instance vars (untyped: this is what erases SQLite & friends from declarations) ---
 	for p: Dictionary in script.get_script_property_list():
 		if not (int(p.get("usage", 0)) & PROPERTY_USAGE_SCRIPT_VARIABLE):
 			continue
 		if base_props.has(p["name"]):
+			continue
+		if static_names.has(p["name"]): # already declared as a static var above
 			continue
 		out.append("var %s" % p["name"])
 

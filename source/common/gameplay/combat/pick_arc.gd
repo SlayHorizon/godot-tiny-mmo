@@ -75,5 +75,5 @@ func _on_area_entered(area: Area2D) -> void:
 	var result: Dictionary = node.register_gather_hit(source as Player, extraction_damage, instance, tool_type)
 	if result.get("ok", false) or result.has("reason"):
 		var peer_id: int = int((source as Player).player_resource.current_peer_id)
-		if peer_id > 0 and ServerHub.current != null:
-			ServerHub.current.data_push.rpc_id(peer_id, &"mining.gather_result", result)
+		if peer_id > 0 and WorldServer.curr != null:
+			WorldServer.curr.data_push.rpc_id(peer_id, &"mining.gather_result", result)

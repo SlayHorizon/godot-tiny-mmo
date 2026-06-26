@@ -40,10 +40,10 @@ func data_request_handler(
 			return {"ok": false, "reason": "in_combat"}
 		var slot_key: StringName = item.slot.key
 		# Weapons DRAW over a short cast (anti fast-swap + RPG commitment): the real
-		# equip + inventory swap happen in begin_weapon_draw when the draw lands, and
+		# equip + inventory swap happen in begin_hand_draw when the draw lands, and
 		# abilities stay locked until then. Other gear equips instantly.
 		if slot_key == &"weapon":
-			player.begin_weapon_draw(item_id, slot_key)
+			player.begin_hand_draw(item_id)
 			return {"ok": true}
 		var previous_id: int = int(player.equipment_component.slots.values.get(slot_key, 0))
 		if not player.equipment_component.equip_item(item_id):
@@ -53,17 +53,11 @@ func data_request_handler(
 		if previous_id > 0:
 			Inventory.add_item(inventory, previous_id, 1)
 		player.player_resource.equipment[slot_key] = item_id
-	elif item is ConsumableItem and item.can_use(player):
-		# Shared category cooldown (potion chugging) — server-authoritative.
-		var category: StringName = item.cooldown_category
-		var now: int = Time.get_ticks_msec()
-		var cooldowns: Dictionary = player.player_resource.consumable_cooldowns
-		if now < int(cooldowns.get(category, 0)):
-			return {"ok": false, "reason": "cooldown"}
-		item.on_use(player)
-		if item.shared_cooldown_ms > 0:
-			cooldowns[category] = now + item.shared_cooldown_ms
-		# Root the drinker briefly so they can't run-and-chug.
-		if item.use_freeze_ms > 0:
-			WorldServer.curr.data_push.rpc_id(peer_id, &"player.freeze", {"ms": item.use_freeze_ms})
+	elif item.holdable:
+		# A consumable OR any other holdable item (material, trophy, ...) is a HAND ITEM:
+		# draw it in the SAME way. A consumable mounts a node with a "drink" action; a
+		# plain item just shows in hand with no ability. Either way it STAYS in the bag
+		# (referenced), so no removal here. A non-holdable item simply does nothing.
+		player.begin_hand_draw(item_id)
+		return {"ok": true}
 	return {}

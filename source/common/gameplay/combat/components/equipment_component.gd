@@ -23,7 +23,7 @@ signal equipment_changed(
 
 var slots: EquipmentSlots = EquipmentSlots.new()
 
-var equipped_items: Dictionary[StringName, GearItem]
+var equipped_items: Dictionary[StringName, Item]
 
 #Note to myself because a weapon may spawn main weapon, offhand, trail vfx, aura mount etc.
 # This format may be more scalable
@@ -45,6 +45,13 @@ func equip_item(item_id: int) -> bool:
 		synchronizer.set_by_path(slot_path(item.slot.key), item_id)
 		return true
 	return false
+
+
+## Put ANY item in the HAND (the &"weapon" slot) — weapon, potion, material. Synced
+## like every slot, so all clients mount it; the item's own equip() does the mounting.
+## Validation (ownership, can_equip for gear) is the handler's job before this.
+func set_hand(item_id: int) -> void:
+	synchronizer.set_by_path(slot_path(&"weapon"), item_id)
 
 
 func unequip(slot: StringName) -> void:

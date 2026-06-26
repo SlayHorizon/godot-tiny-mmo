@@ -100,12 +100,12 @@ func _peer_id() -> int:
 ## for the instance name (the same trick as Character._broadcast_hit_feedback —
 ## common-side code mustn't import the server-only ServerInstance type).
 func _push(topic: StringName, payload: Dictionary) -> void:
-	if ServerHub.current == null or not is_instance_valid(caster):
+	if WorldServer.curr == null or not is_instance_valid(caster):
 		return
 	var map: Node = caster.get_parent()
 	if map == null or map.get_parent() == null:
 		return
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(topic, payload),
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(topic, payload),
 		map.get_parent().name
 	)

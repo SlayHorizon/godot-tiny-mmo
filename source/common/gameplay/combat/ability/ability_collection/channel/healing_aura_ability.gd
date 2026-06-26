@@ -49,13 +49,13 @@ func _heal(target: Character) -> void:
 	var healed: float = minf(current + heal_per_tick, maximum)
 	target.stats_component.set_stat(Stat.HEALTH, healed)
 	var gained: int = int(round(healed - current))
-	if gained <= 0 or ServerHub.current == null:
+	if gained <= 0 or WorldServer.curr == null:
 		return
 	var container: Node = target.get_parent()
 	if container == null or container.get_parent() == null:
 		return
-	ServerHub.current.propagate_rpc(
-		ServerHub.current.data_push.bind(&"combat.hit", {
+	WorldServer.curr.propagate_rpc(
+		WorldServer.curr.data_push.bind(&"combat.hit", {
 			"amount": gained,
 			"position": target.global_position,
 			"heal": true,

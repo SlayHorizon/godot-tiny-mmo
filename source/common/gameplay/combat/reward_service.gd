@@ -40,9 +40,9 @@ static func distribute(npc: HostileNpc, contributors: Dictionary, killer: Charac
 ## The live Player for a peer (null if they logged off / left), via its current
 ## instance — same lookup quest scoping uses.
 static func _resolve_player(peer_id: int) -> Player:
-	if ServerHub.current == null:
+	if WorldServer.curr == null:
 		return null
-	var inst: Node = ServerHub.current.instance_manager.find_instance_for_peer(peer_id)
+	var inst: Node = WorldServer.curr.instance_manager.find_instance_for_peer(peer_id)
 	if inst == null:
 		return null
 	return inst.get_player(peer_id) as Player
@@ -68,7 +68,7 @@ static func _reward(player: Player, npc: HostileNpc) -> void:
 
 	var peer_id: int = int(resource.current_peer_id)
 	if peer_id > 0:
-		ServerHub.current.data_push.rpc_id(peer_id, &"combat.reward", {
+		WorldServer.curr.data_push.rpc_id(peer_id, &"combat.reward", {
 			"enemy_type": npc.enemy_type,
 			"xp": npc.xp_reward,
 			"level": int(progress.get("level", 1)),
@@ -80,16 +80,16 @@ static func _reward(player: Player, npc: HostileNpc) -> void:
 			"mastery": mastery,
 		})
 
-	var instance: Node = ServerHub.current.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
+	var instance: Node = WorldServer.curr.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
 	var quest_updates: Array = QuestService.on_kill(resource, npc.enemy_type, peer_id, instance)
 	if peer_id > 0 and not quest_updates.is_empty():
-		ServerHub.current.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
+		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
 
 	DailyQuestService.on_kill(resource, npc.enemy_type)
 	LeaderboardService.record_pve_kill(player)
 
 	if int(progress.get("levels_gained", 0)) > 0:
-		var inst: Node = ServerHub.current.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
+		var inst: Node = WorldServer.curr.instance_manager.find_instance_for_peer(peer_id) if peer_id > 0 else null
 		LevelMilestoneService.on_levels_gained(resource, level_before, int(progress.get("level", 1)), inst)
 
 

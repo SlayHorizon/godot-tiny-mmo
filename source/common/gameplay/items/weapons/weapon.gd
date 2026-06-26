@@ -44,6 +44,22 @@ func apply_skin(icon: Texture2D, extra_offset: Vector2 = Vector2.ZERO) -> void:
 	weapon_sprite.position += extra_offset
 
 
+## Drive the in-hand WeaponSprite from [param icon] — the held item's own icon (a
+## consumable or material mounted via Item.mount_in_hand). Client-side only; the
+## in-hand sprite is purely cosmetic, so the server skips it.
+func show_held_icon(icon: Texture2D) -> void:
+	if not GameMode.is_client() or weapon_sprite == null or icon == null:
+		return
+	if icon is AtlasTexture:
+		var atlas: AtlasTexture = icon as AtlasTexture
+		weapon_sprite.texture = atlas.atlas
+		weapon_sprite.region_enabled = true
+		weapon_sprite.region_rect = atlas.region
+	else:
+		weapon_sprite.texture = icon
+		weapon_sprite.region_enabled = false
+
+
 ## Visual hook for a CHANNELED ability (healing aura, future recall): enter/exit
 ## a "stance" pose while the channel holds. Base does nothing; weapons with a
 ## distinctive channel look (the hammer planted, swollen, floating) override it.
@@ -126,6 +142,17 @@ func mount_specials(ability_ids: Array[int]) -> void:
 			abilities[_base_ability_count + i] = _own_ability(ability)
 
 
+## Install a runtime-built ability on the SPECIAL (Q) slot, leaving the PRIMARY
+## (left-click) slot empty — used by held non-weapon items (a consumable's "drink") so
+## the action is a DELIBERATE Q press / tile tap, never the spammy main attack (stray
+## left-clicks would otherwise waste potions). NOT duplicated (the caller made a fresh
+## per-mount instance); the [null, ability] shape + _base_ability_count = 2 mean a later
+## mount_specials() can't resize it away (the generic hand ships with zero abilities).
+func set_special_ability(ability: AbilityResource) -> void:
+	abilities = [null, ability]
+	_base_ability_count = 2
+
+
 func try_perform_action(action_index: int, direction: Vector2) -> bool:
 	# Negative indices would wrap around the array (Python-style) — reject both ends.
 	if action_index < 0 or action_index >= abilities.size():
@@ -189,8 +216,8 @@ func _consume_mana(ability: AbilityResource) -> void:
 ## auto_use so charge weapons fire at FULL power (an NPC's damage is its
 ## EnemyTypeResource tuning, not a button-tap minimum).
 func auto_attack(direction: Vector2) -> void:
-	if abilities.is_empty():
-		return
+	if abilities.is_empty() or abilities[0] == null:
+		return # no primary (a held non-weapon item parks its action on the special slot)
 	var ability: AbilityResource = abilities[0]
 	if not ability.can_use(character):
 		return
@@ -224,7 +251,7 @@ func process_input(local_player: LocalPlayer) -> void:
 ## gate — a finger ON the bar would otherwise read as "UI blocks combat".
 func press_slot(slot: int, local_player: LocalPlayer) -> void:
 	if local_player.is_equip_drawing():
-		return # abilities locked while drawing a weapon (the equip-cast)
+		return # abilities locked mid weapon-draw / drink-cast
 	if slot >= 0 and slot < abilities.size():
 		_handle_slot_input(slot, true, false, local_player)
 
