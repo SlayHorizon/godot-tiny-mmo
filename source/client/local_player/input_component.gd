@@ -264,6 +264,11 @@ func get_look_direction() -> Vector2:
 ## Releases are deliberately NOT gated: a release completes an action begun
 ## outside the UI (e.g. a drawn bow) and can't start a new one.
 func _ui_blocks_combat() -> bool:
+	# World interactables (talkable NPCs) suppress combat exactly like a STOP control —
+	# so clicking an NPC to talk doesn't ALSO fire your weapon. They're Area2Ds in the
+	# world, which the gui_get_hovered_control check below can't see.
+	if ClientState.world_interactables_hovered > 0:
+		return true
 	var focused: Control = get_viewport().gui_get_focus_owner()
 	if focused is LineEdit or focused is TextEdit:
 		return true

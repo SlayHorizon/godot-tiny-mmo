@@ -217,6 +217,15 @@ func freeze_movement(seconds: float) -> void:
 	_movement_lock_until_ms = maxi(_movement_lock_until_ms, Time.get_ticks_msec() + int(seconds * 1000.0))
 
 
+## True while a real WEAPON (one with a primary attack) is in hand — i.e. combat mode.
+## Bare hands, a held potion, or a held material all read as UNARMED. The world click-
+## to-inspect gate uses this: you only open a player's profile while holstered, so a
+## click in a fight is always a shot, never a profile.
+func is_armed() -> bool:
+	var weapon: Weapon = equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
+	return weapon != null and not weapon.abilities.is_empty() and weapon.abilities[0] != null
+
+
 # --- Weapon equip-cast (client) ---
 ## True while drawing a weapon: abilities are locked (process_input + the touch
 ## ability bar both read this), but movement + aim stay free. Set from equip.cast,

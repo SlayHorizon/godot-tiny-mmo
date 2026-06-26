@@ -31,6 +31,7 @@ func _ready() -> void:
 	PixelIcon.from_button(notification_button)
 	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
+	ClientState.player_profile_by_peer_requested.connect(open_player_profile_by_peer)
 	ClientState.open_menu_requested.connect(_on_menu_requested)
 
 	ClientState.input_changed.connect(_on_input_type_changed)
@@ -123,6 +124,13 @@ func _on_menu_requested(menu_name: StringName, arg: Variant) -> void:
 func open_player_profile(player_id: int) -> void:
 	display_menu(&"player_profile")
 	menus[&"player_profile"].open_player_profile(player_id)
+
+
+## Open a profile by the target's PEER id (a world click) — the server resolves it to
+## the persistent player_id. Mirrors open_player_profile for the by-peer path.
+func open_player_profile_by_peer(peer_id: int) -> void:
+	display_menu(&"player_profile")
+	menus[&"player_profile"].open_player_profile_by_peer(peer_id)
 
 
 func _on_submenu_visiblity_changed(_menu: Control) -> void:

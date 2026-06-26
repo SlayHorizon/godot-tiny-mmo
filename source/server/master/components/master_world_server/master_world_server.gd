@@ -117,11 +117,32 @@ func tell_world_to_broadcast(world_peer_id: int, message: String) -> bool:
 	return true
 
 
+## Tell one world to run a staged restart countdown (warns players over [param seconds],
+## then a final save). Does NOT quit the world — the deploy's `systemctl stop` does that
+## (and saves again via WorldServer._notification). Returns true if the world is known.
+func tell_world_to_restart(world_peer_id: int, seconds: int, message: String) -> bool:
+	if not connected_worlds.has(world_peer_id):
+		return false
+	master_restart.rpc_id(world_peer_id, seconds, message)
+	return true
+
+
+## Fan the restart countdown out to EVERY connected world in one shot (the deploy
+## makes a single call; the master knows the whole roster). Returns the count notified.
+func tell_all_worlds_to_restart(seconds: int, message: String) -> int:
+	var count: int = 0
+	for world_peer_id: int in connected_worlds:
+		master_restart.rpc_id(world_peer_id, seconds, message)
+		count += 1
+	return count
+
+
 # Stubs declared so Godot's RPC table accepts the outbound calls. World side
 # implements the actual behavior in WorldManagerClient.
 @rpc("authority") func master_save() -> void: pass
 @rpc("authority") func master_shutdown() -> void: pass
 @rpc("authority") func master_broadcast(_message: String) -> void: pass
+@rpc("authority") func master_restart(_seconds: int, _message: String) -> void: pass
 @rpc("authority") func master_mute(_player_id: int, _reason: String, _duration_ms: int) -> void: pass
 @rpc("authority") func master_unmute(_player_id: int) -> void: pass
 @rpc("authority") func master_jail(_player_id: int, _reason: String, _duration_ms: int) -> void: pass

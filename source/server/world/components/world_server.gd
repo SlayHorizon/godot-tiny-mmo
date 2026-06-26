@@ -55,6 +55,24 @@ func _on_periodic_save() -> void:
 	ServerLog.info("Periodic save: %d player(s) flushed, backup %s." % [saved, "ok" if ok else "FAILED"])
 
 
+## Graceful shutdown: flush every still-connected player + snapshot the DB before
+## the process exits. Fires on a clean quit — Ctrl+C in a console, a graceful
+## window close, or `systemctl stop` when the unit delivers SIGINT (set
+## KillSignal=SIGINT + a few seconds of TimeoutStopSec in the systemd unit so
+## this can finish). Without it, a deploy that stops the process dropped up to one
+## periodic-save interval (5 min) of everyone's in-memory progress, since only the
+## 5-min tick and per-player disconnect persisted state. SQLite writes are
+## synchronous, so the save completes before the engine tears the tree down.
+func _notification(what: int) -> void:
+	if what != NOTIFICATION_WM_CLOSE_REQUEST:
+		return
+	if database == null:
+		return
+	var saved: int = database.save_all_connected(connected_players)
+	var ok: bool = database.backup_database()
+	ServerLog.info("Shutdown save: %d player(s) flushed, backup %s." % [saved, "ok" if ok else "FAILED"])
+
+
 func _connect_multiplayer_api_signals(api: SceneMultiplayer) -> void:
 	api.peer_connected.connect(_on_peer_connected)
 	api.peer_disconnected.connect(_on_peer_disconnected)

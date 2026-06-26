@@ -19,6 +19,10 @@ const INTERACT_RANGE: float = 90.0
 ## Quest-giver key, mirrored from the resource (interactions resolve quests by it).
 var npc_id: int
 
+## Client-only: true while the cursor is over this NPC's click-area, so we contribute
+## exactly once to ClientState.world_interactables_hovered (and can undo it on free).
+var _interactable_hovered: bool = false
+
 
 func _ready() -> void:
 	_apply_resource()
@@ -74,8 +78,7 @@ func _find_map() -> Map:
 
 
 func _spawn_click_area() -> void:
-	var area: Area2D = Area2D.new()
-	area.input_pickable = true
+	var area: ClickableArea = ClickableArea.new()
 	var collision: CollisionShape2D = CollisionShape2D.new()
 	var rect: RectangleShape2D = RectangleShape2D.new()
 	rect.size = _sprite_size()
@@ -83,7 +86,23 @@ func _spawn_click_area() -> void:
 	collision.position = animated_sprite.position
 	area.add_child(collision)
 	add_child(area)
-	area.input_event.connect(_on_clicked)
+	area.clicked.connect(_on_clicked) # ClickableArea does the left-click/tap detection
+	# Mirror the GUI combat-gate into the world: while the cursor is over this talkable
+	# NPC, suppress the player's attack so a click TALKS instead of also shooting. Undone
+	# on free (tree_exiting) so the shared counter can't leak and stick combat off.
+	area.mouse_entered.connect(_set_interactable_hover.bind(true))
+	area.mouse_exited.connect(_set_interactable_hover.bind(false))
+	area.tree_exiting.connect(_set_interactable_hover.bind(false))
+
+
+## Client-only: suppress the local player's combat while the cursor is over this NPC (so
+## a click talks, not shoots). Counted on ClientState; the [member _interactable_hovered]
+## guard keeps it to a single contribution we can cleanly undo on mouse-exit / free.
+func _set_interactable_hover(on: bool) -> void:
+	if not GameMode.is_client() or on == _interactable_hovered:
+		return
+	_interactable_hovered = on
+	ClientState.world_interactables_hovered += 1 if on else -1
 
 
 ## Float a "DIALOG" glyph above the head so players know the NPC is talkable.
@@ -105,15 +124,7 @@ func _sprite_size() -> Vector2:
 	return tex.get_size() if tex != null else fallback
 
 
-func _on_clicked(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	var clicked: bool = (
-		(event is InputEventMouseButton
-			and event.button_index == MOUSE_BUTTON_LEFT
-			and event.pressed)
-		or (event is InputEventScreenTouch and event.pressed)
-	)
-	if not clicked:
-		return
+func _on_clicked() -> void:
 	if _player_in_range():
 		_open_interactions()
 	else:

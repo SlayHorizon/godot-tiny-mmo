@@ -146,7 +146,12 @@ func _on_connection_failed() -> void:
 func _on_server_disconnected() -> void:
 	print("Server disconnected.")
 	close_connection()
+	# Freeze the world so nothing acts on a dead connection, then surface a clear
+	# overlay (Reconnect / Back to login) instead of the old silent freeze. Transition
+	# runs PROCESS_MODE_ALWAYS, so its buttons stay live while the tree is paused.
 	get_tree().paused = true
+	if is_instance_valid(Transition):
+		Transition.show_disconnected()
 
 
 func _on_peer_authenticating(_peer_id: int) -> void:

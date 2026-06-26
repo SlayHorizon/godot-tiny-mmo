@@ -2,9 +2,12 @@
 
 [ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/gameplay/characters/character.tscn" id="1_0ps03"]
 [ext_resource type="Script" uid="uid://bexas1o2f74ve" path="res://source/common/gameplay/characters/player/player.gd" id="2_meo3t"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/maps/components/clickable_area.tscn" id="3_fgc57"]
 
 [node name="Player" unique_id=361125681 instance=ExtResource("1_0ps03")]
 script = ExtResource("2_meo3t")
 
 [node name="EquipmentComponent" parent="." index="9" unique_id=1695674137 node_paths=PackedStringArray("synchronizer")]
 synchronizer = NodePath("../StateSynchronizer")
+
+[node name="ProfileClickArea" parent="." index="11" unique_id=66420381 instance=ExtResource("3_fgc57")]

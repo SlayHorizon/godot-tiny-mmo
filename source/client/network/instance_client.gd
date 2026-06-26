@@ -159,10 +159,28 @@ func spawn_player(player_id: int) -> void:
 	
 	if not new_player.is_inside_tree():
 		instance_map.add_child(new_player)
-		#instance_map.add_child(new_player)
-	
+		# Click-to-inspect: the player scene carries a ClickableArea (ProfileClickArea).
+		# Wire its `clicked` to open the profile — the GATE (holster-mode) lives in the
+		# handler, in CLIENT code, because Player.gd must not reference ClientState (cycle).
+		# Connect once: the local player node is reused across map changes.
+		if not new_player.has_meta(&"profile_click_wired"):
+			new_player.set_meta(&"profile_click_wired", true)
+			var click_area: ClickableArea = new_player.get_node_or_null(^"ProfileClickArea") as ClickableArea
+			if click_area != null:
+				click_area.clicked.connect(_on_player_clicked.bind(player_id))
+
 	var sync: StateSynchronizer = new_player.state_synchronizer
-	synchronizer_manager.add_entity(player_id, sync) 
+	synchronizer_manager.add_entity(player_id, sync)
+
+
+## A player's ClickableArea (ProfileClickArea) was clicked → open their profile, but ONLY
+## while the local player has no weapon out (holster-mode), so a click during a fight
+## stays a shot. [param peer_id] is sent to the server, which resolves it to the
+## persistent player_id (the client doesn't carry it).
+func _on_player_clicked(peer_id: int) -> void:
+	var lp: LocalPlayer = ClientState.local_player
+	if lp != null and is_instance_valid(lp) and not lp.is_armed():
+		ClientState.player_profile_by_peer_requested.emit(peer_id)
 
 
 func _on_combat_hit(payload: Dictionary) -> void:

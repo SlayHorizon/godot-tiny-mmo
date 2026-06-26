@@ -149,6 +149,50 @@ func master_shutdown() -> void:
 	get_tree().quit.call_deferred()
 
 
+## Master tells this world to run a staged restart countdown: warn every connected
+## player at decreasing marks (5m / 2m / 1m / 30s / 10s, only those <= total), then a
+## final save when it elapses. It does NOT quit — the deploy's `systemctl stop` stops
+## the process (and saves again via WorldServer._notification). The deploy waits the
+## same [param seconds] before stopping, so the countdown and the stop line up.
+@rpc("authority")
+func master_restart(seconds: int, message: String) -> void:
+	if world_server == null or world_server.chat_service == null:
+		return
+	var note: String = message if not message.is_empty() else "Server restarting for an update."
+	ServerLog.info("Restart countdown started: %ds — %s" % [seconds, note])
+	var remaining: int = maxi(seconds, 0)
+	_broadcast_restart_notice(remaining, note)  # immediate heads-up
+	for mark: int in [300, 120, 60, 30, 10]:
+		if mark >= remaining:
+			continue
+		await get_tree().create_timer(remaining - mark).timeout
+		remaining = mark
+		_broadcast_restart_notice(remaining, note)
+	if remaining > 0:
+		await get_tree().create_timer(remaining).timeout
+	# Insurance save in case the deploy's stop is delayed or never lands.
+	if database != null:
+		var saved: int = database.save_all_connected(world_server.connected_players)
+		database.backup_database()
+		ServerLog.info("Restart countdown elapsed — final save (%d player(s)); awaiting stop." % saved)
+
+
+## One restart-warning line to every connected player, phrased in minutes or seconds.
+func _broadcast_restart_notice(remaining: int, note: String) -> void:
+	var when: String
+	if remaining >= 60:
+		var mins: int = int(round(remaining / 60.0))
+		when = "%d minute%s" % [mins, "" if mins == 1 else "s"]
+	else:
+		when = "%d second%s" % [remaining, "" if remaining == 1 else "s"]
+	var text: String = "[Server] Restart in %s. %s" % [when, note]
+	for peer_id: int in world_server.connected_players:
+		var player: PlayerResource = world_server.connected_players[peer_id]
+		if player == null:
+			continue
+		world_server.chat_service.push_system_to_player(null, player.player_id, text)
+
+
 ## Master pushes a system message to every connected player in this world.
 @rpc("authority")
 func master_broadcast(message: String) -> void:

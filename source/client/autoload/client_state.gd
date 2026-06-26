@@ -5,6 +5,10 @@ extends Node
 
 signal local_player_ready(local_player: LocalPlayer)
 signal player_profile_requested(id: int)
+## Same as player_profile_requested but the target is identified by PEER id (a world
+## click) — the client doesn't carry the persistent player_id, so the server resolves
+## it (see profile.get.gd).
+signal player_profile_by_peer_requested(peer_id: int)
 signal open_menu_requested(menu: StringName, arg: Variant)
 signal dm_requested(id: int)
 ## Emitted on the client after a successful gather (mining, ...). Carries the
@@ -32,6 +36,11 @@ var player_id: int
 ## movement polling is gated. Raw key events still flow, so menu UI can use arrows
 ## or stick for navigation later.
 var menu_open: bool = false
+## How many talkable world interactables (NPC click-areas) the cursor is over. While
+## > 0, combat input is suppressed (InputComponent._ui_blocks_combat) so clicking an NPC
+## to talk doesn't ALSO fire your weapon — the world-space mirror of the GUI gate.
+## Counter, so overlapping NPCs balance; each NPC clears its own contribution on free.
+var world_interactables_hovered: int = 0
 ## Fired when the local player's tagged guild changes (login / tag / create /
 ## join / leave). Ally-aware visuals (e.g. guild guard health bars) listen so
 ## they re-evaluate without a relog.

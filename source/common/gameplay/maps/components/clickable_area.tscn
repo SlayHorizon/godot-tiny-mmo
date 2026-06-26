@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/maps/components/clickable_area.gd" id="1_clickable"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_clickbox"]
+size = Vector2(28, 44)
+
+[node name="ClickableArea" type="Area2D"]
+script = ExtResource("1_clickable")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -20)
+shape = SubResource("RectangleShape2D_clickbox")

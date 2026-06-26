@@ -66,6 +66,16 @@ func open_player_profile(player_id: int) -> void:
 	)
 
 
+## Open by the target's PEER id (a world click) — the server resolves peer -> player_id.
+func open_player_profile_by_peer(peer_id: int) -> void:
+	Client.request_data(
+		&"profile.get",
+		apply_profile,
+		{"peer": peer_id},
+		InstanceClient.current.name
+	)
+
+
 ## Apply a profile payload to the panel: identity strip, sprite, stats column,
 ## description, earned-title strip, action-bar buttons.
 func apply_profile(profile: Dictionary) -> void:

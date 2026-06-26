@@ -8,6 +8,12 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		return {"error": 1, "ok": false, "name": "Unknown"}
 
 	var target_id: int = int(args.get("id", 0))
+	# A world-click sends the target's PEER id (the client doesn't carry the persistent
+	# player_id), so resolve it to that connected player's id here.
+	if target_id == 0 and args.has("peer"):
+		var target: PlayerResource = ws.connected_players.get(int(args["peer"]))
+		if target != null:
+			target_id = target.player_id
 	if target_id == 0:
 		target_id = from_player.player_id
 

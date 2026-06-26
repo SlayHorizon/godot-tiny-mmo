@@ -13,6 +13,7 @@ extends "res://addons/httpserver/http_server.gd"
 ##   POST /v1/worlds/save         — body {world_id}
 ##   POST /v1/worlds/shutdown     — body {world_id}
 ##   POST /v1/worlds/broadcast    — body {world_id, message}
+##   POST /v1/restart_all         — body {seconds?, message?} (fans out to all worlds)
 ##   POST /v1/players/mute        — body {world_id, player_id, reason?, duration_ms?}
 ##   POST /v1/players/unmute      — body {world_id, player_id}
 ##   POST /v1/players/jail        — body {world_id, player_id, reason?, duration_ms?}
@@ -61,6 +62,7 @@ func _ready() -> void:
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/worlds/save",       _handle_world_save)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/worlds/shutdown",   _handle_world_shutdown)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/worlds/broadcast",  _handle_world_broadcast)
+	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/restart_all",       _handle_restart_all)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/mute",      _handle_player_mute)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/unmute",    _handle_player_unmute)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/jail",      _handle_player_jail)
@@ -148,6 +150,22 @@ func _handle_world_broadcast(payload: Dictionary) -> Dictionary:
 	if not world_manager.tell_world_to_broadcast(world_id, message):
 		return {"ok": false, "error": "unknown_world"}
 	return {"ok": true, "message": "Broadcast sent."}
+
+
+## Fan a restart countdown out to EVERY connected world in one call — the deploy
+## hits this once before stopping the servers, so players get staged warnings while
+## the old build is still up. Body: {seconds?, message?}. Worlds warn + final-save;
+## they do NOT quit (the deploy's stop does that). Returns the world count notified.
+func _handle_restart_all(payload: Dictionary) -> Dictionary:
+	if not _check_auth(payload):
+		return _unauthorized()
+	var seconds: int = clampi(int(payload.get("seconds", 300)), 0, 3600)
+	var message: String = str(payload.get("message", "")).strip_edges()
+	if message.length() > 280:
+		return {"ok": false, "error": "message_too_long"}
+	var count: int = world_manager.tell_all_worlds_to_restart(seconds, message)
+	ServerLog.info("Dashboard restart_all: %d world(s), countdown %ds." % [count, seconds])
+	return {"ok": true, "worlds": count, "seconds": seconds}
 
 
 # --- Aggregated read endpoints (players / chat / logs) ---

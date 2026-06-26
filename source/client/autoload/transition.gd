@@ -92,6 +92,26 @@ func _show_error() -> void:
 	_buttons.visible = true
 
 
+## Mid-game server drop (Client.server_disconnected): replace the old silent freeze
+## with a clear overlay. Most restarts ship a new build, so the safe action is "Back
+## to login" — it reloads the scene, which re-runs the gateway's version handshake and
+## shows the update gate if the build moved on (on web it does a full page reload to
+## pull the new build). "Retry" covers the transient-blip case (reconnect to the same
+## world). Called while the tree is paused; this layer is PROCESS_MODE_ALWAYS so the
+## buttons stay live, and _retry / _back_to_login unpause.
+func show_disconnected() -> void:
+	_active = false  # not a load — keep _on_world_ready / the load path from firing here
+	if _fade_tween and _fade_tween.is_valid():
+		_fade_tween.kill()
+	visible = true
+	_root.modulate.a = 1.0
+	_bloom.modulate.a = 0.0
+	_background.texture = null
+	_label.text = "Connection lost.\nThe server may be restarting for an update."
+	_spinner.visible = false
+	_buttons.visible = true
+
+
 ## The reveal. Runs on local_player_ready — the world's loaded, so the main thread is
 ## free and these tweens actually animate (a bloom at the START is frozen by the
 ## synchronous world load, hence the static "white filter" look). The cover fades
@@ -110,6 +130,7 @@ func _fade_out() -> void:
 
 func _retry() -> void:
 	_active = true
+	get_tree().paused = false  # a mid-game disconnect paused the tree; let it run again
 	_show_loading()
 	Client.close_connection()
 	Client.connect_to_server(_address, _port, _token)
@@ -117,9 +138,15 @@ func _retry() -> void:
 
 func _back_to_login() -> void:
 	_active = false
-	visible = false
 	Client.close_connection()
 	get_tree().paused = false
+	# On web, reload_current_scene keeps the already-loaded (now stale) wasm build, so
+	# an update would never reach the player. A full page reload re-fetches index.html +
+	# the new build from the host. JavaScriptBridge only exists on the web export.
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.location.reload();", true)
+		return
+	visible = false
 	get_tree().reload_current_scene()
 
 
