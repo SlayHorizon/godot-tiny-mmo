@@ -36,4 +36,10 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> voi
 		or (event is InputEventScreenTouch and event.pressed)
 	)
 	if clicked and menu_name != &"":
-		ClientState.open_menu_requested.emit(menu_name, menu_arg)
+		ClientState.open_menu_requested.emit(menu_name, _build_menu_arg())
+
+
+## The argument handed to the opened menu's open(). Defaults to [member menu_arg];
+## stateful subclasses override to pass a richer payload (e.g. a resource + key).
+func _build_menu_arg() -> Variant:
+	return menu_arg

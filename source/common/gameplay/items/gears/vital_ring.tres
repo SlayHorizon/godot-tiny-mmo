@@ -16,7 +16,6 @@ slot = ExtResource("4_ob8vn")
 required_level = 10
 base_modifiers = Array[ExtResource("1_ws5w6")]([SubResource("Resource_p3pyk")])
 item_name = &"Vital Ring"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"vital_ring"
 metadata/id = 33

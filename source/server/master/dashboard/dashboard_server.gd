@@ -14,6 +14,7 @@ extends "res://addons/httpserver/http_server.gd"
 ##   POST /v1/worlds/shutdown     — body {world_id}
 ##   POST /v1/worlds/broadcast    — body {world_id, message}
 ##   POST /v1/restart_all         — body {seconds?, message?} (fans out to all worlds)
+##   POST /v1/save_all            — flush every world to disk now (pre-stop save)
 ##   POST /v1/players/mute        — body {world_id, player_id, reason?, duration_ms?}
 ##   POST /v1/players/unmute      — body {world_id, player_id}
 ##   POST /v1/players/jail        — body {world_id, player_id, reason?, duration_ms?}
@@ -63,6 +64,7 @@ func _ready() -> void:
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/worlds/shutdown",   _handle_world_shutdown)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/worlds/broadcast",  _handle_world_broadcast)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/restart_all",       _handle_restart_all)
+	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/save_all",          _handle_save_all)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/mute",      _handle_player_mute)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/unmute",    _handle_player_unmute)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/players/jail",      _handle_player_jail)
@@ -166,6 +168,17 @@ func _handle_restart_all(payload: Dictionary) -> Dictionary:
 	var count: int = world_manager.tell_all_worlds_to_restart(seconds, message)
 	ServerLog.info("Dashboard restart_all: %d world(s), countdown %ds." % [count, seconds])
 	return {"ok": true, "worlds": count, "seconds": seconds}
+
+
+## Flush every connected world to disk right now (no countdown, no quit). The deploy
+## hits this immediately before `systemctl stop` so players are persisted — Godot
+## headless can't save on the kill signal itself. Returns the world count saved.
+func _handle_save_all(payload: Dictionary) -> Dictionary:
+	if not _check_auth(payload):
+		return _unauthorized()
+	var count: int = world_manager.tell_all_worlds_to_save()
+	ServerLog.info("Dashboard save_all: %d world(s)." % count)
+	return {"ok": true, "worlds": count}
 
 
 # --- Aggregated read endpoints (players / chat / logs) ---

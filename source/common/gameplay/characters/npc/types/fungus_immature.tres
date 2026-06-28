@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_yxfn6"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_q581e"]
-[ext_resource type="SpriteFrames" uid="uid://dobjx0ntafslb" path="res://source/common/gameplay/characters/sprite_frames/fungus.tres" id="3_k45uy"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/characters/sprite_frames/fungus_immature.tres" id="3_k45uy"]
 
 [resource]
 script = ExtResource("2_q581e")
-enemy_type = &"fungus"
+enemy_type = &"fungus_immature"
 display_name = "Fungus"
 skin = ExtResource("3_k45uy")
 max_health = 55.0
@@ -19,5 +19,5 @@ detection_radius = 90
 chase_on_area = true
 xp_reward = 3
 respawn_delay = 14.0
-metadata/slug = &"fungus"
+metadata/slug = &"fungus_immature"
 metadata/id = 3

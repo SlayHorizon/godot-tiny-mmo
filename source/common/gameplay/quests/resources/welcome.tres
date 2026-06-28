@@ -4,17 +4,19 @@
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
 [ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_reward"]
 [ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="4_potion"]
+[ext_resource type="Resource" uid="uid://dtojmae8u5g6l" path="res://source/common/gameplay/characters/npc/npcs/mira.tres" id="5_mira"]
+[ext_resource type="Resource" uid="uid://dicfbsg4ycah2" path="res://source/common/gameplay/characters/npc/npcs/foreman.tres" id="6_foreman"]
 
 [sub_resource type="Resource" id="Obj_visit_mira"]
 script = ExtResource("1_obj")
 type = 3
-target_giver_id = 4
+target_giver = ExtResource("5_mira")
 target_giver_name = "Mira the Herbalist"
 
 [sub_resource type="Resource" id="Obj_visit_foreman"]
 script = ExtResource("1_obj")
 type = 3
-target_giver_id = 10
+target_giver = ExtResource("6_foreman")
 target_giver_name = "the Foreman"
 
 [sub_resource type="Resource" id="Reward_potion"]

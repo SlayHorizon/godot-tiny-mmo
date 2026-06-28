@@ -29,7 +29,6 @@ metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 
 [resource]
 script = ExtResource("11_dtmro")
-npc_id = 100
 npc_name = "Hall Keeper"
 skin = ExtResource("11_b8ym4")
 greeting = "You've the look of the fresh made, still blinking, not sure what you're for. Work's the cure for that, only one I ever found. Board's on the wall. I'll point you at the jobs that won't get you killed your first day out."

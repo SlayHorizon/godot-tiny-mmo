@@ -23,7 +23,6 @@ slot = ExtResource("4_pnpyg")
 required_level = 20
 base_modifiers = Array[ExtResource("1_ilcse")]([SubResource("Resource_404ct"), SubResource("Resource_guu3k")])
 item_name = &"Ancient Hood"
-description = ""
 vendor_value = 5
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"ancient_hood"

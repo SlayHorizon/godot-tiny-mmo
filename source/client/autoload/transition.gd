@@ -21,6 +21,8 @@ var _background: TextureRect
 var _spinner: TextureRect
 var _label: Label
 var _buttons: HBoxContainer
+var _retry_button: Button
+var _back_button: Button
 var _bloom: ColorRect
 var _fade_tween: Tween
 
@@ -89,6 +91,7 @@ func _show_loading() -> void:
 func _show_error() -> void:
 	_label.text = "Couldn't reach the world."
 	_spinner.visible = false
+	_retry_button.visible = true  # load-time failure: the token may still be valid, so retry can work
 	_buttons.visible = true
 
 
@@ -107,8 +110,14 @@ func show_disconnected() -> void:
 	_root.modulate.a = 1.0
 	_bloom.modulate.a = 0.0
 	_background.texture = null
-	_label.text = "Connection lost.\nThe server may be restarting for an update."
+	# Honest for BOTH causes — a server update/restart OR the player's own network
+	# dropping — since server_disconnected fires for any established-connection loss.
+	_label.text = "Connection lost.\nThe server may be updating, or your connection dropped."
 	_spinner.visible = false
+	# No Retry here: auth tokens are one-shot (consumed at login), so an in-place
+	# reconnect always fails. Recovery goes back through the gateway for a fresh token
+	# (auto-login makes that one click, and re-runs the version gate on updates).
+	_retry_button.visible = false
 	_buttons.visible = true
 
 
@@ -146,8 +155,16 @@ func _back_to_login() -> void:
 	if OS.has_feature("web"):
 		JavaScriptBridge.eval("window.location.reload();", true)
 		return
+	# The live world + HUD live under persistent parents (the instance under the Client
+	# autoload, the UI under root), so reload_current_scene rebuilds the gateway but
+	# does NOT free them — leaving the old world showing under the login menu. Tear
+	# them down explicitly first.
+	if is_instance_valid(Client) and Client.instance_manager:
+		Client.instance_manager.teardown()
 	visible = false
-	get_tree().reload_current_scene()
+	# Deferred: this runs from a Button.pressed callback, and reloading the scene
+	# mid-signal can throw "can't be used during in/out signal".
+	get_tree().reload_current_scene.call_deferred()
 
 
 # --- Build (code, Toaster-style) -------------------------------------------
@@ -208,14 +225,16 @@ func _build_ui() -> void:
 	_buttons = HBoxContainer.new()
 	_buttons.alignment = BoxContainer.ALIGNMENT_CENTER
 	_buttons.add_theme_constant_override(&"separation", 12)
-	var retry: Button = Button.new()
-	retry.text = "Retry"
-	retry.pressed.connect(_retry)
-	var back: Button = Button.new()
-	back.text = "Back to login"
-	back.pressed.connect(_back_to_login)
-	_buttons.add_child(retry)
-	_buttons.add_child(back)
+	_retry_button = Button.new()
+	_retry_button.text = "Retry"
+	_retry_button.pressed.connect(_retry)
+	_back_button = Button.new()
+	# On web, "Back to login" reloads the page (fetches a fresh build); elsewhere it
+	# returns to the gateway. Label it for what it actually does on this platform.
+	_back_button.text = "Reload" if OS.has_feature("web") else "Back to login"
+	_back_button.pressed.connect(_back_to_login)
+	_buttons.add_child(_retry_button)
+	_buttons.add_child(_back_button)
 	vbox.add_child(_buttons)
 
 	# The enter-world bloom (warm white, softer than stark white). Parented to the

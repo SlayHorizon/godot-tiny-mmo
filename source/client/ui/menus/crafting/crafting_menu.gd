@@ -4,7 +4,9 @@ extends Control
 ## list is static client-side data (from the CraftingStationResource); only the craft
 ## itself is server-validated.
 
-var _station_id: int
+## Owning CraftingStation node's name. Sent with the craft request so the server
+## resolves the same station from the player's current map.
+var _station_key: String
 var _station: CraftingStationResource
 ## item_id -> owned count, from the latest inventory fetch.
 var _owned: Dictionary[int, int]
@@ -25,9 +27,11 @@ func _on_visibility_changed() -> void:
 		_refresh()
 
 
-func open(station_id: int) -> void:
-	_station_id = station_id
-	_station = CraftingStationResource.load_station(station_id)
+func open(arg: Dictionary) -> void:
+	_station_key = str(arg.get("key", ""))
+	# The catalog rides along from the CraftingStation node — render the local
+	# resource directly (no load-by-id), so inline/un-indexed stations open too.
+	_station = arg.get("station") as CraftingStationResource
 	if _station == null:
 		hide()
 		return
@@ -167,7 +171,7 @@ func _has_ingredients(recipe: CraftingRecipe) -> bool:
 func _on_craft_pressed(index: int, recipe: CraftingRecipe) -> void:
 	var result: Array = await Client.request_data_await(
 		&"craft.item",
-		{"station": _station_id, "recipe": index},
+		{"station_key": _station_key, "recipe": index},
 		InstanceClient.current.name
 	)
 	if result[1] != OK or not result[0].get("ok", false):

@@ -16,9 +16,6 @@ const INTERACT_RANGE: float = 90.0
 
 @export var npc_resource: NPCResource
 
-## Quest-giver key, mirrored from the resource (interactions resolve quests by it).
-var npc_id: int
-
 ## Client-only: true while the cursor is over this NPC's click-area, so we contribute
 ## exactly once to ClientState.world_interactables_hovered (and can undo it on free).
 var _interactable_hovered: bool = false
@@ -57,10 +54,15 @@ func _ready() -> void:
 		_spawn_marker()
 
 
+## This NPC's quest-giver key — the slug of its NPCResource (its filename). Quests
+## register + resolve their giver by this instead of a hand-assigned int id.
+func giver_key() -> StringName:
+	return npc_resource.giver_key() if npc_resource else &""
+
+
 func _apply_resource() -> void:
 	if npc_resource == null:
 		return
-	npc_id = npc_resource.npc_id
 	display_name = npc_resource.npc_name # drives the shared name label (client)
 	if npc_resource.skin != null:
 		skin_id = 0 # disable id-based skin; drive it directly (mirrors HostileNpc)
@@ -148,9 +150,11 @@ func _open_interactions() -> void:
 		return
 	# Talking to a quest-giver NPC counts as "visiting" it — advance any
 	# "talk to NPC X" objective server-side (fire-and-forget; the server pushes
-	# quest.update if anything changed). Pure shop/flavor NPCs (npc_id 0) skip it.
-	if npc_id > 0 and InstanceClient.current != null:
-		Client.request_data(&"npc.interact", func(_r: Dictionary) -> void: pass, {"npc": npc_id}, InstanceClient.current.name)
+	# quest.update if anything changed). A no-quest NPC just no-ops server-side, so
+	# firing for any NPC that has a key is harmless.
+	var key: StringName = giver_key()
+	if not key.is_empty() and InstanceClient.current != null:
+		Client.request_data(&"npc.interact", func(_r: Dictionary) -> void: pass, {"npc": String(key)}, InstanceClient.current.name)
 	var entries: Array = []
 	for interaction: NPCInteraction in npc_resource.interactions:
 		if interaction == null:

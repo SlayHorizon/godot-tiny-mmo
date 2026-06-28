@@ -1,12 +1,11 @@
 class_name ShopResource
 extends Resource
-## Editor-authored shop definition, registered as the "shops" content type.
-##
-## Workflow: create instances under res://source/common/gameplay/shops/data/,
-## then run the TinyMMO plugin's Generate with content_name "shops" pointing at
-## that folder. The plugin assigns each shop a registry id/slug (baked into
-## metadata) and builds shops_index.tres, so shops resolve through
-## ContentRegistryHub like items and maps — sent over the network as a small id.
+## Editor-authored shop definition. Attach one to an NPC's ShopInteraction —
+## either inline (a sub-resource on the NPC) or a shared .tres dragged into the
+## interaction's `shop` field. The server resolves the shop from the merchant
+## NPC's giver_key() (its NPCResource filename slug) via Map.shops, the same way
+## quests resolve their giver; the client renders the catalog from the resource
+## carried in the menu arg, so no registry id, Generate step, or index is needed.
 
 ## Which trades this shop offers the player (controls which tabs the shop UI shows).
 enum Trades {
@@ -25,14 +24,6 @@ enum Trades {
 ## Specialty recurring exchanges this vendor offers (e.g. Mira always accepts
 ## 5 Healing Herbs for 4 gold). Empty for generic vendors.
 @export var accepted_trades: Array[ShopTrade]
-
-
-## Loads a shop by its registry id, or null if the shops content type hasn't been
-## generated yet / the id is unknown.
-static func load_shop(shop_id: int) -> ShopResource:
-	if ContentRegistryHub.registry_of(&"shops") == null:
-		return null
-	return ContentRegistryHub.load_by_id(&"shops", shop_id) as ShopResource
 
 
 func allows_buying() -> bool:

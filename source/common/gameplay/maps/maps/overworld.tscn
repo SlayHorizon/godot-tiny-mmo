@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://wqvuy2e2dljl" path="res://source/common/gameplay/maps/maps/castle/outside_building.tscn" id="14_2lykb"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="15_4i121"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="16_dylal"]
-[ext_resource type="Resource" uid="uid://djj2vxg3nbswn" path="res://source/common/gameplay/characters/npc/types/fungus.tres" id="17_vkc0x"]
+[ext_resource type="Resource" uid="uid://djj2vxg3nbswn" path="res://source/common/gameplay/characters/npc/types/fungus_immature.tres" id="17_vkc0x"]
 [ext_resource type="Resource" uid="uid://b30ybcv0ulinq" path="res://source/common/gameplay/characters/npc/types/goblin.tres" id="18_2i5ur"]
 [ext_resource type="Resource" uid="uid://diqelrbkjdx54" path="res://source/common/gameplay/characters/npc/types/rat_base.tres" id="19_h821s"]
 [ext_resource type="Resource" uid="uid://c43oawxmbygiq" path="res://source/common/gameplay/characters/npc/types/wolf.tres" id="20_be1cg"]

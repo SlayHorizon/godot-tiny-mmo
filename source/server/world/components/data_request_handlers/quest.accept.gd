@@ -10,11 +10,11 @@ func data_request_handler(
 	if not player:
 		return {"ok": false}
 
-	var giver_id: int = int(args.get("giver", 0))
+	var giver_key: StringName = StringName(str(args.get("giver", "")))
 	var quest_id: int = int(args.get("id", 0))
 
 	# Verify the quest is actually offered by that giver in the player's map.
-	var giver: Object = instance.instance_map.get_quest_giver(giver_id)
+	var giver: Object = instance.instance_map.get_quest_giver(giver_key)
 	if giver == null or not _giver_offers(giver, quest_id):
 		return {"ok": false}
 

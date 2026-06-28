@@ -23,7 +23,6 @@ slot = ExtResource("4_c2pit")
 required_level = 15
 base_modifiers = Array[ExtResource("1_j6m1g")]([SubResource("Resource_2cm48"), SubResource("Resource_c2pit")])
 item_name = &"Focus Ring"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"focus_ring"
 metadata/id = 15

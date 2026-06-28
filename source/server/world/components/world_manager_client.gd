@@ -185,7 +185,7 @@ func _broadcast_restart_notice(remaining: int, note: String) -> void:
 		when = "%d minute%s" % [mins, "" if mins == 1 else "s"]
 	else:
 		when = "%d second%s" % [remaining, "" if remaining == 1 else "s"]
-	var text: String = "[Server] Restart in %s. %s" % [when, note]
+	var text: String = "Restart in %s. %s" % [when, note]
 	for peer_id: int in world_server.connected_players:
 		var player: PlayerResource = world_server.connected_players[peer_id]
 		if player == null:

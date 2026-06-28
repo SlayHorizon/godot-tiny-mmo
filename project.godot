@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Ekonia"
-config/version="0.10.2"
+config/version="0.11.2"
 run/main_scene="res://source/common/main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="slayhorizon"

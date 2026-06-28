@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_ccyyb")
 content_name = &"sprites"
-version = 1782377417
-next_id = 35
+version = 1782553432
+next_id = 39
 entries = Array[Dictionary]([{
 &"hash": "a713957cf45109970dd71e6452edebdcc4b11cad4c3c8326d19d8086dbdf657e",
 &"id": 6,
@@ -28,10 +28,25 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/sprite_frames/bandit_tracker.tres",
 &"slug": &"bandit_tracker"
 }, {
-&"hash": "5ce3c4d8eb3c269d8f100526d9c2649a53c9ef0c9ab2675777a86c985164c46e",
-&"id": 10,
-&"path": "res://source/common/gameplay/characters/sprite_frames/fungus.tres",
-&"slug": &"fungus"
+&"hash": "75784ea21cf142dc7e4916abeaeebe079d12d4989587242d7a1dcf70c0919868",
+&"id": 35,
+&"path": "res://source/common/gameplay/characters/sprite_frames/fungus_heavy.tres",
+&"slug": &"fungus_heavy"
+}, {
+&"hash": "ea6bbe5562dd3efd6e33fbfd15409b4b0ad5795c197060b51ead35789e48b278",
+&"id": 36,
+&"path": "res://source/common/gameplay/characters/sprite_frames/fungus_immature.tres",
+&"slug": &"fungus_immature"
+}, {
+&"hash": "e0082e21eef92cf85b56572bf764acaa8d9304c0373a4af174179c94418bc6f9",
+&"id": 37,
+&"path": "res://source/common/gameplay/characters/sprite_frames/fungus_long.tres",
+&"slug": &"fungus_long"
+}, {
+&"hash": "03dfa251317518f3e110c53a4e860de9e765dcef77e83756ba162ed3da8aa65f",
+&"id": 38,
+&"path": "res://source/common/gameplay/characters/sprite_frames/fungus_old.tres",
+&"slug": &"fungus_old"
 }, {
 &"hash": "7bd50b95b39d20818bbd1c31bd0dbd11a94bfa259f01751f3f32996f9fb951b2",
 &"id": 4,

@@ -191,8 +191,9 @@ func request_enter_world(gateway_id: int, request_id: int, username: String, wor
 
 	account.last_world_name = world_manager.connected_worlds[world_id].get("info", {}).get("name", "")
 	account.last_character_id = character_id
-	if OS.has_feature("debug"):
-		authentication_manager.save_account_collection()
+	# Persist on every world-enter, not just debug — release builds must keep the
+	# "continue on last world" metadata too. (Was gated on "debug".)
+	authentication_manager.save_account_collection()
 
 	world_manager.request_login.rpc_id(
 		world_id,

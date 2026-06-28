@@ -23,7 +23,6 @@ slot = ExtResource("4_ulsmp")
 required_level = 10
 base_modifiers = Array[ExtResource("1_ajh1c")]([SubResource("Resource_rmoyd"), SubResource("Resource_22dr1")])
 item_name = &"Shadow Vest"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"shadow_vest"
 metadata/id = 31

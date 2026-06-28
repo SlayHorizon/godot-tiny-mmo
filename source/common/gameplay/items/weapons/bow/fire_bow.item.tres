@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://42mfsxxm5msy"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_50h28"]
+[ext_resource type="Texture2D" uid="uid://dba183tgy3vrg" path="res://assets/sprites/items/weapons/fire/fire.png" id="2_50h28"]
+[ext_resource type="PackedScene" uid="uid://e6kqwoh5tlxp" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn" id="3_56aj1"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_mvb3v"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_b22dr"]
+
+[sub_resource type="Resource" id="Resource_ibcoj"]
+script = ExtResource("1_50h28")
+stat_name = "move_speed"
+value = -8.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="Resource" id="Mod_ad_bow"]
+script = ExtResource("1_50h28")
+stat_name = "ad"
+value = 16.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ibcoj"]
+atlas = ExtResource("2_50h28")
+region = Rect2(48, 48, 16, 32)
+
+[resource]
+script = ExtResource("4_mvb3v")
+category = &"bow"
+right_hand_scene = ExtResource("3_56aj1")
+slot = ExtResource("5_b22dr")
+required_level = 10
+base_modifiers = Array[ExtResource("1_50h28")]([SubResource("Resource_ibcoj"), SubResource("Mod_ad_bow")])
+item_name = &"Fire  Bow"
+item_icon = SubResource("AtlasTexture_ibcoj")
+description = "To do: change description. A plain wooden bow. Draw to charge, loose to fire."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/_custom_type_script = "uid://5hk0gl5ng64h"
+metadata/slug = &"fire_bow.item"
+metadata/id = 85

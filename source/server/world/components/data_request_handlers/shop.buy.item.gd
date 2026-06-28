@@ -10,7 +10,7 @@ func data_request_handler(
 	if not player:
 		return {"ok": false}
 
-	var shop_id: int = int(args.get("shop_id", 0))
+	var shop_key: StringName = StringName(str(args.get("shop_key", "")))
 	var item_id: int = int(args.get("id", 0))
 	var amount: int = int(args.get("amount", 1))
 	if item_id <= 0 or amount <= 0:
@@ -18,7 +18,7 @@ func data_request_handler(
 
 	# Resolve the shop from a merchant present in the player's map (authoritative +
 	# verifies the player is at the shop's map), not from a client-trusted id.
-	var shop: ShopResource = instance.instance_map.get_shop(shop_id)
+	var shop: ShopResource = instance.instance_map.get_shop(shop_key)
 	if not shop or not shop.allows_buying():
 		return {"ok": false}
 

@@ -23,7 +23,6 @@ slot = ExtResource("4_i5q0x")
 required_level = 10
 base_modifiers = Array[ExtResource("1_v263k")]([SubResource("Resource_5hd0y"), SubResource("Resource_ltmu6")])
 item_name = &"Enchanted Hood"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"enchanted_hood"
 metadata/id = 13

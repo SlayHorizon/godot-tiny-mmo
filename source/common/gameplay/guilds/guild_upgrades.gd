@@ -116,7 +116,7 @@ static func defender_tier(guild: Guild) -> int:
 ## per-tier scenes); the flag resolves the slug to an id and ships it in the
 ## spawn init. Index = tier - 1.
 const DEFENDER_ENEMY_SLUG_BY_TIER: Array[StringName] = [
-	&"fungus", &"goblin", &"bandit", &"bandit_captain",
+	&"fungus_immature", &"goblin", &"bandit", &"bandit_captain",
 ]
 
 

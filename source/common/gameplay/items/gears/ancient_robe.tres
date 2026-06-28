@@ -23,7 +23,6 @@ slot = ExtResource("4_h6tkx")
 required_level = 20
 base_modifiers = Array[ExtResource("1_ism3y")]([SubResource("Resource_2no8i"), SubResource("Resource_upxp1")])
 item_name = &"Ancient Robe"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"ancient_robe"
 metadata/id = 8

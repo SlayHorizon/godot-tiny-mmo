@@ -6,7 +6,9 @@ enum Mode { BUY, SELL }
 const STOCK_INFINITE_TEXT: String = "∞"
 
 var _shop: ShopResource
-var _shop_id: int
+## Owning merchant NPC's giver_key (its NPCResource filename slug). Sent with every
+## shop request so the server resolves the same shop from the player's current map.
+var _shop_key: String
 var _mode: Mode
 var _golds: int
 ## Registry id of the gold currency item (the player's balance is its inventory count).
@@ -92,10 +94,11 @@ func _make_mode_tab(text: String) -> Button:
 	return tab
 
 
-func open(shop_id: int) -> void:
-	_shop_id = shop_id
-	# Shop contents are static client-side data — render from the local ShopResource.
-	_shop = ShopResource.load_shop(shop_id)
+func open(arg: Dictionary) -> void:
+	_shop_key = str(arg.get("key", ""))
+	# The catalog rides along from the NPC's ShopInteraction — render the local
+	# ShopResource directly (no load-by-id), so inline/un-indexed shops open too.
+	_shop = arg.get("shop") as ShopResource
 	if not _shop:
 		return
 	if not _shop.shop_name.is_empty():
@@ -396,7 +399,7 @@ func _request_open() -> void:
 	# Target the player's CURRENT instance — without it the server falls back to the
 	# default (overworld) instance, where a non-overworld shop isn't registered, so
 	# the auth fails and the menu closes (the "opens for a second then vanishes" bug).
-	var result: Array = await Client.request_data_await(&"shop.open", {"shop_id": _shop_id}, InstanceClient.current.name)
+	var result: Array = await Client.request_data_await(&"shop.open", {"shop_key": _shop_key}, InstanceClient.current.name)
 	if result[1] != OK:
 		return
 	if not result[0].get("ok", false):
@@ -446,7 +449,7 @@ func _buy() -> void:
 	action_button.disabled = true
 	var result: Array = await Client.request_data_await(
 		&"shop.buy.item",
-		{"shop_id": _shop_id, "id": _selected_slot.item_id, "amount": amount},
+		{"shop_key": _shop_key, "id": _selected_slot.item_id, "amount": amount},
 		InstanceClient.current.name
 	)
 	if result[1] != OK or not result[0].get("ok", false):
@@ -466,7 +469,7 @@ func _sell() -> void:
 	action_button.disabled = true
 	var result: Array = await Client.request_data_await(
 		&"shop.sell.item",
-		{"shop_id": _shop_id, "slot_uid": slot_uid, "amount": amount},
+		{"shop_key": _shop_key, "slot_uid": slot_uid, "amount": amount},
 		InstanceClient.current.name
 	)
 	if result[1] != OK or not result[0].get("ok", false):
@@ -489,7 +492,7 @@ func _trade() -> void:
 	action_button.disabled = true
 	var result: Array = await Client.request_data_await(
 		&"shop.trade.item",
-		{"shop_id": _shop_id, "trade_index": trade_index, "bundles": bundles},
+		{"shop_key": _shop_key, "trade_index": trade_index, "bundles": bundles},
 		InstanceClient.current.name
 	)
 	if result[1] != OK or not result[0].get("ok", false):
