@@ -126,7 +126,7 @@ func _rebuild_left() -> void:
 
 	_left_list.add_child(HSeparator.new())
 	_left_list.add_child(_make_left_action("+  Create guild", _show_create))
-	_left_list.add_child(_make_left_action("🔍  Browse", _show_browse))
+	_left_list.add_child(_make_left_action("Browse", _show_browse))
 
 	# Touch/mouse drag-to-scroll for the joined-guilds list.
 	DragScroll.enable(_left_list.get_parent() as ScrollContainer)
@@ -327,7 +327,7 @@ func _view_profile(parent: Node) -> void:
 
 	box.add_child(_make_section_header("Trophies"))
 	var trophies: Label = Label.new()
-	trophies.text = "No trophies yet — earn them through guild feats. (coming soon)"
+	trophies.text = "No trophies yet. Earn them through guild feats. (soon)"
 	trophies.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	trophies.add_theme_color_override(&"font_color", COLOR_MUTED)
 	trophies.add_theme_font_size_override(&"font_size", 12)
@@ -609,11 +609,11 @@ func _refresh_current() -> void:
 ## live; the rest are placeholders that signal the roadmap (see docs/guild.md).
 func _view_more(parent: Node) -> void:
 	var box: VBoxContainer = _padded(parent)
-	box.add_child(_more_entry("🏛  Guild Hall", true, func() -> void: _open_hall_panel()))
-	box.add_child(_more_entry("⚙  Settings", true, func() -> void: _select_section("settings")))
-	box.add_child(_more_entry("🏆  Trophies", false, Callable()))
-	box.add_child(_more_entry("🤝  Allies", false, Callable()))
-	box.add_child(_more_entry("🏝  Island", false, Callable()))
+	box.add_child(_more_entry("Guild Hall", true, func() -> void: _open_hall_panel()))
+	box.add_child(_more_entry("Settings", true, func() -> void: _select_section("settings")))
+	box.add_child(_more_entry("Trophies", false, Callable()))
+	box.add_child(_more_entry("Allies", false, Callable()))
+	box.add_child(_more_entry("Island", false, Callable()))
 
 	box.add_child(HSeparator.new())
 	if bool(_guild.get("is_leader", false)):
@@ -625,7 +625,7 @@ func _view_more(parent: Node) -> void:
 		box.add_child(leader_note)
 	else:
 		var leave: Button = Button.new()
-		leave.text = "🚪  Leave guild"
+		leave.text = "Leave guild"
 		leave.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		leave.custom_minimum_size = Vector2(0, 42)
 		leave.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -692,7 +692,7 @@ func _open_hall_panel() -> void:
 	var header: HBoxContainer = HBoxContainer.new()
 	box.add_child(header)
 	var title: Label = Label.new()
-	title.text = "🏛  Guild Hall"
+	title.text = "Guild Hall"
 	title.add_theme_font_size_override(&"font_size", 20)
 	title.add_theme_color_override(&"font_color", COLOR_GOLD)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL

@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1781544805
-next_id = 23
+version = 1782676112
+next_id = 29
 entries = Array[Dictionary]([{
 &"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
 &"id": 12,
@@ -23,30 +23,40 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/overload.tres",
 &"slug": &"overload"
 }, {
-&"hash": "4585696f5d99b404a6531137fb435fab1c8d98c7abbb7189c49a01fc9006d414",
+&"hash": "5d9981038811e0b3272d7c7a29a83ea157815447972f9709b5076a61df00f064",
 &"id": 1,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_bolt.tres",
 &"slug": &"wand_bolt"
 }, {
-&"hash": "8e941caeb8a0b4348b774ca7627b010009b4286c133a3ac92e50807fafe1a144",
+&"hash": "11fd53add6a72c5fbcb5a5c98a0f184400482134428ab53f2500dc7bd85a040e",
 &"id": 2,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres",
 &"slug": &"wand_heal"
 }, {
-&"hash": "49d36ee71f08eb10ded225fcdf8192cefe45379984e08f6dec90c2f817559a02",
+&"hash": "40ce4797485a71d959937f1ecbd39fd1be1dc8838db138d04ac7e89a401143a2",
 &"id": 20,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura.tres",
 &"slug": &"hammer_aura"
 }, {
-&"hash": "b41ac2b510dae5e6b6a78e665ed13b8632a72d31ce33cf36f484310230e06686",
+&"hash": "241349a4034afc375e8c5a4e65ea14b55640728c10bfa1dda61030bb8a2c73df",
 &"id": 21,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_2.tres",
 &"slug": &"hammer_aura_2"
 }, {
-&"hash": "c983965258a8d7d09116f2ab8872e8a5608ab2b97cc41e5005328c994645dc1b",
+&"hash": "c6b1a7aa128ffaf6aaada07330a5a5b34594ff0a06cbaca716770837d45f4e9f",
 &"id": 22,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_3.tres",
 &"slug": &"hammer_aura_3"
+}, {
+&"hash": "79863aee4d2b0a9a63677e4c2ab42068878f338ef24280b457ea40939f72b58c",
+&"id": 23,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_4.tres",
+&"slug": &"hammer_aura_4"
+}, {
+&"hash": "478c302ba8c31666ac9ad8678ad5fc40beff829fe2dfea97e425a07b7585dd5d",
+&"id": 24,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/recall.tres",
+&"slug": &"recall"
 }, {
 &"hash": "979e3836ded66f65dff84541b04e51ec96b65c3d6475bdcb4466181d9dc1a6b9",
 &"id": 15,
@@ -58,7 +68,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres",
 &"slug": &"bow_multishot"
 }, {
-&"hash": "b1c350aacfab9fc49977a261f28b3b8ec93dbf087198f877ea357a9823785a51",
+&"hash": "27c977ac18c3c720ab6210960419be539a6fafed10b83cebce718a1cc0487ff8",
 &"id": 4,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_shot.tres",
 &"slug": &"bow_shot"
@@ -68,32 +78,52 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/venom_shot.tres",
 &"slug": &"venom_shot"
 }, {
+&"hash": "7a48507bd773d6e6500c261cc80575d30f6b9aff070623f87dce01cde1c27481",
+&"id": 26,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/guard/last_stand.tres",
+&"slug": &"last_stand"
+}, {
+&"hash": "ea044e72919b871d3f355cce704506bcd09309aef4456eb134aa9ab45b8bdbd8",
+&"id": 27,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/guard/last_stand_2.tres",
+&"slug": &"last_stand_2"
+}, {
+&"hash": "e1e8bf15cd4614a2905c03bd94233a5ab7b28a9d7f9f006d781f795572ddb5db",
+&"id": 28,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/guard/last_stand_3.tres",
+&"slug": &"last_stand_3"
+}, {
 &"hash": "cd6704e6a8f234533bda6a8fd46369b28bc356f6571abe1af29c28a5990e86eb",
 &"id": 17,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/bladestorm.tres",
 &"slug": &"bladestorm"
+}, {
+&"hash": "b9c64ec2cd44af28cf5248e70e9a663b59672c4bd6ca46ce677e4213edc492f2",
+&"id": 25,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/cataclysm.tres",
+&"slug": &"cataclysm"
 }, {
 &"hash": "fb78dc6a2e0b0e86c5bb7abbfa77b6521cf7dcbda97fd9b92182cc7c94e11b80",
 &"id": 14,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crippling_strike.tres",
 &"slug": &"crippling_strike"
 }, {
-&"hash": "ad636b7cd4cc446a0a95ff9fd59bd72e3be92c3bf266cc3153e5f52c75ffa91c",
+&"hash": "2e32953d09c1f0869962ae2fdd1db6182e5a060d4729565bdaaebac84723dead",
 &"id": 11,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres",
 &"slug": &"crushing_blow"
 }, {
-&"hash": "9c34ec734ad78015b64767d8538dcd367524e80410deba9d6e52542141b7b8e3",
+&"hash": "91fd15ef276fd4640e8e6a7ed0f21d8d4123fcd6f828f1db1ba1c8b81c07bb7e",
 &"id": 18,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/earthshatter.tres",
 &"slug": &"earthshatter"
 }, {
-&"hash": "1ba82a429e5f41dd7436d2527d7b82f4ed9a2ea081a7899e53bd257faa207493",
+&"hash": "dd946d75d58bf23c2c69212b3626b53fc52ae855f773251f76a09c17df3a5f5f",
 &"id": 5,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/hammer_slam.tres",
 &"slug": &"hammer_slam"
 }, {
-&"hash": "d6eec44c656cb1b601115cdcaab6f92beef2d30736a8ecdf0025146910562879",
+&"hash": "88df4a9f1bcd03ed5b68845bb9a16149085f19b098e7272d7a6c9f4ed62af2ce",
 &"id": 19,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/shockwave.tres",
 &"slug": &"shockwave"

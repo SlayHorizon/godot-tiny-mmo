@@ -18,7 +18,7 @@ region = Rect2(0, 0, 16, 48)
 [resource]
 script = ExtResource("4_5osyi")
 category = &"sword"
-capacity = 3
+capacity = 4
 right_hand_scene = ExtResource("3_6ocd1")
 slot = ExtResource("5_quip8")
 required_level = 10

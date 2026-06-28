@@ -48,6 +48,17 @@ func use_ability(user: Entity, _direction: Vector2) -> void:
 	caster.add_child(channel)
 
 
+## Channel length + per-second mana drain (the real cost — mana_cost stays 0 for
+## channels, so the panel's mana line never fires; this fills that gap). Subclasses
+## prepend their own effect line (heal/tick, …) then chain super().
+func extra_stat_lines() -> PackedStringArray:
+	var lines: PackedStringArray = PackedStringArray()
+	lines.append("%ss channel" % fmt_num(channel_duration_s))
+	if mana_per_tick > 0.0:
+		lines.append("%s mana/s" % fmt_num(mana_per_tick / tick_interval_s))
+	return lines
+
+
 ## Per-tick effect (server-only). Override to heal allies, drain a resource, etc.
 func channel_tick(_caster: Character) -> void:
 	pass

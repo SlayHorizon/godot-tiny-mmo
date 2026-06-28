@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_gemjq")
 content_name = &"items"
-version = 1782547113
+version = 1782676120
 next_id = 87
 entries = Array[Dictionary]([{
 &"hash": "6a28882d527672ef69cabf897a4baf390b4f2cbb700277112bbf0e07f9c6a05e",
@@ -293,7 +293,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/bow/arrow.tscn",
 &"slug": &"arrow"
 }, {
-&"hash": "b4567d21137c7bc08f47484803b6700f8753cdbca186ee73c6c9ed12fe097006",
+&"hash": "f872fbc9edea8e78e885adda487d691b82ed1e99a8d488053f25ce1ba33fec2b",
 &"id": 84,
 &"path": "res://source/common/gameplay/items/weapons/bow/bone_bow.item.tres",
 &"slug": &"bone_bow.item"
@@ -308,7 +308,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/bow/rustic_bow.item.tres",
 &"slug": &"rustic_bow.item"
 }, {
-&"hash": "6d098d6de96652ecffcd2f8c802f0555d21e2527e57f28412378105b43e345ee",
+&"hash": "d990d76822850a10980bfc627e7c286e9552b2d925ee0cab4e39eb039af00401",
 &"id": 5,
 &"path": "res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres",
 &"slug": &"wooden_bow.item"
@@ -343,7 +343,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/items/weapons/hammer/hammer_bone.item.tres",
 &"slug": &"hammer_bone.item"
 }, {
-&"hash": "7cce93ff3dd1e1a274b5cf0d8f84aa3056b5efb47596a3da13dd6a19b4f21d4b",
+&"hash": "845da8cb4ab668a0627c2de13eacffa60df2faf26038194925b1d3fc4c0c4c5f",
 &"id": 77,
 &"path": "res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres",
 &"slug": &"hammer_fire.item"

@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3 uid="uid://b2lg7cppdgh6i"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
-[ext_resource type="Script" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
-[ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_spin.tres" id="4_spin"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crippling_strike.tres" id="5_cripple"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/bladestorm.tres" id="6_storm"]
+[ext_resource type="Script" uid="uid://cx1btl22f4mft" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" uid="uid://dmdvxcrsmfmo2" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" uid="uid://dydqgila3yro1" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_spin.tres" id="4_spin"]
+[ext_resource type="Resource" uid="uid://41sliav2wm8r" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crippling_strike.tres" id="5_cripple"]
+[ext_resource type="Resource" uid="uid://bo4c63oa2w21k" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/bladestorm.tres" id="6_storm"]
 
 [sub_resource type="Resource" id="Node_spin"]
 script = ExtResource("2_node")
@@ -13,28 +13,27 @@ id = &"sword_spin"
 node_name = "Spin Attack"
 description = "A whirling strike that hits everyone around you. Mount it in your sword's special slot."
 branch = &"domination"
-tier = 1
 ability = ExtResource("4_spin")
 
 [sub_resource type="Resource" id="Node_cripple"]
 script = ExtResource("2_node")
 id = &"sword_cripple"
-upgrades = &"sword_spin"
 node_name = "Crippling Strike"
 description = "A vicious strike that slows the target for 2 seconds. The game's first crowd-control tool. Weight 2."
 branch = &"domination"
 tier = 2
 ability = ExtResource("5_cripple")
+upgrades = &"sword_spin"
 
 [sub_resource type="Resource" id="Node_storm"]
 script = ExtResource("2_node")
 id = &"sword_bladestorm"
-upgrades = &"sword_cripple"
 node_name = "Bladestorm"
 description = "An explosive spinning flurry that devastates everything around you. Weight 3."
 branch = &"domination"
 tier = 3
 ability = ExtResource("6_storm")
+upgrades = &"sword_cripple"
 
 [sub_resource type="Resource" id="Mod_armor_parry"]
 script = ExtResource("3_mod")
@@ -47,12 +46,10 @@ id = &"sword_parry"
 node_name = "Parry Stance"
 description = "+6 armor while wielding a sword."
 branch = &"resolve"
-tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_armor_parry")])
 
 [sub_resource type="Resource" id="Mod_hp_vigor"]
 script = ExtResource("3_mod")
-stat_name = "health_max"
 value = 20.0
 
 [sub_resource type="Resource" id="Node_vigor"]
@@ -75,7 +72,6 @@ id = &"sword_tempo"
 node_name = "Duelist's Tempo"
 description = "+8 ability haste while wielding a sword. Faster swings and shorter cooldowns."
 branch = &"inspiration"
-tier = 1
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_haste_tempo")])
 
 [resource]

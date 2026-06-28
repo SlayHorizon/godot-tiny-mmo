@@ -67,6 +67,36 @@ static func _on_channel_start(payload: Dictionary) -> void:
 			weapon.set_channeling_pose(true)
 
 
+## A nearby player raised their guard (Last Stand) — flash the shield VFX on them
+## (every client, so you read allies/enemies popping a defensive too). The buff
+## itself is server-authoritative; this is purely the visual.
+static func _on_guard_cast(payload: Dictionary) -> void:
+	if current == null:
+		return
+	var player: Player = current.players_by_peer_id.get(int(payload.get("p", 0)), null)
+	if player == null:
+		return
+	# Persistent floor aura for the whole buff (the honest "I'm guarding" tell).
+	var aura: GuardAura = GuardAura.new()
+	aura.duration = float(payload.get("d", 6.0))
+	player.add_child(aura)
+	# Brief shield flash on cast (the dramatic moment; a one-shot, not a bubble).
+	var fx_path: String = String(payload.get("fx", ""))
+	if fx_path.is_empty():
+		return
+	var frames: SpriteFrames = ResourceLoader.load(fx_path) as SpriteFrames
+	if frames == null:
+		return
+	var sc: float = float(payload.get("sc", 0.7))
+	SpriteEffect.spawn(player, frames, {
+		"scale": Vector2(sc, sc),
+		"modulate": payload.get("mod", Color.WHITE),
+		"offset": Vector2(0.0, -6.0),
+		"z_index": 1,
+		"saturation": float(payload.get("sat", 1.0)),
+	})
+
+
 ## Channel ended (completed, cancelled, caster died) — drop the aura.
 static func _on_channel_end(payload: Dictionary) -> void:
 	if current == null:
@@ -117,6 +147,7 @@ func _ready() -> void:
 		Client.subscribe(&"combat.hit", _on_combat_hit_static)
 		Client.subscribe(&"channel.start", _on_channel_start)
 		Client.subscribe(&"channel.end", _on_channel_end)
+		Client.subscribe(&"guard.cast", _on_guard_cast)
 		Client.subscribe(&"dungeon.room", _on_dungeon_room)
 		Client.subscribe(&"dungeon.left", _on_dungeon_left)
 		_subscribed = true

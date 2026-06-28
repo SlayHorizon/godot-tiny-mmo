@@ -2,19 +2,24 @@
 
 [ext_resource type="Script" uid="uid://01sxrebcprpu" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/melee_swing_ability.gd" id="1_swing"]
 [ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="2_arc"]
+[ext_resource type="Texture2D" uid="uid://c4tyu3a68kwkd" path="res://assets/sprites/ui/ability_icons/earthshatter.png" id="3_icon"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/combat/vfx/sky_hammer.tres" id="4_vfx"]
 
 [resource]
 script = ExtResource("1_swing")
 arc_scene = ExtResource("2_arc")
 ad_ratio = 2.2
+impact_vfx = ExtResource("4_vfx")
+impact_vfx_scale = 1.4
 slow_amount = 20.0
 slow_duration_s = 1.5
-arc_radius = 50.0
+arc_radius = 68.0
 name = "Earthshatter"
+icon = ExtResource("3_icon")
 cooldown = 16.0
 mana_cost = 36
 impact_shake = 0.95
-impact_reach = 50.0
+impact_reach = 68.0
 impact_particles = 28
 impact_color = Color(1, 0.45, 0.25, 0.9)
 impact_rings = 3

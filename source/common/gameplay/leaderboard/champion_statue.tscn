@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" uid="uid://6bcg7fwcl6mi" path="res://source/common/gameplay/characters/character.tscn" id="1_base"]
+[ext_resource type="Script" path="res://source/common/gameplay/leaderboard/champion_statue.gd" id="2_script"]
+
+[node name="ChampionStatue" instance=ExtResource("1_base")]
+script = ExtResource("2_script")

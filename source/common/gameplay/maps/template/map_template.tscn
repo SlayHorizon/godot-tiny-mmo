@@ -10,6 +10,7 @@ script = ExtResource("1_4ckjo")
 replicated_props_container = NodePath("ReplicatedPropsContainer")
 
 [node name="Ground" type="TileMapLayer" parent="."]
+z_index = -10
 tile_set = ExtResource("2_r6dc5")
 
 [node name="Wall" type="TileMapLayer" parent="."]

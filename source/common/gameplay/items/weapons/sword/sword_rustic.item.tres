@@ -18,7 +18,7 @@ region = Rect2(0, 0, 16, 64)
 [resource]
 script = ExtResource("4_gevim")
 category = &"sword"
-capacity = 2
+capacity = 3
 right_hand_scene = ExtResource("3_sgh8v")
 slot = ExtResource("5_vucvx")
 required_level = 5

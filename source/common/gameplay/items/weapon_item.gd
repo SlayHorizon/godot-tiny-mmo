@@ -8,7 +8,7 @@ extends GearItem
 @export var category: StringName
 ## Max ability weight (= node tier) the special slot accepts — the gear half
 ## of the mastery system: higher-tier weapons channel heavier abilities.
-@export_range(1, 3) var capacity: int = 1
+@export_range(1, 5) var capacity: int = 1
 
 @export var right_hand_scene: PackedScene
 

@@ -25,6 +25,7 @@ region = Rect2(80, 128, 16, 32)
 [resource]
 script = ExtResource("4_yrgi7")
 category = &"bow"
+capacity = 2
 right_hand_scene = ExtResource("3_2v2rc")
 slot = ExtResource("5_0n47l")
 required_level = 5

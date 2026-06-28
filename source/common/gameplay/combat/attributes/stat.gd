@@ -33,6 +33,11 @@ const CRIT_CHANCE: StringName = &"crit_chance"
 const CRIT_DAMAGE: StringName = &"crit_damage"
 const ABILITY_HASTE: StringName = &"ability_haste"
 
+## Conditional damage amp (%): extra damage dealt to targets below a low-HP
+## threshold (mastery "Executioner" passive). Read at melee-hit time; 0 for anyone
+## without the passive, so it's inert by default. See MeleeArc.
+const DAMAGE_VS_LOW_HP: StringName = &"damage_vs_low_hp"
+
 
 ## Player-facing labels for stats shown in tooltips. Anything not listed falls back
 ## to a capitalized form of the raw key.
@@ -50,8 +55,16 @@ const DISPLAY_NAMES: Dictionary = {
 	CRIT_CHANCE: "Crit Chance",
 	CRIT_DAMAGE: "Crit Damage",
 	ABILITY_HASTE: "Ability Haste",
+	DAMAGE_VS_LOW_HP: "Damage vs Low HP",
 }
+
+## Stats whose value reads as a percentage in UI (rendered "+25%" not "+25").
+const PERCENT_STATS: Array[StringName] = [DAMAGE_VS_LOW_HP]
 
 
 static func display_name(stat_name: StringName) -> String:
 	return DISPLAY_NAMES.get(stat_name, String(stat_name).capitalize())
+
+
+static func is_percent(stat_name: StringName) -> bool:
+	return PERCENT_STATS.has(stat_name)

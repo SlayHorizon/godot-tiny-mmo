@@ -23,10 +23,10 @@ var _interactable_hovered: bool = false
 
 func _ready() -> void:
 	_apply_resource()
+	# Friendly NPCs never take damage — keep their bar off and out of the auto-hide path.
+	health_bar_auto_hide = false
 	super._ready() # Character setup (animations, sync, etc.)
-	# Friendly NPCs never take damage — hide the health bar Character wires up.
-	if has_node(^"ProgressBar"):
-		($ProgressBar as CanvasItem).hide()
+	progress_bar.hide()
 	if npc_resource == null:
 		return
 
@@ -128,6 +128,7 @@ func _sprite_size() -> Vector2:
 
 func _on_clicked() -> void:
 	if _player_in_range():
+		_face_local_player()
 		_open_interactions()
 	else:
 		# A too-far tap shouldn't be a silent no-op, so nudge the player closer.
@@ -143,6 +144,15 @@ func _player_in_range() -> bool:
 	if lp == null or not is_instance_valid(lp):
 		return false
 	return global_position.distance_to(lp.global_position) <= INTERACT_RANGE
+
+
+## Client-only cosmetic: flip the (2-direction) NPC sprite to face the local player when
+## talked to. Sprites default to facing right; flip when the player stands to our left.
+func _face_local_player() -> void:
+	var lp: LocalPlayer = ClientState.local_player
+	if lp == null or not is_instance_valid(lp) or animated_sprite == null:
+		return
+	animated_sprite.flip_h = lp.global_position.x < global_position.x
 
 
 func _open_interactions() -> void:

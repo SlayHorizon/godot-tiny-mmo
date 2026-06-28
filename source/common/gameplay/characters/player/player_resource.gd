@@ -286,8 +286,9 @@ func add_skill_xp(skill_name: StringName, amount: int) -> Dictionary:
 
 ## Baseline xp to advance a weapon-mastery level (scales linearly, like skills).
 const MASTERY_XP_BASE: int = 150
-## 1 mastery point per level, so the cap is also the full point budget — tree
-## content is sized so total node cost == cap (see docs/mastery.md).
+## Max mastery level per weapon category. Combined with MasteryService
+## POINTS_PER_LEVEL (2) this sets the point budget (20). Tree content now exceeds
+## the budget on purpose — you specialize, you don't own everything (docs/mastery.md).
 const MASTERY_LEVEL_CAP: int = 10
 
 

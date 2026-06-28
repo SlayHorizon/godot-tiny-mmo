@@ -20,7 +20,6 @@ metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 
 [resource]
 script = ExtResource("4_gsvox")
-npc_id = 111
 npc_name = "Bonecarver"
 skin = ExtResource("5_rdenb")
 greeting = "Don't flinch. You'll wear this face too, you keep dying like you mean it or like [i]they[/i] mean it. I went out past counting and came back… economical. Bone's honest, at least. Buy something."

@@ -13,6 +13,10 @@ extends Area2D
 ## walks in during its life. The shape query is what lets a swing hit a STILL
 ## target (a territory flag, a motionless mob) that enter-events miss.
 
+## A target at/below this fraction of max HP counts as "low" for the wielder's
+## Executioner mastery passive (DAMAGE_VS_LOW_HP amp).
+const LOW_HP_THRESHOLD: float = 0.35
+
 @export var lifetime: float = 0.18
 
 var source: Character
@@ -57,10 +61,31 @@ func _on_body_entered(body: Node2D) -> void:
 	if _hit_bodies.has(body):
 		return
 	_hit_bodies.append(body)
-	var result: CombatHit.Result = CombatHit.try_damage(source if source is Character else null, body, damage)
-	# Slow rides a LANDED hit on a Player only. `body` may be a HurtBox area — resolve to its
-	# owner for the type check (the first negative status buff, via the same BuffService potions use).
+	# `body` may be a HurtBox area — resolve to its owner Character for HP / type checks.
+	var struck: Node = (body as HurtBox).character if body is HurtBox else body
+	var dealt: float = damage * _execute_multiplier(struck)
+	var result: CombatHit.Result = CombatHit.try_damage(source if source is Character else null, body, dealt)
+	# Slow rides a LANDED hit on a Player only (the first negative status buff, via
+	# the same BuffService potions use).
 	if result == CombatHit.Result.DAMAGED and slow_amount > 0.0 and slow_duration_s > 0.0:
-		var struck: Node = (body as HurtBox).character if body is HurtBox else body
 		if struck is Player:
 			BuffService.apply(struck as Player, Stat.MOVE_SPEED, -slow_amount, slow_duration_s)
+
+
+## Executioner mastery passive: the wielder's DAMAGE_VS_LOW_HP stat (%) amplifies
+## damage to targets at/below [constant LOW_HP_THRESHOLD] of max HP. Returns 1.0
+## (no change) for anyone without the passive — the stat is 0 by default — so this
+## is a cheap no-op on every other hit in the game.
+func _execute_multiplier(struck: Node) -> float:
+	if not is_instance_valid(source):
+		return 1.0
+	var amp: float = source.stats_component.get_stat(Stat.DAMAGE_VS_LOW_HP)
+	if amp <= 0.0 or struck is not Character:
+		return 1.0
+	var target: Character = struck as Character
+	var max_hp: float = target.stats_component.get_stat(Stat.HEALTH_MAX)
+	if max_hp <= 0.0:
+		return 1.0
+	if target.stats_component.get_stat(Stat.HEALTH) / max_hp <= LOW_HP_THRESHOLD:
+		return 1.0 + amp / 100.0
+	return 1.0

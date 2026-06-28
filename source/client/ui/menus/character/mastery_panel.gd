@@ -275,7 +275,7 @@ func _node_display_name(node_id: String) -> String:
 	if tree != null:
 		var node: MasteryNode = tree.get_node_by_id(StringName(node_id))
 		if node != null:
-			return node.node_name
+			return node.display_name()
 	return node_id
 
 

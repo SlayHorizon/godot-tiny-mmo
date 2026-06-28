@@ -49,6 +49,13 @@ static func try_damage(source: Character, body: Node2D, damage: float, damage_ty
 	if body is not Character:
 		return Result.BLOCKED
 
+	# Only a hostile mob or another player is a valid combatant. Friendly NPCs (shops, quest
+	# givers, trainers) + champion statues + any other Character are non-combatants — the hit
+	# passes through them. Without this a player one-shots a shopkeeper into a "dead but still
+	# standing" state (is_dead latches, die() is a base no-op), and no later hit registers.
+	if body is not HostileNpc and body is not Player:
+		return Result.IGNORED
+
 	# No NPC-vs-NPC friendly fire (until proper teams exist).
 	if source is not Player and body is not Player:
 		return Result.IGNORED

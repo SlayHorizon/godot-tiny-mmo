@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://b64q6sv46brpr"]
 
-[ext_resource type="Texture2D" uid="uid://bl4x3jlsvt3jq" path="res://assets/sprites/items/weapons/bone/bone.png" id="2_j03do"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_j03do"]
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_10omy"]
 [ext_resource type="PackedScene" uid="uid://e6kqwoh5tlxp" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn" id="4_x4sqe"]
 [ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="5_ts60e"]
@@ -28,7 +28,7 @@ category = &"bow"
 right_hand_scene = ExtResource("4_x4sqe")
 slot = ExtResource("6_j3qvs")
 base_modifiers = Array[ExtResource("3_10omy")]([SubResource("Resource_ibcoj"), SubResource("Mod_ad_bow")])
-item_name = &"Bone Bow"
+item_name = &"Wooden Bow"
 item_icon = SubResource("AtlasTexture_ibcoj")
 description = "A plain wooden bow. Draw to charge, loose to fire."
 can_trade = true

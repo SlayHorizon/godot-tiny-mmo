@@ -1,12 +1,12 @@
 extends Control
-## Right-side HUD menu launcher: a Genshin-style GRID of menu tiles (icon above label), built in code
+## Left-side HUD menu launcher: a Genshin-style GRID of menu tiles (icon above label), built in code
 ## and routed through ClientState signals so it stays decoupled from the HUD script. A dim backdrop
 ## catches click-away taps. Opens/closes with a slide + fade (see open/close).
 ##
 ## SCALES by design — a 4-wide tile grid holds many menus where the old vertical text list ran out of
 ## height, and a ScrollContainer absorbs overflow. To ADD a menu: an entry below (label + the menu
 ## folder under ui/menus/) + its menu scene, and drop a `<label>.png` (lowercased) into
-## assets/sprites/ui/menu_icons/ — it auto-loads as the tile icon (see _make_tile). No PNG = label-only.
+## assets/sprites/ui/menu_icons_shadow/32px/ — it auto-loads as the tile icon (see _make_tile). No PNG = label-only.
 
 ## All launcher tiles in ONE ordered list, GROUPED into rows of 4 by category (You / Social / World /
 ## Other) so each grid row reads as one category. Each entry: a label, and the menu folder under
@@ -40,16 +40,16 @@ const MENU_ENTRIES: Array[Dictionary] = [
 ## Tiles per row — 4, Genshin-style. Tiles are sized for TOUCH (mobile).
 const GRID_COLUMNS: int = 4
 
-## Icon style folder — flip between the flat and drop-shadow sets (both kept in-project) by changing
-## this one line: "res://assets/sprites/ui/menu_icons/" (flat) or ".../menu_icons_shadow/" (shadow).
-const ICON_DIR: String = "res://assets/sprites/ui/menu_icons_shadow/"
+## Icon folder — the 32px drop-shadow tile set. (The flat menu_icons/ set was removed; the
+## smaller 16px glyphs used elsewhere, e.g. the chat toggle, live in ../16px/.)
+const ICON_DIR: String = "res://assets/sprites/ui/menu_icons_shadow/32px/"
 
-## Right-dock geometry (px from the screen's right edge). Full-height panel flush to top/right/bottom
-## (mirrors the left-docked chat); slides in from PANEL_SLIDE further right while fading. Wide enough that
-## 4 columns give bigger ~square tiles with room for long labels.
-const PANEL_OFFSET_LEFT: float = -456.0
-const PANEL_OFFSET_RIGHT: float = 0.0
-const PANEL_SLIDE: float = 48.0
+## Left-dock geometry (px from the screen's left edge, mirroring the chat — the launcher opens on the
+## same side as its rail button). Full-height panel flush to top/left/bottom; slides in from PANEL_SLIDE
+## further left while fading. Wide enough that 4 columns give bigger ~square tiles with room for labels.
+const PANEL_OFFSET_LEFT: float = 0.0
+const PANEL_OFFSET_RIGHT: float = 456.0
+const PANEL_SLIDE: float = -48.0
 
 var _panel: Control
 var _tween: Tween
@@ -81,8 +81,8 @@ func _build() -> void:
 
 	# Right-docked, full-height side panel (no floating card) so it reads consistently with the chat.
 	_panel = Control.new()
-	_panel.anchor_left = 1.0
-	_panel.anchor_right = 1.0
+	_panel.anchor_left = 0.0
+	_panel.anchor_right = 0.0
 	_panel.anchor_top = 0.0
 	_panel.anchor_bottom = 1.0
 	_panel.offset_left = PANEL_OFFSET_LEFT
@@ -91,16 +91,16 @@ func _build() -> void:
 	_panel.offset_bottom = 0.0
 	add_child(_panel)
 
-	# Full-bleed backdrop: dark + opaque anchored at the RIGHT (screen) edge, fading lighter and more
-	# transparent toward the centre where the panel meets empty screen. Mirrors the chat on the opposite
+	# Full-bleed backdrop: dark + opaque anchored at the LEFT (screen) edge, fading lighter and more
+	# transparent toward the centre where the panel meets empty screen. Mirrors the chat on the same
 	# side. LINEAR-filtered (a smooth gradient, not pixel art; icons keep the project's NEAREST default).
 	var grad: Gradient = Gradient.new()
 	grad.offsets = PackedFloat32Array([0.0, 1.0])
 	grad.colors = PackedColorArray([Color(0.07, 0.075, 0.09, 0.95), Color(0.13, 0.14, 0.16, 0.35)])
 	var grad_tex: GradientTexture2D = GradientTexture2D.new()
 	grad_tex.gradient = grad
-	grad_tex.fill_from = Vector2(1.0, 0.5)
-	grad_tex.fill_to = Vector2(0.0, 0.5)
+	grad_tex.fill_from = Vector2(0.0, 0.5)
+	grad_tex.fill_to = Vector2(1.0, 0.5)
 	var grad_rect: TextureRect = TextureRect.new()
 	grad_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	grad_rect.texture = grad_tex

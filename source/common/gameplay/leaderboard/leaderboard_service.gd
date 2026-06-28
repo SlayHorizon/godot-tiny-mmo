@@ -278,3 +278,54 @@ static func _top_n_guild(world_server: Node, board: String, limit: int) -> Array
 		})
 	scored.sort_custom(func(a, b): return a["score"] > b["score"])
 	return scored.slice(0, limit)
+
+
+# --- Server-side: in-world champion statues ---
+
+## Boards the plaza statues display (all-time totals). Each ChampionStatue picks its board
+## from its own @export category; this is just the set we resolve + cache.
+const STATUE_BOARDS: Array[String] = ["pve_total", "pvp_total", "level"]
+## Cache so 100 players walking into the plaza don't each re-rank the whole roster + hit the
+## DB for skins. Per-process (per-world), refreshed on a short TTL.
+const STATUE_CACHE_TTL_MS: int = 30000
+static var _statue_cache: Dictionary = {}
+static var _statue_cache_ms: int = 0
+
+
+## Top-1 of each statue board with the leader's skin: { board: {name, score, skin_id} }.
+## The ONLY place skin_id rides with leaderboard data — kept off the leaderboard.top menu
+## path on purpose. Cached; pulled once by the statue plaza on area-enter. Offline-safe.
+static func champions(world_server: Node) -> Dictionary:
+	var now: int = Time.get_ticks_msec()
+	if not _statue_cache.is_empty() and now - _statue_cache_ms < STATUE_CACHE_TTL_MS:
+		return _statue_cache
+	var out: Dictionary = {}
+	for board: String in STATUE_BOARDS:
+		var top: Array = top_n(world_server, board, 1)
+		if top.is_empty():
+			continue
+		var entry: Dictionary = top[0]
+		out[board] = {
+			"id": int(entry["id"]), # player_id — for the statue's click-to-profile
+			"name": entry["name"],
+			"score": entry["score"],
+			"skin_id": _skin_id_for(world_server, int(entry["id"])),
+		}
+	_statue_cache = out
+	_statue_cache_ms = now
+	return out
+
+
+## A player's equipped skin_id — live in-memory if online, else the persisted players.skin_id
+## column (so a champion's statue still shows their look while they're offline).
+static func _skin_id_for(world_server: Node, player_id: int) -> int:
+	for peer_id: int in world_server.connected_players:
+		var p: PlayerResource = world_server.connected_players[peer_id]
+		if p != null and p.player_id == player_id:
+			return p.skin_id
+	if world_server.database == null or world_server.database.store == null:
+		return 1
+	var db = world_server.database.store.db
+	db.query("SELECT skin_id FROM players WHERE player_id = %d;" % player_id)
+	var rows: Array = db.query_result
+	return int(rows[0].get("skin_id", 1)) if not rows.is_empty() else 1

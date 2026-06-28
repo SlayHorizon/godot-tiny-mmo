@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://gq7qvwoyrijf"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_nxbkg"]
-[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="2_rsxgv"]
+[ext_resource type="Texture2D" uid="uid://bl4x3jlsvt3jq" path="res://assets/sprites/items/weapons/bone/bone.png" id="2_nxbkg"]
 [ext_resource type="PackedScene" uid="uid://e6kqwoh5tlxp" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn" id="3_44gs4"]
 [ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_7q31o"]
 [ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_13ws6"]
@@ -18,8 +18,8 @@ stat_name = "ad"
 value = 5.0
 metadata/_custom_type_script = "uid://cvggwjkht4km4"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ibcoj"]
-atlas = ExtResource("2_rsxgv")
+[sub_resource type="AtlasTexture" id="AtlasTexture_rsxgv"]
+atlas = ExtResource("2_nxbkg")
 region = Rect2(48, 48, 16, 32)
 
 [resource]
@@ -28,8 +28,8 @@ category = &"bow"
 right_hand_scene = ExtResource("3_44gs4")
 slot = ExtResource("5_13ws6")
 base_modifiers = Array[ExtResource("1_nxbkg")]([SubResource("Resource_ibcoj"), SubResource("Mod_ad_bow")])
-item_name = &"Bow"
-item_icon = SubResource("AtlasTexture_ibcoj")
+item_name = &"Bone Bow"
+item_icon = SubResource("AtlasTexture_rsxgv")
 description = "A plain wooden bow. Draw to charge, loose to fire."
 can_trade = true
 can_sell = true

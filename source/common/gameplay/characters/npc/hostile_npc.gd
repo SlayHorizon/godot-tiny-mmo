@@ -210,16 +210,14 @@ func _apply_enemy_data() -> void:
 		# A big sprite swallows the head-bar — lift it clear of the enlarged sprite
 		# and scale it up so a boss reads as a boss. Scale around the bar's own
 		# centre so it stays horizontally centred over the mob.
-		if has_node(^"ProgressBar"):
-			var bar: Control = $ProgressBar
-			var lift: float = 55.0 * (enemy_data.visual_scale - 1.0)
-			bar.offset_top -= lift
-			bar.offset_bottom -= lift
-			bar.pivot_offset = Vector2(
-				(bar.offset_right - bar.offset_left) * 0.5,
-				(bar.offset_bottom - bar.offset_top) * 0.5
-			)
-			bar.scale = Vector2.ONE * enemy_data.visual_scale
+		var lift: float = 55.0 * (enemy_data.visual_scale - 1.0)
+		progress_bar.offset_top -= lift
+		progress_bar.offset_bottom -= lift
+		progress_bar.pivot_offset = Vector2(
+			(progress_bar.offset_right - progress_bar.offset_left) * 0.5,
+			(progress_bar.offset_bottom - progress_bar.offset_top) * 0.5
+		)
+		progress_bar.scale = Vector2.ONE * enemy_data.visual_scale
 
 var container: ReplicatedPropsContainer
 var enemy_state: EnemyState = EnemyState.IDLE
@@ -317,8 +315,9 @@ func _apply_ally_bar_tint() -> void:
 		return
 	var is_ally: bool = is_instance_valid(ClientState) and ClientState.active_guild_id == owner_guild_id
 	set_health_bar_fill(BAR_COLOR_ALLY if is_ally else BAR_COLOR_HOSTILE)
-	if is_ally and has_node(^"ProgressBar"):
-		($ProgressBar as CanvasItem).show() # ally guards stay visible
+	if is_ally:
+		health_bar_auto_hide = false # ally guards stay visible (not damage-gated)
+		progress_bar.show()
 
 
 ## Server-set: while this timestamp is in the future the body holds position — a
