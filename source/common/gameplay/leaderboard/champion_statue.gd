@@ -8,14 +8,19 @@ extends Character
 
 ## Which board this statue honors; maps to the all-time leaderboard board id.
 @export_enum("pve", "pvp", "level") var category: String = "pve"
+## Which place on that board this statue enshrines (1 = champion, 2/3 = podium, …). Drop several
+## statues sharing a category with ascending rank to build a hall of fame. Capped to the service's
+## STATUE_TOP_N; a rank with no one yet shows "(unclaimed)".
+@export_range(1, 10) var rank: int = 1
 
 const BOARD_BY_CATEGORY: Dictionary = {"pve": "pve_total", "pvp": "pvp_total", "level": "level"}
-const RANK_LABEL: Dictionary = {"pve": "#1 PvE", "pvp": "#1 PvP", "level": "Highest Level"}
+const CATEGORY_LABEL: Dictionary = {"pve": "PvE", "pvp": "PvP", "level": "Level"}
 
 ## player_id of the displayed champion, for the click-to-profile (0 = none yet).
 var _champion_id: int = 0
 var _plaque: Label
 var _hovered: bool = false
+var _fetching: bool = false # dedupes the _ready + local_player_ready double-call into one request
 
 
 func _ready() -> void:
@@ -32,31 +37,45 @@ func _ready() -> void:
 		_refresh()
 
 
-## Pull the cached champions once and apply this statue's category.
+## Pull the cached champions once and apply this statue's (category, rank). The _fetching guard
+## collapses the _ready immediate-call + the local_player_ready signal into a single request.
 func _refresh() -> void:
-	if InstanceClient.current == null:
+	if InstanceClient.current == null or _fetching:
 		return
+	_fetching = true
 	var result: Array = await Client.request_data_await(
 		&"leaderboard.champions", {}, InstanceClient.current.name
 	)
+	# The request can take up to ~5s; if a map switch freed this statue meanwhile, the resumed
+	# coroutine must not touch the node. is_instance_valid works on a freed self; is_inside_tree
+	# would itself error. Guard BEFORE writing any member.
+	if not is_instance_valid(self):
+		return
+	_fetching = false
 	if result[1] != OK:
 		return
 	var champions: Dictionary = (result[0] as Dictionary).get("champions", {})
-	var entry: Dictionary = champions.get(BOARD_BY_CATEGORY.get(category, "pve_total"), {})
-	if entry.is_empty():
+	var ranked: Array = champions.get(BOARD_BY_CATEGORY.get(category, "pve_total"), [])
+	if rank < 1 or rank > ranked.size():
 		_champion_id = 0
-		_plaque.text = "%s\n(unclaimed)" % RANK_LABEL.get(category, "")
+		_plaque.text = "%s\n(unclaimed)" % _rank_label()
 		return
+	var entry: Dictionary = ranked[rank - 1]
 	_champion_id = int(entry.get("id", 0))
 	skin_id = int(entry.get("skin_id", 1)) # Character's setter swaps the sprite
 	if animated_sprite != null and animated_sprite.sprite_frames != null \
 			and animated_sprite.sprite_frames.has_animation(&"idle"):
 		animated_sprite.play(&"idle")
 	_plaque.text = "%s\n%s\n%s" % [
-		RANK_LABEL.get(category, ""),
+		_rank_label(),
 		str(entry.get("name", "?")),
 		_score_line(int(entry.get("score", 0))),
 	]
+
+
+## "#2 PvE" / "#1 Level" — the rank + category line atop the plaque.
+func _rank_label() -> String:
+	return "#%d %s" % [rank, CATEGORY_LABEL.get(category, "")]
 
 
 func _score_line(score: int) -> String:

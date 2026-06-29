@@ -285,32 +285,38 @@ static func _top_n_guild(world_server: Node, board: String, limit: int) -> Array
 ## Boards the plaza statues display (all-time totals). Each ChampionStatue picks its board
 ## from its own @export category; this is just the set we resolve + cache.
 const STATUE_BOARDS: Array[String] = ["pve_total", "pvp_total", "level"]
-## Cache so 100 players walking into the plaza don't each re-rank the whole roster + hit the
-## DB for skins. Per-process (per-world), refreshed on a short TTL.
-const STATUE_CACHE_TTL_MS: int = 30000
+## How deep each board's hall of fame goes — a statue's @export rank (1..N) picks its slot, so
+## this caps how many ranks can be enshrined per board. Ranking already sorts the whole roster
+## either way (top_n), so a bigger N only adds that many skin lookups per board per refresh.
+const STATUE_TOP_N: int = 10
+## Cache so a plaza full of players doesn't each re-rank the whole roster + hit the DB for skins.
+## Per-process (per-world). All-time champions change rarely, so the TTL is generous — the hall of
+## fame may lag a leaderboard change by a few minutes, which is fine for an aspirational board.
+const STATUE_CACHE_TTL_MS: int = 300000 # 5 min
 static var _statue_cache: Dictionary = {}
 static var _statue_cache_ms: int = 0
 
 
-## Top-1 of each statue board with the leader's skin: { board: {name, score, skin_id} }.
-## The ONLY place skin_id rides with leaderboard data — kept off the leaderboard.top menu
-## path on purpose. Cached; pulled once by the statue plaza on area-enter. Offline-safe.
+## Top-N of each statue board, best-first, each entry carrying the player's skin:
+## { board: [ {id, name, score, skin_id}, ... ] }. The ONLY place skin_id rides with leaderboard
+## data — kept off the leaderboard.top menu path on purpose. Cached; pulled by the statue plaza
+## on area-enter. Offline-safe. A statue indexes this by its (category -> board, rank).
 static func champions(world_server: Node) -> Dictionary:
 	var now: int = Time.get_ticks_msec()
 	if not _statue_cache.is_empty() and now - _statue_cache_ms < STATUE_CACHE_TTL_MS:
 		return _statue_cache
 	var out: Dictionary = {}
 	for board: String in STATUE_BOARDS:
-		var top: Array = top_n(world_server, board, 1)
-		if top.is_empty():
-			continue
-		var entry: Dictionary = top[0]
-		out[board] = {
-			"id": int(entry["id"]), # player_id — for the statue's click-to-profile
-			"name": entry["name"],
-			"score": entry["score"],
-			"skin_id": _skin_id_for(world_server, int(entry["id"])),
-		}
+		var ranked: Array = []
+		for entry: Dictionary in top_n(world_server, board, STATUE_TOP_N):
+			ranked.append({
+				"id": int(entry["id"]), # player_id — for the statue's click-to-profile
+				"name": entry["name"],
+				"score": entry["score"],
+				"skin_id": _skin_id_for(world_server, int(entry["id"])),
+			})
+		if not ranked.is_empty():
+			out[board] = ranked
 	_statue_cache = out
 	_statue_cache_ms = now
 	return out
