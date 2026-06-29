@@ -135,7 +135,9 @@ func _on_sparring_match_state(payload: Dictionary) -> void:
 	var pos: Variant = payload.get("position", null)
 	if pos is Vector2 and pos != Vector2.ZERO:
 		global_position = pos
-		_movement_lock_until_ms = Time.get_ticks_msec() + 500
+		# Match START freezes for the whole countdown (3/2/1 must actually hold you on your spawn
+		# until FIGHT!); match END just settles you on the teleport back (500ms default).
+		_movement_lock_until_ms = Time.get_ticks_msec() + int(payload.get("countdown_ms", 500))
 	# Spar-team tinting: remember allies/opponents for the match (cleared on end)
 	# and re-tint everyone in the map so health bars flip immediately.
 	if bool(payload.get("in_match", false)):
@@ -177,6 +179,17 @@ func _on_teleport(payload: Dictionary) -> void:
 var _channeling: bool = false
 ## Safety net so a dropped channel.end can't strand us rooted forever.
 var _channel_until_ms: int = 0
+## A MOBILE channel (a spin) lets us keep moving — slowed to _channel_speed_mult —
+## instead of rooting + cancelling on a move key. Set from the channel.start push.
+var _channel_mobile: bool = false
+var _channel_speed_mult: float = 0.5
+## Grace at the START of a rooted channel during which a held move key does NOT cancel
+## it — you're rooted in place (so you visibly stop and the aura explains itself), with
+## time to release the keys. Without it, activating WHILE running cancels instantly and
+## reads as "the button did nothing". Cancel resumes after the grace if you're still
+## moving.
+const CHANNEL_MOVE_GRACE_MS: int = 850
+var _channel_grace_until_ms: int = 0
 ## Name of the ability WE'RE channeling (empty = none). The ability bar reads
 ## this off the local player — the HUD lives outside the instance's multiplayer
 ## context, so it can't identify "us" via get_unique_id; LocalPlayer can.
@@ -188,6 +201,9 @@ func _on_channel_start(payload: Dictionary) -> void:
 		return # someone else's channel — InstanceClient draws their aura, we don't root
 	_channeling = true
 	channeling_ability_name = String(payload.get("an", ""))
+	_channel_mobile = bool(payload.get("mob", false))
+	_channel_speed_mult = float(payload.get("msm", 0.5))
+	_channel_grace_until_ms = Time.get_ticks_msec() + CHANNEL_MOVE_GRACE_MS
 	_channel_until_ms = Time.get_ticks_msec() + int(float(payload.get("d", 6.0)) * 1000.0) + 750
 
 
@@ -195,6 +211,7 @@ func _on_channel_end(payload: Dictionary) -> void:
 	if int(payload.get("p", -1)) != multiplayer.get_unique_id():
 		return
 	_channeling = false
+	_channel_mobile = false
 	channeling_ability_name = ""
 
 
@@ -325,14 +342,21 @@ func _notify_zone_transition() -> void:
 
 
 func process_movement() -> void:
-	if _dead or _channeling or ClientState.menu_open or Time.get_ticks_msec() < _movement_lock_until_ms:
+	# A ROOTED channel (heal aura) freezes you; a MOBILE channel (spin) lets you
+	# walk, slowed (handled below). Death / menu / movement-lock always freeze.
+	if _dead or ClientState.menu_open or Time.get_ticks_msec() < _movement_lock_until_ms \
+			or (_channeling and not _channel_mobile):
 		velocity = Vector2.ZERO
 		return
 	# Read the server-synced MOVE_SPEED stat so AGILITY (and speed gear) actually
 	# move you faster. Fall back to `speed` until the first stat sync lands so the
 	# player isn't frozen on spawn.
 	var move_speed: float = stats_component.get_stat(Stat.MOVE_SPEED)
-	velocity = input_direction * (move_speed if move_speed > 0.0 else speed)
+	if move_speed <= 0.0:
+		move_speed = speed
+	if _channeling and _channel_mobile:
+		move_speed *= _channel_speed_mult  # spinning slows you
+	velocity = input_direction * move_speed
 	move_and_slide()
 
 
@@ -364,11 +388,18 @@ func process_input() -> void:
 		if Time.get_ticks_msec() > _channel_until_ms:
 			_channeling = false
 			channeling_ability_name = ""
-		elif input_direction != Vector2.ZERO:
-			_cancel_channel()
+		elif not _channel_mobile:
+			# Rooted channel: a move key CANCELS — but only after the start grace, so
+			# activating while running roots you (you stop + see the aura) and gives you
+			# a beat to release the keys instead of cancelling on the held input.
+			if input_direction != Vector2.ZERO and Time.get_ticks_msec() >= _channel_grace_until_ms:
+				_cancel_channel()
+			else:
+				action_input = false
+				return
 		else:
+			# Mobile channel (spin): walk freely (slowed), but no attacking mid-spin.
 			action_input = false
-			return
 
 	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):
@@ -392,8 +423,8 @@ func update_hand_pivot(delta: float) -> void:
 	# Channeling plants you in a fixed stance — the weapon holds its angle rather
 	# than swivelling to the cursor (a planted hammer that still tracked aim would
 	# look wrong). The pose itself is the weapon's set_channeling_pose.
-	if _channeling:
-		return
+	if _channeling and not _channel_mobile:
+		return  # rooted channels plant the weapon; a spin keeps tracking aim
 	var to_flip: int = -1 if flipped else 1
 	var look_angle: float = atan2(look_direction.y, look_direction.x * to_flip)
 	hand_pivot.rotation = lerp_angle(hand_pivot.rotation, look_angle, delta * hand_pivot_speed)

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="DeflectAbility" format=3 uid="uid://dsg5jydw0pv1u"]
+
+[ext_resource type="Script" uid="uid://w6iphinllb7f" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/deflect_ability.gd" id="1_deflect"]
+[ext_resource type="Texture2D" uid="uid://dp3cmepfphe8p" path="res://assets/sprites/ui/ability_icons/deflect_1.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_deflect")
+name = "Deflect"
+icon = ExtResource("2_icon")
+cooldown = 6.0
+metadata/slug = &"sword_deflect"
+metadata/id = 32

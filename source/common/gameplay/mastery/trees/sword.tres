@@ -3,37 +3,69 @@
 [ext_resource type="Script" uid="uid://cx1btl22f4mft" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
 [ext_resource type="Script" uid="uid://dmdvxcrsmfmo2" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
-[ext_resource type="Resource" uid="uid://dydqgila3yro1" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_spin.tres" id="4_spin"]
-[ext_resource type="Resource" uid="uid://41sliav2wm8r" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crippling_strike.tres" id="5_cripple"]
-[ext_resource type="Resource" uid="uid://bo4c63oa2w21k" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/bladestorm.tres" id="6_storm"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/sword_whirlwind.tres" id="4_ww1"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/sword_whirlwind_2.tres" id="5_ww2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/sword_whirlwind_3.tres" id="6_ww3"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_deflect.tres" id="7_df1"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_deflect_2.tres" id="8_df2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/berserk/sword_berserk.tres" id="9_bsk1"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/berserk/sword_berserk_2.tres" id="10_bsk2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/berserk/sword_berserk_3.tres" id="11_bsk3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/bulwark.png" id="12_bulwark"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/haste.png" id="13_haste"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/sword_rally.tres" id="14_rl1"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/sword_rally_2.tres" id="15_rl2"]
 
-[sub_resource type="Resource" id="Node_spin"]
+[sub_resource type="Resource" id="Node_ww1"]
 script = ExtResource("2_node")
-id = &"sword_spin"
-node_name = "Spin Attack"
-description = "A whirling strike that hits everyone around you. Mount it in your sword's special slot."
+id = &"sword_whirlwind"
+description = "Spin in a blur of steel, hitting everything around you. You move slowly while it spins."
 branch = &"domination"
-ability = ExtResource("4_spin")
+ability = ExtResource("4_ww1")
 
-[sub_resource type="Resource" id="Node_cripple"]
+[sub_resource type="Resource" id="Node_ww2"]
 script = ExtResource("2_node")
-id = &"sword_cripple"
-node_name = "Crippling Strike"
-description = "A vicious strike that slows the target for 2 seconds. The game's first crowd-control tool. Weight 2."
+id = &"sword_whirlwind_2"
+description = "A longer, wider spin that grinds down everyone near you."
 branch = &"domination"
 tier = 2
-ability = ExtResource("5_cripple")
-upgrades = &"sword_spin"
+ability = ExtResource("5_ww2")
+upgrades = &"sword_whirlwind"
 
-[sub_resource type="Resource" id="Node_storm"]
+[sub_resource type="Resource" id="Node_ww3"]
 script = ExtResource("2_node")
-id = &"sword_bladestorm"
-node_name = "Bladestorm"
-description = "An explosive spinning flurry that devastates everything around you. Weight 3."
+id = &"sword_whirlwind_3"
+description = "An unrelenting steel cyclone: the widest, longest spin you can hold."
 branch = &"domination"
 tier = 3
-ability = ExtResource("6_storm")
-upgrades = &"sword_cripple"
+ability = ExtResource("6_ww3")
+upgrades = &"sword_whirlwind_2"
+
+[sub_resource type="Resource" id="Node_bsk1"]
+script = ExtResource("2_node")
+id = &"sword_berserk"
+description = "Go berserk. For a few seconds you heal part of every hit you land, so you can fight your way back from low health."
+branch = &"domination"
+tier = 2
+ability = ExtResource("9_bsk1")
+
+[sub_resource type="Resource" id="Node_bsk2"]
+script = ExtResource("2_node")
+id = &"sword_berserk_2"
+description = "Heals more, lasts longer, and sharpens your blade while it rages."
+branch = &"domination"
+tier = 3
+ability = ExtResource("10_bsk2")
+upgrades = &"sword_berserk"
+
+[sub_resource type="Resource" id="Node_bsk3"]
+script = ExtResource("2_node")
+id = &"sword_berserk_3"
+description = "Full bloodlust: the strongest, longest rage you can call."
+branch = &"domination"
+tier = 4
+ability = ExtResource("11_bsk3")
+upgrades = &"sword_berserk_2"
 
 [sub_resource type="Resource" id="Mod_armor_parry"]
 script = ExtResource("3_mod")
@@ -46,20 +78,25 @@ id = &"sword_parry"
 node_name = "Parry Stance"
 description = "+6 armor while wielding a sword."
 branch = &"resolve"
+icon = ExtResource("12_bulwark")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_armor_parry")])
 
-[sub_resource type="Resource" id="Mod_hp_vigor"]
-script = ExtResource("3_mod")
-value = 20.0
-
-[sub_resource type="Resource" id="Node_vigor"]
+[sub_resource type="Resource" id="Node_deflect"]
 script = ExtResource("2_node")
-id = &"sword_vigor"
-node_name = "Veteran's Vigor"
-description = "+20 max health while wielding a sword."
+id = &"sword_deflect"
+description = "Raise a shimmering guard bubble. For a moment, arrows and bolts that reach you are knocked out of the air."
 branch = &"resolve"
 tier = 2
-passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_vigor")])
+ability = ExtResource("7_df1")
+
+[sub_resource type="Resource" id="Node_deflect2"]
+script = ExtResource("2_node")
+id = &"sword_deflect_2"
+description = "A wider bubble that holds longer."
+branch = &"resolve"
+tier = 3
+ability = ExtResource("8_df2")
+upgrades = &"sword_deflect"
 
 [sub_resource type="Resource" id="Mod_haste_tempo"]
 script = ExtResource("3_mod")
@@ -72,10 +109,28 @@ id = &"sword_tempo"
 node_name = "Duelist's Tempo"
 description = "+8 ability haste while wielding a sword. Faster swings and shorter cooldowns."
 branch = &"inspiration"
+icon = ExtResource("13_haste")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_haste_tempo")])
+
+[sub_resource type="Resource" id="Node_rally"]
+script = ExtResource("2_node")
+id = &"sword_rally"
+description = "Plant your feet and rally. After a short cry, you and nearby allies surge with move speed."
+branch = &"inspiration"
+tier = 2
+ability = ExtResource("14_rl1")
+
+[sub_resource type="Resource" id="Node_rally2"]
+script = ExtResource("2_node")
+id = &"sword_rally_2"
+description = "A louder cry: more speed, longer, and it reaches farther."
+branch = &"inspiration"
+tier = 3
+ability = ExtResource("15_rl2")
+upgrades = &"sword_rally"
 
 [resource]
 script = ExtResource("1_tree")
 category = &"sword"
 display_name = "Sword"
-nodes = Array[ExtResource("2_node")]([SubResource("Node_spin"), SubResource("Node_cripple"), SubResource("Node_storm"), SubResource("Node_parry"), SubResource("Node_vigor"), SubResource("Node_tempo")])
+nodes = Array[ExtResource("2_node")]([SubResource("Node_ww1"), SubResource("Node_ww2"), SubResource("Node_ww3"), SubResource("Node_bsk1"), SubResource("Node_bsk2"), SubResource("Node_bsk3"), SubResource("Node_parry"), SubResource("Node_deflect"), SubResource("Node_deflect2"), SubResource("Node_tempo"), SubResource("Node_rally"), SubResource("Node_rally2")])

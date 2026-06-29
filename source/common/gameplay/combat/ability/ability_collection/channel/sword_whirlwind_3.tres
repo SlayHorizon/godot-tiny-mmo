@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SpinAbility" format=3 uid="uid://bo5agbjb74nrh"]
+
+[ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="1_7djrj"]
+[ext_resource type="Script" uid="uid://jk5i0h66djrs" path="res://source/common/gameplay/combat/ability/ability_collection/channel/spin_ability.gd" id="1_spin"]
+[ext_resource type="Texture2D" uid="uid://bj7ivup1sgc3q" path="res://assets/sprites/ui/ability_icons/whirlwind_3.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_spin")
+damage_ratio = 0.35
+channel_duration_s = 5.0
+tick_interval_s = 0.5
+radius = 64.0
+mana_per_tick = 6.0
+visual_kind = &"spin"
+mobile = true
+mobile_speed_mult = 0.55
+name = "Whirlwind III"
+icon = ExtResource("2_icon")
+cooldown = 9.0
+metadata/slug = &"sword_whirlwind_3"
+metadata/id = 31

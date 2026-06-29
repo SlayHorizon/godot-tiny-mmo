@@ -64,6 +64,9 @@ var dm_name_by_player_id: Dictionary[int, String] = {}
 var pending_name_fetch_at_ms: Dictionary[int, int] = {}
 
 var unread_by_conversation: Dictionary[String, int] = {}
+## Last emitted DM-unread state, so unread_changed fires only on a real flip — not on every
+## incoming message / channel open (each would otherwise redundantly re-swap the HUD icon).
+var _last_unread_dm: bool = false
 
 var seen_msg_ids_by_conversation: Dictionary[String, Dictionary] = {}
 var history_requested_by_conversation: Dictionary[String, bool] = {}
@@ -1052,7 +1055,10 @@ func _set_unread(convo_id: String, v: int) -> void:
 	unread_by_conversation[convo_id] = maxi(v, 0)
 	_update_dm_button_if_needed(convo_id)
 	_update_public_button_labels()
-	unread_changed.emit(_has_unread_dm())
+	var has_dm: bool = _has_unread_dm()
+	if has_dm != _last_unread_dm:
+		_last_unread_dm = has_dm
+		unread_changed.emit(has_dm)
 
 
 func _inc_unread(convo_id: String) -> void:

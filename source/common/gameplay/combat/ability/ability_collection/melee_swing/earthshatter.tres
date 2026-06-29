@@ -9,11 +9,11 @@
 script = ExtResource("1_swing")
 arc_scene = ExtResource("2_arc")
 ad_ratio = 2.2
-impact_vfx = ExtResource("4_vfx")
-impact_vfx_scale = 1.4
 slow_amount = 20.0
 slow_duration_s = 1.5
 arc_radius = 68.0
+impact_vfx = ExtResource("4_vfx")
+impact_vfx_scale = 1.4
 name = "Earthshatter"
 icon = ExtResource("3_icon")
 cooldown = 16.0

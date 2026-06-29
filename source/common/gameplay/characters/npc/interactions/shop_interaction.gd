@@ -26,4 +26,10 @@ func menu_entry(npc: Node) -> Dictionary:
 func register(map: Map, npc: Node) -> void:
 	var owner: NPC = npc as NPC
 	if shop and owner != null:
-		map.shops[owner.giver_key()] = shop
+		var key: StringName = owner.giver_key()
+		# Shops key on the NPCResource slug, so two NPCs sharing one NPCResource collide and the
+		# last write silently wins — a town's second merchant would mis-resolve. Crafting is immune
+		# (node-name keyed). Warn the author rather than fail silently.
+		if map.shops.has(key) and map.shops[key] != shop:
+			push_warning("ShopInteraction: duplicate giver_key '%s' — two NPCs share an NPCResource with different shops; one will be unreachable. Give them distinct NPCResource files." % key)
+		map.shops[key] = shop

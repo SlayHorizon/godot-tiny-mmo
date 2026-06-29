@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RallyAbility" format=3 uid="uid://cgh30lcc8547s"]
+
+[ext_resource type="Script" uid="uid://dcs3rejm1yurr" path="res://source/common/gameplay/combat/ability/ability_collection/channel/rally_ability.gd" id="1_rally"]
+[ext_resource type="Texture2D" uid="uid://dbjcaxiea66im" path="res://assets/sprites/ui/ability_icons/rally_1.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_rally")
+channel_duration_s = 1.5
+tick_interval_s = 1.5
+radius = 80.0
+name = "Rally"
+icon = ExtResource("2_icon")
+cooldown = 14.0
+metadata/slug = &"sword_rally"
+metadata/id = 37

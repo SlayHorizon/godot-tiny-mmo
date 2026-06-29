@@ -30,6 +30,12 @@ extends AbilityResource
 ## Client-visual selector sent in channel.start — the client maps it to a look
 ## (&"heal_aura" = green ground ring). A new channel adds a new kind + visual.
 @export var visual_kind: StringName = &"heal_aura"
+## MOBILE channel: instead of rooting you (and cancelling when you move), you keep
+## moving at [member mobile_speed_mult] of your speed while it runs (a spin you can
+## walk during). The heal aura leaves this false = rooted. Client-side only — the
+## flag rides the channel.start push so the wielder reads it.
+@export var mobile: bool = false
+@export_range(0.0, 1.0) var mobile_speed_mult: float = 0.5
 
 
 func use_ability(user: Entity, _direction: Vector2) -> void:

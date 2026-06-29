@@ -9,11 +9,11 @@
 script = ExtResource("1_swing")
 arc_scene = ExtResource("2_arc")
 ad_ratio = 3.0
-impact_vfx = ExtResource("4_vfx")
-impact_vfx_scale = 1.8
 slow_amount = 30.0
 slow_duration_s = 2.0
 arc_radius = 90.0
+impact_vfx = ExtResource("4_vfx")
+impact_vfx_scale = 1.8
 name = "Cataclysm"
 icon = ExtResource("3_icon")
 cooldown = 22.0

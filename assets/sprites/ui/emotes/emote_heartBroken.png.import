@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f3rpf64x24vx"
-path="res://.godot/imported/emote_heartBroken.png-155f750caf53a67eb7cb7684ae0c6e63.ctex"
+uid="uid://b0r0a71lvh5md"
+path="res://.godot/imported/emote_heartBroken.png-e4a8a1207d8180738d998bb97bab2147.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_heartBroken.png"
-dest_files=["res://.godot/imported/emote_heartBroken.png-155f750caf53a67eb7cb7684ae0c6e63.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_heartBroken.png"
+dest_files=["res://.godot/imported/emote_heartBroken.png-e4a8a1207d8180738d998bb97bab2147.ctex"]
 
 [params]
 

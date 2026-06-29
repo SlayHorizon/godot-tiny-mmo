@@ -78,6 +78,15 @@ func predict_release() -> void:
 	pass
 
 
+## Client-side prediction hook for SINGLE-PHASE abilities: run the part that must
+## feel INSTANT on the caster (before the server echo of use_ability arrives a
+## round-trip later), without server-authoritative effects. Default no-op. Deflect
+## spawns its parry bubble here so a client pops the incoming shot in real time
+## instead of one RTT late (which left a ghost arrow flying client-side).
+func predict_use(_entity: Entity) -> void:
+	pass
+
+
 ## One-call complete use for AI / auto attackers (no press/release input to
 ## drive multi-phase abilities). Default = the normal single-phase use; charge
 ## abilities override to fire at FULL power — an NPC's output is tuned by its

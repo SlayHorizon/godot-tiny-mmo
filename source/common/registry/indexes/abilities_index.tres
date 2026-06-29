@@ -5,13 +5,28 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1782676112
-next_id = 29
+version = 1782729586
+next_id = 39
 entries = Array[Dictionary]([{
 &"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
 &"id": 12,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres",
 &"slug": &"arcane_wall"
+}, {
+&"hash": "3cfe9ebd6e48ea77354368c723bd81e586fb367200f1052bdbed720007d67f24",
+&"id": 34,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/berserk/sword_berserk.tres",
+&"slug": &"sword_berserk"
+}, {
+&"hash": "5c903df2350a349d2ec6bb761c5f070dfd3bd900517477e292a8ecd564540f26",
+&"id": 35,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/berserk/sword_berserk_2.tres",
+&"slug": &"sword_berserk_2"
+}, {
+&"hash": "f212d1543bd26d944e904ea9dc17bbf41092762b4eb0c0ecbf9c0cee541ec523",
+&"id": 36,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/berserk/sword_berserk_3.tres",
+&"slug": &"sword_berserk_3"
 }, {
 &"hash": "89ad782a48ea5db037f26be9e5c0a4b813dbb3625ccf3d3c292df7c5078210a6",
 &"id": 10,
@@ -58,6 +73,31 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/recall.tres",
 &"slug": &"recall"
 }, {
+&"hash": "dedee5cd6d16941392086b4b010d92159d4955ef6886d98cf3480eaa0d28c5c2",
+&"id": 37,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/sword_rally.tres",
+&"slug": &"sword_rally"
+}, {
+&"hash": "538c9343d1ab439cd3a17860c486cbdb5bd20336eca4bc212ddd587ab5838faa",
+&"id": 38,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/sword_rally_2.tres",
+&"slug": &"sword_rally_2"
+}, {
+&"hash": "247f7850f99396c31547d15bb90531bfdb3bb470776ce17533c9b4ab6ea5a38d",
+&"id": 29,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/sword_whirlwind.tres",
+&"slug": &"sword_whirlwind"
+}, {
+&"hash": "74a77435fcd1e31149d0625e96ad31d5ea1b3e11f7cc435021d09c0d3bf00b8c",
+&"id": 30,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/sword_whirlwind_2.tres",
+&"slug": &"sword_whirlwind_2"
+}, {
+&"hash": "64e5f03b5a1e0ea1b09a6ea3669f1abe543a9a74a94537ecad1a6a8985e63ce1",
+&"id": 31,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/sword_whirlwind_3.tres",
+&"slug": &"sword_whirlwind_3"
+}, {
 &"hash": "979e3836ded66f65dff84541b04e51ec96b65c3d6475bdcb4466181d9dc1a6b9",
 &"id": 15,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres",
@@ -78,17 +118,17 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/venom_shot.tres",
 &"slug": &"venom_shot"
 }, {
-&"hash": "7a48507bd773d6e6500c261cc80575d30f6b9aff070623f87dce01cde1c27481",
+&"hash": "741e318ad55bfec72823d056f6ae673545c434c0f0933fd9b72279bb2b733399",
 &"id": 26,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/guard/last_stand.tres",
 &"slug": &"last_stand"
 }, {
-&"hash": "ea044e72919b871d3f355cce704506bcd09309aef4456eb134aa9ab45b8bdbd8",
+&"hash": "4745347bcc635f3231ae4ba33031dffb0ea412e0b96e5947744484f44d105a07",
 &"id": 27,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/guard/last_stand_2.tres",
 &"slug": &"last_stand_2"
 }, {
-&"hash": "e1e8bf15cd4614a2905c03bd94233a5ab7b28a9d7f9f006d781f795572ddb5db",
+&"hash": "22e21c0a40abe7e465f3a9e337cb900f964c6cc530f0664ef6556067af0a941d",
 &"id": 28,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/guard/last_stand_3.tres",
 &"slug": &"last_stand_3"
@@ -98,7 +138,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/bladestorm.tres",
 &"slug": &"bladestorm"
 }, {
-&"hash": "b9c64ec2cd44af28cf5248e70e9a663b59672c4bd6ca46ce677e4213edc492f2",
+&"hash": "e509d6aada3cf2cf46a0230085e51e4f719be34c6a2a15301f558cf6d2211ad8",
 &"id": 25,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/cataclysm.tres",
 &"slug": &"cataclysm"
@@ -113,7 +153,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/crushing_blow.tres",
 &"slug": &"crushing_blow"
 }, {
-&"hash": "91fd15ef276fd4640e8e6a7ed0f21d8d4123fcd6f828f1db1ba1c8b81c07bb7e",
+&"hash": "22c2648132bfb839b4bd1016144a630db85c69d98ade361a0e60f2034dee326a",
 &"id": 18,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/earthshatter.tres",
 &"slug": &"earthshatter"
@@ -127,6 +167,16 @@ entries = Array[Dictionary]([{
 &"id": 19,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/shockwave.tres",
 &"slug": &"shockwave"
+}, {
+&"hash": "6a05beb7f9cb7a685f3ca0137b19215322848e0e7a01ca5b459155b350f92ee1",
+&"id": 32,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_deflect.tres",
+&"slug": &"sword_deflect"
+}, {
+&"hash": "95471e468f3d2c110b5fb4485ee222cd86b70232cc04367b7bc90347f8b28386",
+&"id": 33,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_deflect_2.tres",
+&"slug": &"sword_deflect_2"
 }, {
 &"hash": "dd60a0aa1519e6c1ddbe0ebf07fdfc9ae2c7dd5eb994daecb26b11673bf65598",
 &"id": 6,

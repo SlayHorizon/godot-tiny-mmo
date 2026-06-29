@@ -31,6 +31,8 @@ func _ready() -> void:
 		"r": ability.radius,
 		"k": ability.visual_kind,
 		"an": ability.name, # so the caster's ability bar can light the matching tile
+		"mob": ability.mobile, # mobile channel: the wielder moves (slowed) instead of rooting
+		"msm": ability.mobile_speed_mult,
 	})
 	var timer: Timer = Timer.new()
 	timer.wait_time = maxf(0.1, ability.tick_interval_s)

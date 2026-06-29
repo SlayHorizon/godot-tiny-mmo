@@ -121,14 +121,25 @@ static func effective_special_ids(resource: PlayerResource, weapon_item: WeaponI
 				# channeling a lighter tier to free weapon power for another ability
 				# is a valid build. One tier per chain; over-budget picks stay inert.
 				var root: String = String(_chain_root_id(tree, node))
-				if node.tier <= budget and not used_chains.has(root):
+				var weight: int = ability_weight(node)
+				if weight <= budget and not used_chains.has(root):
 					var ability_id: int = int(node.ability.get_meta(&"id", 0))
 					if ability_id > 0:
 						resolved = ability_id
-						budget -= node.tier
+						budget -= weight
 						used_chains[root] = true
 		out.append(resolved)
 	return out
+
+
+## EQUIP weight of an ability node = tier - 1. A T1 (weight 0) is FREE to slot, so
+## you can ALWAYS fill both special slots — capacity is the UPGRADE budget you
+## spread across them (T2/T3/T4 cost 1/2/3), not a cost for having abilities at
+## all. This keeps early loadouts from feeling empty and lets a capstone (T4) still
+## carry a minor second ability. Point cost to LEARN stays = tier (spent_cost).
+## See docs/progression.md.
+static func ability_weight(node: MasteryNode) -> int:
+	return maxi(0, node.tier - 1)
 
 
 ## The base (lowest) node of [param node]'s upgrade chain — follow `upgrades`

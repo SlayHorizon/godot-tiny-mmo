@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GuardAbility" format=3 uid="uid://beh3aoqwprdc2"]
 
 [ext_resource type="Script" uid="uid://i0cq7eptibp3" path="res://source/common/gameplay/combat/ability/ability_collection/guard/guard_ability.gd" id="1_guard"]
-[ext_resource type="SpriteFrames" uid="uid://cro3pq8op4l3w" path="res://source/common/gameplay/combat/vfx/guard_shield.tres" id="2_vfx"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/combat/vfx/guard_shield.tres" id="2_vfx"]
 [ext_resource type="Texture2D" uid="uid://bydvxfybnyf6k" path="res://assets/sprites/ui/ability_icons/last_stand_2.png" id="3_icon"]
 
 [resource]

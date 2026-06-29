@@ -38,6 +38,11 @@ const ABILITY_HASTE: StringName = &"ability_haste"
 ## without the passive, so it's inert by default. See MeleeArc.
 const DAMAGE_VS_LOW_HP: StringName = &"damage_vs_low_hp"
 
+## Lifesteal (%): heal this fraction of damage you DEAL back to yourself. 0 by
+## default (inert); the sword "Berserk" active grants a big timed chunk. Applied
+## server-side in Character.take_damage on the attacker. See BuffService / Berserk.
+const LIFESTEAL: StringName = &"lifesteal"
+
 
 ## Player-facing labels for stats shown in tooltips. Anything not listed falls back
 ## to a capitalized form of the raw key.
@@ -56,10 +61,11 @@ const DISPLAY_NAMES: Dictionary = {
 	CRIT_DAMAGE: "Crit Damage",
 	ABILITY_HASTE: "Ability Haste",
 	DAMAGE_VS_LOW_HP: "Damage vs Low HP",
+	LIFESTEAL: "Lifesteal",
 }
 
 ## Stats whose value reads as a percentage in UI (rendered "+25%" not "+25").
-const PERCENT_STATS: Array[StringName] = [DAMAGE_VS_LOW_HP]
+const PERCENT_STATS: Array[StringName] = [DAMAGE_VS_LOW_HP, LIFESTEAL]
 
 
 static func display_name(stat_name: StringName) -> String:

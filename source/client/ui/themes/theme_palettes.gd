@@ -10,10 +10,10 @@ const DEFAULT: StringName = &"horizon"
 ## slug -> { backdrop = login background path, accent = focus/active accent }. The styling for each slug
 ## lives in theme_<slug>.tres (generated from theme_horizon by generate_ingame_themes.gd).
 const PALETTES: Dictionary = {
-	&"horizon": {"backdrop": "res://assets/sprites/gui/backgrounds/castle_garden.png", "accent": Color(0.58, 0.82, 0.98)},
-	&"gold": {"backdrop": "res://assets/sprites/gui/backgrounds/desert.png", "accent": Color(0.95, 0.74, 0.44)},
-	&"forest": {"backdrop": "res://assets/sprites/gui/backgrounds/fairy_forest.png", "accent": Color(0.66, 0.85, 0.5)},
-	&"fireforge": {"backdrop": "res://assets/sprites/gui/backgrounds/fireforge.png", "accent": Color(0.97, 0.56, 0.32)},
+	&"horizon": {"backdrop": "res://assets/sprites/ui/backgrounds/castle_garden.png", "accent": Color(0.58, 0.82, 0.98)},
+	&"gold": {"backdrop": "res://assets/sprites/ui/backgrounds/desert.png", "accent": Color(0.95, 0.74, 0.44)},
+	&"forest": {"backdrop": "res://assets/sprites/ui/backgrounds/fairy_forest.png", "accent": Color(0.66, 0.85, 0.5)},
+	&"fireforge": {"backdrop": "res://assets/sprites/ui/backgrounds/fireforge.png", "accent": Color(0.97, 0.56, 0.32)},
 }
 
 

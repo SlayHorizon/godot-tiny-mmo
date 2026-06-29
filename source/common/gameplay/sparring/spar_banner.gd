@@ -56,8 +56,8 @@ func _format_matchup(teams: Array) -> String:
 
 
 ## "[b]A & B[/b] win!" (gold) or "Draw" (grey) — the post-match result line.
-func _format_result(winners: Array, draw: bool) -> String:
-	if draw:
+func _format_result(winners: Array, is_draw: bool) -> String:
+	if is_draw:
 		return "[color=#cccccc]Draw[/color]"
 	if winners.is_empty():
 		return ""

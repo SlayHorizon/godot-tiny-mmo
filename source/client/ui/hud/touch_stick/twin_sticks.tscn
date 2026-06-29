@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cwf2vgd3eef62" path="res://source/client/ui/hud/touch_stick/twin_sticks.gd" id="1_iguff"]
 [ext_resource type="Script" uid="uid://c0g2wg2nlsmvg" path="res://source/client/ui/shared/touch_stick.gd" id="1_tc8qe"]
-[ext_resource type="Texture2D" uid="uid://bo10hjxhnmqor" path="res://assets/sprites/gui/joysticks/Joystick.png" id="2_ccom4"]
-[ext_resource type="Texture2D" uid="uid://ra5nobirjsej" path="res://assets/sprites/gui/joysticks/SmallHandleFilledGrey.png" id="3_ccom4"]
-[ext_resource type="Texture2D" uid="uid://diivad073arrl" path="res://assets/sprites/gui/joysticks/JoystickSplitted.png" id="4_7fqm7"]
+[ext_resource type="Texture2D" uid="uid://bapc5j3pavit1" path="res://assets/sprites/ui/joysticks/Joystick.png" id="2_ccom4"]
+[ext_resource type="Texture2D" uid="uid://dlixy6gib54fq" path="res://assets/sprites/ui/joysticks/SmallHandleFilledGrey.png" id="3_ccom4"]
+[ext_resource type="Texture2D" uid="uid://nceqao84rg1m" path="res://assets/sprites/ui/joysticks/JoystickSplitted.png" id="4_7fqm7"]
 
 [node name="TwinSticks" type="Control" unique_id=2047762390 node_paths=PackedStringArray("move_stick", "shoot_stick")]
 layout_mode = 3

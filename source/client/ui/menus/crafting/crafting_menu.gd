@@ -1,8 +1,8 @@
 extends Control
-## Crafting station UI. Opened by name "crafting" with a station registry id.
-## Lists the station's recipes with ingredient have/need and a Craft button. The recipe
-## list is static client-side data (from the CraftingStationResource); only the craft
-## itself is server-validated.
+## Crafting station UI. Opened by the station NODE NAME (the server resolves the same station
+## from the player's current map by that name). Lists the station's recipes with ingredient
+## have/need and a Craft button. The recipe list is static client-side data (from the
+## CraftingStationResource); only the craft itself is server-validated.
 
 ## Owning CraftingStation node's name. Sent with the craft request so the server
 ## resolves the same station from the player's current map.

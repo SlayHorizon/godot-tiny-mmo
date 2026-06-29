@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xiq1psbcajag"
-path="res://.godot/imported/emote_faceHappy.png-5890981e863adbfc341e3d3d66f83866.ctex"
+uid="uid://b82414wk4pho1"
+path="res://.godot/imported/emote_faceHappy.png-d19e856d3737a62519d9bc3891d48021.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_faceHappy.png"
-dest_files=["res://.godot/imported/emote_faceHappy.png-5890981e863adbfc341e3d3d66f83866.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_faceHappy.png"
+dest_files=["res://.godot/imported/emote_faceHappy.png-d19e856d3737a62519d9bc3891d48021.ctex"]
 
 [params]
 

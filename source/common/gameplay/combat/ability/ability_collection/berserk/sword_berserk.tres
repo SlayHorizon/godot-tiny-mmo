@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BerserkAbility" format=3 uid="uid://dqjyvkrq51hjw"]
+
+[ext_resource type="Script" uid="uid://fk5dippdukhk" path="res://source/common/gameplay/combat/ability/ability_collection/berserk/berserk_ability.gd" id="1_berserk"]
+[ext_resource type="Texture2D" uid="uid://cuhxvl6j7247e" path="res://assets/sprites/ui/ability_icons/berserk_1.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_berserk")
+lifesteal_percent = 20.0
+name = "Berserk"
+icon = ExtResource("2_icon")
+cooldown = 18.0
+mana_cost = 30
+metadata/slug = &"sword_berserk"
+metadata/id = 34

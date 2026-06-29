@@ -209,6 +209,23 @@ func is_in_combat() -> bool:
 	return Time.get_ticks_msec() < combat_until_ms
 
 
+## Sword Deflect: ticks_msec until which incoming PROJECTILES are destroyed instead
+## of damaging us (a timed parry). Set per-peer by DeflectAbility (so each peer
+## deflects its own projectile copies; the server's window gates real damage), and
+## read by CombatHit.try_damage on deflectable hits.
+var deflect_until_ms: int = 0
+
+
+## Opens a brief deflect window of [param window_s] seconds (overwrites, never stacks).
+func open_deflect(window_s: float) -> void:
+	deflect_until_ms = Time.get_ticks_msec() + int(window_s * 1000.0)
+
+
+## True while a Deflect window is live — projectiles aimed at us are parried.
+func is_deflecting() -> bool:
+	return Time.get_ticks_msec() < deflect_until_ms
+
+
 ## Server-only. Applies [param amount] raw damage from [param attacker], mitigated by
 ## the matching resistance — ARMOR for physical, MR for magic (see CombatHit's
 ## damage-type constants) — then triggers death at zero health. Every attack
@@ -230,6 +247,17 @@ func take_damage(amount: float, attacker: Character = null, damage_type: StringN
 	var mitigated: float = amount * (100.0 / (100.0 + maxf(0.0, resist)))
 	var new_health: float = maxf(0.0, stats_component.get_stat(Stat.HEALTH) - mitigated)
 	stats_component.set_stat(Stat.HEALTH, new_health)
+
+	# Lifesteal: the attacker heals a % of the damage they just dealt (sword Berserk,
+	# or any future lifesteal source). Inert for anyone with the 0 default stat, so it
+	# costs nothing until granted. Heals off the killing blow too (applied pre-death).
+	if attacker != null and attacker != self and not attacker.is_dead:
+		var lifesteal: float = attacker.stats_component.get_stat(Stat.LIFESTEAL)
+		if lifesteal > 0.0:
+			var healed: float = mitigated * lifesteal / 100.0
+			var att_max: float = attacker.stats_component.get_stat(Stat.HEALTH_MAX)
+			var att_hp: float = attacker.stats_component.get_stat(Stat.HEALTH)
+			attacker.stats_component.set_stat(Stat.HEALTH, minf(att_max, att_hp + healed))
 
 	# Broadcast a hit event so clients can render damage numbers, screen
 	# shake, hit pause, sound — anything game-feel piggybacks off the same

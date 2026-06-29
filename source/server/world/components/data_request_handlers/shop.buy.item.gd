@@ -1,5 +1,10 @@
 extends DataRequestHandler
 
+## Sanity cap on a single buy: a client could send a huge `amount` that overflows `price *
+## amount` (int64) into a negative total, slip past the currency check, then run an unbounded
+## add loop. No legitimate purchase needs more than this in one transaction.
+const MAX_BUY_AMOUNT: int = 9999
+
 
 func data_request_handler(
 	peer_id: int,
@@ -13,7 +18,7 @@ func data_request_handler(
 	var shop_key: StringName = StringName(str(args.get("shop_key", "")))
 	var item_id: int = int(args.get("id", 0))
 	var amount: int = int(args.get("amount", 1))
-	if item_id <= 0 or amount <= 0:
+	if item_id <= 0 or amount <= 0 or amount > MAX_BUY_AMOUNT:
 		return {"ok": false}
 
 	# Resolve the shop from a merchant present in the player's map (authoritative +

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://28spj5oako1c"
-path="res://.godot/imported/emote_faceAngry.png-9a7aaa97bf2b753e29d49ab16c085bb5.ctex"
+uid="uid://cuqqhnblj30rl"
+path="res://.godot/imported/emote_faceAngry.png-88ea9af6580c0c2c591132daf7cb8166.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_faceAngry.png"
-dest_files=["res://.godot/imported/emote_faceAngry.png-9a7aaa97bf2b753e29d49ab16c085bb5.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_faceAngry.png"
+dest_files=["res://.godot/imported/emote_faceAngry.png-88ea9af6580c0c2c591132daf7cb8166.ctex"]
 
 [params]
 

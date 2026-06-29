@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bargvrmt5p31"
-path="res://.godot/imported/emote_swirl.png-5d3eb01bac66180f27eddc1334f4f90d.ctex"
+uid="uid://d38eqcx2rvycp"
+path="res://.godot/imported/emote_swirl.png-1e2d83689b27b295e74a135bfa4810a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_swirl.png"
-dest_files=["res://.godot/imported/emote_swirl.png-5d3eb01bac66180f27eddc1334f4f90d.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_swirl.png"
+dest_files=["res://.godot/imported/emote_swirl.png-1e2d83689b27b295e74a135bfa4810a8.ctex"]
 
 [params]
 

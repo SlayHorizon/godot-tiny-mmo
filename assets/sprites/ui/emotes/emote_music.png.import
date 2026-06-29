@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wo00ltxqswla"
-path="res://.godot/imported/emote_music.png-0ac52c1b43df22ab1fa0384ea10b837b.ctex"
+uid="uid://be2t8846lutaa"
+path="res://.godot/imported/emote_music.png-85bb9f9674d0caa8538e46f83bf8a25a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_music.png"
-dest_files=["res://.godot/imported/emote_music.png-0ac52c1b43df22ab1fa0384ea10b837b.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_music.png"
+dest_files=["res://.godot/imported/emote_music.png-85bb9f9674d0caa8538e46f83bf8a25a.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dr3pgwvkaf2sh"
-path="res://.godot/imported/emote_star.png-592e283b6b77812700233f1fa57e5f72.ctex"
+uid="uid://jh2tjypgbqy0"
+path="res://.godot/imported/emote_star.png-824608a05c8a429220394740182a8834.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_star.png"
-dest_files=["res://.godot/imported/emote_star.png-592e283b6b77812700233f1fa57e5f72.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_star.png"
+dest_files=["res://.godot/imported/emote_star.png-824608a05c8a429220394740182a8834.ctex"]
 
 [params]
 

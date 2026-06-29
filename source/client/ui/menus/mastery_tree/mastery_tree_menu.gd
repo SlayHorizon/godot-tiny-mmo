@@ -221,11 +221,13 @@ func _chain_groups(branch: StringName, tree: MasteryTreeResource) -> Array:
 
 func _make_chain_column(group: Array, tree: MasteryTreeResource, info: Dictionary, color: Color) -> Control:
 	var col: VBoxContainer = VBoxContainer.new()
-	# Bottom-anchored so every chain's tier-1 tile lands on the same bottom row,
-	# however deep the chain runs.
+	# Bottom-anchored, and each tile sits at its ABSOLUTE tier row: T1 = bottom row,
+	# T2 = second, etc. A chain that starts above T1 (e.g. Deflect begins at T2) gets
+	# empty cells padded in below it, so tiers read straight across every branch and a
+	# tile's row == its capacity cost. One tier-row = TILE_SIZE.y + the 12px connector.
 	col.size_flags_vertical = Control.SIZE_SHRINK_END
 	col.add_theme_constant_override(&"separation", 0)
-	# Highest tier first (top) down to tier 1 (bottom) — the tree builds upward.
+	# Highest tier first (top) down to the chain's lowest tier (group is tier-ascending).
 	for i: int in range(group.size() - 1, -1, -1):
 		col.add_child(_make_tile(group[i] as MasteryNode, tree, info, color))
 		if i > 0:
@@ -234,6 +236,12 @@ func _make_chain_column(group: Array, tree: MasteryTreeResource, info: Dictionar
 			line.custom_minimum_size = Vector2(2, 12)
 			line.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			col.add_child(line)
+	# Pad empty rows below the lowest tile so it lands on its absolute tier row.
+	var lowest_tier: int = int((group[0] as MasteryNode).tier)
+	for _pad: int in range(lowest_tier - 1):
+		var spacer: Control = Control.new()
+		spacer.custom_minimum_size = Vector2(TILE_SIZE.x, TILE_SIZE.y + 12)
+		col.add_child(spacer)
 	return col
 
 
@@ -515,7 +523,7 @@ func _open_slot_picker(node_id: String) -> void:
 	var title: String = "Place %s (Power %d) on which slot?" % [_node_display_name(node_id), _node_power(node_id)]
 	var cap: int = _wielded_capacity()
 	if cap >= 0:
-		title += "\nYour weapon channels up to %d power." % cap
+		title += "\nWeapon capacity: %d. A T1 ability is free; T2/T3/T4 cost 1/2/3 to slot." % cap
 	_picker_overlay = SlotPickerOverlay.open(
 		self, title, entries,
 		func(slot: int) -> void: _send_loadout_with(node_id, slot)
@@ -547,7 +555,7 @@ func _send_loadout_with(node_id: String, slot: int) -> void:
 	if cap >= 0 and slot >= 0:
 		var used: int = _loadout_power_used(picks, MasteryService.tree_for(StringName(_category)))
 		if used > cap:
-			Toaster.toast("Not enough weapon power (%d / %d). Equip a higher-tier weapon to channel it all." % [used, cap])
+			Toaster.toast("Over capacity (%d / %d used). T1 abilities are free; a higher-tier weapon channels heavier upgrades." % [used, cap])
 	Client.request_data(
 		&"mastery.loadout",
 		_on_loadout_result,
@@ -677,7 +685,8 @@ func _wielded_capacity() -> int:
 	return -1
 
 
-## Total power the loadout picks consume (sum of their tiers; "" holes skipped).
+## Capacity the loadout consumes (sum of each pick's equip weight = tier-1, so T1
+## picks are free; "" holes skipped).
 func _loadout_power_used(picks: Array, tree: MasteryTreeResource) -> int:
 	if tree == null:
 		return 0
@@ -688,7 +697,7 @@ func _loadout_power_used(picks: Array, tree: MasteryTreeResource) -> int:
 			continue
 		var node: MasteryNode = tree.get_node_by_id(StringName(id))
 		if node != null:
-			total += node.tier
+			total += MasteryService.ability_weight(node)
 	return total
 
 
@@ -700,4 +709,4 @@ func _too_heavy_for_wielded(node: MasteryNode) -> bool:
 	var weapon_item: WeaponItem = ClientState.local_player.equipment_component.equipped_items.get(&"weapon", null) as WeaponItem
 	if weapon_item == null or String(weapon_item.category) != _category:
 		return false
-	return node.tier > weapon_item.capacity
+	return MasteryService.ability_weight(node) > weapon_item.capacity

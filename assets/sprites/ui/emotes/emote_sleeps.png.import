@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://rnujhi53lg4"
-path="res://.godot/imported/emote_sleeps.png-aea117f84ae5ef24f162f39133f3efe5.ctex"
+uid="uid://civi5xbhdciiy"
+path="res://.godot/imported/emote_sleeps.png-d4d3920a6c73c222380315579a70c506.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_sleeps.png"
-dest_files=["res://.godot/imported/emote_sleeps.png-aea117f84ae5ef24f162f39133f3efe5.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_sleeps.png"
+dest_files=["res://.godot/imported/emote_sleeps.png-d4d3920a6c73c222380315579a70c506.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfi6gjwd4brv7"
-path="res://.godot/imported/emote_cross.png-52bd740a7457c843f5a32a3e0645687c.ctex"
+uid="uid://cm8th3e7iigkm"
+path="res://.godot/imported/emote_cross.png-655d00ed379806a05fb48ea192cb8d17.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_cross.png"
-dest_files=["res://.godot/imported/emote_cross.png-52bd740a7457c843f5a32a3e0645687c.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_cross.png"
+dest_files=["res://.godot/imported/emote_cross.png-655d00ed379806a05fb48ea192cb8d17.ctex"]
 
 [params]
 

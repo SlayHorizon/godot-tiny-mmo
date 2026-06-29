@@ -10,7 +10,7 @@ extends CanvasLayer
 ## Built in code (like Toaster) so it stays one self-contained file — intended to
 ## fold into a single UI autoload (with Toaster) later.
 
-const _SPINNER_TEX: String = "res://assets/sprites/gui/spinner.png"
+const _SPINNER_TEX: String = "res://assets/sprites/ui/spinner.png"
 const _CREAM: Color = Color(0.929, 0.894, 0.820)
 # "Entering the world" payoff cue — a soft magical swell, played once as the cover
 # begins. Lives here (not the gateway) so every enter path triggers it identically.
@@ -21,7 +21,6 @@ var _background: TextureRect
 var _spinner: TextureRect
 var _label: Label
 var _buttons: HBoxContainer
-var _retry_button: Button
 var _back_button: Button
 var _bloom: ColorRect
 var _fade_tween: Tween
@@ -91,17 +90,15 @@ func _show_loading() -> void:
 func _show_error() -> void:
 	_label.text = "Couldn't reach the world."
 	_spinner.visible = false
-	_retry_button.visible = true  # load-time failure: the token may still be valid, so retry can work
 	_buttons.visible = true
 
 
 ## Mid-game server drop (Client.server_disconnected): replace the old silent freeze
-## with a clear overlay. Most restarts ship a new build, so the safe action is "Back
-## to login" — it reloads the scene, which re-runs the gateway's version handshake and
-## shows the update gate if the build moved on (on web it does a full page reload to
-## pull the new build). "Retry" covers the transient-blip case (reconnect to the same
-## world). Called while the tree is paused; this layer is PROCESS_MODE_ALWAYS so the
-## buttons stay live, and _retry / _back_to_login unpause.
+## with a clear overlay + a single "Back to login" action — it reloads the scene,
+## which re-runs the gateway's version handshake (showing the update gate if the
+## build moved on) and auto-logs back in; on web it does a full page reload to pull
+## the new build. Called while the tree is paused; this layer is PROCESS_MODE_ALWAYS
+## so the button stays live, and _back_to_login unpauses.
 func show_disconnected() -> void:
 	_active = false  # not a load — keep _on_world_ready / the load path from firing here
 	if _fade_tween and _fade_tween.is_valid():
@@ -114,10 +111,6 @@ func show_disconnected() -> void:
 	# dropping — since server_disconnected fires for any established-connection loss.
 	_label.text = "Connection lost.\nThe server may be updating, or your connection dropped."
 	_spinner.visible = false
-	# No Retry here: auth tokens are one-shot (consumed at login), so an in-place
-	# reconnect always fails. Recovery goes back through the gateway for a fresh token
-	# (auto-login makes that one click, and re-runs the version gate on updates).
-	_retry_button.visible = false
 	_buttons.visible = true
 
 
@@ -135,14 +128,6 @@ func _fade_out() -> void:
 	_fade_tween.tween_property(_root, "modulate:a", 0.0, 0.45).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	_fade_tween.tween_property(_bloom, "modulate:a", 0.0, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	_fade_tween.chain().tween_callback(func() -> void: visible = false)
-
-
-func _retry() -> void:
-	_active = true
-	get_tree().paused = false  # a mid-game disconnect paused the tree; let it run again
-	_show_loading()
-	Client.close_connection()
-	Client.connect_to_server(_address, _port, _token)
 
 
 func _back_to_login() -> void:
@@ -225,15 +210,14 @@ func _build_ui() -> void:
 	_buttons = HBoxContainer.new()
 	_buttons.alignment = BoxContainer.ALIGNMENT_CENTER
 	_buttons.add_theme_constant_override(&"separation", 12)
-	_retry_button = Button.new()
-	_retry_button.text = "Retry"
-	_retry_button.pressed.connect(_retry)
+	# Single action: "Back to login". There's no Retry — auth tokens are one-shot
+	# (consumed at login), so an in-place reconnect can never work; recovery always
+	# goes back through the gateway for a fresh token (auto-login makes it one tap).
 	_back_button = Button.new()
-	# On web, "Back to login" reloads the page (fetches a fresh build); elsewhere it
-	# returns to the gateway. Label it for what it actually does on this platform.
+	# On web, this reloads the page (fetches a fresh build); elsewhere it returns to
+	# the gateway. Label it for what it actually does on this platform.
 	_back_button.text = "Reload" if OS.has_feature("web") else "Back to login"
 	_back_button.pressed.connect(_back_to_login)
-	_buttons.add_child(_retry_button)
 	_buttons.add_child(_back_button)
 	vbox.add_child(_buttons)
 

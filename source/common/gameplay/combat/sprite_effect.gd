@@ -39,15 +39,30 @@ static func spawn(parent: Node, frames: SpriteFrames, opts: Dictionary = {}) -> 
 		mat.shader = _sat_shader
 		mat.set_shader_parameter("saturation", sat)
 		fx.material = mat
+	fx._loop = bool(opts.get("loop", false))
+	fx._spin_deg = float(opts.get("spin_deg_per_sec", 0.0))
 	parent.add_child(fx)
 	return fx
+
+
+# A LOOPING effect replays instead of freeing on finish, and is freed EXTERNALLY
+# (e.g. by channel.end). _spin_deg rotates it each frame — a slash that spins
+# around the caster reads as a whirlwind.
+var _loop: bool = false
+var _spin_deg: float = 0.0
 
 
 func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	centered = true
-	# A one-shot: the "default" anim is authored non-looping, so animation_finished
-	# fires once at the end. queue_free then (a Timer fallback would be needed only
-	# if we ever loop; we don't here).
-	animation_finished.connect(queue_free)
+	if _loop:
+		# Replay on finish; the owner (channel.end) frees us.
+		animation_finished.connect(func() -> void: play(&"default"))
+	else:
+		animation_finished.connect(queue_free)
 	play(&"default")
+
+
+func _process(delta: float) -> void:
+	if _spin_deg != 0.0:
+		rotation += deg_to_rad(_spin_deg) * delta

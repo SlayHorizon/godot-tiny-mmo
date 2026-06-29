@@ -22,6 +22,7 @@ var _hidden_for_menu: Array[CanvasItem] = []
 @onready var chat: ChatMenu = $Chat
 @onready var twin_sticks: Control = $TwinSticks
 @onready var quest_tracker: QuestTracker = $QuestTracker
+@onready var trade_panel: Control = $TradePanel
 @onready var experience_bar: ProgressBar = $Resources/ExperienceBar
 @onready var experience_level_label: Label = $Resources/ExperienceBar/LevelLabel
 @onready var death_screen: ColorRect = $DeathScreen
@@ -54,6 +55,9 @@ func _ready() -> void:
 		sub_menu.z_index = 2
 	# The launcher isn't a display_menu submenu, so hook its show/hide into the same HUD-hide path.
 	menu_overlay.visibility_changed.connect(_refresh_hud_for_menus)
+	# The trade panel is a standalone overlay (not a display_menu) — treat it like a menu too: hide
+	# the gameplay HUD + freeze movement while it's open, so HUD clicks can't bleed through behind it.
+	trade_panel.visibility_changed.connect(_refresh_hud_for_menus)
 
 	ClientState.input_changed.connect(_on_input_type_changed)
 
@@ -178,7 +182,7 @@ func _on_submenu_visiblity_changed(_menu: Control) -> void:
 ## too); display_menu submenus live in the separate sub_menu container, so they're unaffected.
 ## Stacked menus are handled by _any_submenu_visible (the HUD stays hidden until ALL close).
 func _refresh_hud_for_menus() -> void:
-	var covered: bool = _any_submenu_visible() or (menu_overlay != null and menu_overlay.visible)
+	var covered: bool = _any_submenu_visible() or (menu_overlay != null and menu_overlay.visible) or trade_panel.visible
 	if covered:
 		# Capture-and-hide ONCE: only nodes currently visible, so we never force-show a node that
 		# was hidden by its OWN logic (TwinSticks is touch-only; QuestTracker shows only while a
@@ -197,7 +201,7 @@ func _refresh_hud_for_menus() -> void:
 		# The quest tracker self-gates on tracked/active state, which may have changed while it was
 		# menu-hidden (the player untracked it in the log) — re-derive instead of trusting the blind
 		# show() above. Sync-set covers the common cases instantly; refresh() confirms vs live quests.
-		quest_tracker.visible = ClientState.tracked_quest_id != -1
+		quest_tracker.visible = ClientState.tracked_quest_id > 0 # > 0 = real pinned quest (0 = none, -1 = untracked)
 		quest_tracker.refresh()
 
 
@@ -206,7 +210,7 @@ func _refresh_hud_for_menus() -> void:
 ## opens) can't leave a one-frame gap where movement slips through. Mobile is already
 ## covered (the HUD and its sticks hide above). This is the desktop-keyboard gate.
 func _process(_delta: float) -> void:
-	ClientState.menu_open = _any_submenu_visible()
+	ClientState.menu_open = _any_submenu_visible() or trade_panel.visible
 
 
 ## True if any display_menu submenu is currently visible.

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4x6yeexdy064"
-path="res://.godot/imported/emote_circle.png-de8ec51df8995c2ca77354da82332a80.ctex"
+uid="uid://c408g6r3fn52y"
+path="res://.godot/imported/emote_circle.png-8ec6f743ea9c37335188a2752ee7d8f9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/gui/emotes/emote_circle.png"
-dest_files=["res://.godot/imported/emote_circle.png-de8ec51df8995c2ca77354da82332a80.ctex"]
+source_file="res://assets/sprites/ui/emotes/emote_circle.png"
+dest_files=["res://.godot/imported/emote_circle.png-8ec6f743ea9c37335188a2752ee7d8f9.ctex"]
 
 [params]
 

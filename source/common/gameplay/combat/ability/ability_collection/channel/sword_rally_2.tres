@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RallyAbility" format=3 uid="uid://lofkrosp3t4x"]
+
+[ext_resource type="Script" uid="uid://dcs3rejm1yurr" path="res://source/common/gameplay/combat/ability/ability_collection/channel/rally_ability.gd" id="1_rally"]
+[ext_resource type="Texture2D" uid="uid://ub7uyvlnoekn" path="res://assets/sprites/ui/ability_icons/rally_2.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_rally")
+move_speed_bonus = 22.0
+buff_duration_s = 6.0
+channel_duration_s = 1.5
+tick_interval_s = 1.5
+radius = 100.0
+name = "Rally II"
+icon = ExtResource("2_icon")
+cooldown = 13.0
+metadata/slug = &"sword_rally_2"
+metadata/id = 38

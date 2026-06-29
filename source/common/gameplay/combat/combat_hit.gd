@@ -28,7 +28,7 @@ enum Result {
 ## queue_frees on DAMAGED/BLOCKED and passes through on IGNORED; a melee arc just
 ## ignores the result and lets the damage land. Server-authoritative — call only
 ## where damage is owned (the hitboxes already gate on multiplayer.is_server()).
-static func try_damage(source: Character, body: Node2D, damage: float, damage_type: StringName = DAMAGE_PHYSICAL) -> Result:
+static func try_damage(source: Character, body: Node2D, damage: float, damage_type: StringName = DAMAGE_PHYSICAL, deflectable: bool = false) -> Result:
 	# Combat hitboxes detect a character's HurtBox area (not its navigation body) — resolve
 	# the hurtbox to its owning Character so the target rules below work unchanged.
 	if body is HurtBox:
@@ -66,6 +66,12 @@ static func try_damage(source: Character, body: Node2D, damage: float, damage_ty
 	if source is Player and body is Player:
 		if not can_damage(source as Player, body as Player):
 			return Result.IGNORED
+
+	# Sword Deflect: a parry window destroys an incoming projectile (no damage). Only
+	# deflectable hits (projectiles opt in) — a melee swing still lands through it. The
+	# body is a confirmed enemy here, so a parrying ally never eats a friendly shot.
+	if deflectable and (body as Character).is_deflecting():
+		return Result.BLOCKED  # caller (the projectile) queue_frees; no damage dealt
 
 	body.take_damage(damage, source, damage_type)
 	return Result.DAMAGED
