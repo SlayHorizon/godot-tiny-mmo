@@ -4,8 +4,8 @@
 
 [resource]
 script = ExtResource("1_dvqs5")
-instance_name = &"CaveArea1"
-map_path = "uid://wkvp6lqnmgx5"
+instance_name = &"FungusArea1"
+map_path = "uid://bet5gn3f3egqg"
 metadata/_custom_type_script = "uid://deqjrbn7hm53u"
 metadata/slug = &"cave_area1"
 metadata/id = 5
