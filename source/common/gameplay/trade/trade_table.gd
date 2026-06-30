@@ -103,7 +103,15 @@ func server_set_offer(player: Player, items: Dictionary, gold: int) -> void:
 	var seat: int = seat_players.find(player)
 	if seat == -1:
 		return
-	seat_offers[seat] = {"items": items, "gold": gold}
+	# Clamp to what the player ACTUALLY holds — joining costs gold so the client's max can lag, and
+	# offering more than you own would just fail the swap at completion (a confusing silent failure).
+	var inventory: Dictionary = player.player_resource.inventory
+	var clamped: Dictionary = {}
+	for item_id: Variant in items:
+		var want: int = mini(int(items[item_id]), Inventory.count(inventory, int(item_id)))
+		if want > 0:
+			clamped[int(item_id)] = want
+	seat_offers[seat] = {"items": clamped, "gold": clampi(int(gold), 0, Inventory.count(inventory, Economy.gold_id()))}
 	_reset_accepts() # changing an offer un-confirms both sides
 
 
@@ -243,6 +251,15 @@ func _set_hover(on: bool) -> void:
 
 
 func _build_display() -> void:
+	# Stack the countdown + both seat offers in a VBox so they AUTO-SPACE. Fixed y-offsets let a tall
+	# offer (name + up to 6 items + gold) grow down into the next seat's label and overlap it.
+	var box: VBoxContainer = VBoxContainer.new()
+	box.position = Vector2(-72.0, -120.0) # above the table; grows downward — tweak per placement
+	box.add_theme_constant_override(&"separation", 4)
+	add_child(box)
+	_countdown_label = Label.new()
+	_countdown_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
+	box.add_child(_countdown_label)
 	for i: int in 2:
 		# RichTextLabel so each seat's offer is tinted by its player colour (seat 0 = gold, seat 1 =
 		# blue) — so onlookers can tell whose items are whose at a glance.
@@ -251,14 +268,9 @@ func _build_display() -> void:
 		label.fit_content = true
 		label.scroll_active = false
 		label.autowrap_mode = TextServer.AUTOWRAP_OFF
-		label.custom_minimum_size = Vector2(140.0, 0.0)
-		label.position = Vector2(-60.0, -96.0 + i * 40.0)
-		add_child(label)
+		label.custom_minimum_size = Vector2(160.0, 0.0)
+		box.add_child(label)
 		_seat_labels.append(label)
-	_countdown_label = Label.new()
-	_countdown_label.position = Vector2(-60.0, -112.0)
-	_countdown_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
-	add_child(_countdown_label)
 
 
 func _on_table_state(data: Dictionary) -> void:

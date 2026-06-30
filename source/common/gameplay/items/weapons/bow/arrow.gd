@@ -28,7 +28,9 @@ var burn_duration_s: float = 0.0
 var dot_kind: StringName = &"burn"
 
 ## Seconds a projectile flies before despawning if it hits nothing (speed × this ≈ max range).
-const LIFETIME: float = 1.2
+## A var, not a const, so a short-range caster (the book's Arc Strike) can shorten its reach
+## via BoltShootAbility.max_range — a melee spell shouldn't out-range the bow.
+var lifetime: float = 1.2
 
 ## Max distance moved between hit checks. A fast projectile (or a frame-time spike under load) moves
 ## speed×frametime per frame; if that exceeds the hit shape, a point-blank target can fall BETWEEN two
@@ -52,7 +54,7 @@ func _ready() -> void:
 	rotate(direction.angle())
 	# Lifetime cap so stray shots don't sail across the map. TODO: a projectile manager beats a timer each.
 	var timer: Timer = Timer.new()
-	timer.wait_time = LIFETIME
+	timer.wait_time = lifetime
 	timer.one_shot = true
 	timer.timeout.connect(queue_free)
 	add_child(timer)

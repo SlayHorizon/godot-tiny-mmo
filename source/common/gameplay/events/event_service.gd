@@ -30,7 +30,7 @@ static func start_world_boss(instance: ServerInstance, spawn_container: Replicat
 	if not GameMode.is_world_server():
 		return "World bosses can only be spawned on a world server."
 	if is_instance_valid(_active_boss):
-		return "A world boss (%s) is already active — finish it first." % _active_boss.display_name
+		return "A world boss (%s) is already active. Finish it first." % _active_boss.display_name
 	if spawn_container == null:
 		return "No spawn container here."
 
@@ -40,7 +40,7 @@ static func start_world_boss(instance: ServerInstance, spawn_container: Replicat
 		{"enemy_type_slug": WORLD_BOSS_SLUG}
 	) as HostileNpc
 	if boss == null:
-		return "Failed to spawn the world boss (slug '%s' — is it registered?)." % WORLD_BOSS_SLUG
+		return "Failed to spawn the world boss (slug '%s', is it registered?)." % WORLD_BOSS_SLUG
 
 	# world_boss.tres already defines the whole fight (big stats + visual,
 	# leashes=false so it commits, single-life, the Boss tuning group). Here we
@@ -59,7 +59,7 @@ static func start_world_boss(instance: ServerInstance, spawn_container: Replicat
 	if instance != null and instance.instance_resource != null:
 		where = String(instance.instance_resource.instance_name)
 	# (The combat music cue is fired by the boss's own BossController on spawn.)
-	_announce("A world boss has risen in %s: %s! Rally and bring it down — everyone who fights shares the spoils." % [where, boss.display_name])
+	_announce("A world boss has risen in %s: %s! Rally and bring it down. Everyone who fights shares the spoils." % [where, boss.display_name])
 	return "" # success — the server-wide announce IS the admin's confirmation (skip the echo)
 
 

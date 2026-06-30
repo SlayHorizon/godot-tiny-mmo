@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="LightningLashAbility" format=3 uid="uid://jfgmc1k6vbsv"]
+
+[ext_resource type="Script" uid="uid://bhmn076nujd4a" path="res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_ability.gd" id="1_lash"]
+[ext_resource type="PackedScene" uid="uid://b8s7oak2vqlpx" path="res://source/common/gameplay/combat/melee_arc.tscn" id="1_v4u3m"]
+[ext_resource type="Texture2D" uid="uid://k4l22efg64sw" path="res://assets/sprites/ui/ability_icons/lightning_lash.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_lash")
+ap_ratio = 0.5
+beam_length = 160.0
+beam_width = 38.0
+channel_duration_s = 3.5
+tick_interval_s = 0.2
+radius = 160.0
+mana_per_tick = 4.0
+visual_kind = &"lash"
+mobile = true
+name = "Lightning Lash III"
+icon = ExtResource("2_icon")
+cooldown = 5.0
+cast_time_s = 0.6
+metadata/slug = &"lightning_lash_3"
+metadata/id = 52

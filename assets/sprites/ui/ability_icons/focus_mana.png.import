@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3n053obioby0"
-path="res://.godot/imported/Icon142.png-b177a7e767c07f08df533f8aa42ab9b3.ctex"
+uid="uid://dlhq3mvrmc0x0"
+path="res://.godot/imported/focus_mana.png-8631a8be6b8f848aca0d5098ccd50d24.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/items/icons/Icon142.png"
-dest_files=["res://.godot/imported/Icon142.png-b177a7e767c07f08df533f8aa42ab9b3.ctex"]
+source_file="res://assets/sprites/ui/ability_icons/focus_mana.png"
+dest_files=["res://.godot/imported/focus_mana.png-8631a8be6b8f848aca0d5098ccd50d24.ctex"]
 
 [params]
 

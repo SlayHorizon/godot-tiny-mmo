@@ -241,6 +241,10 @@ func take_damage(amount: float, attacker: Character = null, damage_type: StringN
 	if attacker:
 		last_attacker = attacker
 		attacker.combat_until_ms = now + COMBAT_LINGER_MS
+		# Acting offensively ends the attacker's post-respawn spawn protection, so a
+		# freshly respawned player can't be untouchable AND deal damage at once.
+		if attacker is Player:
+			(attacker as Player).pvp_immune_until_ms = 0
 
 	var resist_stat: StringName = Stat.MR if damage_type == CombatHit.DAMAGE_MAGIC else Stat.ARMOR
 	var resist: float = stats_component.get_stat(resist_stat)

@@ -281,7 +281,7 @@ func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, loca
 			# Predict the instant-feedback part locally (e.g. Deflect's bubble), so it
 			# fires NOW instead of waiting a round-trip for the server echo. No-op for
 			# most abilities; the server echo still runs the authoritative use_ability.
-			ability.predict_use(character)
+			ability.predict_use(character, local_player.look_direction)
 		_send_action(slot, false, local_player)
 	# Independent `if` (NOT elif): a fast tap can press and release within the
 	# same frame — the release must still send or the shot never fires.

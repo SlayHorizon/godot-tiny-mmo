@@ -40,29 +40,41 @@ static func spawn(parent: Node, frames: SpriteFrames, opts: Dictionary = {}) -> 
 		mat.set_shader_parameter("saturation", sat)
 		fx.material = mat
 	fx._loop = bool(opts.get("loop", false))
+	fx._hold = bool(opts.get("hold", false))
 	fx._spin_deg = float(opts.get("spin_deg_per_sec", 0.0))
+	fx._life = float(opts.get("duration", 0.0))
 	parent.add_child(fx)
 	return fx
 
 
 # A LOOPING effect replays instead of freeing on finish, and is freed EXTERNALLY
-# (e.g. by channel.end). _spin_deg rotates it each frame — a slash that spins
-# around the caster reads as a whirlwind.
+# (e.g. by channel.end) OR after [member _life] seconds if set (a lingering field
+# that loops its short anim for a fixed time). _spin_deg rotates it each frame.
+# A HOLD effect plays ONCE then sticks on its last frame, freed externally (Battle
+# Form's rune builds, then holds at full while the body grows).
 var _loop: bool = false
+var _hold: bool = false
 var _spin_deg: float = 0.0
+var _life: float = 0.0
+var _age: float = 0.0
 
 
 func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	centered = true
 	if _loop:
-		# Replay on finish; the owner (channel.end) frees us.
+		# Replay on finish; freed by the owner or by _life below.
 		animation_finished.connect(func() -> void: play(&"default"))
-	else:
+	elif not _hold:
 		animation_finished.connect(queue_free)
+	# _hold: do nothing on finish — stick on the last frame until freed externally.
 	play(&"default")
 
 
 func _process(delta: float) -> void:
 	if _spin_deg != 0.0:
 		rotation += deg_to_rad(_spin_deg) * delta
+	if _life > 0.0:
+		_age += delta
+		if _age >= _life:
+			queue_free()

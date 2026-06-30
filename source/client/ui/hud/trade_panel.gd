@@ -70,6 +70,23 @@ func _build_body() -> void:
 	columns.add_child(VSeparator.new())
 	columns.add_child(_build_their_column())
 
+	# Ready lights on a shared row so both sides line up (your column is taller — it has Add item —
+	# so an in-column ready would sit at a different y on each side).
+	var ready_row: HBoxContainer = HBoxContainer.new()
+	ready_row.add_theme_constant_override(&"separation", 14)
+	body.add_child(ready_row)
+	_you_ready = Label.new()
+	_you_ready.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ready_row.add_child(_you_ready)
+	_them_ready = Label.new()
+	_them_ready.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ready_row.add_child(_them_ready)
+
+	# Push the action bar to the BOTTOM of the (full-window) card so the offers sit up top.
+	var spacer: Control = Control.new()
+	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_child(spacer)
+
 	body.add_child(HSeparator.new())
 	var footer: HBoxContainer = HBoxContainer.new()
 	footer.add_theme_constant_override(&"separation", 8)
@@ -116,9 +133,6 @@ func _build_your_column() -> VBoxContainer:
 	_add_button = _make_action("Add item", _toggle_picker)
 	_add_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.add_child(_add_button)
-
-	_you_ready = Label.new()
-	col.add_child(_you_ready)
 	return col
 
 
@@ -131,8 +145,6 @@ func _build_their_column() -> VBoxContainer:
 	col.add_child(_them_grid)
 	_them_gold = Label.new()
 	col.add_child(_them_gold)
-	_them_ready = Label.new()
-	col.add_child(_them_ready)
 	return col
 
 
@@ -404,9 +416,13 @@ func _send_offer() -> void:
 
 
 func _on_set_gold() -> void:
-	_my_gold = int(_gold_spin.value)
+	# The Set button is focus-less, so clicking it doesn't pull focus off the spinbox to commit a
+	# TYPED amount — force the line edit to apply first, else we'd send the stale .value.
+	_gold_spin.get_line_edit().release_focus()
+	_my_gold = mini(int(_gold_spin.value), _owned_gold) # never offer more than you hold
 	_gold_pending = false
 	_send_offer()
+	Toaster.toast("Gold set to %d." % _my_gold) # confirm the amount actually went into your offer
 
 
 func _on_gold_spin_pending(_value: float) -> void:
@@ -462,6 +478,7 @@ func _on_join() -> void:
 
 func _on_join_result(data: Dictionary) -> void:
 	if data.get("ok", false):
+		_refresh() # re-fetch inventory so the gold max reflects the join cost we just paid
 		return
 	match String(data.get("reason", "")):
 		"gold":

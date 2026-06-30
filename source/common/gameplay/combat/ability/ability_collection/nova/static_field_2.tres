@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="NovaAbility" format=3 uid="uid://dcu3ef60l51i0"]
+
+[ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="1_2rmqw"]
+[ext_resource type="Script" uid="uid://daxuj610o34a" path="res://source/common/gameplay/combat/ability/ability_collection/nova/nova_ability.gd" id="1_nova"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/combat/vfx/static_ring.tres" id="2_ring"]
+[ext_resource type="Texture2D" uid="uid://bjpl5ptp8w1kq" path="res://assets/sprites/ui/ability_icons/static_field.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1_nova")
+ap_ratio = 0.38
+radius = 55.0
+slow_amount = 14.0
+slow_duration_s = 1.5
+duration_s = 3.0
+vfx = ExtResource("2_ring")
+vfx_color = Color(0.7, 0.9, 1, 1)
+name = "Static Field II"
+icon = ExtResource("3_icon")
+cooldown = 8.0
+mana_cost = 35
+metadata/slug = &"static_field_2"
+metadata/id = 47

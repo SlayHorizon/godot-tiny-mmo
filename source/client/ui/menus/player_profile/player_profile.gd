@@ -212,7 +212,7 @@ func _render_title_strip(profile: Dictionary) -> void:
 ## built-in panel styling; it's disabled so it doesn't take focus.
 func _title_chip(text: String) -> Button:
 	var chip: Button = Button.new()
-	chip.text = "🏆 %s" % text
+	chip.text = "%s" % text
 	chip.disabled = true
 	chip.focus_mode = Control.FOCUS_NONE
 	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE

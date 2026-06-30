@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bv06kai8ia12k"]
+
+[ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_rra25"]
+[ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="2_ability"]
+[ext_resource type="Resource" uid="uid://bkpaev6m1otd2" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/arc_strike.tres" id="3_arc"]
+
+[node name="Book" unique_id=1498533445 instance=ExtResource("1_rra25")]
+abilities = Array[ExtResource("2_ability")]([ExtResource("3_arc")])
+
+[node name="WeaponSprite" parent="." index="0" unique_id=2118713155]
+position = Vector2(8, 13)
+region_rect = Rect2(48, 0, 16, 16)

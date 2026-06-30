@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://cpbdi3ouhyvte"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://dba183tgy3vrg" path="res://assets/sprites/items/weapons/fire/fire.png" id="2_tex"]
+[ext_resource type="PackedScene" uid="uid://bv06kai8ia12k" path="res://source/common/gameplay/items/weapons/book/book.tscn" id="3_book"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_item"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_slot"]
+
+[sub_resource type="Resource" id="Mod_ap"]
+script = ExtResource("1_mod")
+stat_name = "ap"
+value = 15.0
+
+[sub_resource type="Resource" id="Mod_mana_max"]
+script = ExtResource("1_mod")
+stat_name = "mana_max"
+value = 90.0
+
+[sub_resource type="Resource" id="Mod_mana_regen"]
+script = ExtResource("1_mod")
+stat_name = "mana_regen"
+value = 5.5
+
+[sub_resource type="Resource" id="Mod_hp"]
+script = ExtResource("1_mod")
+value = 40.0
+
+[sub_resource type="AtlasTexture" id="Icon"]
+atlas = ExtResource("2_tex")
+region = Rect2(96, 32, 16, 16)
+
+[resource]
+script = ExtResource("4_item")
+category = &"book"
+capacity = 4
+right_hand_scene = ExtResource("3_book")
+slot = ExtResource("5_slot")
+required_level = 12
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap"), SubResource("Mod_mana_max"), SubResource("Mod_mana_regen"), SubResource("Mod_hp")])
+item_name = &"Fire Tome"
+item_icon = SubResource("Icon")
+description = "A fire-bound tome, heaviest of the battlemage's books. A deep mana pool and quick regen to nuke from the heart of melee."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/slug = &"book_fire.item"
+metadata/id = 96

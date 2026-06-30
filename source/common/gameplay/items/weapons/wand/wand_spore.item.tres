@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponItem" format=3]
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://c118jtihx3ybm"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
 [ext_resource type="Texture2D" uid="uid://d0226i8o2vv53" path="res://assets/sprites/items/weapons/rustic/rustic.png" id="2_tex"]
@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ap"]
 script = ExtResource("1_mod")
 stat_name = "ap"
-value = 14.0
+value = 10.0
 
 [sub_resource type="Resource" id="Mod_ms"]
 script = ExtResource("1_mod")
@@ -35,4 +35,4 @@ can_trade = true
 can_sell = true
 stack_limit = 1
 metadata/slug = &"wand_spore.item"
-metadata/id = 89
+metadata/id = 91

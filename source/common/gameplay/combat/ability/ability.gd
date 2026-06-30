@@ -83,7 +83,7 @@ func predict_release() -> void:
 ## round-trip later), without server-authoritative effects. Default no-op. Deflect
 ## spawns its parry bubble here so a client pops the incoming shot in real time
 ## instead of one RTT late (which left a ghost arrow flying client-side).
-func predict_use(_entity: Entity) -> void:
+func predict_use(_entity: Entity, _direction: Vector2) -> void:
 	pass
 
 

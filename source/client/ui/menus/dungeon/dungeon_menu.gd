@@ -166,7 +166,7 @@ func _build_party_panel() -> void:
 	var vbox: VBoxContainer = _panel_body()
 	_add_roster(vbox, "Public party", _members, _capacity, true)
 	var note: Label = Label.new()
-	note.text = "Normal mode — drop in with anyone. (Hard mode lives in Private rooms.)"
+	note.text = "Normal mode. Drop in with anyone. (Hard mode lives in Private rooms.)"
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	note.modulate = Color(1, 1, 1, 0.55)
 	vbox.add_child(note)
@@ -256,7 +256,7 @@ func _render_leaderboard(vbox: VBoxContainer, status: Label, response: Dictionar
 		return
 	var entries: Array = response.get("entries", [])
 	if entries.is_empty():
-		status.text = "No clears yet — be the first."
+		status.text = "No clears yet. Be the first."
 		return
 	status.text = ""
 	for i: int in entries.size():

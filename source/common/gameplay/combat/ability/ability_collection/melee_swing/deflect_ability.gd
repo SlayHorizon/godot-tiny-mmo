@@ -24,7 +24,7 @@ func use_ability(user: Entity, _direction: Vector2) -> void:
 	_deflect(user)
 
 
-func predict_use(user: Entity) -> void:
+func predict_use(user: Entity, _direction: Vector2) -> void:
 	# Caster-side: raise the bubble the instant the button is pressed.
 	_deflect(user)
 

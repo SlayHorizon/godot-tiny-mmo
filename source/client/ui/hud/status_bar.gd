@@ -38,12 +38,12 @@ const STAT_LABELS: Dictionary = {
 ## learn what each icon means, LoL-style. Buffs/debuffs without a bespoke line
 ## fall back to a generated one.
 const DESCRIPTIONS: Dictionary = {
-	&"combat": "In Combat — armor is locked (weapons still swap freely).",
-	&"burn": "Burning — taking fire damage every second.",
-	&"poison": "Poisoned — taking damage every second.",
-	&"slow": "Slowed — reduced movement speed.",
-	&"mana_regen": "Mana Tonic — your mana regenerates faster.",
-	&"move_speed": "Hastened — increased movement speed.",
+	&"combat": "In Combat. Armor is locked (weapons still swap freely).",
+	&"burn": "Burning. Taking fire damage every second.",
+	&"poison": "Poisoned. Taking damage every second.",
+	&"slow": "Slowed. Reduced movement speed.",
+	&"mana_regen": "Mana Tonic. Your mana regenerates faster.",
+	&"move_speed": "Hastened. Increased movement speed.",
 }
 
 ## How long the tap-to-read label lingers on mobile (no hover there).
@@ -82,7 +82,7 @@ func _on_status_sync(payload: Dictionary) -> void:
 		var did: StringName = StringName(str(debuff.get("id", "")))
 		specs.append({
 			"key": "debuff:" + String(did), "icon": DEBUFF_ICONS.get(did, DEBUFF_FALLBACK),
-			"desc": _describe(did, "%s — harmful effect." % String(did).capitalize()),
+			"desc": _describe(did, "%s: harmful effect." % String(did).capitalize()),
 			"remaining": int(debuff.get("remaining", 0)),
 		})
 

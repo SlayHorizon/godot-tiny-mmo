@@ -5,13 +5,28 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1782729586
-next_id = 39
+version = 1782841085
+next_id = 53
 entries = Array[Dictionary]([{
 &"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
 &"id": 12,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres",
 &"slug": &"arcane_wall"
+}, {
+&"hash": "f279da9911cbcaa3b1ac47f8e992e54f7c8fde64dde074b1952d69e135e98596",
+&"id": 41,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form.tres",
+&"slug": &"battle_form"
+}, {
+&"hash": "b5f073017548b8d0550824504e7ae2e8f006264cb5c7fcb2c317969d33f3899d",
+&"id": 44,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_2.tres",
+&"slug": &"battle_form_2"
+}, {
+&"hash": "e22e9d5a5903f48e3ab712669f1bb42f9a11656bdb608c0c38a55b625f1a1969",
+&"id": 49,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_3.tres",
+&"slug": &"battle_form_3"
 }, {
 &"hash": "3cfe9ebd6e48ea77354368c723bd81e586fb367200f1052bdbed720007d67f24",
 &"id": 34,
@@ -27,6 +42,21 @@ entries = Array[Dictionary]([{
 &"id": 36,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/berserk/sword_berserk_3.tres",
 &"slug": &"sword_berserk_3"
+}, {
+&"hash": "f516376dedd44f4b71f72ac3194d2f17aefa18147bec14c8285c90bd7572820f",
+&"id": 42,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/blink/blink.tres",
+&"slug": &"blink"
+}, {
+&"hash": "e9afc5fe355102e03c6c4f8981b3f0199f3f76f3d571e3e7aa6b45386b1e41f3",
+&"id": 45,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/blink/blink_2.tres",
+&"slug": &"blink_2"
+}, {
+&"hash": "1f24a1b0238365a3f4dc706ec1a76795f8906a7f655b577be94d65ccc77b2005",
+&"id": 39,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/arc_strike.tres",
+&"slug": &"arc_strike"
 }, {
 &"hash": "89ad782a48ea5db037f26be9e5c0a4b813dbb3625ccf3d3c292df7c5078210a6",
 &"id": 10,
@@ -67,6 +97,21 @@ entries = Array[Dictionary]([{
 &"id": 23,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_4.tres",
 &"slug": &"hammer_aura_4"
+}, {
+&"hash": "5688e17ea4a84b1ab7181b2d61bcb231435b0d2ae08a50520e65fb5b18ea630f",
+&"id": 50,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash.tres",
+&"slug": &"lightning_lash"
+}, {
+&"hash": "3e51474a6e011ff8191b0ee465aad6ac1a112c149a960e8979d939a3adae39e4",
+&"id": 51,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_2.tres",
+&"slug": &"lightning_lash_2"
+}, {
+&"hash": "5588141b3345e78897e3ce726e7d7f6dfc8c1e5c42a4c5fa9c31af73390abbf8",
+&"id": 52,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_3.tres",
+&"slug": &"lightning_lash_3"
 }, {
 &"hash": "478c302ba8c31666ac9ad8678ad5fc40beff829fe2dfea97e425a07b7585dd5d",
 &"id": 24,
@@ -187,6 +232,31 @@ entries = Array[Dictionary]([{
 &"id": 7,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_swing.tres",
 &"slug": &"sword_swing"
+}, {
+&"hash": "ea820e5a95c1d674439fad72ff56bd37f8c3629b0656d12849f53e2b4fd58373",
+&"id": 43,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/blood_feast.tres",
+&"slug": &"blood_feast"
+}, {
+&"hash": "7accd801ab1fc6b80d6b416af0d35fe5d58bf9d22267b97ae3632fb59fd641a8",
+&"id": 46,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/blood_feast_2.tres",
+&"slug": &"blood_feast_2"
+}, {
+&"hash": "899c6f33aa4e705924cb6bcb071e9c7add457a2fc43458516c12447cba84eaba",
+&"id": 40,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/static_field.tres",
+&"slug": &"static_field"
+}, {
+&"hash": "028c417f773e2cb104ecb903972e0927b994a0e3f507470d29288dd0c5835f76",
+&"id": 47,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/static_field_2.tres",
+&"slug": &"static_field_2"
+}, {
+&"hash": "6e5de36f06fffd44e471261ce1187147eee5309dbbad275cd022f5eeb06bf969",
+&"id": 48,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/static_field_3.tres",
+&"slug": &"static_field_3"
 }, {
 &"hash": "208d77de6cbeb0907a65da3d1b02add22aad5d936333a9d8f66cd16e9d76111e",
 &"id": 8,

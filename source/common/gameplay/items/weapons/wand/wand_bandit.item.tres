@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ap_wand"]
 script = ExtResource("1_tnje4")
 stat_name = "ap"
-value = 18.0
+value = 14.0
 
 [sub_resource type="Resource" id="Resource_koamn"]
 script = ExtResource("1_tnje4")

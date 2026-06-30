@@ -32,6 +32,10 @@ extends AbilityResource
 ## purple; heal sets green, ember sets red.
 @export var bolt_modulate: Color = Color(0.75, 0.55, 1.0)
 
+## Caps the bolt's reach in PIXELS (0 = use the projectile's own default lifetime). A
+## melee caster (the book) sets a short range so its bolt doesn't out-poke the bow.
+@export var max_range: float = 0.0
+
 
 func use_ability(user: Entity, direction: Vector2) -> void:
 	if user is Character:
@@ -42,6 +46,8 @@ func use_ability(user: Entity, direction: Vector2) -> void:
 	bolt.top_level = true
 	bolt.direction = direction.normalized() if direction != Vector2.ZERO else Vector2.RIGHT
 	bolt.speed = speed
+	if max_range > 0.0:
+		bolt.lifetime = max_range / maxf(1.0, speed)  # reach ≈ max_range px
 	bolt.source = user
 	bolt.damage = maxf(0.0, _wielder_ap(user) * ap_ratio)
 	bolt.damage_type = CombatHit.DAMAGE_MAGIC # mitigated by MR, not armor

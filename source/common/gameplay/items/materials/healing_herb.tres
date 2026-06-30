@@ -1,11 +1,16 @@
 [gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://d2dopgtbgmdii"]
 
-[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="1_icon"]
+[ext_resource type="Texture2D" uid="uid://cepulii2k6xrt" path="res://assets/sprites/environment/props/vegetation.png" id="1_jwll5"]
 [ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_script"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_21x3k"]
+atlas = ExtResource("1_jwll5")
+region = Rect2(64, 192, 16, 16)
 
 [resource]
 script = ExtResource("2_script")
 item_name = &"Healing Herb"
+item_icon = SubResource("AtlasTexture_21x3k")
 description = "A common wildflower with mild healing properties. Found in clearings and along roadsides."
 vendor_value = 2
 metadata/_custom_type_script = "uid://nsr1timk430j"

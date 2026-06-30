@@ -1,0 +1,135 @@
+[gd_resource type="Resource" script_class="MasteryTreeResource" format=3]
+
+[ext_resource type="Script" uid="uid://cx1btl22f4mft" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
+[ext_resource type="Script" uid="uid://dmdvxcrsmfmo2" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash.tres" id="4_lash"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form.tres" id="5_bform"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/blink/blink.tres" id="6_blink"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/nova/blood_feast.tres" id="7_feast"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_2.tres" id="8_lash2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_3.tres" id="9_lash3"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/nova/blood_feast_2.tres" id="10_feast2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_2.tres" id="11_bform2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/blink/blink_2.tres" id="12_blink2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_3.tres" id="13_bform3"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/juggernaut.png" id="14_jug"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/focus_mana.png" id="15_focus"]
+
+[sub_resource type="Resource" id="Mod_hp_tough"]
+script = ExtResource("3_mod")
+stat_name = "health_max"
+value = 25.0
+
+[sub_resource type="Resource" id="Node_tough"]
+script = ExtResource("2_node")
+id = &"book_toughness"
+node_name = "Toughness"
+description = "+25 max health. The battlemage fights up close, so it needs the bulk."
+branch = &"resolve"
+icon = ExtResource("14_jug")
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_tough")])
+
+[sub_resource type="Resource" id="Mod_regen_focus"]
+script = ExtResource("3_mod")
+stat_name = "mana_regen"
+value = 2.0
+
+[sub_resource type="Resource" id="Node_focus"]
+script = ExtResource("2_node")
+id = &"book_focus"
+node_name = "Focus"
+description = "+2 mana regen per second."
+branch = &"inspiration"
+icon = ExtResource("15_focus")
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_regen_focus")])
+
+[sub_resource type="Resource" id="Node_lash"]
+script = ExtResource("2_node")
+id = &"book_lightning_lash"
+description = "Lash out a beam of lightning where you aim, sweeping it across whoever's in front of you. You move slowly and keep aiming while it crackles."
+branch = &"domination"
+ability = ExtResource("4_lash")
+
+[sub_resource type="Resource" id="Node_lash2"]
+script = ExtResource("2_node")
+id = &"book_lightning_lash_2"
+description = "A longer, fiercer lash that reaches farther and lasts longer."
+branch = &"domination"
+tier = 2
+ability = ExtResource("8_lash2")
+upgrades = &"book_lightning_lash"
+
+[sub_resource type="Resource" id="Node_lash3"]
+script = ExtResource("2_node")
+id = &"book_lightning_lash_3"
+description = "A roaring storm-lance: the longest reach, the fiercest current."
+branch = &"domination"
+tier = 3
+ability = ExtResource("9_lash3")
+upgrades = &"book_lightning_lash_2"
+
+[sub_resource type="Resource" id="Node_bform"]
+script = ExtResource("2_node")
+id = &"book_battle_form"
+description = "Swell into a towering battle form: a huge wall of temporary health for a few seconds. You grow bigger and easier to hit, but you become very hard to kill."
+branch = &"resolve"
+tier = 2
+ability = ExtResource("5_bform")
+
+[sub_resource type="Resource" id="Node_blink"]
+script = ExtResource("2_node")
+id = &"book_blink"
+description = "Teleport a short way in the direction you're aiming, stopping at walls. Dive in or slip away."
+branch = &"inspiration"
+ability = ExtResource("6_blink")
+
+[sub_resource type="Resource" id="Node_feast"]
+script = ExtResource("2_node")
+id = &"book_blood_feast"
+description = "Erupt in a burst of blood, tearing into everyone around you and draining their life and energy back into yourself. Dive the pack to claw your health back."
+branch = &"domination"
+tier = 3
+ability = ExtResource("7_feast")
+
+[sub_resource type="Resource" id="Node_feast2"]
+script = ExtResource("2_node")
+id = &"book_blood_feast_2"
+description = "A deeper feast: bigger burst, more life and energy torn back per foe."
+branch = &"domination"
+tier = 4
+ability = ExtResource("10_feast2")
+upgrades = &"book_blood_feast"
+
+[sub_resource type="Resource" id="Node_bform2"]
+script = ExtResource("2_node")
+id = &"book_battle_form_2"
+description = "An even mightier form: a larger frame, a greater wall of health, held longer."
+branch = &"resolve"
+tier = 3
+ability = ExtResource("11_bform2")
+upgrades = &"book_battle_form"
+
+[sub_resource type="Resource" id="Node_blink2"]
+script = ExtResource("2_node")
+id = &"book_blink_2"
+description = "A longer blink on a shorter cooldown."
+branch = &"inspiration"
+tier = 2
+ability = ExtResource("12_blink2")
+upgrades = &"book_blink"
+
+[sub_resource type="Resource" id="Node_bform3"]
+script = ExtResource("2_node")
+id = &"book_battle_form_3"
+description = "The ultimate form: a colossal frame and a staggering wall of health, held the longest. The battlemage made titan."
+branch = &"resolve"
+tier = 4
+ability = ExtResource("13_bform3")
+upgrades = &"book_battle_form_2"
+
+[resource]
+script = ExtResource("1_tree")
+category = &"book"
+display_name = "Book"
+nodes = Array[ExtResource("2_node")]([SubResource("Node_lash"), SubResource("Node_lash2"), SubResource("Node_lash3"), SubResource("Node_feast"), SubResource("Node_feast2"), SubResource("Node_bform"), SubResource("Node_bform2"), SubResource("Node_bform3"), SubResource("Node_blink"), SubResource("Node_blink2"), SubResource("Node_tough"), SubResource("Node_focus")])

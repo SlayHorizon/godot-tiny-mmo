@@ -10,6 +10,9 @@ var notifications: Array[Dictionary]
 var menus: Dictionary[StringName, Control]
 var _xp_tween: Tween
 var _chat_icon: TextureRect
+## Bumped on every player.died push so an in-flight respawn countdown can detect that a newer
+## death event superseded it and bail (the newest invocation owns the death overlay).
+var _death_gen: int = 0
 ## Gameplay nodes we hid because a menu opened — restored (only these) on close, so nodes with
 ## their own visibility gating (touch-only sticks, tracked-only quest tracker) that were already
 ## hidden don't get force-shown.
@@ -121,6 +124,11 @@ func _maybe_show_web_notice() -> void:
 
 ## Shows the death overlay with a per-second countdown until the server respawns us.
 func _on_player_died(data: Dictionary) -> void:
+	# Re-entrancy guard: claim a fresh generation. If a newer death push arrives while this
+	# countdown is mid-flight, our captured gen goes stale and we bail without touching the
+	# overlay, so the newest invocation owns the screen (no early hide / no double text write).
+	_death_gen += 1
+	var gen: int = _death_gen
 	var seconds: int = int(ceil(float(data.get("respawn_in", 2.5))))
 	var killed_by: String = str(data.get("killed_by", ""))
 	var headline: String = "Slain by %s" % killed_by if not killed_by.is_empty() else "You died"
@@ -129,6 +137,8 @@ func _on_player_died(data: Dictionary) -> void:
 		death_label.text = "%s\nRespawning in %d..." % [headline, remaining]
 		await get_tree().create_timer(1.0).timeout
 		if not is_instance_valid(self):
+			return
+		if gen != _death_gen:
 			return
 	death_screen.visible = false
 

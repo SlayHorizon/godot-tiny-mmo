@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ap_wand"]
 script = ExtResource("1_kwl2h")
 stat_name = "ap"
-value = 25.0
+value = 20.0
 
 [sub_resource type="Resource" id="Resource_koamn"]
 script = ExtResource("1_kwl2h")
@@ -40,5 +40,5 @@ description = "FIRE WANDDD"
 can_trade = true
 can_sell = true
 stack_limit = 1
-metadata/slug = &"wand.item"
-metadata/id = 72
+metadata/slug = &"fire_wand.item"
+metadata/id = 90

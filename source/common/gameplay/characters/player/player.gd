@@ -13,6 +13,15 @@ var zone_flags: int = 0
 
 var teleport_lock_until_ms: int = 0
 
+## Server time (ticks_msec) until which other players can't damage this one —
+## post-respawn spawn protection. 0 = vulnerable. Set in revive(), cleared the
+## moment this player deals damage (see Character.take_damage).
+var pvp_immune_until_ms: int = 0
+
+## Anti-camp PvP death streak + last-PvP-death stamp (runtime, not persisted).
+var _pvp_death_streak: int = 0
+var _last_pvp_death_ms: int = 0
+
 ## --- Weapon equip-cast (server-authoritative draw) ---
 ## A weapon "draws" over WEAPON_DRAW_MS before it actually equips: abilities are
 ## locked (the action.perform gate + the client lock) and the client shows a cast
@@ -31,6 +40,15 @@ const RESPAWN_DELAY: float = 3.0
 ## Grace window after respawn where the player can't traverse warpers — the map spawn point can sit
 ## on a warper (e.g. forest↔overworld), and without this the first step off re-warps the player.
 const RESPAWN_WARP_GRACE_MS: int = 2000
+## Post-respawn PvP grace: other players can't damage a freshly respawned player
+## for this long (stops spawn-camping / AoE on the respawn point). It ends the
+## instant THEY attack (see Character.take_damage), so it can't be abused.
+const RESPAWN_PVP_IMMUNITY_MS: int = 3000
+## Anti-camp exile: this many PvP deaths within RAPID_DEATH_WINDOW_MS sends the
+## victim's next respawn to the far, safe jail_room instead of the local spawn,
+## so a spawn-camp / feed loop can't continue. Sparring deaths don't count.
+const RAPID_DEATH_WINDOW_MS: int = 20000
+const RAPID_DEATH_LIMIT: int = 3
 
 
 ## On death: tell the client (death screen + countdown + where to respawn), wait, then
@@ -39,9 +57,22 @@ const RESPAWN_WARP_GRACE_MS: int = 2000
 ## Staying dead during the delay also makes nearby enemies drop aggro (they ignore dead
 ## targets) instead of trailing the corpse.
 func die(killer: Character) -> void:
-	# Leaderboard: credit the killer if this was a player-vs-player kill. NPC
-	# killers are filtered out inside record_pvp_kill.
-	LeaderboardService.record_pvp_kill(killer)
+	# Leaderboard: credit the killer for real open-world PvP only — never
+	# sparring/duels (those are tallied as arena wins/losses). in_match is still
+	# true here (on_player_died_in_match clears it below). NPC killers are
+	# filtered out inside record_pvp_kill.
+	if player_resource == null or not player_resource.in_match:
+		LeaderboardService.record_pvp_kill(killer)
+
+	# Anti-camp: count consecutive PvP deaths in a short window. Hitting the limit
+	# exiles the next respawn to the far, safe jail_room (below), so a spawn-camp or
+	# feed loop can't keep going. Sparring deaths are excluded.
+	var exile_after_respawn: bool = false
+	if killer is Player and (player_resource == null or not player_resource.in_match):
+		var now_ms: int = Time.get_ticks_msec()
+		_pvp_death_streak = (_pvp_death_streak + 1) if (now_ms - _last_pvp_death_ms <= RAPID_DEATH_WINDOW_MS) else 1
+		_last_pvp_death_ms = now_ms
+		exile_after_respawn = _pvp_death_streak >= RAPID_DEATH_LIMIT
 
 	# Hardcore dungeon: a death spends a shared revive. If the pool's empty the whole run fails —
 	# DungeonService revives + ejects the party to town, so skip the normal respawn here.
@@ -84,6 +115,14 @@ func die(killer: Character) -> void:
 	# briefly so stepping off doesn't immediately warp the player (their idea; mirrors spawn_player).
 	mark_just_teleported(RESPAWN_WARP_GRACE_MS)
 
+	# Too many quick PvP deaths: relocate the victim to the far, safe jail_room spawn
+	# (a one-way move, NOT a jail sentence — warpers still let them walk back). Removes
+	# the target so a spawn-camp / feed loop ends. Streak already reset just above.
+	if exile_after_respawn and peer_id > 0:
+		_pvp_death_streak = 0
+		_last_pvp_death_ms = 0
+		WorldServer.curr.instance_manager.send_player_to_jail(peer_id)
+
 
 ## Top HP and mana back to full (does NOT touch the dead flag). The dungeon enter/exit refill uses it
 ## to save players a few potions, spar-style; revive() builds on it for respawns.
@@ -97,6 +136,15 @@ func restore_full() -> void:
 func revive() -> void:
 	restore_full()
 	is_dead = false
+	# Spawn protection: a brief window where other players can't damage us, so a
+	# camper can't AoE the respawn point. Ends early the moment WE attack.
+	pvp_immune_until_ms = Time.get_ticks_msec() + RESPAWN_PVP_IMMUNITY_MS
+
+
+## True while post-respawn spawn protection is active — set in revive(), cleared
+## when this player deals damage. Checked by CombatHit.can_damage for open-world PvP.
+func is_pvp_immune() -> bool:
+	return Time.get_ticks_msec() < pvp_immune_until_ms
 
 
 func _ready() -> void:

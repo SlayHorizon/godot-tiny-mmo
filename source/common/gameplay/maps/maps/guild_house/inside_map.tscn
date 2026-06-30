@@ -31,6 +31,10 @@
 [ext_resource type="PackedScene" path="res://source/common/gameplay/leaderboard/champion_statue.tscn" id="26_7whis"]
 [ext_resource type="Resource" uid="uid://wp3akqcd3x2h" path="res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres" id="28_j3473"]
 [ext_resource type="Script" uid="uid://b2j8gyjph35qx" path="res://source/common/gameplay/trade/trade_table.gd" id="30_0sb5n"]
+[ext_resource type="Resource" uid="uid://cegn1bg7mq07w" path="res://source/common/gameplay/items/weapons/book/book_bone.item.tres" id="32_kkxvd"]
+[ext_resource type="Resource" uid="uid://cg2jsfh0cr5gy" path="res://source/common/gameplay/items/weapons/book/book_wood.item.tres" id="32_nurwa"]
+[ext_resource type="Resource" uid="uid://b5u0jyyxqonrh" path="res://source/common/gameplay/items/weapons/book/book_rustic.item.tres" id="33_nurwa"]
+[ext_resource type="Resource" uid="uid://cpbdi3ouhyvte" path="res://source/common/gameplay/items/weapons/book/book_fire.item.tres" id="34_5dvjx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5v2ol"]
 size = Vector2(80, 50)
@@ -111,6 +115,48 @@ metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j3473"]
 size = Vector2(48, 41.740356)
+
+[sub_resource type="Resource" id="Resource_bn6im"]
+script = ExtResource("22_1whb7")
+item = ExtResource("32_nurwa")
+price = 50
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_vtsvb"]
+script = ExtResource("22_1whb7")
+item = ExtResource("32_kkxvd")
+price = 50
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_k1af3"]
+script = ExtResource("22_1whb7")
+item = ExtResource("33_nurwa")
+price = 200
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_a7ht8"]
+script = ExtResource("22_1whb7")
+item = ExtResource("34_5dvjx")
+price = 500
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_bigeu"]
+script = ExtResource("25_0sb5n")
+shop_name = "BATTLE MAGE SHOP"
+entries = Array[ExtResource("22_1whb7")]([SubResource("Resource_bn6im"), SubResource("Resource_vtsvb"), SubResource("Resource_k1af3"), SubResource("Resource_a7ht8")])
+trades = 0
+metadata/_custom_type_script = "uid://bsed5oxrf1q15"
+
+[sub_resource type="Resource" id="Resource_083po"]
+script = ExtResource("20_8uqpf")
+shop = SubResource("Resource_bigeu")
+metadata/_custom_type_script = "uid://bpo804060rk5t"
+
+[sub_resource type="Resource" id="Resource_tge8w"]
+script = ExtResource("19_kqnsa")
+npc_name = "Horizon3"
+interactions = Array[ExtResource("9_fjcme")]([SubResource("Resource_083po")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="GuildHouseInside" type="Node2D" unique_id=108008123]
 y_sort_enabled = true
@@ -224,7 +270,7 @@ master_id = 1
 metadata/_custom_type_script = "uid://cmw2wguvs4l0k"
 
 [node name="Hori" parent="." unique_id=1325067539 instance=ExtResource("10_subvk")]
-position = Vector2(-6.5010376, -411.0844)
+position = Vector2(-8, -408)
 npc_resource = SubResource("Resource_nurwa")
 
 [node name="ChampionStatue" parent="." unique_id=609075953 instance=ExtResource("26_7whis")]
@@ -290,3 +336,7 @@ offset_top = -360.0
 offset_right = -136.0
 offset_bottom = -337.0
 text = "Trade"
+
+[node name="Hori3" parent="." unique_id=533616522 instance=ExtResource("10_subvk")]
+position = Vector2(48, -408)
+npc_resource = SubResource("Resource_tge8w")
