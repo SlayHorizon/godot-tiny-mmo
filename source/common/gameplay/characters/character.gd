@@ -50,8 +50,8 @@ var ability_cooldowns: Dictionary = {}
 @onready var equipment_component: EquipmentComponent = $EquipmentComponent
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var animation_tree: AnimationTree = $AnimationTree
-@onready var locomotion_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/LocomotionSM/playback")
-@onready var weapon_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/WeaponSM/playback")
+#@onready var locomotion_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/LocomotionSM/playback")
+#@onready var weapon_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/WeaponSM/playback")
 
 
 ## Over-head HP bar fill colors by relationship to the local viewer. Missing HP
@@ -312,20 +312,24 @@ func die(_killer: Character) -> void:
 ## do this on equip via add_animation_library.
 ##
 ## Server-side is a no-op; animation work is purely cosmetic.
+const player_animation_path : StringName = &"parameters/AnimationBlend/PlayerAnimation/transition_request"
+const shot_request : StringName = &"parameters/AnimationBlend/ShotRequest/request"
+const idle_pause_request : StringName = &"parameters/AnimationBlend/WeaponIdleState/transition_request"
 func play_action_animation(anim_name: StringName) -> void:
 	if not GameMode.is_client() or anim_name.is_empty():
 		return
 	if animation_tree == null or animation_tree.tree_root == null:
 		return
 	# tree_root is a StateMachine; OnFoot is the BlendTree state we author in.
-	var on_foot: AnimationNodeBlendTree = animation_tree.tree_root.get_node(&"OnFoot") as AnimationNodeBlendTree
+	var on_foot: AnimationNodeBlendTree = animation_tree.tree_root.get_node(&"AnimationBlend") as AnimationNodeBlendTree
 	if on_foot == null:
 		return
-	var interrupt_anim: AnimationNodeAnimation = on_foot.get_node(&"InteruptAnimation") as AnimationNodeAnimation
+	var interrupt_anim: AnimationNodeAnimation = on_foot.get_node(&"ShotAnimation") as AnimationNodeAnimation
 	if interrupt_anim == null:
 		return
+
 	interrupt_anim.animation = anim_name
-	animation_tree[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
+	animation_tree[shot_request] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
 
 
 func update_weapon_animation(state: String) -> void:
@@ -348,11 +352,14 @@ func _set_skin_id(id: int) -> void:
 func _set_anim(new_anim: Animations) -> void:
 	match new_anim:
 		Animations.IDLE:
-			locomotion_state_machine.travel(&"locomotion_idle")
+			animation_tree[player_animation_path] = "Idle"
+			#locomotion_state_machine.travel(&"locomotion_idle")
 		Animations.RUN:
-			locomotion_state_machine.travel(&"locomotion_run")
+			animation_tree[player_animation_path] = "Walk"
+			#locomotion_state_machine.travel(&"locomotion_run")
 		Animations.DEATH:
-			locomotion_state_machine.travel(&"locomotion_death")
+			animation_tree[player_animation_path] = "Death"
+			#locomotion_state_machine.travel(&"locomotion_death")
 	anim = new_anim
 
 
