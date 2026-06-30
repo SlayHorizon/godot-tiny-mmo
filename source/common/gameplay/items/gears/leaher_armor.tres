@@ -17,7 +17,6 @@ slot = ExtResource("4_hb14x")
 required_level = 5
 base_modifiers = Array[ExtResource("1_61etr")]([SubResource("Resource_bxcbi")])
 item_name = &"Leather Armor"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"leaher_armor"
 metadata/id = 20

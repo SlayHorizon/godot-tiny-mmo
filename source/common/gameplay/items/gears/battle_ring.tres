@@ -22,7 +22,6 @@ slot = ExtResource("4_jnguy")
 required_level = 20
 base_modifiers = Array[ExtResource("1_6abd4")]([SubResource("Resource_t7116"), SubResource("Resource_jnguy")])
 item_name = &"Battle Ring"
-description = ""
 vendor_value = 5
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"battle_ring"

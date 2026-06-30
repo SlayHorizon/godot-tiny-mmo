@@ -2,12 +2,14 @@
 
 [ext_resource type="Script" uid="uid://01sxrebcprpu" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/melee_swing_ability.gd" id="1_swing"]
 [ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="2_arc"]
+[ext_resource type="Texture2D" uid="uid://b3hmi81e5uvo0" path="res://assets/sprites/ui/ability_icons/crushing_blow.png" id="3_icon"]
 
 [resource]
 script = ExtResource("1_swing")
 arc_scene = ExtResource("2_arc")
 ad_ratio = 1.6
 name = "Crushing Blow"
+icon = ExtResource("3_icon")
 cooldown = 4.0
 mana_cost = 14
 impact_shake = 0.5

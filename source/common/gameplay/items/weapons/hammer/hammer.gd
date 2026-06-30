@@ -72,6 +72,10 @@ func _play_slam_visual() -> void:
 	var ground_hold: float = GROUND_HOLD_S + (0.1 if cast > 0.0 else 0.0)
 	var has_sprite: bool = weapon_sprite != null
 
+	# A telegraphed slam can call down a sky VFX (a giant hammer) that falls during
+	# the wind-up and bursts on the smash. time-to-impact = wind-up + descent.
+	_spawn_sky_impact(raise_t + hold_t + SMASH_S)
+
 	_slam_tween = create_tween()
 	# Wind up high and slow...
 	_slam_tween.tween_property(self, ^"rotation_degrees", RAISE_ANGLE, raise_t)\
@@ -99,6 +103,39 @@ func _play_slam_visual() -> void:
 	if has_sprite:
 		_slam_tween.parallel().tween_property(weapon_sprite, ^"scale", Vector2.ONE, SETTLE_S)\
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## Schedule the slam's optional sky impact VFX (a falling hammer). It plays at its
+## authored speed but is DELAYED so its ground-hit frame lands on the smash — so
+## the hammer falls in the last stretch of the wind-up (after the telegraph), not
+## the instant the ability starts. Client-only; only for abilities with an
+## impact_vfx.
+func _spawn_sky_impact(time_to_impact: float) -> void:
+	var swing: MeleeSwingAbility = _slam_ability as MeleeSwingAbility
+	if swing == null or swing.impact_vfx == null:
+		return
+	var fps: float = maxf(1.0, swing.impact_vfx.get_animation_speed(&"default"))
+	# Seconds from the VFX's start until its ground-hit frame plays.
+	var to_hit: float = float(maxi(1, swing.impact_vfx_frame) - 1) / fps
+	var delay: float = maxf(0.0, time_to_impact - to_hit)
+	if delay <= 0.001:
+		_emit_sky_impact(swing.impact_vfx, swing.impact_vfx_scale)
+	else:
+		get_tree().create_timer(delay).timeout.connect(
+			_emit_sky_impact.bind(swing.impact_vfx, swing.impact_vfx_scale)
+		)
+
+
+func _emit_sky_impact(frames: SpriteFrames, vfx_scale: float) -> void:
+	if not GameMode.is_client() or not is_instance_valid(character) or character.get_parent() == null:
+		return
+	var fx: SpriteEffect = SpriteEffect.spawn(character.get_parent(), frames, {
+		"scale": Vector2(vfx_scale, vfx_scale),
+		"z_index": 2,
+	})
+	if fx != null:
+		# Raise the frame so its lower-third ground burst lands near the feet.
+		fx.global_position = character.global_position + Vector2(0.0, -38.0 * vfx_scale)
 
 
 func _on_slam_impact() -> void:

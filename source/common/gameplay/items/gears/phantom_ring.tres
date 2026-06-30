@@ -22,7 +22,6 @@ slot = ExtResource("4_ivorv")
 required_level = 15
 base_modifiers = Array[ExtResource("1_roq6x")]([SubResource("Resource_egjoi"), SubResource("Resource_51dxl")])
 item_name = &"Phantom Ring"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"phantom_ring"
 metadata/id = 26

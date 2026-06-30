@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bro2oljlaeval" path="res://source/common/gameplay/items/weapons/hammer/hammer.gd" id="0_script"]
 [ext_resource type="PackedScene" uid="uid://64u3mmswdrma" path="res://source/common/gameplay/items/weapons/weapon.tscn" id="1_base"]
-[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="4_tex"]
 [ext_resource type="Script" uid="uid://b41gujk35w421" path="res://source/common/gameplay/combat/ability/ability.gd" id="2_ability"]
 [ext_resource type="Resource" uid="uid://co5yuyl2isw2l" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/hammer_slam.tres" id="3_slam"]
+[ext_resource type="Texture2D" uid="uid://bogvbnwhxp5ej" path="res://assets/sprites/items/weapons/wood/wood.png" id="4_tex"]
 
 [node name="Weapon" unique_id=1743781734 instance=ExtResource("1_base")]
 script = ExtResource("0_script")

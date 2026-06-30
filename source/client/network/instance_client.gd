@@ -53,18 +53,63 @@ static func _on_channel_start(payload: Dictionary) -> void:
 	var existing: Node = player.get_node_or_null(^"ChannelVisual")
 	if existing != null:
 		existing.queue_free()
+	var kind: StringName = StringName(payload.get("k", &"heal_aura"))
+	# A spin (Whirlwind) shows OVERLAPPING slashes (SpinVisual) blended into a
+	# continuous sweep, not the drawn ring — and the weapon doesn't plant.
+	if kind == &"spin":
+		var radius: float = float(payload.get("r", 60.0))
+		var slash: SpriteFrames = load("res://source/common/gameplay/combat/vfx/slash.tres") as SpriteFrames
+		var spin: SpinVisual = SpinVisual.new()
+		spin.name = "ChannelVisual"  # so channel.end frees it (and its in-flight slashes)
+		spin.frames = slash
+		spin.vfx_scale = radius / 64.0
+		player.add_child(spin)
+		return
 	var visual: ChannelVisual = ChannelVisual.new()
 	visual.name = "ChannelVisual"
 	visual.duration = float(payload.get("d", 6.0))
 	visual.radius = float(payload.get("r", 60.0))
-	visual.kind = StringName(payload.get("k", &"heal_aura"))
+	visual.kind = kind
 	player.add_child(visual)
 	# The wielded weapon strikes its channel stance (the hammer plants + floats).
 	# Recall isn't a weapon channel, so the weapon stays neutral for it.
-	if StringName(payload.get("k", &"heal_aura")) != &"recall":
+	if kind != &"recall":
 		var weapon: Weapon = player.equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
 		if weapon != null:
 			weapon.set_channeling_pose(true)
+
+
+## A nearby player raised their guard (Last Stand) — flash the shield VFX on them
+## (every client, so you read allies/enemies popping a defensive too). The buff
+## itself is server-authoritative; this is purely the visual.
+static func _on_guard_cast(payload: Dictionary) -> void:
+	if current == null:
+		return
+	var player: Player = current.players_by_peer_id.get(int(payload.get("p", 0)), null)
+	if player == null:
+		return
+	# Persistent floor aura for the whole buff (the honest "I'm guarding" tell). The
+	# colour is overridable so the same push drives Berserk's RED rage aura too.
+	var aura: GuardAura = GuardAura.new()
+	aura.duration = float(payload.get("d", 6.0))
+	if payload.has("col"):
+		aura.color = payload.get("col")
+	player.add_child(aura)
+	# Brief shield flash on cast (the dramatic moment; a one-shot, not a bubble).
+	var fx_path: String = String(payload.get("fx", ""))
+	if fx_path.is_empty():
+		return
+	var frames: SpriteFrames = ResourceLoader.load(fx_path) as SpriteFrames
+	if frames == null:
+		return
+	var sc: float = float(payload.get("sc", 0.7))
+	SpriteEffect.spawn(player, frames, {
+		"scale": Vector2(sc, sc),
+		"modulate": payload.get("mod", Color.WHITE),
+		"offset": Vector2(0.0, -6.0),
+		"z_index": 1,
+		"saturation": float(payload.get("sat", 1.0)),
+	})
 
 
 ## Channel ended (completed, cancelled, caster died) — drop the aura.
@@ -117,6 +162,7 @@ func _ready() -> void:
 		Client.subscribe(&"combat.hit", _on_combat_hit_static)
 		Client.subscribe(&"channel.start", _on_channel_start)
 		Client.subscribe(&"channel.end", _on_channel_end)
+		Client.subscribe(&"guard.cast", _on_guard_cast)
 		Client.subscribe(&"dungeon.room", _on_dungeon_room)
 		Client.subscribe(&"dungeon.left", _on_dungeon_left)
 		_subscribed = true

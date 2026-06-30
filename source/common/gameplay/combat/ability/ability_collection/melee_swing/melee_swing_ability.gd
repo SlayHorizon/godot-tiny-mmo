@@ -36,6 +36,30 @@ extends AbilityResource
 ## reusing the same arc scene — pair it with a matching [member impact_reach].
 @export var arc_radius: float = 0.0
 
+## A one-shot impact VFX (an animated spritesheet, e.g. a hammer crashing down from
+## the sky) shown centred on the wielder when this swing fires — for the dramatic
+## TELEGRAPHED slams, where the wind-up gives it time to fall. The hammer weapon
+## spawns it timed to the smash (see hammer.gd). Null = just the code SlamImpact.
+@export var impact_vfx: SpriteFrames
+@export var impact_vfx_scale: float = 1.3
+## Which frame of [member impact_vfx] is the moment it hits the ground (1-indexed,
+## NOT from 0). The weapon delays the VFX so THIS frame lands on the smash (the
+## hammer falls in the last stretch of the wind-up, after the telegraph). For the
+## sky-hammer sheet the ground-hit frame is 5.
+@export var impact_vfx_frame: int = 5
+
+
+## Damage (as % of AD), plus on-hit slow and wind-up when this swing has them —
+## so each tier's real numbers show in the mastery detail panel.
+func extra_stat_lines() -> PackedStringArray:
+	var lines: PackedStringArray = PackedStringArray()
+	lines.append("%d%% AD" % int(round(ad_ratio * 100.0)))
+	if slow_amount > 0.0:
+		lines.append("-%s move speed for %ss" % [fmt_num(slow_amount), fmt_num(slow_duration_s)])
+	if cast_time_s > 0.0:
+		lines.append("%ss wind-up" % fmt_num(cast_time_s))
+	return lines
+
 
 func use_ability(user: Entity, direction: Vector2) -> void:
 	# Animation runs on every peer (client AND server) so the swing reads

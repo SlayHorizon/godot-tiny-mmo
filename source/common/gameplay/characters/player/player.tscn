@@ -7,6 +7,10 @@
 [node name="Player" unique_id=361125681 instance=ExtResource("1_0ps03")]
 script = ExtResource("2_meo3t")
 
+[node name="AnimatedSprite2D" parent="." index="2" unique_id=1675562039]
+animation = &"death"
+frame_progress = 0.0
+
 [node name="EquipmentComponent" parent="." index="9" unique_id=1695674137 node_paths=PackedStringArray("synchronizer")]
 synchronizer = NodePath("../StateSynchronizer")
 

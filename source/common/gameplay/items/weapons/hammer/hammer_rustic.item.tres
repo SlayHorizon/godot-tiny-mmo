@@ -23,7 +23,7 @@ region = Rect2(16, 80, 16, 48)
 [resource]
 script = ExtResource("4_4jxpk")
 category = &"hammer"
-capacity = 2
+capacity = 3
 right_hand_scene = ExtResource("3_253qg")
 slot = ExtResource("5_g4no1")
 required_level = 5

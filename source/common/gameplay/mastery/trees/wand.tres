@@ -7,6 +7,8 @@
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres" id="5_ember"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres" id="6_wall"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/overload.tres" id="7_overload"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/spellpower.png" id="8_sp"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/warding.png" id="9_ward"]
 
 [sub_resource type="Resource" id="Mod_ap_attunement"]
 script = ExtResource("3_mod")
@@ -20,6 +22,7 @@ node_name = "Attunement"
 description = "+5 ability power while wielding a wand."
 branch = &"domination"
 tier = 1
+icon = ExtResource("8_sp")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ap_attunement")])
 
 [sub_resource type="Resource" id="Node_ember"]
@@ -53,6 +56,7 @@ node_name = "Warding"
 description = "+6 magic resistance while wielding a wand."
 branch = &"resolve"
 tier = 1
+icon = ExtResource("9_ward")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_mr_warding")])
 
 [sub_resource type="Resource" id="Node_wall"]

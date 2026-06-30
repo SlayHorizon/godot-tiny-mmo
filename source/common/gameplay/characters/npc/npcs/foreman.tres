@@ -28,7 +28,6 @@ metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 
 [resource]
 script = ExtResource("9_otpy6")
-npc_id = 10
 npc_name = "Foreman"
 greeting = "If you're here to gawk, the quarry's that way and so's the gate. If you want honest coin, I've veins need clearing and not enough backs to do it. Pick up a pick."
 interactions = Array[ExtResource("1_8t7eq")]([SubResource("Resource_x51h1"), SubResource("Resource_iqd18"), SubResource("Resource_82tnh")])

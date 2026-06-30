@@ -18,6 +18,9 @@ extends Area2D
 const COUNTDOWN_MS: int = 12000
 ## Max distinct items one player can put in an offer (keeps trades simple).
 const MAX_OFFER_ITEMS: int = 6
+## Per-seat tint for the in-world offer labels (seat 0 = gold, seat 1 = blue) — the SAME tones the
+## spar banner uses, so the colour->player association is learned once across features.
+const SEAT_COLORS: PackedStringArray = ["f2bd2a", "73b3ff"]
 
 ## Server only. Per seat (index 0 = A, 1 = B):
 var seat_players: Array = [null, null]               # Player ref or null
@@ -26,8 +29,10 @@ var seat_accepted: Array[bool] = [false, false]
 ## When (ticks_msec) the swap fires once both have accepted (0 = no countdown running).
 var countdown_until: int = 0
 
-var _seat_labels: Array[Label] = []
+var _seat_labels: Array[RichTextLabel] = []
 var _countdown_label: Label
+var _countdown_tween: Tween
+var _hovered: bool = false # client: cursor over the table (suppresses the attack so a click opens it)
 
 
 func _ready() -> void:
@@ -37,8 +42,10 @@ func _ready() -> void:
 		set_physics_process(true) # auto-leave + countdown
 		return
 	set_physics_process(false)
-	input_pickable = true
-	input_event.connect(_on_input_event)
+	# Clicking the table opens the trade view. Use the shared ClickableArea (like NPCs / players /
+	# statues) instead of the table's own input_event, so the same left-click/tap detection AND the
+	# hover combat-suppression apply — clicking the table no longer also fires your weapon.
+	_spawn_click_area()
 	_build_display()
 	Client.subscribe(&"trade.table", _on_table_state)
 
@@ -111,21 +118,35 @@ func server_set_accepted(player: Player, accepted: bool) -> void:
 		countdown_until = 0
 
 
+## Server: a player-facing summary of an offer (item names + amounts + gold) for the result toast.
+func _describe_offer(offer: Dictionary) -> Dictionary:
+	var items: Array = []
+	var offer_items: Dictionary = offer.get("items", {})
+	for item_id: Variant in offer_items:
+		var item: Item = ContentRegistryHub.load_by_id(&"items", int(item_id))
+		items.append({"name": str(item.item_name) if item else "?", "amount": int(offer_items[item_id])})
+	return {"items": items, "gold": int(offer.get("gold", 0))}
+
+
 func _complete_trade() -> void:
 	countdown_until = 0
 	var a = seat_players[0]
 	var b = seat_players[1]
 	var ok: bool = is_instance_valid(a) and is_instance_valid(b) and _try_swap(a, b)
 
+	# Capture what each side RECEIVES (the other's offer) before clearing, for the result toast.
+	var received: Array = [_describe_offer(seat_offers[1]), _describe_offer(seat_offers[0])]
+
 	# Clear the table either way; players stay seated and can trade again.
 	seat_offers = [_empty_offer(), _empty_offer()]
 	seat_accepted = [false, false]
 
-	for participant in [a, b]:
+	for i: int in 2:
+		var participant = seat_players[i]
 		if is_instance_valid(participant):
 			var peer_id: int = int(participant.player_resource.current_peer_id)
 			if peer_id > 0:
-				WorldServer.curr.data_push.rpc_id(peer_id, &"trade.result", {"ok": ok})
+				WorldServer.curr.data_push.rpc_id(peer_id, &"trade.result", {"ok": ok, "received": received[i] if ok else {}})
 
 
 ## Validates both offers against current inventories, then swaps atomically.
@@ -171,23 +192,67 @@ func _server_instance() -> Node:
 
 # --- Client input + in-world display ---
 
-func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	var clicked: bool = (
-		(event is InputEventMouseButton
-			and event.button_index == MOUSE_BUTTON_LEFT
-			and event.pressed)
-		or (event is InputEventScreenTouch and event.pressed)
-	)
-	if clicked:
-		# Just open the panel (view). Joining a seat is an explicit button (costs gold).
-		ClientState.set_viewed_trade(table_id)
+func _spawn_click_area() -> void:
+	var area: ClickableArea = ClickableArea.new()
+	var collision: CollisionShape2D = CollisionShape2D.new()
+	var existing: CollisionShape2D = _find_collision_shape()
+	if existing != null and existing.shape != null:
+		collision.shape = existing.shape.duplicate() # match the placed table's clickable footprint
+		collision.position = existing.position
+	else:
+		var rect: RectangleShape2D = RectangleShape2D.new()
+		rect.size = Vector2(48, 32)
+		collision.shape = rect
+	area.add_child(collision)
+	add_child(area)
+	area.clicked.connect(_on_clicked)
+	# Hover suppresses the local player's attack so a click opens the table instead of also shooting.
+	area.mouse_entered.connect(_set_hover.bind(true))
+	area.mouse_exited.connect(_set_hover.bind(false))
+	area.tree_exiting.connect(_set_hover.bind(false))
+
+
+func _find_collision_shape() -> CollisionShape2D:
+	for child in get_children():
+		if child is CollisionShape2D:
+			return child as CollisionShape2D
+	return null
+
+
+func _on_clicked() -> void:
+	if _player_in_range():
+		ClientState.set_viewed_trade(table_id) # view only; claiming a seat is an explicit button
+	else:
+		Toaster.toast("Too far from the trade table.")
+
+
+## True when the local player is within seat_range — the same distance the server uses to keep a
+## seat — so you can't even open the panel from across the map. Null-safe before the player exists.
+func _player_in_range() -> bool:
+	var lp: LocalPlayer = ClientState.local_player
+	if lp == null or not is_instance_valid(lp):
+		return false
+	return global_position.distance_to(lp.global_position) <= seat_range
+
+
+func _set_hover(on: bool) -> void:
+	if not GameMode.is_client() or on == _hovered:
+		return
+	_hovered = on
+	ClientState.world_interactables_hovered += 1 if on else -1
 
 
 func _build_display() -> void:
 	for i: int in 2:
-		var label: Label = Label.new()
+		# RichTextLabel so each seat's offer is tinted by its player colour (seat 0 = gold, seat 1 =
+		# blue) — so onlookers can tell whose items are whose at a glance.
+		var label: RichTextLabel = RichTextLabel.new()
+		label.bbcode_enabled = true
+		label.fit_content = true
+		label.scroll_active = false
+		label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		label.custom_minimum_size = Vector2(140.0, 0.0)
 		label.position = Vector2(-60.0, -96.0 + i * 40.0)
-		label.add_theme_color_override(&"font_color", Color(0.95, 0.85, 0.4))
 		add_child(label)
 		_seat_labels.append(label)
 	_countdown_label = Label.new()
@@ -201,19 +266,42 @@ func _on_table_state(data: Dictionary) -> void:
 		return
 	var seats: Array = data.get("seats", [])
 	for i: int in _seat_labels.size():
-		_seat_labels[i].text = _format_seat(seats[i]) if i < seats.size() else ""
+		_seat_labels[i].text = _format_seat(seats[i], i) if i < seats.size() else ""
+	# Countdown ticks down locally (smooth) from the server's start value; a later push with
+	# countdown == 0 (un-accept / complete) cancels it — the server stays authoritative.
 	var countdown: int = int(data.get("countdown", 0))
-	_countdown_label.text = "Trading in %d…" % countdown if countdown > 0 else ""
+	if countdown > 0:
+		_run_countdown(countdown)
+	else:
+		_stop_countdown()
 
 
-func _format_seat(seat: Dictionary) -> String:
+func _format_seat(seat: Dictionary, index: int) -> String:
 	var occupant: String = str(seat.get("name", ""))
 	if occupant.is_empty():
 		return ""
-	var text: String = occupant + (" ✓" if seat.get("accepted", false) else "")
+	var text: String = occupant + (" (ready)" if seat.get("accepted", false) else "")
 	for item: Dictionary in seat.get("items", []):
 		text += "\n  %dx %s" % [int(item.get("amount", 1)), str(item.get("name", ""))]
 	var gold: int = int(seat.get("gold", 0))
 	if gold > 0:
 		text += "\n  %dg" % gold
-	return text
+	return "[color=#%s]%s[/color]" % [SEAT_COLORS[index % SEAT_COLORS.size()], text]
+
+
+## Smoothly tick the in-world countdown from `seconds` to 0 (restarted on each fresh server value).
+func _run_countdown(seconds: int) -> void:
+	_stop_countdown()
+	_countdown_tween = create_tween()
+	_countdown_tween.tween_method(_set_countdown_text, float(seconds), 0.0, float(seconds))
+
+
+func _set_countdown_text(value: float) -> void:
+	_countdown_label.text = "Trading in %d…" % maxi(1, ceili(value))
+
+
+func _stop_countdown() -> void:
+	if _countdown_tween != null and _countdown_tween.is_valid():
+		_countdown_tween.kill()
+	_countdown_tween = null
+	_countdown_label.text = ""

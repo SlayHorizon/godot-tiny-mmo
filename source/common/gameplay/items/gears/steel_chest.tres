@@ -22,7 +22,6 @@ slot = ExtResource("4_c63jk")
 required_level = 15
 base_modifiers = Array[ExtResource("1_f8yf3")]([SubResource("Resource_0hiag"), SubResource("Resource_exe0p")])
 item_name = &"Steel Chestplate"
-description = ""
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"steel_chest"
 metadata/id = 32

@@ -156,6 +156,25 @@ func get_account_characters(account_name: String) -> Dictionary:
 	return out
 
 
+## Every player holding a non-empty persisted role, for the /staff roster + role
+## audits. Returns [{player_id, name, account, roles}] with roles parsed to a Dict.
+func get_role_holders() -> Array:
+	db.query(
+		"SELECT player_id, display_name, account_name, server_roles_json FROM players "
+		+ "WHERE server_roles_json IS NOT NULL AND server_roles_json NOT IN ('{}', '');"
+	)
+	var out: Array = []
+	for row: Dictionary in db.query_result:
+		var roles_v: Variant = JSON.parse_string(str(row.get("server_roles_json", "{}")))
+		out.append({
+			"player_id": int(row.get("player_id", 0)),
+			"name": str(row.get("display_name", "")),
+			"account": str(row.get("account_name", "")),
+			"roles": roles_v if roles_v is Dictionary else {},
+		})
+	return out
+
+
 ## Returns the persisted ownership of a flag, or {} if no row exists (flag never
 ## captured — treat as unowned, full HP, no grace period).
 func get_flag_state(flag_id: int) -> Dictionary:

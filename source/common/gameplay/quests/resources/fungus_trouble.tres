@@ -6,7 +6,7 @@
 
 [sub_resource type="Resource" id="Obj_kill_slime"]
 script = ExtResource("1_obj")
-enemy_type = &"fungus"
+enemy_type = &"fungus_immature"
 required_amount = 3
 
 [resource]

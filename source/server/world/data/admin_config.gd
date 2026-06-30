@@ -23,6 +23,14 @@ static func role_for(account_name: String) -> String:
 	return _roles.get(account_name.to_lower(), "")
 
 
+## All config-granted entries (account -> role), for the /staff roster. A copy, so
+## callers can't mutate the cache.
+static func all() -> Dictionary:
+	if not _loaded:
+		_load()
+	return _roles.duplicate()
+
+
 ## Re-read the file (e.g. after editing it without restarting the server).
 static func reload() -> void:
 	_roles.clear()

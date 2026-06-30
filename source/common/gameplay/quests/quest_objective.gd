@@ -11,9 +11,9 @@ enum Type { KILL, COLLECT, CRAFT, VISIT }
 ## COLLECT (have N in the bag) / CRAFT (craft N) target item.
 @export var item: Item
 @export var required_amount: int = 1
-## VISIT only: the QuestGiver to talk to. The objective advances when the
-## player opens the quest menu at this giver.
-@export var target_giver_id: int = 0
+## VISIT only: the NPC to talk to (drag in its NPCResource). The objective advances
+## when the player opens the quest menu at this NPC.
+@export var target_giver: NPCResource
 ## VISIT only: human-readable target name used in the objective description
 ## (e.g. "Mira the Herbalist"). Lets the quest read cleanly without a runtime
 ## lookup of the giver's name.
@@ -27,7 +27,7 @@ func target_key() -> Variant:
 		Type.KILL:
 			return enemy_type
 		Type.VISIT:
-			return target_giver_id
+			return target_giver.giver_key() if target_giver else &""
 		_:
 			return int(item.get_meta(&"id", 0)) if item else 0
 

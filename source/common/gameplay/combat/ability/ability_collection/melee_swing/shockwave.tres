@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://01sxrebcprpu" path="res://source/common/gameplay/combat/ability/ability_collection/melee_swing/melee_swing_ability.gd" id="1_swing"]
 [ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="2_arc"]
+[ext_resource type="Texture2D" uid="uid://wwcail0dhq3p" path="res://assets/sprites/ui/ability_icons/shockwave.png" id="3_icon"]
 
 [resource]
 script = ExtResource("1_swing")
@@ -9,6 +10,7 @@ arc_scene = ExtResource("2_arc")
 slow_amount = 25.0
 slow_duration_s = 1.5
 name = "Shockwave"
+icon = ExtResource("3_icon")
 cooldown = 5.0
 mana_cost = 10
 impact_shake = 0.6

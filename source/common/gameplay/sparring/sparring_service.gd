@@ -144,6 +144,7 @@ static func _start_match(instance: Node, master: DuelMaster, rosters: Array) -> 
 					"position": spawn_pos,
 					"allies": allies,
 					"opponents": opponents,
+					"countdown_ms": PVP_ENABLE_DELAY_MS, # freeze movement for the whole 3/2/1
 				})
 
 	if master.fight_zone != null:
@@ -155,6 +156,7 @@ static func _start_match(instance: Node, master: DuelMaster, rosters: Array) -> 
 	# Degenerate case: a whole team dropped between queue and start.
 	if _check_elimination(key):
 		return
+	_broadcast_matchup(instance, master, rosters)
 	_push_countdown(instance, all_peers, COUNTDOWN_SECONDS)
 
 
@@ -310,6 +312,7 @@ static func _end_match(key: String, winner_index: int) -> void:
 			ws.data_push.rpc_id(peer, &"sparring.match.state", {"in_match": false, "position": return_pos})
 
 	_announce_result(ws, instance, master, rosters, winner_index)
+	_broadcast_result(instance, master, rosters, winner_index) # winner stays up until the next match
 
 
 static func _finalize_fighter(ws: Node, instance: Node, master: DuelMaster, peer_id: int, return_pos: Vector2, won: bool) -> void:
@@ -412,6 +415,36 @@ static func _broadcast_queue(instance: Node, master: DuelMaster, queue: Array) -
 		ws.data_push.bind(&"sparring.queue.update", payload),
 		instance.name
 	)
+
+
+## Live matchup ("A vs B") broadcast at match start.
+static func _broadcast_matchup(instance: Node, master: DuelMaster, rosters: Array) -> void:
+	var teams: Array = [] # per-team name arrays, for styled (RichText) rendering client-side
+	for roster: Array in rosters:
+		var names: Array = _names(roster)
+		if not names.is_empty():
+			teams.append(names)
+	_push_banner(instance, master, {"kind": "matchup", "teams": teams})
+
+
+## Result ("A wins!" / "Draw") broadcast at match end — STAYS on the board until the next match's
+## matchup replaces it (no clear, no cooldown; a late-joiner simply missed it, which is fine).
+static func _broadcast_result(instance: Node, master: DuelMaster, rosters: Array, winner_index: int) -> void:
+	_push_banner(instance, master, {
+		"kind": "result",
+		"draw": winner_index < 0,
+		"winners": _names(rosters[winner_index]) if winner_index >= 0 else [],
+	})
+
+
+## Shared push: stamps master_id + broadcasts to the WHOLE instance (onlookers included, not just
+## the fighters). A placed SparBanner node mirrors it by master_id.
+static func _push_banner(instance: Node, master: DuelMaster, payload: Dictionary) -> void:
+	var ws: WorldServer = WorldServer.curr
+	if ws == null or instance == null or master == null:
+		return
+	payload["master_id"] = master.master_id
+	ws.propagate_rpc(ws.data_push.bind(&"sparring.match.banner", payload), instance.name)
 
 
 static func _names(peers: Array) -> Array:

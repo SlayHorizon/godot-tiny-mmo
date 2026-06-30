@@ -11,7 +11,7 @@ class_name MasteryService
 const TREES_DIR: String = "res://source/common/gameplay/mastery/trees/"
 
 ## Mastery level required before nodes of a tier can be bought.
-const TIER_UNLOCK_LEVEL: Dictionary[int, int] = {1: 1, 2: 3, 3: 6}
+const TIER_UNLOCK_LEVEL: Dictionary[int, int] = {1: 1, 2: 3, 3: 6, 4: 10}
 
 static var _trees: Dictionary[StringName, MasteryTreeResource]
 static var _trees_loaded: bool = false
@@ -41,11 +41,18 @@ static func spent_cost(entry: Dictionary, tree: MasteryTreeResource) -> int:
 	return total
 
 
-## 1 point per mastery level (level 1 included — the first tier-1 pick is
-## meant to be near-immediate, see docs/mastery.md).
+## Mastery points granted per level. 2 → a level-10 cap yields a 20-point budget:
+## enough to specialize into one branch's flagship chain plus a splash (tree
+## content totals ~30, a single branch ~11-16). The tree is NO LONGER sized so
+## you can own everything at cap — you choose. Tune this one number to retune the
+## whole budget. See docs/mastery.md.
+const POINTS_PER_LEVEL: int = 2
+
+## Level 1 already grants a full POINTS_PER_LEVEL so the first tier-1 pick is
+## near-immediate (see docs/mastery.md).
 static func available_points(entry: Dictionary, tree: MasteryTreeResource) -> int:
 	var level: int = mini(int(entry.get("level", 1)), PlayerResource.MASTERY_LEVEL_CAP)
-	return level - spent_cost(entry, tree)
+	return level * POINTS_PER_LEVEL - spent_cost(entry, tree)
 
 
 ## Buys a tree node. The category entry is only CREATED by practice (first
@@ -114,14 +121,25 @@ static func effective_special_ids(resource: PlayerResource, weapon_item: WeaponI
 				# channeling a lighter tier to free weapon power for another ability
 				# is a valid build. One tier per chain; over-budget picks stay inert.
 				var root: String = String(_chain_root_id(tree, node))
-				if node.tier <= budget and not used_chains.has(root):
+				var weight: int = ability_weight(node)
+				if weight <= budget and not used_chains.has(root):
 					var ability_id: int = int(node.ability.get_meta(&"id", 0))
 					if ability_id > 0:
 						resolved = ability_id
-						budget -= node.tier
+						budget -= weight
 						used_chains[root] = true
 		out.append(resolved)
 	return out
+
+
+## EQUIP weight of an ability node = tier - 1. A T1 (weight 0) is FREE to slot, so
+## you can ALWAYS fill both special slots — capacity is the UPGRADE budget you
+## spread across them (T2/T3/T4 cost 1/2/3), not a cost for having abilities at
+## all. This keeps early loadouts from feeling empty and lets a capstone (T4) still
+## carry a minor second ability. Point cost to LEARN stays = tier (spent_cost).
+## See docs/progression.md.
+static func ability_weight(node: MasteryNode) -> int:
+	return maxi(0, node.tier - 1)
 
 
 ## The base (lowest) node of [param node]'s upgrade chain — follow `upgrades`

@@ -78,6 +78,15 @@ func predict_release() -> void:
 	pass
 
 
+## Client-side prediction hook for SINGLE-PHASE abilities: run the part that must
+## feel INSTANT on the caster (before the server echo of use_ability arrives a
+## round-trip later), without server-authoritative effects. Default no-op. Deflect
+## spawns its parry bubble here so a client pops the incoming shot in real time
+## instead of one RTT late (which left a ghost arrow flying client-side).
+func predict_use(_entity: Entity) -> void:
+	pass
+
+
 ## One-call complete use for AI / auto attackers (no press/release input to
 ## drive multi-phase abilities). Default = the normal single-phase use; charge
 ## abilities override to fire at FULL power — an NPC's output is tuned by its
@@ -109,3 +118,16 @@ func effective_cooldown(user: Entity = null) -> float:
 
 func mark_used():
 	last_action_time = Time.get_ticks_msec() / 1000.0
+
+
+## Extra stat rows for the mastery detail panel (heal/tick, channel length, …),
+## rendered alongside the always-shown cooldown + mana. Base abilities have none;
+## subclasses override so each tier's real numbers show truthfully (and never
+## drift from prose). Keep entries short, e.g. "+2 HP/s", "12s channel".
+func extra_stat_lines() -> PackedStringArray:
+	return PackedStringArray()
+
+
+## Format a stat value for display: whole numbers drop the trailing ".0".
+static func fmt_num(value: float) -> String:
+	return ("%d" % int(value)) if is_equal_approx(value, roundf(value)) else ("%.1f" % value)

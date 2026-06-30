@@ -26,10 +26,10 @@ static func on_craft(
 ## objectives. VISIT objectives are single-fire (required_amount typically 1),
 ## so re-visiting after completion is a no-op.
 static func on_visit(
-	resource: PlayerResource, giver_id: int,
+	resource: PlayerResource, giver_key: StringName,
 	peer_id: int = 0, instance: Node = null
 ) -> Array:
-	return _advance_matching(resource, QuestObjective.Type.VISIT, giver_id, peer_id, instance)
+	return _advance_matching(resource, QuestObjective.Type.VISIT, giver_key, peer_id, instance)
 
 
 static func _advance_matching(

@@ -6,7 +6,7 @@ func data_request_handler(
 	instance: ServerInstance,
 	args: Dictionary
 ) -> Dictionary:
-	var station_id: int = int(args.get("station", 0))
+	var station_key: StringName = StringName(str(args.get("station_key", "")))
 	var recipe_index: int = int(args.get("recipe", -1))
 
 	var player: Player = instance.players_by_peer_id.get(peer_id, null)
@@ -14,7 +14,7 @@ func data_request_handler(
 		return {"ok": false}
 
 	# Resolve the station from the player's map (authoritative + verifies they're at it).
-	var station: CraftingStationResource = instance.instance_map.get_crafting_station(station_id)
+	var station: CraftingStationResource = instance.instance_map.get_crafting_station(station_key)
 	if station == null:
 		return {"ok": false}
 	if recipe_index < 0 or recipe_index >= station.recipes.size():

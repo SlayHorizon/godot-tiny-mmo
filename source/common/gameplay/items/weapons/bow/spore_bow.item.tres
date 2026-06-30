@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://d0226i8o2vv53" path="res://assets/sprites/items/weapons/rustic/rustic.png" id="2_tex"]
+[ext_resource type="PackedScene" uid="uid://e6kqwoh5tlxp" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_item"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_slot"]
+
+[sub_resource type="Resource" id="Mod_ad"]
+script = ExtResource("1_mod")
+stat_name = "ad"
+value = 7.0
+
+[sub_resource type="Resource" id="Mod_ms"]
+script = ExtResource("1_mod")
+stat_name = "move_speed"
+value = -7.0
+
+[sub_resource type="AtlasTexture" id="Atlas_icon"]
+atlas = ExtResource("2_tex")
+region = Rect2(80, 128, 16, 32)
+
+[resource]
+script = ExtResource("4_item")
+category = &"bow"
+capacity = 1
+right_hand_scene = ExtResource("3_scene")
+slot = ExtResource("5_slot")
+required_level = 5
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ad"), SubResource("Mod_ms")])
+item_name = &"Spore Bow"
+item_icon = SubResource("Atlas_icon")
+description = "A bow strung with fibrous mycelium."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/slug = &"spore_bow.item"
+metadata/id = 90

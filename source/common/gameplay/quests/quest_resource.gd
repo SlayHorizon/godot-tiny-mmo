@@ -34,10 +34,10 @@ enum Completion { ALL, ANY }
 @export_multiline var unlock_message: String
 
 @export_group("Delivery")
-## If set, only the QuestGiver with this giver_id can turn this quest in. Used
-## for delivery quests: NPC A offers it, NPC B accepts the turn-in. When 0
-## (default) the same giver who offered the quest also turns it in.
-@export var turn_in_giver_id: int = 0
+## If set, only THIS NPC turns the quest in (drag in its NPCResource). For delivery
+## quests: NPC A offers it, NPC B accepts the turn-in. Leave EMPTY (default) when the
+## same NPC that offers it also turns it in (the runtime resolves to the offerer).
+@export var turn_in_giver: NPCResource
 ## Optional item granted to the player when they accept the quest (a sealed
 ## letter, a parcel, etc.). The item is consumed on turn-in. Use sparingly:
 ## quest items have no vendor utility and just clutter the bag.
@@ -58,3 +58,9 @@ static func load_quest(quest_id: int) -> QuestResource:
 	if ContentRegistryHub.registry_of(&"quests") == null:
 		return null
 	return ContentRegistryHub.load_by_id(&"quests", quest_id) as QuestResource
+
+
+## The slug of the NPC this quest turns in to, or &"" when it turns in at whoever
+## offered it (turn_in_giver left empty). The turn-in handlers compare against this.
+func turn_in_giver_key() -> StringName:
+	return turn_in_giver.giver_key() if turn_in_giver else &""

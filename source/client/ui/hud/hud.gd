@@ -1,16 +1,28 @@
 class_name HUD
 extends Control
 
+const CHAT_ICON: Texture2D = preload("res://assets/sprites/ui/menu_icons_shadow/32px/message.png")
+const CHAT_ICON_UNREAD: Texture2D = preload("res://assets/sprites/ui/menu_icons_shadow/32px/message_exclamation.png")
 
 @export var sub_menu: Control
 
 var notifications: Array[Dictionary]
 var menus: Dictionary[StringName, Control]
+var _xp_tween: Tween
+var _chat_icon: TextureRect
+## Gameplay nodes we hid because a menu opened — restored (only these) on close, so nodes with
+## their own visibility gating (touch-only sticks, tracked-only quest tracker) that were already
+## hidden don't get force-shown.
+var _hidden_for_menu: Array[CanvasItem] = []
 
 @onready var menu_overlay: Control = $MenuOverlay
-@onready var notification_button: Button = $MenuButtons/HBoxContainer/NotificationButton
-@onready var menu_button: Button = $MenuButtons/HBoxContainer/MenuButton
+@onready var notification_button: Button = $MenuButtons/ButtonRail/NotificationButton
+@onready var menu_button: Button = $MenuButtons/ButtonRail/MenuButton
+@onready var chat_button: Button = $MenuButtons/ButtonRail/ChatButton
+@onready var chat: ChatMenu = $Chat
 @onready var twin_sticks: Control = $TwinSticks
+@onready var quest_tracker: QuestTracker = $QuestTracker
+@onready var trade_panel: Control = $TradePanel
 @onready var experience_bar: ProgressBar = $Resources/ExperienceBar
 @onready var experience_level_label: Label = $Resources/ExperienceBar/LevelLabel
 @onready var death_screen: ColorRect = $DeathScreen
@@ -29,10 +41,23 @@ func _ready() -> void:
 	# whole-pixel centered) — visible in the scene, sharp at runtime.
 	PixelIcon.from_button(menu_button)
 	PixelIcon.from_button(notification_button)
+	# Chat button now lives in this rail (was self-placed by chat_menu); it toggles the chat
+	# feed and badges with the exclamation glyph when a DM is unread.
+	_chat_icon = PixelIcon.from_button(chat_button)
+	chat_button.pressed.connect(chat.toggle_feed)
+	chat.unread_changed.connect(_on_chat_unread)
 	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
 	ClientState.player_profile_by_peer_requested.connect(open_player_profile_by_peer)
 	ClientState.open_menu_requested.connect(_on_menu_requested)
+	# Submenus sit ABOVE the chat (z=1) so the chat peek / full feed never floats over an open menu.
+	if sub_menu != null:
+		sub_menu.z_index = 2
+	# The launcher isn't a display_menu submenu, so hook its show/hide into the same HUD-hide path.
+	menu_overlay.visibility_changed.connect(_refresh_hud_for_menus)
+	# The trade panel is a standalone overlay (not a display_menu) — treat it like a menu too: hide
+	# the gameplay HUD + freeze movement while it's open, so HUD clicks can't bleed through behind it.
+	trade_panel.visibility_changed.connect(_refresh_hud_for_menus)
 
 	ClientState.input_changed.connect(_on_input_type_changed)
 
@@ -54,6 +79,11 @@ func _ready() -> void:
 	# watch node_added). The gateway has its own wiring; this is scoped to the in-game HUD subtree.
 	_wire_subtree(self)
 	get_tree().node_added.connect(_on_node_added)
+
+
+## Swap the rail chat button to the exclamation glyph while a DM is unread (chat_menu emits).
+func _on_chat_unread(has_unread: bool) -> void:
+	PixelIcon.set_art(_chat_icon, CHAT_ICON_UNREAD if has_unread else CHAT_ICON)
 
 
 ## Fetch the current level/xp once (e.g. on spawn / map change).
@@ -110,7 +140,16 @@ func _apply_progression(data: Dictionary) -> void:
 	if data.has("xp_to_next"):
 		experience_bar.max_value = maxi(1, int(data["xp_to_next"]))
 	if data.has("experience"):
-		experience_bar.value = int(data["experience"])
+		var new_xp: int = int(data["experience"])
+		if _xp_tween != null and _xp_tween.is_valid():
+			_xp_tween.kill()
+		if new_xp >= experience_bar.value:
+			# XP gained — fill up smoothly. A level-up wraps the value DOWN; snap that
+			# (a draining bar reads backwards) so only forward gains animate.
+			_xp_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			_xp_tween.tween_property(experience_bar, ^"value", new_xp, 0.3)
+		else:
+			experience_bar.value = new_xp
 
 
 func _on_input_type_changed(input_type: InputComponent.InputType) -> void:
@@ -134,13 +173,36 @@ func open_player_profile_by_peer(peer_id: int) -> void:
 
 
 func _on_submenu_visiblity_changed(_menu: Control) -> void:
-	# Show the HUD only when NO submenu remains open. Closing a STACKED menu (e.g.
-	# the full-screen mastery tree over the character window) must not pop the HUD
-	# back up while another menu is still visible behind it.
-	if _any_submenu_visible():
-		hide()
+	_refresh_hud_for_menus()
+
+
+## Gameplay HUD hides behind any open menu OR the launcher (both are semi-transparent, so the
+## bars / sticks / chat bleeding through reads messy). We hide the individual gameplay nodes
+## rather than the whole HUD, because the launcher is our OWN child (hiding self would hide it
+## too); display_menu submenus live in the separate sub_menu container, so they're unaffected.
+## Stacked menus are handled by _any_submenu_visible (the HUD stays hidden until ALL close).
+func _refresh_hud_for_menus() -> void:
+	var covered: bool = _any_submenu_visible() or (menu_overlay != null and menu_overlay.visible) or trade_panel.visible
+	if covered:
+		# Capture-and-hide ONCE: only nodes currently visible, so we never force-show a node that
+		# was hidden by its OWN logic (TwinSticks is touch-only; QuestTracker shows only while a
+		# quest is tracked). Re-entrancy from stacked menus is a no-op (list already populated).
+		if _hidden_for_menu.is_empty():
+			for node: CanvasItem in [
+				$TwinSticks, $Chat, $QuestTracker, $ItemSlots, $StatusBar, $AbilityBar, $Resources, $MenuButtons
+			]:
+				if node.visible:
+					node.hide()
+					_hidden_for_menu.append(node)
 	else:
-		show()
+		for node: CanvasItem in _hidden_for_menu:
+			node.show()
+		_hidden_for_menu.clear()
+		# The quest tracker self-gates on tracked/active state, which may have changed while it was
+		# menu-hidden (the player untracked it in the log) — re-derive instead of trusting the blind
+		# show() above. Sync-set covers the common cases instantly; refresh() confirms vs live quests.
+		quest_tracker.visible = ClientState.tracked_quest_id > 0 # > 0 = real pinned quest (0 = none, -1 = untracked)
+		quest_tracker.refresh()
 
 
 ## Suppress player movement whenever a blocking menu is up. Polled each frame (NOT
@@ -148,7 +210,7 @@ func _on_submenu_visiblity_changed(_menu: Control) -> void:
 ## opens) can't leave a one-frame gap where movement slips through. Mobile is already
 ## covered (the HUD and its sticks hide above). This is the desktop-keyboard gate.
 func _process(_delta: float) -> void:
-	ClientState.menu_open = _any_submenu_visible()
+	ClientState.menu_open = _any_submenu_visible() or trade_panel.visible
 
 
 ## True if any display_menu submenu is currently visible.

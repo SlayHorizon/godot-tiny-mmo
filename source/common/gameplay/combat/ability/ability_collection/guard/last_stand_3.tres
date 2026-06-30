@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="GuardAbility" format=3 uid="uid://u72yxdhyohmo"]
+
+[ext_resource type="Script" uid="uid://i0cq7eptibp3" path="res://source/common/gameplay/combat/ability/ability_collection/guard/guard_ability.gd" id="1_guard"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/combat/vfx/guard_shield.tres" id="2_vfx"]
+[ext_resource type="Texture2D" uid="uid://ko6g4l6231fo" path="res://assets/sprites/ui/ability_icons/last_stand_3.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1_guard")
+armor_bonus = 65.0
+mr_bonus = 35.0
+buff_duration_s = 7.0
+shield_vfx = ExtResource("2_vfx")
+vfx_modulate = Color(1.12, 1.12, 1, 0.95)
+vfx_scale = 1.2
+name = "Last Stand III"
+icon = ExtResource("3_icon")
+cooldown = 16.0
+mana_cost = 25
+metadata/slug = &"last_stand_3"
+metadata/id = 28

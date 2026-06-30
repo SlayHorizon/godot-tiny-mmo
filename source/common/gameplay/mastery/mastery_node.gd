@@ -18,8 +18,10 @@ extends Resource
 @export_multiline var description: String
 ## &"offensive", &"defensive" or &"supportive" — pure UI grouping.
 @export var branch: StringName = &"offensive"
-## 1-3. Doubles as point cost AND ability weight (the weapon-capacity gate).
-@export_range(1, 3) var tier: int = 1
+## 1-4. Doubles as point cost AND ability weight (the weapon-capacity gate).
+## Note: weapon capacity caps at 3 today, so a tier-4 ability is un-equippable
+## until the capacity system extends — it still displays in the tree.
+@export_range(1, 4) var tier: int = 1
 @export var ability: AbilityResource
 @export var passive_modifiers: Array[StatModifier]
 
@@ -29,3 +31,14 @@ extends Resource
 ## same chain, and an equipped slot always resolves to your HIGHEST owned tier.
 ## See docs/mastery.md and MasteryService chain helpers.
 @export var upgrades: StringName
+
+
+## Name to show in the tree/detail panel. ABILITY nodes can leave [member
+## node_name] empty and inherit the ability's own name — one source of truth, no
+## re-typing the same name in two places. PASSIVE nodes (no ability) set it here.
+func display_name() -> String:
+	if not node_name.is_empty():
+		return node_name
+	if ability != null:
+		return ability.name
+	return ""

@@ -35,6 +35,10 @@ var pivot: float = 0.0:
 var ability_cooldowns: Dictionary = {}
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+## Over-head HP bar + name label. Guaranteed present by the Character scene (every subclass
+## inherits character.tscn), so subclasses use these directly — no has_node/cast dance.
+@onready var progress_bar: ProgressBar = $ProgressBar
+@onready var display_name_label: Label = $DisplayNameLabel
 @onready var hand_offset: Node2D = $HandOffset
 @onready var hand_pivot: Node2D = $HandOffset/HandPivot
 
@@ -82,18 +86,18 @@ func _ready() -> void:
 	_on_stat_changed(Stat.HEALTH_MAX, stats_component.get_stat(Stat.HEALTH_MAX))
 	stats_component.stats.stat_changed.connect(_on_stat_changed)
 	set_health_bar_fill(BAR_COLOR_HOSTILE) # default; subclasses recolor by team
+	if health_bar_auto_hide:
+		progress_bar.hide() # surfaces only on HP change (see _flash_health_bar)
 
 
 ## Client: paint the over-head HP bar fill a solid color. Always SET (never
 ## remove the override — that reverts to the theme's gray default). Square,
 ## anti-aliasing off so edges stay crisp on a low-res pixel-art canvas.
 func set_health_bar_fill(color: Color) -> void:
-	if not has_node(^"ProgressBar"):
-		return
 	var fill: StyleBoxFlat = StyleBoxFlat.new()
 	fill.bg_color = color
 	fill.anti_aliasing = false
-	($ProgressBar as ProgressBar).add_theme_stylebox_override(&"fill", fill)
+	progress_bar.add_theme_stylebox_override(&"fill", fill)
 
 
 # --- Hit-feedback state (client-side only) -----------------------------------
@@ -112,17 +116,35 @@ const HIT_FLASH_FADE_S: float = 0.18
 
 var _hit_flash_tween: Tween
 
+# --- Over-head health bar auto-hide (client-side) ---
+const HEALTH_BAR_SHOW_S: float = 4.0
+const HEALTH_BAR_FILL_S: float = 0.18
+## When true the over-head bar starts hidden and only surfaces for a few seconds when HP
+## changes, then fades — cuts clutter with many characters on screen + saves idle tweens.
+## Subclasses set it false to keep the bar always-on (ally guards) or always-off (friendly NPCs).
+var health_bar_auto_hide: bool = true
+var _bar_value_tween: Tween
+var _bar_hide_tween: Tween
+
 
 func _on_stat_changed(stat_name: StringName, value: float) -> void:
 	if stat_name == Stat.HEALTH:
-		$ProgressBar.value = value
-		# Hit feedback fires on net HP decrease only — regen, idle-heal,
-		# respawn-snap-to-full would otherwise spam flash/sound.
-		if _last_health_seen >= 0.0 and value < _last_health_seen:
-			_play_hit_feedback()
+		if _last_health_seen < 0.0:
+			progress_bar.value = value # first sync — snap, no flash/feedback
+		elif value != _last_health_seen:
+			# Only react to a REAL change — heartbeat snapshots + instance re-syncs
+			# re-send the SAME hp, which must not re-flash every visible bar.
+			_set_bar_value(value) # glide to the new value
+			# Hit feedback fires on net HP decrease only — regen, idle-heal,
+			# respawn-snap-to-full would otherwise spam flash/sound.
+			if value < _last_health_seen:
+				_play_hit_feedback()
+			# Auto-hide bars surface for a few seconds on a real HP change.
+			if health_bar_auto_hide:
+				_flash_health_bar()
 		_last_health_seen = value
 	if stat_name == Stat.HEALTH_MAX:
-		$ProgressBar.max_value = value
+		progress_bar.max_value = value
 
 
 ## Combat juice: brief red tint on the sprite + a spatial hit SFX. Called
@@ -145,6 +167,28 @@ func _play_hit_feedback() -> void:
 		Client.audio_manager.play_sfx(HIT_SOUND_PATH, global_position)
 
 
+## Glide the over-head bar to [param value] instead of snapping.
+func _set_bar_value(value: float) -> void:
+	if _bar_value_tween != null and _bar_value_tween.is_valid():
+		_bar_value_tween.kill()
+	_bar_value_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_bar_value_tween.tween_property(progress_bar, ^"value", value, HEALTH_BAR_FILL_S)
+
+
+## Reveal an auto-hide bar, then fade it out after HEALTH_BAR_SHOW_S of no further change
+## (each new hit restarts the timer). Purely client-side — no server involvement.
+func _flash_health_bar() -> void:
+	var bar: CanvasItem = progress_bar
+	bar.show()
+	bar.modulate.a = 1.0
+	if _bar_hide_tween != null and _bar_hide_tween.is_valid():
+		_bar_hide_tween.kill()
+	_bar_hide_tween = create_tween()
+	_bar_hide_tween.tween_interval(HEALTH_BAR_SHOW_S)
+	_bar_hide_tween.tween_property(bar, ^"modulate:a", 0.0, 0.4)
+	_bar_hide_tween.tween_callback(bar.hide)
+
+
 # --- Combat (server-authoritative) ---
 
 ## True once health has hit zero, until the subclass revives/respawns.
@@ -163,6 +207,23 @@ var combat_until_ms: int = 0
 ## Server-side: true while a recent hit still keeps this character in combat.
 func is_in_combat() -> bool:
 	return Time.get_ticks_msec() < combat_until_ms
+
+
+## Sword Deflect: ticks_msec until which incoming PROJECTILES are destroyed instead
+## of damaging us (a timed parry). Set per-peer by DeflectAbility (so each peer
+## deflects its own projectile copies; the server's window gates real damage), and
+## read by CombatHit.try_damage on deflectable hits.
+var deflect_until_ms: int = 0
+
+
+## Opens a brief deflect window of [param window_s] seconds (overwrites, never stacks).
+func open_deflect(window_s: float) -> void:
+	deflect_until_ms = Time.get_ticks_msec() + int(window_s * 1000.0)
+
+
+## True while a Deflect window is live — projectiles aimed at us are parried.
+func is_deflecting() -> bool:
+	return Time.get_ticks_msec() < deflect_until_ms
 
 
 ## Server-only. Applies [param amount] raw damage from [param attacker], mitigated by
@@ -186,6 +247,17 @@ func take_damage(amount: float, attacker: Character = null, damage_type: StringN
 	var mitigated: float = amount * (100.0 / (100.0 + maxf(0.0, resist)))
 	var new_health: float = maxf(0.0, stats_component.get_stat(Stat.HEALTH) - mitigated)
 	stats_component.set_stat(Stat.HEALTH, new_health)
+
+	# Lifesteal: the attacker heals a % of the damage they just dealt (sword Berserk,
+	# or any future lifesteal source). Inert for anyone with the 0 default stat, so it
+	# costs nothing until granted. Heals off the killing blow too (applied pre-death).
+	if attacker != null and attacker != self and not attacker.is_dead:
+		var lifesteal: float = attacker.stats_component.get_stat(Stat.LIFESTEAL)
+		if lifesteal > 0.0:
+			var healed: float = mitigated * lifesteal / 100.0
+			var att_max: float = attacker.stats_component.get_stat(Stat.HEALTH_MAX)
+			var att_hp: float = attacker.stats_component.get_stat(Stat.HEALTH)
+			attacker.stats_component.set_stat(Stat.HEALTH, minf(att_max, att_hp + healed))
 
 	# Broadcast a hit event so clients can render damage numbers, screen
 	# shake, hit pause, sound — anything game-feel piggybacks off the same

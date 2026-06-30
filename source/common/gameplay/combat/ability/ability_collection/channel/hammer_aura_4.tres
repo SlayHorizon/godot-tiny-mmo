@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="HealingAuraAbility" format=3 uid="uid://nwg08stgc1x5"]
+
+[ext_resource type="Script" uid="uid://65vini7oytjw" path="res://source/common/gameplay/combat/ability/ability_collection/channel/healing_aura_ability.gd" id="1_aura"]
+[ext_resource type="Texture2D" uid="uid://c42wh386gy4ep" path="res://assets/sprites/ui/ability_icons/healing_aura_4.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_aura")
+heal_per_tick = 8.0
+channel_duration_s = 15.0
+radius = 105.0
+mana_per_tick = 11.0
+name = "Healing Aura IV"
+icon = ExtResource("2_icon")
+cooldown = 30.0
+metadata/slug = &"hammer_aura_4"
+metadata/id = 23

@@ -82,7 +82,7 @@ func _on_connection_succeeded() -> void:
 		_weather_layer = WeatherLayer.new()
 		add_child(_weather_layer)
 
-	if OS.has_feature("debug"):
+	if OS.has_feature("editor"):
 		DisplayServer.window_set_title("Client - %d" % peer_id)
 
 

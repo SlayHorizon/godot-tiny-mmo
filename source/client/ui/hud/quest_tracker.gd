@@ -1,3 +1,4 @@
+class_name QuestTracker
 extends PanelContainer
 ## HUD quest tracker: shows a single quest (the one pinned via the log, else the first
 ## active quest) with its objectives + live progress. Hidden when there's nothing to track.
@@ -35,6 +36,13 @@ func _ready() -> void:
 	Client.subscribe(&"combat.reward", func(_data: Dictionary): _refresh())
 	Client.subscribe(&"mining.gather_result", func(_data: Dictionary): _refresh())
 	ClientState.local_player_ready.connect(func(_lp: LocalPlayer): _refresh())
+	_refresh()
+
+
+## Re-derive visibility + content from the live tracked / active quest state. Public so the HUD
+## can re-validate after a menu closes — a quest may have been untracked while the tracker was
+## menu-hidden, and a blind show() would otherwise resurrect it.
+func refresh() -> void:
 	_refresh()
 
 

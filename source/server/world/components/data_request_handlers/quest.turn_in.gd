@@ -10,10 +10,10 @@ func data_request_handler(
 	if not player:
 		return {"ok": false}
 
-	var giver_id: int = int(args.get("giver", 0))
+	var giver_key: StringName = StringName(str(args.get("giver", "")))
 	var quest_id: int = int(args.get("id", 0))
 
-	var giver: Object = instance.instance_map.get_quest_giver(giver_id)
+	var giver: Object = instance.instance_map.get_quest_giver(giver_key)
 	if giver == null:
 		return {"ok": false}
 
@@ -25,8 +25,9 @@ func data_request_handler(
 	#   1. Same giver offered + turns in (turn_in_giver_id == 0, default).
 	#   2. Delivery: different giver, but quest.turn_in_giver_id == this giver.
 	var valid_turn_in: bool = false
-	if quest.turn_in_giver_id > 0:
-		valid_turn_in = giver_id == quest.turn_in_giver_id
+	var turn_in_key: StringName = quest.turn_in_giver_key()
+	if not turn_in_key.is_empty():
+		valid_turn_in = giver_key == turn_in_key
 	else:
 		valid_turn_in = _giver_offers(giver, quest_id)
 	if not valid_turn_in:

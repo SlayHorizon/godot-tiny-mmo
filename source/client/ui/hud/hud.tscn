@@ -12,26 +12,9 @@
 [ext_resource type="Script" uid="uid://cvras2gvcldqx" path="res://source/client/ui/hud/trade_panel.gd" id="9_trade"]
 [ext_resource type="Script" uid="uid://b573js8q3lmn8" path="res://source/client/ui/hud/ability_bar.gd" id="10_abilitybar"]
 [ext_resource type="Script" uid="uid://5w3b2d61o6d8" path="res://source/client/ui/hud/status_bar.gd" id="11_statusbar"]
-[ext_resource type="Texture2D" uid="uid://dhos2s1jvvjqx" path="res://assets/sprites/ui/menu_icons_shadow/16px/three_dots_vertical.png" id="12_menuicon"]
-[ext_resource type="Texture2D" uid="uid://cw67l0l2tftac" path="res://assets/sprites/ui/menu_icons_shadow/16px/exclamation_mark.png" id="13_notificon"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qpw0"]
-bg_color = Color(0.215902, 0.215902, 0.215902, 0.203922)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
-border_blend = true
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yow4d"]
-bg_color = Color(0.421725, 0.311275, 0.859316, 0.627451)
-border_color = Color(0.0646966, 0.0646965, 0.0646965, 1)
-border_blend = true
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
+[ext_resource type="Texture2D" uid="uid://bkp7uawftw7ll" path="res://assets/sprites/ui/menu_icons_shadow/32px/three_dots_vertical.png" id="12_menuicon"]
+[ext_resource type="Texture2D" uid="uid://dliywarss4qeo" path="res://assets/sprites/ui/menu_icons_shadow/32px/exclamation_mark.png" id="13_notificon"]
+[ext_resource type="Texture2D" uid="uid://b30enhdjqcbft" path="res://assets/sprites/ui/menu_icons_shadow/32px/message.png" id="14_chaticon"]
 
 [node name="HUD" type="Control" unique_id=1687231756]
 layout_mode = 3
@@ -51,6 +34,7 @@ mouse_filter = 1
 layout_mode = 1
 
 [node name="QuestTracker" type="PanelContainer" parent="." unique_id=1289632756]
+visible = false
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 1
 anchors_preset = 1
@@ -98,7 +82,7 @@ custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"SlotButton"
-theme_override_constants/icon_max_width = 64
+theme_override_constants/icon_max_width = 44
 text = "1"
 icon_alignment = 1
 
@@ -107,7 +91,7 @@ custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"SlotButton"
-theme_override_constants/icon_max_width = 64
+theme_override_constants/icon_max_width = 44
 text = "2"
 icon_alignment = 1
 
@@ -116,7 +100,7 @@ custom_minimum_size = Vector2(52, 52)
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"SlotButton"
-theme_override_constants/icon_max_width = 64
+theme_override_constants/icon_max_width = 44
 text = "3"
 icon_alignment = 1
 
@@ -186,8 +170,7 @@ grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_styles/background = SubResource("StyleBoxFlat_8qpw0")
-theme_override_styles/fill = SubResource("StyleBoxFlat_yow4d")
+theme_type_variation = &"XPBar"
 step = 0.5
 value = 66.0
 allow_greater = true
@@ -211,52 +194,30 @@ vertical_alignment = 1
 layout_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="ProgressBar" type="ProgressBar" parent="Resources" unique_id=677753433]
-layout_mode = 0
-offset_left = 122.0
-offset_top = -11.0
-offset_right = 172.0
-offset_bottom = 21.0
-show_percentage = false
-
-[node name="ProgressBar2" type="ProgressBar" parent="Resources" unique_id=110266963]
-layout_mode = 0
-offset_left = -126.0
-offset_top = -12.0
-offset_right = -83.0
-offset_bottom = 20.0
-show_percentage = false
-
 [node name="MenuButtons" type="Control" parent="." unique_id=546432435]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-grow_horizontal = 0
+anchors_preset = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MenuButtons" unique_id=555689072]
+[node name="ButtonRail" type="VBoxContainer" parent="MenuButtons" unique_id=555689072]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -118.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = 62.0
-grow_horizontal = 0
-alignment = 2
+offset_left = 10.0
+offset_top = 215.0
+offset_right = 50.0
+offset_bottom = 351.0
+theme_override_constants/separation = 8
 
-[node name="NotificationButton" type="Button" parent="MenuButtons/HBoxContainer" unique_id=1245197826]
-custom_minimum_size = Vector2(52, 52)
+[node name="ChatButton" type="Button" parent="MenuButtons/ButtonRail" unique_id=777000111]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-icon = ExtResource("13_notificon")
+tooltip_text = "Open chat  (Enter to type)"
+icon = ExtResource("14_chaticon")
 icon_alignment = 1
 metadata/_edit_lock_ = true
 
-[node name="MenuButton" type="Button" parent="MenuButtons/HBoxContainer" unique_id=948283629]
-custom_minimum_size = Vector2(52, 52)
+[node name="MenuButton" type="Button" parent="MenuButtons/ButtonRail" unique_id=948283629]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -264,8 +225,18 @@ icon = ExtResource("12_menuicon")
 icon_alignment = 1
 metadata/_edit_lock_ = true
 
+[node name="NotificationButton" type="Button" parent="MenuButtons/ButtonRail" unique_id=1245197826]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+icon = ExtResource("13_notificon")
+icon_alignment = 1
+metadata/_edit_lock_ = true
+
 [node name="MenuOverlay" type="Control" parent="." unique_id=1850870091]
 visible = false
+z_index = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -328,6 +299,7 @@ text = "Confirm"
 
 [node name="DeathScreen" type="ColorRect" parent="." unique_id=102476699]
 visible = false
+z_index = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -352,6 +324,7 @@ vertical_alignment = 1
 
 [node name="TradePanel" type="Control" parent="." unique_id=1478787724]
 visible = false
+z_index = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -361,7 +334,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("9_trade")
 
-[connection signal="pressed" from="MenuButtons/HBoxContainer/NotificationButton" to="." method="_on_notification_button_pressed"]
-[connection signal="pressed" from="MenuButtons/HBoxContainer/MenuButton" to="." method="_on_overlay_menu_button_pressed"]
+[connection signal="pressed" from="MenuButtons/ButtonRail/MenuButton" to="." method="_on_overlay_menu_button_pressed"]
+[connection signal="pressed" from="MenuButtons/ButtonRail/NotificationButton" to="." method="_on_notification_button_pressed"]
 [connection signal="pressed" from="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer/CancelButton" to="NotificationPopup" method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="NotificationPopup/PanelContainer/VBoxContainer/HBoxContainer/ConfirmButton" to="NotificationPopup" method="_on_confirm_button_pressed"]

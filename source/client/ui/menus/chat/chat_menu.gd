@@ -1,3 +1,4 @@
+class_name ChatMenu
 extends Control
 
 
@@ -43,10 +44,10 @@ const HISTORY_LIMIT: int = 50
 ## slide so both panels animate consistently.
 const FULL_FEED_SLIDE: float = 48.0
 
-## HUD chat-toggle icons: the plain message glyph, swapped for the exclamation variant while an unread
-## DM is waiting. Public/guild/system are ambient + shown in the peek, so they deliberately don't badge it.
-const CHAT_ICON: Texture2D = preload("res://assets/sprites/ui/menu_icons_shadow/16px/message.png")
-const CHAT_ICON_UNREAD: Texture2D = preload("res://assets/sprites/ui/menu_icons_shadow/16px/message_exclamation.png")
+## Emitted when the unread-DM state flips, so the HUD chat button (now in the menu rail) can
+## swap to/from the exclamation glyph. Only DMs badge it (public/guild/system are ambient,
+## shown in the peek). See HUD._on_chat_unread.
+signal unread_changed(has_unread: bool)
 #endregion
 
 
@@ -63,6 +64,9 @@ var dm_name_by_player_id: Dictionary[int, String] = {}
 var pending_name_fetch_at_ms: Dictionary[int, int] = {}
 
 var unread_by_conversation: Dictionary[String, int] = {}
+## Last emitted DM-unread state, so unread_changed fires only on a real flip — not on every
+## incoming message / channel open (each would otherwise redundantly re-swap the HUD icon).
+var _last_unread_dm: bool = false
 
 var seen_msg_ids_by_conversation: Dictionary[String, Dictionary] = {}
 var history_requested_by_conversation: Dictionary[String, bool] = {}
@@ -91,7 +95,6 @@ var _public_label_guild: String = "Guild"
 
 var fade_out_tween: Tween
 var _full_feed_tween: Tween
-var _chat_toggle_icon: TextureRect
 #endregion
 
 
@@ -194,7 +197,6 @@ func _ready() -> void:
 	# for the first message to trigger it.
 	_start_peek_fade()
 
-	_build_chat_toggle()
 	_apply_input_mode()
 	ClientState.input_changed.connect(func(_t: InputComponent.InputType) -> void: _apply_input_mode())
 	# PC: hide the compose field again when focus leaves it (Enter re-opens).
@@ -240,27 +242,9 @@ func _reset_keyboard_lift() -> void:
 	set_process(false)
 
 
-## The one deliberate chat click-target on every platform: a small bubble
-## pinned under the peek block toggling the full panel.
-var _chat_toggle: Button
-
-func _build_chat_toggle() -> void:
-	_chat_toggle = Button.new()
-	_chat_toggle.custom_minimum_size = Vector2(40, 40)
-	_chat_toggle.focus_mode = Control.FOCUS_NONE
-	_chat_toggle.tooltip_text = "Open chat  (Enter to type)"
-	_chat_toggle.position = Vector2(10, 218)
-	_chat_toggle.pressed.connect(_on_chat_toggle_pressed)
-	add_child(_chat_toggle)
-	_chat_toggle_icon = PixelIcon.mount(_chat_toggle, CHAT_ICON)
-	# The bubble is the OPENER — the full panel has its own Close button, so
-	# hide it while the panel is up (it drew on top of the panel otherwise).
-	full_feed.visibility_changed.connect(func() -> void:
-		_chat_toggle.visible = not full_feed.visible
-	)
-
-
-func _on_chat_toggle_pressed() -> void:
+## Toggle the full chat panel. Called by the HUD's chat button (it lives in the menu rail
+## now, not here) and by the click-away handler; the panel also has its own Close button.
+func toggle_feed() -> void:
 	if full_feed.visible:
 		_on_close_button_pressed()
 		return
@@ -1071,7 +1055,10 @@ func _set_unread(convo_id: String, v: int) -> void:
 	unread_by_conversation[convo_id] = maxi(v, 0)
 	_update_dm_button_if_needed(convo_id)
 	_update_public_button_labels()
-	_update_chat_toggle_icon()
+	var has_dm: bool = _has_unread_dm()
+	if has_dm != _last_unread_dm:
+		_last_unread_dm = has_dm
+		unread_changed.emit(has_dm)
 
 
 func _inc_unread(convo_id: String) -> void:
@@ -1089,13 +1076,6 @@ func _has_unread_dm() -> bool:
 		if convo_id.begins_with("dm:") and unread_by_conversation[convo_id] > 0:
 			return true
 	return false
-
-
-## Swap the closed-state HUD toggle between the plain and exclamation chat glyphs based on unread DMs.
-func _update_chat_toggle_icon() -> void:
-	if not is_instance_valid(_chat_toggle_icon):
-		return
-	PixelIcon.set_art(_chat_toggle_icon, CHAT_ICON_UNREAD if _has_unread_dm() else CHAT_ICON)
 
 
 func _update_dm_button_if_needed(convo_id: String) -> void:

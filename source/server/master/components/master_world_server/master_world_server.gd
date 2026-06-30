@@ -137,6 +137,19 @@ func tell_all_worlds_to_restart(seconds: int, message: String) -> int:
 	return count
 
 
+## Flush + back up EVERY connected world right now (no countdown). This is the
+## RELIABLE pre-stop persistence path: Godot headless does NOT run _notification on
+## SIGINT/SIGTERM, so `systemctl stop` alone never saves — the deploy calls this
+## first. master_save runs the save synchronously in its RPC handler (signal-free),
+## so it actually persists. Returns the world count notified.
+func tell_all_worlds_to_save() -> int:
+	var count: int = 0
+	for world_peer_id: int in connected_worlds:
+		master_save.rpc_id(world_peer_id)
+		count += 1
+	return count
+
+
 # Stubs declared so Godot's RPC table accepts the outbound calls. World side
 # implements the actual behavior in WorldManagerClient.
 @rpc("authority") func master_save() -> void: pass
@@ -223,8 +236,10 @@ func player_character_creation_result(gateway_id: int, peer_id: int, username: S
 		account.last_world_name = connected_worlds[world_id].get("info", {}).get("name", "")
 		account.last_character_id = result_code
 		account.peer_id = peer_id # mark connected so a second login is refused
-		if OS.has_feature("debug"):
-			authentication_manager.save_account_collection()
+		# Persist account metadata (last world/character) on every login — must run in
+		# production too, not just debug, or "continue on last world" breaks in a
+		# release build. (Was gated on "debug", which masked this on the debug server.)
+		authentication_manager.save_account_collection()
 		var auth_token: String = authentication_manager.generate_random_token()
 		fetch_token.rpc_id(world_id, auth_token, username, result_code)
 		

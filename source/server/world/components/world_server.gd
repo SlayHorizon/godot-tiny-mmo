@@ -55,14 +55,12 @@ func _on_periodic_save() -> void:
 	ServerLog.info("Periodic save: %d player(s) flushed, backup %s." % [saved, "ok" if ok else "FAILED"])
 
 
-## Graceful shutdown: flush every still-connected player + snapshot the DB before
-## the process exits. Fires on a clean quit — Ctrl+C in a console, a graceful
-## window close, or `systemctl stop` when the unit delivers SIGINT (set
-## KillSignal=SIGINT + a few seconds of TimeoutStopSec in the systemd unit so
-## this can finish). Without it, a deploy that stops the process dropped up to one
-## periodic-save interval (5 min) of everyone's in-memory progress, since only the
-## 5-min tick and per-player disconnect persisted state. SQLite writes are
-## synchronous, so the save completes before the engine tears the tree down.
+## Best-effort save on a window-manager close (editor run / windowed build).
+## NOTE: Godot headless does NOT deliver _notification on SIGINT/SIGTERM, so this
+## does NOT fire on `systemctl stop` (verified). The reliable production save path
+## is master-triggered (master_save / master_restart, RPC-driven so it's signal-
+## free) — the deploy calls /v1/save_all before stopping. This handler stays only
+## for the interactive/windowed case; it's harmless and never the sole safety net.
 func _notification(what: int) -> void:
 	if what != NOTIFICATION_WM_CLOSE_REQUEST:
 		return

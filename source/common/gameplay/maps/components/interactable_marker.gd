@@ -8,7 +8,7 @@ extends Node2D
 ## Runs in @tool mode so changing `kind` previews live in the editor (the idle bob
 ## is skipped there so the marker stays put while you position it).
 ##
-## Emotes are pixel-art PNGs (assets/sprites/gui/emotes) — they render crisply on
+## Emotes are pixel-art PNGs (assets/sprites/ui/emotes) — they render crisply on
 ## web, unlike the emoji we started with, and read better than the big text label
 ## they replaced. The kind→emote map below is just data; re-point it freely.
 
@@ -21,7 +21,7 @@ enum Kind {
 	GATHER,          ## ore vein / herb patch / etc.
 }
 
-const _EMOTE_DIR: String = "res://assets/sprites/gui/emotes/"
+const _EMOTE_DIR: String = "res://assets/sprites/ui/emotes/"
 ## Kind → emote file. Pure data — swap any of these for another emote freely.
 const _EMOTES: Dictionary = {
 	Kind.QUEST_AVAILABLE: "emote_exclamation.png",

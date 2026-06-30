@@ -27,7 +27,6 @@ metadata/_custom_type_script = "uid://cb4eeew5u1da1"
 
 [resource]
 script = ExtResource("1_npcres")
-npc_id = 4
 npc_name = "Mira"
 skin = ExtResource("10_hg6wj")
 greeting = "[wave]Welcome, dear.[/wave] I'm [color=#d8a]Mira[/color], folk say my brews taste of swamp water.  They're not wrong. Here to learn the herbs, or just to buy?"

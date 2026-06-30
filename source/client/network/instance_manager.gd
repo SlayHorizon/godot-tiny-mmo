@@ -13,6 +13,23 @@ func _ready() -> void:
 	pass
 
 
+## Free the live world (map) + HUD and clear the InstanceClient statics so the client
+## can cleanly return to the gateway. These live under PERSISTENT parents — this
+## manager under the Client autoload, the UI added under root — so a scene reload
+## alone does NOT free them, which left the old world rendering under the rebuilt
+## login menu after a disconnect. Transition._back_to_login calls this first.
+func teardown() -> void:
+	if current_instance and is_instance_valid(current_instance):
+		current_instance.queue_free()
+	current_instance = null
+	if current_ui and is_instance_valid(current_ui):
+		current_ui.queue_free()
+	current_ui = null
+	InstanceClient.current = null
+	InstanceClient.local_player = null
+	ClientState.local_player = null
+
+
 @rpc("authority", "call_remote", "reliable", 0)
 func charge_new_instance(map_path: String, instance_id: String) -> void:
 	var new_instance: InstanceClient = InstanceClient.new()

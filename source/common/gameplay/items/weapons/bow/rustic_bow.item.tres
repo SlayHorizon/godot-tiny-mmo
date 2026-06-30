@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://c8mlycu302745"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_0xwrd"]
+[ext_resource type="Texture2D" uid="uid://d0226i8o2vv53" path="res://assets/sprites/items/weapons/rustic/rustic.png" id="2_0xwrd"]
+[ext_resource type="PackedScene" uid="uid://e6kqwoh5tlxp" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.tscn" id="3_2v2rc"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_yrgi7"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_0n47l"]
+
+[sub_resource type="Resource" id="Resource_ibcoj"]
+script = ExtResource("1_0xwrd")
+stat_name = "move_speed"
+value = -7.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="Resource" id="Mod_ad_bow"]
+script = ExtResource("1_0xwrd")
+stat_name = "ad"
+value = 9.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ibcoj"]
+atlas = ExtResource("2_0xwrd")
+region = Rect2(80, 128, 16, 32)
+
+[resource]
+script = ExtResource("4_yrgi7")
+category = &"bow"
+capacity = 2
+right_hand_scene = ExtResource("3_2v2rc")
+slot = ExtResource("5_0n47l")
+required_level = 5
+base_modifiers = Array[ExtResource("1_0xwrd")]([SubResource("Resource_ibcoj"), SubResource("Mod_ad_bow")])
+item_name = &"Rustic Bow"
+item_icon = SubResource("AtlasTexture_ibcoj")
+description = "To do: change description. A plain wooden bow. Draw to charge, loose to fire."
+can_trade = true
+can_sell = true
+stack_limit = 1
+metadata/_custom_type_script = "uid://5hk0gl5ng64h"
+metadata/slug = &"rustic_bow.item"
+metadata/id = 86

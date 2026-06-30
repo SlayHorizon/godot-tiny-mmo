@@ -15,8 +15,8 @@ func data_request_handler(
 		return {"ok": false}
 
 	# Authorize: the shop must be present in the player's current map.
-	var shop_id: int = int(args.get("shop_id", 0))
-	var shop: ShopResource = instance.instance_map.get_shop(shop_id)
+	var shop_key: StringName = StringName(str(args.get("shop_key", "")))
+	var shop: ShopResource = instance.instance_map.get_shop(shop_key)
 	if shop == null:
 		return {"ok": false}
 

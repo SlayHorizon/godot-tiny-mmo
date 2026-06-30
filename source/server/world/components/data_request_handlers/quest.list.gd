@@ -22,17 +22,17 @@ func data_request_handler(
 	# view, which only has IDs to work with.)
 	var quest_ids: Array = []
 	var resources_by_id: Dictionary = {}
-	var giver_id: int = int(args.get("giver", 0))
+	var giver_key: StringName = StringName(str(args.get("giver", "")))
 	var giver_name: String = ""
-	if giver_id > 0:
+	if not giver_key.is_empty():
 		# Opening the menu at a giver is "visiting" them — advance any matching
 		# VISIT objectives BEFORE building the view so the player sees the
 		# just-advanced count in the same response. Also push quest.update so
 		# the HUD tracker refreshes immediately (same pattern as kill/craft).
-		var visit_updates: Array = QuestService.on_visit(resource, giver_id, peer_id, instance)
+		var visit_updates: Array = QuestService.on_visit(resource, giver_key, peer_id, instance)
 		if not visit_updates.is_empty():
 			WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": visit_updates})
-		var giver: Object = instance.instance_map.get_quest_giver(giver_id)
+		var giver: Object = instance.instance_map.get_quest_giver(giver_key)
 		if giver:
 			giver_name = str(giver.get(&"giver_name"))
 			for quest: QuestResource in giver.get(&"quests"):
@@ -48,7 +48,7 @@ func data_request_handler(
 				if resource.quest_state(active_quest_id) != &"active":
 					continue
 				var quest: QuestResource = QuestResource.load_quest(active_quest_id)
-				if quest and quest.turn_in_giver_id == giver_id:
+				if quest and quest.turn_in_giver_key() == giver_key:
 					resources_by_id[active_quest_id] = quest
 					quest_ids.append(active_quest_id)
 	else:
@@ -61,7 +61,7 @@ func data_request_handler(
 	# Toast any quest that just became turn-in-able via a passive COLLECT fill
 	# (inventory changes fire no advance event). Latches so it only toasts once.
 	QuestService.notify_passive_ready(resource, peer_id)
-	return {"giver": giver_id, "giver_name": giver_name, "quests": out}
+	return {"giver": String(giver_key), "giver_name": giver_name, "quests": out}
 
 
 func _quest_view(resource: PlayerResource, quest_id: int, quest_ref: QuestResource, inventory: Dictionary) -> Dictionary:

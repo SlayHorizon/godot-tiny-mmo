@@ -18,7 +18,7 @@ const COLOR_HINT: Color = Color(0.65, 0.75, 0.9)
 const COLOR_DESC: Color = Color(0.75, 0.75, 0.8)
 const COLOR_REWARD: Color = Color(0.85, 0.8, 0.4)
 
-var _giver_id: int
+var _giver_key: String
 var _quests: Array = []
 var _selected_quest_id: int = -1
 ## Title-row buttons keyed by quest id, kept for highlight refresh on selection.
@@ -37,18 +37,18 @@ func _ready() -> void:
 
 
 func _on_visibility_changed() -> void:
-	if visible and _giver_id > 0:
+	if visible and not _giver_key.is_empty():
 		_refresh()
 
 
-func open(giver_id: int) -> void:
-	_giver_id = giver_id
+func open(giver_key: String) -> void:
+	_giver_key = giver_key
 	_refresh()
 
 
 func _refresh() -> void:
 	var result: Array = await Client.request_data_await(
-		&"quest.list", {"giver": _giver_id}, InstanceClient.current.name
+		&"quest.list", {"giver": _giver_key}, InstanceClient.current.name
 	)
 	if result[1] != OK:
 		return
@@ -311,7 +311,7 @@ func _spacer(height: int) -> Control:
 
 func _on_accept(quest_id: int) -> void:
 	var result: Array = await Client.request_data_await(
-		&"quest.accept", {"giver": _giver_id, "id": quest_id}, InstanceClient.current.name
+		&"quest.accept", {"giver": _giver_key, "id": quest_id}, InstanceClient.current.name
 	)
 	if result[1] == OK and result[0].get("ok", false):
 		ClientState.set_tracked_quest(quest_id) # latest accepted becomes the tracked one
@@ -320,7 +320,7 @@ func _on_accept(quest_id: int) -> void:
 
 func _on_turn_in(quest_id: int) -> void:
 	await Client.request_data_await(
-		&"quest.turn_in", {"giver": _giver_id, "id": quest_id}, InstanceClient.current.name
+		&"quest.turn_in", {"giver": _giver_key, "id": quest_id}, InstanceClient.current.name
 	)
 	_refresh()
 

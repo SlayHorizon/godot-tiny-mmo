@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://5wv1gfwppcnf"]
 
 [ext_resource type="Script" uid="uid://ch86ljq7iwgv8" path="res://source/client/gateway/gateway.gd" id="2_74q4y"]
-[ext_resource type="Texture2D" uid="uid://cn5blfyqokda6" path="res://assets/sprites/gui/backgrounds/fairy_forest.png" id="4_uvr2v"]
+[ext_resource type="Texture2D" uid="uid://cl572rmxiaw1m" path="res://assets/sprites/ui/backgrounds/fairy_forest.png" id="4_uvr2v"]
 [ext_resource type="FontFile" uid="uid://cehc3gujked8x" path="res://assets/fonts/Cinzel/static/Cinzel-Bold.ttf" id="5_opc3y"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="6_g2eid"]
 [ext_resource type="FontFile" uid="uid://cr1d4ugttxggp" path="res://assets/fonts/Atkinson_Hyperlegible/AtkinsonHyperlegible-Bold.ttf" id="6_tnybn"]
-[ext_resource type="Texture2D" uid="uid://drh48n51habmy" path="res://assets/sprites/gui/gateway/icon_more.png" id="7_4oa66"]
+[ext_resource type="Texture2D" uid="uid://cp0ddo3nvmx2u" path="res://assets/sprites/ui/gateway/icon_more.png" id="7_4oa66"]
 [ext_resource type="PackedScene" uid="uid://dgpsxb4qq1hex" path="res://source/client/ui/menus/settings/settings_menu.tscn" id="7_g2eid"]
 [ext_resource type="Script" uid="uid://q5rsjtg6nsto" path="res://source/client/gateway/popup_panel.gd" id="9_4rdug"]
 

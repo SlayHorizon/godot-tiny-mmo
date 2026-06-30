@@ -278,6 +278,10 @@ func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, loca
 			ability.use_ability(character, Vector2.ZERO)
 		else:
 			_stamp_cooldown(ability) # predictive — server cooldown stays authoritative
+			# Predict the instant-feedback part locally (e.g. Deflect's bubble), so it
+			# fires NOW instead of waiting a round-trip for the server echo. No-op for
+			# most abilities; the server echo still runs the authoritative use_ability.
+			ability.predict_use(character)
 		_send_action(slot, false, local_player)
 	# Independent `if` (NOT elif): a fast tap can press and release within the
 	# same frame — the release must still send or the shot never fires.

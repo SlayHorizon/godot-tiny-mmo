@@ -6,6 +6,7 @@
 script = ExtResource("1_p8grt")
 instance_name = &"jail"
 map_path = "uid://bvo6o8uth0b7u"
+load_at_startup = true
 metadata/_custom_type_script = "uid://deqjrbn7hm53u"
 metadata/slug = &"jail"
 metadata/id = 12

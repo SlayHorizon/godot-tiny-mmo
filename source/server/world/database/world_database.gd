@@ -97,14 +97,23 @@ func save_all_connected(connected_players: Dictionary) -> int:
 
 
 ## Snapshot the live .db file to user://db_backups/<name>_<unix_ts>.db and
-## prune older backups to keep at most [param keep_last]. Cheap byte-copy —
-## SQLite WAL keeps the live file consistent enough that a crash mid-write
-## still leaves a recoverable backup file. Returns true on success.
+## prune older backups to keep at most [param keep_last]. Returns true on success.
+##
+## CRITICAL: checkpoint the WAL into the main .db FIRST. In WAL mode recent writes
+## live in the -wal sidecar until checkpointed, and this backup byte-copies ONLY the
+## .db — so without the checkpoint every backup silently omitted everything since the
+## last auto-checkpoint (observed live: a 332 KB .db beside a 4 MB uncheckpointed
+## -wal, i.e. hours of progress missing from every "successful" backup). TRUNCATE
+## also folds the -wal back to ~0, so the live .db stays current and the -wal can't
+## balloon. Runs on the server's own DB connection, so it always gets the lock.
 func backup_database(keep_last: int = 10) -> bool:
 	if database_path.is_empty():
 		return false
 	if not FileAccess.file_exists(database_path):
 		return false
+
+	if db != null:
+		db.query("PRAGMA wal_checkpoint(TRUNCATE);")
 
 	var backup_dir: String = "user://db_backups"
 	DirAccess.make_dir_recursive_absolute(backup_dir)

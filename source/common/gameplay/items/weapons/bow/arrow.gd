@@ -120,4 +120,5 @@ func _handle_collision(node: Node2D) -> void:
 ## resolves a HurtBox to its Character, applies the target rules, and deals the hit). Override for a
 ## different effect — see HealBolt. Server-authoritative: damage is gated inside take_damage.
 func _resolve_hit(node: Node2D) -> CombatHit.Result:
-	return CombatHit.try_damage(source as Character, node, damage, damage_type)
+	# deflectable = true: a target mid-Deflect destroys this projectile (no damage).
+	return CombatHit.try_damage(source as Character, node, damage, damage_type, true)

@@ -23,11 +23,6 @@ const BRANCH_SUBTITLES: Dictionary[StringName, String] = {
 	&"inspiration": "Support & Mobility",
 }
 const TILE_SIZE: Vector2 = Vector2(54, 54)
-## Placeholder lock art path (artist drop-in later). Loaded at runtime, NOT
-## preloaded, so an un-imported / missing test asset degrades to initials instead
-## of breaking the whole menu at parse time. Real node icons come from
-## MasteryNode.icon / AbilityResource.icon.
-const LOCKED_ICON_PATH: String = "res://assets/sprites/gui/test/locked_icon.png"
 
 const COLOR_OWNED: Color = Color(0.5, 0.85, 0.55)
 const COLOR_LEARN: Color = Color(0.96, 0.74, 0.16)
@@ -40,7 +35,6 @@ var _selected_node: String = ""
 
 var _points_label: Label
 var _picker_overlay: Control
-var _locked_icon: Texture2D
 
 
 func _ready() -> void:
@@ -50,8 +44,6 @@ func _ready() -> void:
 	var backdrop: ColorRect = get_child(0) as ColorRect
 	if backdrop != null:
 		backdrop.color = Color(0.05, 0.06, 0.09, 0.98)
-	if ResourceLoader.exists(LOCKED_ICON_PATH):
-		_locked_icon = load(LOCKED_ICON_PATH)
 	visibility_changed.connect(_on_visibility_changed)
 	close_requested.connect(_close_slot_picker)
 	# The shell's right-side button reads "Close"; here it's a Back to the hub.
@@ -146,7 +138,6 @@ func _rebuild() -> void:
 		branches_row.add_child(_make_branch_panel(branch, tree, info))
 
 	root_box.add_child(_make_detail_panel(tree, info))
-	root_box.add_child(_make_legend())
 
 
 ## Prefer the first owned ability (what the player most likely wants to manage),
@@ -230,11 +221,13 @@ func _chain_groups(branch: StringName, tree: MasteryTreeResource) -> Array:
 
 func _make_chain_column(group: Array, tree: MasteryTreeResource, info: Dictionary, color: Color) -> Control:
 	var col: VBoxContainer = VBoxContainer.new()
-	# Bottom-anchored so every chain's tier-1 tile lands on the same bottom row,
-	# however deep the chain runs.
+	# Bottom-anchored, and each tile sits at its ABSOLUTE tier row: T1 = bottom row,
+	# T2 = second, etc. A chain that starts above T1 (e.g. Deflect begins at T2) gets
+	# empty cells padded in below it, so tiers read straight across every branch and a
+	# tile's row == its capacity cost. One tier-row = TILE_SIZE.y + the 12px connector.
 	col.size_flags_vertical = Control.SIZE_SHRINK_END
 	col.add_theme_constant_override(&"separation", 0)
-	# Highest tier first (top) down to tier 1 (bottom) — the tree builds upward.
+	# Highest tier first (top) down to the chain's lowest tier (group is tier-ascending).
 	for i: int in range(group.size() - 1, -1, -1):
 		col.add_child(_make_tile(group[i] as MasteryNode, tree, info, color))
 		if i > 0:
@@ -243,6 +236,12 @@ func _make_chain_column(group: Array, tree: MasteryTreeResource, info: Dictionar
 			line.custom_minimum_size = Vector2(2, 12)
 			line.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			col.add_child(line)
+	# Pad empty rows below the lowest tile so it lands on its absolute tier row.
+	var lowest_tier: int = int((group[0] as MasteryNode).tier)
+	for _pad: int in range(lowest_tier - 1):
+		var spacer: Control = Control.new()
+		spacer.custom_minimum_size = Vector2(TILE_SIZE.x, TILE_SIZE.y + 12)
+		col.add_child(spacer)
 	return col
 
 
@@ -267,7 +266,7 @@ func _make_tile(node: MasteryNode, _tree: MasteryTreeResource, info: Dictionary,
 	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	button.focus_mode = Control.FOCUS_NONE
 	button.clip_contents = false
-	button.tooltip_text = node.node_name
+	button.tooltip_text = node.display_name()
 
 	var border_col: Color = Color(color.r, color.g, color.b, 0.45)
 	var border_w: int = 1
@@ -291,15 +290,18 @@ func _make_tile(node: MasteryNode, _tree: MasteryTreeResource, info: Dictionary,
 	for style_name: StringName in [&"normal", &"hover", &"pressed", &"focus", &"disabled"]:
 		button.add_theme_stylebox_override(style_name, box)
 
+	# Locked tiles show their REAL icon, just dimmed (disabled style) — players can
+	# see what they're working toward and still click to read its description +
+	# unlock requirement in the detail panel. (No padlock placeholder.)
 	if locked:
-		button.modulate.a = 0.5
+		button.modulate = Color(0.55, 0.55, 0.62, 0.7)
 
-	var tex: Texture2D = _locked_icon if locked else _node_icon(node)
+	var tex: Texture2D = _node_icon(node)
 	if tex != null:
 		PixelIcon.mount(button, tex)
 	else:
 		var initials: Label = Label.new()
-		initials.text = _initials(node.node_name)
+		initials.text = _initials(node.display_name())
 		initials.add_theme_font_size_override(&"font_size", 18)
 		initials.add_theme_color_override(&"font_color", color)
 		initials.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -312,10 +314,31 @@ func _make_tile(node: MasteryNode, _tree: MasteryTreeResource, info: Dictionary,
 		var key: String = SLOT_KEYS[slot_index] if slot_index < SLOT_KEYS.size() else str(slot_index + 1)
 		button.add_child(_badge(key, COLOR_EQUIP, Color.WHITE))
 	elif affordable:
-		button.add_child(_badge("+", COLOR_LEARN, Color(0.16, 0.12, 0.0)))
+		button.add_child(_learn_plus())
 
 	button.pressed.connect(_select_node.bind(String(node.id)))
 	return button
+
+
+## The "can learn" affordance: a clean bold "+" glyph (outlined for contrast on
+## any tile), NOT a filled chip — reads as a plain plus, not a cross.
+func _learn_plus() -> Control:
+	var lab: Label = Label.new()
+	lab.text = "+"
+	lab.add_theme_font_size_override(&"font_size", 18)
+	lab.add_theme_color_override(&"font_color", COLOR_LEARN)
+	lab.add_theme_color_override(&"font_outline_color", Color(0.08, 0.06, 0.0, 0.95))
+	lab.add_theme_constant_override(&"outline_size", 4)
+	lab.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lab.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lab.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lab.anchor_left = 1.0
+	lab.anchor_right = 1.0
+	lab.offset_left = -20
+	lab.offset_top = -1
+	lab.offset_right = -2
+	lab.offset_bottom = 19
+	return lab
 
 
 func _badge(text: String, bg: Color, fg: Color) -> Control:
@@ -356,6 +379,10 @@ func _select_node(node_id: String) -> void:
 
 func _make_detail_panel(tree: MasteryTreeResource, info: Dictionary) -> Control:
 	var panel: PanelContainer = PanelContainer.new()
+	# Fixed height so the layout never jumps when a description wraps to a 2nd/3rd
+	# line (1 line ≈ 85, 2 ≈ 105, 3 ≈ 125). Reserve the 3-line height; shorter
+	# descriptions just leave whitespace below. Keep descriptions to ≤3 lines.
+	panel.custom_minimum_size.y = 126
 	var box: StyleBoxFlat = StyleBoxFlat.new()
 	box.bg_color = Color(0.09, 0.10, 0.13, 0.92)
 	box.set_corner_radius_all(8)
@@ -384,9 +411,9 @@ func _make_detail_panel(tree: MasteryTreeResource, info: Dictionary) -> Control:
 
 	var name_label: Label = Label.new()
 	if node.ability != null:
-		name_label.text = "%s   ·   Power %d" % [node.node_name, node.tier]
+		name_label.text = "%s   ·   Power %d" % [node.display_name(), node.tier]
 	else:
-		name_label.text = "%s   ·   Passive" % node.node_name
+		name_label.text = "%s   ·   Passive" % node.display_name()
 	name_label.add_theme_font_size_override(&"font_size", 16)
 	name_label.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.78))
 	text_box.add_child(name_label)
@@ -401,7 +428,7 @@ func _make_detail_panel(tree: MasteryTreeResource, info: Dictionary) -> Control:
 	var meta_label: Label = Label.new()
 	meta_label.add_theme_font_size_override(&"font_size", 12)
 	if node.ability != null:
-		var parts: PackedStringArray = PackedStringArray()
+		var parts: PackedStringArray = node.ability.extra_stat_lines()
 		parts.append("%s cooldown" % _fmt_cooldown(node.ability.cooldown))
 		if node.ability.mana_cost > 0:
 			parts.append("%d mana" % node.ability.mana_cost)
@@ -460,33 +487,6 @@ func _make_action_button(node: MasteryNode, _tree: MasteryTreeResource, info: Di
 	return button
 
 
-func _make_legend() -> Control:
-	var row: HBoxContainer = HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override(&"separation", 16)
-	row.add_child(_legend_item(COLOR_LEARN, "can learn"))
-	row.add_child(_legend_item(COLOR_OWNED, "owned"))
-	row.add_child(_legend_item(COLOR_EQUIP, "equipped (Q/E)"))
-	row.add_child(_legend_item(Color(0.5, 0.52, 0.6), "locked"))
-	return row
-
-
-func _legend_item(color: Color, text: String) -> Control:
-	var item: HBoxContainer = HBoxContainer.new()
-	item.add_theme_constant_override(&"separation", 5)
-	var swatch: ColorRect = ColorRect.new()
-	swatch.color = color
-	swatch.custom_minimum_size = Vector2(10, 10)
-	swatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	item.add_child(swatch)
-	var lab: Label = Label.new()
-	lab.text = text
-	lab.add_theme_font_size_override(&"font_size", 10)
-	lab.add_theme_color_override(&"font_color", Color(0.7, 0.72, 0.78))
-	item.add_child(lab)
-	return item
-
-
 # ---------------------------------------------------------------------------
 # Actions (server-validated; re-fetch + rebuild on result)
 # ---------------------------------------------------------------------------
@@ -523,7 +523,7 @@ func _open_slot_picker(node_id: String) -> void:
 	var title: String = "Place %s (Power %d) on which slot?" % [_node_display_name(node_id), _node_power(node_id)]
 	var cap: int = _wielded_capacity()
 	if cap >= 0:
-		title += "\nYour weapon channels up to %d power." % cap
+		title += "\nWeapon capacity: %d. A T1 ability is free; T2/T3/T4 cost 1/2/3 to slot." % cap
 	_picker_overlay = SlotPickerOverlay.open(
 		self, title, entries,
 		func(slot: int) -> void: _send_loadout_with(node_id, slot)
@@ -555,7 +555,7 @@ func _send_loadout_with(node_id: String, slot: int) -> void:
 	if cap >= 0 and slot >= 0:
 		var used: int = _loadout_power_used(picks, MasteryService.tree_for(StringName(_category)))
 		if used > cap:
-			Toaster.toast("Not enough weapon power (%d / %d). Equip a higher-tier weapon to channel it all." % [used, cap])
+			Toaster.toast("Over capacity (%d / %d used). T1 abilities are free; a higher-tier weapon channels heavier upgrades." % [used, cap])
 	Client.request_data(
 		&"mastery.loadout",
 		_on_loadout_result,
@@ -606,7 +606,7 @@ func _node_display_name(node_id: String) -> String:
 	if tree != null:
 		var node: MasteryNode = tree.get_node_by_id(StringName(node_id))
 		if node != null:
-			return node.node_name
+			return node.display_name()
 	return node_id
 
 
@@ -646,8 +646,32 @@ func _passive_bonus_text(node: MasteryNode) -> String:
 	var parts: PackedStringArray = PackedStringArray()
 	for modifier: StatModifier in node.passive_modifiers:
 		var prefix: String = "+" if modifier.value >= 0.0 else ""
-		parts.append("%s%s %s" % [prefix, _fmt_num(modifier.value), Stat.display_name(StringName(modifier.stat_name))])
+		var suffix: String = "%" if Stat.is_percent(StringName(modifier.stat_name)) else ""
+		var line: String = "%s%s%s %s" % [prefix, _fmt_num(modifier.value), suffix, Stat.display_name(StringName(modifier.stat_name))]
+		# Chain passive (tier 2+): the ranks STACK, so spell out the running total
+		# at this rank — "+9% ... (17% total)" — instead of leaving players to add it up.
+		if not node.upgrades.is_empty():
+			var total: float = _chain_total_for_stat(node, StringName(modifier.stat_name))
+			line += " (%s%s total)" % [_fmt_num(total), suffix]
+		parts.append(line)
 	return ", ".join(parts) if not parts.is_empty() else "Always active while this weapon is wielded."
+
+
+## Sum of one stat's passive modifiers from a chain's root up to [param node] —
+## the cumulative value you actually get at this rank (lower ranks are required to
+## own this one, so they always contribute).
+func _chain_total_for_stat(node: MasteryNode, stat_name: StringName) -> float:
+	var tree: MasteryTreeResource = MasteryService.tree_for(StringName(_category))
+	var total: float = 0.0
+	var cur: MasteryNode = node
+	while cur != null:
+		for modifier: StatModifier in cur.passive_modifiers:
+			if StringName(modifier.stat_name) == stat_name:
+				total += modifier.value
+		if cur.upgrades.is_empty() or tree == null:
+			break
+		cur = tree.get_node_by_id(cur.upgrades)
+	return total
 
 
 func _fmt_num(value: float) -> String:
@@ -661,7 +685,8 @@ func _wielded_capacity() -> int:
 	return -1
 
 
-## Total power the loadout picks consume (sum of their tiers; "" holes skipped).
+## Capacity the loadout consumes (sum of each pick's equip weight = tier-1, so T1
+## picks are free; "" holes skipped).
 func _loadout_power_used(picks: Array, tree: MasteryTreeResource) -> int:
 	if tree == null:
 		return 0
@@ -672,7 +697,7 @@ func _loadout_power_used(picks: Array, tree: MasteryTreeResource) -> int:
 			continue
 		var node: MasteryNode = tree.get_node_by_id(StringName(id))
 		if node != null:
-			total += node.tier
+			total += MasteryService.ability_weight(node)
 	return total
 
 
@@ -684,4 +709,4 @@ func _too_heavy_for_wielded(node: MasteryNode) -> bool:
 	var weapon_item: WeaponItem = ClientState.local_player.equipment_component.equipped_items.get(&"weapon", null) as WeaponItem
 	if weapon_item == null or String(weapon_item.category) != _category:
 		return false
-	return node.tier > weapon_item.capacity
+	return MasteryService.ability_weight(node) > weapon_item.capacity

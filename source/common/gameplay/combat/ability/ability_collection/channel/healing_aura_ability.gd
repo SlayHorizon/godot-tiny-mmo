@@ -4,13 +4,21 @@ extends ChannelAbility
 ## caster AND to nearby players within [member radius]. Slow but steady — the
 ## tank-cleric's sustain. You're planted while it runs (moving cancels it), which
 ## is the counterplay. Tiers grow the heal + radius as an upgrade chain in the
-## hammer Resolve branch.
+## hammer Inspiration branch.
 ##
 ## Server-authoritative; the green aura renders from the channel push and each
 ## heal pops a green number via the existing combat.hit heal feedback.
 
 ## HP restored per tick to each valid target (caster + nearby players).
 @export var heal_per_tick: float = 3.0
+
+
+## Lead with the heal-per-second, then the channel/mana lines from ChannelAbility.
+func extra_stat_lines() -> PackedStringArray:
+	var lines: PackedStringArray = PackedStringArray()
+	lines.append("+%s HP/s" % fmt_num(heal_per_tick / tick_interval_s))
+	lines.append_array(super())
+	return lines
 
 
 func channel_tick(caster: Character) -> void:

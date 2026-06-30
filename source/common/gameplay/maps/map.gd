@@ -65,22 +65,20 @@ enum ZoneModifiers {
 @export var camera_limit_bottom: int = 10000000
 
 var warpers: Dictionary[int, Warper]
-## shop registry id -> ShopResource, gathered from the merchant nodes placed in this
-## map (mirrors how warpers are collected). The server uses this to resolve/verify a
-## shop the player is actually at, rather than trusting a client-sent id.
-var shops: Dictionary[int, ShopResource]
-## node-name -> MineableNode, gathered from the gathering nodes placed in this
-## map (same pattern as warpers/shops). The server resolves the node a player
-## mines by name (Godot guarantees uniqueness within a parent).
-var mineables: Dictionary[StringName, MineableNode]
-## crafting-station registry id -> CraftingStationResource, gathered from the station
-## nodes placed in this map (mirrors shops). The server resolves/verifies the station
-## a player crafts at, rather than trusting a client-sent id.
-var crafting_stations: Dictionary[int, CraftingStationResource]
-## giver_id -> quest source: a QuestInteraction on an NPC (registered by its
-## register()). Exposes `quests` + `giver_name`, read by the quest handlers. The
-## server resolves offered quests (never a client-sent list).
-var quest_givers: Dictionary[int, Object]
+## merchant NPC giver_key (its NPCResource filename slug) -> ShopResource, gathered
+## from the NPCs placed in this map. The server uses this to resolve/verify a shop the
+## player is actually at, rather than trusting a client-sent key — and it lets an inline
+## shop (no registry id) resolve by its owning NPC, the way quest_givers do.
+var shops: Dictionary[StringName, ShopResource]
+## node name -> CraftingStationResource, gathered from the CraftingStation nodes placed
+## in this map (same pattern as warpers). The server resolves/verifies the station a
+## player crafts at by node name, rather than trusting a client-sent key — and an inline
+## station (no registry id) resolves by its node, the way shops resolve by their NPC.
+var crafting_stations: Dictionary[StringName, CraftingStationResource]
+## giver slug -> quest source: a QuestInteraction on an NPC (registered by its
+## register(), keyed by the NPCResource filename slug). Exposes `quests` +
+## `giver_name`, read by the quest handlers. The server resolves offered quests.
+var quest_givers: Dictionary[StringName, Object]
 ## table_id -> TradeTable node. The server holds each table's trade session.
 var trade_tables: Dictionary[int, TradeTable]
 ## flag_id -> TerritoryFlag node, gathered from the basing flags placed in this
@@ -88,8 +86,6 @@ var trade_tables: Dictionary[int, TradeTable]
 var territory_flags: Dictionary[int, TerritoryFlag]
 ## master_id -> DuelMaster NPC. The server queues sparring through these.
 var duel_masters: Dictionary[int, DuelMaster]
-## master_id -> DungeonMaster lobby station. The server queues dungeon runs here.
-var dungeon_masters: Dictionary[int, DungeonMaster]
 
 
 func _ready() -> void:
@@ -101,18 +97,14 @@ func _ready() -> void:
 		if child is Warper:
 			var warper_id: int = child.warper_id
 			warpers[warper_id] = child
-		elif child is MineableNode:
-			mineables[child.name] = child
 		elif child is CraftingStation and child.station:
-			crafting_stations[int(child.station.get_meta(&"id", 0))] = child.station
+			crafting_stations[child.name] = child.station
 		elif child is TradeTable:
 			trade_tables[child.table_id] = child
 		elif child is TerritoryFlag:
 			territory_flags[child.flag_id] = child
 		elif child is DuelMaster:
 			duel_masters[child.master_id] = child
-		elif child is DungeonMaster:
-			dungeon_masters[child.master_id] = child
 
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
@@ -124,24 +116,20 @@ func get_spawn_position(warper_id: int = 0) -> Vector2:
 	return Vector2.ZERO
 
 
-## The shop sold by a merchant in this map, or null.
-func get_shop(shop_id: int) -> ShopResource:
-	return shops.get(shop_id)
+## The shop sold by a merchant in this map, or null. Keyed by the merchant NPC's
+## giver_key() (its NPCResource filename slug), matching quest_givers.
+func get_shop(shop_key: StringName) -> ShopResource:
+	return shops.get(shop_key)
 
 
-## The gathering node with this name in this map, or null.
-func get_mineable(node_name: StringName) -> MineableNode:
-	return mineables.get(node_name)
+## The crafting station with this node name in this map, or null.
+func get_crafting_station(station_key: StringName) -> CraftingStationResource:
+	return crafting_stations.get(station_key)
 
 
-## The crafting station with this registry id in this map, or null.
-func get_crafting_station(station_id: int) -> CraftingStationResource:
-	return crafting_stations.get(station_id)
-
-
-## The quest-giver NPC with this id in this map, or null.
-func get_quest_giver(giver_id: int) -> Object:
-	return quest_givers.get(giver_id)
+## The quest-giver NPC with this slug in this map, or null.
+func get_quest_giver(giver_key: StringName) -> Object:
+	return quest_givers.get(giver_key)
 
 
 ## The trade table with this id in this map, or null.
@@ -149,18 +137,9 @@ func get_trade_table(table_id: int) -> TradeTable:
 	return trade_tables.get(table_id)
 
 
-## The territory flag with this id in this map, or null.
-func get_territory_flag(flag_id: int) -> TerritoryFlag:
-	return territory_flags.get(flag_id)
-
-
 ## The duel master with this id in this map, or null.
 func get_duel_master(master_id: int) -> DuelMaster:
 	return duel_masters.get(master_id)
-
-
-func get_dungeon_master(master_id: int) -> DungeonMaster:
-	return dungeon_masters.get(master_id)
 
 
 func override_map_rules(instance_resource: InstanceResource) -> void:
