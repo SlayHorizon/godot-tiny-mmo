@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="BattleFormAbility" format=3 uid="uid://sgchqvcqt2ib"]
 
 [ext_resource type="Script" uid="uid://blavokqxrda2d" path="res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_ability.gd" id="1_bf"]
-[ext_resource type="Texture2D" uid="uid://fq586nxrosdg" path="res://assets/sprites/ui/ability_icons/battle_form.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://bm1ogs50w77va" path="res://assets/sprites/ui/ability_icons/battle_form_2.png" id="1_pp5lj"]
 
 [resource]
 script = ExtResource("1_bf")
@@ -9,7 +9,7 @@ bonus_hp = 280.0
 scale_factor = 1.8
 buff_duration_s = 14.0
 name = "Battle Form II"
-icon = ExtResource("2_icon")
+icon = ExtResource("1_pp5lj")
 cooldown = 84.0
 mana_cost = 70
 metadata/slug = &"battle_form_2"

@@ -8,8 +8,9 @@ const GLOBAL_COMMANDS_PATH: String = "res://source/server/world/components/chat_
 ## instance_name = "jail" to enable the jail system.
 const JAIL_INSTANCE_NAME: String = "jail"
 ## Town hub the universal Recall sends players to (an InstanceResource's
-## instance_name). Change this to repoint recall at a different home map.
-const RECALL_INSTANCE_NAME: String = "Overworld"
+## instance_name). Repointed to the tavern (2026-07-01) — it's the social hub +
+## login spawn + portal room, so recall landing anywhere else undercuts it.
+const RECALL_INSTANCE_NAME: String = "GuildHouse"
 ## Social hub players spawn at on every login AFTER their first (the tavern / guild house).
 ## A brand-new character's first-ever login starts in the jail cell instead — see
 ## _on_peer_connected.

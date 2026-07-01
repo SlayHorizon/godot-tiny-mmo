@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://v03p4cycoksj" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/bolt_shoot_ability.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://qyjnnivyohm3" path="res://source/common/gameplay/items/weapons/book/arc_bolt.tscn" id="2_bolt"]
 [ext_resource type="Texture2D" uid="uid://mbtakmldj1hq" path="res://assets/sprites/ui/ability_icons/arc_strike.png" id="3_icon"]
+[ext_resource type="SpriteFrames" uid="uid://p8h7fiyv40vx" path="res://source/common/gameplay/combat/vfx/lash_burst.tres" id="4_burst"]
 
 [resource]
 script = ExtResource("1_script")
@@ -10,7 +11,10 @@ projectile_scene = ExtResource("2_bolt")
 ap_ratio = 0.35
 speed = 380.0
 bolt_modulate = Color(1, 1, 1, 1)
-max_range = 55.0
+max_range = 80.0
+spread_degrees = 7.0
+muzzle_vfx = ExtResource("4_burst")
+impact_vfx = ExtResource("4_burst")
 name = "Arc Strike"
 icon = ExtResource("3_icon")
 cooldown = 0.25

@@ -5,25 +5,25 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1782841085
-next_id = 53
+version = 1782942406
+next_id = 58
 entries = Array[Dictionary]([{
 &"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
 &"id": 12,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres",
 &"slug": &"arcane_wall"
 }, {
-&"hash": "f279da9911cbcaa3b1ac47f8e992e54f7c8fde64dde074b1952d69e135e98596",
+&"hash": "f8be1bec24b50328e50f35c5342aa2dff277ced5c088de381ccde4ad517ee588",
 &"id": 41,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form.tres",
 &"slug": &"battle_form"
 }, {
-&"hash": "b5f073017548b8d0550824504e7ae2e8f006264cb5c7fcb2c317969d33f3899d",
+&"hash": "2c97364ca571b59ef4d42f84424e77446760871b9a00f060e903b97a2330fec0",
 &"id": 44,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_2.tres",
 &"slug": &"battle_form_2"
 }, {
-&"hash": "e22e9d5a5903f48e3ab712669f1bb42f9a11656bdb608c0c38a55b625f1a1969",
+&"hash": "16e57c9a022b3fbc03400c987f3c572f1dbe56445e8a6507ed756480c80e903d",
 &"id": 49,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_3.tres",
 &"slug": &"battle_form_3"
@@ -53,7 +53,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/blink/blink_2.tres",
 &"slug": &"blink_2"
 }, {
-&"hash": "1f24a1b0238365a3f4dc706ec1a76795f8906a7f655b577be94d65ccc77b2005",
+&"hash": "d85e5855f57dcc97e44694c6e79e5116168d95034c0ffbb4ab655d38d877248f",
 &"id": 39,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/arc_strike.tres",
 &"slug": &"arc_strike"
@@ -62,6 +62,11 @@ entries = Array[Dictionary]([{
 &"id": 10,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres",
 &"slug": &"ember_bolt"
+}, {
+&"hash": "b8def098859301ae28fb5c07484d66c947c063242fc94f62649b42717dd5aad8",
+&"id": 53,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/fireball.tres",
+&"slug": &"fireball"
 }, {
 &"hash": "f69da66e7bf7299bf0066c9b17aa7948e734b24ec2452e5a1b227183590a92d5",
 &"id": 13,
@@ -98,6 +103,11 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/hammer_aura_4.tres",
 &"slug": &"hammer_aura_4"
 }, {
+&"hash": "bd6748ee74a768a04b9421b9b2accd0b6ca4abe728b0e7541ae102f1e7271222",
+&"id": 54,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/life_siphon.tres",
+&"slug": &"life_siphon"
+}, {
 &"hash": "5688e17ea4a84b1ab7181b2d61bcb231435b0d2ae08a50520e65fb5b18ea630f",
 &"id": 50,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash.tres",
@@ -112,6 +122,11 @@ entries = Array[Dictionary]([{
 &"id": 52,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_3.tres",
 &"slug": &"lightning_lash_3"
+}, {
+&"hash": "4af57a1e1b8080eed6e80b80af95f39768ce9ce01bf198ce2dd2c76bcff2f448",
+&"id": 56,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/mana_font.tres",
+&"slug": &"mana_font"
 }, {
 &"hash": "478c302ba8c31666ac9ad8678ad5fc40beff829fe2dfea97e425a07b7585dd5d",
 &"id": 24,
@@ -233,15 +248,25 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/melee_swing/sword_swing.tres",
 &"slug": &"sword_swing"
 }, {
-&"hash": "ea820e5a95c1d674439fad72ff56bd37f8c3629b0656d12849f53e2b4fd58373",
+&"hash": "4ce3edc05e94db911edcbb1ead021fb4dbef82f0d3a9e3787fdc32f500146c55",
+&"id": 57,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/meteor/meteor.tres",
+&"slug": &"meteor"
+}, {
+&"hash": "0e59fd31482ba035b2e1cac06022f1246f7d05fd66a353a0b8e6f112ccbe438f",
 &"id": 43,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/blood_feast.tres",
 &"slug": &"blood_feast"
 }, {
-&"hash": "7accd801ab1fc6b80d6b416af0d35fe5d58bf9d22267b97ae3632fb59fd641a8",
+&"hash": "7b55ac9ed131e95d154e4ba519337275d21cff5802e20e3b75d0c9d7ffeb1f10",
 &"id": 46,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/blood_feast_2.tres",
 &"slug": &"blood_feast_2"
+}, {
+&"hash": "7ba65155e4d7ab3b5428b4d438fb687f1f37c070d4925b13b82733699e433a79",
+&"id": 55,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/frost_nova.tres",
+&"slug": &"frost_nova"
 }, {
 &"hash": "899c6f33aa4e705924cb6bcb071e9c7add457a2fc43458516c12447cba84eaba",
 &"id": 40,

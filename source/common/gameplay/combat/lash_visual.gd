@@ -9,7 +9,7 @@ var beam_length: float = 120.0
 var _sprite: AnimatedSprite2D
 
 
-static func make(player: Node, frames: SpriteFrames, beam_len: float) -> LashVisual:
+static func make(player: Node, frames: SpriteFrames, beam_len: float, frame_px: float = 256.0) -> LashVisual:
 	var lv: LashVisual = LashVisual.new()
 	lv.name = "ChannelVisual"
 	lv.beam_length = beam_len
@@ -18,7 +18,7 @@ static func make(player: Node, frames: SpriteFrames, beam_len: float) -> LashVis
 	s.centered = true
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	s.z_index = 1
-	var sc: float = beam_len / 256.0  # the bolt sheet is 256px wide
+	var sc: float = beam_len / frame_px  # scale the sheet's frame width to the beam reach
 	s.scale = Vector2(sc, sc)
 	lv._sprite = s
 	lv.add_child(s)

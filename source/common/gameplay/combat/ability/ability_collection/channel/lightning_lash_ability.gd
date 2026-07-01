@@ -15,6 +15,10 @@ extends ChannelAbility
 ## Beam reach (kept short — this is a melee-range lash) and width.
 @export var beam_length: float = 120.0
 @export var beam_width: float = 34.0
+## Drain beam (Life Siphon): each enemy the beam hits also heals the caster and restores
+## mana. 0 = a plain damage beam (Lightning Lash). Rides MeleeArc's existing drain hooks.
+@export var heal_per_hit: float = 0.0
+@export var mana_per_hit: float = 0.0
 @export var arc_scene: PackedScene = preload("res://source/common/gameplay/combat/melee_arc.tscn")
 
 const CAST_VFX: SpriteFrames = preload("res://source/common/gameplay/combat/vfx/lash_cast.tres")
@@ -78,6 +82,8 @@ func channel_tick(caster: Character) -> void:
 		shape_node.position = Vector2(beam_length / 2.0, 0.0)  # extend forward along local +x
 	arc.damage = caster.stats_component.get_stat(Stat.AP) * ap_ratio
 	arc.damage_type = CombatHit.DAMAGE_MAGIC
+	arc.heal_per_hit = heal_per_hit
+	arc.mana_per_hit = mana_per_hit
 	caster.get_parent().add_child(arc)
 	arc.global_position = caster.global_position
 	arc.rotation = aim.angle()
@@ -87,5 +93,9 @@ func extra_stat_lines() -> PackedStringArray:
 	var lines: PackedStringArray = PackedStringArray()
 	lines.append("%d%% AP per tick" % int(round(ap_ratio * 100.0)))
 	lines.append("%dpx beam" % int(beam_length))
+	if heal_per_hit > 0.0:
+		lines.append("+%s health per hit" % fmt_num(heal_per_hit))
+	if mana_per_hit > 0.0:
+		lines.append("+%s mana per hit" % fmt_num(mana_per_hit))
 	lines.append_array(super())
 	return lines

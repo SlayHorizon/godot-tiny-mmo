@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://0m5eq6iylq26"]
+
+[ext_resource type="Script" uid="uid://4hhub4nmllsm" path="res://source/common/gameplay/maps/components/interaction_areas/warper/portal/portal.gd" id="1_script"]
+[ext_resource type="SpriteFrames" uid="uid://30144oabunet" path="res://assets/sprites/vfx/portal/portal_frames.tres" id="2_frames"]
+[ext_resource type="Shader" uid="uid://dgwdab0el8mbw" path="res://source/common/gameplay/maps/components/interaction_areas/warper/portal/hue_shift.gdshader" id="3_shader"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_portal"]
+size = Vector2(40, 40)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_portal"]
+resource_local_to_scene = true
+shader = ExtResource("3_shader")
+shader_parameter/hue_offset = 0.026111104488372838
+
+[node name="Portal" type="Area2D" unique_id=375786523]
+monitorable = false
+script = ExtResource("1_script")
+warp_delay_s = 0.45
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=21930326]
+shape = SubResource("RectangleShape2D_portal")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1117866431]
+material = SubResource("ShaderMaterial_portal")
+sprite_frames = ExtResource("2_frames")
+autoplay = "default"
+
+[node name="Label" type="Label" parent="." unique_id=1160876326]
+offset_left = -60.0
+offset_top = 24.0
+offset_right = 60.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 10
+horizontal_alignment = 1

@@ -27,6 +27,12 @@ const BASE_STATS: Dictionary[StringName, float] = {
 	Stat.ATTACK_SPEED: 0.8
 }
 
+## Free max HP per level past 1 — the PvP durability floor: levels buy baseline,
+## attributes buy specialization, so no build can opt into being one-tapped
+## (docs/pvp_balance.md). Composed into spawn stats (instance_server) and applied
+## live on level-up (leveled_up signal). L20 glass = 145 HP ≈ 3 basics to kill.
+const HEALTH_PER_LEVEL: float = 5.0
+
 @export var player_id: int
 @export var account_name: String
 
@@ -132,6 +138,13 @@ const BASE_STATS: Dictionary[StringName, float] = {
 @export var last_position: Vector2 = Vector2.ZERO
 @export var current_instance: String
 
+## Fired once per level gained (see level_up). The live server Player listens and
+## applies the per-level grants (HEALTH_PER_LEVEL) — one hook instead of touching
+## every add_experience call site (kills, quests, dailies, /xp, redeems).
+## (Named level_gained, not leveled_up — add_skill_xp/add_mastery_xp already use
+## leveled_up as a local, and the signal would be shadowed.)
+signal level_gained
+
 ## Current Network ID
 var current_peer_id: int
 
@@ -175,6 +188,7 @@ func init(
 func level_up() -> void:
 	available_attributes_points += ATTRIBUTE_POINTS_PER_LEVEL
 	level += 1
+	level_gained.emit()
 
 
 ## Character xp to advance a level: one clean linear-incremental curve — level N

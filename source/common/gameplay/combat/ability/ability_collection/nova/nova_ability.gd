@@ -30,13 +30,39 @@ extends AbilityResource
 ## Ring VFX shown on the caster (sent by path in the cast push so clients load it).
 @export var vfx: SpriteFrames
 @export var vfx_color: Color = Color(1, 1, 1, 1)
+## The VFX sheet's frame WIDTH in px — the scale math sizes the visual so the art spans
+## ~the hit diameter. 128 for the ring/spiral packs; 256 for wide sheets (frost spikes).
+@export var vfx_frame_px: float = 128.0
 
 
+const CAST_RUNE: SpriteFrames = preload("res://source/common/gameplay/combat/vfx/battle_rune_build.tres")
+
+
+## A cast time (cast_time_s on the .tres) telegraphs the nova with a ground rune at the
+## caster's feet — enemies see it coming — then the burst/field lands. 0 = instant (the old
+## behavior, e.g. Static Field). The caster is NOT rooted during the cast, just committed.
 func use_ability(user: Entity, _direction: Vector2) -> void:
-	if not GameMode.is_world_server() or user is not Character:
+	if user is not Character:
 		return
-	var caster: Character = user as Character
-	if caster.get_parent() == null or arc_scene == null:
+	if GameMode.is_client() and cast_time_s > 0.0:
+		SpriteEffect.spawn(user, CAST_RUNE, {
+			"scale": Vector2(radius / 90.0, radius / 90.0),
+			"offset": Vector2(0.0, 6.0),  # a rune on the ground at the caster's feet
+			"z_index": -1,
+			"modulate": vfx_color,
+			"speed_scale": 7.0 / (16.0 * cast_time_s),  # 7 build frames stretched over the cast
+		})
+	if not GameMode.is_world_server():
+		return
+	if cast_time_s > 0.0:
+		(user as Character).get_tree().create_timer(cast_time_s).timeout.connect(_spawn_nova.bind(user as Character))
+	else:
+		_spawn_nova(user as Character)
+
+
+## Spawns the actual burst/field — split out so the cast time can defer it.
+func _spawn_nova(caster: Character) -> void:
+	if not is_instance_valid(caster) or caster.is_dead or caster.get_parent() == null or arc_scene == null:
 		return
 	var dmg: float = caster.stats_component.get_stat(Stat.AP) * ap_ratio
 	if duration_s > 0.0:
@@ -88,7 +114,7 @@ func _broadcast_ring(caster: Character) -> void:
 		WorldServer.curr.data_push.bind(&"guard.cast", {
 			"p": int(player.player_resource.current_peer_id),
 			"fx": vfx.resource_path,
-			"sc": radius / 64.0,  # 128px frame -> ~2*radius diameter
+			"sc": (radius * 2.0) / maxf(1.0, vfx_frame_px),  # art spans ~the hit diameter
 			"mod": vfx_color,
 			"aura": false,
 			"loop": duration_s > 0.0,  # a field loops its ring for the duration

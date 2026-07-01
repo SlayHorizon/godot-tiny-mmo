@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" uid="uid://c2f126nxuonb3" path="res://source/common/gameplay/items/weapons/bow/arrow.gd" id="1_proj"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/combat/vfx/fireball_comet.tres" id="2_frames"]
+
+[sub_resource type="RectangleShape2D" id="rect"]
+size = Vector2(18, 18)
+
+[node name="Fireball" type="Area2D"]
+collision_layer = 0
+script = ExtResource("1_proj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("rect")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+rotation = -0.4
+scale = Vector2(0.3, 0.3)
+sprite_frames = ExtResource("2_frames")
+autoplay = "default"

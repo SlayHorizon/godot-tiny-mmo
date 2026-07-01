@@ -398,8 +398,15 @@ func process_input() -> void:
 				action_input = false
 				return
 		else:
-			# Mobile channel (spin): walk freely (slowed), but no attacking mid-spin.
+			# Mobile channel (spin/lash): walk freely (slowed), but NO abilities mid-channel.
+			# Re-tap a special to bail early — mobile channels don't cancel on move the way
+			# rooted ones do. The start grace stops the launching press from self-cancelling.
+			if Time.get_ticks_msec() >= _channel_grace_until_ms and (
+					Input.is_action_just_pressed(&"player_special")
+					or Input.is_action_just_pressed(&"player_special_2")):
+				_cancel_channel()
 			action_input = false
+			return
 
 	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):

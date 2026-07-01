@@ -131,5 +131,5 @@ upgrades = &"book_battle_form_2"
 [resource]
 script = ExtResource("1_tree")
 category = &"book"
-display_name = "Book"
+display_name = "Tome"
 nodes = Array[ExtResource("2_node")]([SubResource("Node_lash"), SubResource("Node_lash2"), SubResource("Node_lash3"), SubResource("Node_feast"), SubResource("Node_feast2"), SubResource("Node_bform"), SubResource("Node_bform2"), SubResource("Node_bform3"), SubResource("Node_blink"), SubResource("Node_blink2"), SubResource("Node_tough"), SubResource("Node_focus")])

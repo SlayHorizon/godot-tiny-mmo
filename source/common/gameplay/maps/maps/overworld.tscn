@@ -578,3 +578,7 @@ modulate = Color(0, 0.6117647, 0.23137255, 1)
 position = Vector2(2025.5386, 429.87)
 collision_mask = 6
 npc_resource = SubResource("Resource_ofiq8")
+
+[node name="PortalWarper" parent="." unique_id=1414716116 instance=ExtResource("21_81rgi")]
+position = Vector2(836.16785, 330.8485)
+warper_id = 21

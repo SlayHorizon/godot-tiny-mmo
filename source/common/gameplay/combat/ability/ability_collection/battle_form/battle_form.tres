@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="BattleFormAbility" format=3 uid="uid://du2utlv85uwcy"]
 
 [ext_resource type="Script" uid="uid://blavokqxrda2d" path="res://source/common/gameplay/combat/ability/ability_collection/battle_form/battle_form_ability.gd" id="1_bf"]
-[ext_resource type="Texture2D" uid="uid://fq586nxrosdg" path="res://assets/sprites/ui/ability_icons/battle_form.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://cy2smbxvualtg" path="res://assets/sprites/ui/ability_icons/battle_form_1.png" id="1_u5gxo"]
 
 [resource]
 script = ExtResource("1_bf")
 buff_duration_s = 10.0
 name = "Battle Form"
-icon = ExtResource("2_icon")
+icon = ExtResource("1_u5gxo")
 cooldown = 90.0
 mana_cost = 60
 metadata/slug = &"battle_form"

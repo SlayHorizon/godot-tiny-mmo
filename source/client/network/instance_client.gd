@@ -67,6 +67,12 @@ static func _on_channel_start(payload: Dictionary) -> void:
 		return
 	# Lightning Lash: a looping lightning beam that tracks your live aim (LashVisual), so it
 	# sweeps with the cursor and shows roughly where the damage hitbox fires.
+	if kind == &"siphon":
+		# Life Siphon: the blood drain beam (same live-aim sweep as the lash; 128px frames).
+		var drain: SpriteFrames = load("res://source/common/gameplay/combat/vfx/siphon_beam.tres") as SpriteFrames
+		if drain != null:
+			LashVisual.make(player, drain, float(payload.get("r", 100.0)), 128.0)
+		return
 	if kind == &"lash":
 		var beam: SpriteFrames = load("res://source/common/gameplay/combat/vfx/lash_beam.tres") as SpriteFrames
 		if beam != null:

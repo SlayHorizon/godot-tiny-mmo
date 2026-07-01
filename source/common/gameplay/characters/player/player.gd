@@ -147,6 +147,14 @@ func is_pvp_immune() -> bool:
 	return Time.get_ticks_msec() < pvp_immune_until_ms
 
 
+# Server-side (connected in instance_server): per-level baseline grant, applied
+# the moment a level lands. Heals only the gained amount — a mid-fight level-up
+# must not be a free full heal. Spawn-time composition covers reconnects.
+func _on_level_gained() -> void:
+	stats_component.modify_stat(Stat.HEALTH_MAX, PlayerResource.HEALTH_PER_LEVEL)
+	stats_component.modify_stat(Stat.HEALTH, PlayerResource.HEALTH_PER_LEVEL)
+
+
 func _ready() -> void:
 	super._ready()
 	if not multiplayer.is_server():

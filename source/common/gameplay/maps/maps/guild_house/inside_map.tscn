@@ -35,6 +35,8 @@
 [ext_resource type="Resource" uid="uid://cg2jsfh0cr5gy" path="res://source/common/gameplay/items/weapons/book/book_wood.item.tres" id="32_nurwa"]
 [ext_resource type="Resource" uid="uid://b5u0jyyxqonrh" path="res://source/common/gameplay/items/weapons/book/book_rustic.item.tres" id="33_nurwa"]
 [ext_resource type="Resource" uid="uid://cpbdi3ouhyvte" path="res://source/common/gameplay/items/weapons/book/book_fire.item.tres" id="34_5dvjx"]
+[ext_resource type="PackedScene" uid="uid://0m5eq6iylq26" path="res://source/common/gameplay/maps/components/interaction_areas/warper/portal/portal.tscn" id="36_nn0vf"]
+[ext_resource type="Resource" uid="uid://dfeyr0kdescac" path="res://source/common/gameplay/maps/instance/instance_collection/forest/forest.tres" id="37_vtsvb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5v2ol"]
 size = Vector2(80, 50)
@@ -340,3 +342,18 @@ text = "Trade"
 [node name="Hori3" parent="." unique_id=533616522 instance=ExtResource("10_subvk")]
 position = Vector2(48, -408)
 npc_resource = SubResource("Resource_tge8w")
+
+[node name="WoodPortal" parent="." unique_id=693340034 instance=ExtResource("36_nn0vf")]
+position = Vector2(-496, -368)
+portal_color = Color(0, 0.33908218, 0.29476115, 1)
+destination_label = "DimWood (Dark Forest)"
+target_instance = ExtResource("37_vtsvb")
+warper_id = 20
+target_id = 1
+
+[node name="MinePortal" parent="." unique_id=1822358153 instance=ExtResource("36_nn0vf")]
+position = Vector2(-624, -368)
+destination_label = "Fungus Cave (Soon)"
+target_instance = ExtResource("5_5ghuf")
+warper_id = 21
+target_id = 21

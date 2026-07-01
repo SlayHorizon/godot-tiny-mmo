@@ -153,6 +153,20 @@ func set_special_ability(ability: AbilityResource) -> void:
 	_base_ability_count = 2
 
 
+## Rotate [param direction] by a random angle inside the slot ability's spread cone (a
+## spray like Arc Strike); unchanged for pinpoint abilities. Called ONCE on the server in
+## the action.perform handler, BEFORE the echo — so the sprayed aim is baked into every
+## peer's shot and the visual bolt matches the one that dealt damage.
+func aim_with_spread(action_index: int, direction: Vector2) -> Vector2:
+	if action_index < 0 or action_index >= abilities.size() or direction == Vector2.ZERO:
+		return direction
+	var bolt: BoltShootAbility = abilities[action_index] as BoltShootAbility
+	if bolt == null or bolt.spread_degrees <= 0.0:
+		return direction
+	var half: float = deg_to_rad(bolt.spread_degrees)
+	return direction.rotated(randf_range(-half, half))
+
+
 func try_perform_action(action_index: int, direction: Vector2) -> bool:
 	# Negative indices would wrap around the array (Python-style) — reject both ends.
 	if action_index < 0 or action_index >= abilities.size():
@@ -264,6 +278,11 @@ func release_slot(slot: int, local_player: LocalPlayer) -> void:
 
 
 func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, local_player: LocalPlayer) -> void:
+	# No abilities while channeling — the channel IS your action. Catches the touch
+	# ability-bar path (press_slot) and any mobile-channel fall-through; the server
+	# enforces the same authoritatively in the action.perform handler.
+	if not local_player.channeling_ability_name.is_empty():
+		return
 	var ability: AbilityResource = abilities[slot]
 	if ability == null:
 		return # empty loadout slot (null hole)

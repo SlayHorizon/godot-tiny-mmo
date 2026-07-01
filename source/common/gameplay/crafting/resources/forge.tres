@@ -10,6 +10,14 @@
 [ext_resource type="Resource" uid="uid://bkwfaojguoklp" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="8_iron_bar"]
 [ext_resource type="Resource" uid="uid://bqd4ajt5kmlcr" path="res://source/common/gameplay/items/gears/iron_helmet.tres" id="9_iron_helm"]
 [ext_resource type="Resource" uid="uid://cb6x01k6mbv2x" path="res://source/common/gameplay/items/gears/iron_chest.tres" id="10_iron_chest"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/silver_ore.tres" id="11_silver_ore"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/gold_ore.tres" id="12_gold_ore"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/silver_bar.tres" id="13_silver_bar"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/gold_bar.tres" id="14_gold_bar"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/copper_helmet.tres" id="15_cop_helm"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/copper_chest.tres" id="16_cop_chest"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/copper_ring.tres" id="17_cop_ring"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/heavy_boots.tres" id="18_heavy_boots"]
 
 [sub_resource type="Resource" id="Ing_copper_coal"]
 script = ExtResource("3_ingred")
@@ -59,6 +67,7 @@ metadata/_custom_type_script = "uid://cgkqi5dwtob32"
 script = ExtResource("1_recipe")
 output_item = ExtResource("9_iron_helm")
 ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_iron_helm_bar")])
+required_level = 2
 xp_reward = 18
 metadata/_custom_type_script = "uid://btm2w18d3d327"
 
@@ -72,13 +81,107 @@ metadata/_custom_type_script = "uid://cgkqi5dwtob32"
 script = ExtResource("1_recipe")
 output_item = ExtResource("10_iron_chest")
 ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_iron_chest_bar")])
+required_level = 2
 xp_reward = 30
+
+[sub_resource type="Resource" id="Ing_silver_coal"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_coal")
+amount = 2
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Ing_silver_ore"]
+script = ExtResource("3_ingred")
+item = ExtResource("11_silver_ore")
+amount = 4
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_silver_bar"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("13_silver_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_silver_coal"), SubResource("Ing_silver_ore")])
+required_level = 3
+xp_reward = 12
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_gold_coal"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_coal")
+amount = 2
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Ing_gold_ore"]
+script = ExtResource("3_ingred")
+item = ExtResource("12_gold_ore")
+amount = 4
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_gold_bar"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("14_gold_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_gold_coal"), SubResource("Ing_gold_ore")])
+required_level = 4
+xp_reward = 16
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_cop_helm_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_cop_bar")
+amount = 2
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_copper_helmet"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("15_cop_helm")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_cop_helm_bar")])
+xp_reward = 10
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_cop_chest_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_cop_bar")
+amount = 3
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_copper_chest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("16_cop_chest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_cop_chest_bar")])
+xp_reward = 14
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_cop_ring_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_cop_bar")
+amount = 1
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_copper_ring"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("17_cop_ring")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_cop_ring_bar")])
+xp_reward = 6
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_heavy_boots_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_iron_bar")
+amount = 2
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_heavy_boots"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("18_heavy_boots")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_heavy_boots_bar")])
+required_level = 2
+xp_reward = 22
+metadata/_custom_type_script = "uid://btm2w18d3d327"
 metadata/_custom_type_script = "uid://btm2w18d3d327"
 
 [resource]
 script = ExtResource("2_station")
 station_name = "Forge"
-recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_copper_bar"), SubResource("Recipe_iron_bar"), SubResource("Recipe_iron_helm"), SubResource("Recipe_iron_chest")])
+recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_copper_bar"), SubResource("Recipe_iron_bar"), SubResource("Recipe_silver_bar"), SubResource("Recipe_gold_bar"), SubResource("Recipe_copper_helmet"), SubResource("Recipe_copper_chest"), SubResource("Recipe_copper_ring"), SubResource("Recipe_iron_helm"), SubResource("Recipe_iron_chest"), SubResource("Recipe_heavy_boots")])
 metadata/_custom_type_script = "uid://dou76lfuf6clf"
 metadata/slug = &"forge"
 metadata/id = 1

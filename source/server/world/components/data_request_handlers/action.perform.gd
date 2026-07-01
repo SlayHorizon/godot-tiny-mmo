@@ -20,6 +20,10 @@ func data_request_handler(
 	# abilities[0] through this same path once the draw lands.)
 	if player.is_equip_casting():
 		return {}
+	# No abilities mid-channel — the channel IS your action (the client suppresses this too;
+	# here is the authoritative gate). A live ChannelInstance rides the caster while it holds.
+	if player.get_node_or_null(^"ChannelInstance") != null:
+		return {}
 
 	var action_index: int = args.get("i", 0)
 	if action_index < 0:
@@ -28,7 +32,11 @@ func data_request_handler(
 	# "r" marks the RELEASE phase of a two-phase (charge) ability.
 	var released: bool = bool(args.get("r", false))
 	if player.equipment_component.can_use(&"weapon", action_index, released):
-		player.equipment_component.mounted_nodes[&"weapon"].perform_action(action_index, action_direction, released)
+		var weapon_node: Weapon = player.equipment_component.mounted_nodes[&"weapon"] as Weapon
+		# Bake aim spread ONCE here (server RNG) so the sprayed direction rides the echo to
+		# every peer — the visual bolt then matches the one that actually dealt damage.
+		action_direction = weapon_node.aim_with_spread(action_index, action_direction)
+		weapon_node.perform_action(action_index, action_direction, released)
 		WorldServer.curr.propagate_rpc(
 			WorldServer.curr.data_push.bind(
 				&"action.perform",

@@ -1,6 +1,6 @@
-[gd_resource type="SpriteFrames" load_steps=10 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://p8h7fiyv40vx"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/vfx/lightning/lash_burst.png" id="1_tex"]
+[ext_resource type="Texture2D" uid="uid://c7oe027wv64xp" path="res://assets/sprites/vfx/lightning/lash_burst.png" id="1_tex"]
 
 [sub_resource type="AtlasTexture" id="f0"]
 atlas = ExtResource("1_tex")
