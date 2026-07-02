@@ -8,7 +8,7 @@
 [resource]
 script = ExtResource("1_script")
 projectile_scene = ExtResource("2_bolt")
-ap_ratio = 0.9
+ap_ratio = 0.75
 speed = 240.0
 burn_dps = 4.0
 burn_duration_s = 3.0
@@ -16,7 +16,7 @@ bolt_modulate = Color(1, 1, 1, 1)
 max_range = 190.0
 impact_vfx = ExtResource("3_boom")
 explode_radius = 55.0
-explode_ap_ratio = 0.6
+explode_ap_ratio = 0.5
 name = "Fireball"
 icon = ExtResource("4_icon")
 cooldown = 7.0

@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="3_shop"]
 [ext_resource type="Resource" uid="uid://6m10gk0883iw" path="res://source/common/gameplay/items/consumables/minor_health_potion.tres" id="4_hrjyu"]
 [ext_resource type="Resource" uid="uid://onx5sxsctc6a" path="res://source/common/gameplay/items/consumables/health_potion.tres" id="4_potion"]
-[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/healing_herb.tres" id="5_herb"]
+[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/herbs/healing_herb.tres" id="5_herb"]
 [ext_resource type="Resource" uid="uid://cd4yooe27ja23" path="res://source/common/gameplay/items/consumables/greater_health_potion.tres" id="6_qf0tq"]
 [ext_resource type="Resource" uid="uid://c4r6h4wum0u0b" path="res://source/common/gameplay/items/weapons/tools/sickle.tres" id="7_qf0tq"]
 [ext_resource type="Resource" uid="uid://c3yrbuisnrtng" path="res://source/common/gameplay/items/consumables/focus_tonic.tres" id="8_a0r3b"]

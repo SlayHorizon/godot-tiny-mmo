@@ -1,0 +1,403 @@
+[gd_resource type="Resource" script_class="CraftingStationResource" format=3]
+
+[ext_resource type="Script" uid="uid://btm2w18d3d327" path="res://source/common/gameplay/crafting/crafting_recipe.gd" id="1_recipe"]
+[ext_resource type="Script" uid="uid://dou76lfuf6clf" path="res://source/common/gameplay/crafting/crafting_station_resource.gd" id="2_station"]
+[ext_resource type="Script" uid="uid://cgkqi5dwtob32" path="res://source/common/gameplay/crafting/craft_ingredient.gd" id="3_ingred"]
+[ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="4_cl_forest"]
+[ext_resource type="Resource" uid="uid://bw238ey5rg6bx" path="res://source/common/gameplay/items/materials/cloth/cloth_cave.tres" id="5_cl_cave"]
+[ext_resource type="Resource" uid="uid://cif36huc5qgcj" path="res://source/common/gameplay/items/materials/cloth/cloth_bandit.tres" id="6_cl_bandit"]
+[ext_resource type="Resource" uid="uid://d2xyv5ipfxgwa" path="res://source/common/gameplay/items/materials/cloth/cloth_sewer.tres" id="7_cl_sewer"]
+[ext_resource type="Resource" uid="uid://2aygya3q5pvo" path="res://source/common/gameplay/items/materials/leather/hide_forest.tres" id="8_hi_forest"]
+[ext_resource type="Resource" uid="uid://cp04kpxb8r61s" path="res://source/common/gameplay/items/materials/leather/hide_cave.tres" id="9_hi_cave"]
+[ext_resource type="Resource" uid="uid://bis5a66yw1pxp" path="res://source/common/gameplay/items/materials/leather/hide_bandit.tres" id="10_hi_bandit"]
+[ext_resource type="Resource" uid="uid://deajqapim5otj" path="res://source/common/gameplay/items/materials/leather/hide_sewer.tres" id="11_hi_sewer"]
+[ext_resource type="Resource" uid="uid://cl38hgxqwxftu" path="res://source/common/gameplay/items/materials/leather/leather_forest.tres" id="12_le_forest"]
+[ext_resource type="Resource" uid="uid://b8i2jeggl5x64" path="res://source/common/gameplay/items/materials/leather/leather_cave.tres" id="13_le_cave"]
+[ext_resource type="Resource" uid="uid://dtb5bin7denb7" path="res://source/common/gameplay/items/materials/leather/leather_bandit.tres" id="14_le_bandit"]
+[ext_resource type="Resource" uid="uid://dvk2wfkbekb8p" path="res://source/common/gameplay/items/materials/leather/leather_sewer.tres" id="15_le_sewer"]
+[ext_resource type="Resource" uid="uid://bkwfaojguoklp" path="res://source/common/gameplay/items/materials/metals/iron_bar.tres" id="16_iron_bar"]
+[ext_resource type="Resource" uid="uid://c3echj2r4f0vu" path="res://source/common/gameplay/items/materials/metals/gold_bar.tres" id="17_gold_bar"]
+[ext_resource type="Resource" uid="uid://osgbreqq1srf" path="res://source/common/gameplay/items/gears/cloth_hood.tres" id="20_cloth_hood"]
+[ext_resource type="Resource" uid="uid://cusgrq4sr1y0e" path="res://source/common/gameplay/items/gears/cloth_vest.tres" id="21_cloth_vest"]
+[ext_resource type="Resource" uid="uid://dtak0maw6wl8a" path="res://source/common/gameplay/items/gears/cloth_shoes.tres" id="22_cloth_shoes"]
+[ext_resource type="Resource" uid="uid://dbnrtj6sfe5m2" path="res://source/common/gameplay/items/gears/apprentice_robe.tres" id="23_appr_robe"]
+[ext_resource type="Resource" uid="uid://d1oanmteu8mm7" path="res://source/common/gameplay/items/gears/scholars_hood.tres" id="24_sch_hood"]
+[ext_resource type="Resource" uid="uid://c7a3xroll3uvl" path="res://source/common/gameplay/items/gears/cloth/scholars_boots.tres" id="25_sch_boots"]
+[ext_resource type="Resource" uid="uid://b6mnixgcp2nlk" path="res://source/common/gameplay/items/gears/enchanted_hood.tres" id="26_ench_hood"]
+[ext_resource type="Resource" uid="uid://ci7mr13qre0tg" path="res://source/common/gameplay/items/gears/enchanted_robe.tres" id="27_ench_robe"]
+[ext_resource type="Resource" uid="uid://1pvd48lvpyap" path="res://source/common/gameplay/items/gears/leather_cap.tres" id="28_lea_cap"]
+[ext_resource type="Resource" uid="uid://b2lsx2w3peg6e" path="res://source/common/gameplay/items/gears/leather_jacket.tres" id="29_lea_jacket"]
+[ext_resource type="Resource" uid="uid://c3nblwxqa8jxn" path="res://source/common/gameplay/items/gears/leather/leather_boots.tres" id="30_lea_boots"]
+[ext_resource type="Resource" uid="uid://dcmepqwxbw6da" path="res://source/common/gameplay/items/gears/studded_jacket.tres" id="31_studded"]
+[ext_resource type="Resource" uid="uid://by2watwkpcv3r" path="res://source/common/gameplay/items/gears/shadow_hood.tres" id="32_sh_hood"]
+[ext_resource type="Resource" uid="uid://nilojs8k84g" path="res://source/common/gameplay/items/gears/shadow_vest.tres" id="33_sh_vest"]
+[ext_resource type="Resource" uid="uid://cyv3ssopexdcr" path="res://source/common/gameplay/items/gears/leather/phantom_hood.tres" id="34_ph_hood"]
+[ext_resource type="Resource" uid="uid://b0p4d74ltt0lu" path="res://source/common/gameplay/items/gears/leather/phantom_sandals.tres" id="35_ph_sandals"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/cloth/apprentice_hood.tres" id="36_ap_hood"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/cloth/apprentice_shoes.tres" id="37_ap_shoes"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/cloth/scholars_robe.tres" id="38_sch_robe"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/cloth/enchanted_shoes.tres" id="39_ench_shoes"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/leather/studded_cap.tres" id="40_st_cap"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/leather/studded_boots.tres" id="41_st_boots"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/leather/shadow_boots.tres" id="42_sh_boots"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/leather/phantom_vest.tres" id="43_ph_vest"]
+
+[sub_resource type="Resource" id="I_cure_f"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_hi_forest")
+amount = 2
+
+[sub_resource type="Resource" id="R_leather_forest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("12_le_forest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_cure_f")])
+xp_reward = 4
+
+[sub_resource type="Resource" id="I_cure_c"]
+script = ExtResource("3_ingred")
+item = ExtResource("9_hi_cave")
+amount = 2
+
+[sub_resource type="Resource" id="R_leather_cave"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("13_le_cave")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_cure_c")])
+required_level = 2
+xp_reward = 6
+
+[sub_resource type="Resource" id="I_cure_b"]
+script = ExtResource("3_ingred")
+item = ExtResource("10_hi_bandit")
+amount = 2
+
+[sub_resource type="Resource" id="R_leather_bandit"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("14_le_bandit")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_cure_b")])
+required_level = 3
+xp_reward = 8
+
+[sub_resource type="Resource" id="I_cure_s"]
+script = ExtResource("3_ingred")
+item = ExtResource("11_hi_sewer")
+amount = 2
+
+[sub_resource type="Resource" id="R_leather_sewer"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("15_le_sewer")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_cure_s")])
+required_level = 4
+xp_reward = 10
+
+[sub_resource type="Resource" id="I_hood_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_cl_forest")
+amount = 3
+
+[sub_resource type="Resource" id="R_cloth_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("20_cloth_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_hood_cl")])
+xp_reward = 10
+
+[sub_resource type="Resource" id="I_vest_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_cl_forest")
+amount = 5
+
+[sub_resource type="Resource" id="R_cloth_vest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("21_cloth_vest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_vest_cl")])
+xp_reward = 14
+
+[sub_resource type="Resource" id="I_shoes_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_cl_forest")
+amount = 2
+
+[sub_resource type="Resource" id="R_cloth_shoes"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("22_cloth_shoes")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_shoes_cl")])
+xp_reward = 10
+
+[sub_resource type="Resource" id="I_appr_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_cl_cave")
+amount = 5
+
+[sub_resource type="Resource" id="R_appr_robe"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("23_appr_robe")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_appr_cl")])
+required_level = 2
+xp_reward = 24
+
+[sub_resource type="Resource" id="I_schh_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_cl_bandit")
+amount = 4
+
+[sub_resource type="Resource" id="R_sch_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("24_sch_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_schh_cl")])
+required_level = 3
+xp_reward = 30
+
+[sub_resource type="Resource" id="I_schb_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_cl_bandit")
+amount = 3
+
+[sub_resource type="Resource" id="R_sch_boots"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("25_sch_boots")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_schb_cl")])
+required_level = 3
+xp_reward = 26
+
+[sub_resource type="Resource" id="I_enh_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_cl_sewer")
+amount = 4
+
+[sub_resource type="Resource" id="I_enh_au"]
+script = ExtResource("3_ingred")
+item = ExtResource("17_gold_bar")
+amount = 1
+
+[sub_resource type="Resource" id="R_ench_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("26_ench_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_enh_cl"), SubResource("I_enh_au")])
+required_level = 4
+xp_reward = 44
+
+[sub_resource type="Resource" id="I_enr_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_cl_sewer")
+amount = 6
+
+[sub_resource type="Resource" id="I_enr_au"]
+script = ExtResource("3_ingred")
+item = ExtResource("17_gold_bar")
+amount = 1
+
+[sub_resource type="Resource" id="R_ench_robe"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("27_ench_robe")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_enr_cl"), SubResource("I_enr_au")])
+required_level = 4
+xp_reward = 55
+
+[sub_resource type="Resource" id="I_cap_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("12_le_forest")
+amount = 2
+
+[sub_resource type="Resource" id="R_lea_cap"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("28_lea_cap")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_cap_le")])
+xp_reward = 10
+
+[sub_resource type="Resource" id="I_jack_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("12_le_forest")
+amount = 4
+
+[sub_resource type="Resource" id="R_lea_jacket"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("29_lea_jacket")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_jack_le")])
+xp_reward = 14
+
+[sub_resource type="Resource" id="I_boot_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("12_le_forest")
+amount = 2
+
+[sub_resource type="Resource" id="R_lea_boots"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("30_lea_boots")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_boot_le")])
+xp_reward = 10
+
+[sub_resource type="Resource" id="I_stud_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("13_le_cave")
+amount = 4
+
+[sub_resource type="Resource" id="I_stud_fe"]
+script = ExtResource("3_ingred")
+item = ExtResource("16_iron_bar")
+amount = 2
+
+[sub_resource type="Resource" id="R_studded"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("31_studded")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_stud_le"), SubResource("I_stud_fe")])
+required_level = 2
+xp_reward = 24
+
+[sub_resource type="Resource" id="I_shh_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("14_le_bandit")
+amount = 3
+
+[sub_resource type="Resource" id="R_sh_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("32_sh_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_shh_le")])
+required_level = 3
+xp_reward = 28
+
+[sub_resource type="Resource" id="I_shv_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("14_le_bandit")
+amount = 4
+
+[sub_resource type="Resource" id="R_sh_vest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("33_sh_vest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_shv_le")])
+required_level = 3
+xp_reward = 34
+
+[sub_resource type="Resource" id="I_phh_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("15_le_sewer")
+amount = 4
+
+[sub_resource type="Resource" id="R_ph_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("34_ph_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_phh_le")])
+required_level = 4
+xp_reward = 44
+
+[sub_resource type="Resource" id="I_phs_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("15_le_sewer")
+amount = 3
+
+[sub_resource type="Resource" id="R_ph_sandals"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("35_ph_sandals")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_phs_le")])
+required_level = 4
+xp_reward = 40
+
+[sub_resource type="Resource" id="I_aph_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_cl_cave")
+amount = 3
+
+[sub_resource type="Resource" id="R_ap_hood"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("36_ap_hood")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_aph_cl")])
+required_level = 2
+xp_reward = 20
+
+[sub_resource type="Resource" id="I_aps_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_cl_cave")
+amount = 2
+
+[sub_resource type="Resource" id="R_ap_shoes"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("37_ap_shoes")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_aps_cl")])
+required_level = 2
+xp_reward = 18
+
+[sub_resource type="Resource" id="I_schr_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_cl_bandit")
+amount = 6
+
+[sub_resource type="Resource" id="R_sch_robe"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("38_sch_robe")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_schr_cl")])
+required_level = 3
+xp_reward = 36
+
+[sub_resource type="Resource" id="I_enchs_cl"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_cl_sewer")
+amount = 3
+
+[sub_resource type="Resource" id="R_ench_shoes"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("39_ench_shoes")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_enchs_cl")])
+required_level = 4
+xp_reward = 40
+
+[sub_resource type="Resource" id="I_stc_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("13_le_cave")
+amount = 2
+
+[sub_resource type="Resource" id="I_stc_fe"]
+script = ExtResource("3_ingred")
+item = ExtResource("16_iron_bar")
+amount = 1
+
+[sub_resource type="Resource" id="R_st_cap"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("40_st_cap")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_stc_le"), SubResource("I_stc_fe")])
+required_level = 2
+xp_reward = 20
+
+[sub_resource type="Resource" id="I_stb_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("13_le_cave")
+amount = 2
+
+[sub_resource type="Resource" id="I_stb_fe"]
+script = ExtResource("3_ingred")
+item = ExtResource("16_iron_bar")
+amount = 1
+
+[sub_resource type="Resource" id="R_st_boots"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("41_st_boots")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_stb_le"), SubResource("I_stb_fe")])
+required_level = 2
+xp_reward = 18
+
+[sub_resource type="Resource" id="I_shb_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("14_le_bandit")
+amount = 2
+
+[sub_resource type="Resource" id="R_sh_boots"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("42_sh_boots")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_shb_le")])
+required_level = 3
+xp_reward = 26
+
+[sub_resource type="Resource" id="I_phv_le"]
+script = ExtResource("3_ingred")
+item = ExtResource("15_le_sewer")
+amount = 5
+
+[sub_resource type="Resource" id="R_ph_vest"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("43_ph_vest")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_phv_le")])
+required_level = 4
+xp_reward = 50
+
+[resource]
+script = ExtResource("2_station")
+station_name = "Workbench"
+profession = &"outfitting"
+recipes = Array[ExtResource("1_recipe")]([SubResource("R_leather_forest"), SubResource("R_leather_cave"), SubResource("R_leather_bandit"), SubResource("R_leather_sewer"), SubResource("R_cloth_hood"), SubResource("R_cloth_vest"), SubResource("R_cloth_shoes"), SubResource("R_ap_hood"), SubResource("R_appr_robe"), SubResource("R_ap_shoes"), SubResource("R_sch_hood"), SubResource("R_sch_robe"), SubResource("R_sch_boots"), SubResource("R_ench_hood"), SubResource("R_ench_robe"), SubResource("R_ench_shoes"), SubResource("R_lea_cap"), SubResource("R_lea_jacket"), SubResource("R_lea_boots"), SubResource("R_st_cap"), SubResource("R_studded"), SubResource("R_st_boots"), SubResource("R_sh_hood"), SubResource("R_sh_vest"), SubResource("R_sh_boots"), SubResource("R_ph_hood"), SubResource("R_ph_vest"), SubResource("R_ph_sandals")])

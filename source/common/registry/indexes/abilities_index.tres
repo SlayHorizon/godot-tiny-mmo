@@ -5,13 +5,18 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1782942406
-next_id = 58
+version = 1783014906
+next_id = 61
 entries = Array[Dictionary]([{
 &"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
 &"id": 12,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres",
 &"slug": &"arcane_wall"
+}, {
+&"hash": "a4a82ae2597430f2a32b5380c8209dd36c67cf0ca88bbb44087304589f428941",
+&"id": 58,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall_2.tres",
+&"slug": &"arcane_wall_2"
 }, {
 &"hash": "f8be1bec24b50328e50f35c5342aa2dff277ced5c088de381ccde4ad517ee588",
 &"id": 41,
@@ -63,10 +68,15 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres",
 &"slug": &"ember_bolt"
 }, {
-&"hash": "b8def098859301ae28fb5c07484d66c947c063242fc94f62649b42717dd5aad8",
+&"hash": "f203854e87aff6ac5a6bf354f6df8ec07dd4e053df0f3169d384a27acd43b110",
 &"id": 53,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/fireball.tres",
 &"slug": &"fireball"
+}, {
+&"hash": "d394547d64ba878d247a605bc6b2867a1b4f0c0b8d4a76b886ec1831f3b5db22",
+&"id": 59,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/fireball_2.tres",
+&"slug": &"fireball_2"
 }, {
 &"hash": "f69da66e7bf7299bf0066c9b17aa7948e734b24ec2452e5a1b227183590a92d5",
 &"id": 13,
@@ -82,6 +92,11 @@ entries = Array[Dictionary]([{
 &"id": 2,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres",
 &"slug": &"wand_heal"
+}, {
+&"hash": "ccada9ae0c67e7e38d6e3cfd206c57c9cbd8710992de7da6e57b2799e4fc24d9",
+&"id": 60,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal_2.tres",
+&"slug": &"wand_heal_2"
 }, {
 &"hash": "40ce4797485a71d959937f1ecbd39fd1be1dc8838db138d04ac7e89a401143a2",
 &"id": 20,
@@ -123,7 +138,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_3.tres",
 &"slug": &"lightning_lash_3"
 }, {
-&"hash": "4af57a1e1b8080eed6e80b80af95f39768ce9ce01bf198ce2dd2c76bcff2f448",
+&"hash": "8be9d2ec648d7b3e7b83538db3b5334d3ac2682dd987d621f947f99be2745466",
 &"id": 56,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/mana_font.tres",
 &"slug": &"mana_font"

@@ -425,19 +425,32 @@ func _make_detail_panel(tree: MasteryTreeResource, info: Dictionary) -> Control:
 	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_box.add_child(desc_label)
 
-	var meta_label: Label = Label.new()
-	meta_label.add_theme_font_size_override(&"font_size", 12)
 	if node.ability != null:
-		var parts: PackedStringArray = node.ability.extra_stat_lines()
-		parts.append("%s cooldown" % _fmt_cooldown(node.ability.cooldown))
+		# EFFECTS (what it does, warm amber) then COSTS (what it costs you —
+		# cooldown/mana, cool blue) — visually split so the price reads at a glance.
+		var meta_rich: RichTextLabel = RichTextLabel.new()
+		meta_rich.bbcode_enabled = true
+		meta_rich.fit_content = true
+		meta_rich.scroll_active = false
+		meta_rich.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		meta_rich.add_theme_font_size_override(&"normal_font_size", 12)
+		var effects: PackedStringArray = node.ability.extra_stat_lines()
+		var costs: PackedStringArray = PackedStringArray()
+		costs.append("%s cooldown" % _fmt_cooldown(node.ability.cooldown))
 		if node.ability.mana_cost > 0:
-			parts.append("%d mana" % node.ability.mana_cost)
-		meta_label.text = "   ·   ".join(parts)
-		meta_label.add_theme_color_override(&"font_color", Color(0.85, 0.78, 0.55))
+			costs.append("%d mana" % node.ability.mana_cost)
+		var chunks: PackedStringArray = PackedStringArray()
+		if not effects.is_empty():
+			chunks.append("[color=#d9c78c]%s[/color]" % "   ·   ".join(effects))
+		chunks.append("[color=#7ea8d9]%s[/color]" % "   ·   ".join(costs))
+		meta_rich.text = "   ·   ".join(chunks)
+		text_box.add_child(meta_rich)
 	else:
+		var meta_label: Label = Label.new()
+		meta_label.add_theme_font_size_override(&"font_size", 12)
 		meta_label.text = _passive_bonus_text(node)
 		meta_label.add_theme_color_override(&"font_color", Color(0.65, 0.9, 0.7))
-	text_box.add_child(meta_label)
+		text_box.add_child(meta_label)
 
 	hbox.add_child(_make_action_button(node, tree, info))
 	return panel

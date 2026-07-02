@@ -5,7 +5,8 @@
 
 [resource]
 script = ExtResource("1_font")
-channel_duration_s = 10.0
+channel_duration_s = 12.0
+tick_interval_s = 4.0
 radius = 90.0
 visual_kind = &"mana_font"
 name = "Mana Font"

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://dg5l3afqqf4kk"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://bd0ohyvo6looc" path="res://assets/sprites/items/icons/Icon202.png" id="2_icon"]
+[ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_gear"]
+[ext_resource type="Resource" uid="uid://cdrd3x2ugfrev" path="res://source/common/gameplay/items/item_slot/slots/ring.tres" id="4_slot"]
+
+[sub_resource type="Resource" id="Mod_main"]
+script = ExtResource("1_mod")
+stat_name = "move_speed"
+value = 1.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[resource]
+script = ExtResource("3_gear")
+slot = ExtResource("4_slot")
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_main")])
+item_name = &"Copper Agile Ring"
+item_icon = ExtResource("2_icon")
+metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"ring_agile_copper"
+metadata/id = 122

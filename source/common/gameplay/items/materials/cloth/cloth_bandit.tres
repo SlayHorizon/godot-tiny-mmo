@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://cif36huc5qgcj"]
+
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="1_v8rd0"]
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_script"]
+
+[resource]
+script = ExtResource("2_script")
+item_name = &"Bandit Cloth"
+description = "Sturdy weave cut from hideout raiders. Heretics dress for war. Woven into cloth garments."
+metadata/_custom_type_script = "uid://nsr1timk430j"
+metadata/slug = &"cloth_bandit"
+metadata/id = 101

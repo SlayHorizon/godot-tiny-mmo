@@ -16,10 +16,6 @@ script = ExtResource("1_mod")
 stat_name = "ability_haste"
 value = 6.0
 
-[sub_resource type="AtlasTexture" id="Atlas_bone_wand"]
-atlas = ExtResource("2_tex")
-region = Rect2(80, 0, 32, 16)
-
 [sub_resource type="Resource" id="Mod_wmana"]
 script = ExtResource("1_mod")
 stat_name = "mana_max"
@@ -29,6 +25,10 @@ value = 25.0
 script = ExtResource("1_mod")
 stat_name = "mana_regen"
 value = 1.5
+
+[sub_resource type="AtlasTexture" id="Atlas_bone_wand"]
+atlas = ExtResource("2_tex")
+region = Rect2(80, 0, 32, 16)
 
 [resource]
 script = ExtResource("4_item")

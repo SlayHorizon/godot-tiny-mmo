@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://6p3vfy8lleu3"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="2_icon"]
+[ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_gear"]
+[ext_resource type="Resource" uid="uid://dn7q51odqrqp5" path="res://source/common/gameplay/items/item_slot/slots/boot.tres" id="4_slot"]
+
+[sub_resource type="Resource" id="Mod_mr"]
+script = ExtResource("1_mod")
+stat_name = "mr"
+value = 1.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="Resource" id="Mod_mana"]
+script = ExtResource("1_mod")
+stat_name = "mana_max"
+value = 2.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="Resource" id="Mod_speed"]
+script = ExtResource("1_mod")
+stat_name = "move_speed"
+value = 1.0
+metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[resource]
+script = ExtResource("3_gear")
+slot = ExtResource("4_slot")
+required_level = 5
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_mr"), SubResource("Mod_mana"), SubResource("Mod_speed")])
+item_name = &"Apprentice Shoes"
+metadata/_custom_type_script = "uid://dnmtdktay2df6"
+metadata/slug = &"apprentice_shoes"
+metadata/id = 135
