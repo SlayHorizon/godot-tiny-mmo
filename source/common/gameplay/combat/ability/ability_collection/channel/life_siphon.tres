@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="LightningLashAbility" format=3 uid="uid://g5j4avmqem1"]
+
+[ext_resource type="Script" uid="uid://bhmn076nujd4a" path="res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_ability.gd" id="1_lash"]
+[ext_resource type="PackedScene" uid="uid://b8s7oak2vqlpx" path="res://source/common/gameplay/combat/melee_arc.tscn" id="2_arc"]
+[ext_resource type="Texture2D" uid="uid://cnowyjpniqgnj" path="res://assets/sprites/ui/ability_icons/life_siphon.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1_lash")
+ap_ratio = 0.18
+beam_length = 100.0
+beam_width = 26.0
+heal_per_hit = 1.0
+mana_per_hit = 4.0
+channel_duration_s = 3.0
+tick_interval_s = 0.4
+radius = 100.0
+mana_per_tick = 2.0
+visual_kind = &"siphon"
+mobile = true
+name = "Life Siphon"
+icon = ExtResource("3_icon")
+cooldown = 9.0
+mana_cost = 10
+metadata/slug = &"life_siphon"
+metadata/id = 54

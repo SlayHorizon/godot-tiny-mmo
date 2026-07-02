@@ -6,6 +6,10 @@
 [ext_resource type="Resource" uid="uid://j7bqyla76n5q" path="res://source/common/gameplay/items/materials/linen.tres" id="4_linen"]
 [ext_resource type="Resource" uid="uid://osgbreqq1srf" path="res://source/common/gameplay/items/gears/cloth_hood.tres" id="5_cloth_hood"]
 [ext_resource type="Resource" uid="uid://cusgrq4sr1y0e" path="res://source/common/gameplay/items/gears/cloth_vest.tres" id="6_cloth_vest"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/apprentice_robe.tres" id="7_appr_robe"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/enchanted_robe.tres" id="8_ench_robe"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/mage_boots.tres" id="9_mage_boots"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/iron_bar.tres" id="10_iron_bar"]
 
 [sub_resource type="Resource" id="Ing_cloth_hood_linen"]
 script = ExtResource("3_ingred")
@@ -32,11 +36,64 @@ output_item = ExtResource("6_cloth_vest")
 ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_cloth_vest_linen")])
 metadata/_custom_type_script = "uid://btm2w18d3d327"
 
+[sub_resource type="Resource" id="Ing_appr_robe_linen"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_linen")
+amount = 4
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_apprentice_robe"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("7_appr_robe")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_appr_robe_linen")])
+xp_reward = 10
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_ench_robe_linen"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_linen")
+amount = 6
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Ing_ench_robe_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("10_iron_bar")
+amount = 1
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_enchanted_robe"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("8_ench_robe")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_ench_robe_linen"), SubResource("Ing_ench_robe_bar")])
+required_level = 2
+xp_reward = 24
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
+[sub_resource type="Resource" id="Ing_mage_boots_linen"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_linen")
+amount = 3
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Ing_mage_boots_bar"]
+script = ExtResource("3_ingred")
+item = ExtResource("10_iron_bar")
+amount = 1
+metadata/_custom_type_script = "uid://cgkqi5dwtob32"
+
+[sub_resource type="Resource" id="Recipe_mage_boots"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("9_mage_boots")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("Ing_mage_boots_linen"), SubResource("Ing_mage_boots_bar")])
+required_level = 2
+xp_reward = 20
+metadata/_custom_type_script = "uid://btm2w18d3d327"
+
 [resource]
 script = ExtResource("2_station")
 station_name = "Loom"
 profession = &"tailoring"
-recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_cloth_hood"), SubResource("Recipe_cloth_vest")])
+recipes = Array[ExtResource("1_recipe")]([SubResource("Recipe_cloth_hood"), SubResource("Recipe_cloth_vest"), SubResource("Recipe_apprentice_robe"), SubResource("Recipe_enchanted_robe"), SubResource("Recipe_mage_boots")])
 metadata/_custom_type_script = "uid://dou76lfuf6clf"
 metadata/slug = &"loom"
 metadata/id = 2

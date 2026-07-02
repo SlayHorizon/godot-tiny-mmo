@@ -9,8 +9,9 @@ var _content: VBoxContainer
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	# On-theme panel: dark card with an amber left accent so the tracker reads
-	# as part of the same visual language as the quest log / giver dialog.
+	# On-theme panel: a transparent dark-neutral card (no accent bar) that reads cleanly over the
+	# world under any palette — same overlay language as the chat. The palette shows through the
+	# quest name instead (see _display).
 	add_theme_stylebox_override(&"panel", _make_panel_style())
 
 	var margin: MarginContainer = MarginContainer.new()
@@ -81,19 +82,18 @@ func _on_received(data: Dictionary) -> void:
 	show()
 
 
-## Dark card with a thick amber left border — visually ties the floating
-## tracker to the quest log's selected-row / section-tab accent.
+## Transparent dark-neutral card: a soft charcoal fill (palette-agnostic, like the chat overlay)
+## with a faint hairline edge + drop shadow for definition over the world. No accent bar — the
+## palette comes through the quest name instead (see _display). Alpha is the one knob to nudge if
+## text dips on very bright scenes.
 func _make_panel_style() -> StyleBoxFlat:
 	var box: StyleBoxFlat = StyleBoxFlat.new()
-	box.bg_color = Color(0.06, 0.078, 0.117, 0.92)
-	box.border_width_left = 3
-	box.border_color = Color(0.96, 0.74, 0.16, 1)
-	box.corner_radius_top_left = 4
-	box.corner_radius_top_right = 4
-	box.corner_radius_bottom_right = 4
-	box.corner_radius_bottom_left = 4
-	box.shadow_color = Color(0, 0, 0, 0.3)
-	box.shadow_size = 4
+	box.bg_color = Color(0.05, 0.06, 0.08, 0.6)
+	box.set_border_width_all(1)
+	box.border_color = Color(1.0, 1.0, 1.0, 0.07)
+	box.set_corner_radius_all(4)
+	box.shadow_color = Color(0, 0, 0, 0.35)
+	box.shadow_size = 5
 	return box
 
 
@@ -104,16 +104,9 @@ func _display(quest: Dictionary) -> void:
 	var complete: bool = bool(quest.get("complete", false))
 	var any_mode: bool = int(quest.get("completion", 0)) == 1
 
-	# Tiny "QUEST" eyebrow so the panel is self-explanatory at a glance.
-	var eyebrow: Label = Label.new()
-	eyebrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	eyebrow.text = "QUEST"
-	eyebrow.add_theme_font_size_override(&"font_size", 9)
-	eyebrow.add_theme_color_override(&"font_color", Color(0.6, 0.66, 0.78))
-	_content.add_child(eyebrow)
-
-	# Name: yellow while in progress, bright green with a ✓ prefix once ready.
-	# The shift in color is the player's primary "I'm done!" cue.
+	# Name leads the panel — no "QUEST" eyebrow, the layout speaks for itself. It follows the active
+	# palette accent while in progress, then flips to bright green with a ✓ prefix once ready: that
+	# color shift is the player's primary "I'm done!" cue.
 	var name_label: Label = Label.new()
 	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	name_label.add_theme_font_size_override(&"font_size", 14)
@@ -121,7 +114,7 @@ func _display(quest: Dictionary) -> void:
 	name_label.text = prefix + str(quest.get("name", "?"))
 	name_label.add_theme_color_override(
 		&"font_color",
-		Color(0.5, 0.95, 0.5) if complete else Color(1.0, 0.9, 0.55)
+		Color(0.5, 0.95, 0.5) if complete else _accent_color()
 	)
 	_content.add_child(name_label)
 
@@ -166,3 +159,12 @@ func _display(quest: Dictionary) -> void:
 		ready_label.text = "↩ Return to the quest giver"
 		ready_label.add_theme_color_override(&"font_color", Color(0.55, 0.9, 0.55))
 		_content.add_child(ready_label)
+
+
+## The active palette's accent (the same hue the gateway + menus focus-tint with), read live from
+## the shared [gateway]/palette setting so the quest name matches the player's chosen theme. Mirrors
+## ui.gd's palette read; falls back to the default palette.
+func _accent_color() -> Color:
+	var saved: Variant = ClientState.settings.get_value(&"gateway", &"palette")
+	var slug: StringName = StringName(saved) if saved is String or saved is StringName else ThemePalettes.DEFAULT
+	return ThemePalettes.accent(slug)

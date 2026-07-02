@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ManaFontAbility" format=3 uid="uid://ceth2qxeofs8t"]
+
+[ext_resource type="Script" uid="uid://b46q2yakpenvg" path="res://source/common/gameplay/combat/ability/ability_collection/channel/mana_font_ability.gd" id="1_font"]
+[ext_resource type="Texture2D" uid="uid://32u3u62wv68d" path="res://assets/sprites/ui/ability_icons/mana_font.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_font")
+channel_duration_s = 10.0
+radius = 90.0
+visual_kind = &"mana_font"
+name = "Mana Font"
+icon = ExtResource("2_icon")
+cooldown = 30.0
+metadata/slug = &"mana_font"
+metadata/id = 56

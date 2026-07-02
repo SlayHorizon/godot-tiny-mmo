@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="LightningLashAbility" format=3 uid="uid://8sqp43w32p22"]
+
+[ext_resource type="PackedScene" uid="uid://b8s7oak2vqlpx" path="res://source/common/gameplay/combat/melee_arc.tscn" id="1_gb2rf"]
+[ext_resource type="Script" uid="uid://bhmn076nujd4a" path="res://source/common/gameplay/combat/ability/ability_collection/channel/lightning_lash_ability.gd" id="1_lash"]
+[ext_resource type="Texture2D" uid="uid://k4l22efg64sw" path="res://assets/sprites/ui/ability_icons/lightning_lash.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_lash")
+ap_ratio = 0.42
+beam_length = 140.0
+beam_width = 36.0
+channel_duration_s = 3.0
+tick_interval_s = 0.25
+radius = 140.0
+mana_per_tick = 3.5
+visual_kind = &"lash"
+mobile = true
+name = "Lightning Lash II"
+icon = ExtResource("2_icon")
+cooldown = 6.0
+cast_time_s = 0.7
+metadata/slug = &"lightning_lash_2"
+metadata/id = 51

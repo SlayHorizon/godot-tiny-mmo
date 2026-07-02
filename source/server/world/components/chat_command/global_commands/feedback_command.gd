@@ -22,7 +22,7 @@ func _init() -> void:
 	command_name = "feedback"
 	command_alias = ["bug", "report"]
 	command_priority = 0 # everyone
-	command_usage = "/feedback <your message>   (bug report or suggestion — context is attached automatically)"
+	command_usage = "/feedback <your message>   (bug report or suggestion; context is attached automatically)"
 
 
 func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInstance) -> String:
@@ -38,7 +38,7 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 
 	# Rate-limit only well-formed reports, so a malformed call doesn't burn budget.
 	if not RateLimiter.check(peer_id, &"chat.feedback", MAX_PER_WINDOW, WINDOW_MS):
-		return "You're sending feedback very fast — give it a moment, then try again. Thanks!"
+		return "You're sending feedback very fast. Give it a moment, then try again. Thanks!"
 
 	var ws: WorldServer = server_instance.world_server
 	var player: PlayerResource = ws.connected_players.get(peer_id)
@@ -77,7 +77,7 @@ func execute(args: PackedStringArray, peer_id: int, server_instance: ServerInsta
 		DiscordNotifier.COLOR_INFO
 	)
 
-	var reply: String = "Thanks! Your feedback was sent to the devs. 🙏\nGot a screenshot or clip? Share it on Discord: %s" % DISCORD_INVITE
+	var reply: String = "Thanks! Your feedback was sent to the devs.\nGot a screenshot or clip? Share it on Discord: %s" % DISCORD_INVITE
 	if truncated:
 		reply += "\nNote: your message was long, so only the first %d characters were sent." % MAX_LEN
 	return reply

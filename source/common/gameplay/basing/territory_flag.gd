@@ -124,7 +124,7 @@ func _process(_delta: float) -> void:
 		@warning_ignore("integer_division")
 		var seconds: int = remaining_ms / 1000
 		@warning_ignore("integer_division")
-		grace_label.text = "🛡 Immune %d:%02d" % [seconds / 60, seconds % 60]
+		grace_label.text = "Immune %d:%02d" % [seconds / 60, seconds % 60]
 		grace_label.visible = true
 	elif grace_label.visible:
 		grace_label.visible = false
@@ -318,9 +318,9 @@ func _announce_capture(killer: Player, previous_id: int, previous_name: String) 
 	var killer_name: String = killer.player_resource.display_name if killer else "Someone"
 	var msg: String
 	if previous_id <= 0:
-		msg = "🏴 %s claimed '%s' for %s!" % [killer_name, territory_name, owner_guild_name]
+		msg = "%s claimed '%s' for %s!" % [killer_name, territory_name, owner_guild_name]
 	else:
-		msg = "🏴 %s took '%s' from %s for %s!" % [killer_name, territory_name, previous_name, owner_guild_name]
+		msg = "%s took '%s' from %s for %s!" % [killer_name, territory_name, previous_name, owner_guild_name]
 	for peer_id: int in ws.connected_players:
 		var player: PlayerResource = ws.connected_players[peer_id]
 		if player == null:

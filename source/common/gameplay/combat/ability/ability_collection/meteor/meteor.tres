@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="MeteorAbility" format=3 uid="uid://bqujn1m7erhm5"]
+
+[ext_resource type="Script" uid="uid://brx7t0y0cc8vj" path="res://source/common/gameplay/combat/ability/ability_collection/meteor/meteor_ability.gd" id="1_meteor"]
+[ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="1_mpbp0"]
+[ext_resource type="Texture2D" uid="uid://dfox4uphx0211" path="res://assets/sprites/ui/ability_icons/meteor.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_meteor")
+name = "Meteor"
+icon = ExtResource("2_icon")
+cooldown = 40.0
+mana_cost = 55
+metadata/slug = &"meteor"
+metadata/id = 57

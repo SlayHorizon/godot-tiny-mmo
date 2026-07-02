@@ -195,7 +195,7 @@ func _on_gather_result(data: Dictionary) -> void:
 				var now_ms: int = Time.get_ticks_msec()
 				if now_ms - _last_depleted_toast_ms > 4000:
 					_last_depleted_toast_ms = now_ms
-					Toaster.toast("This vein is depleted — come back later.")
+					Toaster.toast("This vein is depleted. Come back later.")
 			# "cooldown" stays silent — players will spam swings during it.
 		return
 
@@ -225,7 +225,7 @@ func _on_gather_result(data: Dictionary) -> void:
 	if data.get("leveled_up", false):
 		big.append("%s — Level %d!" % [str(data.get("job", "mining")).capitalize(), int(data.get("level", 1))])
 	if int(data.get("perk_points_gained", 0)) > 0:
-		big.append("Perk point available — spend in Character → Jobs.")
+		big.append("Perk point available. Spend in Character → Jobs.")
 	if not big.is_empty():
 		Toaster.toast_group("Level Up!", big)
 

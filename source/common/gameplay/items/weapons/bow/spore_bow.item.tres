@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponItem" format=3]
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://dowcv48c5suhy"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
 [ext_resource type="Texture2D" uid="uid://d0226i8o2vv53" path="res://assets/sprites/items/weapons/rustic/rustic.png" id="2_tex"]
@@ -35,4 +35,4 @@ can_trade = true
 can_sell = true
 stack_limit = 1
 metadata/slug = &"spore_bow.item"
-metadata/id = 90
+metadata/id = 87

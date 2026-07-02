@@ -25,6 +25,14 @@ var damage: float = 10.0
 ## timed negative buff to each Player struck. 0 = no slow. Set by the ability.
 var slow_amount: float = 0.0
 var slow_duration_s: float = 0.0
+## Physical by default (melee). A spell nova (NovaAbility) sets MAGIC so it scales the
+## caster's MR-mitigated path instead of armor.
+var damage_type: StringName = CombatHit.DAMAGE_PHYSICAL
+## Blood Feast drain: each LANDED hit heals + restores mana to the SOURCE (the caster
+## feeds on the pack). 0 = none. mana_per_hit only pays out on a real hit, so whiffing
+## into air refunds nothing.
+var heal_per_hit: float = 0.0
+var mana_per_hit: float = 0.0
 
 var _hit_bodies: Array[Node] = []
 var _scanned: bool = false
@@ -64,12 +72,21 @@ func _on_body_entered(body: Node2D) -> void:
 	# `body` may be a HurtBox area — resolve to its owner Character for HP / type checks.
 	var struck: Node = (body as HurtBox).character if body is HurtBox else body
 	var dealt: float = damage * _execute_multiplier(struck)
-	var result: CombatHit.Result = CombatHit.try_damage(source if source is Character else null, body, dealt)
+	var result: CombatHit.Result = CombatHit.try_damage(source if source is Character else null, body, dealt, damage_type)
+	if result != CombatHit.Result.DAMAGED:
+		return
 	# Slow rides a LANDED hit on a Player only (the first negative status buff, via
 	# the same BuffService potions use).
-	if result == CombatHit.Result.DAMAGED and slow_amount > 0.0 and slow_duration_s > 0.0:
-		if struck is Player:
-			BuffService.apply(struck as Player, Stat.MOVE_SPEED, -slow_amount, slow_duration_s)
+	if slow_amount > 0.0 and slow_duration_s > 0.0 and struck is Player:
+		BuffService.apply(struck as Player, Stat.MOVE_SPEED, -slow_amount, slow_duration_s)
+	# Blood Feast: drain the struck enemy — heal + mana to the source, per landed hit.
+	if is_instance_valid(source):
+		if heal_per_hit > 0.0:
+			var hmax: float = source.stats_component.get_stat(Stat.HEALTH_MAX)
+			source.stats_component.set_stat(Stat.HEALTH, minf(hmax, source.stats_component.get_stat(Stat.HEALTH) + heal_per_hit))
+		if mana_per_hit > 0.0:
+			var mmax: float = source.stats_component.get_stat(Stat.MANA_MAX)
+			source.stats_component.set_stat(Stat.MANA, minf(mmax, source.stats_component.get_stat(Stat.MANA) + mana_per_hit))
 
 
 ## Executioner mastery passive: the wielder's DAMAGE_VS_LOW_HP stat (%) amplifies

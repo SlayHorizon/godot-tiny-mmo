@@ -144,4 +144,7 @@ static func can_damage(source: Player, target: Player) -> bool:
 	if source.player_resource != null and target.player_resource != null \
 			and (source.player_resource.in_match or target.player_resource.in_match):
 		return SparringService.can_spar_damage(source, target)
+	# Post-respawn spawn protection (open-world PvP only — spar is handled above).
+	if target.is_pvp_immune():
+		return false
 	return target.is_pvp()

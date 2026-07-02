@@ -24,6 +24,12 @@ extends Resource
 @export_range(1, 4) var tier: int = 1
 @export var ability: AbilityResource
 @export var passive_modifiers: Array[StatModifier]
+## Passives are PERMANENT once learned — they apply no matter which weapon you wield, so
+## investing in every tree reinforces your character (and your HP/stats never jump on a
+## mid-fight weapon swap). Set this TRUE only for a passive that's a weapon-specific gimmick
+## and would be wrong on other weapons — e.g. hammer Executioner's "+damage vs low-HP" should
+## buff the hammer, not every weapon. Weapon-bound passives apply only while that weapon is held.
+@export var weapon_bound: bool = false
 
 ## Upgrade chain: the id of the lower-tier node this one REPLACES (empty = a
 ## standalone ability or the chain's root). A "signature move" is a chain — you

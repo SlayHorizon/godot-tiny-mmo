@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="NovaAbility" format=3 uid="uid://blwok67mxy1m7"]
+
+[ext_resource type="Script" uid="uid://daxuj610o34a" path="res://source/common/gameplay/combat/ability/ability_collection/nova/nova_ability.gd" id="1_nova"]
+[ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="2_arc"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/combat/vfx/frost_spikes.tres" id="3_ring"]
+[ext_resource type="Texture2D" uid="uid://b2s1rjnb73j64" path="res://assets/sprites/ui/ability_icons/frost_nova.png" id="4_icon"]
+
+[resource]
+script = ExtResource("1_nova")
+ap_ratio = 0.35
+radius = 60.0
+slow_amount = 14.0
+slow_duration_s = 1.5
+vfx = ExtResource("3_ring")
+vfx_frame_px = 256.0
+name = "Frost Nova"
+icon = ExtResource("4_icon")
+cooldown = 10.0
+mana_cost = 30
+metadata/slug = &"frost_nova"
+metadata/id = 55

@@ -202,7 +202,7 @@ static func tick_all_territories(world_server: Node) -> void:
 static func _announce_tick(ws: Node, guild: Guild, sg_gained: int) -> void:
 	if ws.chat_service == null or sg_gained <= 0:
 		return
-	var msg: String = "🏛 Your guild earned %d Seasonal Glory from held territory." % sg_gained
+	var msg: String = "Your guild earned %d Seasonal Glory from held territory." % sg_gained
 	_push_to_guild_members(ws, guild.guild_id, msg)
 
 
@@ -210,7 +210,7 @@ static func _announce_milestone(ws: Node, guild: Guild, sg_gained: int) -> void:
 	if ws.chat_service == null or sg_gained <= 0:
 		return
 	var kills: int = sg_gained * KILLS_PER_GLORY
-	var msg: String = "🎖 %d kills in your territory earned the guild %d Seasonal Glory." % [kills, sg_gained]
+	var msg: String = "%d kills in your territory earned the guild %d Seasonal Glory." % [kills, sg_gained]
 	_push_to_guild_members(ws, guild.guild_id, msg)
 
 

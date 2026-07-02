@@ -350,6 +350,7 @@ position = Vector2(2709.0002, 1048)
 scale = Vector2(2.7102876, 0.8535888)
 target_instance = ExtResource("26_8a8tv")
 warper_id = 5
+target_id = 1
 
 [node name="Forest" parent="." unique_id=615061629 instance=ExtResource("21_81rgi")]
 position = Vector2(-32, 1304)
@@ -577,3 +578,7 @@ modulate = Color(0, 0.6117647, 0.23137255, 1)
 position = Vector2(2025.5386, 429.87)
 collision_mask = 6
 npc_resource = SubResource("Resource_ofiq8")
+
+[node name="PortalWarper" parent="." unique_id=1414716116 instance=ExtResource("21_81rgi")]
+position = Vector2(836.16785, 330.8485)
+warper_id = 21

@@ -186,16 +186,25 @@ static func refresh(player: Player) -> void:
 	var weapon_item: WeaponItem = player.equipment_component.equipped_items.get(&"weapon", null) as WeaponItem
 	player.equipment_component.set_special_abilities(effective_special_ids(resource, weapon_item))
 
-	if weapon_item != null and not weapon_item.category.is_empty():
-		var tree: MasteryTreeResource = tree_for(weapon_item.category)
-		if tree != null and resource.masteries.has(weapon_item.category):
-			var spent: Dictionary = (resource.masteries[weapon_item.category] as Dictionary).get("spent", {})
-			for node: MasteryNode in tree.nodes:
-				if node.ability != null or not spent.has(String(node.id)):
-					continue
-				for modifier: StatModifier in node.passive_modifiers:
-					player.stats_component.modify_stat(modifier.stat_name, modifier.value)
-					resource.applied_mastery_passives.append({"stat": modifier.stat_name, "value": modifier.value})
+	# Passives apply from EVERY tree the player has invested in, not just the wielded one:
+	# global passives (the default) are permanent character stats, so grinding all trees
+	# stacks them and a weapon swap never jolts your HP/stats. Weapon-bound passives still
+	# apply only while their own weapon is held (e.g. hammer Executioner).
+	var equipped_category: StringName = weapon_item.category if weapon_item != null else &""
+	for category: StringName in resource.masteries:
+		var tree: MasteryTreeResource = tree_for(category)
+		if tree == null:
+			continue
+		var spent: Dictionary = (resource.masteries[category] as Dictionary).get("spent", {})
+		var is_held: bool = category == equipped_category
+		for node: MasteryNode in tree.nodes:
+			if node.ability != null or not spent.has(String(node.id)):
+				continue
+			if node.weapon_bound and not is_held:
+				continue
+			for modifier: StatModifier in node.passive_modifiers:
+				player.stats_component.modify_stat(modifier.stat_name, modifier.value)
+				resource.applied_mastery_passives.append({"stat": modifier.stat_name, "value": modifier.value})
 
 	_carry_current_to_max(player, Stat.HEALTH, Stat.HEALTH_MAX, old_hp_max)
 	_carry_current_to_max(player, Stat.MANA, Stat.MANA_MAX, old_mana_max)
@@ -213,7 +222,9 @@ static func _carry_current_to_max(player: Player, current: StringName, maxs: Str
 	var cur: float = player.stats_component.get_stat(current)
 	if cur <= 0.0:
 		return # dead / pre-spawn — leave it to the spawn refill
-	player.stats_component.set_stat(current, clampf(cur + delta, 0.0, new_max))
+	# Floor at 1, not 0: losing a +max passive/item while low must never drop a LIVING player
+	# to 0 (that left them stuck at "0 HP but not dead"). Death only ever comes from damage.
+	player.stats_component.set_stat(current, clampf(cur + delta, 1.0, new_max))
 
 
 static func _load_trees() -> void:

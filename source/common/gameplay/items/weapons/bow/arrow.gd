@@ -27,8 +27,21 @@ var burn_dps: float = 0.0
 var burn_duration_s: float = 0.0
 var dot_kind: StringName = &"burn"
 
+## Optional client-only spark spawned where the shot lands (a DAMAGED hit). Set by the
+## spawning ability (BoltShoot's impact_vfx); null = none. Pure visual juice.
+var impact_vfx: SpriteFrames
+
+## > 0: the shot EXPLODES where it stops (target hit OR wall) — an AoE burst dealing
+## [member explode_damage] magic damage in the radius (the Fireball). The impact_vfx doubles
+## as the explosion visual, scaled to the radius.
+var explode_radius: float = 0.0
+var explode_damage: float = 0.0
+const EXPLOSION_ARC: PackedScene = preload("res://source/common/gameplay/combat/melee_arc_centered.tscn")
+
 ## Seconds a projectile flies before despawning if it hits nothing (speed × this ≈ max range).
-const LIFETIME: float = 1.2
+## A var, not a const, so a short-range caster (the book's Arc Strike) can shorten its reach
+## via BoltShootAbility.max_range — a melee spell shouldn't out-range the bow.
+var lifetime: float = 1.2
 
 ## Max distance moved between hit checks. A fast projectile (or a frame-time spike under load) moves
 ## speed×frametime per frame; if that exceeds the hit shape, a point-blank target can fall BETWEEN two
@@ -52,11 +65,20 @@ func _ready() -> void:
 	rotate(direction.angle())
 	# Lifetime cap so stray shots don't sail across the map. TODO: a projectile manager beats a timer each.
 	var timer: Timer = Timer.new()
-	timer.wait_time = LIFETIME
+	timer.wait_time = lifetime
 	timer.one_shot = true
-	timer.timeout.connect(queue_free)
+	timer.timeout.connect(_on_lifetime_end)
 	add_child(timer)
 	timer.start()
+
+
+## Reached max range without hitting anything. An exploding shot (Fireball) DETONATES
+## here — the blast at max reach is part of its identity; a plain shot just despawns.
+func _on_lifetime_end() -> void:
+	if explode_radius > 0.0:
+		_spawn_impact()
+		_explode()
+	queue_free()
 
 
 func _physics_process(delta: float) -> void:
@@ -101,8 +123,13 @@ func _handle_collision(node: Node2D) -> void:
 		CombatHit.Result.IGNORED:
 			return # friendly / safe-zone / non-target — keep flying
 		CombatHit.Result.BLOCKED:
+			if explode_radius > 0.0: # a fireball detonates on a wall too (plain shots just stop)
+				_spawn_impact()
+				_explode()
 			queue_free() # wall / door — stop here
 		CombatHit.Result.DAMAGED:
+			_spawn_impact()
+			_explode()
 			# Ride a burn on top if this projectile carries one (server applies; clients see the sync).
 			if burn_dps > 0.0 and multiplayer.is_server():
 				var victim: Node2D = node
@@ -122,3 +149,49 @@ func _handle_collision(node: Node2D) -> void:
 func _resolve_hit(node: Node2D) -> CombatHit.Result:
 	# deflectable = true: a target mid-Deflect destroys this projectile (no damage).
 	return CombatHit.try_damage(source as Character, node, damage, damage_type, true)
+
+
+## Client-only spark at the hit location. Parented to the MAP (this bolt frees on impact),
+## so it lingers where it landed instead of dying with the projectile.
+func _spawn_impact() -> void:
+	if impact_vfx == null or multiplayer.is_server():
+		return
+	var host: Node = get_parent() # the caster — its parent is the map
+	if host == null:
+		return
+	host = host.get_parent()
+	if host == null:
+		return
+	# An exploding shot scales its blast visual to the damage radius (128px frames);
+	# a plain impact spark stays small.
+	var sc: float = (explode_radius * 2.2 / 128.0) if explode_radius > 0.0 else 0.4
+	var fx: SpriteEffect = SpriteEffect.spawn(host, impact_vfx, {
+		"scale": Vector2(sc, sc),
+		"z_index": 1,
+		"speed_scale": 1.5 if explode_radius <= 0.0 else 1.0,
+	})
+	if fx != null:
+		fx.global_position = global_position
+
+
+## Server-side AoE detonation at the stop point (explode_radius > 0 only — the Fireball).
+## Reuses the centered MeleeArc: everything in the radius takes explode_damage as magic.
+func _explode() -> void:
+	if explode_radius <= 0.0 or not multiplayer.is_server() or source == null:
+		return
+	var map: Node = get_parent() # top_level bolt still parents under the caster — map is above
+	if map is Character:
+		map = map.get_parent()
+	if map == null:
+		return
+	var arc: MeleeArc = EXPLOSION_ARC.instantiate()
+	arc.source = source
+	var shape_node: CollisionShape2D = arc.get_node_or_null(^"CollisionShape2D") as CollisionShape2D
+	if shape_node != null and shape_node.shape is CircleShape2D:
+		var circle: CircleShape2D = shape_node.shape.duplicate()
+		circle.radius = explode_radius
+		shape_node.shape = circle
+	arc.damage = explode_damage
+	arc.damage_type = CombatHit.DAMAGE_MAGIC
+	map.add_child(arc)
+	arc.global_position = global_position

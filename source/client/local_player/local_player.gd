@@ -98,7 +98,7 @@ func _ready() -> void:
 	Client.subscribe(&"dungeon.entered", func(payload: Dictionary) -> void:
 		Toaster.toast_group(
 			"Entered %s" % str(payload.get("dungeon", "the dungeon")),
-			PackedStringArray(["Clear each room — defeat the boss to escape."]),
+			PackedStringArray(["Clear each room. Defeat the boss to escape."]),
 			4.0))
 	# Boss enrage (dungeon phase 2): a red banner + camera shake so the escalation
 	# reads — see BossController._announce_enrage.
@@ -336,9 +336,9 @@ func _notify_zone_transition() -> void:
 		return
 	_was_pvp = now_pvp
 	if now_pvp:
-		Toaster.toast("Entered a PvP zone — other players can attack you here.", 3.0, PVP_TOAST_COLOR)
+		Toaster.toast("Entered a PvP zone. Other players can attack you here.", 3.0, PVP_TOAST_COLOR)
 	else:
-		Toaster.toast("Back in a safe zone — you're protected from other players.", 3.0, SAFE_TOAST_COLOR)
+		Toaster.toast("Back in a safe zone. You're protected from other players.", 3.0, SAFE_TOAST_COLOR)
 
 
 func process_movement() -> void:
@@ -398,8 +398,15 @@ func process_input() -> void:
 				action_input = false
 				return
 		else:
-			# Mobile channel (spin): walk freely (slowed), but no attacking mid-spin.
+			# Mobile channel (spin/lash): walk freely (slowed), but NO abilities mid-channel.
+			# Re-tap a special to bail early — mobile channels don't cancel on move the way
+			# rooted ones do. The start grace stops the launching press from self-cancelling.
+			if Time.get_ticks_msec() >= _channel_grace_until_ms and (
+					Input.is_action_just_pressed(&"player_special")
+					or Input.is_action_just_pressed(&"player_special_2")):
+				_cancel_channel()
 			action_input = false
+			return
 
 	equipment_component.process_input(self)
 	if action_input and equipment_component.can_use(&"weapon", 0):

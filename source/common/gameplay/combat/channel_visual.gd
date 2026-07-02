@@ -8,6 +8,7 @@ extends Node2D
 ## channels ship (recall = a cast bar + rune, etc.).
 
 const HEAL_TINT: Color = Color(0.35, 1.0, 0.5)
+const MANA_TINT: Color = Color(0.4, 0.7, 1.0)
 
 var duration: float = 6.0
 var radius: float = 60.0
@@ -16,11 +17,16 @@ var kind: StringName = &"heal_aura"
 var _elapsed: float = 0.0
 
 
+## The aura family's tint: green for the healing aura, blue for the Mana Font.
+func _aura_tint() -> Color:
+	return MANA_TINT if kind == &"mana_font" else HEAL_TINT
+
+
 func _ready() -> void:
 	# Aura/ground effects sit under the character; the recall cast bar sits above
 	# it (a head-height progress read, like the chat bubble's layer).
 	z_index = 5 if (kind == &"recall" or kind == &"equip") else -1
-	if kind == &"heal_aura":
+	if kind == &"heal_aura" or kind == &"mana_font":
 		_spawn_motes()
 
 
@@ -41,10 +47,11 @@ func _spawn_motes() -> void:
 	p.initial_velocity_max = 24.0
 	p.scale_amount_min = 1.0
 	p.scale_amount_max = 2.0
+	var tint: Color = _aura_tint()
 	var ramp: Gradient = Gradient.new()
 	ramp.offsets = PackedFloat32Array([0.0, 0.35, 1.0])
 	ramp.colors = PackedColorArray([
-		Color(HEAL_TINT, 0.0), Color(HEAL_TINT, 0.7), Color(HEAL_TINT, 0.0),
+		Color(tint, 0.0), Color(tint, 0.7), Color(tint, 0.0),
 	]) # fade in as they lift, fade out at the top
 	p.color_ramp = ramp
 	add_child(p)
@@ -100,11 +107,12 @@ func _draw_equip() -> void:
 func _draw_heal_aura() -> void:
 	# A gentle breathing pulse so it reads as a sustained, friendly effect —
 	# deliberately unlike the sharp one-shot expand of an impact ring.
+	var tint: Color = _aura_tint()
 	var pulse: float = 0.5 + 0.5 * sin(_elapsed * 4.0)
 	var fill_a: float = 0.06 + 0.05 * pulse
-	draw_circle(Vector2.ZERO, radius, Color(HEAL_TINT, fill_a))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(HEAL_TINT, 0.5 + 0.3 * pulse), 2.0, true)
-	# A rising inner ring — cheap "life lifting back up" read without particles.
+	draw_circle(Vector2.ZERO, radius, Color(tint, fill_a))
+	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(tint, 0.5 + 0.3 * pulse), 2.0, true)
+	# A rising inner ring — cheap "life/mana lifting back up" read without particles.
 	var t: float = fposmod(_elapsed * 0.6, 1.0)
 	var inner: float = lerpf(radius * 0.2, radius * 0.85, t)
-	draw_arc(Vector2.ZERO, inner, 0.0, TAU, 40, Color(HEAL_TINT, 0.35 * (1.0 - t)), 1.5, true)
+	draw_arc(Vector2.ZERO, inner, 0.0, TAU, 40, Color(tint, 0.35 * (1.0 - t)), 1.5, true)

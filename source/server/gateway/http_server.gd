@@ -133,7 +133,7 @@ func _check_version(payload: Dictionary) -> Dictionary:
 	var have: String = client_version if not client_version.is_empty() else "unknown"
 	return {
 		"error": GatewayAPI.ERR_OUTDATED_VERSION,
-		"msg": "Outdated game version — please update. (server %s, you have %s)" % [server_version, have],
+		"msg": "Outdated game version. Please update. (server %s, you have %s)" % [server_version, have],
 	}
 
 

@@ -158,6 +158,6 @@ func _humanize(reason: String) -> String:
 		"unknown": return "That code doesn't exist."
 		"already": return "You've already redeemed this code on this character."
 		"expired": return "This code has expired."
-		"rate_limited": return "Too many tries — wait a moment and try again."
+		"rate_limited": return "Too many tries. Wait a moment and try again."
 		"misconfigured": return "This code isn't set up correctly. Please report it."
 		_: return "Couldn't redeem that code."

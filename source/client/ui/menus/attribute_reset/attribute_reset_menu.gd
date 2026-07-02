@@ -79,7 +79,7 @@ func _on_confirm() -> void:
 		return
 	var data: Dictionary = result[0]
 	if data.get("ok", false):
-		Toaster.toast("Attributes reset — %d points to spend (Character menu)." % int(data.get("points", 0)))
+		Toaster.toast("Attributes reset. %d points to spend (Character menu)." % int(data.get("points", 0)))
 		return
 	match str(data.get("reason", "")):
 		"gold":

@@ -259,7 +259,7 @@ func _apply_response(response: Dictionary) -> void:
 
 	var entries: Array = response.get("entries", [])
 	if entries.is_empty():
-		_status_label.text = "No entries yet — go earn some glory."
+		_status_label.text = "No entries yet. Go earn some glory."
 		return
 	_status_label.text = "Top %d" % entries.size()
 

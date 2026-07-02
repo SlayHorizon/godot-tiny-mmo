@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://qyjnnivyohm3"]
+
+[ext_resource type="Script" uid="uid://c2f126nxuonb3" path="res://source/common/gameplay/items/weapons/bow/arrow.gd" id="1_proj"]
+[ext_resource type="SpriteFrames" uid="uid://ky7hg01wfceg" path="res://source/common/gameplay/combat/vfx/arc_bolt.tres" id="2_frames"]
+
+[sub_resource type="RectangleShape2D" id="rect"]
+size = Vector2(16, 16)
+
+[node name="ArcBolt" type="Area2D"]
+collision_layer = 0
+script = ExtResource("1_proj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("rect")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.18, 0.18)
+sprite_frames = ExtResource("2_frames")
+autoplay = "default"

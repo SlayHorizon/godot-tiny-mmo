@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ap"]
 script = ExtResource("1_mod")
 stat_name = "ap"
-value = 12.0
+value = 6.0
 
 [sub_resource type="Resource" id="Mod_haste"]
 script = ExtResource("1_mod")
@@ -20,12 +20,22 @@ value = 6.0
 atlas = ExtResource("2_tex")
 region = Rect2(80, 0, 32, 16)
 
+[sub_resource type="Resource" id="Mod_wmana"]
+script = ExtResource("1_mod")
+stat_name = "mana_max"
+value = 25.0
+
+[sub_resource type="Resource" id="Mod_wregen"]
+script = ExtResource("1_mod")
+stat_name = "mana_regen"
+value = 1.5
+
 [resource]
 script = ExtResource("4_item")
 category = &"wand"
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
-base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap"), SubResource("Mod_haste")])
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap"), SubResource("Mod_haste"), SubResource("Mod_wmana"), SubResource("Mod_wregen")])
 item_name = &"Bone Wand"
 item_icon = SubResource("Atlas_bone_wand")
 description = "A wand of polished bone. It casts swiftly, though its bolts carry a little less force."

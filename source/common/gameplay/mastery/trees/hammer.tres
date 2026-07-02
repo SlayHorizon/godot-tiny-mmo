@@ -68,6 +68,7 @@ icon = ExtResource("15_exe1")
 description = "Your hammer deals more damage to enemies below 35% health. Finish what you start."
 branch = &"domination"
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_exe1")])
+weapon_bound = true
 
 [sub_resource type="Resource" id="Mod_exe2"]
 script = ExtResource("3_mod")
@@ -83,6 +84,7 @@ description = "Hits low-health enemies even harder."
 branch = &"domination"
 tier = 2
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_exe2")])
+weapon_bound = true
 upgrades = &"hammer_executioner"
 
 [sub_resource type="Resource" id="Mod_exe3"]
@@ -99,6 +101,7 @@ description = "Your finisher hits hardest of all. No one walks away."
 branch = &"domination"
 tier = 3
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_exe3")])
+weapon_bound = true
 upgrades = &"hammer_executioner_2"
 
 [sub_resource type="Resource" id="Mod_armor_bulwark"]
@@ -111,7 +114,7 @@ script = ExtResource("2_node")
 id = &"hammer_bulwark"
 node_name = "Bulwark"
 icon = ExtResource("12_bul")
-description = "+6 armor while wielding a hammer."
+description = "+6 armor."
 branch = &"resolve"
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_armor_bulwark")])
 
@@ -124,7 +127,7 @@ script = ExtResource("2_node")
 id = &"hammer_juggernaut"
 node_name = "Juggernaut"
 icon = ExtResource("13_jug")
-description = "+20 max health while wielding a hammer."
+description = "+20 max health."
 branch = &"resolve"
 tier = 2
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_juggernaut")])
@@ -164,7 +167,7 @@ script = ExtResource("2_node")
 id = &"hammer_momentum"
 node_name = "Momentum"
 icon = ExtResource("14_mom")
-description = "+10 move speed while wielding a hammer. Shrug off its weight and keep advancing."
+description = "+10 move speed. Shrug off its weight and keep advancing."
 branch = &"inspiration"
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ms_momentum")])
 

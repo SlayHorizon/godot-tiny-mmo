@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="BoltShootAbility" format=3 uid="uid://c7i2vynws34cc"]
+
+[ext_resource type="Script" uid="uid://v03p4cycoksj" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/bolt_shoot_ability.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://source/common/gameplay/items/weapons/wand/fireball.tscn" id="2_bolt"]
+[ext_resource type="SpriteFrames" uid="uid://bcu6tgh1c2rvd" path="res://source/common/gameplay/combat/vfx/fire_explosion.tres" id="3_boom"]
+[ext_resource type="Texture2D" uid="uid://dkx5rgrgepjj8" path="res://assets/sprites/ui/ability_icons/fireball.png" id="4_icon"]
+
+[resource]
+script = ExtResource("1_script")
+projectile_scene = ExtResource("2_bolt")
+ap_ratio = 0.9
+speed = 240.0
+burn_dps = 4.0
+burn_duration_s = 3.0
+bolt_modulate = Color(1, 1, 1, 1)
+max_range = 190.0
+impact_vfx = ExtResource("3_boom")
+explode_radius = 55.0
+explode_ap_ratio = 0.6
+name = "Fireball"
+icon = ExtResource("4_icon")
+cooldown = 7.0
+mana_cost = 30
+metadata/slug = &"fireball"
+metadata/id = 53

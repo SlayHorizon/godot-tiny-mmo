@@ -115,7 +115,11 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 	if player.has_recently_teleported():
 		return
 	if interaction_area is Warper and interaction_area.target_instance:
-		player_entered_warper.emit.call_deferred(player, self, interaction_area)
+		var warper: Warper = interaction_area
+		if warper.warp_delay_s > 0.0:
+			_warp_after_dwell(player, warper)
+		else:
+			player_entered_warper.emit.call_deferred(player, self, warper)
 	if interaction_area is Teleporter:
 		var teleporter: Teleporter = interaction_area
 		# No target = an unconfigured teleporter, or the landing end of a ONE-WAY pair (leave the
@@ -130,6 +134,18 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		# (it overwrites with its own input next frame). Push the explicit player.teleport that
 		# teleport_peer_to / recall use so the client actually snaps to the destination.
 		WorldServer.curr.data_push.rpc_id(player.name.to_int(), &"player.teleport", {"position": dest})
+
+
+## Portal-style delayed warp: fire only if the player is still inside the warper once
+## its dwell elapses — stepping out cancels, mirroring the client-side fade cancel.
+## Runs outside the physics callback (post-await), so the emit needs no defer.
+func _warp_after_dwell(player: Player, warper: Warper) -> void:
+	await get_tree().create_timer(warper.warp_delay_s).timeout
+	if not is_instance_valid(self) or not is_instance_valid(player) or not is_instance_valid(warper):
+		return
+	if not warper.overlaps_body(player) or player.has_recently_teleported():
+		return
+	player_entered_warper.emit(player, self, warper)
 
 
 @rpc("any_peer", "call_remote", "reliable", 0)
@@ -200,6 +216,11 @@ func instantiate_player(peer_id: int) -> Player:
 		var player_stats: Dictionary[StringName, float]
 		player_stats.assign(player_resource.BASE_STATS)
 
+		# Levels grant baseline max HP on top of BASE_STATS — the durability floor
+		# (docs/pvp_balance.md). Retroactive by construction: stats are rebuilt
+		# from scratch here on every spawn, so existing characters get it on login.
+		player_stats[Stat.HEALTH_MAX] += PlayerResource.HEALTH_PER_LEVEL * (player_resource.level - 1)
+
 		var stats_from_attributes: Dictionary[StringName, float]
 		stats_from_attributes.assign(AttributeMap.attr_to_stats(player_resource.attributes))
 		
@@ -230,6 +251,11 @@ func instantiate_player(peer_id: int) -> Player:
 		# Stats were rebuilt from base + attributes + gear above — put any live
 		# timed buffs (potions) back on top so an instance change doesn't strip them.
 		BuffService.reapply(new_player)
+
+		# Live level-ups raise the HP floor immediately (a method target, not a
+		# lambda, so the connection auto-cleans when this node frees on instance
+		# change — the resource outlives the per-instance Player node).
+		player_resource.level_gained.connect(new_player._on_level_gained)
 
 		# Mastery: mount the chosen special + the wielded category's passive
 		# nodes, and keep both in sync with later weapon swaps.
