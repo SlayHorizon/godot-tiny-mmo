@@ -1,7 +1,6 @@
 [gd_scene format=4 uid="uid://bxq6itupvblac"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_qm0ql"]
-[ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="2_h58c5"]
 [ext_resource type="TileSet" uid="uid://hrdxga40fogr" path="res://source/common/gameplay/maps/tilesets/mining_cave_tileset.tres" id="2_i8b6r"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="4_jod3t"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="4_off4s"]
@@ -81,9 +80,6 @@ position = Vector2(-136, -1574)
 
 [node name="Warper" parent="." unique_id=1414716116 instance=ExtResource("4_jod3t")]
 position = Vector2(-4, -27)
-
-[node name="NPC" parent="." unique_id=1922057613 instance=ExtResource("2_h58c5")]
-position = Vector2(-99, 80)
 
 [node name="Room1" type="Area2D" parent="." unique_id=978642219 node_paths=PackedStringArray("doors")]
 position = Vector2(-8, -443)
