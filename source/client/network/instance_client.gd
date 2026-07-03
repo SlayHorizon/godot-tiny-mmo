@@ -285,6 +285,10 @@ func spawn_player(player_id: int) -> void:
 
 		# Always update instance and sync manager references.
 		local_player.synchronizer_manager = synchronizer_manager
+		# Warp arrivals spawn ON the destination portal: client-side teleport grace so
+		# that first contact doesn't trigger the portal's fade/rev-up. Mirrors the
+		# server's own spawn-time mark_just_teleported.
+		local_player.mark_just_teleported(1200)
 	else:
 		new_player = DUMMY_PLAYER.instantiate()
 	

@@ -183,7 +183,11 @@ tile_set = ExtResource("2_xkpnh")
 position = Vector2(119, -135)
 scale = Vector2(2.76, 1)
 target_instance = ExtResource("5_5ghuf")
+warper_id = 2
 target_id = 1
+
+[node name="Entrance2" parent="." unique_id=1414716116 instance=ExtResource("4_0jqnl")]
+position = Vector2(66.9693, -231.81927)
 
 [node name="JailRoom" parent="." unique_id=659164498 instance=ExtResource("4_0jqnl")]
 position = Vector2(456, -246)
@@ -208,7 +212,7 @@ tile_map_data = PackedByteArray("AAD/////AwAMAAoAAAA=")
 tile_set = ExtResource("3_cwf2m")
 
 [node name="VillageElder" parent="." unique_id=1922057613 instance=ExtResource("10_subvk")]
-position = Vector2(25, -229)
+position = Vector2(184, -248)
 collision_mask = 6
 npc_resource = ExtResource("9_aldlr")
 
@@ -218,7 +222,7 @@ collision_mask = 6
 npc_resource = ExtResource("9_lkcla")
 
 [node name="DungeonMaster" parent="." unique_id=1763540222 instance=ExtResource("10_subvk")]
-position = Vector2(379, -233)
+position = Vector2(-136, -320)
 collision_mask = 6
 npc_resource = ExtResource("11_aldlr")
 
@@ -277,7 +281,7 @@ metadata/_custom_type_script = "uid://cmw2wguvs4l0k"
 
 [node name="DuelMaster2" parent="." unique_id=1303478002 node_paths=PackedStringArray("fight_zone") instance=ExtResource("18_egdmy")]
 position = Vector2(137, -574)
-master_id = 1
+master_id = 2
 master_name = "Duel Arena 2vs2"
 fight_zone = NodePath("Area2D")
 

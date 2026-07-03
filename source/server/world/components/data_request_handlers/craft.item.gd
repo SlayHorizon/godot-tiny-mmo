@@ -69,6 +69,8 @@ func data_request_handler(
 	# objective reflects a freshly-crafted item live, not just on menu reopen.
 	var quest_updates: Array = QuestService.on_craft(resource, output_id, peer_id, instance)
 	WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_updates})
+	# Daily "craft N items" progress — count the items produced this craft.
+	DailyQuestService.on_craft(resource, recipe.output_amount)
 
 	return {
 		"ok": true,

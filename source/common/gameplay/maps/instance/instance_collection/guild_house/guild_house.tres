@@ -6,6 +6,7 @@
 script = ExtResource("1_2uix5")
 instance_name = &"GuildHouse"
 map_path = "uid://d3td3u4jic7j6"
+load_at_startup = true
 metadata/_custom_type_script = "uid://deqjrbn7hm53u"
 metadata/slug = &"guild_house"
 metadata/id = 3

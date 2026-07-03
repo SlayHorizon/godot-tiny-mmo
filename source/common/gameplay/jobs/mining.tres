@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bkat7yo0vssli" path="res://source/common/gameplay/items/item.gd" id="1_eebcb"]
 [ext_resource type="Script" uid="uid://de3kcsod5da5r" path="res://source/common/gameplay/jobs/job_perks.gd" id="1_jp"]
-[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/coal_ore.tres" id="3_hb6fp"]
-[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/copper_ore.tres" id="4_3aric"]
-[ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="5_su7rm"]
+[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/metals/coal_ore.tres" id="3_hb6fp"]
+[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/metals/copper_ore.tres" id="4_3aric"]
+[ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/metals/iron_ore.tres" id="5_su7rm"]
 
 [resource]
 script = ExtResource("1_jp")

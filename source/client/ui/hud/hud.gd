@@ -147,6 +147,9 @@ func _on_player_died(data: Dictionary) -> void:
 func _apply_progression(data: Dictionary) -> void:
 	if data.has("level"):
 		experience_level_label.text = "Lv %d" % int(data["level"])
+		# Mirror into ClientState so world nodes (gated portals) can read it without
+		# poking at HUD labels.
+		ClientState.player_level = int(data["level"])
 	if data.has("xp_to_next"):
 		experience_bar.max_value = maxi(1, int(data["xp_to_next"]))
 	if data.has("experience"):

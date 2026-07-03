@@ -19,9 +19,12 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		return result
 
 	# Grant the reward through the standard combat.reward channel so the client
-	# gets the same XP bar / level-up handling as kills and mainline quests.
-	var xp: int = int(result.get("xp", 0))
-	var gold: int = int(result.get("gold", 0))
+	# gets the same XP bar / level-up handling as kills and mainline quests. The
+	# claim that completes the whole set folds in a one-off completion bonus.
+	var bonus_xp: int = int(result.get("bonus_xp", 0))
+	var bonus_gold: int = int(result.get("bonus_gold", 0))
+	var xp: int = int(result.get("xp", 0)) + bonus_xp
+	var gold: int = int(result.get("gold", 0)) + bonus_gold
 	var inventory: Dictionary = resource.inventory
 	var loot: Array = []
 	if gold > 0:
@@ -40,7 +43,8 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		"xp_to_next": resource.level_xp_to_next(),
 		"loot": loot,
 	})
-	WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": ["Daily reward claimed."]})
+	var claim_msg: String = "All dailies complete! Bonus reward earned." if (bonus_xp > 0 or bonus_gold > 0) else "Daily reward claimed."
+	WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": [claim_msg]})
 
 	if int(progress.get("levels_gained", 0)) > 0:
 		LevelMilestoneService.on_levels_gained(resource, level_before, int(progress.get("level", 1)), instance)

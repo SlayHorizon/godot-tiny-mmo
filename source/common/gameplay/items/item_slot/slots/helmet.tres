@@ -10,8 +10,8 @@ metadata/_custom_type_script = "uid://b31ll8nrh57dx"
 
 [resource]
 script = ExtResource("1_xg0yy")
-key = &"relic"
-display_name = "Relic"
+key = &"helmet"
+display_name = "Helmet"
 unlock_rule = SubResource("Resource_0hho8")
 icon = ExtResource("1_0hho8")
 metadata/_custom_type_script = "uid://e40odrowquc8"

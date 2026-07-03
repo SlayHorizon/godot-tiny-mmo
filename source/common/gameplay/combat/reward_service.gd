@@ -59,6 +59,7 @@ static func _reward(player: Player, npc: HostileNpc) -> void:
 	var loot_gained: Array = _roll_loot(npc)
 	for entry: Dictionary in loot_gained:
 		Inventory.add_item(resource.inventory, int(entry["id"]), int(entry["amount"]))
+		DailyQuestService.on_collect(resource, int(entry["id"]), int(entry["amount"]))
 
 	# Weapon mastery: practicing a category = killing with it. Same xp number.
 	var mastery: Dictionary = {}

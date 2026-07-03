@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
 [ext_resource type="Resource" uid="uid://yknmxceq6mdh" path="res://source/common/gameplay/items/materials/captain_tag.tres" id="3_tag"]
-[ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/copper_bar.tres" id="4_cop_bar"]
+[ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/metals/copper_bar.tres" id="4_cop_bar"]
 [ext_resource type="SpriteFrames" uid="uid://cjvpbhojuaqq" path="res://source/common/gameplay/characters/sprite_frames/bandit_fighter.tres" id="5_a7j0n"]
 [ext_resource type="Resource" uid="uid://wp3akqcd3x2h" path="res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres" id="6_avcwm"]
 

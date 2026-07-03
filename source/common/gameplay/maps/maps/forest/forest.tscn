@@ -26,7 +26,12 @@
 [ext_resource type="Resource" uid="uid://dclt4rvqc51ri" path="res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres" id="12_1vpp3"]
 [ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="14_1vpp3"]
 [ext_resource type="PackedScene" path="res://source/common/gameplay/lighting/firefly.tscn" id="26_4tbu3"]
+[ext_resource type="PackedScene" uid="uid://0m5eq6iylq26" path="res://source/common/gameplay/maps/components/interaction_areas/warper/portal/portal.tscn" id="27_ndacl"]
 [ext_resource type="PackedScene" path="res://source/common/gameplay/lighting/campfire.tscn" id="27_o3pwt"]
+[ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="29_uexkn"]
+[ext_resource type="Resource" uid="uid://dtpviov364y0b" path="res://source/common/gameplay/maps/components/mineable_nodes/coal_vein.tres" id="30_qncuc"]
+[ext_resource type="Resource" uid="uid://g8rxlnr0pfyk" path="res://source/common/gameplay/maps/components/mineable_nodes/healing_herb.tres" id="31_qncuc"]
+[ext_resource type="Resource" uid="uid://d08wf1j2mhlc5" path="res://source/common/gameplay/maps/components/mineable_nodes/copper_vein.tres" id="32_bvke5"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_w1xny"]
 normal = Vector2(-1, 0)
@@ -128,7 +133,7 @@ enemy_data = ExtResource("6_8w7oy")
 weapon = ExtResource("7_q7qsh")
 
 [node name="Bandit2" parent="ReplicatedPropsContainer" unique_id=831851949 instance=ExtResource("5_8w7oy")]
-position = Vector2(1960, 1466)
+position = Vector2(1896, 1336)
 debug_draw_ranges = false
 enemy_data = ExtResource("6_8w7oy")
 weapon = null
@@ -153,7 +158,7 @@ weapon = null
 
 [node name="BanditSorcerer" parent="ReplicatedPropsContainer" unique_id=1075097675 instance=ExtResource("5_8w7oy")]
 position = Vector2(1335, 1583)
-debug_draw_ranges = true
+debug_draw_ranges = false
 enemy_data = ExtResource("7_qrw5n")
 weapon = ExtResource("9_twffw")
 
@@ -238,7 +243,6 @@ npc_resource = ExtResource("6_1iruy")
 [node name="Overworld" parent="." unique_id=693791312 instance=ExtResource("5_3a2x5")]
 position = Vector2(2703.0002, 1878)
 scale = Vector2(1.48, 8.68)
-target_instance = ExtResource("6_1fctu")
 warper_id = 1
 target_id = 7
 
@@ -262,3 +266,89 @@ position = Vector2(2520, 1784)
 
 [node name="RespawnPoint" parent="." unique_id=1414716116 instance=ExtResource("5_3a2x5")]
 position = Vector2(2457.2495, 1784.071)
+
+[node name="Portal" parent="." unique_id=375786523 instance=ExtResource("27_ndacl")]
+position = Vector2(2560.7412, 1939.629)
+portal_color = Color(5.7756904e-07, 0.38057977, 0.46695477, 1)
+destination_label = "Castle Garden"
+target_instance = ExtResource("6_1fctu")
+warper_id = 20
+target_id = 20
+
+[node name="MineableNodes" type="Node2D" parent="." unique_id=400947523]
+
+[node name="CoalOre" parent="MineableNodes" unique_id=1129547794 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(2072, 2328)
+data = ExtResource("30_qncuc")
+
+[node name="CoalOre2" parent="MineableNodes" unique_id=1095656006 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(2213.8872, 2355.7212)
+data = ExtResource("30_qncuc")
+
+[node name="CoalOre3" parent="MineableNodes" unique_id=157653248 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1821.5239, 2175.6724)
+data = ExtResource("30_qncuc")
+
+[node name="CoalOre4" parent="MineableNodes" unique_id=508373564 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1810.4099, 1057.8293)
+data = ExtResource("30_qncuc")
+
+[node name="CoalOre5" parent="MineableNodes" unique_id=775309343 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1856, 1512)
+data = ExtResource("30_qncuc")
+
+[node name="HealingHerb6" parent="MineableNodes" unique_id=1525069235 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(2466.8735, 2265.4775)
+data = ExtResource("31_qncuc")
+
+[node name="HealingHerb7" parent="MineableNodes" unique_id=2050217268 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1560, 1320)
+data = ExtResource("31_qncuc")
+
+[node name="HealingHerb8" parent="MineableNodes" unique_id=190419950 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1764.9962, 1474.9259)
+data = ExtResource("31_qncuc")
+
+[node name="HealingHerb10" parent="MineableNodes" unique_id=918260302 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1336, 1856)
+data = ExtResource("31_qncuc")
+
+[node name="HealingHerb9" parent="MineableNodes" unique_id=706260920 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1046.3683, 1989.428)
+data = ExtResource("31_qncuc")
+
+[node name="HealingHerb5" parent="MineableNodes" unique_id=548800099 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(1962.2344, 2207.9014)
+data = ExtResource("31_qncuc")
+
+[node name="HealingHerb4" parent="MineableNodes" unique_id=1584970675 instance=ExtResource("29_uexkn")]
+y_sort_enabled = true
+position = Vector2(2160.929, 2264.9128)
+data = ExtResource("31_qncuc")
+
+[node name="CopperOre" parent="MineableNodes" unique_id=1346951654 instance=ExtResource("29_uexkn")]
+position = Vector2(784, 1104)
+data = ExtResource("32_bvke5")
+
+[node name="CopperOre2" parent="MineableNodes" unique_id=1644192236 instance=ExtResource("29_uexkn")]
+position = Vector2(1476.9714, 838.2217)
+data = ExtResource("32_bvke5")
+
+[node name="CopperOre3" parent="MineableNodes" unique_id=1270989794 instance=ExtResource("29_uexkn")]
+position = Vector2(1610.7056, 894.5703)
+data = ExtResource("32_bvke5")
+
+[node name="CopperOre4" parent="MineableNodes" unique_id=340649084 instance=ExtResource("29_uexkn")]
+position = Vector2(1653.1404, 2027.0826)
+data = ExtResource("32_bvke5")

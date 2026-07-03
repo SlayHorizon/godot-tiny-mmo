@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
-[ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/iron_ore.tres" id="3_iron_ore"]
+[ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/metals/iron_ore.tres" id="3_iron_ore"]
 
 [sub_resource type="Resource" id="Drop_iron_ore"]
 script = ExtResource("2_loot")

@@ -59,7 +59,7 @@ warper_id = 1
 target_id = 1
 
 [node name="WarperTavern" parent="." unique_id=1414716116 instance=ExtResource("3_sxpnr")]
-position = Vector2(134.74481, 133.8377)
+position = Vector2(136, 152)
 
 [node name="CharterClerk" parent="." unique_id=1922057613 instance=ExtResource("5_ukoid")]
 position = Vector2(328.8266, 87.64915)

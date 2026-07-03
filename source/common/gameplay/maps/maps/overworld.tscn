@@ -29,7 +29,7 @@
 [ext_resource type="Resource" uid="uid://ci3xj57ys32t7" path="res://source/common/gameplay/maps/instance/instance_collection/guild_outpost_base/guild_outpost.tres" id="26_8a8tv"]
 [ext_resource type="Resource" uid="uid://dfeyr0kdescac" path="res://source/common/gameplay/maps/instance/instance_collection/forest/forest.tres" id="27_iavpv"]
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="28_pmd4b"]
-[ext_resource type="Resource" uid="uid://iuqxmo63ipnn" path="res://source/common/gameplay/maps/instance/instance_collection/fungus_cave/cave_area1.tres" id="29_a6vyc"]
+[ext_resource type="Resource" uid="uid://iuqxmo63ipnn" path="res://source/common/gameplay/maps/instance/instance_collection/fungus_cave/fungus_cave.tres" id="29_a6vyc"]
 [ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="29_chos2"]
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="30_s110y"]
 [ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="31_metnh"]
@@ -42,10 +42,6 @@
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="38_8mfai"]
 [ext_resource type="Resource" uid="uid://dicfbsg4ycah2" path="res://source/common/gameplay/characters/npc/npcs/foreman.tres" id="39_vkg56"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="45_c2jou"]
-[ext_resource type="PackedScene" path="res://source/common/gameplay/crafting/crafting_station.tscn" id="45_or0xh"]
-[ext_resource type="Resource" uid="uid://26gsysjvnvs2" path="res://source/common/gameplay/crafting/resources/anvil.tres" id="46_88r8o"]
-[ext_resource type="Resource" uid="uid://ba6iuomnbqi3s" path="res://source/common/gameplay/crafting/resources/furnace.tres" id="47_2htmb"]
-[ext_resource type="Resource" path="res://source/common/gameplay/crafting/resources/workbench.tres" id="48_ammjv"]
 [ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="52_siw4h"]
 [ext_resource type="SpriteFrames" uid="uid://bm8vwj7ahrduw" path="res://source/common/gameplay/characters/sprite_frames/bandit_sorcerer.tres" id="57_n1veu"]
 [ext_resource type="SpriteFrames" uid="uid://cm2d0tro8bmkh" path="res://source/common/gameplay/characters/sprite_frames/bandit_scout.tres" id="58_rklgs"]
@@ -590,18 +586,6 @@ position = Vector2(2025.5386, 429.87)
 collision_mask = 6
 npc_resource = SubResource("Resource_ofiq8")
 
-[node name="PortalWarper" parent="." unique_id=1414716116 instance=ExtResource("21_81rgi")]
+[node name="PortalWarper" parent="." unique_id=1530705318 instance=ExtResource("21_81rgi")]
 position = Vector2(836.16785, 330.8485)
 warper_id = 21
-
-[node name="CraftingStation" parent="." unique_id=1281574747 instance=ExtResource("45_or0xh")]
-position = Vector2(1246.6517, 734.9737)
-station = ExtResource("46_88r8o")
-
-[node name="CraftingStation2" parent="." unique_id=1344681273 instance=ExtResource("45_or0xh")]
-position = Vector2(1325.7124, 736.1654)
-station = ExtResource("47_2htmb")
-
-[node name="CraftingStation3" parent="." unique_id=1435357278 instance=ExtResource("45_or0xh")]
-position = Vector2(1416.667, 738.7724)
-station = ExtResource("48_ammjv")

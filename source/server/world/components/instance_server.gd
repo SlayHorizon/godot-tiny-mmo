@@ -116,6 +116,14 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		return
 	if interaction_area is Warper and interaction_area.target_instance:
 		var warper: Warper = interaction_area
+		# Level gate, checked at ENTRY so a doomed attempt never starts a dwell (the
+		# client pre-checks the same exported value and skips its fade too).
+		if warper.required_level > 0 and player.player_resource.level < warper.required_level:
+			world_server.chat_service.push_system_to_player(
+				self, player.player_resource.player_id,
+				"Requires level %d." % warper.required_level
+			)
+			return
 		if warper.warp_delay_s > 0.0:
 			_warp_after_dwell(player, warper)
 		else:

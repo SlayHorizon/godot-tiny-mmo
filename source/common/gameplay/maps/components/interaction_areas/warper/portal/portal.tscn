@@ -10,7 +10,9 @@ size = Vector2(40, 40)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_portal"]
 resource_local_to_scene = true
 shader = ExtResource("3_shader")
-shader_parameter/hue_offset = 0.026111104488372838
+shader_parameter/hue_offset = 0.9999465998649596
+shader_parameter/sat_scale = 1.0000124504204388
+shader_parameter/val_scale = 1.00023313179025
 
 [node name="Portal" type="Area2D" unique_id=375786523]
 monitorable = false
@@ -26,6 +28,8 @@ sprite_frames = ExtResource("2_frames")
 autoplay = "default"
 
 [node name="Label" type="Label" parent="." unique_id=1160876326]
+visible = false
+z_index = 10
 offset_left = -60.0
 offset_top = 24.0
 offset_right = 60.0

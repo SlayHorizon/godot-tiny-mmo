@@ -508,6 +508,8 @@ static func on_dungeon_cleared(instance: Node) -> void:
 		# reward lockout, so a reward-locked re-run can still set a faster record.
 		if hard and player != null:
 			LeaderboardService.record_dungeon_clear(player, dungeon_name, seconds)
+		if player != null:
+			DailyQuestService.on_dungeon_clear(player.player_resource)
 		WorldServer.curr.data_push.rpc_id(peer, &"dungeon.cleared", {
 			"dungeon": label,
 			"seconds": seconds,

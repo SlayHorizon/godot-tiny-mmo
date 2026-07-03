@@ -15,9 +15,26 @@
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/gameplay/maps/components/interaction_areas/teleporter/teleporter.tscn" id="11_jbsjy"]
 [ext_resource type="Resource" uid="uid://41yfvobb2tye" path="res://source/common/gameplay/characters/npc/types/fungus_long.tres" id="11_ug5c4"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="12_y53hc"]
-[ext_resource type="Resource" uid="uid://dicfbsg4ycah2" path="res://source/common/gameplay/characters/npc/npcs/foreman.tres" id="13_msvda"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="16_dxrxi"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="17_s14j1"]
 [ext_resource type="Script" uid="uid://cr2yg6sl43by8" path="res://source/common/gameplay/dungeon/dungeon_master.gd" id="17_vnkgl"]
 [ext_resource type="Script" uid="uid://i1qmy82mdrm8" path="res://source/common/gameplay/dungeon/dungeon_resource.gd" id="18_kouuu"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="18_wegif"]
+[ext_resource type="PackedScene" uid="uid://0m5eq6iylq26" path="res://source/common/gameplay/maps/components/interaction_areas/warper/portal/portal.tscn" id="19_pvtw6"]
+[ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="23_n7hu4"]
+[ext_resource type="Resource" uid="uid://d08wf1j2mhlc5" path="res://source/common/gameplay/maps/components/mineable_nodes/copper_vein.tres" id="24_dysl4"]
+
+[sub_resource type="Resource" id="Resource_le077"]
+script = ExtResource("17_s14j1")
+lines = Array[String](["In construction"])
+metadata/_custom_type_script = "uid://cb4eeew5u1da1"
+
+[sub_resource type="Resource" id="Resource_40wvd"]
+script = ExtResource("18_wegif")
+npc_name = "Cave Master"
+greeting = "In construction"
+interactions = Array[ExtResource("16_dxrxi")]([SubResource("Resource_le077")])
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [sub_resource type="Resource" id="Resource_pvtw6"]
 script = ExtResource("18_kouuu")
@@ -29,6 +46,11 @@ metadata/_custom_type_script = "uid://i1qmy82mdrm8"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kouuu"]
 size = Vector2(49, 39)
+
+[sub_resource type="Resource" id="Resource_s1d4l"]
+script = ExtResource("18_wegif")
+npc_name = "Dungeon Fungus"
+metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [node name="FungusCave" type="Node2D" unique_id=425990119 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
@@ -228,12 +250,11 @@ position = Vector2(783, 262)
 target = NodePath("../BarTeleporter")
 
 [node name="ShopSeller" parent="." unique_id=1922057613 instance=ExtResource("12_y53hc")]
-position = Vector2(865, 91)
-npc_resource = ExtResource("13_msvda")
+position = Vector2(872, 88)
+npc_resource = SubResource("Resource_40wvd")
 
 [node name="QuestGiver" parent="." unique_id=1450054875 instance=ExtResource("12_y53hc")]
 position = Vector2(725, 74)
-npc_resource = ExtResource("13_msvda")
 
 [node name="DungeonMaster" type="Area2D" parent="." unique_id=774721028]
 position = Vector2(520, -1236)
@@ -244,3 +265,19 @@ metadata/_custom_type_script = "uid://cr2yg6sl43by8"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DungeonMaster" unique_id=1762807606]
 position = Vector2(-0.5, -9.5)
 shape = SubResource("RectangleShape2D_kouuu")
+
+[node name="NPC" parent="DungeonMaster" unique_id=763121726 instance=ExtResource("12_y53hc")]
+position = Vector2(-3.0127563, -8.832031)
+npc_resource = SubResource("Resource_s1d4l")
+
+[node name="Portal" parent="." unique_id=375786523 instance=ExtResource("19_pvtw6")]
+position = Vector2(-48, -72)
+portal_color = Color(5.7756904e-07, 0.38057977, 0.46695477, 1)
+destination_label = "Castle Garden"
+target_instance = ExtResource("8_f6l70")
+warper_id = 21
+target_id = 21
+
+[node name="MineableNode" parent="." unique_id=1129547794 instance=ExtResource("23_n7hu4")]
+position = Vector2(139.9191, -1114.0907)
+data = ExtResource("24_dysl4")

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="InstanceResource" format=3 uid="uid://iuqxmo63ipnn"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_7bboh"]
+
+[resource]
+script = ExtResource("1_7bboh")
+instance_name = &"FungusArea1"
+map_path = "uid://bet5gn3f3egqg"
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"
+metadata/slug = &"cave_area1"
+metadata/id = 5

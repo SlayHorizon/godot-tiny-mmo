@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://dxdcgb62etvpi"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_j6m1g"]
-[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/ring_focus.png" id="2_c2pit"]
+[ext_resource type="Texture2D" uid="uid://rtuupsobqtbk" path="res://assets/sprites/items/icons/ring_focus.png" id="2_c2pit"]
 [ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_2cm48"]
 [ext_resource type="Resource" uid="uid://cdrd3x2ugfrev" path="res://source/common/gameplay/items/item_slot/slots/ring.tres" id="4_c2pit"]
 

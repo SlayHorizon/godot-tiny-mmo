@@ -3,11 +3,12 @@ extends Resource
 ## One generative blueprint for a daily quest. The board rolls 3 of these per
 ## player per day, scoped to their level range.
 ##
-## Kept deliberately simple: KILL or COLLECT, fixed amount, fixed reward. No
-## per-level scaling — if you want a tougher version, author a separate
-## template at a higher min_level. Keeps numbers readable.
+## Kinds: KILL / COLLECT are targeted (match enemy_type / item); SPAR / DUNGEON /
+## CRAFT are generic action counters (any duel / dungeon clear / craft). Fixed
+## amount + reward, no per-level scaling — author a separate template at a higher
+## min_level for a tougher version. Keeps numbers readable.
 
-enum Kind { KILL, COLLECT }
+enum Kind { KILL, COLLECT, SPAR, DUNGEON, CRAFT }
 
 ## Stable id used to track progress on a player. Two templates must never share
 ## an id; rolling a duplicate would silently overwrite progress in the player's
@@ -36,9 +37,16 @@ func describe() -> String:
 	if not description.is_empty():
 		return description
 	match kind:
-		Kind.KILL: return "Defeat %s" % String(enemy_type).capitalize()
-		Kind.COLLECT: return "Collect %s" % (str(item.item_name) if item else "?")
+		Kind.KILL: return "Defeat %d %s" % [required_amount, String(enemy_type).capitalize()]
+		Kind.COLLECT: return "Collect %d %s" % [required_amount, str(item.item_name) if item else "?"]
+		Kind.SPAR: return "Fight %d arena duel%s" % [required_amount, _plural(required_amount)]
+		Kind.DUNGEON: return "Clear %d dungeon%s" % [required_amount, _plural(required_amount)]
+		Kind.CRAFT: return "Craft %d item%s" % [required_amount, _plural(required_amount)]
 	return "?"
+
+
+static func _plural(n: int) -> String:
+	return "" if n == 1 else "s"
 
 
 ## What the daily's "target_key" is for matching incoming kill/collect events.

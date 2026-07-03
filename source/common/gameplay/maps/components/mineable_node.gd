@@ -187,6 +187,7 @@ func register_gather_hit(player: Player, damage: int, instance: ServerInstance, 
 
 	var ore_id: int = int(data.ore.get_meta(&"id", 0))
 	Inventory.add_item(player.player_resource.inventory, ore_id, amount)
+	DailyQuestService.on_collect(player.player_resource, ore_id, amount)
 
 	# Job XP — iterate the dict so a node can credit multiple jobs at once.
 	var grants: Array = []

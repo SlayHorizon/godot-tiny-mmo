@@ -79,6 +79,12 @@ func _quest_view(resource: PlayerResource, quest_id: int, quest_ref: QuestResour
 	var objectives: Array = []
 	for i: int in quest.objectives.size():
 		var objective: QuestObjective = quest.objectives[i]
+		# A null slot means the objective resource failed to load (usually a broken
+		# ext_resource path after a file move). Skip + warn instead of crashing the
+		# whole list — the warning names the quest so the data is findable.
+		if objective == null:
+			ServerLog.warn("quest.list: quest %d ('%s') objective %d is null (broken resource ref?) — skipped" % [quest_id, quest.quest_name, i])
+			continue
 		objectives.append({
 			"desc": objective.describe(),
 			"count": objective.required_amount if turned_in else QuestService.objective_count(resource, quest_id, i, objective, inventory),

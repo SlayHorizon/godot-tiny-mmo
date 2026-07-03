@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://dcmepqwxbw6da"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_61etr"]
-[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/gear_torso_leather.png" id="2_hb14x"]
+[ext_resource type="Texture2D" uid="uid://djqteudbi7f3m" path="res://assets/sprites/items/icons/gear_iron_torso_light.png" id="2_hb14x"]
 [ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_bxcbi"]
 [ext_resource type="Resource" uid="uid://wi13k03tseev" path="res://source/common/gameplay/items/item_slot/slots/torso.tres" id="4_hb14x"]
 

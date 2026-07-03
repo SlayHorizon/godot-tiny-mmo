@@ -254,7 +254,7 @@ func set_instance_collection() -> void:
 		var instance_resource: InstanceResource = loaded
 		if instance_resource.load_at_startup:
 			charge_instance(instance_resource)
-		if instance_resource.instance_name == "Overworld":
+		if instance_resource.instance_name == "jail":
 			default_instance = instance_resource
 		instance_collection.set(instance_resource.instance_name, instance_resource)
 

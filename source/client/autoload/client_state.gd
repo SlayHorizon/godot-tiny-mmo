@@ -30,6 +30,10 @@ signal input_changed(input_type: InputComponent.InputType)
 
 var local_player: LocalPlayer
 var player_id: int
+## The local character's level, mirrored from progression data (progression.get on
+## spawn/map change + combat.reward pushes — see HUD._apply_progression). Client-side
+## cosmetic checks only (e.g. a gated Portal suppressing its fade); the server enforces.
+var player_level: int = 1
 ## True while a blocking menu is open (NPC dialogue, shop, quest log, inventory).
 ## While set, the local player's movement and actions are suppressed, so you can't
 ## walk or fight with a menu up, and can't keep one open to act from afar. Only the
