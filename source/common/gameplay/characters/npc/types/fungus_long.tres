@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://41yfvobb2tye"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_u7jpx"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_m3cbx"]
+[ext_resource type="SpriteFrames" uid="uid://d1gjn3upkax7n" path="res://source/common/gameplay/characters/sprite_frames/fungus_long.tres" id="3_u7jpx"]
+
+[resource]
+script = ExtResource("2_m3cbx")
+enemy_type = &"fungus_long"
+display_name = "Spory Fungus"
+skin = ExtResource("3_u7jpx")
+max_health = 55.0
+attack_damage = 10.0
+attack_cooldown = 1.8
+move_speed = 80
+distance_to_attack = 16
+max_distance_from_spawn = 200
+detection_radius = 90
+chase_on_area = true
+xp_reward = 3
+respawn_delay = 14.0
+metadata/slug = &"fungus_immature"
+metadata/id = 3
