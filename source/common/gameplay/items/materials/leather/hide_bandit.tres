@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://bis5a66yw1pxp"]
+
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="1_i18wi"]
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_script"]
+
+[resource]
+script = ExtResource("2_script")
+item_name = &"Bandit Hide"
+description = "Tough hide from the hideout's guard hounds. Cures into Bandit Leather."
+metadata/_custom_type_script = "uid://nsr1timk430j"
+metadata/slug = &"hide_bandit"
+metadata/id = 106

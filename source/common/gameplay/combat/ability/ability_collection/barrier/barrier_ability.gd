@@ -24,6 +24,15 @@ extends AbilityResource
 @export var cast_animation: StringName
 
 
+func extra_stat_lines() -> PackedStringArray:
+	var lines: PackedStringArray = PackedStringArray()
+	if block_hp > 0.0:
+		lines.append("blocks %s damage" % fmt_num(block_hp))
+	lines.append("%ss wall" % fmt_num(duration_s))
+	lines.append("%dpx wide" % int(length))
+	return lines
+
+
 func use_ability(user: Entity, direction: Vector2) -> void:
 	if user is Character:
 		(user as Character).play_action_animation(cast_animation)

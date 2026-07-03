@@ -1,0 +1,85 @@
+[gd_resource type="Resource" script_class="CraftingStationResource" format=3 uid="uid://ba6iuomnbqi3s"]
+
+[ext_resource type="Script" uid="uid://btm2w18d3d327" path="res://source/common/gameplay/crafting/crafting_recipe.gd" id="1_recipe"]
+[ext_resource type="Script" uid="uid://dou76lfuf6clf" path="res://source/common/gameplay/crafting/crafting_station_resource.gd" id="2_station"]
+[ext_resource type="Script" uid="uid://cgkqi5dwtob32" path="res://source/common/gameplay/crafting/craft_ingredient.gd" id="3_ingred"]
+[ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/metals/copper_ore.tres" id="4_cop_ore"]
+[ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/metals/iron_ore.tres" id="5_iron_ore"]
+[ext_resource type="Resource" uid="uid://ljjy35qnjuxf" path="res://source/common/gameplay/items/materials/metals/silver_ore.tres" id="6_silver_ore"]
+[ext_resource type="Resource" uid="uid://cxftijx4uktja" path="res://source/common/gameplay/items/materials/metals/gold_ore.tres" id="7_gold_ore"]
+[ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/metals/coal_ore.tres" id="8_coal"]
+[ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/metals/copper_bar.tres" id="9_cop_bar"]
+[ext_resource type="Resource" uid="uid://bkwfaojguoklp" path="res://source/common/gameplay/items/materials/metals/iron_bar.tres" id="10_iron_bar"]
+[ext_resource type="Resource" uid="uid://5m2aby8t4xmu" path="res://source/common/gameplay/items/materials/metals/silver_bar.tres" id="11_silver_bar"]
+[ext_resource type="Resource" uid="uid://c3echj2r4f0vu" path="res://source/common/gameplay/items/materials/metals/gold_bar.tres" id="12_gold_bar"]
+
+[sub_resource type="Resource" id="I_cu_ore"]
+script = ExtResource("3_ingred")
+item = ExtResource("4_cop_ore")
+amount = 4
+
+[sub_resource type="Resource" id="I_cu_coal"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_coal")
+amount = 2
+
+[sub_resource type="Resource" id="R_copper_bar"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("9_cop_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_cu_ore"), SubResource("I_cu_coal")])
+xp_reward = 4
+
+[sub_resource type="Resource" id="I_fe_ore"]
+script = ExtResource("3_ingred")
+item = ExtResource("5_iron_ore")
+amount = 4
+
+[sub_resource type="Resource" id="I_fe_coal"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_coal")
+amount = 2
+
+[sub_resource type="Resource" id="R_iron_bar"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("10_iron_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_fe_ore"), SubResource("I_fe_coal")])
+xp_reward = 8
+
+[sub_resource type="Resource" id="I_ag_ore"]
+script = ExtResource("3_ingred")
+item = ExtResource("6_silver_ore")
+amount = 4
+
+[sub_resource type="Resource" id="I_ag_coal"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_coal")
+amount = 2
+
+[sub_resource type="Resource" id="R_silver_bar"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("11_silver_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_ag_ore"), SubResource("I_ag_coal")])
+required_level = 3
+xp_reward = 12
+
+[sub_resource type="Resource" id="I_au_ore"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_gold_ore")
+amount = 4
+
+[sub_resource type="Resource" id="I_au_coal"]
+script = ExtResource("3_ingred")
+item = ExtResource("8_coal")
+amount = 2
+
+[sub_resource type="Resource" id="R_gold_bar"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("12_gold_bar")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_au_ore"), SubResource("I_au_coal")])
+required_level = 4
+xp_reward = 16
+
+[resource]
+script = ExtResource("2_station")
+station_name = "Furnace"
+recipes = Array[ExtResource("1_recipe")]([SubResource("R_copper_bar"), SubResource("R_iron_bar"), SubResource("R_silver_bar"), SubResource("R_gold_bar")])

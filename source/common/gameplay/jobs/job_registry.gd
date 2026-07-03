@@ -13,8 +13,7 @@ static var JOBS: Dictionary[StringName, JobPerks] = {
 	&"mining": preload("res://source/common/gameplay/jobs/mining.tres"),
 	&"harvesting": preload("res://source/common/gameplay/jobs/harvesting.tres"),
 	&"smithing": preload("res://source/common/gameplay/jobs/smithing.tres"),
-	&"tailoring": preload("res://source/common/gameplay/jobs/tailoring.tres"),
-	&"leatherworking": preload("res://source/common/gameplay/jobs/leatherworking.tres"),
+	&"outfitting": preload("res://source/common/gameplay/jobs/outfitting.tres"),
 }
 
 
