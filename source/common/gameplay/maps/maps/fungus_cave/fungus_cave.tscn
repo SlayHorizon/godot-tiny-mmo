@@ -47,11 +47,6 @@ metadata/_custom_type_script = "uid://i1qmy82mdrm8"
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kouuu"]
 size = Vector2(49, 39)
 
-[sub_resource type="Resource" id="Resource_s1d4l"]
-script = ExtResource("18_wegif")
-npc_name = "Dungeon Fungus"
-metadata/_custom_type_script = "uid://ddps5vwhnf048"
-
 [node name="FungusCave" type="Node2D" unique_id=425990119 node_paths=PackedStringArray("replicated_props_container")]
 y_sort_enabled = true
 script = ExtResource("1_0pyxm")
@@ -266,13 +261,9 @@ metadata/_custom_type_script = "uid://cr2yg6sl43by8"
 position = Vector2(-0.5, -9.5)
 shape = SubResource("RectangleShape2D_kouuu")
 
-[node name="NPC" parent="DungeonMaster" unique_id=763121726 instance=ExtResource("12_y53hc")]
-position = Vector2(-3.0127563, -8.832031)
-npc_resource = SubResource("Resource_s1d4l")
-
 [node name="Portal" parent="." unique_id=375786523 instance=ExtResource("19_pvtw6")]
 position = Vector2(-48, -72)
-portal_color = Color(5.7756904e-07, 0.38057977, 0.46695477, 1)
+portal_color = Color(1.2513996e-06, 0.5407531, 0.6588039, 1)
 destination_label = "Castle Garden"
 target_instance = ExtResource("8_f6l70")
 warper_id = 21

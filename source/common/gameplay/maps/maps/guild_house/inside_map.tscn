@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://d3td3u4jic7j6"]
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_cguwf"]
+[ext_resource type="AudioStream" uid="uid://b7j3i2egxdgkk" path="res://assets/audio/music/shop.ogg" id="2_5dvjx"]
 [ext_resource type="TileSet" uid="uid://cp3aq00j7d6as" path="res://source/common/gameplay/maps/tilesets/buildings_inside_tileset.tres" id="2_xkpnh"]
 [ext_resource type="TileSet" uid="uid://bac235cdm8sb6" path="res://source/common/gameplay/maps/tilesets/buildings_outside_tileset.tres" id="3_cwf2m"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="4_0jqnl"]
@@ -161,6 +162,7 @@ size = Vector2(48, 41.740356)
 [node name="GuildHouseInside" type="Node2D" unique_id=108008123]
 y_sort_enabled = true
 script = ExtResource("1_cguwf")
+music = ExtResource("2_5dvjx")
 metadata/_custom_type_script = "uid://7mbux4mybta0"
 
 [node name="Ground" type="TileMapLayer" parent="." unique_id=760974860]

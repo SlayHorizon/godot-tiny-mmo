@@ -19,17 +19,27 @@ func menu_entry(npc: Node) -> Dictionary:
 		"label": _label_or("Shop"),
 		"icon": _icon_or(""),
 		"menu": &"shop",
-		"arg": {"key": String(owner.giver_key()), "shop": shop},
+		"arg": {"key": String(_shop_key(owner)), "shop": shop},
 	}
 
 
 func register(map: Map, npc: Node) -> void:
 	var owner: NPC = npc as NPC
 	if shop and owner != null:
-		var key: StringName = owner.giver_key()
-		# Shops key on the NPCResource slug, so two NPCs sharing one NPCResource collide and the
-		# last write silently wins — a town's second merchant would mis-resolve. Crafting is immune
-		# (node-name keyed). Warn the author rather than fail silently.
+		var key: StringName = _shop_key(owner)
+		# Two shop NPCs resolving to the same key with different shops collide and the
+		# last write silently wins. Warn the author rather than fail silently.
 		if map.shops.has(key) and map.shops[key] != shop:
-			push_warning("ShopInteraction: duplicate giver_key '%s' — two NPCs share an NPCResource with different shops; one will be unreachable. Give them distinct NPCResource files." % key)
+			push_warning("ShopInteraction: duplicate shop key '%s' — two shop NPCs resolve to the same key; one will be unreachable. Give them distinct NPCResource files or node names." % key)
 		map.shops[key] = shop
+
+
+## The map-unique key this shop registers + authorizes under. Prefer the NPC's
+## giver_key (its NPCResource file slug); fall back to the NPC's node name when
+## the resource is INLINE (no file -> empty slug), so inline shop NPCs get a
+## stable, collision-free key instead of every inline shop sharing "". Node names
+## are unique per scene — the same basis crafting stations key on. menu_entry
+## (client arg) and register (server map) both call this, so they always agree.
+static func _shop_key(owner: NPC) -> StringName:
+	var key: StringName = owner.giver_key()
+	return key if not key.is_empty() else owner.name

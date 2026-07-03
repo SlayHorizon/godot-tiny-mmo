@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_68sb6"]
 [ext_resource type="TileSet" uid="uid://c5xmsv8ol2sya" path="res://source/common/gameplay/maps/tilesets/castle.tres" id="2_ooayc"]
+[ext_resource type="AudioStream" uid="uid://cm5502pmvcc5j" path="res://assets/audio/music/market.ogg" id="2_xjjg4"]
 [ext_resource type="PackedScene" uid="uid://bihlmci6oa6b8" path="res://source/common/gameplay/maps/maps/guild_house/outside_building.tscn" id="3_0cu5u"]
 [ext_resource type="Script" uid="uid://bydt2tg3ki33r" path="res://source/common/gameplay/basing/territory_flag.gd" id="4_pywca"]
 [ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="5_vf1no"]
@@ -358,6 +359,7 @@ animations = [{
 [node name="Hub" type="Node2D" unique_id=701596431]
 y_sort_enabled = true
 script = ExtResource("1_68sb6")
+music = ExtResource("2_xjjg4")
 camera_limit_left = -461
 camera_limit_top = -225
 camera_limit_right = 1237
