@@ -10,31 +10,31 @@
 [ext_resource type="Resource" uid="uid://q4cf80ltq3o7" path="res://source/common/gameplay/items/gears/metal/copper_helmet.tres" id="10_cu_helm"]
 [ext_resource type="Resource" uid="uid://06eftjbn1jrb" path="res://source/common/gameplay/items/gears/metal/copper_chest.tres" id="11_cu_chest"]
 [ext_resource type="Resource" uid="uid://cdya57kta2v38" path="res://source/common/gameplay/items/gears/metal/copper_boots.tres" id="12_cu_boots"]
-[ext_resource type="Resource" uid="uid://bqd4ajt5kmlcr" path="res://source/common/gameplay/items/gears/iron_helmet.tres" id="13_fe_helm"]
-[ext_resource type="Resource" uid="uid://cb6x01k6mbv2x" path="res://source/common/gameplay/items/gears/iron_chest.tres" id="14_fe_chest"]
+[ext_resource type="Resource" uid="uid://bqd4ajt5kmlcr" path="res://source/common/gameplay/items/gears/metal/iron_helmet.tres" id="13_fe_helm"]
+[ext_resource type="Resource" uid="uid://cb6x01k6mbv2x" path="res://source/common/gameplay/items/gears/metal/iron_chest.tres" id="14_fe_chest"]
 [ext_resource type="Resource" uid="uid://gjk4hvjre3ox" path="res://source/common/gameplay/items/gears/metal/iron_boots.tres" id="15_fe_boots"]
-[ext_resource type="Resource" uid="uid://dva5dhreyo7oq" path="res://source/common/gameplay/items/gears/silver_helmet.tres" id="16_ag_helm"]
+[ext_resource type="Resource" uid="uid://dva5dhreyo7oq" path="res://source/common/gameplay/items/gears/metal/silver_helmet.tres" id="16_ag_helm"]
 [ext_resource type="Resource" uid="uid://bx7r2woa6hcaq" path="res://source/common/gameplay/items/gears/metal/silver_chest.tres" id="17_ag_chest"]
 [ext_resource type="Resource" uid="uid://sw7lrve8r4xn" path="res://source/common/gameplay/items/gears/metal/silver_boots.tres" id="18_ag_boots"]
 [ext_resource type="Resource" uid="uid://cfyha2k3evcbd" path="res://source/common/gameplay/items/gears/metal/gold_helmet.tres" id="19_au_helm"]
 [ext_resource type="Resource" uid="uid://cb6byo2q8d4tw" path="res://source/common/gameplay/items/gears/metal/gold_chest.tres" id="20_au_chest"]
-[ext_resource type="Resource" uid="uid://c7y0m821gjf6s" path="res://source/common/gameplay/items/gears/metal/copper_ring.tres" id="30_vit_cu"]
+[ext_resource type="Resource" uid="uid://c7y0m821gjf6s" path="res://source/common/gameplay/items/gears/rings/ring_vital_copper.tres" id="30_vit_cu"]
 [ext_resource type="Resource" uid="uid://bl77gx5cq03da" path="res://source/common/gameplay/items/gears/rings/ring_vital_iron.tres" id="31_vit_fe"]
-[ext_resource type="Resource" uid="uid://ck6cv62s6h7vq" path="res://source/common/gameplay/items/gears/vital_ring.tres" id="32_vit_ag"]
+[ext_resource type="Resource" uid="uid://ck6cv62s6h7vq" path="res://source/common/gameplay/items/gears/rings/ring_vital_silver.tres" id="32_vit_ag"]
 [ext_resource type="Resource" uid="uid://dklvf1ocerpct" path="res://source/common/gameplay/items/gears/rings/ring_vital_gold.tres" id="33_vit_au"]
-[ext_resource type="Resource" uid="uid://q48c6nmayuqg" path="res://source/common/gameplay/items/gears/mana_ring.tres" id="34_foc_cu"]
+[ext_resource type="Resource" uid="uid://q48c6nmayuqg" path="res://source/common/gameplay/items/gears/rings/ring_focus_copper.tres" id="34_foc_cu"]
 [ext_resource type="Resource" uid="uid://cedqcft2ex86n" path="res://source/common/gameplay/items/gears/rings/ring_focus_iron.tres" id="35_foc_fe"]
-[ext_resource type="Resource" uid="uid://dxdcgb62etvpi" path="res://source/common/gameplay/items/gears/focus_ring.tres" id="36_foc_ag"]
+[ext_resource type="Resource" uid="uid://dxdcgb62etvpi" path="res://source/common/gameplay/items/gears/rings/ring_focus_silver.tres" id="36_foc_ag"]
 [ext_resource type="Resource" uid="uid://cixc0iyg4fjwl" path="res://source/common/gameplay/items/gears/rings/ring_focus_gold.tres" id="37_foc_au"]
 [ext_resource type="Resource" uid="uid://dg5l3afqqf4kk" path="res://source/common/gameplay/items/gears/rings/ring_agile_copper.tres" id="38_agi_cu"]
-[ext_resource type="Resource" uid="uid://damsgq1j2pyyy" path="res://source/common/gameplay/items/gears/rings/agile_ring.tres" id="39_agi_fe"]
+[ext_resource type="Resource" uid="uid://damsgq1j2pyyy" path="res://source/common/gameplay/items/gears/rings/ring_agile_iron.tres" id="39_agi_fe"]
 [ext_resource type="Resource" uid="uid://crli8f7qamv4y" path="res://source/common/gameplay/items/gears/rings/ring_agile_silver.tres" id="40_agi_ag"]
 [ext_resource type="Resource" uid="uid://bauigep73avj7" path="res://source/common/gameplay/items/gears/rings/ring_agile_gold.tres" id="41_agi_au"]
 [ext_resource type="Resource" uid="uid://cn2adklrwpt54" path="res://source/common/gameplay/items/gears/rings/ring_guard_copper.tres" id="42_gua_cu"]
 [ext_resource type="Resource" uid="uid://dpp7igwa0g5tq" path="res://source/common/gameplay/items/gears/rings/ring_guard_iron.tres" id="43_gua_fe"]
 [ext_resource type="Resource" uid="uid://dhip37ume8mm6" path="res://source/common/gameplay/items/gears/rings/ring_guard_silver.tres" id="44_gua_ag"]
 [ext_resource type="Resource" uid="uid://b01u4m663krn6" path="res://source/common/gameplay/items/gears/rings/ring_guard_gold.tres" id="45_gua_au"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/gears/metal/gold_boots.tres" id="46_au_boots"]
+[ext_resource type="Resource" uid="uid://dut1iwma7xwhi" path="res://source/common/gameplay/items/gears/metal/gold_boots.tres" id="46_au_boots"]
 
 [sub_resource type="Resource" id="I_cu2a"]
 script = ExtResource("3_ingred")
@@ -162,6 +162,18 @@ output_item = ExtResource("20_au_chest")
 ingredients = Array[ExtResource("3_ingred")]([SubResource("I_au5")])
 required_level = 4
 xp_reward = 55
+
+[sub_resource type="Resource" id="I_au2b"]
+script = ExtResource("3_ingred")
+item = ExtResource("7_au")
+amount = 2
+
+[sub_resource type="Resource" id="R_au_boots"]
+script = ExtResource("1_recipe")
+output_item = ExtResource("46_au_boots")
+ingredients = Array[ExtResource("3_ingred")]([SubResource("I_au2b")])
+required_level = 4
+xp_reward = 40
 
 [sub_resource type="Resource" id="I_r_cu_a"]
 script = ExtResource("3_ingred")
@@ -395,19 +407,8 @@ ingredients = Array[ExtResource("3_ingred")]([SubResource("I_up_gua_au_ring"), S
 required_level = 4
 xp_reward = 36
 
-[sub_resource type="Resource" id="I_au2b"]
-script = ExtResource("3_ingred")
-item = ExtResource("7_au")
-amount = 2
-
-[sub_resource type="Resource" id="R_au_boots"]
-script = ExtResource("1_recipe")
-output_item = ExtResource("46_au_boots")
-ingredients = Array[ExtResource("3_ingred")]([SubResource("I_au2b")])
-required_level = 4
-xp_reward = 40
-
 [resource]
 script = ExtResource("2_station")
 station_name = "Anvil"
+craft_fee = 5
 recipes = Array[ExtResource("1_recipe")]([SubResource("R_cu_helm"), SubResource("R_cu_chest"), SubResource("R_cu_boots"), SubResource("R_fe_helm"), SubResource("R_fe_chest"), SubResource("R_fe_boots"), SubResource("R_ag_helm"), SubResource("R_ag_chest"), SubResource("R_ag_boots"), SubResource("R_au_helm"), SubResource("R_au_chest"), SubResource("R_au_boots"), SubResource("R_vit_cu"), SubResource("R_foc_cu"), SubResource("R_agi_cu"), SubResource("R_gua_cu"), SubResource("R_vit_fe"), SubResource("R_foc_fe"), SubResource("R_agi_fe"), SubResource("R_gua_fe"), SubResource("R_vit_ag"), SubResource("R_foc_ag"), SubResource("R_agi_ag"), SubResource("R_gua_ag"), SubResource("R_vit_au"), SubResource("R_foc_au"), SubResource("R_agi_au"), SubResource("R_gua_au")])

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://b845e8o11p6lo"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_roq6x"]
-[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="2_ivorv"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/ring_phantom.png" id="2_ivorv"]
 [ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_egjoi"]
 [ext_resource type="Resource" uid="uid://cdrd3x2ugfrev" path="res://source/common/gameplay/items/item_slot/slots/ring.tres" id="4_ivorv"]
 
@@ -22,6 +22,7 @@ slot = ExtResource("4_ivorv")
 required_level = 15
 base_modifiers = Array[ExtResource("1_roq6x")]([SubResource("Resource_egjoi"), SubResource("Resource_51dxl")])
 item_name = &"Phantom Ring"
+item_icon = ExtResource("2_ivorv")
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"ring_phantom"
 metadata/id = 152

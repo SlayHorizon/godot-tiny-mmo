@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://c3nblwxqa8jxn"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_dat0y"]
-[ext_resource type="Texture2D" uid="uid://c5i67th8u1h7l" path="res://assets/sprites/items/icons/Icon222.png" id="2_2058t"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/gear_boots_leather.png" id="2_2058t"]
 [ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_uuvsg"]
 [ext_resource type="Resource" uid="uid://dn7q51odqrqp5" path="res://source/common/gameplay/items/item_slot/slots/boot.tres" id="4_uuvsg"]
 

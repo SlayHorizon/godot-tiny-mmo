@@ -31,6 +31,12 @@ func data_request_handler(
 	if level < recipe.required_level:
 		return {"ok": false, "reason": "level", "required_level": recipe.required_level}
 
+	# Station fee: a flat per-craft gold sink (docs/crafting.md economy guards).
+	var fee: int = station.craft_fee
+	var gold_id: int = Economy.gold_id()
+	if fee > 0 and Inventory.count(inventory, gold_id) < fee:
+		return {"ok": false, "reason": "gold", "fee": fee}
+
 	# Verify every ingredient is available before consuming any (atomic craft).
 	for ingredient: CraftIngredient in recipe.ingredients:
 		if ingredient == null or ingredient.item == null:
@@ -39,12 +45,14 @@ func data_request_handler(
 		if Inventory.count(inventory, ing_id) < ingredient.amount:
 			return {"ok": false, "reason": "ingredients"}
 
-	# Consume ingredients.
+	# Consume ingredients, then the station fee.
 	for ingredient: CraftIngredient in recipe.ingredients:
 		if ingredient == null or ingredient.item == null:
 			continue
 		var ing_id: int = int(ingredient.item.get_meta(&"id", 0))
 		Inventory.remove_amount_by_id(inventory, ing_id, ingredient.amount)
+	if fee > 0:
+		Inventory.remove_amount_by_id(inventory, gold_id, fee)
 
 	# Grant the output (one at a time so stackables merge / non-stackables get slots).
 	var output_id: int = int(recipe.output_item.get_meta(&"id", 0))

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://1pvd48lvpyap"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
-[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/gear_helmet_leather.png" id="2_icon"]
 [ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_gear"]
 [ext_resource type="Resource" uid="uid://dnbj6tmyghec4" path="res://source/common/gameplay/items/item_slot/slots/helmet.tres" id="4_slot"]
 
@@ -22,6 +22,7 @@ script = ExtResource("3_gear")
 slot = ExtResource("4_slot")
 base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_armor"), SubResource("Mod_speed")])
 item_name = &"Leather Cap"
+item_icon = ExtResource("2_icon")
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"leather_cap"
 metadata/id = 120

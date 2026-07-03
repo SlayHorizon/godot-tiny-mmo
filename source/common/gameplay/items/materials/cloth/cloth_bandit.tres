@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_script")
 item_name = &"Bandit Cloth"
+item_icon = ExtResource("1_v8rd0")
 description = "Sturdy weave cut from hideout raiders. Heretics dress for war. Woven into cloth garments."
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"cloth_bandit"

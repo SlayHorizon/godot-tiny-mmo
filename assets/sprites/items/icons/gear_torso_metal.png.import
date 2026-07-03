@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bd0ohyvo6looc"
-path="res://.godot/imported/Icon202.png-6b124955a40cb0efc93e31afe5255bb9.ctex"
+uid="uid://ct18drjt45ivs"
+path="res://.godot/imported/gear_torso_metal.png-a6ba5c59eca98b93130792c81c171501.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/items/icons/Icon202.png"
-dest_files=["res://.godot/imported/Icon202.png-6b124955a40cb0efc93e31afe5255bb9.ctex"]
+source_file="res://assets/sprites/items/icons/gear_torso_metal.png"
+dest_files=["res://.godot/imported/gear_torso_metal.png-a6ba5c59eca98b93130792c81c171501.ctex"]
 
 [params]
 

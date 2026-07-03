@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_script")
 item_name = &"Sewer Hide"
+item_icon = ExtResource("1_57ub3")
 description = "Slick scaled hide from sewer vermin. Cures into Sewer Leather."
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"hide_sewer"

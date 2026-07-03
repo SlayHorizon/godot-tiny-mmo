@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_script")
 item_name = &"Cave Leather"
+item_icon = ExtResource("1_qcvfr")
 description = "Cured cave leather, tough and pliable. Used to craft leather armor."
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"leather_cave"

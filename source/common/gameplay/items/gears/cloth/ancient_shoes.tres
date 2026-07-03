@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GearItem" format=3]
 
 [ext_resource type="Script" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
-[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/Icon271.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/gear_boots_cloth.png" id="2_icon"]
 [ext_resource type="Script" path="res://source/common/gameplay/items/gear_item.gd" id="3_gear"]
 [ext_resource type="Resource" path="res://source/common/gameplay/items/item_slot/slots/boot.tres" id="4_slot"]
 

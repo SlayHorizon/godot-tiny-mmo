@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_script")
 item_name = &"Forest Hide"
+item_icon = ExtResource("1_qynb8")
 description = "Rough hide from the forest's corrupted beasts. Cures into Forest Leather."
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"hide_forest"

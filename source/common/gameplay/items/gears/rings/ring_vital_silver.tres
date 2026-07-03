@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="GearItem" format=3 uid="uid://ck6cv62s6h7vq"]
 
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_ws5w6"]
-[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="2_oww5n"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/ring_vital.png" id="2_oww5n"]
 [ext_resource type="Script" uid="uid://dnmtdktay2df6" path="res://source/common/gameplay/items/gear_item.gd" id="3_6ykrd"]
 [ext_resource type="Resource" uid="uid://cdrd3x2ugfrev" path="res://source/common/gameplay/items/item_slot/slots/ring.tres" id="4_ob8vn"]
 
@@ -16,6 +16,7 @@ slot = ExtResource("4_ob8vn")
 required_level = 10
 base_modifiers = Array[ExtResource("1_ws5w6")]([SubResource("Resource_p3pyk")])
 item_name = &"Silver Vital Ring"
+item_icon = ExtResource("2_oww5n")
 metadata/_custom_type_script = "uid://dnmtdktay2df6"
 metadata/slug = &"ring_vital_silver"
 metadata/id = 154

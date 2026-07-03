@@ -82,4 +82,5 @@ xp_reward = 16
 [resource]
 script = ExtResource("2_station")
 station_name = "Furnace"
+craft_fee = 5
 recipes = Array[ExtResource("1_recipe")]([SubResource("R_copper_bar"), SubResource("R_iron_bar"), SubResource("R_silver_bar"), SubResource("R_gold_bar")])

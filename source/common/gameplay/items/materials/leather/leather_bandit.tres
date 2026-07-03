@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_script")
 item_name = &"Bandit Leather"
+item_icon = ExtResource("1_yfy3q")
 description = "Cured hound leather, hard-wearing. Used to craft leather armor."
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"leather_bandit"
