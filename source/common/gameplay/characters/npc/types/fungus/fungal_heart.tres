@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/leather/hide_cave.tres" id="3_hide"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/characters/sprite_frames/fungus_old.tres" id="4_skin"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/sword/sword_spore.item.tres" id="5_sword"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/hammer/hammer_spore.item.tres" id="6_hammer"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/wand/wand_spore.item.tres" id="7_wand"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/bow/spore_bow.item.tres" id="8_bow"]
+
+[sub_resource type="Resource" id="Drop_hide"]
+script = ExtResource("2_loot")
+item = ExtResource("3_hide")
+min_amount = 3
+max_amount = 3
+
+[sub_resource type="Resource" id="Drop_sword"]
+script = ExtResource("2_loot")
+item = ExtResource("5_sword")
+chance = 0.22
+
+[sub_resource type="Resource" id="Drop_hammer"]
+script = ExtResource("2_loot")
+item = ExtResource("6_hammer")
+chance = 0.22
+
+[sub_resource type="Resource" id="Drop_wand"]
+script = ExtResource("2_loot")
+item = ExtResource("7_wand")
+chance = 0.22
+
+[sub_resource type="Resource" id="Drop_bow"]
+script = ExtResource("2_loot")
+item = ExtResource("8_bow")
+chance = 0.22
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"fungal_heart"
+display_name = "The Fungal Heart"
+skin = ExtResource("4_skin")
+visual_scale = 1.5
+is_boss = true
+max_health = 550.0
+attack_damage = 16.0
+attack_cooldown = 1.5
+move_speed = 60
+distance_to_attack = 24
+detection_radius = 170
+leashes = false
+chase_on_area = true
+xp_reward = 200
+respawns = false
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_hide"), SubResource("Drop_sword"), SubResource("Drop_hammer"), SubResource("Drop_wand"), SubResource("Drop_bow")])
+slam_radius = 110.0
+slam_windup_s = 1.1
+slam_damage = 45.0
+slam_interval_s = 6.5
+enraged_slam_interval_s = 3.8
+add_enemy_slug = &"spore_swarm"
+add_count = 3
+add_spread_px = 56.0
+enrage_speed_mult = 1.25

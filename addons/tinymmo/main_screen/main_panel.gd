@@ -163,6 +163,8 @@ func generate_content_index(
 		if not resource:
 			continue
 
+		warn_quest_prereq_cycles(resource, resource_path)
+
 		var slug: StringName = resource_path.get_file().get_basename()
 		if seen_slugs.has(slug):
 			print_plugin("Skipping '%s' — slug '%s' already indexed (duplicate basename)." % [resource_path, slug])
@@ -225,6 +227,26 @@ func get_resource_file_paths(
 	
 	dir.list_dir_end()
 	return file_paths
+
+
+## Near-free prereq authoring guard, run during Generate since it already loads
+## every resource: flags a quest that lists itself as a prerequisite, or whose
+## immediate prerequisite lists it back (a one-level mutual lock — both quests
+## would be permanently hidden). Deliberately NOT an arbitrary-depth cycle
+## search; longer cycles are a designer-error case not worth the machinery.
+func warn_quest_prereq_cycles(resource: Resource, resource_path: String) -> void:
+	var quest: QuestResource = resource as QuestResource
+	if quest == null:
+		return
+	for prereq: QuestResource in quest.requires_quests:
+		if prereq == null:
+			continue
+		if prereq == quest or prereq.resource_path == resource_path:
+			print_plugin("[color=red]PREREQ CYCLE[/color] — quest '%s' requires ITSELF (%s)." % [quest.quest_name, resource_path])
+			continue
+		for back: QuestResource in prereq.requires_quests:
+			if back != null and (back == quest or back.resource_path == resource_path):
+				print_plugin("[color=red]PREREQ CYCLE[/color] — quests '%s' and '%s' require each other; both will be hidden forever (%s)." % [quest.quest_name, prereq.quest_name, resource_path])
 
 
 func get_slug_id(content_index: ContentIndex, slug: StringName) -> int:

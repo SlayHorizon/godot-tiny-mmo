@@ -149,6 +149,11 @@ static func apply_turn_in(
 		})
 		WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {"messages": quest_messages})
 
+	if instance != null:
+		# Unlock toasts for quests this turn-in was the last gate of. Passes the
+		# PRE-turn-in level so quests unlocked by the XP's level-up are left to
+		# on_levels_gained below (the two paths partition, never double-toast).
+		LevelMilestoneService.on_quest_turned_in(resource, quest_id, level_before, instance)
 	if int(progress.get("levels_gained", 0)) > 0 and instance != null:
 		LevelMilestoneService.on_levels_gained(
 			resource, level_before, int(progress.get("level", 1)), instance

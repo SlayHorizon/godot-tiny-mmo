@@ -9,7 +9,6 @@ script = ExtResource("1_quest")
 quest_name = "The Duel Master Calls"
 description = "Find the Duel Master at the arena. He's heard you can fight, so go show him."
 min_level = 5
-turn_in_giver_id = 8
 reward_xp = 40
 grant_title = "Promising Brawler"
 metadata/_custom_type_script = "uid://c5p53get4ikl6"

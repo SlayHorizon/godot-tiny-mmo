@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://tr5yubwcqy8"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_edovy"]
+[ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="2_55rrj"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="3_kmpfu"]
+[ext_resource type="SpriteFrames" uid="uid://b3kb4pkejph4" path="res://source/common/gameplay/characters/sprite_frames/goblin.tres" id="4_4il4u"]
+
+[sub_resource type="Resource" id="Drop_cloth"]
+script = ExtResource("1_edovy")
+item = ExtResource("2_55rrj")
+max_amount = 2
+chance = 0.25
+
+[resource]
+script = ExtResource("3_kmpfu")
+enemy_type = &"goblin_cutter"
+display_name = "Goblin Cutter"
+skin = ExtResource("4_4il4u")
+max_health = 45.0
+attack_damage = 7.0
+attack_cooldown = 1.2
+lunge_range = 130.0
+lunge_radius = 22.0
+lunge_cooldown = 6.0
+move_speed = 75
+distance_to_attack = 18
+max_distance_from_spawn = 250
+detection_radius = 100
+chase_on_area = true
+xp_reward = 12
+respawn_delay = 12.0
+loot = Array[ExtResource("1_edovy")]([SubResource("Drop_cloth")])
+metadata/slug = &"goblin_cutter"
+metadata/id = 23

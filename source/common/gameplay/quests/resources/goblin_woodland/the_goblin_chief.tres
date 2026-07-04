@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://8ebftksx70hd"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_8vmji"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_xnv0w"]
+[ext_resource type="Resource" uid="uid://xm2pimpk5jg6" path="res://source/common/gameplay/quests/resources/goblin_woodland/break_the_warren_guard.tres" id="3_ivwvu"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_smysb"]
+
+[sub_resource type="Resource" id="Obj_kill_chief"]
+script = ExtResource("1_8vmji")
+enemy_type = &"goblin_chief"
+
+[resource]
+script = ExtResource("2_xnv0w")
+quest_name = "The Goblin Chief"
+description = "Kill the goblin chief inside the warren. Cut off the head and the raids stop."
+objectives = Array[ExtResource("1_8vmji")]([SubResource("Obj_kill_chief")])
+min_level = 4
+unlock_message = "[Warden Bren] The chief is holed up deep in the warren. Come see me when you are ready."
+requires_quests = Array[ExtResource("2_xnv0w")]([ExtResource("3_ivwvu")])
+reward_xp = 160
+reward_gold = 12
+grant_title = "Warrenbreaker"
+metadata/slug = &"the_goblin_chief"
+metadata/id = 32

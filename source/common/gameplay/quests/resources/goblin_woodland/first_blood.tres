@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://dvqp5tuvk32sk"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_xp0uk"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_oa2gf"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_rewro"]
+
+[sub_resource type="Resource" id="Obj_kill_runt"]
+script = ExtResource("1_xp0uk")
+enemy_type = &"goblin_runt"
+required_amount = 3
+
+[resource]
+script = ExtResource("2_oa2gf")
+quest_name = "First Blood"
+description = "Put down 3 goblin runts around the meadow. They are bold lately, and bold runts become bold raiders."
+objectives = Array[ExtResource("1_xp0uk")]([SubResource("Obj_kill_runt")])
+reward_xp = 50
+reward_gold = 2
+metadata/slug = &"first_blood"
+metadata/id = 31

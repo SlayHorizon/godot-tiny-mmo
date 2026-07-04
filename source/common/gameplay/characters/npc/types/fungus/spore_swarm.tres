@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/cloth/cloth_cave.tres" id="3_cloth"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/characters/sprite_frames/fungus_immature.tres" id="4_skin"]
+
+[sub_resource type="Resource" id="Drop_cloth"]
+script = ExtResource("2_loot")
+item = ExtResource("3_cloth")
+chance = 0.1
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"spore_swarm"
+display_name = "Spore Swarm"
+skin = ExtResource("4_skin")
+visual_scale = 0.7
+max_health = 22.0
+attack_damage = 5.0
+attack_cooldown = 1.1
+move_speed = 85
+distance_to_attack = 16
+max_distance_from_spawn = 260
+detection_radius = 150
+chase_on_area = true
+xp_reward = 4
+respawn_delay = 8.0
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_cloth")])

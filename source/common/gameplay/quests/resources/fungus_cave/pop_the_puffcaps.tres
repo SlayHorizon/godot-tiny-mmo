@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://bx2tdoowtro4c"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Resource" uid="uid://byuel0j1g0npv" path="res://source/common/gameplay/quests/resources/fungus_cave/spores_in_the_dark.tres" id="3_q1"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_8u5em"]
+
+[sub_resource type="Resource" id="Obj_kill_puffcap"]
+script = ExtResource("1_obj")
+enemy_type = &"puffcap"
+required_amount = 5
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Pop the Puffcaps"
+description = "Pop 5 puffcaps before they seed the walls. Mind the spore bolts, they sting from far off."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_puffcap")])
+min_level = 5
+requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q1")])
+reward_xp = 180
+reward_gold = 7

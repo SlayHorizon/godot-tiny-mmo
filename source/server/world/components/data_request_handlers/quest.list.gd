@@ -38,6 +38,11 @@ func data_request_handler(
 			for quest: QuestResource in giver.get(&"quests"):
 				if quest:
 					var qid: int = int(quest.get_meta(&"id", 0))
+					# Prereq-locked quests are INCLUDED and render locked with
+					# their unlock conditions (owner call after playtest
+					# 2026-07-04 — hidden chain quests popped invisibly and
+					# players could miss that a follow-up existed). Accepting
+					# stays hard-gated server-side in quest.accept.
 					resources_by_id[qid] = quest
 					quest_ids.append(qid)
 			# Pending turn-ins: active quests whose turn_in_giver_id points at
@@ -110,4 +115,38 @@ func _quest_view(resource: PlayerResource, quest_id: int, quest_ref: QuestResour
 		# 0 = ALL objectives required, 1 = ANY single objective is enough. Lets
 		# the client tweak the objective list label ("Speak with any of these…").
 		"completion": int(quest.completion),
+		# Prerequisite lock info: true once accepted/turned in (a chain can't
+		# retroactively lock a quest you hold), else the live gate check.
+		"meets_prereq": resource.quest_state(quest_id) != &"" or quest.prerequisites_met(resource),
+		# Names of the still-unturned-in prerequisite quests, for the locked-row
+		# condition line. Empty when met (or already accepted).
+		"prereq_names": _unmet_prereq_names(resource, quest),
+		# 0 = ALL prereqs required, 1 = ANY one is enough ("one of several paths").
+		"prereq_mode": int(quest.requires_mode),
+		# Item rewards as [{name, amount}] so the client reward line can show
+		# gear/material grants, not just XP/gold.
+		"reward_items": _reward_item_views(quest),
 	}
+
+
+func _reward_item_views(quest: QuestResource) -> Array:
+	var out: Array = []
+	for reward: QuestReward in quest.reward_items:
+		if reward and reward.item:
+			out.append({"name": str(reward.item.item_name), "amount": reward.amount})
+	return out
+
+
+## Quest-name list of the prerequisites [param resource] hasn't turned in yet.
+## Empty for anything already accepted — the lock only applies pre-accept.
+func _unmet_prereq_names(resource: PlayerResource, quest: QuestResource) -> Array:
+	if resource.quest_state(int(quest.get_meta(&"id", 0))) != &"":
+		return []
+	var names: Array = []
+	for prereq: QuestResource in quest.requires_quests:
+		if prereq == null:
+			continue
+		var prereq_id: int = int(prereq.get_meta(&"id", 0))
+		if prereq_id <= 0 or resource.quest_state(prereq_id) != &"turned_in":
+			names.append(str(prereq.quest_name))
+	return names

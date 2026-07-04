@@ -16,7 +16,6 @@ quest_name = "A Sealed Letter"
 description = "The tailor hands you a wax-sealed letter. \"Take it to the cartographer in the next town. Be quick, and don't open it.\""
 objectives = Array[ExtResource("1_obj")]([SubResource("Obj_have_letter")])
 min_level = 3
-turn_in_giver_id = 2
 grant_on_accept = ExtResource("2_letter")
 reward_xp = 80
 reward_gold = 3

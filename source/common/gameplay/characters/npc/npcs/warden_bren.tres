@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://bdg1wvajij76o"]
+
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="1_npcres"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="2_npcint"]
+[ext_resource type="Resource" uid="uid://dvqp5tuvk32sk" path="res://source/common/gameplay/quests/resources/goblin_woodland/first_blood.tres" id="3_bq5pt"]
+[ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="3_quest"]
+[ext_resource type="Resource" uid="uid://d37pro3e87wj5" path="res://source/common/gameplay/quests/resources/goblin_woodland/clear_the_path.tres" id="4_4ovsd"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_dialogue"]
+[ext_resource type="Resource" uid="uid://e8ogym77gl1j" path="res://source/common/gameplay/quests/resources/goblin_woodland/cloth_for_the_warden.tres" id="5_1nhgx"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="5_questres"]
+[ext_resource type="Resource" uid="uid://xm2pimpk5jg6" path="res://source/common/gameplay/quests/resources/goblin_woodland/break_the_warren_guard.tres" id="6_7qe6i"]
+[ext_resource type="Resource" uid="uid://8ebftksx70hd" path="res://source/common/gameplay/quests/resources/goblin_woodland/the_goblin_chief.tres" id="7_iehm4"]
+[ext_resource type="SpriteFrames" uid="uid://bfer1b8yk1buk" path="res://source/common/gameplay/characters/sprite_frames/royal_archer.tres" id="11_skin"]
+
+[sub_resource type="Resource" id="QuestInteraction_bren"]
+script = ExtResource("3_quest")
+quests = Array[ExtResource("5_questres")]([ExtResource("3_bq5pt"), ExtResource("4_4ovsd"), ExtResource("5_1nhgx"), ExtResource("6_7qe6i"), ExtResource("7_iehm4")])
+
+[sub_resource type="Resource" id="Dialogue_road_ahead"]
+script = ExtResource("4_dialogue")
+lines = Array[String](["The woodland is my post, and it ends at the warren.", "Past the hub there is a portal down into the fungus cave. The Hollow touched that place, and it glows where it should not.", "Finish your business with the goblins first. Then take a torch and go see for yourself."])
+label_override = "Ask about the road ahead"
+
+[resource]
+script = ExtResource("1_npcres")
+npc_name = "Warden Bren"
+skin = ExtResource("11_skin")
+greeting = "Hold there. The meadow past this gate is crawling with goblins. If you can swing that thing on your back, I have work for you."
+interactions = Array[ExtResource("2_npcint")]([SubResource("QuestInteraction_bren"), SubResource("Dialogue_road_ahead")])

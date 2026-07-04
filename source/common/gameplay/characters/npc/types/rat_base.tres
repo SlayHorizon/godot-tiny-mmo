@@ -20,4 +20,4 @@ chase_on_area = true
 xp_reward = 6
 respawn_delay = 10.0
 metadata/slug = &"rat_base"
-metadata/id = 10
+metadata/id = 27

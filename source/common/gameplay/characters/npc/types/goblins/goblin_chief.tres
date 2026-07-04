@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://deo2ei3h78ouy"]
+
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_4uukv"]
+[ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="2_101c6"]
+[ext_resource type="Resource" uid="uid://bqwbdldhjhxcq" path="res://source/common/gameplay/items/weapons/sword/sword_bone.item.tres" id="3_w5dmq"]
+[ext_resource type="Resource" uid="uid://40jxvc14a1wh" path="res://source/common/gameplay/items/weapons/hammer/hammer_bone.item.tres" id="4_ef2se"]
+[ext_resource type="Resource" uid="uid://dmwwy1l2pyvar" path="res://source/common/gameplay/items/weapons/wand/wand_bone.item.tres" id="5_iaetd"]
+[ext_resource type="Resource" uid="uid://cegn1bg7mq07w" path="res://source/common/gameplay/items/weapons/book/book_bone.item.tres" id="6_6qodo"]
+[ext_resource type="Resource" uid="uid://gq7qvwoyrijf" path="res://source/common/gameplay/items/weapons/bow/bone_bow.item.tres" id="7_ylanq"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="8_tvh5y"]
+[ext_resource type="SpriteFrames" uid="uid://b3kb4pkejph4" path="res://source/common/gameplay/characters/sprite_frames/goblin.tres" id="9_61lu3"]
+
+[sub_resource type="Resource" id="Drop_cloth"]
+script = ExtResource("1_4uukv")
+item = ExtResource("2_101c6")
+min_amount = 3
+max_amount = 3
+
+[sub_resource type="Resource" id="Drop_sword"]
+script = ExtResource("1_4uukv")
+item = ExtResource("3_w5dmq")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_hammer"]
+script = ExtResource("1_4uukv")
+item = ExtResource("4_ef2se")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_wand"]
+script = ExtResource("1_4uukv")
+item = ExtResource("5_iaetd")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_book"]
+script = ExtResource("1_4uukv")
+item = ExtResource("6_6qodo")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_bow"]
+script = ExtResource("1_4uukv")
+item = ExtResource("7_ylanq")
+chance = 0.2
+
+[resource]
+script = ExtResource("8_tvh5y")
+enemy_type = &"goblin_chief"
+display_name = "Goblin Chief"
+skin = ExtResource("9_61lu3")
+visual_scale = 1.4
+is_boss = true
+max_health = 320.0
+attack_damage = 12.0
+move_speed = 65
+distance_to_attack = 22
+leashes = false
+detection_radius = 160
+chase_on_area = true
+xp_reward = 120
+respawns = false
+loot = Array[ExtResource("1_4uukv")]([SubResource("Drop_cloth"), SubResource("Drop_sword"), SubResource("Drop_hammer"), SubResource("Drop_wand"), SubResource("Drop_book"), SubResource("Drop_bow")])
+slam_radius = 100.0
+slam_windup_s = 1.2
+slam_damage = 30.0
+slam_interval_s = 7.0
+enraged_slam_interval_s = 4.0
+add_enemy_slug = &"goblin_runt"
+metadata/slug = &"goblin_chief"
+metadata/id = 22

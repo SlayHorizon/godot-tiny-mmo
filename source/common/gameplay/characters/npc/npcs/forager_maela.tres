@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://bd8w3ab76gouv"]
+
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="1_npcres"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="2_npcint"]
+[ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="3_quest"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_dialogue"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="5_questres"]
+[ext_resource type="Resource" uid="uid://byuel0j1g0npv" path="res://source/common/gameplay/quests/resources/fungus_cave/spores_in_the_dark.tres" id="6_q1"]
+[ext_resource type="Resource" uid="uid://bx2tdoowtro4c" path="res://source/common/gameplay/quests/resources/fungus_cave/pop_the_puffcaps.tres" id="7_q2"]
+[ext_resource type="Resource" uid="uid://6x8bd0w55lsk" path="res://source/common/gameplay/quests/resources/fungus_cave/cloth_from_the_caps.tres" id="8_q3"]
+[ext_resource type="Resource" uid="uid://0wt22r5mbmd" path="res://source/common/gameplay/quests/resources/fungus_cave/break_the_myconid_line.tres" id="9_q4"]
+[ext_resource type="Resource" uid="uid://b500o70a6rn7w" path="res://source/common/gameplay/quests/resources/fungus_cave/the_fungal_heart.tres" id="10_q5"]
+[ext_resource type="SpriteFrames" uid="uid://dkeeft051qhl3" path="res://source/common/gameplay/characters/sprite_frames/rogue.tres" id="11_skin"]
+
+[sub_resource type="Resource" id="QuestInteraction_maela"]
+script = ExtResource("3_quest")
+quests = Array[ExtResource("5_questres")]([ExtResource("6_q1"), ExtResource("7_q2"), ExtResource("8_q3"), ExtResource("9_q4"), ExtResource("10_q5")])
+
+[sub_resource type="Resource" id="Dialogue_glow"]
+script = ExtResource("4_dialogue")
+lines = Array[String](["The glow is pretty until you learn what it eats.", "This cave used to be a clean dig. Then the seep reached it and the fungus learned to walk.", "Keep to the lit galleries. What waits in the deep passage is worse than mushrooms."])
+label_override = "Ask about the glow"
+
+[resource]
+script = ExtResource("1_npcres")
+npc_name = "Forager Maela"
+skin = ExtResource("11_skin")
+greeting = "Watch your step, the caps burst when you crowd them. You here to clear the galleries? Good. I mark what needs cutting, you cut it."
+interactions = Array[ExtResource("2_npcint")]([SubResource("QuestInteraction_maela"), SubResource("Dialogue_glow")])

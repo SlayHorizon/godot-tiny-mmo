@@ -17,8 +17,6 @@
 [ext_resource type="PackedScene" uid="uid://wqvuy2e2dljl" path="res://source/common/gameplay/maps/maps/castle/outside_building.tscn" id="14_2lykb"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="15_4i121"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="16_dylal"]
-[ext_resource type="Resource" uid="uid://djj2vxg3nbswn" path="res://source/common/gameplay/characters/npc/types/fungus_immature.tres" id="17_vkc0x"]
-[ext_resource type="Resource" uid="uid://b30ybcv0ulinq" path="res://source/common/gameplay/characters/npc/types/goblin.tres" id="18_2i5ur"]
 [ext_resource type="Resource" uid="uid://diqelrbkjdx54" path="res://source/common/gameplay/characters/npc/types/rat_base.tres" id="19_h821s"]
 [ext_resource type="Resource" uid="uid://c43oawxmbygiq" path="res://source/common/gameplay/characters/npc/types/wolf.tres" id="20_be1cg"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="21_81rgi"]
@@ -153,102 +151,30 @@ position = Vector2(1328, 183)
 [node name="ReplicatedPropsContainer" type="Node2D" parent="." unique_id=1981280680 node_paths=PackedStringArray("id_to_node", "node_to_id")]
 script = ExtResource("15_4i121")
 id_to_node = {
-0: NodePath("Fungos"),
-1: NodePath("Fungos2"),
-2: NodePath("Fungos3"),
-3: NodePath("Fungos4"),
-4: NodePath("Goblin"),
-5: NodePath("Goblin2"),
-6: NodePath("Goblin3"),
-7: NodePath("Goblin4"),
-8: NodePath("ShadowGrunt"),
-9: NodePath("ShadowGrunt2"),
-10: NodePath("ShadowGrunt3"),
-11: NodePath("ShadowGrunt4"),
-12: NodePath("Wolf"),
-13: NodePath("Wolf2"),
-14: NodePath("Wolf3"),
-15: NodePath("Wolf4"),
-16: NodePath("Wolf5")
+0: NodePath("ShadowGrunt"),
+1: NodePath("ShadowGrunt2"),
+2: NodePath("ShadowGrunt3"),
+3: NodePath("ShadowGrunt4"),
+4: NodePath("Wolf"),
+5: NodePath("Wolf2"),
+6: NodePath("Wolf3"),
+7: NodePath("Wolf4"),
+8: NodePath("Wolf5")
 }
 node_to_id = {
-NodePath("Wolf5"): 16,
-NodePath("Wolf4"): 15,
-NodePath("Wolf3"): 14,
-NodePath("Wolf2"): 13,
-NodePath("Wolf"): 12,
-NodePath("ShadowGrunt4"): 11,
-NodePath("ShadowGrunt3"): 10,
-NodePath("ShadowGrunt2"): 9,
-NodePath("ShadowGrunt"): 8,
-NodePath("Goblin4"): 7,
-NodePath("Goblin3"): 6,
-NodePath("Goblin2"): 5,
-NodePath("Goblin"): 4,
-NodePath("Fungos4"): 3,
-NodePath("Fungos3"): 2,
-NodePath("Fungos2"): 1,
-NodePath("Fungos"): 0
+NodePath("ShadowGrunt"): 0,
+NodePath("ShadowGrunt2"): 1,
+NodePath("ShadowGrunt3"): 2,
+NodePath("ShadowGrunt4"): 3,
+NodePath("Wolf"): 4,
+NodePath("Wolf2"): 5,
+NodePath("Wolf3"): 6,
+NodePath("Wolf4"): 7,
+NodePath("Wolf5"): 8
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
-
-[node name="Fungos" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("16_dylal")]
-position = Vector2(440, 1173)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("17_vkc0x")
-weapon = null
-
-[node name="Fungos2" parent="ReplicatedPropsContainer" unique_id=1845214526 instance=ExtResource("16_dylal")]
-position = Vector2(322, 1266)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("17_vkc0x")
-weapon = null
-
-[node name="Fungos3" parent="ReplicatedPropsContainer" unique_id=1306141079 instance=ExtResource("16_dylal")]
-position = Vector2(524, 1273)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("17_vkc0x")
-weapon = null
-
-[node name="Fungos4" parent="ReplicatedPropsContainer" unique_id=185268357 instance=ExtResource("16_dylal")]
-position = Vector2(420, 1373)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("17_vkc0x")
-weapon = null
-
-[node name="Goblin" parent="ReplicatedPropsContainer" unique_id=1040842365 instance=ExtResource("16_dylal")]
-position = Vector2(2273, 1623)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("18_2i5ur")
-weapon = null
-
-[node name="Goblin2" parent="ReplicatedPropsContainer" unique_id=1935918290 instance=ExtResource("16_dylal")]
-position = Vector2(2083, 1550)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("18_2i5ur")
-weapon = null
-
-[node name="Goblin3" parent="ReplicatedPropsContainer" unique_id=278540449 instance=ExtResource("16_dylal")]
-position = Vector2(1736, 1919)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("18_2i5ur")
-weapon = null
-
-[node name="Goblin4" parent="ReplicatedPropsContainer" unique_id=1413540805 instance=ExtResource("16_dylal")]
-position = Vector2(2082, 1732)
-collision_mask = 6
-debug_draw_ranges = false
-enemy_data = ExtResource("18_2i5ur")
-weapon = null
 
 [node name="ShadowGrunt" parent="ReplicatedPropsContainer" unique_id=1928866089 instance=ExtResource("16_dylal")]
 position = Vector2(613, 1743)

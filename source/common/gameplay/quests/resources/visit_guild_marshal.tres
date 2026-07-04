@@ -9,7 +9,6 @@ script = ExtResource("1_quest")
 quest_name = "The Marshal's Invitation"
 description = "Meet Marshal Veska at the muster hall. She wants a word, so bring your wits."
 min_level = 8
-turn_in_giver_id = 9
 reward_xp = 40
 grant_title = "Hopeful Recruit"
 metadata/_custom_type_script = "uid://c5p53get4ikl6"

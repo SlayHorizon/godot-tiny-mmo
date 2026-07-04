@@ -5,21 +5,21 @@
 [ext_resource type="Resource" uid="uid://crp8g14r50b4m" path="res://source/common/gameplay/items/materials/metals/coal_ore.tres" id="3_coal"]
 [ext_resource type="Resource" uid="uid://3vo07t5fjdwo" path="res://source/common/gameplay/items/materials/metals/copper_ore.tres" id="4_cop_ore"]
 [ext_resource type="Resource" uid="uid://ddjaybrt21lpq" path="res://source/common/gameplay/items/materials/metals/iron_ore.tres" id="5_iron_ore"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="6_linen"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/leather/hide_forest.tres" id="7_hide"]
+[ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="6_linen"]
+[ext_resource type="Resource" uid="uid://2aygya3q5pvo" path="res://source/common/gameplay/items/materials/leather/hide_forest.tres" id="7_hide"]
 [ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/herbs/healing_herb.tres" id="8_herb"]
 
 [sub_resource type="Resource" id="T_kill_slime"]
 script = ExtResource("1_tmpl")
 template_id = 1
-enemy_type = &"fungus_immature"
+enemy_type = &"sporeling"
 required_amount = 3
 max_level = 10
 
 [sub_resource type="Resource" id="T_kill_goblin"]
 script = ExtResource("1_tmpl")
 template_id = 2
-enemy_type = &"goblin"
+enemy_type = &"goblin_runt"
 required_amount = 5
 min_level = 2
 max_level = 12
@@ -125,7 +125,6 @@ description = "Play 2 arena duels"
 script = ExtResource("1_tmpl")
 template_id = 13
 kind = 3
-required_amount = 1
 min_level = 5
 reward_xp = 60
 reward_gold = 6
@@ -137,7 +136,6 @@ template_id = 14
 kind = 4
 required_amount = 2
 reward_xp = 35
-reward_gold = 3
 description = "Craft 2 items"
 
 [resource]

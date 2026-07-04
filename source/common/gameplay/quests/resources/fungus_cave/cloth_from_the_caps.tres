@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://6x8bd0w55lsk"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Resource" uid="uid://bw238ey5rg6bx" path="res://source/common/gameplay/items/materials/cloth/cloth_cave.tres" id="3_cloth"]
+[ext_resource type="Resource" uid="uid://byuel0j1g0npv" path="res://source/common/gameplay/quests/resources/fungus_cave/spores_in_the_dark.tres" id="4_q1"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="5_mdr7q"]
+
+[sub_resource type="Resource" id="Obj_collect_cloth"]
+script = ExtResource("1_obj")
+type = 1
+item = ExtResource("3_cloth")
+required_amount = 6
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Cloth from the Caps"
+description = "Bring me 6 bolts of cave cloth. The caps weave it in their gills, strange but true."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_collect_cloth")])
+min_level = 5
+requires_quests = Array[ExtResource("2_quest")]([ExtResource("4_q1")])
+reward_xp = 200
+reward_gold = 8

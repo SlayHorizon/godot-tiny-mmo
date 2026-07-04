@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://0wt22r5mbmd"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Resource" uid="uid://bx2tdoowtro4c" path="res://source/common/gameplay/quests/resources/fungus_cave/pop_the_puffcaps.tres" id="3_q2"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_h5vot"]
+
+[sub_resource type="Resource" id="Obj_kill_brute"]
+script = ExtResource("1_obj")
+enemy_type = &"myconid_brute"
+required_amount = 3
+
+[sub_resource type="Resource" id="Obj_kill_swarm"]
+script = ExtResource("1_obj")
+enemy_type = &"spore_swarm"
+required_amount = 8
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Break the Myconid Line"
+description = "Break the myconid line past the grove. The big ones leap, keep your feet moving."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_brute"), SubResource("Obj_kill_swarm")])
+min_level = 7
+unlock_message = "[Forager Maela] You handle yourself well down here. The myconids hold the deep passage, come see me."
+requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q2")])
+reward_xp = 260
+reward_gold = 10

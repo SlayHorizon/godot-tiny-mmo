@@ -11,7 +11,7 @@ var _selected_id: int
 var _list_vbox: VBoxContainer
 var _detail_title: Label
 var _track_button: Button
-var _detail_body: VBoxContainer
+var _detail_body: QuestDetailBody
 var _row_buttons: Dictionary[int, Button]
 
 
@@ -73,9 +73,9 @@ func _build_layout() -> void:
 	body_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	right_col.add_child(body_scroll)
 
-	_detail_body = VBoxContainer.new()
-	_detail_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_detail_body.add_theme_constant_override(&"separation", 8)
+	# Shared with the quest-giver menu — description / objectives / rewards
+	# render identically in both quest screens by construction.
+	_detail_body = QuestDetailBody.new()
 	body_scroll.add_child(_detail_body)
 
 
@@ -183,13 +183,11 @@ func _select_quest(quest_id: int) -> void:
 # --- Detail ---
 
 func _rebuild_detail() -> void:
-	for child in _detail_body.get_children():
-		child.queue_free()
-
 	var quest: Dictionary = _find_quest(_selected_id)
 	if quest.is_empty():
 		_detail_title.text = ""
 		_track_button.visible = false
+		_detail_body.clear()
 		var hint: Label = Label.new()
 		hint.text = "Select a quest on the left."
 		hint.modulate.a = 0.55
@@ -212,51 +210,9 @@ func _rebuild_detail() -> void:
 			_track_button.text = "Track"
 			_track_button.pressed.connect(func(): ClientState.set_tracked_quest(quest_id))
 
-	var description: String = str(quest.get("description", ""))
-	if not description.is_empty():
-		var desc_label: Label = Label.new()
-		desc_label.text = description
-		desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		desc_label.add_theme_color_override(&"font_color", Color(0.75, 0.77, 0.83))
-		_detail_body.add_child(desc_label)
-
-	var obj_header: Label = Label.new()
-	obj_header.text = "Objectives"
-	obj_header.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.5))
-	_detail_body.add_child(obj_header)
-
-	# ANY-mode quests (completion == 1) treat objectives as alternatives — an
-	# "OR" line between them reads them as a choice, not a checklist.
-	var any_mode: bool = int(quest.get("completion", 0)) == 1
-	var objectives: Array = quest.get("objectives", [])
-	for i in objectives.size():
-		if any_mode and i > 0:
-			var or_label: Label = Label.new()
-			or_label.text = "OR"
-			or_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			or_label.add_theme_color_override(&"font_color", Color(0.65, 0.75, 0.9))
-			_detail_body.add_child(or_label)
-		var objective: Dictionary = objectives[i]
-		var count: int = int(objective.get("count", 0))
-		var required: int = int(objective.get("required", 1))
-		var met: bool = count >= required
-		var objective_label: Label = Label.new()
-		# VISIT rows aren't counted — show a ✓ when done, not "(0/1)".
-		if bool(objective.get("countable", true)):
-			objective_label.text = "• %s (%d/%d)" % [str(objective.get("desc", "")), count, required]
-		else:
-			objective_label.text = "• %s%s" % [str(objective.get("desc", "")), "  ✓" if met else ""]
-		objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		if met:
-			objective_label.add_theme_color_override(&"font_color", Color(0.5, 0.9, 0.5))
-		_detail_body.add_child(objective_label)
-
-	_detail_body.add_child(HSeparator.new())
-
-	var reward_label: Label = Label.new()
-	reward_label.text = "Rewards: %d XP, %d gold" % [int(quest.get("reward_xp", 0)), int(quest.get("reward_gold", 0))]
-	reward_label.add_theme_color_override(&"font_color", Color(0.85, 0.8, 0.4))
-	_detail_body.add_child(reward_label)
+	# Description / objectives / rewards — shared renderer (QuestDetailBody),
+	# identical to the giver menu by construction.
+	_detail_body.render(quest)
 
 
 func _find_quest(quest_id: int) -> Dictionary:

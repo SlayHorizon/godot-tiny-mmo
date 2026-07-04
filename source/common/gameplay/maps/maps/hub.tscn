@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="6_vf1no"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="7_aris3"]
 [ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/guild_house/guild_house.tres" id="8_m02lb"]
+[ext_resource type="Resource" uid="uid://c0m2t2hjlih2p" path="res://source/common/gameplay/maps/instance/instance_collection/woodland.tres" id="12_sgxfe"]
 [ext_resource type="Resource" uid="uid://dicfbsg4ycah2" path="res://source/common/gameplay/characters/npc/npcs/foreman.tres" id="13_anjaa"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="16_da30u"]
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="17_hnnrj"]
@@ -21,7 +22,6 @@
 [ext_resource type="Resource" uid="uid://iuqxmo63ipnn" path="res://source/common/gameplay/maps/instance/instance_collection/fungus_cave/fungus_cave.tres" id="24_2sqao"]
 [ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="24_o1ke5"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="25_2opns"]
-[ext_resource type="Resource" uid="uid://dtojmae8u5g6l" path="res://source/common/gameplay/characters/npc/npcs/mira.tres" id="25_anjaa"]
 [ext_resource type="PackedScene" path="res://source/common/gameplay/crafting/crafting_station.tscn" id="25_og50n"]
 [ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="26_8i8tr"]
 [ext_resource type="Resource" uid="uid://26gsysjvnvs2" path="res://source/common/gameplay/crafting/resources/anvil.tres" id="26_anjaa"]
@@ -452,6 +452,15 @@ destination_label = "DimWood (Dark Forest)"
 target_instance = ExtResource("30_og50n")
 warper_id = 20
 target_id = 20
+required_level = 15
+
+[node name="WoodlandPortal" parent="." unique_id=686472752 instance=ExtResource("29_2sqao")]
+position = Vector2(1056, 272)
+portal_color = Color(8.4228816e-07, 0.52939844, 0.24124122, 1)
+destination_label = "Goblin Woodland"
+target_instance = ExtResource("12_sgxfe")
+warper_id = 23
+target_id = 23
 
 [node name="MinePortal" parent="." unique_id=396714839 instance=ExtResource("29_2sqao")]
 position = Vector2(1056, 352)
@@ -462,7 +471,7 @@ target_id = 21
 required_level = 5
 
 [node name="QuestGiver" parent="." unique_id=1922057613 instance=ExtResource("16_da30u")]
-position = Vector2(1128, 256)
+position = Vector2(936, 184)
 npc_resource = ExtResource("13_anjaa")
 
 [node name="ForgeSmith" parent="." unique_id=655889327 instance=ExtResource("16_da30u")]
@@ -472,11 +481,6 @@ npc_resource = SubResource("Resource_jubm3")
 [node name="TheTailor" parent="." unique_id=1048618121 instance=ExtResource("16_da30u")]
 position = Vector2(-304, 232)
 npc_resource = SubResource("Resource_p483h")
-
-[node name="Mira" parent="." unique_id=350384924 instance=ExtResource("16_da30u")]
-position = Vector2(1128, 320)
-collision_mask = 6
-npc_resource = ExtResource("25_anjaa")
 
 [node name="AnvilStation" parent="." unique_id=325384635 instance=ExtResource("25_og50n")]
 position = Vector2(-104, 168)

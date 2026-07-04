@@ -11,9 +11,10 @@
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="7_msvda"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="8_f6l70"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="9_msvda"]
-[ext_resource type="Resource" uid="uid://djj2vxg3nbswn" path="res://source/common/gameplay/characters/npc/types/fungus_immature.tres" id="10_f6l70"]
+[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/fungus/sporeling.tres" id="10_s14j1"]
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/gameplay/maps/components/interaction_areas/teleporter/teleporter.tscn" id="11_jbsjy"]
-[ext_resource type="Resource" uid="uid://41yfvobb2tye" path="res://source/common/gameplay/characters/npc/types/fungus_long.tres" id="11_ug5c4"]
+[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/fungus/puffcap.tres" id="11_wegif"]
+[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/fungus/myconid_brute.tres" id="12_n7hu4"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="12_y53hc"]
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="16_dxrxi"]
 [ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="17_s14j1"]
@@ -22,6 +23,7 @@
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="18_wegif"]
 [ext_resource type="PackedScene" uid="uid://0m5eq6iylq26" path="res://source/common/gameplay/maps/components/interaction_areas/warper/portal/portal.tscn" id="19_pvtw6"]
 [ext_resource type="PackedScene" uid="uid://dqo57ux3v3lkq" path="res://source/common/gameplay/maps/components/mineable_node.tscn" id="23_n7hu4"]
+[ext_resource type="Resource" uid="uid://bd8w3ab76gouv" path="res://source/common/gameplay/characters/npc/npcs/forager_maela.tres" id="24_dxrxi"]
 [ext_resource type="Resource" uid="uid://d08wf1j2mhlc5" path="res://source/common/gameplay/maps/components/mineable_nodes/copper_vein.tres" id="24_dysl4"]
 
 [sub_resource type="Resource" id="Resource_le077"]
@@ -145,96 +147,66 @@ texture_scale = 1.44
 [node name="ReplicatedPropsContainer" type="Node2D" parent="." unique_id=1470008682 node_paths=PackedStringArray("id_to_node", "node_to_id")]
 script = ExtResource("6_y53hc")
 id_to_node = {
-0: NodePath("Fungus"),
-1: NodePath("Fungus2"),
-2: NodePath("Fungus3"),
-3: NodePath("Fungus4"),
-4: NodePath("Fungus5"),
-5: NodePath("FungusLong"),
-6: NodePath("FungusLong2"),
-7: NodePath("FungusLong3"),
-8: NodePath("FungusLong4"),
-9: NodePath("FungusLong5")
+0: NodePath("Sporeling"),
+1: NodePath("Sporeling2"),
+2: NodePath("Sporeling3"),
+3: NodePath("Sporeling4"),
+4: NodePath("Puffcap"),
+5: NodePath("Puffcap2"),
+6: NodePath("Myconid")
 }
 node_to_id = {
-NodePath("Fungus"): 0,
-NodePath("Fungus2"): 1,
-NodePath("Fungus3"): 2,
-NodePath("Fungus4"): 3,
-NodePath("Fungus5"): 4,
-NodePath("FungusLong"): 5,
-NodePath("FungusLong2"): 6,
-NodePath("FungusLong3"): 7,
-NodePath("FungusLong4"): 8,
-NodePath("FungusLong5"): 9
+NodePath("Sporeling"): 0,
+NodePath("Sporeling2"): 1,
+NodePath("Sporeling3"): 2,
+NodePath("Sporeling4"): 3,
+NodePath("Puffcap"): 4,
+NodePath("Puffcap2"): 5,
+NodePath("Myconid"): 6
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 
-[node name="Fungus" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("9_msvda")]
-position = Vector2(-471, -175)
+[node name="Sporeling" parent="ReplicatedPropsContainer" unique_id=573307470 instance=ExtResource("9_msvda")]
+position = Vector2(-512, -240)
 debug_draw_ranges = false
-enemy_data = ExtResource("10_f6l70")
+enemy_data = ExtResource("10_s14j1")
 weapon = null
 
-[node name="Fungus2" parent="ReplicatedPropsContainer" unique_id=875476665 instance=ExtResource("9_msvda")]
-position = Vector2(-463, -299)
+[node name="Sporeling2" parent="ReplicatedPropsContainer" unique_id=164733755 instance=ExtResource("9_msvda")]
+position = Vector2(-416, -288)
 debug_draw_ranges = false
-enemy_data = ExtResource("10_f6l70")
+enemy_data = ExtResource("10_s14j1")
 weapon = null
 
-[node name="Fungus3" parent="ReplicatedPropsContainer" unique_id=516345593 instance=ExtResource("9_msvda")]
-position = Vector2(-325, -339)
+[node name="Sporeling3" parent="ReplicatedPropsContainer" unique_id=1154991180 instance=ExtResource("9_msvda")]
+position = Vector2(22.234344, -993.80927)
 debug_draw_ranges = false
-enemy_data = ExtResource("10_f6l70")
+enemy_data = ExtResource("10_s14j1")
 weapon = null
 
-[node name="Fungus4" parent="ReplicatedPropsContainer" unique_id=405140565 instance=ExtResource("9_msvda")]
-position = Vector2(-173, -286)
+[node name="Sporeling4" parent="ReplicatedPropsContainer" unique_id=2087290461 instance=ExtResource("9_msvda")]
+position = Vector2(160, -1040)
 debug_draw_ranges = false
-enemy_data = ExtResource("10_f6l70")
+enemy_data = ExtResource("10_s14j1")
 weapon = null
 
-[node name="Fungus5" parent="ReplicatedPropsContainer" unique_id=1652415439 instance=ExtResource("9_msvda")]
-position = Vector2(35, -277)
+[node name="Puffcap" parent="ReplicatedPropsContainer" unique_id=1819247693 instance=ExtResource("9_msvda")]
+position = Vector2(432, -1072)
 debug_draw_ranges = false
-enemy_data = ExtResource("10_f6l70")
+enemy_data = ExtResource("11_wegif")
 weapon = null
 
-[node name="FungusLong" parent="ReplicatedPropsContainer" unique_id=56868025 instance=ExtResource("9_msvda")]
-position = Vector2(47, -1084)
+[node name="Puffcap2" parent="ReplicatedPropsContainer" unique_id=89553493 instance=ExtResource("9_msvda")]
+position = Vector2(536, -1104)
 debug_draw_ranges = false
-enemy_data = ExtResource("11_ug5c4")
+enemy_data = ExtResource("11_wegif")
 weapon = null
 
-[node name="FungusLong2" parent="ReplicatedPropsContainer" unique_id=459947861 instance=ExtResource("9_msvda")]
-position = Vector2(187, -973)
+[node name="Myconid" parent="ReplicatedPropsContainer" unique_id=561387804 instance=ExtResource("9_msvda")]
+position = Vector2(506.03534, -1409.5321)
 debug_draw_ranges = false
-enemy_data = ExtResource("11_ug5c4")
+enemy_data = ExtResource("12_n7hu4")
 weapon = null
-
-[node name="FungusLong3" parent="ReplicatedPropsContainer" unique_id=1973278873 instance=ExtResource("9_msvda")]
-position = Vector2(34, -902)
-debug_draw_ranges = false
-enemy_data = ExtResource("11_ug5c4")
-weapon = null
-
-[node name="FungusLong4" parent="ReplicatedPropsContainer" unique_id=1123112949 instance=ExtResource("9_msvda")]
-position = Vector2(-314, -1177)
-debug_draw_ranges = false
-enemy_data = ExtResource("11_ug5c4")
-weapon = null
-
-[node name="FungusLong5" parent="ReplicatedPropsContainer" unique_id=1935529028 instance=ExtResource("9_msvda")]
-position = Vector2(-231, -1082)
-debug_draw_ranges = false
-enemy_data = ExtResource("11_ug5c4")
-weapon = null
-
-[node name="Entrance" parent="." unique_id=1414716116 instance=ExtResource("7_msvda")]
-position = Vector2(-1, -19)
-scale = Vector2(3.559999, 1)
-target_instance = ExtResource("8_f6l70")
-target_id = 8
 
 [node name="BarTeleporter" parent="." unique_id=1534252068 node_paths=PackedStringArray("target") instance=ExtResource("11_jbsjy")]
 position = Vector2(-121, -634)
@@ -261,7 +233,13 @@ metadata/_custom_type_script = "uid://cr2yg6sl43by8"
 position = Vector2(-0.5, -9.5)
 shape = SubResource("RectangleShape2D_kouuu")
 
-[node name="Portal" parent="." unique_id=375786523 instance=ExtResource("19_pvtw6")]
+[node name="Entrance" parent="." unique_id=1414716116 instance=ExtResource("7_msvda")]
+position = Vector2(-1, -19)
+scale = Vector2(3.559999, 1)
+target_instance = ExtResource("8_f6l70")
+target_id = 8
+
+[node name="CastleGardenPortal" parent="." unique_id=375786523 instance=ExtResource("19_pvtw6")]
 position = Vector2(-48, -72)
 portal_color = Color(1.2513996e-06, 0.5407531, 0.6588039, 1)
 destination_label = "Castle Garden"
@@ -269,6 +247,12 @@ target_instance = ExtResource("8_f6l70")
 warper_id = 21
 target_id = 21
 
-[node name="MineableNode" parent="." unique_id=1129547794 instance=ExtResource("23_n7hu4")]
+[node name="Maela" parent="." unique_id=1893723557 instance=ExtResource("12_y53hc")]
+position = Vector2(72, -128)
+npc_resource = ExtResource("24_dxrxi")
+
+[node name="MineableNodes" type="Node2D" parent="." unique_id=202359622]
+
+[node name="CopperVein" parent="MineableNodes" unique_id=1129547794 instance=ExtResource("23_n7hu4")]
 position = Vector2(139.9191, -1114.0907)
 data = ExtResource("24_dysl4")

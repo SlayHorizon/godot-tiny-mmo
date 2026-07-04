@@ -23,16 +23,31 @@ func data_request_handler(
 	if resource.quest_state(quest_id) != &"":
 		return {"ok": false, "reason": "already"}
 
+	# FAIL CLOSED on a registry miss: a quest the registry can't resolve can
+	# never progress or turn in (on_kill / load_quest skip null), so accepting
+	# it just strands a dead entry in the player's log. Null here = the quests
+	# index is stale in THIS process — Generate ran but the server wasn't
+	# restarted (ContentRegistryHub loads indexes once, at static init).
+	var quest: QuestResource = QuestResource.load_quest(quest_id)
+	if quest == null:
+		ServerLog.warn("quest.accept: id %d offered by '%s' but missing from the quests registry — Generate + RESTART the server." % [quest_id, giver_key])
+		return {"ok": false, "reason": "unknown"}
+
 	# Level gate: if the quest sets min_level, the player has to be at least
 	# that high. Optional side quests use this for sparring/guild/basing intros.
-	var quest: QuestResource = QuestResource.load_quest(quest_id)
-	if quest and quest.min_level > 0 and resource.level < quest.min_level:
+	if quest.min_level > 0 and resource.level < quest.min_level:
 		return {"ok": false, "reason": "level"}
+
+	# Prerequisite gate (quest chains + the wardstone-flag seam). The giver list
+	# shows unmet quests as locked rows with no Accept, but enforce here too so
+	# a stale menu can't accept early.
+	if not quest.prerequisites_met(resource):
+		return {"ok": false, "reason": "prereq"}
 
 	resource.accept_quest(quest_id)
 
 	# Delivery quests grant a parcel/letter on accept (consumed at turn-in).
-	if quest and quest.grant_on_accept:
+	if quest.grant_on_accept:
 		var item_id: int = int(quest.grant_on_accept.get_meta(&"id", 0))
 		if item_id > 0:
 			Inventory.add_item(resource.inventory, item_id, 1)

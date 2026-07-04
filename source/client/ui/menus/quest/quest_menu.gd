@@ -1,22 +1,17 @@
-extends Control
-## Quest-giver dialog, master-detail layout. Left column lists the quest titles
-## this giver offers (with state tag: New / Active / Ready / Done / Locked).
-## Right column shows the full details of the selected quest (description,
-## objectives, rewards, action button).
-##
-## Standard RPG/MMO journal pattern — lets a giver carry many quests without
-## scrolling and keeps the first read clean: the player sees all titles at a
-## glance and drills in on what catches their eye.
+extends MenuShell
+## Quest-giver dialog on the shared MenuShell frame (full-screen, same chrome
+## as the quest log / other menus). Master-detail: left column lists the
+## giver's quest titles with a state tag (New / Active / Ready / Done / LV n /
+## Locked), right column shows the selected quest via the shared
+## QuestDetailBody plus this menu's own action slot (Accept / Turn in / lock
+## conditions). Locked chain quests render with their unlock conditions —
+## never hidden (owner call 2026-07-04).
 
 const COLOR_NEW: Color = Color(0.95, 0.95, 0.95)
 const COLOR_ACTIVE: Color = Color(0.95, 0.85, 0.45)
 const COLOR_READY: Color = Color(0.55, 0.9, 0.55)
 const COLOR_DONE: Color = Color(0.55, 0.65, 0.55)
 const COLOR_LOCKED: Color = Color(0.7, 0.5, 0.5)
-const COLOR_OBJ_MET: Color = Color(0.5, 0.9, 0.5)
-const COLOR_HINT: Color = Color(0.65, 0.75, 0.9)
-const COLOR_DESC: Color = Color(0.75, 0.75, 0.8)
-const COLOR_REWARD: Color = Color(0.85, 0.8, 0.4)
 
 var _giver_key: String
 var _quests: Array = []
@@ -24,16 +19,78 @@ var _selected_quest_id: int = -1
 ## Title-row buttons keyed by quest id, kept for highlight refresh on selection.
 var _title_buttons: Dictionary[int, Button]
 
-@onready var title_label: Label = %TitleLabel
-@onready var title_list: VBoxContainer = %TitleList
-@onready var title_scroll: ScrollContainer = $Margin/Card/Pad/Root/Body/LeftPanel/LeftScroll
-@onready var detail_title: Label = %DetailTitle
-@onready var action_slot: HBoxContainer = %ActionSlot
-@onready var details_container: VBoxContainer = %DetailsContainer
+var _title_scroll: ScrollContainer
+var _title_list: VBoxContainer
+var _detail_title: Label
+var _action_slot: HBoxContainer
+var _detail_body: QuestDetailBody
 
 
 func _ready() -> void:
+	build_shell("Quests", null, true)
+	content.add_child(_build_body())
 	visibility_changed.connect(_on_visibility_changed)
+	# Live refresh while the dialog is open: kill counts tick and READY
+	# appears without closing and re-talking to the giver.
+	Client.subscribe(&"quest.update", func(_data: Dictionary) -> void:
+		if is_visible_in_tree() and not _giver_key.is_empty():
+			_refresh()
+	)
+
+
+## Same split layout (and stretch ratios) as the quest log, so the two quest
+## screens read as one family.
+func _build_body() -> Control:
+	var hbox: HBoxContainer = HBoxContainer.new()
+	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	hbox.add_theme_constant_override(&"separation", 12)
+
+	_title_scroll = ScrollContainer.new()
+	_title_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_title_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_title_scroll.size_flags_stretch_ratio = 0.85
+	_title_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	hbox.add_child(_title_scroll)
+
+	_title_list = VBoxContainer.new()
+	_title_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_title_list.add_theme_constant_override(&"separation", 4)
+	_title_scroll.add_child(_title_list)
+
+	# Right: pinned header (title + action) above a scrolling detail body, so
+	# Accept / Turn in stays reachable past a long description.
+	var right_col: VBoxContainer = VBoxContainer.new()
+	right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_col.size_flags_stretch_ratio = 1.3
+	right_col.add_theme_constant_override(&"separation", 8)
+	hbox.add_child(right_col)
+
+	var header: HBoxContainer = HBoxContainer.new()
+	header.add_theme_constant_override(&"separation", 8)
+	right_col.add_child(header)
+
+	_detail_title = Label.new()
+	_detail_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_detail_title.add_theme_font_size_override(&"font_size", 18)
+	_detail_title.add_theme_color_override(&"font_color", Color(1.0, 0.95, 0.75))
+	_detail_title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	header.add_child(_detail_title)
+
+	_action_slot = HBoxContainer.new()
+	header.add_child(_action_slot)
+
+	var body_scroll: ScrollContainer = ScrollContainer.new()
+	body_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	right_col.add_child(body_scroll)
+
+	_detail_body = QuestDetailBody.new()
+	body_scroll.add_child(_detail_body)
+
+	return hbox
 
 
 func _on_visibility_changed() -> void:
@@ -41,6 +98,7 @@ func _on_visibility_changed() -> void:
 		_refresh()
 
 
+## Entry point from HUD.display_menu(&"quest", giver_key).
 func open(giver_key: String) -> void:
 	_giver_key = giver_key
 	_refresh()
@@ -54,7 +112,7 @@ func _refresh() -> void:
 		return
 	var data: Dictionary = result[0]
 	var giver_name: String = str(data.get("giver_name", ""))
-	title_label.text = giver_name if not giver_name.is_empty() else "Quests"
+	set_title(giver_name if not giver_name.is_empty() else "Quests")
 	_quests = data.get("quests", [])
 	_build_title_list()
 	_select_initial()
@@ -65,7 +123,7 @@ func _refresh() -> void:
 # ---------------------------------------------------------------------------
 
 func _build_title_list() -> void:
-	for child in title_list.get_children():
+	for child: Node in _title_list.get_children():
 		child.queue_free()
 	_title_buttons.clear()
 
@@ -73,7 +131,7 @@ func _build_title_list() -> void:
 		var empty: Label = Label.new()
 		empty.text = "Nothing available."
 		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		title_list.add_child(empty)
+		_title_list.add_child(empty)
 		_show_empty_details()
 		return
 
@@ -81,9 +139,9 @@ func _build_title_list() -> void:
 		var quest_id: int = int(quest.get("id", 0))
 		var button: Button = _make_title_row(quest)
 		button.pressed.connect(_select_quest.bind(quest_id))
-		title_list.add_child(button)
+		_title_list.add_child(button)
 		_title_buttons[quest_id] = button
-	DragScroll.enable(title_scroll) # touch/mouse drag-scroll the quest list (flips fresh rows to PASS)
+	DragScroll.enable(_title_scroll) # touch/mouse drag-scroll (flips fresh rows to PASS)
 
 
 func _make_title_row(quest: Dictionary) -> Button:
@@ -110,6 +168,10 @@ func _status_tag(quest: Dictionary) -> String:
 		"turned_in":
 			return "DONE"
 		_:
+			# Chain lock outranks the level chip: "do the earlier quest" is the
+			# actionable info; the level requirement still shows in the details.
+			if not bool(quest.get("meets_prereq", true)):
+				return "LOCKED"
 			if not bool(quest.get("meets_level", true)):
 				return "LV %d" % int(quest.get("min_level", 0))
 			return "NEW"
@@ -123,7 +185,7 @@ func _status_color(quest: Dictionary) -> Color:
 		"turned_in":
 			return COLOR_DONE
 		_:
-			if not bool(quest.get("meets_level", true)):
+			if not bool(quest.get("meets_prereq", true)) or not bool(quest.get("meets_level", true)):
 				return COLOR_LOCKED
 			return COLOR_NEW
 
@@ -133,7 +195,8 @@ func _status_color(quest: Dictionary) -> Color:
 # ---------------------------------------------------------------------------
 
 ## Pick the first sensible quest to show on open: a Ready turn-in first
-## (most actionable), then any Active, then the first one in the list.
+## (most actionable), then any Active, then the first ACCEPTABLE one (opening
+## on a locked row buries the lede), then the first in the list.
 func _select_initial() -> void:
 	if _quests.is_empty():
 		return
@@ -148,6 +211,11 @@ func _select_initial() -> void:
 				target_id = int(quest.get("id", 0))
 				break
 	if target_id == -1:
+		for quest: Dictionary in _quests:
+			if str(quest.get("state", "")) == "" and _unmet_conditions(quest).is_empty():
+				target_id = int(quest.get("id", 0))
+				break
+	if target_id == -1:
 		target_id = int(_quests[0].get("id", 0))
 	_select_quest(target_id)
 
@@ -155,7 +223,7 @@ func _select_initial() -> void:
 func _select_quest(quest_id: int) -> void:
 	_selected_quest_id = quest_id
 	# Refresh the toggle state on every row so only the selected one stays pressed.
-	for qid in _title_buttons:
+	for qid: int in _title_buttons:
 		_title_buttons[qid].button_pressed = qid == quest_id
 	for quest: Dictionary in _quests:
 		if int(quest.get("id", 0)) == quest_id:
@@ -168,107 +236,57 @@ func _select_quest(quest_id: int) -> void:
 # ---------------------------------------------------------------------------
 
 func _show_empty_details() -> void:
-	detail_title.text = ""
-	for child in action_slot.get_children():
+	_detail_title.text = ""
+	for child: Node in _action_slot.get_children():
 		child.queue_free()
-	for child in details_container.get_children():
-		child.queue_free()
+	_detail_body.clear()
 	var hint: Label = Label.new()
 	hint.text = "No quests to discuss."
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.modulate.a = 0.55
-	details_container.add_child(hint)
+	_detail_body.add_child(hint)
 
 
 func _show_details(quest: Dictionary) -> void:
-	for child in details_container.get_children():
+	for child: Node in _action_slot.get_children():
 		child.queue_free()
-	for child in action_slot.get_children():
-		child.queue_free()
-
-	var state: String = str(quest.get("state", ""))
-	var complete: bool = bool(quest.get("complete", false))
-	var any_mode: bool = int(quest.get("completion", 0)) == 1
-
-	# Title + action live in the pinned header (mirrors the quest log) so the
-	# Accept / Turn-in button is always reachable without scrolling past a long
-	# description.
-	detail_title.text = str(quest.get("name", "?"))
-	action_slot.add_child(_make_action(
-		int(quest.get("id", 0)),
-		state,
-		complete,
-		bool(quest.get("meets_level", true)),
-		int(quest.get("min_level", 0)),
+	_detail_title.text = str(quest.get("name", "?"))
+	_action_slot.add_child(_make_action(
+		quest, str(quest.get("state", "")), bool(quest.get("complete", false))
 	))
-
-	var description: String = str(quest.get("description", ""))
-	if not description.is_empty():
-		var desc_label: Label = Label.new()
-		desc_label.text = description
-		desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		desc_label.add_theme_color_override(&"font_color", COLOR_DESC)
-		details_container.add_child(desc_label)
-
-	var objectives: Array = quest.get("objectives", [])
-	if not objectives.is_empty():
-		var obj_header: Label = Label.new()
-		obj_header.text = "Objectives"
-		obj_header.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.5))
-		details_container.add_child(obj_header)
-		for i: int in objectives.size():
-			# ANY-mode quests intersperse an OR line between objectives so the
-			# player reads them as alternatives, not a checklist. We render OR
-			# rows even though they're not part of the data — they're a pure
-			# layout affordance.
-			if any_mode and i > 0:
-				details_container.add_child(_make_or_separator())
-			details_container.add_child(_make_objective_row(objectives[i]))
-
-	details_container.add_child(_spacer(8))
-	details_container.add_child(HSeparator.new())
-	var reward_label: Label = Label.new()
-	reward_label.text = "Rewards: %d XP, %d gold" % [
-		int(quest.get("reward_xp", 0)), int(quest.get("reward_gold", 0))
-	]
-	reward_label.add_theme_color_override(&"font_color", COLOR_REWARD)
-	details_container.add_child(reward_label)
+	_detail_body.render(quest)
 
 
-func _make_objective_row(objective: Dictionary) -> Label:
-	var count: int = int(objective.get("count", 0))
-	var required: int = int(objective.get("required", 1))
-	var met: bool = count >= required
-	var desc: String = str(objective.get("desc", ""))
-	var row: Label = Label.new()
-	# VISIT objectives aren't counted ("Speak with X") — show a ✓ when done rather
-	# than a clumsy "(0/1)". Countable rows (defeat/bring/craft) show "(c/r)".
-	if bool(objective.get("countable", true)):
-		row.text = "• %s (%d/%d)" % [desc, count, required]
-	else:
-		row.text = "• %s%s" % [desc, "  ✓" if met else ""]
-	if met:
-		row.add_theme_color_override(&"font_color", COLOR_OBJ_MET)
-	return row
+## Human-readable list of everything still blocking an Accept, one line each.
+## Chain conditions first (they're the actionable ones), level after. ANY-mode
+## prereqs read as a single "one of" line.
+func _unmet_conditions(quest: Dictionary) -> Array[String]:
+	var conditions: Array[String] = []
+	if not bool(quest.get("meets_prereq", true)):
+		var names: Array = quest.get("prereq_names", [])
+		if names.is_empty():
+			conditions.append("Locked") # flag-gated (e.g. a future wardstone key)
+		elif int(quest.get("prereq_mode", 0)) == 1:
+			conditions.append("Complete one of: %s" % ", ".join(names))
+		else:
+			for prereq_name: Variant in names:
+				conditions.append("Complete \"%s\"" % str(prereq_name))
+	if not bool(quest.get("meets_level", true)):
+		conditions.append("Requires level %d" % int(quest.get("min_level", 0)))
+	return conditions
 
 
-## Indented "OR" line slotted between objectives in ANY-mode quests so the
-## player reads them as alternatives rather than a checklist.
-func _make_or_separator() -> Label:
-	var label: Label = Label.new()
-	label.text = "OR"
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_color_override(&"font_color", COLOR_HINT)
-	return label
-
-
-func _make_action(quest_id: int, state: String, complete: bool, meets_level: bool, min_level: int) -> Control:
+func _make_action(quest: Dictionary, state: String, complete: bool) -> Control:
+	var quest_id: int = int(quest.get("id", 0))
 	match state:
 		"":
-			if not meets_level:
+			var conditions: Array[String] = _unmet_conditions(quest)
+			if not conditions.is_empty():
 				var locked: Label = Label.new()
-				locked.text = "Requires level %d" % min_level
+				locked.text = "\n".join(conditions)
 				locked.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				# No autowrap: in an HBox an autowrapped label's min width
+				# collapses to ~one glyph (the goblin-chief overflow bug).
 				locked.add_theme_color_override(&"font_color", COLOR_LOCKED)
 				return locked
 			var accept: Button = Button.new()
@@ -298,13 +316,6 @@ func _make_action(quest_id: int, state: String, complete: bool, meets_level: boo
 			return done
 
 
-## Small vertical spacer for visual rhythm between sections.
-func _spacer(height: int) -> Control:
-	var ctrl: Control = Control.new()
-	ctrl.custom_minimum_size = Vector2(0, height)
-	return ctrl
-
-
 # ---------------------------------------------------------------------------
 # Quest actions
 # ---------------------------------------------------------------------------
@@ -323,7 +334,3 @@ func _on_turn_in(quest_id: int) -> void:
 		&"quest.turn_in", {"giver": _giver_key, "id": quest_id}, InstanceClient.current.name
 	)
 	_refresh()
-
-
-func _on_close_button_pressed() -> void:
-	hide()

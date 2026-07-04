@@ -9,7 +9,6 @@ script = ExtResource("1_quest")
 quest_name = "Maps and Flags"
 description = "Find Scout Aelin at the warden's camp. She can teach you how the banners work: claiming a wardstone and holding it."
 min_level = 16
-turn_in_giver_id = 10
 reward_xp = 40
 grant_title = "Scout's Pupil"
 metadata/_custom_type_script = "uid://c5p53get4ikl6"

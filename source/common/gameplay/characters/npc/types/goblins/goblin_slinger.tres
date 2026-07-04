@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://i26d4k5wypcy"]
+
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="3_cloth"]
+[ext_resource type="SpriteFrames" uid="uid://b3kb4pkejph4" path="res://source/common/gameplay/characters/sprite_frames/goblin.tres" id="4_skin"]
+[ext_resource type="Resource" uid="uid://dspsv5pyhjuwi" path="res://source/common/gameplay/items/weapons/wand/wand.item.tres" id="5_wand"]
+
+[sub_resource type="Resource" id="Drop_cloth"]
+script = ExtResource("2_loot")
+item = ExtResource("3_cloth")
+max_amount = 2
+chance = 0.4
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"goblin_slinger"
+display_name = "Goblin Slinger"
+skin = ExtResource("4_skin")
+max_health = 35.0
+attack_cooldown = 2.0
+weapon = ExtResource("5_wand")
+move_speed = 60
+distance_to_attack = 140
+max_distance_from_spawn = 220
+detection_radius = 130
+chase_on_area = true
+xp_reward = 15
+respawn_delay = 15.0
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_cloth")])
+metadata/slug = &"goblin_slinger"
+metadata/id = 26

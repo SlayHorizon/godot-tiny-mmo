@@ -6,14 +6,14 @@
 
 [sub_resource type="Resource" id="Obj_kill_slime"]
 script = ExtResource("1_obj")
-enemy_type = &"fungus_immature"
+enemy_type = &"sporeling"
 required_amount = 3
 
 [resource]
 script = ExtResource("2_quest")
 quest_name = "Fungus Trouble"
-description = "Clear 3 fungus from the meadow. The rest will take the hint."
-objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_slime"), null])
+description = "Clear 3 sporelings from the cave galleries. The rest will take the hint."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_slime")])
 reward_xp = 50
 reward_gold = 2
 metadata/_custom_type_script = "uid://c5p53get4ikl6"
