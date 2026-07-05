@@ -1,17 +1,16 @@
-[gd_resource type="Resource" script_class="ChargeAbility" format=3 uid="uid://2v85op0ttfga"]
+[gd_resource type="Resource" script_class="ShotOverrideAbility" format=3 uid="uid://wguuy5tv7qxq"]
 
-[ext_resource type="Script" uid="uid://byk0d74w4xe1n" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/charge_ability.gd" id="1_charge"]
-[ext_resource type="PackedScene" uid="uid://cckkklpa17vo" path="res://source/common/gameplay/items/weapons/bow/arrow.tscn" id="2_arrow"]
+[ext_resource type="Script" uid="uid://bme1yhv3y7stc" path="res://source/common/gameplay/combat/ability/ability_collection/shot_override/shot_override_ability.gd" id="1_override"]
+[ext_resource type="Texture2D" uid="uid://c0nxo7wucbeg8" path="res://assets/sprites/ui/ability_icons/multishot.png" id="9_icon"]
 
 [resource]
-script = ExtResource("1_charge")
-projectile_scene = ExtResource("2_arrow")
-min_speed = 200.0
-max_speed = 400.0
+script = ExtResource("1_override")
 projectile_count = 3
-damage_factor = 0.4
+spread_deg = 16.0
+damage_factor = 0.5
 name = "Multishot"
-cooldown = 1.8
+icon = ExtResource("9_icon")
+cooldown = 5.0
 mana_cost = 12
 metadata/slug = &"bow_multishot"
 metadata/id = 3

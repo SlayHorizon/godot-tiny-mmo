@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="BoltShootAbility" format=3 uid="uid://c7i2vynws34cc"]
 
 [ext_resource type="Script" uid="uid://v03p4cycoksj" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/bolt_shoot_ability.gd" id="1_script"]
-[ext_resource type="PackedScene" path="res://source/common/gameplay/items/weapons/wand/fireball.tscn" id="2_bolt"]
+[ext_resource type="PackedScene" uid="uid://q8d1xdan2hdn" path="res://source/common/gameplay/items/weapons/wand/fireball.tscn" id="2_bolt"]
 [ext_resource type="SpriteFrames" uid="uid://bcu6tgh1c2rvd" path="res://source/common/gameplay/combat/vfx/fire_explosion.tres" id="3_boom"]
 [ext_resource type="Texture2D" uid="uid://dkx5rgrgepjj8" path="res://assets/sprites/ui/ability_icons/fireball.png" id="4_icon"]
 

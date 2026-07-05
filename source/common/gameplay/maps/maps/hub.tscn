@@ -445,25 +445,56 @@ target_instance = ExtResource("8_m02lb")
 warper_id = 1
 target_id = 2
 
-[node name="WoodPortal" parent="." unique_id=375786523 instance=ExtResource("29_2sqao")]
-position = Vector2(1056, 192)
+[node name="DarkForestPortal" parent="." unique_id=375786523 instance=ExtResource("29_2sqao")]
+position = Vector2(1072, 112)
 portal_color = Color(0, 0.33908218, 0.29476115, 1)
 destination_label = "DimWood (Dark Forest)"
 target_instance = ExtResource("30_og50n")
 warper_id = 20
 target_id = 20
-required_level = 15
+required_level = 20
+
+[node name="BanditHideoutPortal" parent="." unique_id=706210769 instance=ExtResource("29_2sqao")]
+position = Vector2(1024, 360)
+portal_color = Color(0.4117476, 0.0003790778, 0.48652047, 1)
+destination_label = "Bandit Hideout"
+required_level = 10
+
+[node name="TheHollowPortal" parent="." unique_id=2072488891 instance=ExtResource("29_2sqao")]
+position = Vector2(1176, 416)
+portal_color = Color(0.11549731, 0.1297065, 0.12632617, 1)
+destination_label = "The Hollow"
+required_level = 35
 
 [node name="WoodlandPortal" parent="." unique_id=686472752 instance=ExtResource("29_2sqao")]
-position = Vector2(1056, 272)
-portal_color = Color(8.4228816e-07, 0.52939844, 0.24124122, 1)
+position = Vector2(1024, 200)
+portal_color = Color(0.3670073, 0.5757053, 0.25363114, 1)
 destination_label = "Goblin Woodland"
 target_instance = ExtResource("12_sgxfe")
 warper_id = 23
 target_id = 23
 
-[node name="MinePortal" parent="." unique_id=396714839 instance=ExtResource("29_2sqao")]
-position = Vector2(1056, 352)
+[node name="DesertPortal" parent="." unique_id=151131626 instance=ExtResource("29_2sqao")]
+position = Vector2(1200, 216)
+portal_color = Color(0.5308139, 0.42815638, 0, 1)
+destination_label = "Desert"
+required_level = 25
+
+[node name="DesertPortal2" parent="." unique_id=1638213698 instance=ExtResource("29_2sqao")]
+position = Vector2(1104, 344)
+portal_color = Color(0, 0.526729, 0.27035004, 1)
+destination_label = "The Sewers"
+required_level = 15
+
+[node name="FireForgePortal" parent="." unique_id=121112763 instance=ExtResource("29_2sqao")]
+position = Vector2(1024, 440)
+portal_color = Color(0.7412448, 0.25372657, 0, 1)
+destination_label = "Fire Forge"
+required_level = 30
+
+[node name="CavePortal" parent="." unique_id=396714839 instance=ExtResource("29_2sqao")]
+position = Vector2(1112, 232)
+portal_color = Color(0.37106, 0.22349265, 0.094957806, 1)
 destination_label = "Fungus Cave"
 target_instance = ExtResource("24_2sqao")
 warper_id = 21

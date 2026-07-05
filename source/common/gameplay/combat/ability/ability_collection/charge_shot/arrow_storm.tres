@@ -1,20 +1,17 @@
-[gd_resource type="Resource" script_class="ChargeAbility" format=3 uid="uid://b12to6pnwc2sj"]
+[gd_resource type="Resource" script_class="ShotOverrideAbility" format=3 uid="uid://m8sb3unjvaqj"]
 
-[ext_resource type="Script" uid="uid://byk0d74w4xe1n" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/charge_ability.gd" id="1_charge"]
-[ext_resource type="PackedScene" uid="uid://cckkklpa17vo" path="res://source/common/gameplay/items/weapons/bow/arrow.tscn" id="2_arrow"]
+[ext_resource type="Script" uid="uid://bme1yhv3y7stc" path="res://source/common/gameplay/combat/ability/ability_collection/shot_override/shot_override_ability.gd" id="1_override"]
+[ext_resource type="Texture2D" uid="uid://b6jtyfj816mrw" path="res://assets/sprites/ui/ability_icons/arrow_storm.png" id="9_icon"]
 
 [resource]
-script = ExtResource("1_charge")
-projectile_scene = ExtResource("2_arrow")
-charge_time_s = 1.0
-min_ad_ratio = 0.5
-min_speed = 260.0
-max_speed = 460.0
+script = ExtResource("1_override")
 projectile_count = 7
-spread_deg = 32.0
+spread_deg = 30.0
 damage_factor = 0.4
+glow_color = Color(1, 0.7, 0.25, 1)
 name = "Arrow Storm"
-cooldown = 6.0
+icon = ExtResource("9_icon")
+cooldown = 8.0
 mana_cost = 18
 metadata/slug = &"arrow_storm"
 metadata/id = 15

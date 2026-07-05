@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://m6ronoxklq18"]
+
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="1_npcres"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="2_npcint"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="3_shop"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_dialogue"]
+[ext_resource type="Resource" uid="uid://dinpq4lo3fkgy" path="res://source/common/gameplay/shops/resources/hermit_exchange.tres" id="5_exchange"]
+[ext_resource type="SpriteFrames" uid="uid://v5y6komavnpb" path="res://source/common/gameplay/characters/sprite_frames/wizard.tres" id="6_skin"]
+
+[sub_resource type="Resource" id="ShopInteraction_hermit"]
+script = ExtResource("3_shop")
+shop = ExtResource("5_exchange")
+
+[sub_resource type="Resource" id="Dialogue_quiet"]
+script = ExtResource("4_dialogue")
+lines = Array[String](["The camp asks where things come from. I only ask what they weigh.", "Past the wall it is quiet here. The good kind of quiet. Mostly.", "Sell me what you do not need. The forest keeps its own accounts."])
+label_override = "Ask why he lives here"
+
+[resource]
+script = ExtResource("1_npcres")
+npc_name = "the Hermit"
+skin = ExtResource("6_skin")
+greeting = "Not many find this place. Fewer leave with lighter packs. Show me what you carry."
+interactions = Array[ExtResource("2_npcint")]([SubResource("ShopInteraction_hermit"), SubResource("Dialogue_quiet")])

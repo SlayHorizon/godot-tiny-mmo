@@ -5,15 +5,15 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1783014906
-next_id = 61
+version = 1783256153
+next_id = 63
 entries = Array[Dictionary]([{
-&"hash": "9932ee6a501d76668c79de31e4b1181cd18f709b9f995d9a9272dee56ac847b6",
+&"hash": "2c4332ebd7e89e96bb711600fa07ed4788ddf437949d1102ff8827a8ce5a8c7f",
 &"id": 12,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall.tres",
 &"slug": &"arcane_wall"
 }, {
-&"hash": "a4a82ae2597430f2a32b5380c8209dd36c67cf0ca88bbb44087304589f428941",
+&"hash": "a82c49eb7d688ce726b9559e7eacafef660f2736c62531efbe53d4484585e64a",
 &"id": 58,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall_2.tres",
 &"slug": &"arcane_wall_2"
@@ -68,12 +68,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/ember_bolt.tres",
 &"slug": &"ember_bolt"
 }, {
-&"hash": "f203854e87aff6ac5a6bf354f6df8ec07dd4e053df0f3169d384a27acd43b110",
+&"hash": "6fd094cbf6ec929971922bd6ce5d3b15df604ff2fb8cd5fe492f883cbc9a5ee2",
 &"id": 53,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/fireball.tres",
 &"slug": &"fireball"
 }, {
-&"hash": "d394547d64ba878d247a605bc6b2867a1b4f0c0b8d4a76b886ec1831f3b5db22",
+&"hash": "296de369a4efabfc44864352013668de51e3c3c39f8ae8a845c10bcf89ce15f9",
 &"id": 59,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/fireball_2.tres",
 &"slug": &"fireball_2"
@@ -88,12 +88,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_bolt.tres",
 &"slug": &"wand_bolt"
 }, {
-&"hash": "11fd53add6a72c5fbcb5a5c98a0f184400482134428ab53f2500dc7bd85a040e",
+&"hash": "bc270e1ad1e309959a96701ecb7bb86e87b1c09742baf89643449738af4c9a63",
 &"id": 2,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal.tres",
 &"slug": &"wand_heal"
 }, {
-&"hash": "ccada9ae0c67e7e38d6e3cfd206c57c9cbd8710992de7da6e57b2799e4fc24d9",
+&"hash": "a5460a5b16281cd814b81e28e3a08ed3bf14fd610aa54dac183b519f761fd984",
 &"id": 60,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal_2.tres",
 &"slug": &"wand_heal_2"
@@ -173,12 +173,12 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/channel/sword_whirlwind_3.tres",
 &"slug": &"sword_whirlwind_3"
 }, {
-&"hash": "979e3836ded66f65dff84541b04e51ec96b65c3d6475bdcb4466181d9dc1a6b9",
+&"hash": "43ce783a29b4224a2612999f869b3bc211f6d840fd41a815435dd847c6e9e3c1",
 &"id": 15,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres",
 &"slug": &"arrow_storm"
 }, {
-&"hash": "2c3bde9e9391444c1847dd316cb91c5e491af226e306b7dd971b9169c23e107d",
+&"hash": "12938fc1324d6f113450e1a1886fc2f77ff6d5838e2f3dd7347dbd8d8852108c",
 &"id": 3,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres",
 &"slug": &"bow_multishot"
@@ -307,6 +307,16 @@ entries = Array[Dictionary]([{
 &"id": 9,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/pick_swing/wooden_sickle_swing.tres",
 &"slug": &"wooden_sickle_swing"
+}, {
+&"hash": "e49670ae838d9241d939a5405c05e1dbab20e6a4c3b903ed4c341bc48dacce8e",
+&"id": 61,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/shot_override/deadeye.tres",
+&"slug": &"deadeye"
+}, {
+&"hash": "1989404048bb43f6eee1f269926254ca4f25c549c541f67abf833df2fff7a592",
+&"id": 62,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/shot_override/deadeye_2.tres",
+&"slug": &"deadeye_2"
 }])
 scan_path = "res://source/common/gameplay/combat/ability/ability_collection"
 filters = PackedStringArray("*.tres")

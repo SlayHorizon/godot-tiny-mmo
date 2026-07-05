@@ -4,39 +4,48 @@
 [ext_resource type="Script" uid="uid://dmdvxcrsmfmo2" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
 [ext_resource type="Resource" uid="uid://2v85op0ttfga" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres" id="4_multi"]
-[ext_resource type="Resource" uid="uid://b85pgtif6blf8" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/venom_shot.tres" id="5_venom"]
 [ext_resource type="Resource" uid="uid://b12to6pnwc2sj" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres" id="6_storm"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/juggernaut.png" id="7_jug"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/momentum.png" id="8_mom"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/haste.png" id="9_haste"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/shot_override/deadeye.tres" id="10_deadeye"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/shot_override/deadeye_2.tres" id="11_deadeye2"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/steady_aim.png" id="12_steady"]
 
 [sub_resource type="Resource" id="Node_multishot"]
 script = ExtResource("2_node")
 id = &"bow_multishot"
 node_name = "Multishot"
-description = "Charge and loose a fan of three arrows. Mount it in your bow's special slot."
+description = "Arm your bow: the next arrow you draw splits into a fan of three. The deeper the draw, the harder the fan hits."
 branch = &"domination"
 ability = ExtResource("4_multi")
-
-[sub_resource type="Resource" id="Node_venom"]
-script = ExtResource("2_node")
-id = &"bow_venom"
-node_name = "Venom Shot"
-description = "A charged shot that poisons the target, dealing damage over 4 seconds. Weight 2."
-branch = &"domination"
-tier = 2
-ability = ExtResource("5_venom")
-upgrades = &"bow_multishot"
 
 [sub_resource type="Resource" id="Node_storm"]
 script = ExtResource("2_node")
 id = &"bow_arrowstorm"
 node_name = "Arrow Storm"
-description = "Charge and unleash a wide volley of seven arrows. Weight 3."
+description = "Arm your bow: the next draw unleashes a wide storm of seven arrows. Weight 3."
 branch = &"domination"
 tier = 3
 ability = ExtResource("6_storm")
-upgrades = &"bow_venom"
+upgrades = &"bow_multishot"
+
+[sub_resource type="Resource" id="Node_deadeye"]
+script = ExtResource("2_node")
+id = &"bow_deadeye"
+description = "Arm your bow: the next arrow becomes a sniper round that punches through targets, flying faster and hitting harder. Weight 1."
+branch = &"domination"
+tier = 2
+ability = ExtResource("10_deadeye")
+
+[sub_resource type="Resource" id="Node_deadeye2"]
+script = ExtResource("2_node")
+id = &"bow_deadeye_2"
+description = "The perfected sniper round: pierces everything in its path, faster and deadlier still. Weight 2."
+branch = &"domination"
+tier = 3
+ability = ExtResource("11_deadeye2")
+upgrades = &"bow_deadeye"
 
 [sub_resource type="Resource" id="Mod_hp_survival"]
 script = ExtResource("3_mod")
@@ -80,8 +89,24 @@ tier = 2
 icon = ExtResource("9_haste")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_haste_hawkeye")])
 
+[sub_resource type="Resource" id="Mod_steady"]
+script = ExtResource("3_mod")
+stat_name = "steady_aim"
+value = 25.0
+
+[sub_resource type="Resource" id="Node_steady"]
+script = ExtResource("2_node")
+id = &"bow_steady_aim"
+node_name = "Steady Aim"
+description = "Plant your feet: a full draw released without moving hits 25% harder. The patient marksman's reward."
+branch = &"inspiration"
+tier = 2
+icon = ExtResource("12_steady")
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_steady")])
+weapon_bound = true
+
 [resource]
 script = ExtResource("1_tree")
 category = &"bow"
 display_name = "Bow"
-nodes = Array[ExtResource("2_node")]([SubResource("Node_multishot"), SubResource("Node_venom"), SubResource("Node_storm"), SubResource("Node_survival"), SubResource("Node_lightstep"), SubResource("Node_hawkeye")])
+nodes = Array[ExtResource("2_node")]([SubResource("Node_multishot"), SubResource("Node_deadeye"), SubResource("Node_deadeye2"), SubResource("Node_storm"), SubResource("Node_survival"), SubResource("Node_lightstep"), SubResource("Node_hawkeye"), SubResource("Node_steady")])

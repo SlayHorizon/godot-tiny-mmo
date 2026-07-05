@@ -34,6 +34,12 @@ var pivot: float = 0.0:
 ## keeps its own (server authoritative, the client mirrors it for prediction).
 var ability_cooldowns: Dictionary = {}
 
+## The bow's ARMED SHOT OVERRIDE (see ShotOverrideAbility): params the next charged
+## release consumes (count/spread/pierce/…, + "at" arm-time ms for expiry). Empty = none.
+## Set/cleared identically on every peer via the action.perform echoes (arm on ability
+## press, consume on release), so no extra sync is needed.
+var armed_shot: Dictionary = {}
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 ## Over-head HP bar + name label. Guaranteed present by the Character scene (every subclass
 ## inherits character.tscn), so subclasses use these directly — no has_node/cast dance.

@@ -7,7 +7,9 @@ extends Weapon
 ## pipeline — this script just reacts to "is my ability charging?" after each
 ## action to keep the bow's sprite honest.
 
-## bone.png sprite-sheet regions for the bow's 3 charge frames. Frame 0 =
+## The bow's 3 charge frames — a LAYOUT CONVENTION shared by every bow sheet
+## (bone/wood/rustic/fire all place them at these coordinates), so apply_skin
+## swaps the texture and these regions stay valid for any skin. Frame 0 =
 ## relaxed bow at rest, frame 1 = half-draw, frame 2 = full draw. All 16x32.
 const BOW_CHARGE_FRAMES: Array[Rect2] = [
 	Rect2(48, 48, 16, 32),

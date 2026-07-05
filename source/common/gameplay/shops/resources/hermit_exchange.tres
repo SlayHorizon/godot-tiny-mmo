@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://dinpq4lo3fkgy"]
+
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_entry"]
+[ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="2_trade"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="3_shop"]
+[ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="4_cloth"]
+[ext_resource type="Resource" uid="uid://2aygya3q5pvo" path="res://source/common/gameplay/items/materials/leather/hide_forest.tres" id="5_hide"]
+[ext_resource type="Resource" uid="uid://d2dopgtbgmdii" path="res://source/common/gameplay/items/materials/herbs/healing_herb.tres" id="6_herb"]
+[ext_resource type="Resource" uid="uid://c4r6h4wum0u0b" path="res://source/common/gameplay/items/weapons/tools/sickle.tres" id="7_sickle"]
+[ext_resource type="Resource" uid="uid://6m10gk0883iw" path="res://source/common/gameplay/items/consumables/minor_health_potion.tres" id="8_potion"]
+
+[sub_resource type="Resource" id="Trade_cloth"]
+script = ExtResource("2_trade")
+item = ExtResource("4_cloth")
+amount = 5
+payout = 3
+
+[sub_resource type="Resource" id="Trade_hide"]
+script = ExtResource("2_trade")
+item = ExtResource("5_hide")
+amount = 5
+payout = 3
+
+[sub_resource type="Resource" id="Trade_herb"]
+script = ExtResource("2_trade")
+item = ExtResource("6_herb")
+amount = 5
+payout = 4
+
+[sub_resource type="Resource" id="Entry_sickle"]
+script = ExtResource("1_entry")
+item = ExtResource("7_sickle")
+price = 6
+
+[sub_resource type="Resource" id="Entry_potion"]
+script = ExtResource("1_entry")
+item = ExtResource("8_potion")
+price = 4
+
+[resource]
+script = ExtResource("3_shop")
+shop_name = "The Hermit's Exchange"
+entries = Array[ExtResource("1_entry")]([SubResource("Entry_sickle"), SubResource("Entry_potion")])
+accepted_trades = Array[ExtResource("2_trade")]([SubResource("Trade_cloth"), SubResource("Trade_hide"), SubResource("Trade_herb")])

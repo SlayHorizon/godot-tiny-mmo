@@ -40,13 +40,18 @@ extends AbilityResource
 ## duplicated on equip), server-authoritative for damage.
 var charging: bool = false
 var _charge_start: float = -1.0
+## Where the draw began — Steady Aim compares it against the release position
+## (a full draw WITHOUT moving = the planted-marksman bonus).
+var _charge_pos: Vector2
 
 
-func use_ability(_entity: Entity, _direction: Vector2) -> void:
+func use_ability(entity: Entity, _direction: Vector2) -> void:
 	# PRESS — begin charging. Weapon visuals (draw frames, anim) hook off
 	# `charging` after this call.
 	charging = true
 	_charge_start = Time.get_ticks_msec() / 1000.0
+	if entity != null:
+		_charge_pos = entity.global_position
 
 
 func release_ability(entity: Entity, direction: Vector2) -> void:
@@ -65,15 +70,39 @@ func release_ability(entity: Entity, direction: Vector2) -> void:
 	var per_shot_damage: float = maxf(0.0, ad * lerpf(min_ad_ratio, max_ad_ratio, t) * damage_factor)
 	var speed: float = lerpf(min_speed, max_speed, t)
 
+	# The bow's SHOT OVERRIDE (docs/bow.md): an armed ability (Multishot/Deadeye/…)
+	# re-flavors THIS release — count/spread/damage/speed/pierce come from it, and the
+	# whole thing still scales with the draw time above (a tapped fan is a weak fan).
+	# take_armed clears it on every peer (arm + release both ride the action echoes).
+	var shot_count: int = projectile_count
+	var shot_spread: float = spread_deg
+	var shot_pierce: int = 0
+	if entity is Character:
+		var armed: Dictionary = ShotOverrideAbility.take_armed(entity as Character)
+		if not armed.is_empty():
+			shot_count = int(armed.get("count", 1))
+			shot_spread = float(armed.get("spread", spread_deg))
+			shot_pierce = int(armed.get("pierce", 0))
+			per_shot_damage *= float(armed.get("factor", 1.0)) * float(armed.get("mult", 1.0))
+			speed *= float(armed.get("speed", 1.0))
+
+	# STEADY AIM (the planted marksman): owning the passive (a `steady_aim` percent
+	# stat, weapon-bound to the bow) rewards a FULL draw released WITHOUT moving.
+	if entity is Character and t >= 1.0 \
+			and entity.global_position.distance_to(_charge_pos) <= 6.0:
+		var steady: float = (entity as Character).stats_component.get_stat(&"steady_aim")
+		if steady > 0.0:
+			per_shot_damage *= 1.0 + steady / 100.0
+
 	var dir_norm: Vector2 = direction.normalized() if direction != Vector2.ZERO else Vector2.RIGHT
 	var base_angle: float = dir_norm.angle()
-	var spread_rad: float = deg_to_rad(spread_deg)
+	var spread_rad: float = deg_to_rad(shot_spread)
 	var step: float = 0.0
-	if projectile_count > 1:
-		step = (spread_rad * 2.0) / float(projectile_count - 1)
-	for i: int in maxi(1, projectile_count):
-		var offset: float = -spread_rad + step * float(i) if projectile_count > 1 else 0.0
-		_spawn(entity, Vector2.RIGHT.rotated(base_angle + offset), per_shot_damage, speed)
+	if shot_count > 1:
+		step = (spread_rad * 2.0) / float(shot_count - 1)
+	for i: int in maxi(1, shot_count):
+		var offset: float = -spread_rad + step * float(i) if shot_count > 1 else 0.0
+		_spawn(entity, Vector2.RIGHT.rotated(base_angle + offset), per_shot_damage, speed, shot_pierce)
 
 
 ## Press-phase gate: can't start a new charge mid-charge; otherwise the normal
@@ -108,13 +137,16 @@ func _init() -> void:
 	has_release = true
 
 
-func _spawn(entity: Entity, direction: Vector2, damage: float, speed: float) -> void:
+func _spawn(entity: Entity, direction: Vector2, damage: float, speed: float, pierce: int = 0) -> void:
 	var projectile: Projectile = projectile_scene.instantiate()
 	projectile.top_level = true
 	projectile.direction = direction
 	projectile.speed = speed
 	projectile.source = entity
 	projectile.damage = damage
+	if pierce > 0:
+		projectile.piercing = true
+		projectile.pierce_left = pierce
 	projectile.burn_dps = dot_dps
 	projectile.burn_duration_s = dot_duration_s
 	projectile.dot_kind = dot_kind

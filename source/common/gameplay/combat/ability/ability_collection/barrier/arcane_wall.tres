@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="BarrierAbility" format=3 uid="uid://cr8htn0a6gd12"]
 
 [ext_resource type="Script" uid="uid://efc507prunq2" path="res://source/common/gameplay/combat/ability/ability_collection/barrier/barrier_ability.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/arcane_wall.png" id="9_icon"]
+[ext_resource type="Texture2D" uid="uid://ce01i7knhkw30" path="res://assets/sprites/ui/ability_icons/arcane_wall.png" id="9_icon"]
 
 [resource]
 script = ExtResource("1_script")
