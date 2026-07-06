@@ -76,15 +76,19 @@ func release_ability(entity: Entity, direction: Vector2) -> void:
 	# take_armed clears it on every peer (arm + release both ride the action echoes).
 	var shot_count: int = projectile_count
 	var shot_spread: float = spread_deg
-	var shot_pierce: int = 0
+	var armed: Dictionary = {}
 	if entity is Character:
-		var armed: Dictionary = ShotOverrideAbility.take_armed(entity as Character)
+		armed = ShotOverrideAbility.take_armed(entity as Character)
 		if not armed.is_empty():
 			shot_count = int(armed.get("count", 1))
 			shot_spread = float(armed.get("spread", spread_deg))
-			shot_pierce = int(armed.get("pierce", 0))
 			per_shot_damage *= float(armed.get("factor", 1.0)) * float(armed.get("mult", 1.0))
 			speed *= float(armed.get("speed", 1.0))
+			# THE SHOT is the cast: the override's cooldown + mana land now, not at
+			# the arming press (so an unfired arm costs nothing but its expiry).
+			var weapon: Weapon = (entity as Character).equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
+			if weapon != null:
+				weapon.stamp_armed_override(String(armed.get("name", "")))
 
 	# STEADY AIM (the planted marksman): owning the passive (a `steady_aim` percent
 	# stat, weapon-bound to the bow) rewards a FULL draw released WITHOUT moving.
@@ -102,7 +106,7 @@ func release_ability(entity: Entity, direction: Vector2) -> void:
 		step = (spread_rad * 2.0) / float(shot_count - 1)
 	for i: int in maxi(1, shot_count):
 		var offset: float = -spread_rad + step * float(i) if shot_count > 1 else 0.0
-		_spawn(entity, Vector2.RIGHT.rotated(base_angle + offset), per_shot_damage, speed, shot_pierce)
+		_spawn(entity, Vector2.RIGHT.rotated(base_angle + offset), per_shot_damage, speed, armed)
 
 
 ## Press-phase gate: can't start a new charge mid-charge; otherwise the normal
@@ -137,16 +141,27 @@ func _init() -> void:
 	has_release = true
 
 
-func _spawn(entity: Entity, direction: Vector2, damage: float, speed: float, pierce: int = 0) -> void:
+func _spawn(entity: Entity, direction: Vector2, damage: float, speed: float, armed: Dictionary = {}) -> void:
 	var projectile: Projectile = projectile_scene.instantiate()
 	projectile.top_level = true
 	projectile.direction = direction
 	projectile.speed = speed
 	projectile.source = entity
 	projectile.damage = damage
-	if pierce > 0:
-		projectile.piercing = true
-		projectile.pierce_left = pierce
+	# Armed-override extras (docs/bow.md): pierce (Deadeye), stun + shockwave slow +
+	# a scaled-up arrow (the Pinning Arrow ult).
+	if not armed.is_empty():
+		var pierce: int = int(armed.get("pierce", 0))
+		if pierce > 0:
+			projectile.piercing = true
+			projectile.pierce_left = pierce
+		projectile.stun_s = float(armed.get("stun", 0.0))
+		projectile.explode_radius = float(armed.get("exp_r", 0.0))
+		projectile.explode_slow = float(armed.get("exp_slow", 0.0))
+		projectile.explode_slow_s = float(armed.get("exp_slow_s", 0.0))
+		var vis_scale: float = float(armed.get("scale", 1.0))
+		if vis_scale != 1.0:
+			projectile.scale *= vis_scale
 	projectile.burn_dps = dot_dps
 	projectile.burn_duration_s = dot_duration_s
 	projectile.dot_kind = dot_kind

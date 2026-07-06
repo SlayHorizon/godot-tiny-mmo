@@ -75,6 +75,11 @@ func _ready() -> void:
 	# Staff teleports (/goto, /summon) within the same map: same problem as the
 	# sparring teleport — we must set position locally + freeze input briefly.
 	Client.subscribe(&"player.teleport", _on_teleport)
+	# STUNNED (Pinning Arrow): the server locks our input for the duration — movement
+	# is client-authoritative, so the freeze must happen here. The movement lock also
+	# swallows attacks, and the server refuses our actions regardless.
+	Client.subscribe(&"player.stunned", func(payload: Dictionary) -> void:
+		freeze_movement(float(payload.get("ms", 1000)) / 1000.0))
 	# Channeling (healing aura, future recall): when OUR channel starts we root in
 	# place; pressing a move key cancels it. Other players' channels only show
 	# their aura (handled in InstanceClient) — these handlers ignore them.

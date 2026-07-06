@@ -32,6 +32,10 @@ func register(map: Map, npc: Node) -> void:
 		if map.shops.has(key) and map.shops[key] != shop:
 			push_warning("ShopInteraction: duplicate shop key '%s' — two shop NPCs resolve to the same key; one will be unreachable. Give them distinct NPCResource files or node names." % key)
 		map.shops[key] = shop
+		# Boot-time visibility: one line per registered shop, so a mis-keyed or
+		# missing merchant is diagnosable from the world log instead of a dead Buy.
+		# Server-only by construction (npc.gd gates register() on is_server()).
+		ServerLog.info("Shop registered: '%s' -> \"%s\" (map %s)" % [key, shop.shop_name, map.name])
 
 
 ## The map-unique key this shop registers + authorizes under. Prefer the NPC's

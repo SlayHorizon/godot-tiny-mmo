@@ -36,6 +36,13 @@ var impact_vfx: SpriteFrames
 ## as the explosion visual, scaled to the radius.
 var explode_radius: float = 0.0
 var explode_damage: float = 0.0
+## Optional slow carried by the explosion arc (the Pinning Arrow's shockwave — 0 damage,
+## pure slow, is a valid explosion).
+var explode_slow: float = 0.0
+var explode_slow_s: float = 0.0
+## > 0: STUN the first character this shot damages for this long (the Pinning Arrow —
+## the game's first hard CC; server-side, immunity-gated in Character.apply_stun).
+var stun_s: float = 0.0
 const EXPLOSION_ARC: PackedScene = preload("res://source/common/gameplay/combat/melee_arc_centered.tscn")
 
 ## Seconds a projectile flies before despawning if it hits nothing (speed × this ≈ max range).
@@ -130,13 +137,17 @@ func _handle_collision(node: Node2D) -> void:
 		CombatHit.Result.DAMAGED:
 			_spawn_impact()
 			_explode()
-			# Ride a burn on top if this projectile carries one (server applies; clients see the sync).
-			if burn_dps > 0.0 and multiplayer.is_server():
+			# Ride a burn / a STUN on top if this projectile carries one (server applies;
+			# clients see the sync / the freeze push).
+			if (burn_dps > 0.0 or stun_s > 0.0) and multiplayer.is_server():
 				var victim: Node2D = node
 				if victim is HurtBox:
 					victim = (victim as HurtBox).character
 				if victim is Character:
-					DamageOverTime.apply(victim as Character, source as Character, dot_kind, burn_dps, burn_duration_s, damage_type)
+					if burn_dps > 0.0:
+						DamageOverTime.apply(victim as Character, source as Character, dot_kind, burn_dps, burn_duration_s, damage_type)
+					if stun_s > 0.0:
+						(victim as Character).apply_stun(stun_s)
 			if not piercing or pierce_left <= 0:
 				queue_free()
 			pierce_left -= 1
@@ -193,5 +204,7 @@ func _explode() -> void:
 		shape_node.shape = circle
 	arc.damage = explode_damage
 	arc.damage_type = CombatHit.DAMAGE_MAGIC
+	arc.slow_amount = explode_slow
+	arc.slow_duration_s = explode_slow_s
 	map.add_child(arc)
 	arc.global_position = global_position

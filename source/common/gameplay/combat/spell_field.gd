@@ -17,6 +17,10 @@ var heal_per_hit: float = 0.0
 var mana_per_hit: float = 0.0
 var tick_interval: float = 0.5
 var duration: float = 2.5
+## PLANTED mode (Rain of Arrows' slow zone): true = the field stays at [member anchor]
+## instead of riding the caster. The caster must stay valid either way (arc.source).
+var anchored: bool = false
+var anchor: Vector2
 
 var _elapsed: float = 0.0
 var _next_tick: float = 0.0
@@ -54,4 +58,4 @@ func _tick() -> void:
 	arc.heal_per_hit = heal_per_hit
 	arc.mana_per_hit = mana_per_hit
 	caster.get_parent().add_child(arc)
-	arc.global_position = caster.global_position
+	arc.global_position = anchor if anchored else caster.global_position

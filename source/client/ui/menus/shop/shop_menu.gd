@@ -452,7 +452,17 @@ func _buy() -> void:
 		{"shop_key": _shop_key, "id": _selected_slot.item_id, "amount": amount},
 		InstanceClient.current.name
 	)
-	if result[1] != OK or not result[0].get("ok", false):
+	if result[1] != OK:
+		Toaster.toast("No response from the server.")
+		_refresh_buy_action()
+		return
+	if not result[0].get("ok", false):
+		# Surface WHY (silent failure made the guild-house shop bug undiagnosable).
+		match str(result[0].get("reason", "")):
+			"no_shop": Toaster.toast("This merchant isn't available right now.")
+			"not_sold_here": Toaster.toast("This item isn't sold here.")
+			"cant_afford": Toaster.toast("Not enough funds.")
+			_: Toaster.toast("Purchase failed.")
 		_refresh_buy_action()
 		return
 	# Gold + counts refresh from the inventory fetch.

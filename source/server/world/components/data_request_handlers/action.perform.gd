@@ -24,10 +24,18 @@ func data_request_handler(
 	# here is the authoritative gate). A live ChannelInstance rides the caster while it holds.
 	if player.get_node_or_null(^"ChannelInstance") != null:
 		return {}
+	# Stunned (Pinning Arrow): fully locked out — the client is frozen by the push,
+	# this is the authoritative backstop.
+	if player.is_stunned():
+		return {}
 
 	var action_index: int = args.get("i", 0)
 	if action_index < 0:
 		return {} # negative indices would wrap weapon ability arrays — reject early
+	# An ARMED shot override (bow) locks the other abilities — only the basic draw
+	# (slot 0) that consumes it stays live. Client mirrors this in Weapon._handle_slot_input.
+	if action_index > 0 and player.has_armed_shot():
+		return {}
 	var action_direction: Vector2 = args.get("d", Vector2.ZERO)
 	# "r" marks the RELEASE phase of a two-phase (charge) ability.
 	var released: bool = bool(args.get("r", false))

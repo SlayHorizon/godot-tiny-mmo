@@ -40,6 +40,16 @@ var ability_cooldowns: Dictionary = {}
 ## press, consume on release), so no extra sync is needed.
 var armed_shot: Dictionary = {}
 
+
+## True while a FRESH shot override is loaded (see ShotOverrideAbility.EXPIRY_S).
+## While armed: no other abilities (weapon + server gates), the ability tile shows
+## active, and the next charged release consumes it.
+func has_armed_shot() -> bool:
+	if armed_shot.is_empty():
+		return false
+	return Time.get_ticks_msec() - int(armed_shot.get("at", 0)) <= int(ShotOverrideAbility.EXPIRY_S * 1000.0)
+
+
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 ## Over-head HP bar + name label. Guaranteed present by the Character scene (every subclass
 ## inherits character.tscn), so subclasses use these directly — no has_node/cast dance.
@@ -225,6 +235,40 @@ var deflect_until_ms: int = 0
 ## Opens a brief deflect window of [param window_s] seconds (overwrites, never stacks).
 func open_deflect(window_s: float) -> void:
 	deflect_until_ms = Time.get_ticks_msec() + int(window_s * 1000.0)
+
+
+## STUN (the game's first hard CC — the bow's Pinning Arrow ult; keep it rare).
+## Server-side: ticks_msec until which this character can't move or act.
+## Mobs read it in HostileNpc's root check; players get a targeted push that
+## locks their client input (movement is client-authoritative), and the server
+## action.perform gate refuses their abilities regardless.
+var stunned_until_ms: int = 0
+## Anti-chain: a fresh stun is IGNORED until this passes (stun end + immunity),
+## so stuns can never be re-applied back-to-back (PvP sanity).
+var _stun_immune_until_ms: int = 0
+const STUN_IMMUNITY_MS: int = 3000
+
+
+## Server-side: stun this character for [param duration_s] (no-op if stun-immune).
+func apply_stun(duration_s: float) -> void:
+	if not multiplayer.is_server() or is_dead:
+		return
+	var now: int = Time.get_ticks_msec()
+	if now < _stun_immune_until_ms:
+		return # still immune from the last stun — no chains
+	var dur_ms: int = int(duration_s * 1000.0)
+	stunned_until_ms = now + dur_ms
+	_stun_immune_until_ms = stunned_until_ms + STUN_IMMUNITY_MS
+	# Players own their movement client-side — tell THAT client to freeze.
+	if self is Player and (self as Player).player_resource != null and WorldServer.curr != null:
+		WorldServer.curr.data_push.rpc_id(
+			int((self as Player).player_resource.current_peer_id),
+			&"player.stunned", {"ms": dur_ms})
+
+
+## Server-side: true while stunned (action gates + mob AI read this).
+func is_stunned() -> bool:
+	return Time.get_ticks_msec() < stunned_until_ms
 
 
 ## True while a Deflect window is live — projectiles aimed at us are parried.

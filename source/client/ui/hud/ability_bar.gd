@@ -188,6 +188,11 @@ func _process(_delta: float) -> void:
 	# What we're channeling (if anything) — read off the local player, which lives
 	# inside the instance's multiplayer context (the HUD doesn't, so it can't ask).
 	var channeling_name: String = ClientState.local_player.channeling_ability_name
+	# An ARMED shot override (bow) reads as an active state too — its cooldown only
+	# starts when the shot fires, so until then the tile glows instead of sweeping.
+	var armed_name: String = ""
+	if ClientState.local_player.has_armed_shot():
+		armed_name = String(ClientState.local_player.armed_shot.get("name", ""))
 	for tile_info: Dictionary in _tiles:
 		var ability: AbilityResource = tile_info["ability"]
 		if ability == null:
@@ -196,11 +201,11 @@ func _process(_delta: float) -> void:
 		var cd_label: Label = tile_info["cd_label"]
 		var button: Button = tile_info["button"]
 		var glow: ColorRect = tile_info["glow"]
-		# Channeling: light the tile and HIDE the cooldown until the channel ends.
-		# The cooldown clock already started at press (mark_used), so when the
-		# channel finishes the sweep just reveals the remaining time — exactly the
-		# "active glow now, cooldown after" read.
-		if not channeling_name.is_empty() and ability.name == channeling_name:
+		# Channeling / armed: light the tile and HIDE the cooldown until it ends.
+		# (A channel's clock already started at press; an armed override's starts at
+		# the consuming shot — either way the glow reads "this is live right now".)
+		var active_name: String = channeling_name if not channeling_name.is_empty() else armed_name
+		if not active_name.is_empty() and ability.name == active_name:
 			sweep.visible = false
 			cd_label.visible = false
 			button.modulate = Color.WHITE

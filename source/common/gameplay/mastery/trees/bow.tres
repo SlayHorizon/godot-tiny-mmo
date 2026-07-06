@@ -3,14 +3,16 @@
 [ext_resource type="Script" uid="uid://cx1btl22f4mft" path="res://source/common/gameplay/mastery/mastery_tree_resource.gd" id="1_tree"]
 [ext_resource type="Script" uid="uid://dmdvxcrsmfmo2" path="res://source/common/gameplay/mastery/mastery_node.gd" id="2_node"]
 [ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="3_mod"]
-[ext_resource type="Resource" uid="uid://2v85op0ttfga" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres" id="4_multi"]
-[ext_resource type="Resource" uid="uid://b12to6pnwc2sj" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres" id="6_storm"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/bow_multishot.tres" id="4_multi"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/charge_shot/arrow_storm.tres" id="6_storm"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/juggernaut.png" id="7_jug"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/momentum.png" id="8_mom"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/haste.png" id="9_haste"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/shot_override/deadeye.tres" id="10_deadeye"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/shot_override/deadeye_2.tres" id="11_deadeye2"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/steady_aim.png" id="12_steady"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/meteor/rain_of_arrows.tres" id="13_rain"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/shot_override/pinning_arrow.tres" id="14_pin"]
 
 [sub_resource type="Resource" id="Node_multishot"]
 script = ExtResource("2_node")
@@ -59,6 +61,22 @@ description = "+12 max health."
 branch = &"resolve"
 icon = ExtResource("7_jug")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_hp_survival")])
+
+[sub_resource type="Resource" id="Node_rain"]
+script = ExtResource("2_node")
+id = &"bow_rain_of_arrows"
+description = "Call a volley down on the spot you aim. Arrows crash into everyone there, then stick in the ground, slowing whoever dares cross. Weight 2."
+branch = &"resolve"
+tier = 3
+ability = ExtResource("13_rain")
+
+[sub_resource type="Resource" id="Node_pin"]
+script = ExtResource("2_node")
+id = &"bow_pinning_arrow"
+description = "Arm a massive arrow. Your next full draw releases it: the first one it strikes is PINNED to the ground, stunned, while the shockwave slows everyone around. The marksman's ultimate: heaviest technique, weight 4."
+branch = &"resolve"
+tier = 4
+ability = ExtResource("14_pin")
 
 [sub_resource type="Resource" id="Mod_ms_lightstep"]
 script = ExtResource("3_mod")
@@ -109,4 +127,4 @@ weapon_bound = true
 script = ExtResource("1_tree")
 category = &"bow"
 display_name = "Bow"
-nodes = Array[ExtResource("2_node")]([SubResource("Node_multishot"), SubResource("Node_deadeye"), SubResource("Node_deadeye2"), SubResource("Node_storm"), SubResource("Node_survival"), SubResource("Node_lightstep"), SubResource("Node_hawkeye"), SubResource("Node_steady")])
+nodes = Array[ExtResource("2_node")]([SubResource("Node_multishot"), SubResource("Node_deadeye"), SubResource("Node_deadeye2"), SubResource("Node_storm"), SubResource("Node_survival"), SubResource("Node_rain"), SubResource("Node_pin"), SubResource("Node_lightstep"), SubResource("Node_hawkeye"), SubResource("Node_steady")])

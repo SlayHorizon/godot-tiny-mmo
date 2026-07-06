@@ -333,9 +333,10 @@ func _physics_process(_delta: float) -> void:
 	if not multiplayer.is_server():
 		return
 
-	# Rooted for a telegraphed cast: hold position. DEAD still processes so death
-	# isn't deferred behind the wind-up.
-	if enemy_state != EnemyState.DEAD and Time.get_ticks_msec() < action_root_until_ms:
+	# Rooted for a telegraphed cast — or STUNNED (Pinning Arrow): hold position and do
+	# nothing. DEAD still processes so death isn't deferred behind the wind-up.
+	if enemy_state != EnemyState.DEAD and (
+			Time.get_ticks_msec() < action_root_until_ms or is_stunned()):
 		velocity = Vector2.ZERO
 		return
 

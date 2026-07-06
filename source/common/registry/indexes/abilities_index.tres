@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1783256153
-next_id = 63
+version = 1783344992
+next_id = 65
 entries = Array[Dictionary]([{
 &"hash": "2c4332ebd7e89e96bb711600fa07ed4788ddf437949d1102ff8827a8ce5a8c7f",
 &"id": 12,
@@ -268,6 +268,11 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/meteor/meteor.tres",
 &"slug": &"meteor"
 }, {
+&"hash": "accc2d9a61915bfd63f45b382d0435fa4e868fb6a141b6677d9b5cba405551de",
+&"id": 63,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/meteor/rain_of_arrows.tres",
+&"slug": &"rain_of_arrows"
+}, {
 &"hash": "0e59fd31482ba035b2e1cac06022f1246f7d05fd66a353a0b8e6f112ccbe438f",
 &"id": 43,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/nova/blood_feast.tres",
@@ -317,6 +322,11 @@ entries = Array[Dictionary]([{
 &"id": 62,
 &"path": "res://source/common/gameplay/combat/ability/ability_collection/shot_override/deadeye_2.tres",
 &"slug": &"deadeye_2"
+}, {
+&"hash": "3b1566ab131477f451e9ef41cc580ba113bbdd671d69b4e0ce6fa165ea0cecc5",
+&"id": 64,
+&"path": "res://source/common/gameplay/combat/ability/ability_collection/shot_override/pinning_arrow.tres",
+&"slug": &"pinning_arrow"
 }])
 scan_path = "res://source/common/gameplay/combat/ability/ability_collection"
 filters = PackedStringArray("*.tres")

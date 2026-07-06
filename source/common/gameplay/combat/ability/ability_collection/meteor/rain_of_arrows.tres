@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RainOfArrowsAbility" format=3 uid="uid://dl4uu7u647ey"]
+
+[ext_resource type="Script" uid="uid://bu84p4xqy2tlu" path="res://source/common/gameplay/combat/ability/ability_collection/meteor/rain_of_arrows_ability.gd" id="1_rain"]
+[ext_resource type="PackedScene" uid="uid://dwgkn4xkqlcfh" path="res://source/common/gameplay/combat/melee_arc_centered.tscn" id="2_arc"]
+[ext_resource type="Texture2D" uid="uid://cd0cj5yx3oxie" path="res://assets/sprites/ui/ability_icons/rain_of_arrows.png" id="3_icon"]
+
+[resource]
+script = ExtResource("1_rain")
+ap_ratio = 0.8
+blast_radius = 60.0
+cast_range = 150.0
+windup_s = 1.0
+name = "Rain of Arrows"
+icon = ExtResource("3_icon")
+cooldown = 14.0
+mana_cost = 20
+metadata/slug = &"rain_of_arrows"
+metadata/id = 63

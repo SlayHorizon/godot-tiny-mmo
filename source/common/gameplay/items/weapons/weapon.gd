@@ -153,6 +153,18 @@ func set_special_ability(ability: AbilityResource) -> void:
 	_base_ability_count = 2
 
 
+## The just-fired charged shot consumed the armed override named [param override_name]:
+## NOW its cooldown + mana land (they were deferred at press — arming is intent, the
+## shot is the cast). Runs on every peer via the release echo; mana stays server-gated
+## inside _consume_mana, cooldown is predicted like any other stamp.
+func stamp_armed_override(override_name: String) -> void:
+	for ability: AbilityResource in abilities:
+		if ability is ShotOverrideAbility and ability.name == override_name:
+			_stamp_cooldown(ability)
+			_consume_mana(ability)
+			return
+
+
 ## Rotate [param direction] by a random angle inside the slot ability's spread cone (a
 ## spray like Arc Strike); unchanged for pinpoint abilities. Called ONCE on the server in
 ## the action.perform handler, BEFORE the echo — so the sprayed aim is baked into every
@@ -212,7 +224,9 @@ func perform_action(action_index: int, direction: Vector2, released: bool = fals
 		_consume_mana(ability)
 	else:
 		ability.use_ability(character, direction)
-		if not ability.has_release:
+		# Shot overrides defer cooldown + mana to the consuming shot (ChargeAbility
+		# stamps them through _stamp_armed_override when the draw fires).
+		if not ability.has_release and ability is not ShotOverrideAbility:
 			_stamp_cooldown(ability)
 			_consume_mana(ability)
 
@@ -283,6 +297,11 @@ func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, loca
 	# enforces the same authoritatively in the action.perform handler.
 	if not local_player.channeling_ability_name.is_empty():
 		return
+	# An ARMED shot override locks the other abilities too — the loaded shot is your
+	# commitment; only the basic (slot 0, the draw that consumes it) stays live.
+	# Server mirror in the action.perform handler.
+	if slot != 0 and character != null and character.has_armed_shot():
+		return
 	var ability: AbilityResource = abilities[slot]
 	if ability == null:
 		return # empty loadout slot (null hole)
@@ -296,7 +315,10 @@ func _handle_slot_input(slot: int, just_pressed: bool, just_released: bool, loca
 			# limiter, which ate releases and bricked the bow).
 			ability.use_ability(character, Vector2.ZERO)
 		else:
-			_stamp_cooldown(ability) # predictive — server cooldown stays authoritative
+			# Shot overrides charge their cooldown + mana when the SHOT FIRES (the
+			# consume in ChargeAbility), not at press — arming is intent, not the cast.
+			if ability is not ShotOverrideAbility:
+				_stamp_cooldown(ability) # predictive — server cooldown stays authoritative
 			# Predict the instant-feedback part locally (e.g. Deflect's bubble), so it
 			# fires NOW instead of waiting a round-trip for the server echo. No-op for
 			# most abilities; the server echo still runs the authoritative use_ability.

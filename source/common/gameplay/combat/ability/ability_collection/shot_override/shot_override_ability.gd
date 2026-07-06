@@ -29,11 +29,30 @@ const EXPIRY_S: float = 6.0
 @export var speed_mult: float = 1.0
 ## Targets pierced before stopping (0 = none; 99 ≈ everything — Deadeye II).
 @export var pierce_count: int = 0
+## STUN the first target hit for this long (the Pinning Arrow ult — the game's first
+## hard CC; immunity-gated server-side). 0 = none.
+@export var stun_s: float = 0.0
+## Shockwave around the impact: radius + slow (the pin's area denial). 0 = none.
+@export var impact_radius: float = 0.0
+@export var impact_slow: float = 0.0
+@export var impact_slow_s: float = 0.0
+## Visual scale on the arrow itself (2+ = the giant ult arrow). 1 = normal.
+@export var shot_scale: float = 1.0
 ## Armed-glow tint on the hand while loaded (also how enemies read what's coming).
 @export var glow_color: Color = Color(1.0, 0.85, 0.4)
 
 const GLOW_VFX: SpriteFrames = preload("res://source/common/gameplay/combat/vfx/lash_burst.tres")
 const GLOW_NODE: StringName = &"ArmedShotGlow"
+
+
+## Arming while ALREADY armed is refused — the loaded shot is a commitment (owner rule:
+## while armed, no other abilities either; that half lives in the weapon/server gates).
+## Cooldown + mana are charged when the SHOT FIRES (the consume in ChargeAbility), not
+## here — arming is intent, the draw is the cast.
+func can_use(user: Entity = null) -> bool:
+	if user is Character and (user as Character).has_armed_shot():
+		return false
+	return super.can_use(user)
 
 
 func use_ability(user: Entity, _direction: Vector2) -> void:
@@ -50,6 +69,11 @@ func use_ability(user: Entity, _direction: Vector2) -> void:
 		"mult": damage_mult,
 		"speed": speed_mult,
 		"pierce": pierce_count,
+		"stun": stun_s,
+		"exp_r": impact_radius,
+		"exp_slow": impact_slow,
+		"exp_slow_s": impact_slow_s,
+		"scale": shot_scale,
 		"at": Time.get_ticks_msec(),
 	}
 	if not GameMode.is_client():
@@ -59,6 +83,9 @@ func use_ability(user: Entity, _direction: Vector2) -> void:
 		return
 	var old: Node = character.right_hand_spot.get_node_or_null(NodePath(GLOW_NODE))
 	if old != null:
+		# Rename BEFORE the deferred free — otherwise the new glow's name collides,
+		# gets auto-renamed, and the consume can never find it (the stale-glow bug).
+		old.name = &"ArmedShotGlowDying"
 		old.queue_free()
 	var fx: SpriteEffect = SpriteEffect.spawn(character.right_hand_spot, GLOW_VFX, {
 		"loop": true,
@@ -102,5 +129,9 @@ func extra_stat_lines() -> PackedStringArray:
 		lines.append("pierces everything" if pierce_count >= 99 else "pierces %d targets" % pierce_count)
 	if speed_mult > 1.0:
 		lines.append("+%d%% arrow speed" % int(round((speed_mult - 1.0) * 100.0)))
+	if stun_s > 0.0:
+		lines.append("pins the target for %ss" % fmt_num(stun_s))
+	if impact_slow > 0.0:
+		lines.append("-%s move speed around the impact" % fmt_num(impact_slow))
 	lines.append("arms your next draw")
 	return lines
