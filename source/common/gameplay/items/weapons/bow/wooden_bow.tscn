@@ -7,9 +7,14 @@
 
 [node name="WoodenBow" unique_id=504140017 instance=ExtResource("1_01c3m")]
 script = ExtResource("2_75guj")
+_current_pull = 0.0
 abilities = Array[ExtResource("3_ability")]([ExtResource("4_shot")])
 
 [node name="WeaponSprite" parent="." index="0" unique_id=2118713155]
+visible = false
 offset = Vector2(-3, -1)
 flip_h = false
 region_rect = Rect2(48, 48, 16, 32)
+
+[node name="Hand" parent="." index="1" unique_id=1234710360]
+visible = false

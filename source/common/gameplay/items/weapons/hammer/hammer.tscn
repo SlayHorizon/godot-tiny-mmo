@@ -11,7 +11,10 @@ script = ExtResource("0_script")
 abilities = Array[ExtResource("2_ability")]([ExtResource("3_slam")])
 
 [node name="WeaponSprite" parent="." index="0" unique_id=2118713155]
-position = Vector2(-8, -7)
+visible = false
 texture = ExtResource("4_tex")
-centered = false
+offset = Vector2(0, -6)
 region_rect = Rect2(16, 16, 16, 32)
+
+[node name="Hand" parent="." index="1" unique_id=1234710360]
+visible = false

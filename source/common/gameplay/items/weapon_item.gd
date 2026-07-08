@@ -12,7 +12,6 @@ extends GearItem
 @export_range(0, 5) var capacity: int = 0
 
 @export var right_hand_scene: PackedScene
-
 @export var left_hand_scene: PackedScene
 
 ## Optional per-skin nudge for the in-hand sprite, when a skin's art sits
@@ -38,7 +37,8 @@ func equip(character: Character) -> void:
 		var right_hand_weapon: Weapon = right_hand_scene.instantiate()
 		right_hand_weapon.character = character
 		character.equipment_component.mounted_nodes[slot.key] = right_hand_weapon
-		character.right_hand_spot.add_child(right_hand_weapon)
+		character.weapon = self
+		#character.right_hand_spot.add_child(right_hand_weapon)
 		# Skin the in-hand sprite from this item's icon, so one type-scene
 		# (sword.tscn) serves every sword skin (fire, rustic, ...).
 		right_hand_weapon.apply_skin(item_icon, sprite_offset)
@@ -60,5 +60,4 @@ func unequip(character: Character) -> void:
 	if weapon:
 		weapon.queue_free()
 	character.equipment_component.mounted_nodes.erase(slot.key)
-	for child in character.left_hand_spot.get_children():
-		child.queue_free()
+	character.weapon = null

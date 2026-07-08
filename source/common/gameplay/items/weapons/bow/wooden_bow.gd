@@ -19,6 +19,15 @@ const BOW_CHARGE_FRAMES: Array[Rect2] = [
 ## so charge → release → re-charge doesn't leave a stale frame.
 var _charge_tween: Tween
 
+@export var _current_pull: float = 0 :
+	set(value):
+		_current_pull = value
+
+		if !lambda.is_null():
+			lambda.call(value)
+			
+var lambda : Callable
+
 
 func perform_action(action_index: int, direction: Vector2, released: bool = false) -> void:
 	super.perform_action(action_index, direction, released)
@@ -30,10 +39,19 @@ func perform_action(action_index: int, direction: Vector2, released: bool = fals
 	if ability is not ChargeAbility:
 		return
 	if (ability as ChargeAbility).charging:
-		character.weapon_state_machine.travel(&"weapon_charge")
-		_play_charge_frames((ability as ChargeAbility).charge_time_s)
+		#character.weapon_state_machine.travel(&"weapon_charge")
+		var anim : Animation = character.animation_player.get_animation(&"weapon/bow.charge")
+		var track : int = anim.find_track("HandOffset/HandPivot/RightHandSpot/WoodenBow", Animation.TYPE_METHOD)
+		if track != -1:
+			anim.track_set_path(track, self.get_path())
+			
+		character.play_action_animation("weapon/bow.charge")
+		#_play_charge_frames((ability as ChargeAbility).charge_time_s)
+		#lambda = func(new_value : float): 
+		#	(ability as ChargeAbility).charge_time_s = new_value
+
 	else:
-		character.weapon_state_machine.travel(&"weapon_idle")
+		#character.weapon_state_machine.travel(&"weapon_idle")
 		_reset_charge_frame()
 
 
@@ -43,24 +61,24 @@ func perform_action(action_index: int, direction: Vector2, released: bool = fals
 func _play_charge_frames(charge_time_s: float) -> void:
 	if weapon_sprite == null:
 		return
-	if _charge_tween != null and _charge_tween.is_running():
-		_charge_tween.kill()
+	#if _charge_tween != null and _charge_tween.is_running():
+	#	_charge_tween.kill()
 	weapon_sprite.region_rect = BOW_CHARGE_FRAMES[0]
-	_charge_tween = create_tween()
-	_charge_tween.tween_interval(charge_time_s * 0.5)
-	_charge_tween.tween_callback(_set_charge_frame.bind(1))
-	_charge_tween.tween_interval(charge_time_s * 0.5)
-	_charge_tween.tween_callback(_set_charge_frame.bind(2))
-
-
-func _set_charge_frame(index: int) -> void:
-	if weapon_sprite == null or index < 0 or index >= BOW_CHARGE_FRAMES.size():
+	#_charge_tween = create_tween()
+	#_charge_tween.tween_interval(charge_time_s * 0.5)
+	#_charge_tween.tween_callback(_set_charge_frame.bind(1))
+	#_charge_tween.tween_interval(charge_time_s * 0.5)
+	#_charge_tween.tween_callback(_set_charge_frame.bind(2))
+	
+func _set_bow_frame(frame_id : int = 0) -> void:
+	if weapon_sprite == null:
 		return
-	weapon_sprite.region_rect = BOW_CHARGE_FRAMES[index]
-
+		
+	weapon_sprite.region_rect = BOW_CHARGE_FRAMES[clampi(frame_id, 0, BOW_CHARGE_FRAMES.size() - 1)]
 
 func _reset_charge_frame() -> void:
 	if _charge_tween != null and _charge_tween.is_running():
 		_charge_tween.kill()
 	if weapon_sprite != null:
 		weapon_sprite.region_rect = BOW_CHARGE_FRAMES[0]
+		character.play_action_animation("@RESET")

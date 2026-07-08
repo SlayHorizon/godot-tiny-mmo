@@ -113,7 +113,7 @@ var mr: float = 0.0
 ## melee AoE attacker. Exported as a PER-NODE OVERRIDE: leave empty to use the
 ## EnemyTypeResource's weapon; set it on a placed node to arm just that one
 ## (an archer in a melee camp) without touching the shared .tres.
-@export var weapon: WeaponItem
+#@export var weapon: WeaponItem
 var xp_reward: int = 25
 ## peer_id -> total damage dealt this life (cleared on respawn). Drives the
 ## participation reward split — see RewardService.

@@ -28,6 +28,12 @@ var flipped: bool = false:
 var pivot: float = 0.0:
 	set = _set_pivot
 
+@export var weapon: WeaponItem:
+	set = _set_weapon
+
+var weapon_instance: Weapon
+var weapon_sprites: Array[Sprite2D]
+
 ## Per-ability cooldown memory (resource_path -> last_action_time seconds), banked
 ## by the weapon on use and restored when an ability is (re)mounted — so swapping a
 ## weapon out and back can't wipe cooldowns. Transient (per session); each machine
@@ -42,8 +48,8 @@ var ability_cooldowns: Dictionary = {}
 @onready var hand_offset: Node2D = $HandOffset
 @onready var hand_pivot: Node2D = $HandOffset/HandPivot
 
-@onready var right_hand_spot: Node2D = $HandOffset/HandPivot/RightHandSpot
-@onready var left_hand_spot: Node2D = $HandOffset/HandPivot/LeftHandSpot
+@onready var right_hand_spot: Hand = $HandOffset/HandPivot/RightHandSpot
+@onready var left_hand_spot: Hand = $HandOffset/HandPivot/LeftHandSpot
 
 @onready var state_synchronizer: StateSynchronizer = $StateSynchronizer
 @onready var stats_component: StatsComponent = $StatsComponent
@@ -318,7 +324,7 @@ func die(_killer: Character) -> void:
 ## Server-side is a no-op; animation work is purely cosmetic.
 const player_animation_path : StringName = &"parameters/AnimationBlend/PlayerAnimation/transition_request"
 const shot_request : StringName = &"parameters/AnimationBlend/ShotRequest/request"
-const idle_pause_request : StringName = &"parameters/AnimationBlend/WeaponIdleState/transition_request"
+#const idle_pause_request : StringName = &"parameters/AnimationBlend/WeaponIdleState/transition_request"
 func play_action_animation(anim_name: StringName) -> void:
 	if not GameMode.is_client() or anim_name.is_empty():
 		return
@@ -377,6 +383,37 @@ func _set_pivot(new_pivot: float) -> void:
 	pivot = new_pivot
 	hand_pivot.rotation = new_pivot
 
+func _set_weapon(new_weapon: WeaponItem) -> void:
+	weapon = new_weapon
+	
+	if weapon_instance != null:
+		weapon_instance.queue_free()
+	
+	if weapon == null:
+		if right_hand_spot != null:
+			right_hand_spot.status = Hand.Status.IDLE
+			
+		if weapon_sprites.size() > 0:
+			for obj in weapon_sprites:
+				obj.queue_free()
+				weapon_sprites.erase(obj)
+		return
+	
+	var weapon_scene: Weapon = weapon.right_hand_scene.instantiate()
+	weapon_instance = weapon_scene
+	add_child(weapon_scene)
+	
+	var weapon_sprite: Sprite2D = Sprite2D.new()
+	weapon_sprite.texture = weapon.item_icon
+	weapon_sprite.offset = weapon.sprite_offset
+	weapon_sprite.show_behind_parent = true
+	
+	weapon_sprites.append(weapon_sprite)
+	
+	right_hand_spot.status = Hand.Status.GRAB
+	right_hand_spot.add_child(weapon_sprite)
+	
+	weapon_scene.weapon_sprite = weapon_sprite
 
 func _set_display_name(new_name: String) -> void:
 	display_name = new_name

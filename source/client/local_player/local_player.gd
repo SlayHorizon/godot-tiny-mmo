@@ -239,8 +239,8 @@ func freeze_movement(seconds: float) -> void:
 ## to-inspect gate uses this: you only open a player's profile while holstered, so a
 ## click in a fight is always a shot, never a profile.
 func is_armed() -> bool:
-	var weapon: Weapon = equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
-	return weapon != null and not weapon.abilities.is_empty() and weapon.abilities[0] != null
+	var myweapon: Weapon = equipment_component.mounted_nodes.get(&"weapon", null) as Weapon
+	return myweapon != null and not myweapon.abilities.is_empty() and myweapon.abilities[0] != null
 
 
 # --- Weapon equip-cast (client) ---

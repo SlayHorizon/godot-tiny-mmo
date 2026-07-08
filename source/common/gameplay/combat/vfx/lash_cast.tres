@@ -40,7 +40,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("f4")
 }],
-"loop": false,
+"loop": 0,
 "name": &"default",
 "speed": 16.0
 }]

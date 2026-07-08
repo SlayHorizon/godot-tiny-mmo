@@ -15,4 +15,8 @@ animation_libraries = Dictionary[StringName, AnimationLibrary]({
 })
 
 [node name="WeaponSprite" parent="." index="0" unique_id=2118713155]
+visible = false
 texture = ExtResource("6_w7nnk")
+
+[node name="Hand" parent="." index="1" unique_id=1234710360]
+visible = false

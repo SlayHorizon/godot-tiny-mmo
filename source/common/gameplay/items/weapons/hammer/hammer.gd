@@ -58,6 +58,7 @@ func _play_slam_visual() -> void:
 	rotation_degrees = 0.0
 	if weapon_sprite != null:
 		weapon_sprite.scale = Vector2.ONE
+		
 	# A telegraphed ability (Earthshatter) stretches the wind-up to fill its
 	# cast time, so the smash + impact land exactly when the delayed damage and
 	# the telegraph resolve. Instant abilities keep the snappy default timing.
@@ -88,6 +89,7 @@ func _play_slam_visual() -> void:
 	# contact, so the size punch reads DURING the fall, not after it.
 	_slam_tween.tween_property(self, ^"rotation_degrees", SMASH_ANGLE, SMASH_S)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	print("slam3", has_sprite, weapon_sprite)
 	if has_sprite:
 		_slam_tween.parallel().tween_property(weapon_sprite, ^"scale", Vector2(SMASH_SCALE, SMASH_SCALE), SMASH_S)\
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
