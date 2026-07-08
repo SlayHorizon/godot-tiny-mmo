@@ -9,25 +9,43 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/warding.png" id="9_ward"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/fireball.tres" id="10_fireball"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/nova/frost_nova.tres" id="11_frost"]
-[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/life_siphon.tres" id="12_siphon"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/clarity.png" id="13_clarity"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/meteor/meteor.tres" id="14_meteor"]
 [ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/channel/mana_font.tres" id="15_font"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/fireball_2.tres" id="16_fireball2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/barrier/arcane_wall_2.tres" id="17_wall2"]
+[ext_resource type="Resource" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/wand_heal_2.tres" id="18_heal2"]
 
 [sub_resource type="Resource" id="Mod_ap_attunement"]
 script = ExtResource("3_mod")
 stat_name = "ap"
-value = 5.0
+value = 3.0
 
 [sub_resource type="Resource" id="Node_attunement"]
 script = ExtResource("2_node")
 id = &"wand_attunement"
 node_name = "Attunement"
-description = "+5 ability power."
+description = "+3 ability power."
 branch = &"domination"
-tier = 1
+tier = 2
 icon = ExtResource("8_sp")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ap_attunement")])
+
+[sub_resource type="Resource" id="Mod_ap_attunement2"]
+script = ExtResource("3_mod")
+stat_name = "ap"
+value = 4.0
+
+[sub_resource type="Resource" id="Node_attunement2"]
+script = ExtResource("2_node")
+id = &"wand_attunement_2"
+node_name = "Attunement II"
+description = "+4 more ability power. Your bond with the arcane deepens."
+branch = &"domination"
+tier = 3
+icon = ExtResource("8_sp")
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_ap_attunement2")])
+upgrades = &"wand_attunement"
 
 [sub_resource type="Resource" id="Mod_mr_warding"]
 script = ExtResource("3_mod")
@@ -56,7 +74,7 @@ ability = ExtResource("6_wall")
 [sub_resource type="Resource" id="Node_heal"]
 script = ExtResource("2_node")
 id = &"wand_heal"
-node_name = "Heal Bolt"
+node_name = "Mending Bolt"
 description = "A bolt that mends instead of harms. Mount it in your wand's special slot to heal allies."
 branch = &"inspiration"
 tier = 1
@@ -78,14 +96,6 @@ branch = &"resolve"
 tier = 2
 ability = ExtResource("11_frost")
 
-[sub_resource type="Resource" id="Node_siphon"]
-script = ExtResource("2_node")
-id = &"wand_life_siphon"
-description = "Channel a crimson beam that drains whoever you aim at, converting their life into your mana. The arcanist's refuel. Weight 2."
-branch = &"inspiration"
-tier = 2
-ability = ExtResource("12_siphon")
-
 [sub_resource type="Resource" id="Node_meteor"]
 script = ExtResource("2_node")
 id = &"wand_meteor"
@@ -105,20 +115,63 @@ ability = ExtResource("15_font")
 [sub_resource type="Resource" id="Mod_regen_clarity"]
 script = ExtResource("3_mod")
 stat_name = "mana_regen"
-value = 0.5
+value = 0.2
 
 [sub_resource type="Resource" id="Node_clarity"]
 script = ExtResource("2_node")
 id = &"wand_clarity"
 node_name = "Clarity"
-description = "+0.5 mana regen per second."
+description = "+0.2 mana regen per second."
 branch = &"inspiration"
 tier = 1
 icon = ExtResource("13_clarity")
 passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_regen_clarity")])
 
+[sub_resource type="Resource" id="Mod_regen_clarity2"]
+script = ExtResource("3_mod")
+stat_name = "mana_regen"
+value = 0.3
+
+[sub_resource type="Resource" id="Node_clarity2"]
+script = ExtResource("2_node")
+id = &"wand_clarity_2"
+node_name = "Clarity II"
+description = "+0.3 more mana regen per second."
+branch = &"inspiration"
+tier = 2
+icon = ExtResource("13_clarity")
+passive_modifiers = Array[ExtResource("3_mod")]([SubResource("Mod_regen_clarity2")])
+upgrades = &"wand_clarity"
+
+[sub_resource type="Resource" id="Node_fireball2"]
+script = ExtResource("2_node")
+id = &"wand_fireball_2"
+description = "A heavier comet: bigger blast, harsher burn, longer reach. Weight 3."
+branch = &"domination"
+tier = 3
+ability = ExtResource("16_fireball2")
+upgrades = &"wand_fireball"
+
+[sub_resource type="Resource" id="Node_wall2"]
+script = ExtResource("2_node")
+id = &"wand_wall_2"
+description = "A wider, sturdier wall that stands longer before it shatters. Weight 3."
+branch = &"resolve"
+tier = 3
+ability = ExtResource("17_wall2")
+upgrades = &"wand_wall"
+
+[sub_resource type="Resource" id="Node_heal2"]
+script = ExtResource("2_node")
+id = &"wand_heal_2"
+description = "A stronger mending bolt, quicker between casts. Keep your allies standing. Weight 1."
+branch = &"inspiration"
+tier = 2
+ability = ExtResource("18_heal2")
+upgrades = &"wand_heal"
+
 [resource]
 script = ExtResource("1_tree")
 category = &"wand"
 display_name = "Wand"
-nodes = Array[ExtResource("2_node")]([SubResource("Node_attunement"), SubResource("Node_fireball"), SubResource("Node_meteor"), SubResource("Node_warding"), SubResource("Node_wall"), SubResource("Node_frost"), SubResource("Node_clarity"), SubResource("Node_heal"), SubResource("Node_siphon"), SubResource("Node_font")])
+nodes = Array[ExtResource("2_node")]([SubResource("Node_attunement"), SubResource("Node_attunement2"), SubResource("Node_fireball"), SubResource("Node_fireball2"), SubResource("Node_meteor"), SubResource("Node_warding"), SubResource("Node_wall"), SubResource("Node_wall2"), SubResource("Node_frost"), SubResource("Node_clarity"), SubResource("Node_clarity2"), SubResource("Node_heal"), SubResource("Node_heal2"), SubResource("Node_font")])

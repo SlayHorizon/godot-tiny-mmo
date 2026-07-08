@@ -256,6 +256,18 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 			"perks": perks,
 		}
 
+	# Outfitting merge (2026-07-02): tailoring + leatherworking became ONE job.
+	# Old saves carry the retired keys — fold them into outfitting (keep the
+	# higher-level entry so no progress is lost), then drop the retired keys.
+	for old_key: StringName in [&"tailoring", &"leatherworking"]:
+		if not player.skills.has(old_key):
+			continue
+		var old_entry: Dictionary = player.skills[old_key]
+		var current: Dictionary = player.skills.get(&"outfitting", {"level": 0, "xp": 0, "perks": {}})
+		if int(old_entry.get("level", 1)) > int(current.get("level", 0)):
+			player.skills[&"outfitting"] = old_entry
+		player.skills.erase(old_key)
+
 	# Weapon mastery: {"masteries": {category -> {"level","xp","spent"}},
 	# "loadout": {category -> node_id}}. JSON gives string keys / float values —
 	# normalize like skills above (categories back to StringName, spent ids stay

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://dtb5bin7denb7"]
+
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="1_yfy3q"]
+[ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_script"]
+
+[resource]
+script = ExtResource("2_script")
+item_name = &"Bandit Leather"
+description = "Cured hound leather, hard-wearing. Used to craft leather armor."
+metadata/_custom_type_script = "uid://nsr1timk430j"
+metadata/slug = &"leather_bandit"
+metadata/id = 110

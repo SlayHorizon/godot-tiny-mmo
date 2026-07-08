@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://ra630em3tob1" path="res://source/common/gameplay/combat/ability/ability_collection/bolt_shoot/heal_bolt_ability.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://ccyqpkpnugjsh" path="res://source/common/gameplay/items/weapons/wand/heal_bolt.tscn" id="2_bolt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/ability_icons/mending_bolt.png" id="9_icon"]
 
 [resource]
 script = ExtResource("1_script")
@@ -10,6 +11,7 @@ ap_ratio = 1.2
 speed = 300.0
 bolt_modulate = Color(0.45, 1, 0.55, 1)
 name = "Mending Bolt"
+icon = ExtResource("9_icon")
 cooldown = 3.0
 mana_cost = 15
 metadata/slug = &"wand_heal"

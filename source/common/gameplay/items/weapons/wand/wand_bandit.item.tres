@@ -17,10 +17,6 @@ stat_name = "move_speed"
 value = -5.0
 metadata/_custom_type_script = "uid://cvggwjkht4km4"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wand"]
-atlas = ExtResource("2_tnje4")
-region = Rect2(160, 32, 16, 32)
-
 [sub_resource type="Resource" id="Mod_wmana"]
 script = ExtResource("1_tnje4")
 stat_name = "mana_max"
@@ -30,6 +26,10 @@ value = 50.0
 script = ExtResource("1_tnje4")
 stat_name = "mana_regen"
 value = 2.5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wand"]
+atlas = ExtResource("2_tnje4")
+region = Rect2(160, 32, 16, 32)
 
 [resource]
 script = ExtResource("4_hkafx")
