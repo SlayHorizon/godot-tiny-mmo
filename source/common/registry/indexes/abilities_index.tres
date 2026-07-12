@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_pce05")
 content_name = &"abilities"
-version = 1783344992
+version = 1783762922
 next_id = 65
 entries = Array[Dictionary]([{
 &"hash": "2c4332ebd7e89e96bb711600fa07ed4788ddf437949d1102ff8827a8ce5a8c7f",

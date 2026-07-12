@@ -8,6 +8,26 @@ enum InputType {
 	TOUCH
 }
 
+# Display names for keycode_to_display (Xbox-style pad labels).
+const _MOUSE_NAMES: Dictionary = {
+	1: "LMB", 2: "RMB", 3: "MMB",
+	4: "Wheel Up", 5: "Wheel Down", 6: "Wheel Left", 7: "Wheel Right",
+	8: "MB4", 9: "MB5",
+}
+
+const _PAD_BUTTON_NAMES: Dictionary = {
+	0: "A", 1: "B", 2: "X", 3: "Y",
+	4: "Back", 5: "Guide", 6: "Start",
+	7: "L3", 8: "R3", 9: "LB", 10: "RB",
+	11: "D-pad Up", 12: "D-pad Down", 13: "D-pad Left", 14: "D-pad Right",
+}
+
+const _PAD_AXIS_NAMES: Dictionary = {
+	"0:-": "LS Left", "0:+": "LS Right", "1:-": "LS Up", "1:+": "LS Down",
+	"2:-": "RS Left", "2:+": "RS Right", "3:-": "RS Up", "3:+": "RS Down",
+	"4:+": "LT", "5:+": "RT",
+}
+
 
 #region public variables
 ## Enable or disable the input processing.
@@ -121,12 +141,10 @@ func _notification(what: int) -> void:
 
 
 func _on_settings_changed(section: StringName, property: StringName, value: Variant) -> void:
-	if value is String:
-		var event: InputEvent = keycode_to_event(value)
-		if event != null:
-			_apply_input_remap(section, property, event)
-			return
-	
+	if value is String and property.begins_with("player_"):
+		apply_bind(section, property, value)
+		return
+
 	match [section, property]:
 		[&"gamepad", &"deadzone_exit"]: stick_deadzone_exit = value
 		[&"gamepad", &"deadzone_enter"]: stick_deadzone_enter = value
@@ -142,12 +160,6 @@ func _apply_settings() -> void:
 		if not settings.has(section): continue
 		for property_name: StringName in settings[section]:
 			_on_settings_changed(section, property_name, settings[section][property_name])
-
-
-func _apply_input_remap(section: StringName, property: StringName, value: Variant) -> void:
-	match section:
-		&"gamepad": replace_event(property, value, InputType.GAMEPAD)
-		&"mouse_keyboard": replace_event(property, value, InputType.MOUSE_KEYBOARD)
 
 
 func _sync_stick_event() -> void:
@@ -345,6 +357,36 @@ func is_special2_just_released() -> bool:
 	return Input.is_action_just_released(&"player_special_2")
 
 
+## Applies every saved keybind from settings to the InputMap. Called by
+## [ClientState] right after settings load, so binds hold from boot (menus,
+## gateway) instead of waiting for the local player's InputComponent to spawn.
+static func apply_saved_binds() -> void:
+	var settings: Dictionary = ClientState.settings.data
+	for section: StringName in [&"mouse_keyboard", &"gamepad"]:
+		if not settings.has(section): continue
+		for property_name: StringName in settings[section]:
+			var value: Variant = settings[section][property_name]
+			if value is String and property_name.begins_with("player_"):
+				apply_bind(section, property_name, value)
+
+
+## Applies one stored bind string to the InputMap. An empty string unbinds
+## the action for that input type.
+static func apply_bind(section: StringName, action_name: StringName, keycode: String) -> void:
+	var input_type: InputType
+	match section:
+		&"gamepad": input_type = InputType.GAMEPAD
+		&"mouse_keyboard": input_type = InputType.MOUSE_KEYBOARD
+		_: return
+	if not InputMap.has_action(action_name): return
+
+	var event: InputEvent = keycode_to_event(keycode)
+	if event:
+		replace_event(action_name, event, input_type)
+	else:
+		clear_event(action_name, input_type)
+
+
 ## Returns a [code]Array[/code] containing [code][bool, StringName][/code] where [code]StringName[/code] is the name of the action
 ## that the event is assigned to. If the key is available the [code]StringName[/code] will be empty.
 static func is_event_available(event: InputEvent) -> Array:
@@ -371,7 +413,7 @@ static func find_action_event(action_name: StringName, input_type: InputType) ->
 	for event: InputEvent in InputMap.action_get_events(action_name):
 		match input_type:
 			InputType.MOUSE_KEYBOARD:
-				if event is InputEventKey:
+				if event is InputEventKey or event is InputEventMouseButton:
 					return event
 			InputType.GAMEPAD:
 				if event is InputEventJoypadButton or event is InputEventJoypadMotion:
@@ -388,12 +430,22 @@ static func replace_event(action_name: StringName, new_event: InputEvent, input_
 	InputMap.action_add_event(action_name, new_event)
 
 
+## Removes the [param input_type] event from [param action_name], if any (unbind).
+static func clear_event(action_name: StringName, input_type: InputType) -> void:
+	var old_event: InputEvent = find_action_event(action_name, input_type)
+	if old_event:
+		InputMap.action_erase_event(action_name, old_event)
+
+
 ## Convert a [InputEvent] into a string for config storage.
 ## Returns a empty string if unsupported. [br]
-## Example: [code]physical:W[/code], [code]button:A[/code], [code]axis:1:-[/code]
+## Example: [code]physical:W[/code], [code]mouse:2[/code], [code]button:0[/code], [code]axis:1:-[/code]
 static func event_to_keycode(event: InputEvent) -> String:
 	if event is InputEventKey:
 		return "physical:%s" % OS.get_keycode_string(event.physical_keycode)
+
+	if event is InputEventMouseButton:
+		return "mouse:%d" % event.button_index
 
 	if event is InputEventJoypadButton:
 		return "button:%d" % event.button_index
@@ -415,6 +467,10 @@ static func keycode_to_event(keycode: String) -> InputEvent:
 			event = InputEventKey.new()
 			event.physical_keycode = OS.find_keycode_from_string(parts[1])
 			event.device = -1
+		"mouse":
+			event = InputEventMouseButton.new()
+			event.button_index = int(parts[1])
+			event.device = -1
 		"button":
 			event = InputEventJoypadButton.new()
 			event.button_index = int(parts[1])
@@ -426,6 +482,25 @@ static func keycode_to_event(keycode: String) -> InputEvent:
 			event.device = -1
 
 	return event
+
+
+## Humanizes a stored keycode string for display in the UI.
+## [code]physical:W[/code] -> [code]W[/code], [code]mouse:2[/code] -> [code]RMB[/code],
+## [code]button:0[/code] -> [code]A[/code], [code]axis:5:+[/code] -> [code]RT[/code].
+static func keycode_to_display(keycode: String) -> String:
+	var parts: Array = keycode.split(":")
+	match parts[0]:
+		"physical":
+			return parts[1]
+		"mouse":
+			return _MOUSE_NAMES.get(int(parts[1]), "Mouse %s" % parts[1])
+		"button":
+			return _PAD_BUTTON_NAMES.get(int(parts[1]), "Pad %s" % parts[1])
+		"axis":
+			var axis_key: String = "%s:%s" % [parts[1], parts[2]]
+			return _PAD_AXIS_NAMES.get(axis_key, "Axis %s" % axis_key)
+
+	return keycode
 
 
 #endregion

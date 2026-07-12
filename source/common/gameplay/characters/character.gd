@@ -40,6 +40,15 @@ var ability_cooldowns: Dictionary = {}
 ## press, consume on release), so no extra sync is needed.
 var armed_shot: Dictionary = {}
 
+## How far in the past this character's networked position renders (see
+## NetMotionSmoother) — ~2x the sender's update interval. Players broadcast at
+## 20 Hz (100 ms); HostileNpc raises it to 200 ms client-side (mobs stream at 10 Hz).
+var net_smooth_delay_ms: int = 100
+
+## Lazily created by net_apply_position on the first networked :position sample.
+## Client-only — the two sync apply paths never route here on the server.
+var _net_smoother: NetMotionSmoother
+
 
 ## True while a FRESH shot override is loaded (see ShotOverrideAbility.EXPIRY_S).
 ## While armed: no other abilities (weapon + server gates), the ability tile shows
@@ -104,6 +113,27 @@ func _ready() -> void:
 	set_health_bar_fill(BAR_COLOR_HOSTILE) # default; subclasses recolor by team
 	if health_bar_auto_hide:
 		progress_bar.hide() # surfaces only on HP change (see _flash_health_bar)
+
+
+## Whether networked :position writes should route through the NetMotionSmoother
+## (docs/netcode_smoothness.md). True for remote characters; LocalPlayer overrides
+## to false — its movement is client-authoritative and the rare server echoes must
+## keep today's raw-apply behavior.
+func wants_net_smoothing() -> bool:
+	return true
+
+
+## Client: feed a networked :position sample into the motion smoother instead of
+## snapping the node. Called by the two sync apply paths (StateSynchronizer for
+## players, ReplicatedPropsContainer for mobs); the smoother snaps on first sample
+## and on teleport-sized jumps, so baselines and warps behave like the raw apply did.
+func net_apply_position(value: Vector2) -> void:
+	if _net_smoother == null:
+		_net_smoother = NetMotionSmoother.new()
+		_net_smoother.name = "NetMotionSmoother"
+		_net_smoother.delay_ms = net_smooth_delay_ms
+		add_child(_net_smoother)
+	_net_smoother.push_sample(value)
 
 
 ## Client: paint the over-head HP bar fill a solid color. Always SET (never

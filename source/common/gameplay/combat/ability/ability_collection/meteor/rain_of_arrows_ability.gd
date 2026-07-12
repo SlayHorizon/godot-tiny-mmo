@@ -36,7 +36,7 @@ func _client_fall(map: Node, target: Vector2) -> void:
 		arrow.region_enabled = true
 		arrow.region_rect = ARROW_REGION
 		arrow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		arrow.rotation = -PI / 2.0  # nose to the ground (art's base points the other way)
+		arrow.rotation = PI / 2.0  # nose to the ground (empirical: -PI/2 pointed up)
 		arrow.z_index = 2
 		map.add_child(arrow)
 		arrow.global_position = land + Vector2(0.0, -170.0)

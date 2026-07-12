@@ -33,7 +33,7 @@ func _ready() -> void:
 	if multiplayer.is_server():
 		# Server: register each capability so its data-request handler resolves it.
 		# No client visuals server-side.
-		var map: Map = _find_map()
+		var map: Map = Map.of(self)
 		if map != null:
 			for interaction: NPCInteraction in npc_resource.interactions:
 				if interaction == null:
@@ -67,16 +67,6 @@ func _apply_resource() -> void:
 	if npc_resource.skin != null:
 		skin_id = 0 # disable id-based skin; drive it directly (mirrors HostileNpc)
 		animated_sprite.sprite_frames = npc_resource.skin
-
-
-## Walk up to the owning Map (interactables are placed as map children).
-func _find_map() -> Map:
-	var node: Node = get_parent()
-	while node != null:
-		if node is Map:
-			return node
-		node = node.get_parent()
-	return null
 
 
 func _spawn_click_area() -> void:

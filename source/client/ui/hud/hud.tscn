@@ -15,6 +15,8 @@
 [ext_resource type="Texture2D" uid="uid://bkp7uawftw7ll" path="res://assets/sprites/ui/menu_icons_shadow/32px/three_dots_vertical.png" id="12_menuicon"]
 [ext_resource type="Texture2D" uid="uid://dliywarss4qeo" path="res://assets/sprites/ui/menu_icons_shadow/32px/exclamation_mark.png" id="13_notificon"]
 [ext_resource type="Texture2D" uid="uid://b30enhdjqcbft" path="res://assets/sprites/ui/menu_icons_shadow/32px/message.png" id="14_chaticon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/menu_icons_shadow/32px/house.png" id="15_recallicon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/menu_icons_shadow/32px/character.png" id="16_actionsicon"]
 
 [node name="HUD" type="Control" unique_id=1687231756]
 layout_mode = 3
@@ -231,6 +233,27 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 icon = ExtResource("13_notificon")
+icon_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="ActionsButton" type="Button" parent="MenuButtons/ButtonRail" unique_id=1245197828]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+tooltip_text = "Actions"
+icon = ExtResource("16_actionsicon")
+icon_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="RecallButton" type="Button" parent="MenuButtons/ButtonRail" unique_id=1245197827]
+visible = false
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+tooltip_text = "Recall to town  (B)"
+icon = ExtResource("15_recallicon")
 icon_alignment = 1
 metadata/_edit_lock_ = true
 

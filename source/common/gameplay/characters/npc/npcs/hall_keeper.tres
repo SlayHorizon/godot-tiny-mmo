@@ -3,10 +3,6 @@
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_wfiou"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_txngb"]
 [ext_resource type="Resource" uid="uid://dyclnj6rv8bnh" path="res://source/common/gameplay/quests/resources/welcome.tres" id="3_35pps"]
-[ext_resource type="Resource" uid="uid://ca6hdigffs5j3" path="res://source/common/gameplay/quests/resources/fungus_trouble.tres" id="4_5alsn"]
-[ext_resource type="Resource" uid="uid://bj4t6nwwxtmh6" path="res://source/common/gameplay/quests/resources/wolves_at_the_ranch.tres" id="5_bwdvf"]
-[ext_resource type="Resource" uid="uid://b5rjgo848r2n7" path="res://source/common/gameplay/quests/resources/the_bandit_captain.tres" id="6_x6sy7"]
-[ext_resource type="Resource" uid="uid://dd7tu8yrec3ie" path="res://source/common/gameplay/quests/resources/camp_cleanup.tres" id="7_151lf"]
 [ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="8_46dxw"]
 [ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="10_dc8vo"]
 [ext_resource type="SpriteFrames" uid="uid://b1gu2vklfnvb5" path="res://source/common/gameplay/characters/sprite_frames/scholar_director.tres" id="11_b8ym4"]
@@ -14,7 +10,7 @@
 
 [sub_resource type="Resource" id="Resource_dnrtu"]
 script = ExtResource("8_46dxw")
-quests = Array[ExtResource("2_txngb")]([ExtResource("3_35pps"), ExtResource("4_5alsn"), ExtResource("5_bwdvf"), ExtResource("6_x6sy7"), ExtResource("7_151lf")])
+quests = Array[ExtResource("2_txngb")]([ExtResource("3_35pps")])
 metadata/_custom_type_script = "uid://dka1daj2vrhn"
 
 [sub_resource type="Resource" id="Resource_gf85t"]

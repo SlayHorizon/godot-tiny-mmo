@@ -41,15 +41,25 @@ func _ready() -> void:
 		return
 	assert(is_instance_valid(controller), "settings: no controller selected.")
 	_load_defaults()
-
-	if is_instance_valid(setting_label):
-		setting_label.text = label_override if not label_override.is_empty() else setting_property.replace("_", " ").capitalize()
+	_update_label()
 
 	if controller is Slider:
 		controller.drag_ended.connect(_on_setting_changed)
 
 	elif controller is Button:
 		controller.pressed.connect(_on_setting_changed)
+
+
+## Re-reads the stored value into the control (e.g. after a bulk reset).
+func refresh() -> void:
+	_load_defaults()
+
+
+## Sets the row label from [member label_override] or the property name.
+## Subclasses that override [method _ready] call this themselves.
+func _update_label() -> void:
+	if is_instance_valid(setting_label):
+		setting_label.text = label_override if not label_override.is_empty() else setting_property.replace("_", " ").capitalize()
 
 
 func _on_setting_changed(new_value: Variant = null) -> void:

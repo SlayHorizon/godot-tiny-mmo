@@ -42,6 +42,7 @@ var _fade: WarpFade
 
 
 func _ready() -> void:
+	super._ready()
 	_apply()
 	# Client-only transition hooks: fade + rev-up while the LOCAL player stands in the
 	# portal. The server enforces the same warp_delay_s dwell independently.

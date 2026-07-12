@@ -1,7 +1,9 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://dc8nipyrsctj3"]
 
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_sql3f"]
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_w6f4p"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_efxcj"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="2_tmyxg"]
 [ext_resource type="SpriteFrames" uid="uid://dtcix7ijvii74" path="res://source/common/gameplay/characters/sprite_frames/orc.tres" id="3_efxcj"]
 
 [resource]

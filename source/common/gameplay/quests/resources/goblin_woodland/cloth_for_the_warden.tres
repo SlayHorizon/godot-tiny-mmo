@@ -4,6 +4,7 @@
 [ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="2_nrkv2"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="3_rbqkh"]
 [ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_wrbrq"]
+[ext_resource type="Resource" uid="uid://dvqp5tuvk32sk" path="res://source/common/gameplay/quests/resources/goblin_woodland/first_blood.tres" id="5_q1"]
 
 [sub_resource type="Resource" id="Obj_collect_cloth"]
 script = ExtResource("1_d47vj")
@@ -17,6 +18,7 @@ quest_name = "Cloth for the Warden"
 description = "Bring me 6 bolts of forest cloth. The goblins steal it faster than the camp can weave it."
 objectives = Array[ExtResource("1_d47vj")]([SubResource("Obj_collect_cloth")])
 min_level = 3
+requires_quests = Array[ExtResource("3_rbqkh")]([ExtResource("5_q1")])
 reward_xp = 80
 reward_gold = 6
 metadata/slug = &"cloth_for_the_warden"

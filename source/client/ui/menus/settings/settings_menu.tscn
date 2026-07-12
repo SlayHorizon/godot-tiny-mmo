@@ -5,13 +5,13 @@
 [ext_resource type="Script" uid="uid://c437u84bullo2" path="res://source/client/ui/shared/nav_panel.gd" id="3_8ix7g"]
 [ext_resource type="ButtonGroup" uid="uid://dtb5xe2032r17" path="res://source/client/ui/menus/settings/components/menu_button_group.tres" id="3_ds323"]
 [ext_resource type="PackedScene" uid="uid://ciwh5s6sslroq" path="res://source/client/ui/menus/settings/components/setting_slider.tscn" id="3_pt8k0"]
-[ext_resource type="PackedScene" uid="uid://bga8ndeih1lxt" path="res://source/client/ui/menus/settings/components/setting_remap.tscn" id="4_pt8k0"]
 [ext_resource type="Script" uid="uid://cfikf4aye66lo" path="res://source/client/ui/menus/settings/components/setting_language.gd" id="6_552vb"]
 [ext_resource type="Script" uid="uid://b78yh1c3uto0o" path="res://source/client/ui/menus/settings/components/setting_container.gd" id="6_b8kg5"]
 [ext_resource type="Script" uid="uid://ciom2x4q8p6ql" path="res://source/client/ui/menus/settings/controls_settings.gd" id="6_x8gi7"]
-[ext_resource type="Script" uid="uid://dlp5twd0pw868" path="res://source/client/ui/menus/settings/components/settings_widget.gd" id="8_x8gi7"]
-[ext_resource type="Script" path="res://source/client/ui/menus/settings/components/setting_palette.gd" id="9_palette"]
+[ext_resource type="Script" uid="uid://c32wsaghescoc" path="res://source/client/ui/menus/settings/components/setting_palette.gd" id="9_palette"]
 [ext_resource type="PackedScene" path="res://source/client/ui/menus/settings/components/setting_toggle.tscn" id="10_toggle"]
+[ext_resource type="PackedScene" path="res://source/client/ui/menus/settings/components/setting_option.tscn" id="11_option"]
+[ext_resource type="Shader" path="res://source/client/ui/shared/menu_blur_backdrop.gdshader" id="12_blur"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8ix7g"]
 content_margin_left = 24.0
@@ -19,7 +19,10 @@ content_margin_top = 12.0
 content_margin_right = 24.0
 content_margin_bottom = 12.0
 
-[sub_resource type="StyleBoxEmpty" id="SBE_card"]
+[sub_resource type="ShaderMaterial" id="SM_blur"]
+shader = ExtResource("12_blur")
+shader_parameter/blur_lod = 2.5
+shader_parameter/dim_color = Color(0.073365234, 0.08239203, 0.122337736, 0.55)
 
 [node name="Settings" type="Control" unique_id=453466263 node_paths=PackedStringArray("initial_panel", "nav_panels")]
 layout_mode = 3
@@ -35,13 +38,14 @@ metadata/_custom_type_script = "uid://bbkmu4fwfxs4p"
 metadata/_edit_vertical_guides_ = [-66.0]
 
 [node name="Background" type="ColorRect" parent="." unique_id=2068828301]
+material = SubResource("SM_blur")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.04, 0.05, 0.08, 0.5)
+color = Color(0.073365234, 0.08239203, 0.122337736, 0.8235294)
 
 [node name="MainContainer" type="MarginContainer" parent="." unique_id=209962397]
 clip_contents = true
@@ -56,27 +60,27 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="Root" type="VBoxContainer" parent="MainContainer"]
+[node name="Root" type="VBoxContainer" parent="MainContainer" unique_id=934663138]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="HeaderBar" type="HBoxContainer" parent="MainContainer/Root"]
+[node name="HeaderBar" type="HBoxContainer" parent="MainContainer/Root" unique_id=1735948712]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="MainContainer/Root/HeaderBar"]
+[node name="TitleLabel" type="Label" parent="MainContainer/Root/HeaderBar" unique_id=2009456617]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "Settings"
 vertical_alignment = 1
 
-[node name="CloseButton" type="Button" parent="MainContainer/Root/HeaderBar"]
+[node name="CloseButton" type="Button" parent="MainContainer/Root/HeaderBar" unique_id=531614041]
 custom_minimum_size = Vector2(80, 40)
 layout_mode = 2
 size_flags_vertical = 4
 text = "Close"
 
-[node name="HSeparator" type="HSeparator" parent="MainContainer/Root"]
+[node name="HSeparator" type="HSeparator" parent="MainContainer/Root" unique_id=107638868]
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainContainer/Root" unique_id=338758405]
@@ -161,7 +165,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="GeneralTitle" type="Label" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer"]
+[node name="GeneralTitle" type="Label" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=274582338]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "General"
@@ -188,63 +192,13 @@ setting_property = &"sound_volume"
 slider_max_value = 1.0
 steps = 0.001
 
-[node name="Language" type="HBoxContainer" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=2027093307]
-custom_minimum_size = Vector2(0, 48)
+[node name="Language" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer" unique_id=2027093307 node_paths=PackedStringArray("setting_label", "controller") instance=ExtResource("11_option")]
 layout_mode = 2
-
-[node name="Label" type="Control" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer/Language"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer/Language/Label"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 1, 1, 0.08)
-
-[node name="SettingName" type="Label" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer/Language/Label"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Language"
-vertical_alignment = 1
-
-[node name="Controller" type="Control" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer/Language"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer/Language/Controller"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 1, 1, 0.15)
-
-[node name="LanguageOption" type="OptionButton" parent="MainContainer/Root/HBoxContainer/General/ScrollContainer/VBoxContainer/Language/Controller" unique_id=876066577 node_paths=PackedStringArray("controller")]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("6_552vb")
 setting_section = &"general"
 setting_property = &"language"
-controller = NodePath(".")
-
+setting_label = NodePath("HBox/SettingName")
+controller = NodePath("HBox/Cell/Options")
 
 [node name="GraphicsSettings" type="PanelContainer" parent="MainContainer/Root/HBoxContainer" unique_id=700000010]
 visible = false
@@ -268,7 +222,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="GraphicsTitle" type="Label" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer"]
+[node name="GraphicsTitle" type="Label" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=1647489264]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Graphics"
@@ -278,7 +232,7 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Display"
 
-[node name="CameraZoom" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" instance=ExtResource("3_pt8k0")]
+[node name="CameraZoom" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=1686564114 instance=ExtResource("3_pt8k0")]
 layout_mode = 2
 setting_section = &"general"
 setting_property = &"camera_zoom"
@@ -287,74 +241,26 @@ slider_max_value = 4.0
 steps = 1.0
 tick_count = 4
 
-[node name="WeatherEffects" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" instance=ExtResource("10_toggle")]
+[node name="WeatherEffects" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=1944322430 instance=ExtResource("10_toggle")]
 layout_mode = 2
 setting_section = &"general"
 setting_property = &"weather_effects"
 hide_on_web = true
 
-[node name="AppearanceLabel" type="Label" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer"]
+[node name="AppearanceLabel" type="Label" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=1115181810]
 layout_mode = 2
 text = "Appearance"
 
-[node name="ThemeRow" type="HBoxContainer" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 48)
+[node name="ThemeRow" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=908134191 node_paths=PackedStringArray("setting_label", "controller") instance=ExtResource("11_option")]
 layout_mode = 2
-
-[node name="Label" type="Control" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer/ThemeRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer/ThemeRow/Label"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 1, 1, 0.08)
-
-[node name="SettingName" type="Label" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer/ThemeRow/Label"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 16
-text = "Theme"
-vertical_alignment = 1
-
-[node name="Controller" type="Control" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer/ThemeRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer/ThemeRow/Controller"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 1, 1, 0.15)
-
-[node name="Palette" type="OptionButton" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer/ThemeRow/Controller" node_paths=PackedStringArray("controller")]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("9_palette")
 setting_section = &"gateway"
 setting_property = &"palette"
-controller = NodePath(".")
+setting_label = NodePath("HBox/SettingName")
+controller = NodePath("HBox/Cell/Options")
+label_override = "Theme"
 
-[node name="RandomizeTheme" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" instance=ExtResource("10_toggle")]
+[node name="RandomizeTheme" parent="MainContainer/Root/HBoxContainer/GraphicsSettings/ScrollContainer/VBoxContainer" unique_id=284253687 instance=ExtResource("10_toggle")]
 layout_mode = 2
 setting_section = &"gateway"
 setting_property = &"randomize"
@@ -368,7 +274,7 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_8ix7g")
 script = ExtResource("6_x8gi7")
 input_type_title = NodePath("ScrollContainer/VBoxContainer/InputTypeTitle")
 input_type_tabs = NodePath("ScrollContainer/VBoxContainer/InputTypeTabs")
-settings_containers = [NodePath("ScrollContainer/VBoxContainer/TouchSettings"), NodePath("ScrollContainer/VBoxContainer/JoystickSettings"), NodePath("ScrollContainer/VBoxContainer/MovementKeybind"), NodePath("ScrollContainer/VBoxContainer/AimKeybind"), NodePath("ScrollContainer/VBoxContainer/Actions")]
+settings_containers = [NodePath("ScrollContainer/VBoxContainer/TouchSettings"), NodePath("ScrollContainer/VBoxContainer/JoystickSettings")]
 metadata/_custom_type_script = "uid://c437u84bullo2"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MainContainer/Root/HBoxContainer/ControlsSettings" unique_id=2140378042]
@@ -392,7 +298,7 @@ text = "InputName"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="InputTypeTabs" type="HBoxContainer" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer"]
+[node name="InputTypeTabs" type="HBoxContainer" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=1161182372]
 layout_mode = 2
 theme_override_constants/separation = 6
 
@@ -401,18 +307,18 @@ visible = false
 layout_mode = 2
 script = ExtResource("6_b8kg5")
 show_on = Array[StringName]([&"TOUCH"])
-widgets = [null, null, NodePath("StickDeadzone")]
+widgets = [NodePath("DynamicLeftStick"), NodePath("DynamicRightStick"), NodePath("StickDeadzone")]
 
 [node name="Label" type="Label" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" unique_id=517536482]
 layout_mode = 2
 text = "Touch Settings"
 
-[node name="DynamicLeftStick" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" instance=ExtResource("10_toggle")]
+[node name="DynamicLeftStick" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" unique_id=920855286 instance=ExtResource("10_toggle")]
 layout_mode = 2
 setting_section = &"touch"
 setting_property = &"dynamic_left_stick"
 
-[node name="DynamicRightStick" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" instance=ExtResource("10_toggle")]
+[node name="DynamicRightStick" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/TouchSettings" unique_id=1486276711 instance=ExtResource("10_toggle")]
 layout_mode = 2
 setting_section = &"touch"
 setting_property = &"dynamic_right_stick"
@@ -452,79 +358,3 @@ setting_property = &"deadzone_exit"
 slider_max_value = 1.0
 steps = 0.1
 tick_count = 11
-
-[node name="MovementKeybind" type="VBoxContainer" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=2084890973 node_paths=PackedStringArray("widgets")]
-visible = false
-layout_mode = 2
-script = ExtResource("6_b8kg5")
-show_on = Array[StringName]([&"MOUSE_KEYBOARD", &"GAMEPAD"])
-widgets = [NodePath("MoveUp"), NodePath("MoveDown"), NodePath("MoveLeft"), NodePath("MoveRight")]
-
-[node name="Label" type="Label" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=717195447]
-layout_mode = 2
-text = "Movement"
-
-[node name="MoveUp" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1702750502 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_move_up"
-
-[node name="MoveDown" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1248323535 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_move_down"
-
-[node name="MoveLeft" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1645392840 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_move_left"
-
-[node name="MoveRight" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/MovementKeybind" unique_id=1756755237 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_move_right"
-
-[node name="AimKeybind" type="VBoxContainer" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=55498292 node_paths=PackedStringArray("widgets")]
-visible = false
-layout_mode = 2
-script = ExtResource("6_b8kg5")
-show_on = Array[StringName]([&"GAMEPAD"])
-widgets = [NodePath("ShootUp"), NodePath("ShootDown"), NodePath("ShootLeft"), NodePath("ShootRight")]
-
-[node name="Label" type="Label" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=411516989]
-layout_mode = 2
-text = "Aim"
-
-[node name="ShootUp" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=1346357426 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_look_up"
-
-[node name="ShootDown" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=2140246662 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_look_down"
-
-[node name="ShootLeft" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=1995444501 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_look_left"
-
-[node name="ShootRight" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/AimKeybind" unique_id=1216705756 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_look_right"
-
-[node name="Actions" type="VBoxContainer" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer" unique_id=498058803 node_paths=PackedStringArray("widgets")]
-visible = false
-layout_mode = 2
-script = ExtResource("6_b8kg5")
-show_on = Array[StringName]([&"MOUSE_KEYBOARD", &"GAMEPAD"])
-widgets = [NodePath("ChatKeybind"), NodePath("InteractKeybind")]
-
-[node name="Label" type="Label" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=1172552691]
-layout_mode = 2
-text = "Actions"
-
-[node name="CheckButtons" type="HBoxContainer" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=258318642]
-layout_mode = 2
-
-[node name="ChatKeybind" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=365204463 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_chat"
-
-[node name="InteractKeybind" parent="MainContainer/Root/HBoxContainer/ControlsSettings/ScrollContainer/VBoxContainer/Actions" unique_id=436113520 instance=ExtResource("4_pt8k0")]
-layout_mode = 2
-setting_property = &"player_interact"

@@ -1,13 +1,15 @@
-[gd_resource type="Resource" script_class="EnemyTypeResource" format=3]
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://3ne3o1ls5mdj"]
 
-[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
-[ext_resource type="Script" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/materials/leather/hide_cave.tres" id="3_hide"]
-[ext_resource type="SpriteFrames" path="res://source/common/gameplay/characters/sprite_frames/fungus_old.tres" id="4_skin"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/sword/sword_spore.item.tres" id="5_sword"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/hammer/hammer_spore.item.tres" id="6_hammer"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/wand/wand_spore.item.tres" id="7_wand"]
-[ext_resource type="Resource" path="res://source/common/gameplay/items/weapons/bow/spore_bow.item.tres" id="8_bow"]
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_q0377"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="2_a2f8b"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
+[ext_resource type="Resource" uid="uid://cp04kpxb8r61s" path="res://source/common/gameplay/items/materials/leather/hide_cave.tres" id="3_hide"]
+[ext_resource type="SpriteFrames" uid="uid://vb13tsyp74iv" path="res://source/common/gameplay/characters/sprite_frames/fungus_old.tres" id="4_skin"]
+[ext_resource type="Resource" uid="uid://f73fbhjwsu73" path="res://source/common/gameplay/items/weapons/sword/sword_spore.item.tres" id="5_sword"]
+[ext_resource type="Resource" uid="uid://jgkj3ooungr0" path="res://source/common/gameplay/items/weapons/hammer/hammer_spore.item.tres" id="6_hammer"]
+[ext_resource type="Resource" uid="uid://c118jtihx3ybm" path="res://source/common/gameplay/items/weapons/wand/wand_spore.item.tres" id="7_wand"]
+[ext_resource type="Resource" uid="uid://dowcv48c5suhy" path="res://source/common/gameplay/items/weapons/bow/spore_bow.item.tres" id="8_bow"]
 
 [sub_resource type="Resource" id="Drop_hide"]
 script = ExtResource("2_loot")
@@ -44,21 +46,19 @@ visual_scale = 1.5
 is_boss = true
 max_health = 550.0
 attack_damage = 16.0
-attack_cooldown = 1.5
 move_speed = 60
 distance_to_attack = 24
-detection_radius = 170
 leashes = false
+detection_radius = 170
 chase_on_area = true
 xp_reward = 200
 respawns = false
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_hide"), SubResource("Drop_sword"), SubResource("Drop_hammer"), SubResource("Drop_wand"), SubResource("Drop_bow")])
-slam_radius = 110.0
-slam_windup_s = 1.1
-slam_damage = 45.0
 slam_interval_s = 6.5
 enraged_slam_interval_s = 3.8
 add_enemy_slug = &"spore_swarm"
 add_count = 3
 add_spread_px = 56.0
 enrage_speed_mult = 1.25
+metadata/slug = &"fungal_heart"
+metadata/id = 31

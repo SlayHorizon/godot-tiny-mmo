@@ -22,6 +22,14 @@ var _hidden_for_menu: Array[CanvasItem] = []
 @onready var notification_button: Button = $MenuButtons/ButtonRail/NotificationButton
 @onready var menu_button: Button = $MenuButtons/ButtonRail/MenuButton
 @onready var chat_button: Button = $MenuButtons/ButtonRail/ChatButton
+@onready var actions_button: Button = $MenuButtons/ButtonRail/ActionsButton
+@onready var recall_button: Button = $MenuButtons/ButtonRail/RecallButton
+
+## The ACTIONS FLYOUT: the rail's expandable drawer of deliberate, non-twitch character
+## actions (docs/ui.md two-tier rule — this is how the HUD scales without top-level creep).
+## Today: Recall. Future tenants (torch/light, emotes, sit, …) just join this list.
+@onready var _action_items: Array[Button] = [recall_button]
+var _actions_open: bool = false
 @onready var chat: ChatMenu = $Chat
 @onready var twin_sticks: Control = $TwinSticks
 @onready var quest_tracker: QuestTracker = $QuestTracker
@@ -49,6 +57,17 @@ func _ready() -> void:
 	_chat_icon = PixelIcon.from_button(chat_button)
 	chat_button.pressed.connect(chat.toggle_feed)
 	chat.unread_changed.connect(_on_chat_unread)
+	# The Actions flyout: one stable rail button expands the drawer of deliberate
+	# character actions — reachable on MOBILE (no B key there) without top-level creep.
+	PixelIcon.from_button(actions_button)
+	PixelIcon.from_button(recall_button)
+	actions_button.pressed.connect(_toggle_actions_flyout)
+	# Recall: same guarded path as the B key; an accidental tap self-corrects (moving
+	# cancels the channel). Firing an action collapses the drawer.
+	recall_button.pressed.connect(func() -> void:
+		if ClientState.local_player != null:
+			ClientState.local_player.request_recall()
+		_toggle_actions_flyout())
 	Client.subscribe(&"notification", _on_notification_received)
 	ClientState.player_profile_requested.connect(open_player_profile)
 	ClientState.player_profile_by_peer_requested.connect(open_player_profile_by_peer)
@@ -251,6 +270,16 @@ func display_menu(menu_name: StringName, arg: Variant = null) -> void:
 
 func _on_overlay_menu_button_pressed() -> void:
 	menu_overlay.open()
+
+
+## Open/close the Actions drawer: the rail simply grows by the action buttons while
+## open. The Actions button warms up as the "this is expanded" tell; firing any action
+## (or re-tapping) collapses it.
+func _toggle_actions_flyout() -> void:
+	_actions_open = not _actions_open
+	for item: Button in _action_items:
+		item.visible = _actions_open
+	actions_button.modulate = Color(1.0, 0.9, 0.6) if _actions_open else Color.WHITE
 
 
 func _on_notification_button_pressed() -> void:

@@ -1,39 +1,61 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://jo7v7jfc54kp"]
 
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_b7xd8"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
-[ext_resource type="Resource" uid="uid://yknmxceq6mdh" path="res://source/common/gameplay/items/materials/captain_tag.tres" id="3_tag"]
-[ext_resource type="Resource" uid="uid://bvgijymuxvkai" path="res://source/common/gameplay/items/materials/metals/copper_bar.tres" id="4_cop_bar"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="2_qpp0m"]
 [ext_resource type="SpriteFrames" uid="uid://cjvpbhojuaqq" path="res://source/common/gameplay/characters/sprite_frames/bandit_fighter.tres" id="5_a7j0n"]
-[ext_resource type="Resource" uid="uid://wp3akqcd3x2h" path="res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres" id="6_avcwm"]
+[ext_resource type="Resource" uid="uid://b6rg0f7dgtrn0" path="res://source/common/gameplay/items/weapons/sword/sword_rustic.item.tres" id="90_sword"]
+[ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="91_hammer"]
+[ext_resource type="Resource" uid="uid://b5u0jyyxqonrh" path="res://source/common/gameplay/items/weapons/book/book_rustic.item.tres" id="92_book"]
+[ext_resource type="Resource" uid="uid://c8mlycu302745" path="res://source/common/gameplay/items/weapons/bow/rustic_bow.item.tres" id="93_bow"]
+[ext_resource type="Resource" uid="uid://blxysmttimic7" path="res://source/common/gameplay/items/weapons/wand/wand_bandit.item.tres" id="94_wand"]
 
-[sub_resource type="Resource" id="Drop_tag"]
+[sub_resource type="Resource" id="Drop_sword"]
 script = ExtResource("2_loot")
-item = ExtResource("3_tag")
+item = ExtResource("90_sword")
+chance = 0.2
 
-[sub_resource type="Resource" id="Drop_copper_bar"]
+[sub_resource type="Resource" id="Drop_hammer"]
 script = ExtResource("2_loot")
-item = ExtResource("4_cop_bar")
-max_amount = 2
-chance = 0.6
+item = ExtResource("91_hammer")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_book"]
+script = ExtResource("2_loot")
+item = ExtResource("92_book")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_bow"]
+script = ExtResource("2_loot")
+item = ExtResource("93_bow")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_wand"]
+script = ExtResource("2_loot")
+item = ExtResource("94_wand")
+chance = 0.2
 
 [resource]
 script = ExtResource("1_script")
 enemy_type = &"bandit_captain"
 display_name = "Bandit Captain"
 skin = ExtResource("5_a7j0n")
-max_health = 300.0
-attack_damage = 25.0
-armor = 8.0
-weapon = ExtResource("6_avcwm")
-lunge_range = 100.0
-lunge_cooldown = 3.0
-move_speed = 90
-distance_to_attack = 25
-max_distance_from_spawn = 200
+visual_scale = 1.3
+is_boss = true
+max_health = 900.0
+attack_damage = 22.0
+attack_cooldown = 1.4
+move_speed = 60
+distance_to_attack = 24
+detection_radius = 180
 chase_on_area = true
-xp_reward = 30
+xp_reward = 250
 respawn_delay = 120.0
-loot = Array[ExtResource("2_loot")]([SubResource("Drop_tag"), SubResource("Drop_copper_bar")])
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_sword"), SubResource("Drop_hammer"), SubResource("Drop_book"), SubResource("Drop_bow"), SubResource("Drop_wand")])
+slam_radius = 120.0
+slam_damage = 60.0
+add_enemy_slug = &"bandit_fighter"
+add_count = 3
 metadata/slug = &"bandit_captain"
 metadata/id = 2

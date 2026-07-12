@@ -27,11 +27,8 @@ func register(map: Map, npc: Node) -> void:
 	var owner: NPC = npc as NPC
 	if shop and owner != null:
 		var key: StringName = _shop_key(owner)
-		# Two shop NPCs resolving to the same key with different shops collide and the
-		# last write silently wins. Warn the author rather than fail silently.
-		if map.shops.has(key) and map.shops[key] != shop:
-			push_warning("ShopInteraction: duplicate shop key '%s' — two shop NPCs resolve to the same key; one will be unreachable. Give them distinct NPCResource files or node names." % key)
-		map.shops[key] = shop
+		# register_keyed carries the duplicate-key warning (the guild-house bug class).
+		map.register_keyed(map.shops, key, shop, "shop")
 		# Boot-time visibility: one line per registered shop, so a mis-keyed or
 		# missing merchant is diagnosable from the world log instead of a dead Buy.
 		# Server-only by construction (npc.gd gates register() on is_server()).

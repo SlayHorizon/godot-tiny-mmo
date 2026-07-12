@@ -8,9 +8,11 @@ static func load_file_with_defaults(config_path: String, defaults: Dictionary) -
 	var config: Dictionary = defaults.duplicate(true)
 
 	for section: String in config_file.get_sections():
-		var section_data: Dictionary = {}
+		# Merge over the defaults instead of replacing the section: a default
+		# key the file doesn't know about (added in a later build) must survive.
+		var section_data: Dictionary = config.get(section, {})
 		for key: String in config_file.get_section_keys(section):
-			section_data[key] = config_file.get_value(section, key, defaults.get(key))
+			section_data[key] = config_file.get_value(section, key)
 
 		config[section] = section_data
 

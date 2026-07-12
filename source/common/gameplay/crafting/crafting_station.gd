@@ -14,6 +14,11 @@ extends Interactable
 func _ready() -> void:
 	if station != null:
 		menu_name = &"crafting"
+		# Self-register with the owning map, keyed by node name (what the client
+		# sends and craft.item resolves).
+		var map: Map = Map.of(self)
+		if map != null:
+			map.register_keyed(map.crafting_stations, StringName(name), station, "crafting station")
 	super._ready()
 
 

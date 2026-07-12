@@ -25,3 +25,5 @@ unlock_message = "[Forager Maela] You handle yourself well down here. The myconi
 requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q2")])
 reward_xp = 260
 reward_gold = 10
+metadata/slug = &"break_the_myconid_line"
+metadata/id = 37

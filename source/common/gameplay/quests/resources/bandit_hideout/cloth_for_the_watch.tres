@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://bqkod16t0ayfl"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Resource" uid="uid://cif36huc5qgcj" path="res://source/common/gameplay/items/materials/cloth/cloth_bandit.tres" id="3_cloth"]
+[ext_resource type="Resource" uid="uid://cfw0rpeydky71" path="res://source/common/gameplay/quests/resources/bandit_hideout/bandit_toll.tres" id="4_q1"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="5_lo0cl"]
+
+[sub_resource type="Resource" id="Obj_collect_cloth"]
+script = ExtResource("1_obj")
+type = 1
+item = ExtResource("3_cloth")
+required_amount = 6
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Cloth for the Watch"
+description = "Bring me 6 Bandit Cloth. Most of it is stolen wool anyway. We patch our own gear with it and call it fair."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_collect_cloth")])
+min_level = 10
+requires_quests = Array[ExtResource("2_quest")]([ExtResource("4_q1")])
+reward_xp = 360
+reward_gold = 14
+metadata/slug = &"cloth_for_the_watch"
+metadata/id = 36

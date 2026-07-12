@@ -21,6 +21,15 @@ var _pending_pairs: Array
 # FieldID -> cache
 var _prop_cache: Dictionary[int, PropertyCache]
 
+# Client-side smoothing route (docs/netcode_smoothness.md): resolved once on the
+# first apply. When root_node is a remote Character, :position goes through its
+# NetMotionSmoother instead of a raw property set. root_node stays duck-typed
+# (has_method) — a typed Character reference here would close a compile cycle,
+# since Character already references StateSynchronizer.
+var _smooth_checked: bool = false
+var _smooth_target: Node
+var _smooth_position_fid: int = -1
+
 
 func _ready() -> void:
 	# Resolve a sensible default root.
@@ -122,6 +131,14 @@ func _mark_dirty_internal(fid: int, value: Variant, only_if_changed: bool) -> vo
 
 ## Apply a batch of pairs. Unknown fields/nodes get buffered and retried later.
 func _apply_pairs(pairs: Array, _is_baseline: bool) -> void:
+	if not _smooth_checked:
+		_smooth_checked = true
+		if not multiplayer.is_server() \
+				and root_node != null \
+				and root_node.has_method(&"net_apply_position") \
+				and root_node.wants_net_smoothing():
+			_smooth_target = root_node
+			_smooth_position_fid = PathRegistry.ensure_id(":position")
 	for pair: Array in pairs:
 		if pair.size() < 2:
 			continue
@@ -129,7 +146,11 @@ func _apply_pairs(pairs: Array, _is_baseline: bool) -> void:
 		var value: Variant = pair[1]
 		last_applied[fid] = value
 
-		var property_cache: PropertyCache = PropertyCache.ensure_cache_for(fid, root_node, _prop_cache) 
+		if fid == _smooth_position_fid and _smooth_target != null:
+			_smooth_target.net_apply_position(value)
+			continue
+
+		var property_cache: PropertyCache = PropertyCache.ensure_cache_for(fid, root_node, _prop_cache)
 		if property_cache == null or not property_cache.apply_or_try_resolve(root_node, value):
 			_pending_pairs.append([fid, value])
 

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_dj3co"]
 [ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_5m4as"]
 [ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="3_ud7al"]
+[ext_resource type="Resource" uid="uid://d37pro3e87wj5" path="res://source/common/gameplay/quests/resources/goblin_woodland/clear_the_path.tres" id="4_q2"]
 
 [sub_resource type="Resource" id="Obj_kill_slinger"]
 script = ExtResource("1_dj3co")
@@ -21,6 +22,7 @@ description = "Break the guard line at the warren mouth. Slingers hang back, so 
 objectives = Array[ExtResource("1_dj3co")]([SubResource("Obj_kill_slinger"), SubResource("Obj_kill_shaman")])
 min_level = 3
 unlock_message = "[Warden Bren] You fight well. The warren mouth needs clearing, come find me."
+requires_quests = Array[ExtResource("2_5m4as")]([ExtResource("4_q2")])
 reward_xp = 110
 reward_gold = 6
 metadata/slug = &"break_the_warren_guard"

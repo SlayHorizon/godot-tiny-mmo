@@ -17,8 +17,14 @@ static func _static_init() -> void:
 	# Hardcoded fields
 	register_field(":position", Wire.Type.VEC2_F32)
 	register_field(":flipped", Wire.Type.BOOL)
-	register_field(":anim", Wire.Type.VARIANT)
-	register_field(":pivot", Wire.Type.F32)
+	# :anim is the Character.Animations enum (IDLE/RUN/DEATH) — a tiny int, and the ONLY
+	# client-pushed field that used to be VARIANT. Typed as U8 so a crafted client delta
+	# can't smuggle an arbitrary Variant through get_var (docs/netcode_security_audit.md P1).
+	register_field(":anim", Wire.Type.U8)
+	# Hand aim angle in radians (~ -PI..PI), snapped to 0.05 on send (local_player).
+	# F16 half-float: precision ~0.002 rad at the extremes, far finer than the 0.05
+	# snap, so visually lossless — and 2 bytes on the wire instead of 4.
+	register_field(":pivot", Wire.Type.F16)
 	
 	register_field(":scale", Wire.Type.VEC2_F32)
 	

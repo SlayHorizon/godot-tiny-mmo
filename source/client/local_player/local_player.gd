@@ -12,6 +12,12 @@ const SAFE_TOAST_COLOR: Color = Color(0.55, 0.95, 0.6)
 const CAMERA_LIMIT_MIN: int = -10000000
 const CAMERA_LIMIT_MAX: int = 10000000
 
+## Upstream send rate cap. The server rebroadcasts entity state at 20 Hz, so sending
+## faster (client physics runs at 60) just triples server ingest for updates nobody
+## ever sees. Dirty-marking still happens every physics frame — the dirty map
+## coalesces — only the actual send is gated (docs/netcode_smoothness.md, Phase 2).
+const NET_SEND_INTERVAL_S: float = 1.0 / 20.0
+
 
 ## Fallback move speed until the synced MOVE_SPEED stat arrives. Actual movement
 ## reads the stat (see process_movement) so AGILITY / gear speed bonuses apply.
@@ -36,6 +42,9 @@ var fid_position: int
 var fid_flipped: int
 var fid_anim: int
 var fid_pivot: int
+
+## Accumulator gating upstream sends to NET_SEND_INTERVAL_S.
+var _net_send_accum: float = 0.0
 
 var synchronizer_manager: StateSynchronizerManagerClient
 
@@ -220,6 +229,15 @@ func _on_channel_end(payload: Dictionary) -> void:
 	channeling_ability_name = ""
 
 
+## Ask the server to start the universal Recall channel. Shared entry for the B key
+## AND the HUD rail button (mobile has no keyboard). No-op while already channeling
+## (cancel by moving) or outside an instance.
+func request_recall() -> void:
+	if _channeling or InstanceClient.current == null:
+		return
+	Client.request_data(&"recall.start", Callable(), {}, InstanceClient.current.name)
+
+
 ## Tell the server to stop our channel (it pushes channel.end back, which also
 ## clears the flag — calling this just unroots us a frame early, locally).
 func _cancel_channel() -> void:
@@ -383,8 +401,8 @@ func process_input() -> void:
 
 	# Recall (B): a universal channel anyone can start — ask the server to begin
 	# it. Not while already channeling (re-press is ignored; cancel by moving).
-	if Input.is_action_just_pressed(&"player_recall") and not _channeling and InstanceClient.current != null:
-		Client.request_data(&"recall.start", Callable(), {}, InstanceClient.current.name)
+	if Input.is_action_just_pressed(&"player_recall"):
+		request_recall()
 
 	# Channeling: rooted (process_movement zeroes velocity). A move key CANCELS
 	# the channel and frees us from this frame on; otherwise suppress all actions
@@ -450,9 +468,20 @@ func process_synchronization() -> void:
 		[fid_pivot, snappedf(hand_pivot.rotation, 0.05)],
 	]
 	state_synchronizer.mark_many_by_id(pairs, true)
+	# Send at 20 Hz, not per physics frame — see NET_SEND_INTERVAL_S.
+	_net_send_accum += get_physics_process_delta_time()
+	if _net_send_accum < NET_SEND_INTERVAL_S:
+		return
+	_net_send_accum = fmod(_net_send_accum, NET_SEND_INTERVAL_S)
 	var collected_pairs: Array = state_synchronizer.collect_dirty_pairs()
 	if not collected_pairs.is_empty():
 		synchronizer_manager.send_my_delta(multiplayer.get_unique_id(), collected_pairs)
+
+
+## Local movement is client-authoritative — networked :position echoes must keep
+## the raw-apply path (process_movement overwrites them next frame by design).
+func wants_net_smoothing() -> bool:
+	return false
 
 
 func set_camera_zoom(zoom: Vector2) -> void:

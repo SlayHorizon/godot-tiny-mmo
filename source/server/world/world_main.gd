@@ -17,6 +17,11 @@ func _ready() -> void:
 	
 	if DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_title("World Server")
+	else:
+		# Headless has no vsync, so _process — which drives the sync manager's
+		# 20/10 Hz send accumulators — would spin uncapped and burn a full core.
+		# 60 fps keeps the send timing accurate at a fraction of the CPU.
+		Engine.max_fps = 60
 	
 	# Default config path. to use another one, override this;
 	# or write --config=config_file_path.cfg as a launch argument.

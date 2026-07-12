@@ -1,9 +1,19 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://c2htgqm6nf3t5"]
 
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_3a3qb"]
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_nnxfd"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="2_1jsux"]
 [ext_resource type="SpriteFrames" uid="uid://bq1hdbyh6phhr" path="res://source/common/gameplay/characters/sprite_frames/orc_warrior.tres" id="3_3a3qb"]
 [ext_resource type="Resource" uid="uid://dclt4rvqc51ri" path="res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres" id="4_1jsux"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="90_mobb"]
+[ext_resource type="Script" uid="uid://cu0vfk2poexsd" path="res://source/common/gameplay/characters/npc/behaviors/lunge_behavior.gd" id="91_lunge"]
+
+[sub_resource type="Resource" id="Lunge_migrated"]
+script = ExtResource("91_lunge")
+lunge_range = 200.0
+lunge_radius = 30.0
+lunge_windup_s = 0.4
+lunge_cooldown = 10.0
 
 [sub_resource type="Resource" id="Resource_1jsux"]
 script = ExtResource("1_3a3qb")
@@ -22,10 +32,7 @@ max_health = 500.0
 attack_damage = 35.0
 armor = 10.0
 weapon = ExtResource("4_1jsux")
-lunge_range = 200.0
-lunge_radius = 30.0
-lunge_windup_s = 0.4
-lunge_cooldown = 10.0
+behaviors = Array[ExtResource("90_mobb")]([SubResource("Lunge_migrated")])
 move_speed = 90
 distance_to_attack = 25
 detection_radius = 100

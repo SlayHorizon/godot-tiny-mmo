@@ -17,7 +17,7 @@ extends StaticBody2D
 ##   - Wire the @export slots (banner / health_bar / grace_label) to the children you
 ##     want. All optional — leave any unset to skip that feature.
 
-const GRACE_MS: int = 2 * 60 * 1000
+const GRACE_MS: int = int(1.10 * 60 * 1000)
 const MAX_HP: float = 500.0
 ## Raw weapon damage is multiplied by this before hitting the flag. A flag is an
 ## objective, not a duel — but capturing one shouldn't be a minute-long solo slog
@@ -98,6 +98,10 @@ var _state_initialized: bool = false
 
 func _ready() -> void:
 	collision_layer = PhysicsLayers.FLAG # attacks target this for capture (not the player body's layer)
+	# Self-register with the owning map (flag damage/capture resolution).
+	var map: Map = Map.of(self)
+	if map != null:
+		map.register_keyed(map.territory_flags, flag_id, self, "territory flag")
 	if multiplayer.is_server():
 		set_process(false) # No client visuals to tick on the server.
 		_load_state_from_db()
@@ -231,7 +235,8 @@ func _capture(killer: Character) -> void:
 	_announce_capture(killer as Player, previous_id, previous_name)
 	# Deferred: _capture runs inside the arrow's physics collision callback, and
 	# spawning the guards' detection areas can't mutate physics mid-flush.
-	BasingService.spawn_defenders.call_deferred(self)
+	# Temporary disable to focus on exclusive PvP
+	#BasingService.spawn_defenders.call_deferred(self)
 	_broadcast_state()
 
 

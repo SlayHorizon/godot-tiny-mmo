@@ -11,11 +11,13 @@
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="7_msvda"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="8_f6l70"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="9_msvda"]
-[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/fungus/sporeling.tres" id="10_s14j1"]
+[ext_resource type="Resource" uid="uid://ou1wadpim68o" path="res://source/common/gameplay/characters/npc/types/fungus/sporeling.tres" id="10_s14j1"]
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/gameplay/maps/components/interaction_areas/teleporter/teleporter.tscn" id="11_jbsjy"]
-[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/fungus/puffcap.tres" id="11_wegif"]
-[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/types/fungus/myconid_brute.tres" id="12_n7hu4"]
+[ext_resource type="Resource" uid="uid://dpdtw2h3td5ip" path="res://source/common/gameplay/characters/npc/types/fungus/puffcap.tres" id="11_wegif"]
+[ext_resource type="Resource" uid="uid://cd8rmrp54ds2e" path="res://source/common/gameplay/characters/npc/types/fungus/myconid_brute.tres" id="12_n7hu4"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="12_y53hc"]
+[ext_resource type="Resource" uid="uid://btnithna7holw" path="res://source/common/gameplay/characters/npc/types/fungus/spore_swarm.tres" id="13_n7hu4"]
+[ext_resource type="Resource" uid="uid://3ne3o1ls5mdj" path="res://source/common/gameplay/characters/npc/types/fungus/fungal_heart.tres" id="14_dysl4"]
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="16_dxrxi"]
 [ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="17_s14j1"]
 [ext_resource type="Script" uid="uid://cr2yg6sl43by8" path="res://source/common/gameplay/dungeon/dungeon_master.gd" id="17_vnkgl"]
@@ -153,7 +155,9 @@ id_to_node = {
 3: NodePath("Sporeling4"),
 4: NodePath("Puffcap"),
 5: NodePath("Puffcap2"),
-6: NodePath("Myconid")
+6: NodePath("Myconid"),
+7: NodePath("SporeSwarm"),
+8: NodePath("FungalHeart")
 }
 node_to_id = {
 NodePath("Sporeling"): 0,
@@ -162,7 +166,9 @@ NodePath("Sporeling3"): 2,
 NodePath("Sporeling4"): 3,
 NodePath("Puffcap"): 4,
 NodePath("Puffcap2"): 5,
-NodePath("Myconid"): 6
+NodePath("Myconid"): 6,
+NodePath("SporeSwarm"): 7,
+NodePath("FungalHeart"): 8
 }
 metadata/_custom_type_script = "uid://wq8klpndipnu"
 
@@ -179,13 +185,13 @@ enemy_data = ExtResource("10_s14j1")
 weapon = null
 
 [node name="Sporeling3" parent="ReplicatedPropsContainer" unique_id=1154991180 instance=ExtResource("9_msvda")]
-position = Vector2(22.234344, -993.80927)
+position = Vector2(40, -864)
 debug_draw_ranges = false
 enemy_data = ExtResource("10_s14j1")
 weapon = null
 
 [node name="Sporeling4" parent="ReplicatedPropsContainer" unique_id=2087290461 instance=ExtResource("9_msvda")]
-position = Vector2(160, -1040)
+position = Vector2(120, -896)
 debug_draw_ranges = false
 enemy_data = ExtResource("10_s14j1")
 weapon = null
@@ -203,9 +209,21 @@ enemy_data = ExtResource("11_wegif")
 weapon = null
 
 [node name="Myconid" parent="ReplicatedPropsContainer" unique_id=561387804 instance=ExtResource("9_msvda")]
-position = Vector2(506.03534, -1409.5321)
+position = Vector2(80, -944)
 debug_draw_ranges = false
 enemy_data = ExtResource("12_n7hu4")
+weapon = null
+
+[node name="SporeSwarm" parent="ReplicatedPropsContainer" unique_id=54992206 instance=ExtResource("9_msvda")]
+position = Vector2(-8, -1104)
+debug_draw_ranges = false
+enemy_data = ExtResource("13_n7hu4")
+weapon = null
+
+[node name="FungalHeart" parent="ReplicatedPropsContainer" unique_id=225589282 instance=ExtResource("9_msvda")]
+position = Vector2(-292.74463, -1169.4962)
+debug_draw_ranges = false
+enemy_data = ExtResource("14_dysl4")
 weapon = null
 
 [node name="BarTeleporter" parent="." unique_id=1534252068 node_paths=PackedStringArray("target") instance=ExtResource("11_jbsjy")]
@@ -224,6 +242,7 @@ npc_resource = SubResource("Resource_40wvd")
 position = Vector2(725, 74)
 
 [node name="DungeonMaster" type="Area2D" parent="." unique_id=774721028]
+visible = false
 position = Vector2(520, -1236)
 script = ExtResource("17_vnkgl")
 dungeon = SubResource("Resource_pvtw6")
@@ -236,11 +255,9 @@ shape = SubResource("RectangleShape2D_kouuu")
 [node name="Entrance" parent="." unique_id=1414716116 instance=ExtResource("7_msvda")]
 position = Vector2(-1, -19)
 scale = Vector2(3.559999, 1)
-target_instance = ExtResource("8_f6l70")
-target_id = 8
 
 [node name="CastleGardenPortal" parent="." unique_id=375786523 instance=ExtResource("19_pvtw6")]
-position = Vector2(-48, -72)
+position = Vector2(-96, -120)
 portal_color = Color(1.2513996e-06, 0.5407531, 0.6588039, 1)
 destination_label = "Castle Garden"
 target_instance = ExtResource("8_f6l70")
@@ -256,3 +273,14 @@ npc_resource = ExtResource("24_dxrxi")
 [node name="CopperVein" parent="MineableNodes" unique_id=1129547794 instance=ExtResource("23_n7hu4")]
 position = Vector2(139.9191, -1114.0907)
 data = ExtResource("24_dysl4")
+
+[node name="CopperVein2" parent="MineableNodes" unique_id=806920154 instance=ExtResource("23_n7hu4")]
+position = Vector2(146.38373, -617.54645)
+data = ExtResource("24_dysl4")
+
+[node name="Label" type="Label" parent="." unique_id=1332924517]
+offset_left = 472.0
+offset_top = -1328.0
+offset_right = 589.0
+offset_bottom = -1305.0
+text = "In construction"

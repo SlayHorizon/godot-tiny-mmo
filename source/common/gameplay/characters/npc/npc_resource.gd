@@ -19,5 +19,14 @@ extends Resource
 ## duel_master.tres -> &"duel_master"). No hand-assigned id to collide: the file you
 ## already named IS the key. A quest references a giver by dragging in its NPCResource;
 ## the runtime matches on this slug (both sides resolve to the same .tres, same slug).
+##
+## INLINE resources (saved inside a scene) have NO file of their own — their
+## resource_path is "scene.tscn::ResourceId", so the old basename slug collapsed
+## to the SCENE's name, silently colliding every inline NPC in that map (two
+## guild-house merchants both keyed 'inside_map' — the shop bug of 2026-07-06).
+## Return empty instead so callers fall back to something unique (ShopInteraction
+## uses the NPC's node name).
 func giver_key() -> StringName:
-	return StringName(resource_path.get_file().get_basename()) if not resource_path.is_empty() else &""
+	if resource_path.is_empty() or resource_path.contains("::"):
+		return &""
+	return StringName(resource_path.get_file().get_basename())

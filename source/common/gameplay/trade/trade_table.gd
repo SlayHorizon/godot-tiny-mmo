@@ -36,6 +36,10 @@ var _hovered: bool = false # client: cursor over the table (suppresses the attac
 
 
 func _ready() -> void:
+	# Self-register with the owning map (BEFORE the server early-return below).
+	var map: Map = Map.of(self)
+	if map != null:
+		map.register_keyed(map.trade_tables, table_id, self, "trade table")
 	if multiplayer.is_server():
 		seat_offers = [_empty_offer(), _empty_offer()]
 		input_pickable = false

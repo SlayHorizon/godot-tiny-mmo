@@ -3,62 +3,32 @@
 [ext_resource type="Script" uid="uid://s6ive88moh6q" path="res://source/client/ui/menus/settings/components/setting_remap.gd" id="1_rc673"]
 [ext_resource type="ButtonGroup" uid="uid://dnri86skakd1g" path="res://source/client/ui/menus/settings/components/remap_group.tres" id="2_q6ujg"]
 
-[node name="SettingRemap" type="HBoxContainer" unique_id=1702750502 node_paths=PackedStringArray("setting_label", "controller")]
+[node name="SettingRemap" type="PanelContainer" unique_id=1702750502 node_paths=PackedStringArray("setting_label", "controller")]
 custom_minimum_size = Vector2(0, 48)
-anchors_preset = 10
-anchor_right = 1.0
-grow_horizontal = 2
+theme_type_variation = &"SettingRow"
 script = ExtResource("1_rc673")
-setting_label = NodePath("Label/SettingName")
-controller = NodePath("Controller/InputRemapButton")
+setting_label = NodePath("HBox/SettingName")
+controller = NodePath("HBox/Cell/InputRemapButton")
 
-[node name="Label" type="Control" parent="." unique_id=1069436853]
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SettingName" type="Label" parent="HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="ColorRect" type="ColorRect" parent="Label" unique_id=209506371]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.08)
-
-[node name="SettingName" type="Label" parent="Label" unique_id=186259383]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
+theme_override_font_sizes/font_size = 16
 text = "ActionName"
 vertical_alignment = 1
 
-[node name="Controller" type="Control" parent="." unique_id=1424484612]
+[node name="Cell" type="PanelContainer" parent="HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.85
+theme_type_variation = &"SettingCell"
 
-[node name="ColorRect" type="ColorRect" parent="Controller" unique_id=359793044]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(255, 255, 255, 0.15)
-
-[node name="InputRemapButton" type="Button" parent="Controller" unique_id=43586039]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="InputRemapButton" type="Button" parent="HBox/Cell"]
+layout_mode = 2
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 button_group = ExtResource("2_q6ujg")

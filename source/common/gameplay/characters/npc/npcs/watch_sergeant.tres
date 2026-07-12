@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://dam33uymrh4ne"]
+
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="1_npcres"]
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="2_npcint"]
+[ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="3_quest"]
+[ext_resource type="Script" uid="uid://cb4eeew5u1da1" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_dialogue"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="5_questres"]
+[ext_resource type="Resource" uid="uid://cfw0rpeydky71" path="res://source/common/gameplay/quests/resources/bandit_hideout/bandit_toll.tres" id="6_q1"]
+[ext_resource type="Resource" uid="uid://cu5jw5yqo5myv" path="res://source/common/gameplay/quests/resources/bandit_hideout/arrows_in_the_trees.tres" id="7_q2"]
+[ext_resource type="Resource" uid="uid://bqkod16t0ayfl" path="res://source/common/gameplay/quests/resources/bandit_hideout/cloth_for_the_watch.tres" id="8_q3"]
+[ext_resource type="Resource" uid="uid://bk7jbs0f2yj6y" path="res://source/common/gameplay/quests/resources/bandit_hideout/break_the_camp_guard.tres" id="9_q4"]
+[ext_resource type="Resource" uid="uid://bgx7x6enhogw" path="res://source/common/gameplay/quests/resources/bandit_hideout/the_bandit_captain.tres" id="10_q5"]
+[ext_resource type="SpriteFrames" uid="uid://dikmb6ti5t2j6" path="res://source/common/gameplay/characters/sprite_frames/royal_soldier.tres" id="11_skin"]
+
+[sub_resource type="Resource" id="QuestInteraction_sergeant"]
+script = ExtResource("3_quest")
+quests = Array[ExtResource("5_questres")]([ExtResource("6_q1"), ExtResource("7_q2"), ExtResource("8_q3"), ExtResource("9_q4"), ExtResource("10_q5")])
+
+[sub_resource type="Resource" id="Dialogue_camp"]
+script = ExtResource("4_dialogue")
+lines = Array[String](["Deserters, charter dodgers, vein thieves. Call them what you want, they all swing the same.", "The watch cannot go in. Too few of us, too many of them. You are not the watch, so nobody sent you. Understood?", "Their sorcerers keep the big ones standing. Learn that lesson cheap, from me, not out there."])
+label_override = "Ask about the camp"
+
+[resource]
+script = ExtResource("1_npcres")
+npc_name = "Watch Sergeant"
+skin = ExtResource("11_skin")
+greeting = "Hold. This is as far as the road is safe. Past those stakes it is all bandit ground. If you are here to fight, the watch pays for outlaw work. If not, turn around."
+interactions = Array[ExtResource("2_npcint")]([SubResource("QuestInteraction_sergeant"), SubResource("Dialogue_camp")])

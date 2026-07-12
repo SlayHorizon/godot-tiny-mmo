@@ -45,17 +45,18 @@ extends Resource
 ## Optional weapon. Null = melee AoE attacker.
 @export var weapon: WeaponItem
 
-@export_group("Lunge")
-## Telegraphed gap-closer. 0 = this enemy never lunges. When its target sits in
-## the pounce window (between ~2× melee range and lunge_range), the mob winds
-## up — a red circle marks the target's CURRENT spot — then dashes to that
-## LOCKED spot and damages players still inside lunge_radius (attack_damage).
-## Fully dodgeable by moving during the windup; punishes standing still.
-@export var lunge_range: float = 0.0
-@export var lunge_radius: float = 24.0
-@export var lunge_windup_s: float = 0.55
-@export var lunge_speed_multiplier: float = 5.0
-@export var lunge_cooldown: float = 5.0
+@export_group("Behaviors")
+## Composable server-side behaviors (docs/hostile_npc_refactor.md): drop in a
+## LungeBehavior etc. Runs alongside the base chase/attack chassis. (The old
+## flat lunge_* fields were migrated into LungeBehavior sub-resources on every
+## user and deleted, 2026-07-09.)
+@export var behaviors: Array[MobBehavior]
+## What the mob DOES on its swing timer (attack_cooldown = the global swing
+## rate). Order = priority: each swing goes to the FIRST attack whose own
+## recharge is up and whose target exists. EMPTY = the classic default —
+## a WeaponAttack if `weapon` is set, else a MeleeAttack at engagement range
+## (synthesized in _apply_enemy_data; no .tres needs authoring for the basics).
+@export var attacks: Array[MobAttack]
 
 @export_group("AI & Movement")
 @export var move_speed: int = 20

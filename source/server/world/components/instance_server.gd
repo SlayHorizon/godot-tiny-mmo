@@ -105,9 +105,11 @@ func load_map(map_path: String) -> void:
 	ready.connect(func():
 		if instance_map.replicated_props_container:
 			synchronizer_manager.add_container(1_000_000, instance_map.replicated_props_container)
-		for child in instance_map.get_children():
-			if child is InteractionArea:
-				child.player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
+		# Recursive: an InteractionArea (warper/teleporter/...) may be grouped under an
+		# organizational node ("Warpers/") — a direct-children scan silently skipped it,
+		# leaving the area registered but its enter-signal never wired (dead portal).
+		for area: Node in instance_map.find_children("*", "InteractionArea", true, false):
+			(area as InteractionArea).player_entered_interaction_area.connect(self._on_player_entered_interaction_area)
 		)
 
 

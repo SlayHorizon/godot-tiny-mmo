@@ -15,6 +15,7 @@ func _ready() -> void:
 		options.set_item_metadata(idx, palette)
 	options.item_selected.connect(_on_palette_selected)
 	_load_defaults()
+	_update_label()
 
 
 func _on_palette_selected(index: int) -> void:

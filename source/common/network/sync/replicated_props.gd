@@ -78,6 +78,12 @@ var _baseline_ops_by_child: Dictionary[int, Array] = {}  # child_id -> [[method:
 var _cpid_cache: Dictionary[int, PropertyCache]
 var _pending_by_cpid: Dictionary[int, Variant]
 
+# Client-side smoothing route (docs/netcode_smoothness.md): a prop child that is a
+# Character (HostileNpc) gets :position through its NetMotionSmoother instead of a
+# raw set. Duck-typed (has_method) to match the StateSynchronizer hook. Resolved
+# lazily — apply_pairs only runs on clients.
+var _smooth_position_fid: int = -1
+
 func _ready() -> void:
 	if Engine.is_editor_hint() and id_to_node.is_empty():
 		_bake_static_map()
@@ -157,10 +163,12 @@ func _flush_pending_pairs_for_spawned(spawns: Array) -> void:
 
 ## pairs: [[cpid, value], ...]
 func apply_pairs(pairs: Array) -> void:
+	if _smooth_position_fid == -1:
+		_smooth_position_fid = PathRegistry.ensure_id(":position")
 	for pair: Array in pairs:
 		if pair.size() < 2:
 			continue
-		
+
 		# Potential confusion here:
 		# cpid is at the same time the node ID and the field/property ID
 		var cpid: int = pair[0]
@@ -172,7 +180,11 @@ func apply_pairs(pairs: Array) -> void:
 		if not child:
 			_pending_by_cpid[cpid] = value
 			continue
-		
+
+		if fid == _smooth_position_fid and child.has_method(&"net_apply_position"):
+			child.net_apply_position(value)
+			continue
+
 		var child_property_cache: PropertyCache = PropertyCache.ensure_cache_for(
 			fid,
 			child,

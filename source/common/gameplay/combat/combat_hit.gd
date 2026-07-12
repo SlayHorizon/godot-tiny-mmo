@@ -131,6 +131,17 @@ static func are_allied(a: Player, b: Player) -> bool:
 	return guild > 0 and guild == b.player_resource.active_guild_id
 
 
+## THE mob-side allegiance check (the faction seam — refactor P3). Two NPCs are
+## on the same side iff they share an owner: wild mobs (owner_guild_id 0) ally
+## with each other, a guild's flag guards ally with each other, and the two
+## never mix. When summons / escort NPCs / real factions arrive, extend HERE
+## ("side = the summoner's side"), never at call sites.
+static func are_allied_npcs(a: HostileNpc, b: HostileNpc) -> bool:
+	if a == null or b == null:
+		return false
+	return a.owner_guild_id == b.owner_guild_id
+
+
 ## Whether [param source] may damage [param target] (player-vs-player only). Allies
 ## never land a hit; a live spar match defers to the duel rules (opponents in the
 ## same match, friendly-fire off, countdown over); otherwise it's open-world PvP,

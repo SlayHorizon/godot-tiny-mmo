@@ -20,3 +20,5 @@ requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q4")])
 reward_xp = 350
 reward_gold = 15
 grant_title = "Sporebane"
+metadata/slug = &"the_fungal_heart"
+metadata/id = 41

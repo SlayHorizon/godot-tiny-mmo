@@ -88,24 +88,40 @@ var territory_flags: Dictionary[int, TerritoryFlag]
 var duel_masters: Dictionary[int, DuelMaster]
 
 
+## Walk up from [param node] to the Map that owns it, or null. Map components
+## use this to SELF-REGISTER into the registry dicts above from their own
+## _ready — the single registration doctrine: anything the server resolves by a
+## client-sent id registers itself (no type scan here). Children _ready before
+## their Map and the dicts are field initializers, so early writes are safe.
+## Works at any nesting depth — the old direct-children scan silently missed
+## anything grouped under a folder node.
+static func of(node: Node) -> Map:
+	var current: Node = node.get_parent()
+	while current != null:
+		if current is Map:
+			return current
+		current = current.get_parent()
+	return null
+
+
+## The single write path for every map registry: last-write-wins like a plain
+## dict store, but WARNS on a conflicting duplicate key — the silent-collision
+## class behind the guild-house shop bug (one entry unreachable, zero errors).
+## Warn server-side only: the same collision exists identically on the client,
+## and ServerLog is the sink that actually reaches the world log.
+func register_keyed(registry: Dictionary, key: Variant, value: Variant, what: String) -> void:
+	if registry.has(key) and registry[key] != value:
+		if GameMode.is_world_server():
+			ServerLog.warn("Map '%s': duplicate %s key '%s' — one of the two will be unreachable." % [name, what, str(key)])
+	registry[key] = value
+
+
 func _ready() -> void:
 	set_process(Engine.is_editor_hint())
 	if Engine.is_editor_hint():
 		return
-
-	for child: Node in get_children():
-		if child is Warper:
-			var warper_id: int = child.warper_id
-			warpers[warper_id] = child
-		elif child is CraftingStation and child.station:
-			crafting_stations[child.name] = child.station
-		elif child is TradeTable:
-			trade_tables[child.table_id] = child
-		elif child is TerritoryFlag:
-			territory_flags[child.flag_id] = child
-		elif child is DuelMaster:
-			duel_masters[child.master_id] = child
-
+	# Components (warpers, stations, tables, flags, duel masters, NPC shops/quests)
+	# self-register via Map.of() + register_keyed() from their own _ready.
 	if not multiplayer.is_server():
 		RenderingServer.set_default_clear_color(map_background_color)
 
@@ -269,7 +285,8 @@ func _draw_cross(c: Vector2, color: Color, size: float, width: float) -> void:
 func get_zone_authoring_data() -> Dictionary:
 	var patches: Array
 	var zone_patches: Array[ZonePatch2D]
-	zone_patches.assign(find_children("*", "ZonePatch2D", false))
+	# Recursive so zone patches can live under organizational folder nodes too.
+	zone_patches.assign(find_children("*", "ZonePatch2D", true, false))
 
 	for zone_patch: ZonePatch2D in zone_patches:
 		if not zone_patch.enabled:

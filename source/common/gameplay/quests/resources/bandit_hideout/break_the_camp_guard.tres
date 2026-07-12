@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://bk7jbs0f2yj6y"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Resource" uid="uid://cu5jw5yqo5myv" path="res://source/common/gameplay/quests/resources/bandit_hideout/arrows_in_the_trees.tres" id="3_q2"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_l1r37"]
+
+[sub_resource type="Resource" id="Obj_kill_brutes"]
+script = ExtResource("1_obj")
+enemy_type = &"bandit_brute"
+required_amount = 3
+
+[sub_resource type="Resource" id="Obj_kill_sorcerers"]
+script = ExtResource("1_obj")
+enemy_type = &"bandit_sorcerer"
+required_amount = 2
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Break the Camp Guard"
+description = "Kill 3 bandit brutes and 2 bandit sorcerers in the inner camp. Put the sorcerers down first. They patch the big ones up faster than you can cut them down."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_brutes"), SubResource("Obj_kill_sorcerers")])
+min_level = 12
+unlock_message = "[Watch Sergeant] The inner camp is your problem now. Watch for the sorcerers. Kill them first and the rest goes easy."
+requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q2")])
+reward_xp = 450
+reward_gold = 16
+metadata/slug = &"break_the_camp_guard"
+metadata/id = 35

@@ -1,9 +1,19 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://cd8rmrp54ds2e"]
 
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_ninm4"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
 [ext_resource type="Resource" uid="uid://cp04kpxb8r61s" path="res://source/common/gameplay/items/materials/leather/hide_cave.tres" id="3_hide"]
 [ext_resource type="SpriteFrames" uid="uid://0bdmuknids0j" path="res://source/common/gameplay/characters/sprite_frames/fungus_heavy.tres" id="4_skin"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="90_mobb"]
+[ext_resource type="Script" uid="uid://cu0vfk2poexsd" path="res://source/common/gameplay/characters/npc/behaviors/lunge_behavior.gd" id="91_lunge"]
+
+[sub_resource type="Resource" id="Lunge_migrated"]
+script = ExtResource("91_lunge")
+lunge_range = 140.0
+lunge_radius = 26.0
+lunge_windup_s = 0.7
+lunge_cooldown = 7.0
 
 [sub_resource type="Resource" id="Drop_hide"]
 script = ExtResource("2_loot")
@@ -19,10 +29,7 @@ skin = ExtResource("4_skin")
 max_health = 130.0
 attack_damage = 14.0
 attack_cooldown = 1.4
-lunge_range = 140.0
-lunge_radius = 26.0
-lunge_windup_s = 0.7
-lunge_cooldown = 7.0
+behaviors = Array[ExtResource("90_mobb")]([SubResource("Lunge_migrated")])
 move_speed = 45
 max_distance_from_spawn = 240
 detection_radius = 110
@@ -30,3 +37,5 @@ chase_on_area = true
 xp_reward = 12
 respawn_delay = 20.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_hide")])
+metadata/slug = &"myconid_brute"
+metadata/id = 32

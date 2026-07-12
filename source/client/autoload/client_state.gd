@@ -123,6 +123,9 @@ func _ready() -> void:
 	settings.load_file()
 	settings.setting_changed.connect(_on_setting_changed)
 	language = settings.data.get(&"general", {}).get(&"language", "en_US")
+	# Saved keybinds must hold from boot (gateway, menus) — not only once the
+	# local player's InputComponent spawns.
+	InputComponent.apply_saved_binds()
 
 
 ## Server-pushed kill rewards: surface them as ONE grouped toast card
@@ -344,11 +347,23 @@ class Settings:
 	signal setting_changed(section: StringName, property: StringName, new_value: Variant)
 
 	var data: Dictionary
+	var _defaults: Dictionary
 
 
 	func load_file() -> void:
-		var defaults: Dictionary = ConfigFileUtils.load_file_with_defaults(DEFAULTS_PATH, {})
-		data = ConfigFileUtils.load_file_with_defaults(SETTINGS_PATH, defaults)
+		_defaults = ConfigFileUtils.load_file_with_defaults(DEFAULTS_PATH, {})
+		data = ConfigFileUtils.load_file_with_defaults(SETTINGS_PATH, _defaults)
+
+
+	## The shipped default for a setting ([code]null[/code] if it has none) —
+	## used by "Reset to Defaults" flows.
+	func get_default(section: StringName, property: StringName) -> Variant:
+		return _defaults.get(section, {}).get(property)
+
+
+	## Every shipped default of a section (empty if the section has none).
+	func get_defaults_section(section: StringName) -> Dictionary:
+		return _defaults.get(section, {})
 
 
 	func save() -> void:

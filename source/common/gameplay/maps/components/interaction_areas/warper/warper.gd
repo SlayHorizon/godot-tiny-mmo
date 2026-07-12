@@ -16,6 +16,13 @@ extends InteractionArea
 @export var required_level: int = 0
 
 
+func _ready() -> void:
+	# Self-register with the owning map (warp resolution + spawn positions).
+	var map: Map = Map.of(self)
+	if map != null:
+		map.register_keyed(map.warpers, warper_id, self, "warper")
+
+
 #func _init() -> void:
 	#print(target_instance)
 	#if target_instance:

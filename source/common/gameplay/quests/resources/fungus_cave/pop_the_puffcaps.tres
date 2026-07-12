@@ -19,3 +19,5 @@ min_level = 5
 requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q1")])
 reward_xp = 180
 reward_gold = 7
+metadata/slug = &"pop_the_puffcaps"
+metadata/id = 39

@@ -12,6 +12,7 @@ enum EnemyState {
 	# Appended (don't reorder — the int value is state-synced to clients):
 	LUNGE_WINDUP, ## planted, telegraphing the pounce zone
 	LUNGING,      ## dashing to the locked spot
+	REVIVING,     ## down but not out — body on the ground, second wind incoming
 }
 
 ## Flip to true to dump every meaningful NPC state transition. Server lines
@@ -144,26 +145,21 @@ var max_distance_from_spawn: int = 300
 var detection_radius: int = 150
 ## Start chasing as soon as a player steps inside detection_area.
 var chase_on_area: bool = false
-## Telegraphed lunge knobs (see EnemyTypeResource). lunge_range 0 = never lunges.
-var lunge_range: float = 0.0
-var lunge_radius: float = 24.0
-var lunge_windup_s: float = 0.55
-var lunge_speed_multiplier: float = 5.0
-var lunge_cooldown: float = 5.0
-
-## Where the pounce will land — locked at windup start, NOT homing (that's what
-## makes it dodgeable).
-var _lunge_target_position: Vector2
-## Dash heading, locked at windup start — the dash flies STRAIGHT, never
-## re-aims mid-flight (re-aiming is what made it jitter around a point it
-## couldn't reach when that point sat inside the player's collider).
-var _lunge_direction: Vector2
-var _lunge_phase_until_ms: int
-var _lunge_deadline_ms: int
-var _lunge_ready_at_ms: int
-## Players already hit by the CURRENT dash (instance id -> true) — the sweep
-## damages anyone the dash runs over, but each victim only once per lunge.
-var _lunge_hit: Dictionary = {}
+## Composable server-side behaviors (docs/hostile_npc_refactor.md P1): built
+## in _apply_enemy_data from enemy_data.behaviors + legacy-field synthesis.
+## Behaviors are SHARED resources — their per-mob runtime scratch lives in
+## [member behavior_state].
+var behaviors: Array[MobBehavior] = []
+## What this mob does on its swing timer (refactor P2). Built in
+## _apply_enemy_data from enemy_data.attacks, or synthesized (weapon →
+## WeaponAttack, else MeleeAttack) when none are authored. Shared resources,
+## like behaviors — per-mob scratch lives in [member behavior_state].
+var attacks: Array[MobAttack] = []
+## Per-mob runtime scratch for shared behavior/attack resources (resource -> Dictionary).
+var behavior_state: Dictionary = {}
+## The behavior currently driving the state machine (set by a successful
+## try_start; the behavior hands control back by setting a chassis state).
+var _state_owner: MobBehavior
 
 
 ## Copy archetype fields onto this instance. Called once at _ready so the rest
@@ -192,11 +188,24 @@ func _apply_enemy_data() -> void:
 		max_distance_from_spawn = NO_LEASH_DISTANCE
 	detection_radius = enemy_data.detection_radius
 	chase_on_area = enemy_data.chase_on_area
-	lunge_range = enemy_data.lunge_range
-	lunge_radius = enemy_data.lunge_radius
-	lunge_windup_s = enemy_data.lunge_windup_s
-	lunge_speed_multiplier = enemy_data.lunge_speed_multiplier
-	lunge_cooldown = enemy_data.lunge_cooldown
+	# Composable behaviors (docs/hostile_npc_refactor.md). The legacy flat
+	# lunge fields are gone — every archetype authors behaviors directly.
+	behaviors = []
+	for behavior: MobBehavior in enemy_data.behaviors:
+		if behavior != null:
+			behaviors.append(behavior)
+	# Swing-timer attacks (refactor P2). No authored attacks = the classic
+	# default: the mounted weapon's ability if armed, else the melee AoE.
+	# (weapon already resolved above, node-level override included.)
+	attacks = []
+	for attack: MobAttack in enemy_data.attacks:
+		if attack != null:
+			attacks.append(attack)
+	if attacks.is_empty():
+		if weapon != null:
+			attacks.append(WeaponAttack.new())
+		else:
+			attacks.append(MeleeAttack.new())
 	if enemy_data.skin != null:
 		skin_id = 0 # disable id-based skin; we're driving it directly
 		# animated_sprite (from Character) is @onready — already assigned by the
@@ -220,7 +229,15 @@ func _apply_enemy_data() -> void:
 		progress_bar.scale = Vector2.ONE * enemy_data.visual_scale
 
 var container: ReplicatedPropsContainer
-var enemy_state: EnemyState = EnemyState.IDLE
+var enemy_state: EnemyState = EnemyState.IDLE:
+	set(value):
+		enemy_state = value
+		# Client: a mob that dies mid-windup must not ghost-play its scheduled
+		# dash — abort the smoother's scripted motion the moment DEAD (or its
+		# intercepted cousin REVIVING) syncs in.
+		if (value == EnemyState.DEAD or value == EnemyState.REVIVING) \
+				and _net_smoother != null and not multiplayer.is_server():
+			_net_smoother.cancel_motion()
 
 var possible_targets: Array[Player]
 var targeted_player: Player
@@ -267,6 +284,9 @@ func _ready() -> void:
 		# before you tagged in updates without a relog).
 		if is_instance_valid(ClientState):
 			ClientState.active_guild_id_changed.connect(_on_local_guild_changed)
+		# Mobs stream at 10 Hz (props channel), half the player broadcast rate — the
+		# interpolation delay needs 2 samples in flight, so double the default.
+		net_smooth_delay_ms = 200
 		set_physics_process(false)
 		return
 	
@@ -351,10 +371,14 @@ func _physics_process(_delta: float) -> void:
 			_process_attack()
 		EnemyState.DEAD:
 			_process_death()
-		EnemyState.LUNGE_WINDUP:
-			_process_lunge_windup()
-		EnemyState.LUNGING:
-			_process_lunging()
+		EnemyState.LUNGE_WINDUP, EnemyState.LUNGING, EnemyState.REVIVING:
+			# Behavior-owned states (docs/hostile_npc_refactor.md): whoever
+			# took over (try_start, or an on_death intercept) drives them
+			# until it hands control back.
+			if _state_owner != null:
+				_state_owner.process_state(self)
+			else:
+				enemy_state = EnemyState.CHASE # orphaned state — recover
 
 	_find_targets()
 	_process_animations()
@@ -426,6 +450,9 @@ func _on_ally_attacked(attacker: Character) -> void:
 
 func _find_targets() -> void:
 	if targeted_player: return
+	# is_dead also covers REVIVING (down but not out) — a body on the ground
+	# doesn't acquire targets; its behavior re-targets when it stands up.
+	if is_dead: return
 	if enemy_state == EnemyState.RETURNING or enemy_state == EnemyState.DEAD: return
 
 	# Self-heal the cached list against the physics truth first: a player who never
@@ -496,74 +523,29 @@ func _target_escaped() -> bool:
 	return jump > TARGET_TELEPORT_BREAK_PX
 
 
-# --- Telegraphed lunge -------------------------------------------------------
+# --- Behavior client visuals -------------------------------------------------
+# (Lunge LOGIC lives in behaviors/lunge_behavior.gd — refactor P1. These rp_
+# handlers stay here: they're client-side visual primitives resolved on the
+# mob node by the container's op replay.)
 
-## Lock the pounce at the target's CURRENT position (not homing — that's the
-## dodge), show the zone on every client, and start the windup.
-func _begin_lunge() -> void:
-	# Charge THROUGH the target's spot, not TO it: the landing point overshoots
-	# behind the player (relative to us), so backing straight away stays inside
-	# the corridor — the only real dodge is stepping OUT of it sideways. Also
-	# keeps the landing point out of the player's collider.
-	_lunge_direction = global_position.direction_to(targeted_player.global_position)
-	_lunge_target_position = targeted_player.global_position + _lunge_direction * (lunge_radius * 2.0)
-	_lunge_phase_until_ms = Time.get_ticks_msec() + int(lunge_windup_s * 1000.0)
-	enemy_state = EnemyState.LUNGE_WINDUP
-	velocity = Vector2.ZERO
-	_lunge_hit.clear()
-	# Corridor telegraph (wolf → landing spot) so players see WHO is charging
-	# and which strip of ground to vacate. Lives through windup + travel time.
-	container.queue_op(_prop_id, "rp_lunge_telegraph", [
-		_lunge_target_position, lunge_radius, lunge_windup_s + 0.45
-	])
-
-
-func _process_lunge_windup() -> void:
-	if Time.get_ticks_msec() >= _lunge_phase_until_ms:
-		enemy_state = EnemyState.LUNGING
-		# Safety deadline: a wall-stuck pounce lands where it got stuck instead
-		# of dashing forever.
-		_lunge_deadline_ms = Time.get_ticks_msec() + 1200
-
-
-func _process_lunging() -> void:
-	# Straight-line dash with the heading locked at windup. Termination is by
-	# PROJECTION onto that heading — once we reach or pass the landing plane
-	# (even after sliding around a collider) the dash is over. No re-aiming →
-	# no jitter, ever.
-	var remaining: float = (_lunge_target_position - global_position).dot(_lunge_direction)
-	if remaining <= 8.0 or Time.get_ticks_msec() >= _lunge_deadline_ms:
-		_land_lunge()
+## Client-side dash playback: the interpolation buffer renders mobs
+## net_smooth_delay_ms in the past — invisible at walk speed, visibly LATE for
+## a 5x-speed dash. The dash is deterministic (straight, heading + landing
+## locked at windup start, constant speed), so it's sent TOGETHER with the
+## windup telegraph and scheduled start_delay_ms out: the local dash begins
+## exactly when the local telegraph expires (one clock — coherent to the
+## eye), played in real time via the smoother's scripted-motion override.
+## Buffered samples resume at touchdown; the snap rule covers a wall-blocked
+## early landing; the enemy_state setter cancels on death.
+func rp_dash(from_position: Vector2, to_position: Vector2, duration_ms: int, start_delay_ms: int) -> void:
+	if multiplayer.is_server():
 		return
-	velocity = _lunge_direction * move_speed * lunge_speed_multiplier
-	move_and_slide()
-	# The DASH is the attack: anyone the wolf runs over inside the corridor
-	# takes the hit (once per lunge). Per-tick distance check is sweep-safe —
-	# at ~5px of travel per physics tick the radius can't tunnel past a player.
-	var damage: float = stats_component.get_stat(Stat.AD)
-	for candidate: Player in _strike_candidates():
-		if _lunge_hit.has(candidate.get_instance_id()):
-			continue
-		if _is_target_valid(candidate) and _is_hostile_to(candidate) \
-				and global_position.distance_to(candidate.global_position) <= lunge_radius:
-			_lunge_hit[candidate.get_instance_id()] = true
-			candidate.take_damage(damage, self)
+	# Ensure the smoother exists (a mob can dash before its first position
+	# sample on a late-joining client); the from-sample is where it stands.
+	net_apply_position(from_position)
+	_net_smoother.play_motion(from_position, to_position, duration_ms, start_delay_ms)
 
-
-## Touchdown: start the cooldown and hand control back to the normal brain.
-## (Damage already happened in-flight — the dash itself is the hitbox.)
-func _land_lunge() -> void:
-	_lunge_ready_at_ms = Time.get_ticks_msec() + int(lunge_cooldown * 1000.0)
-	# The windup+dash took ~a second — the target legitimately moved meanwhile.
-	# Reset the escape tracker so that movement isn't misread as a teleport.
-	_tracked_target = null
-	if _is_target_valid(targeted_player):
-		enemy_state = EnemyState.CHASE
-	else:
-		_abandon_target()
-
-
-## Client-visual: the red dodge corridor from this wolf to the locked landing
+## Client-visual: the red dodge corridor from this mob to the locked landing
 ## spot — shows WHO is charging and the exact strip of ground to vacate.
 func rp_lunge_telegraph(to_position: Vector2, radius: float, duration: float) -> void:
 	if multiplayer.is_server():
@@ -708,12 +690,12 @@ func _process_chase() -> void:
 		enemy_state = EnemyState.ATTACK
 		return
 
-	# Telegraphed lunge: when the target sits in the pounce window (too far to
-	# melee, close enough to pounce) and the cooldown is up, commit to a lunge.
-	if lunge_range > 0.0 and Time.get_ticks_msec() >= _lunge_ready_at_ms:
-		var lunge_min: float = maxf(distance_to_attack * 2.0, lunge_range * 0.4)
-		if distance_from_player >= lunge_min and distance_from_player <= lunge_range:
-			_begin_lunge()
+	# Composable behaviors: the first one that wants this window takes over
+	# the state machine (e.g. the lunge commits to its windup).
+	var now: int = Time.get_ticks_msec()
+	for behavior: MobBehavior in behaviors:
+		if behavior.try_start(self, distance_from_player, now):
+			_state_owner = behavior
 			return
 
 
@@ -754,14 +736,15 @@ func _process_attack() -> void:
 	else:
 		velocity = Vector2.ZERO
 
-	# Auto-attack on cooldown.
+	# Auto-attack on cooldown: attack_cooldown is the GLOBAL swing rate; each
+	# swing goes to the first attack resource whose own recharge is up and
+	# whose target exists (array order = priority — see MobAttack).
 	var now: int = Time.get_ticks_msec()
 	if now >= _next_attack_ms:
-		_next_attack_ms = now + int(attack_cooldown * 1000.0)
-		if weapon != null:
-			_perform_ranged_attack()
-		else:
-			_perform_melee_attack()
+		for attack: MobAttack in attacks:
+			if attack.try_fire(self, now):
+				_next_attack_ms = now + int(attack_cooldown * 1000.0)
+				break
 
 
 ## Players this mob can strike right now: everyone the detection area is tracking,
@@ -775,18 +758,6 @@ func _strike_candidates() -> Array[Player]:
 	if targeted_player != null and not candidates.has(targeted_player):
 		candidates.append(targeted_player)
 	return candidates
-
-
-## A swing: telegraph it on clients (red circle) and damage every living player within
-## melee range (a small AoE), each mitigated by their armor in take_damage.
-func _perform_melee_attack() -> void:
-	container.queue_op(_prop_id, "rp_attack", [float(distance_to_attack)])
-	var damage: float = stats_component.get_stat(Stat.AD)
-	for candidate: Player in _strike_candidates():
-		if _is_target_valid(candidate) \
-				and _is_hostile_to(candidate) \
-				and global_position.distance_to(candidate.global_position) <= distance_to_attack:
-			candidate.take_damage(damage, self)
 
 
 ## Client-visual: flash the melee-range circle. Called via the container's rp_ op.
@@ -828,17 +799,6 @@ func apply_difficulty(health_mult: float, damage_mult: float) -> void:
 	stats_component.set_stat(Stat.AP, stats_component.get_stat(Stat.AP) * damage_mult)
 
 
-## Fires the equipped weapon's ability at the target. The server spawns the real
-## (damaging) projectile; clients replay the shot via rp_shoot for the visual.
-func _perform_ranged_attack() -> void:
-	var mounted: Weapon = equipment_component.mounted_nodes.get(&"weapon")
-	if mounted == null:
-		return
-	var direction: Vector2 = position.direction_to(targeted_player.global_position)
-	mounted.auto_attack(direction)
-	container.queue_op(_prop_id, "rp_shoot", [direction])
-
-
 ## Client-visual: replay the weapon shot so the projectile flies on every client.
 func rp_shoot(direction: Vector2) -> void:
 	if multiplayer.is_server():
@@ -846,6 +806,32 @@ func rp_shoot(direction: Vector2) -> void:
 	var mounted: Weapon = equipment_component.mounted_nodes.get(&"weapon")
 	if mounted:
 		mounted.auto_attack(direction)
+
+
+## Client-visual: replay a registry ability cast (the sorcerer's heal bolt) so
+## its projectile flies on every client — client-side projectiles are cosmetic
+## by design (only the server's applies the effect). Resolved by slug so the op
+## stays readable in logs.
+func rp_cast_ability(ability_slug: StringName, direction: Vector2) -> void:
+	if multiplayer.is_server():
+		return
+	var cast: AbilityResource = ContentRegistryHub.load_by_slug(&"abilities", ability_slug) as AbilityResource
+	if cast != null:
+		cast.auto_use(self, direction)
+
+
+## Client-visual: a lingering hazard disc (spore cloud) pinned where the mob
+## died — the damage is the server's HazardZone; this is only what it looks
+## like. top_level so a later respawn teleport doesn't drag the cloud along.
+func rp_hazard_zone(at: Vector2, radius: float, duration_s: float) -> void:
+	if multiplayer.is_server():
+		return
+	var cloud: HazardCloudVisual = HazardCloudVisual.new()
+	cloud.radius = radius
+	cloud.duration_s = duration_s
+	cloud.top_level = true
+	add_child(cloud)
+	cloud.global_position = at
 
 
 func _debug_client_stat_changed(stat_name: StringName, value: float) -> void:
@@ -904,6 +890,17 @@ func _equip_weapon() -> void:
 
 ## Called by Character.take_damage when health hits zero (server-only).
 func die(killer: Character) -> void:
+	# Death hooks (refactor P4): run BEFORE anything commits — an intercepting
+	# behavior (second wind) revives with zero credit/state leakage, since
+	# neither DEAD state, rewards, nor the died signal have fired yet. The
+	# rest ride the moment for side effects (spore cloud) and let it proceed.
+	# has_method guard: a behavior whose script didn't load (stale editor,
+	# broken .tres) must NEVER abort die() mid-way — that's the unkillable
+	# 0-HP zombie. Death always completes unless a hook DELIBERATELY says so.
+	for behavior: MobBehavior in behaviors:
+		if behavior != null and behavior.has_method(&"on_death") \
+				and behavior.on_death(self, killer):
+			return
 	if DEBUG_NPC:
 		printerr("[SRV NPC %s] die() killer=%s HP=%.1f state→DEAD respawn_in=%.1fs" % [
 			enemy_type,
@@ -1047,6 +1044,7 @@ func _process_death() -> void:
 	is_dead = false
 	enemy_state = EnemyState.IDLE
 	_contributors.clear() # fresh life — past damage no longer counts for rewards
+	behavior_state.clear() # fresh scratch too: lunge cooldowns, spent second winds…
 	# Push the respawn position NOW (the freeze below skips the normal per-frame sync) so the spawn
 	# FX lands on the mob at its spawn point, not at wherever it happened to die.
 	_process_synchronization()

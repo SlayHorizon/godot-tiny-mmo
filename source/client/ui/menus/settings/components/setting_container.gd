@@ -1,5 +1,5 @@
 class_name SettingsContainer
-extends Control
+extends VBoxContainer
 
 
 @export var show_on: Array[StringName]
@@ -7,4 +7,4 @@ extends Control
 
 
 func update_visibility(active_context: StringName) -> void:
-    visible = active_context in show_on
+	visible = active_context in show_on

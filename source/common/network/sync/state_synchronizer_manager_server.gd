@@ -48,11 +48,15 @@ func _process(delta: float) -> void:
 
 	if _accum_ent >= eint:
 		_accum_ent = fmod(_accum_ent, eint)
+		var ent_t0: int = Time.get_ticks_usec()
 		_send_entity_deltas_one_shot()
+		NetProfiler.record_entity_tick(Time.get_ticks_usec() - ent_t0)
 
 	if _accum_props >= pint:
 		_accum_props = fmod(_accum_props, pint)
+		var props_t0: int = Time.get_ticks_usec()
 		_send_container_deltas_one_shot()
+		NetProfiler.record_props_tick(Time.get_ticks_usec() - props_t0)
 
 
 func _track_client_pairs(eid: int, pairs: Array) -> void:
@@ -125,7 +129,9 @@ func _send_entity_deltas_one_shot() -> void:
 					blocks_for_peer.append(bb)
 				
 		if blocks_for_peer.size() > 0:
-			on_state_delta.rpc_id(peer_id, WireCodec.assemble_delta_from_blocks(blocks_for_peer))
+			var payload: PackedByteArray = WireCodec.assemble_delta_from_blocks(blocks_for_peer)
+			NetProfiler.record_send(payload.size())
+			on_state_delta.rpc_id(peer_id, payload)
 	_prune_owner_recent(1000)
 
 
@@ -154,6 +160,7 @@ func _send_container_deltas_one_shot() -> void:
 	# For now broadcast to all (AOI later)
 	for peer_id: int in peers:
 		for bb: PackedByteArray in cont_blocks:
+			NetProfiler.record_send(bb.size())
 			on_props_delta.rpc_id(peer_id, bb)
 
 
@@ -267,9 +274,22 @@ func on_state_delta(_bytes: PackedByteArray) -> void:
 	pass
 
 
+## Upper bound on a legitimate client movement delta. The client pushes at most the
+## 4 client-owned fields (position/anim/flipped/pivot) per tick — ~30 bytes with
+## framing. We cap generously and DROP anything larger BEFORE decoding: some fields
+## resolve to Wire.Type.VARIANT (decoded via StreamPeerBuffer.get_var, which allocates
+## whatever size the bytes claim), and decode runs on every pair ahead of the ownership
+## whitelist — so an unbounded payload here would be a decode-bomb DoS. See
+## docs/netcode_security_audit.md (P1).
+const MAX_CLIENT_DELTA_BYTES: int = 256
+
+
 @rpc("any_peer", "reliable")
 func on_client_delta(bytes: PackedByteArray) -> void:
 	# Receive client-proposed deltas (owner-pushed) — keep strict.
+	# Reject oversized payloads before decode (decode-bomb guard, see the const above).
+	if bytes.size() > MAX_CLIENT_DELTA_BYTES:
+		return
 	var sender: int = multiplayer.get_remote_sender_id()
 	var blocks: Array = WireCodec.decode_delta(bytes)
 	if blocks.is_empty():

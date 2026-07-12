@@ -31,12 +31,13 @@ extends "res://addons/httpserver/http_server.gd"
 ##   res://data/config/dashboard.cfg.
 ##
 ## Binding
-##   By default listens on 0.0.0.0:<PORT> so a port-forwarded server is
-##   immediately reachable from a phone. Lock down to 127.0.0.1 by editing
-##   BIND_ADDRESS below if you'd rather SSH-tunnel in.
+##   Defaults to 127.0.0.1 (loopback only) — reach it via SSH tunnel or a same-host
+##   reverse proxy (Caddy). This is the safe default: even with an empty auth token,
+##   nothing off-box can hit the admin routes. To deliberately expose it on a trusted
+##   private network, set [server] bind = "*" (all interfaces) in dashboard.cfg.
 
 const PORT: int = 8080
-const BIND_ADDRESS: String = "*" # "*" = all interfaces; use "127.0.0.1" for localhost-only
+const DASHBOARD_BIND_DEFAULT: String = "127.0.0.1" # "*" = all interfaces (config-overridable)
 
 const USER_CONFIG_PATH: String = "user://dashboard.cfg"
 const RES_CONFIG_PATH: String = "res://data/config/dashboard.cfg"
@@ -46,6 +47,7 @@ const RES_CONFIG_PATH: String = "res://data/config/dashboard.cfg"
 
 var _started_at_unix: int = 0
 var _auth_token: String = ""
+var _bind_address: String = DASHBOARD_BIND_DEFAULT
 
 
 func _ready() -> void:
@@ -75,8 +77,10 @@ func _ready() -> void:
 	router.register_route(HTTPClient.Method.METHOD_GET,  &"/v1/accounts",                _handle_accounts)
 	router.register_route(HTTPClient.Method.METHOD_POST, &"/v1/accounts/reset_password", _handle_account_reset_password)
 
-	server.listen(PORT, BIND_ADDRESS)
-	ServerLog.info("Dashboard listening on %s:%d" % [BIND_ADDRESS, PORT])
+	server.listen(PORT, _bind_address)
+	ServerLog.info("Dashboard listening on %s:%d" % [_bind_address, PORT])
+	if _bind_address == "*" and _auth_token.is_empty():
+		ServerLog.warn("Dashboard: bound to ALL interfaces with NO auth token — admin routes are open. Set [auth] token or [server] bind=127.0.0.1 in dashboard.cfg.")
 	DiscordNotifier.notify_master_online()
 
 
@@ -414,3 +418,4 @@ func _load_config() -> void:
 	_auth_token = str(config.get_value("auth", "token", ""))
 	if _auth_token.is_empty():
 		ServerLog.warn("Dashboard: token is empty in config, running with auth DISABLED.")
+	_bind_address = str(config.get_value("server", "bind", DASHBOARD_BIND_DEFAULT))

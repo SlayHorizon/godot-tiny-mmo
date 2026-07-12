@@ -1,9 +1,16 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://c43oawxmbygiq"]
 
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_rlmu2"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
 [ext_resource type="Resource" uid="uid://2aygya3q5pvo" path="res://source/common/gameplay/items/materials/leather/hide_forest.tres" id="3_hide"]
 [ext_resource type="Resource" uid="uid://bme5xgselkbng" path="res://source/common/gameplay/items/materials/bone.tres" id="4_bone"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="90_mobb"]
+[ext_resource type="Script" uid="uid://cu0vfk2poexsd" path="res://source/common/gameplay/characters/npc/behaviors/lunge_behavior.gd" id="91_lunge"]
+
+[sub_resource type="Resource" id="Lunge_migrated"]
+script = ExtResource("91_lunge")
+lunge_range = 130.0
 
 [sub_resource type="Resource" id="Drop_hide"]
 script = ExtResource("2_loot")
@@ -23,7 +30,7 @@ max_health = 160.0
 attack_damage = 20.0
 attack_cooldown = 1.0
 armor = 2.0
-lunge_range = 130.0
+behaviors = Array[ExtResource("90_mobb")]([SubResource("Lunge_migrated")])
 move_speed = 90
 distance_to_attack = 18
 max_distance_from_spawn = 200

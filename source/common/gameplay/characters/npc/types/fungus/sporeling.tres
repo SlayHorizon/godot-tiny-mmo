@@ -1,5 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://ou1wadpim68o"]
 
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_k58cg"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="1_kd1ar"]
 [ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="2_loot"]
 [ext_resource type="Resource" uid="uid://bw238ey5rg6bx" path="res://source/common/gameplay/items/materials/cloth/cloth_cave.tres" id="3_cloth"]
@@ -23,3 +25,5 @@ chase_on_area = true
 xp_reward = 6
 respawn_delay = 12.0
 loot = Array[ExtResource("2_loot")]([SubResource("Drop_cloth")])
+metadata/slug = &"sporeling"
+metadata/id = 35

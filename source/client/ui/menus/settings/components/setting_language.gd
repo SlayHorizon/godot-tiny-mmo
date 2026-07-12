@@ -16,6 +16,7 @@ func _ready() -> void:
 
 	controller.item_selected.connect(_on_language_item_selected)
 	_load_defaults()
+	_update_label()
 
 
 func _on_language_item_selected(index: int) -> void:

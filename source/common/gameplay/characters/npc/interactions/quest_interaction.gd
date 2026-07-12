@@ -28,7 +28,11 @@ func menu_entry(npc: Node) -> Dictionary:
 func register(map: Map, npc: Node) -> void:
 	_owner = npc as NPC
 	if _owner != null:
-		map.quest_givers[_owner.giver_key()] = self
+		# register_keyed warns on key collisions. NOTE: unlike shops there is no
+		# node-name fallback here — an INLINE NPCResource giver would key as ""
+		# (quests can only reference givers by .tres file, so an inline giver
+		# can't serve them anyway; all current givers are real .tres files).
+		map.register_keyed(map.quest_givers, _owner.giver_key(), self, "quest giver")
 
 
 ## Quest-source field read by quest.list (duck-typed with QuestGiver.giver_name).

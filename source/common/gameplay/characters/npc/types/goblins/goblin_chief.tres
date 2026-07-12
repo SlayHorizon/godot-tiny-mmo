@@ -1,6 +1,8 @@
 [gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://deo2ei3h78ouy"]
 
 [ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="1_4uukv"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="1_101c6"]
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_w5dmq"]
 [ext_resource type="Resource" uid="uid://vhgsmnbqslo6" path="res://source/common/gameplay/items/materials/cloth/cloth_forest.tres" id="2_101c6"]
 [ext_resource type="Resource" uid="uid://bqwbdldhjhxcq" path="res://source/common/gameplay/items/weapons/sword/sword_bone.item.tres" id="3_w5dmq"]
 [ext_resource type="Resource" uid="uid://40jxvc14a1wh" path="res://source/common/gameplay/items/weapons/hammer/hammer_bone.item.tres" id="4_ef2se"]

@@ -17,3 +17,5 @@ objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_sporeling")])
 min_level = 3
 reward_xp = 120
 reward_gold = 5
+metadata/slug = &"spores_in_the_dark"
+metadata/id = 40

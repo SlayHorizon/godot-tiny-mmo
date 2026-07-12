@@ -8,6 +8,15 @@ extends BaseMultiplayerEndpoint
 @export var world_clock: WorldClock
 @export var chat_service: ChatService
 
+## The full-DB backup (WAL checkpoint TRUNCATE + whole-file copy) is the heaviest
+## periodic op and its cost grows with DB size, so it runs on a MULTIPLE of the save
+## interval instead of every save. Player saves still flush every 5 min (cheap per
+## player, keeps the data-loss window short); the backup folds in every Nth save. Side
+## benefit: with keep_last=10 the retained history stretches from ~50 min to ~5 h.
+## See docs/netcode_perf_audit.md.
+const BACKUP_EVERY_N_SAVES: int = 6  # 6 × 5 min = 30 min
+var _periodic_save_count: int = 0
+
 var token_list: Dictionary[String, PlayerResource]
 
 ## {peer_id: PlayerResource}
@@ -48,9 +57,27 @@ func start_world_server() -> void:
 	save_timer.timeout.connect(_on_periodic_save)
 	add_child(save_timer)
 
+	# Network/tick profiler report — one aggregate [NET] line per second across the
+	# whole world process (docs/netcode_perf_audit.md, F0). Cheap; toggle the output
+	# with NetProfiler.enabled. This is the measurement backbone for load testing.
+	var net_report_timer: Timer = Timer.new()
+	net_report_timer.name = "NetProfilerTimer"
+	net_report_timer.wait_time = 1.0
+	net_report_timer.autostart = true
+	net_report_timer.timeout.connect(
+		func() -> void: NetProfiler.report_and_reset(connected_players.size(), 1.0)
+	)
+	add_child(net_report_timer)
+
 
 func _on_periodic_save() -> void:
 	var saved: int = database.save_all_connected(connected_players)
+	# The backup (checkpoint + full-file copy) only runs every Nth save — see
+	# BACKUP_EVERY_N_SAVES. Shutdown / master-triggered saves back up separately.
+	_periodic_save_count += 1
+	if _periodic_save_count % BACKUP_EVERY_N_SAVES != 0:
+		ServerLog.info("Periodic save: %d player(s) flushed." % saved)
+		return
 	var ok: bool = database.backup_database()
 	ServerLog.info("Periodic save: %d player(s) flushed, backup %s." % [saved, "ok" if ok else "FAILED"])
 

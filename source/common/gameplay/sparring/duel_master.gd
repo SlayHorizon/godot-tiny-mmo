@@ -27,6 +27,10 @@ extends Interactable
 func _ready() -> void:
 	menu_name = &"sparring"
 	menu_arg = master_id
+	# Self-register with the owning map (spar queue/match resolution).
+	var map: Map = Map.of(self)
+	if map != null:
+		map.register_keyed(map.duel_masters, master_id, self, "duel master")
 	super._ready()
 	if master_id <= 0:
 		push_warning("DuelMaster '%s' has master_id=%d. Set a unique positive id in the inspector or it'll fail every lookup." % [name, master_id])

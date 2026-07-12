@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="QuestResource" format=3 uid="uid://cu5jw5yqo5myv"]
+
+[ext_resource type="Script" uid="uid://dqadrvvwt3ig2" path="res://source/common/gameplay/quests/quest_objective.gd" id="1_obj"]
+[ext_resource type="Script" uid="uid://c5p53get4ikl6" path="res://source/common/gameplay/quests/quest_resource.gd" id="2_quest"]
+[ext_resource type="Resource" uid="uid://cfw0rpeydky71" path="res://source/common/gameplay/quests/resources/bandit_hideout/bandit_toll.tres" id="3_q1"]
+[ext_resource type="Script" uid="uid://cdi2gouodhicv" path="res://source/common/gameplay/quests/quest_reward.gd" id="4_6df84"]
+
+[sub_resource type="Resource" id="Obj_kill_archers"]
+script = ExtResource("1_obj")
+enemy_type = &"bandit_archer"
+required_amount = 5
+
+[resource]
+script = ExtResource("2_quest")
+quest_name = "Arrows in the Trees"
+description = "Kill 5 bandit archers at the watchtowers. They see you long before you see them. Keep moving and close the gap."
+objectives = Array[ExtResource("1_obj")]([SubResource("Obj_kill_archers")])
+min_level = 10
+requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q1")])
+reward_xp = 340
+reward_gold = 12
+metadata/slug = &"arrows_in_the_trees"
+metadata/id = 33

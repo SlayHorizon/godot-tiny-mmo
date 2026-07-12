@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_7gygy")
 content_name = &"quests"
-version = 1783177199
-next_id = 33
+version = 1783762918
+next_id = 42
 entries = Array[Dictionary]([{
 &"hash": "4a44a478c7d7cc48d1505b2b9a58825ab9f456554790eb88d9a427d70d4f95e6",
 &"id": 4,
@@ -18,17 +18,37 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/apprentice_miner.tres",
 &"slug": &"apprentice_miner"
 }, {
-&"hash": "aa0f964f913e66ec4ea1e1f5dc29d77c9e7524b9cbcc39028d46e27e477b8382",
-&"id": 5,
-&"path": "res://source/common/gameplay/quests/resources/camp_cleanup.tres",
-&"slug": &"camp_cleanup"
+&"hash": "c586a19d41bbd6cbe4a7ce24be21ee720f3b333458d97e5cad0b630d1693e05c",
+&"id": 33,
+&"path": "res://source/common/gameplay/quests/resources/bandit_hideout/arrows_in_the_trees.tres",
+&"slug": &"arrows_in_the_trees"
+}, {
+&"hash": "7632eb90d5cd0f70266a196e9fdc10bc1de0321e25e489a0b8a7ee6aad483789",
+&"id": 34,
+&"path": "res://source/common/gameplay/quests/resources/bandit_hideout/bandit_toll.tres",
+&"slug": &"bandit_toll"
+}, {
+&"hash": "fea7241ff9c72063ec9fccd165ab3f5dea80991d641ddf2132b2e55a98f67125",
+&"id": 35,
+&"path": "res://source/common/gameplay/quests/resources/bandit_hideout/break_the_camp_guard.tres",
+&"slug": &"break_the_camp_guard"
+}, {
+&"hash": "cb0abceac435351b4d194a710f1eb85c3ecff7ea6c86991c2e9934a193f8cd81",
+&"id": 36,
+&"path": "res://source/common/gameplay/quests/resources/bandit_hideout/cloth_for_the_watch.tres",
+&"slug": &"cloth_for_the_watch"
+}, {
+&"hash": "166de212cc36f8860cc62155fc230384a2af87a7ad87f43ee56ccb378cf2ba8f",
+&"id": 20,
+&"path": "res://source/common/gameplay/quests/resources/bandit_hideout/the_bandit_captain.tres",
+&"slug": &"the_bandit_captain"
 }, {
 &"hash": "26fe161dc466867cc464aa7a9cf542352357b0d6ab7d627164183be312f794a8",
 &"id": 7,
 &"path": "res://source/common/gameplay/quests/resources/copper_for_the_smith.tres",
 &"slug": &"copper_for_the_smith"
 }, {
-&"hash": "97e769d0ae3304bb5852e9c3c504b593207292ee45d0a2ed4ccf0dc91887971b",
+&"hash": "5b845602d464f7c14147719b536053bcf29aeb05b43a44c45e60e4ee25781300",
 &"id": 8,
 &"path": "res://source/common/gameplay/quests/resources/daily_pool.tres",
 &"slug": &"daily_pool"
@@ -38,10 +58,30 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/first_harvest.tres",
 &"slug": &"first_harvest"
 }, {
-&"hash": "64f582452bdc5d482196dcf69b0f44c12fd0e22af609fba687d35d866a01a394",
-&"id": 18,
-&"path": "res://source/common/gameplay/quests/resources/fungus_trouble.tres",
-&"slug": &"fungus_trouble"
+&"hash": "45df4e17f4dacb283b1106893ef51708e0d9a6625ee6d34019afa58695d7239a",
+&"id": 37,
+&"path": "res://source/common/gameplay/quests/resources/fungus_cave/break_the_myconid_line.tres",
+&"slug": &"break_the_myconid_line"
+}, {
+&"hash": "7be1828aea7288da20c2ecda180318b71fe2ead527a030a61de697868efe3da0",
+&"id": 38,
+&"path": "res://source/common/gameplay/quests/resources/fungus_cave/cloth_from_the_caps.tres",
+&"slug": &"cloth_from_the_caps"
+}, {
+&"hash": "802d8ab9516b50b134b433320aad29519e2b5a14b3ca58a972fdb0ca278f7a0c",
+&"id": 39,
+&"path": "res://source/common/gameplay/quests/resources/fungus_cave/pop_the_puffcaps.tres",
+&"slug": &"pop_the_puffcaps"
+}, {
+&"hash": "1bb4d25866b9cbf3061bdcc9b73d8ce20075dfbc9befbe9fbdae0c07ca6053c4",
+&"id": 40,
+&"path": "res://source/common/gameplay/quests/resources/fungus_cave/spores_in_the_dark.tres",
+&"slug": &"spores_in_the_dark"
+}, {
+&"hash": "996ef3985510e344d8aadb70660fbe114764612a510a78a8246da2d6130b41a0",
+&"id": 41,
+&"path": "res://source/common/gameplay/quests/resources/fungus_cave/the_fungal_heart.tres",
+&"slug": &"the_fungal_heart"
 }, {
 &"hash": "01aa50641918283659906893a5111e4553b3848796dbc0e4dd9444a82a450ff9",
 &"id": 28,
@@ -73,11 +113,6 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/herbs_for_mira.tres",
 &"slug": &"herbs_for_mira"
 }, {
-&"hash": "3a879bf09a0d04991c0788692147317108829918f66db91a6f0b138d6e0adab1",
-&"id": 13,
-&"path": "res://source/common/gameplay/quests/resources/iron_golems_for_the_warden.tres",
-&"slug": &"iron_golems_for_the_warden"
-}, {
 &"hash": "cc3df6b3e1e96bb502455853f7210e0b481bab902e62526e017c37ba9b08c949",
 &"id": 14,
 &"path": "res://source/common/gameplay/quests/resources/linen_for_the_tailor.tres",
@@ -93,30 +128,15 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/quests/resources/miras_supplies.tres",
 &"slug": &"miras_supplies"
 }, {
-&"hash": "ebfca0e23a8e7e5f85ee2a085d996bc9044dd8e2db93e2075a60afc9d9957ef7",
-&"id": 17,
-&"path": "res://source/common/gameplay/quests/resources/sealed_letter_delivery.tres",
-&"slug": &"sealed_letter_delivery"
-}, {
 &"hash": "47a57848db580d3e30a37cc909dca8c1e8c83d64ccbe1e102d5018e8861603d2",
 &"id": 19,
 &"path": "res://source/common/gameplay/quests/resources/smelters_trial.tres",
 &"slug": &"smelters_trial"
 }, {
-&"hash": "3f7e9ee1032c1bd9f459052ace35c104a86d639303b8046aeac6c68d64912011",
-&"id": 20,
-&"path": "res://source/common/gameplay/quests/resources/the_bandit_captain.tres",
-&"slug": &"the_bandit_captain"
-}, {
 &"hash": "1cfff91feec8700e111b9711071f6b5c39c0a48ac618a88cea4678cbde464937",
 &"id": 21,
 &"path": "res://source/common/gameplay/quests/resources/the_iron_vein.tres",
 &"slug": &"the_iron_vein"
-}, {
-&"hash": "6dc0339517bb8018d61323ce4e8213679a791ca13c765ae1cf18c7bcc32f4365",
-&"id": 22,
-&"path": "res://source/common/gameplay/quests/resources/the_iron_warlord.tres",
-&"slug": &"the_iron_warlord"
 }, {
 &"hash": "87c502f72f7add4416dab97ed0cd5cea7d3d1f492f3686fff3f46e911b5253f2",
 &"id": 23,
@@ -137,11 +157,6 @@ entries = Array[Dictionary]([{
 &"id": 27,
 &"path": "res://source/common/gameplay/quests/resources/welcome.tres",
 &"slug": &"welcome"
-}, {
-&"hash": "d48c8377b35313d222992edca4f8175a57cef67851cc61014984fcd90ec77fdc",
-&"id": 26,
-&"path": "res://source/common/gameplay/quests/resources/wolves_at_the_ranch.tres",
-&"slug": &"wolves_at_the_ranch"
 }])
 scan_path = "res://source/common/gameplay/quests/resources"
 filters = PackedStringArray("*.tres", "*.tscn")
