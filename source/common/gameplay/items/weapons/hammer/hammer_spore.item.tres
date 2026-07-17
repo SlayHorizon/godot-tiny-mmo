@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ad"]
 script = ExtResource("1_mod")
 stat_name = "ad"
-value = 8.0
+value = 9.0
 
 [sub_resource type="Resource" id="Mod_ms"]
 script = ExtResource("1_mod")
@@ -23,16 +23,15 @@ region = Rect2(16, 80, 16, 48)
 [resource]
 script = ExtResource("4_item")
 category = &"hammer"
-capacity = 1
+capacity = 2
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
 required_level = 5
 base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ad"), SubResource("Mod_ms")])
-item_name = &"Spore Maul"
+item_name = &"Spore Hammer"
 item_icon = SubResource("Atlas_icon")
 description = "A heavy maul crusted with damp cave fungus."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"hammer_spore.item"
 metadata/id = 88

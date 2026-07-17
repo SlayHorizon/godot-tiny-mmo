@@ -9,13 +9,23 @@
 [sub_resource type="Resource" id="Mod_ap_wand"]
 script = ExtResource("1_mod")
 stat_name = "ap"
-value = 12.0
+value = 6.0
 
 [sub_resource type="Resource" id="Resource_koamn"]
 script = ExtResource("1_mod")
 stat_name = "move_speed"
 value = -5.0
 metadata/_custom_type_script = "uid://cvggwjkht4km4"
+
+[sub_resource type="Resource" id="Mod_r0"]
+script = ExtResource("1_mod")
+stat_name = "mana_max"
+value = 20.0
+
+[sub_resource type="Resource" id="Mod_r1"]
+script = ExtResource("1_mod")
+stat_name = "mana_regen"
+value = 1.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wand"]
 atlas = ExtResource("2_tex")
@@ -26,12 +36,11 @@ script = ExtResource("4_weapon_item")
 category = &"wand"
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
-base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap_wand"), SubResource("Resource_koamn")])
-item_name = &"Apprentice Wand"
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap_wand"), SubResource("Resource_koamn"), SubResource("Mod_r0"), SubResource("Mod_r1")])
+item_name = &"Wood Wand"
 item_icon = SubResource("AtlasTexture_wand")
 description = "A simple casting wand. Fires a magic bolt."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"wand.item"
 metadata/id = 72

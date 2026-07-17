@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_inter"]
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="2_shopint"]
+[ext_resource type="Resource" path="res://source/common/gameplay/shops/resources/spore_shop.tres" id="3_shop"]
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/interactions/dialogue_interaction.gd" id="4_diag"]
+[ext_resource type="Script" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="5_npc"]
+[ext_resource type="SpriteFrames" path="res://source/common/gameplay/characters/sprite_frames/fungus_old.tres" id="6_skin"]
+
+[sub_resource type="Resource" id="Shop"]
+script = ExtResource("2_shopint")
+shop = ExtResource("3_shop")
+
+[sub_resource type="Resource" id="Talk"]
+script = ExtResource("4_diag")
+lines = Array[String](["The caves take from everyone. I just collect what they leave.", "Spores in the steel, spores in the string, spores in the pages. Stronger for it, I promise you.", "You breathe it too, you know. Give it a season."])
+label_override = "Ask about the caves"
+
+[resource]
+script = ExtResource("5_npc")
+npc_name = "Myca"
+skin = ExtResource("6_skin")
+greeting = "Mind the shelves. Everything down here grows on what came before it, my stock included. Touch with your eyes."
+interactions = Array[ExtResource("1_inter")]([SubResource("Shop"), SubResource("Talk")])

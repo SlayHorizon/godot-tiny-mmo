@@ -6,7 +6,6 @@
 [resource]
 script = ExtResource("2_script")
 item_name = &"Sealed Letter"
-item_icon = ExtResource("1_icon")
 description = "A wax-sealed letter, addressed to the cartographer in the next town. Don't open it."
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"sealed_letter"

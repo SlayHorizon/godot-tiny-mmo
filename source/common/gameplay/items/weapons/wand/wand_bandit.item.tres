@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ap_wand"]
 script = ExtResource("1_tnje4")
 stat_name = "ap"
-value = 14.0
+value = 11.0
 
 [sub_resource type="Resource" id="Resource_koamn"]
 script = ExtResource("1_tnje4")
@@ -37,12 +37,12 @@ category = &"wand"
 capacity = 3
 right_hand_scene = ExtResource("3_d6o88")
 slot = ExtResource("5_t37d0")
+required_level = 10
 base_modifiers = Array[ExtResource("1_tnje4")]([SubResource("Mod_ap_wand"), SubResource("Resource_koamn"), SubResource("Mod_wmana"), SubResource("Mod_wregen")])
 item_name = &"Rustic Wand"
 item_icon = SubResource("AtlasTexture_wand")
 description = "A crooked wand pried from a bandit sorcerer."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"wand_bandit.item"
 metadata/id = 76

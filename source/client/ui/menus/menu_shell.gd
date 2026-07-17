@@ -30,6 +30,9 @@ var content: MarginContainer
 var header_center: HBoxContainer
 ## Right slot of the header bar (holds Close) — add header-right widgets here.
 var header_right: HBoxContainer
+## The dim ColorRect behind the card — menus can restyle it (e.g. put the
+## menu_blur_backdrop shader material on it for a frosted-glass backdrop).
+var backdrop: ColorRect
 
 var _title_label: Label
 
@@ -37,10 +40,10 @@ var _title_label: Label
 ## Builds the shell as children of `self`. If [param body] is given it's
 ## reparented into the card's content area. Call once from the menu's `_ready`.
 func build_shell(title_text: String = "", body: Control = null, fullscreen: bool = false) -> void:
-	var background: ColorRect = ColorRect.new()
-	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	background.color = Color(0.04, 0.05, 0.08, 0.5)
-	add_child(background)
+	backdrop = ColorRect.new()
+	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0.04, 0.05, 0.08, 0.5)
+	add_child(backdrop)
 
 	var margin: MarginContainer = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

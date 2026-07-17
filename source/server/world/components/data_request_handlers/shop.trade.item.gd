@@ -2,7 +2,6 @@ extends DataRequestHandler
 ## Specialty vendor trade: hand over `bundles * trade.amount` of `trade.item`
 ## in exchange for `bundles * trade.payout` of `trade.currency_item` (default
 ## gold). The exchange rate is set by the vendor (ShopTrade) rather than by the
-## item's vendor_value. See shop.sell.item for the generic-junk path.
 
 
 func data_request_handler(

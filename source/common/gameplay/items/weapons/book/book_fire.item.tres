@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ap"]
 script = ExtResource("1_mod")
 stat_name = "ap"
-value = 15.0
+value = 22.0
 
 [sub_resource type="Resource" id="Mod_mana_max"]
 script = ExtResource("1_mod")
@@ -32,16 +32,15 @@ region = Rect2(96, 32, 16, 16)
 [resource]
 script = ExtResource("4_item")
 category = &"book"
-capacity = 4
+capacity = 5
 right_hand_scene = ExtResource("3_book")
 slot = ExtResource("5_slot")
-required_level = 12
+required_level = 30
 base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap"), SubResource("Mod_mana_max"), SubResource("Mod_mana_regen"), SubResource("Mod_hp")])
 item_name = &"Fire Tome"
 item_icon = SubResource("Icon")
 description = "A fire-bound tome, heaviest of the battlemage's books. A deep mana pool and quick regen to nuke from the heart of melee."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"book_fire.item"
 metadata/id = 96

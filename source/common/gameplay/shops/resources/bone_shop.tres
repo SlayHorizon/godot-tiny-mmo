@@ -8,6 +8,7 @@
 [ext_resource type="Resource" uid="uid://bme5xgselkbng" path="res://source/common/gameplay/items/materials/bone.tres" id="5_3ps0i"]
 [ext_resource type="Resource" uid="uid://dmwwy1l2pyvar" path="res://source/common/gameplay/items/weapons/wand/wand_bone.item.tres" id="5_wand"]
 [ext_resource type="Resource" uid="uid://gq7qvwoyrijf" path="res://source/common/gameplay/items/weapons/bow/bone_bow.item.tres" id="7_ltqen"]
+[ext_resource type="Resource" uid="uid://cegn1bg7mq07w" path="res://source/common/gameplay/items/weapons/book/book_bone.item.tres" id="20_bookb"]
 
 [sub_resource type="Resource" id="Resource_jny5i"]
 script = ExtResource("1_jny5i")
@@ -33,6 +34,16 @@ item = ExtResource("5_3ps0i")
 amount = 2
 metadata/_custom_type_script = "uid://b1my10ee17j5b"
 
+[sub_resource type="Resource" id="Buyback_bow"]
+script = ExtResource("1_jny5i")
+item = ExtResource("7_ltqen")
+payout = 4
+
+[sub_resource type="Resource" id="Buyback_book"]
+script = ExtResource("1_jny5i")
+item = ExtResource("20_bookb")
+payout = 4
+
 [sub_resource type="Resource" id="Entry_bone_sword"]
 script = ExtResource("2_entry")
 item = ExtResource("3_sword")
@@ -54,10 +65,16 @@ script = ExtResource("2_entry")
 item = ExtResource("5_wand")
 price = 12
 
+[sub_resource type="Resource" id="Resource_bookb"]
+script = ExtResource("2_entry")
+item = ExtResource("20_bookb")
+price = 12
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [resource]
 script = ExtResource("1_shop")
 shop_name = "Bonecarver"
-entries = Array[ExtResource("2_entry")]([SubResource("Entry_bone_sword"), SubResource("Resource_0hehb"), SubResource("Entry_bone_maul"), SubResource("Entry_bone_wand")])
-accepted_trades = Array[ExtResource("1_jny5i")]([SubResource("Resource_jny5i"), SubResource("Resource_3ps0i"), SubResource("Resource_ltqen"), SubResource("Resource_xdj6p")])
+entries = Array[ExtResource("2_entry")]([SubResource("Entry_bone_sword"), SubResource("Resource_0hehb"), SubResource("Entry_bone_maul"), SubResource("Entry_bone_wand"), SubResource("Resource_bookb")])
+accepted_trades = Array[ExtResource("1_jny5i")]([SubResource("Resource_jny5i"), SubResource("Resource_3ps0i"), SubResource("Resource_ltqen"), SubResource("Resource_xdj6p"), SubResource("Buyback_bow"), SubResource("Buyback_book")])
 metadata/slug = &"bone_shop"
 metadata/id = 6

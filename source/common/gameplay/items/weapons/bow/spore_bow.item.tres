@@ -23,7 +23,7 @@ region = Rect2(80, 128, 16, 32)
 [resource]
 script = ExtResource("4_item")
 category = &"bow"
-capacity = 1
+capacity = 2
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
 required_level = 5
@@ -32,7 +32,6 @@ item_name = &"Spore Bow"
 item_icon = SubResource("Atlas_icon")
 description = "A bow strung with fibrous mycelium."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"spore_bow.item"
 metadata/id = 87

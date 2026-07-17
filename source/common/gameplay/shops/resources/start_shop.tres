@@ -7,6 +7,32 @@
 [ext_resource type="Resource" uid="uid://b64q6sv46brpr" path="res://source/common/gameplay/items/weapons/bow/wooden_bow.item.tres" id="9_ca6k6"]
 [ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="9_y1msh"]
 [ext_resource type="Resource" uid="uid://f0urxop3y64l" path="res://source/common/gameplay/items/weapons/sword/sword.item.tres" id="10_kyjwk"]
+[ext_resource type="Resource" uid="uid://cg2jsfh0cr5gy" path="res://source/common/gameplay/items/weapons/book/book_wood.item.tres" id="20_bookw"]
+
+[sub_resource type="Resource" id="Buyback_0"]
+script = ExtResource("1_ca6k6")
+item = ExtResource("10_kyjwk")
+payout = 3
+
+[sub_resource type="Resource" id="Buyback_1"]
+script = ExtResource("1_ca6k6")
+item = ExtResource("9_ca6k6")
+payout = 3
+
+[sub_resource type="Resource" id="Buyback_2"]
+script = ExtResource("1_ca6k6")
+item = ExtResource("6_tmucn")
+payout = 3
+
+[sub_resource type="Resource" id="Buyback_3"]
+script = ExtResource("1_ca6k6")
+item = ExtResource("5_lhqif")
+payout = 3
+
+[sub_resource type="Resource" id="Buyback_4"]
+script = ExtResource("1_ca6k6")
+item = ExtResource("20_bookw")
+payout = 3
 
 [sub_resource type="Resource" id="Resource_lhqif"]
 script = ExtResource("1_dqht8")
@@ -32,11 +58,17 @@ item = ExtResource("6_tmucn")
 price = 8
 metadata/_custom_type_script = "uid://vvxt3lf10cxb"
 
+[sub_resource type="Resource" id="Resource_bookw"]
+script = ExtResource("1_dqht8")
+item = ExtResource("20_bookw")
+price = 12
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [resource]
 script = ExtResource("9_y1msh")
 shop_name = "Starter Shop"
-entries = Array[ExtResource("1_dqht8")]([SubResource("Resource_lhqif"), SubResource("Resource_kyjwk"), SubResource("Resource_6r5rp"), SubResource("Resource_o7ypm")])
-trades = 0
+entries = Array[ExtResource("1_dqht8")]([SubResource("Resource_lhqif"), SubResource("Resource_kyjwk"), SubResource("Resource_6r5rp"), SubResource("Resource_o7ypm"), SubResource("Resource_bookw")])
+accepted_trades = Array[ExtResource("1_ca6k6")]([SubResource("Buyback_0"), SubResource("Buyback_1"), SubResource("Buyback_2"), SubResource("Buyback_3"), SubResource("Buyback_4")])
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"start_shop"
 metadata/id = 3

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://crp8g14r50b4m"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/ore_coal.png" id="1_1imlr"]
+[ext_resource type="Texture2D" uid="uid://bvaoxytnvp4lc" path="res://assets/sprites/items/icons/ore_coal.png" id="1_1imlr"]
 [ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_26gqe"]
 
 [resource]
@@ -8,7 +8,6 @@ script = ExtResource("2_26gqe")
 item_name = &"Coal Ore"
 item_icon = ExtResource("1_1imlr")
 description = "Brittle black coal. Fuel for every smelting recipe."
-vendor_value = 1
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"coal_ore"
 metadata/id = 53

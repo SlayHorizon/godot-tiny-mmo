@@ -7,6 +7,12 @@ extends Item
 
 func _init() -> void:
 	can_trade = false
-	can_sell = false
 	stack_limit = 1
-	#inventory_tab = Item.InventoryTab.OTHER
+
+
+func inventory_tab() -> InventoryTab:
+	return InventoryTab.QUEST
+
+
+func group_key() -> StringName:
+	return &"quest"

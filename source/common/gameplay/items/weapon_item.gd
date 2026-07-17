@@ -21,6 +21,20 @@ extends GearItem
 @export var sprite_offset: Vector2 = Vector2.ZERO
 
 
+func inventory_tab() -> InventoryTab:
+	return InventoryTab.WEAPON
+
+
+## Weapons section by mastery category (&"sword" -> its own "Swords" section);
+## uncategorized ones share a generic bucket.
+func group_key() -> StringName:
+	return category if not category.is_empty() else &"weapons"
+
+
+func sort_key() -> Array:
+	return [String(category), required_level, String(item_name)]
+
+
 func stat_lines() -> Array[Dictionary]:
 	var lines: Array[Dictionary] = []
 	# Mastery weapons lead with type + ability-slot capacity ("Sword · Power 2/3").

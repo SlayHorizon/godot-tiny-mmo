@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://cxftijx4uktja"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/ore_gold.png" id="1_irca4"]
+[ext_resource type="Texture2D" uid="uid://corcwn7jtra77" path="res://assets/sprites/items/icons/ore_gold.png" id="1_irca4"]
 [ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_mytch"]
 
 [resource]
@@ -8,7 +8,6 @@ script = ExtResource("2_mytch")
 item_name = &"Gold Ore"
 item_icon = ExtResource("1_irca4")
 description = "Raw gold from the Capital's lost veins. Smelts into gold bars."
-vendor_value = 9
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"gold_ore"
 metadata/id = 55

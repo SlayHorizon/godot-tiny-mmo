@@ -9,6 +9,5 @@ heal_amount = 20
 item_name = &"Minor Health Potion"
 item_icon = ExtResource("1_p8ujo")
 description = "A small draught. Cheap and handy your first days out."
-vendor_value = 1
 metadata/slug = &"minor_health_potion"
 metadata/id = 68

@@ -5,6 +5,34 @@
 [ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="2_entry"]
 [ext_resource type="Resource" uid="uid://b6rg0f7dgtrn0" path="res://source/common/gameplay/items/weapons/sword/sword_rustic.item.tres" id="3_sword"]
 [ext_resource type="Resource" uid="uid://bob6a10f1tu10" path="res://source/common/gameplay/items/weapons/hammer/hammer_rustic.item.tres" id="4_hammer"]
+[ext_resource type="Resource" uid="uid://c8mlycu302745" path="res://source/common/gameplay/items/weapons/bow/rustic_bow.item.tres" id="20_bowr"]
+[ext_resource type="Resource" uid="uid://blxysmttimic7" path="res://source/common/gameplay/items/weapons/wand/wand_bandit.item.tres" id="21_wandr"]
+[ext_resource type="Resource" uid="uid://b5u0jyyxqonrh" path="res://source/common/gameplay/items/weapons/book/book_rustic.item.tres" id="22_bookr"]
+
+[sub_resource type="Resource" id="Buyback_0"]
+script = ExtResource("1_yeyhk")
+item = ExtResource("3_sword")
+payout = 15
+
+[sub_resource type="Resource" id="Buyback_1"]
+script = ExtResource("1_yeyhk")
+item = ExtResource("20_bowr")
+payout = 15
+
+[sub_resource type="Resource" id="Buyback_2"]
+script = ExtResource("1_yeyhk")
+item = ExtResource("4_hammer")
+payout = 15
+
+[sub_resource type="Resource" id="Buyback_3"]
+script = ExtResource("1_yeyhk")
+item = ExtResource("21_wandr")
+payout = 15
+
+[sub_resource type="Resource" id="Buyback_4"]
+script = ExtResource("1_yeyhk")
+item = ExtResource("22_bookr")
+payout = 15
 
 [sub_resource type="Resource" id="Entry_rustic_sword"]
 script = ExtResource("2_entry")
@@ -16,10 +44,28 @@ script = ExtResource("2_entry")
 item = ExtResource("4_hammer")
 price = 65
 
+[sub_resource type="Resource" id="Resource_bowr"]
+script = ExtResource("2_entry")
+item = ExtResource("20_bowr")
+price = 55
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_wandr"]
+script = ExtResource("2_entry")
+item = ExtResource("21_wandr")
+price = 55
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
+[sub_resource type="Resource" id="Resource_bookr"]
+script = ExtResource("2_entry")
+item = ExtResource("22_bookr")
+price = 60
+metadata/_custom_type_script = "uid://vvxt3lf10cxb"
+
 [resource]
 script = ExtResource("1_shop")
 shop_name = "Forge Smith"
-entries = Array[ExtResource("2_entry")]([SubResource("Entry_rustic_sword"), SubResource("Entry_rustic_maul")])
-trades = 0
+entries = Array[ExtResource("2_entry")]([SubResource("Entry_rustic_sword"), SubResource("Entry_rustic_maul"), SubResource("Resource_bowr"), SubResource("Resource_wandr"), SubResource("Resource_bookr")])
+accepted_trades = Array[ExtResource("1_yeyhk")]([SubResource("Buyback_0"), SubResource("Buyback_1"), SubResource("Buyback_2"), SubResource("Buyback_3"), SubResource("Buyback_4")])
 metadata/slug = &"rustic_shop"
 metadata/id = 7

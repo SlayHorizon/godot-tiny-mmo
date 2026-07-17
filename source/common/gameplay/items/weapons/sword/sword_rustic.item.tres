@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ad_rustic"]
 script = ExtResource("1_10w3u")
 stat_name = "ad"
-value = 6.0
+value = 9.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ct1ie"]
 atlas = ExtResource("2_10w3u")
@@ -21,13 +21,12 @@ category = &"sword"
 capacity = 3
 right_hand_scene = ExtResource("3_sgh8v")
 slot = ExtResource("5_vucvx")
-required_level = 5
+required_level = 10
 base_modifiers = Array[ExtResource("1_10w3u")]([SubResource("Mod_ad_rustic")])
 item_name = &"Rustic Sword"
 item_icon = SubResource("AtlasTexture_ct1ie")
 description = "A rugged, well-forged blade. A real step up from your first."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"sword_rustic.item"
 metadata/id = 80

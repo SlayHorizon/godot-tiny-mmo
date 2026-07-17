@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://ck0kstghphmgi"]
+
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_entry"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="2_shop"]
+[ext_resource type="Resource" uid="uid://wp3akqcd3x2h" path="res://source/common/gameplay/items/weapons/sword/sword_fire.item.tres" id="10_i0"]
+[ext_resource type="Resource" uid="uid://42mfsxxm5msy" path="res://source/common/gameplay/items/weapons/bow/fire_bow.item.tres" id="10_i1"]
+[ext_resource type="Resource" uid="uid://dclt4rvqc51ri" path="res://source/common/gameplay/items/weapons/hammer/hammer_fire.item.tres" id="10_i2"]
+[ext_resource type="Resource" uid="uid://cj5fsxnfh5ji5" path="res://source/common/gameplay/items/weapons/wand/fire_wand.item.tres" id="10_i3"]
+[ext_resource type="Resource" uid="uid://cpbdi3ouhyvte" path="res://source/common/gameplay/items/weapons/book/book_fire.item.tres" id="10_i4"]
+[ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="30_trade"]
+
+[sub_resource type="Resource" id="Buyback_0"]
+script = ExtResource("30_trade")
+item = ExtResource("10_i0")
+payout = 55
+
+[sub_resource type="Resource" id="Buyback_1"]
+script = ExtResource("30_trade")
+item = ExtResource("10_i1")
+payout = 55
+
+[sub_resource type="Resource" id="Buyback_2"]
+script = ExtResource("30_trade")
+item = ExtResource("10_i2")
+payout = 55
+
+[sub_resource type="Resource" id="Buyback_3"]
+script = ExtResource("30_trade")
+item = ExtResource("10_i3")
+payout = 55
+
+[sub_resource type="Resource" id="Buyback_4"]
+script = ExtResource("30_trade")
+item = ExtResource("10_i4")
+payout = 55
+
+[sub_resource type="Resource" id="Entry_0"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i0")
+price = 200
+
+[sub_resource type="Resource" id="Entry_1"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i1")
+price = 200
+
+[sub_resource type="Resource" id="Entry_2"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i2")
+price = 200
+
+[sub_resource type="Resource" id="Entry_3"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i3")
+price = 200
+
+[sub_resource type="Resource" id="Entry_4"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i4")
+price = 220
+
+[resource]
+script = ExtResource("2_shop")
+shop_name = "The Ashmonger's Hoard"
+entries = Array[ExtResource("1_entry")]([SubResource("Entry_0"), SubResource("Entry_1"), SubResource("Entry_2"), SubResource("Entry_3"), SubResource("Entry_4")])
+accepted_trades = Array[ExtResource("30_trade")]([SubResource("Buyback_0"), SubResource("Buyback_1"), SubResource("Buyback_2"), SubResource("Buyback_3"), SubResource("Buyback_4")])
+metadata/slug = &"fire_shop"

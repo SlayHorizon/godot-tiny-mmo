@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://cikrefs0c7r42"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="2_1bsrd"]
+[ext_resource type="PackedScene" uid="uid://bv06kai8ia12k" path="res://source/common/gameplay/items/weapons/book/book.tscn" id="3_book"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="4_item"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="5_slot"]
+
+[sub_resource type="Resource" id="Mod_ap"]
+script = ExtResource("1_mod")
+stat_name = "ap"
+value = 10.0
+
+[sub_resource type="Resource" id="Mod_mana_max"]
+script = ExtResource("1_mod")
+stat_name = "mana_max"
+value = 55.0
+
+[sub_resource type="Resource" id="Mod_mana_regen"]
+script = ExtResource("1_mod")
+stat_name = "mana_regen"
+value = 3.5
+
+[sub_resource type="Resource" id="Mod_hp"]
+script = ExtResource("1_mod")
+value = 10.0
+
+[resource]
+script = ExtResource("4_item")
+category = &"book"
+capacity = 2
+right_hand_scene = ExtResource("3_book")
+slot = ExtResource("5_slot")
+required_level = 5
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap"), SubResource("Mod_mana_max"), SubResource("Mod_mana_regen"), SubResource("Mod_hp")])
+item_name = &"Spore Tome"
+description = "A tome grown thick with cave spores. Its pages breathe. A step up in mana for the battlemage who braves the caves."
+can_trade = true
+stack_limit = 1
+metadata/slug = &"book_spore.item"
+metadata/id = 158

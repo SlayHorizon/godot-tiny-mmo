@@ -28,6 +28,14 @@ extends Item
 @export var default_charges: int = 1
 
 
+func inventory_tab() -> InventoryTab:
+	return InventoryTab.CONSUMABLE
+
+
+func group_key() -> StringName:
+	return &"consumables"
+
+
 func stat_lines() -> Array[Dictionary]:
 	var lines: Array[Dictionary] = []
 	if heal_amount > 0:

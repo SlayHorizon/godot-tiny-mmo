@@ -6,6 +6,11 @@
 [ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="2_weapon_item"]
 [ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="3_slot"]
 
+[sub_resource type="Resource" id="Mod_ad"]
+script = ExtResource("1_qe82u")
+stat_name = "ad"
+value = 4.0
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_uqqke"]
 atlas = ExtResource("2_g2wyg")
 region = Rect2(0, 0, 16, 48)
@@ -15,11 +20,11 @@ script = ExtResource("2_weapon_item")
 category = &"sword"
 right_hand_scene = ExtResource("1_sword_scene")
 slot = ExtResource("3_slot")
-item_name = &"Sword"
+base_modifiers = Array[ExtResource("1_qe82u")]([SubResource("Mod_ad")])
+item_name = &"Wood Sword"
 item_icon = SubResource("AtlasTexture_uqqke")
-description = "A simple iron sword. Swing close, swing fast."
+description = "A simple wooden training sword. Swing close, swing fast."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"sword.item"
 metadata/id = 65

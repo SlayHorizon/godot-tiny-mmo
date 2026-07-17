@@ -26,7 +26,6 @@ script = ExtResource("6_1d18i")
 shop_name = "Lost Soul Shop"
 currency_item = ExtResource("2_277it")
 entries = Array[ExtResource("3_hhhqo")]([SubResource("Resource_a2v62"), SubResource("Resource_atp0p")])
-trades = 0
 metadata/_custom_type_script = "uid://bsed5oxrf1q15"
 metadata/slug = &"lost_soul_shop"
 metadata/id = 8

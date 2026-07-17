@@ -9,7 +9,6 @@ heal_amount = 40
 item_name = &"Health Potion"
 item_icon = ExtResource("3_35wr3")
 description = "A reliable brew, standard issue for the watch."
-vendor_value = 3
 metadata/_custom_type_script = "uid://bprsise4rcsak"
 metadata/slug = &"health_potion"
 metadata/id = 1

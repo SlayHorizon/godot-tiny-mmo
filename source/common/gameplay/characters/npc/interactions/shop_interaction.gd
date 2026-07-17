@@ -35,12 +35,18 @@ func register(map: Map, npc: Node) -> void:
 		ServerLog.info("Shop registered: '%s' -> \"%s\" (map %s)" % [key, shop.shop_name, map.name])
 
 
-## The map-unique key this shop registers + authorizes under. Prefer the NPC's
-## giver_key (its NPCResource file slug); fall back to the NPC's node name when
-## the resource is INLINE (no file -> empty slug), so inline shop NPCs get a
-## stable, collision-free key instead of every inline shop sharing "". Node names
-## are unique per scene — the same basis crafting stations key on. menu_entry
-## (client arg) and register (server map) both call this, so they always agree.
-static func _shop_key(owner: NPC) -> StringName:
-	var key: StringName = owner.giver_key()
-	return key if not key.is_empty() else owner.name
+## The map-unique key this shop registers + authorizes under. Base = the NPC's
+## giver_key (its NPCResource file slug), falling back to the NPC's node name for
+## INLINE resources (no file -> empty slug). The SHOP's slug is appended when it
+## has one, so an NPC carrying MULTIPLE ShopInteractions (the all-sets test
+## merchant) gets one collision-free key per shop instead of them all fighting
+## over the NPC key. menu_entry (client arg) and register (server map) both call
+## this, so they always agree.
+func _shop_key(owner: NPC) -> StringName:
+	var base: StringName = owner.giver_key()
+	if base.is_empty():
+		base = owner.name
+	var shop_slug: String = String(shop.get_meta(&"slug", "")) if shop != null else ""
+	if shop_slug.is_empty():
+		return base
+	return StringName("%s:%s" % [base, shop_slug])

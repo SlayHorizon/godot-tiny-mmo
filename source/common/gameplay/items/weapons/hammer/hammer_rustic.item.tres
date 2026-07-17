@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ad_hammer"]
 script = ExtResource("1_b5lkq")
 stat_name = "ad"
-value = 10.0
+value = 11.0
 
 [sub_resource type="Resource" id="Mod_ms_hammer"]
 script = ExtResource("1_b5lkq")
@@ -26,13 +26,12 @@ category = &"hammer"
 capacity = 3
 right_hand_scene = ExtResource("3_253qg")
 slot = ExtResource("5_g4no1")
-required_level = 5
+required_level = 10
 base_modifiers = Array[ExtResource("1_b5lkq")]([SubResource("Mod_ad_hammer"), SubResource("Mod_ms_hammer")])
-item_name = &"Rustic Maul"
+item_name = &"Rustic Hammer"
 item_icon = SubResource("AtlasTexture_urfkj")
 description = "A heavy, iron-banded maul. Rugged and dependable."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"hammer_rustic.item"
 metadata/id = 78

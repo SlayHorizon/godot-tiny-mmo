@@ -7,37 +7,29 @@ extends Resource
 ## quests resolve their giver; the client renders the catalog from the resource
 ## carried in the menu arg, so no registry id, Generate step, or index is needed.
 
-## Which trades this shop offers the player (controls which tabs the shop UI shows).
-enum Trades {
-	BUY_ONLY,  ## Player can only buy from this shop (only the Buy tab is shown).
-	SELL_ONLY, ## Player can only sell to this shop (only the Sell tab is shown).
-	BOTH,      ## Player can buy and sell (both tabs shown).
-}
-
 @export var shop_name: String
 ## Default currency the whole shop trades in (e.g. event tokens for a fair
 ## stall). Leave empty for gold. A per-entry [member ShopEntry.currency_item]
 ## overrides this for that one item.
 @export var currency_item: Item
 @export var entries: Array[ShopEntry]
-@export var trades: Trades = Trades.BOTH
-## Specialty recurring exchanges this vendor offers (e.g. Mira always accepts
-## 5 Healing Herbs for 4 gold). Empty for generic vendors.
+## What this vendor TAKES from the player — barter bundles OR gold buy-backs
+## ("give 1 Bone Sword, receive 4 gold" is just a trade whose payout is gold).
+## THE CURATED ECONOMY (docs/economy.md): there is no generic junk-selling; a
+## vendor buys exactly what's listed here, so every item's outlet is a
+## deliberate authoring decision.
 @export var accepted_trades: Array[ShopTrade]
 
 
+## Capabilities are DERIVED from the data (no parallel enum to contradict it —
+## a stale `trades` flag once silently made six shops refuse selling).
 func allows_buying() -> bool:
-	return trades != Trades.SELL_ONLY
+	return entries != null and not entries.is_empty()
 
 
-func allows_selling() -> bool:
-	return trades != Trades.BUY_ONLY
-
-
-## True if this vendor offers any specialty trades. Specialty trades can be made
-## even at a vendor that doesn't allow generic selling (e.g. an herbalist who
-## accepts only herbs). Defensive against shops authored before the
-## accepted_trades field existed (where it can deserialize as null).
+## True if this vendor takes anything from the player (drives the Sell tab).
+## Defensive against shops authored before the accepted_trades field existed
+## (where it can deserialize as null).
 func has_trades() -> bool:
 	return accepted_trades != null and not accepted_trades.is_empty()
 

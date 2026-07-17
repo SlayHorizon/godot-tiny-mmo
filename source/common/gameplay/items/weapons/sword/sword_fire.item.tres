@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ad_ember"]
 script = ExtResource("1_6mc5q")
 stat_name = "ad"
-value = 12.0
+value = 22.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3p2t8"]
 atlas = ExtResource("2_6mc5q")
@@ -18,16 +18,15 @@ region = Rect2(0, 0, 16, 48)
 [resource]
 script = ExtResource("4_5osyi")
 category = &"sword"
-capacity = 4
+capacity = 5
 right_hand_scene = ExtResource("3_6ocd1")
 slot = ExtResource("5_quip8")
-required_level = 10
+required_level = 30
 base_modifiers = Array[ExtResource("1_6mc5q")]([SubResource("Mod_ad_ember")])
-item_name = &"Emberblade"
+item_name = &"Fire Sword"
 item_icon = SubResource("AtlasTexture_3p2t8")
 description = "A blade wreathed in everlasting embers, heavy with an old power."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"sword_fire.item"
 metadata/id = 79

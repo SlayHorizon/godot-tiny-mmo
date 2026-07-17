@@ -12,7 +12,7 @@ extends Resource
 ## resource's `job_xp` dict, and auto-populate the matching JobPerks
 ## `source_slugs` lists — killing the hand-maintained content drift.
 
-## The item granted per yield. Use a MaterialItem with vendor_value set.
+## The item granted per yield (a MaterialItem; its outlet is a vendor trade or a recipe).
 @export var ore: Item
 @export var yield_amount: int = 1
 ## How many job-XP grants happen on each yield. Examples:

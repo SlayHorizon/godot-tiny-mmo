@@ -11,6 +11,5 @@ buff_duration_s = 600.0
 item_name = &"Mana Tonic"
 item_icon = ExtResource("1_1r52w")
 description = "A focusing draught. Drink before a dungeon or a guild raid."
-vendor_value = 3
 metadata/slug = &"focus_tonic"
 metadata/id = 74

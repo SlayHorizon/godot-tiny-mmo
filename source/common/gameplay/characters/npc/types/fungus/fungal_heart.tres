@@ -10,6 +10,7 @@
 [ext_resource type="Resource" uid="uid://jgkj3ooungr0" path="res://source/common/gameplay/items/weapons/hammer/hammer_spore.item.tres" id="6_hammer"]
 [ext_resource type="Resource" uid="uid://c118jtihx3ybm" path="res://source/common/gameplay/items/weapons/wand/wand_spore.item.tres" id="7_wand"]
 [ext_resource type="Resource" uid="uid://dowcv48c5suhy" path="res://source/common/gameplay/items/weapons/bow/spore_bow.item.tres" id="8_bow"]
+[ext_resource type="Resource" uid="uid://cikrefs0c7r42" path="res://source/common/gameplay/items/weapons/book/book_spore.item.tres" id="9_book"]
 
 [sub_resource type="Resource" id="Drop_hide"]
 script = ExtResource("2_loot")
@@ -37,6 +38,11 @@ script = ExtResource("2_loot")
 item = ExtResource("8_bow")
 chance = 0.22
 
+[sub_resource type="Resource" id="Drop_book"]
+script = ExtResource("2_loot")
+item = ExtResource("9_book")
+chance = 0.22
+
 [resource]
 script = ExtResource("1_script")
 enemy_type = &"fungal_heart"
@@ -53,7 +59,7 @@ detection_radius = 170
 chase_on_area = true
 xp_reward = 200
 respawns = false
-loot = Array[ExtResource("2_loot")]([SubResource("Drop_hide"), SubResource("Drop_sword"), SubResource("Drop_hammer"), SubResource("Drop_wand"), SubResource("Drop_bow")])
+loot = Array[ExtResource("2_loot")]([SubResource("Drop_hide"), SubResource("Drop_sword"), SubResource("Drop_hammer"), SubResource("Drop_wand"), SubResource("Drop_bow"), SubResource("Drop_book")])
 slam_interval_s = 6.5
 enraged_slam_interval_s = 3.8
 add_enemy_slug = &"spore_swarm"

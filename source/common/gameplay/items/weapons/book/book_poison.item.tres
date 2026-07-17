@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://bcjm2kac68f02"]
+
+[ext_resource type="Script" uid="uid://cvggwjkht4km4" path="res://source/common/gameplay/combat/attributes/stat_modifier.gd" id="1_mod"]
+[ext_resource type="Texture2D" uid="uid://dtvatbrsvpnpe" path="res://assets/sprites/items/icons/Icon271.png" id="2_75ecx"]
+[ext_resource type="PackedScene" uid="uid://bv06kai8ia12k" path="res://source/common/gameplay/items/weapons/book/book.tscn" id="2_scene"]
+[ext_resource type="Script" uid="uid://5hk0gl5ng64h" path="res://source/common/gameplay/items/weapon_item.gd" id="3_item"]
+[ext_resource type="Resource" uid="uid://qav4p12rsbn3" path="res://source/common/gameplay/items/item_slot/slots/weapon.tres" id="4_slot"]
+
+[sub_resource type="Resource" id="Mod_0"]
+script = ExtResource("1_mod")
+stat_name = "ap"
+value = 13.0
+
+[sub_resource type="Resource" id="Mod_1"]
+script = ExtResource("1_mod")
+stat_name = "mana_max"
+value = 70.0
+
+[sub_resource type="Resource" id="Mod_2"]
+script = ExtResource("1_mod")
+stat_name = "mana_regen"
+value = 4.0
+
+[sub_resource type="Resource" id="Mod_3"]
+script = ExtResource("1_mod")
+value = 25.0
+
+[resource]
+script = ExtResource("3_item")
+category = &"book"
+capacity = 4
+right_hand_scene = ExtResource("2_scene")
+slot = ExtResource("4_slot")
+required_level = 15
+base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_0"), SubResource("Mod_1"), SubResource("Mod_2"), SubResource("Mod_3")])
+item_name = &"Poison Tome"
+description = "Steeped in the sewers under the Capital. The rot never quite washes off."
+can_trade = true
+stack_limit = 1
+metadata/slug = &"book_poison.item"
+metadata/id = 157

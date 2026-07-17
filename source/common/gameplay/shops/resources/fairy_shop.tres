@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="ShopResource" format=3 uid="uid://0rba8526bwk8"]
+
+[ext_resource type="Script" uid="uid://vvxt3lf10cxb" path="res://source/common/gameplay/shops/shop_entry.gd" id="1_entry"]
+[ext_resource type="Script" uid="uid://b1my10ee17j5b" path="res://source/common/gameplay/shops/shop_trade.gd" id="2_trade"]
+[ext_resource type="Script" uid="uid://bsed5oxrf1q15" path="res://source/common/gameplay/shops/shop_resource.gd" id="3_shop"]
+[ext_resource type="Resource" uid="uid://noy0eoqm3hrk" path="res://source/common/gameplay/items/weapons/sword/sword_fairy.item.tres" id="10_i0"]
+[ext_resource type="Resource" uid="uid://ngd2rh3ckh1o" path="res://source/common/gameplay/items/weapons/bow/fairy_bow.item.tres" id="10_i1"]
+[ext_resource type="Resource" uid="uid://bks25povs08h8" path="res://source/common/gameplay/items/weapons/hammer/hammer_fairy.item.tres" id="10_i2"]
+[ext_resource type="Resource" uid="uid://dt6pjcxaosjlb" path="res://source/common/gameplay/items/weapons/wand/wand_fairy.item.tres" id="10_i3"]
+[ext_resource type="Resource" uid="uid://bwxgmhvwau8kv" path="res://source/common/gameplay/items/weapons/book/book_fairy.item.tres" id="10_i4"]
+
+[sub_resource type="Resource" id="Buyback_0"]
+script = ExtResource("2_trade")
+item = ExtResource("10_i0")
+payout = 30
+
+[sub_resource type="Resource" id="Buyback_1"]
+script = ExtResource("2_trade")
+item = ExtResource("10_i1")
+payout = 30
+
+[sub_resource type="Resource" id="Buyback_2"]
+script = ExtResource("2_trade")
+item = ExtResource("10_i2")
+payout = 30
+
+[sub_resource type="Resource" id="Buyback_3"]
+script = ExtResource("2_trade")
+item = ExtResource("10_i3")
+payout = 30
+
+[sub_resource type="Resource" id="Buyback_4"]
+script = ExtResource("2_trade")
+item = ExtResource("10_i4")
+payout = 30
+
+[sub_resource type="Resource" id="Entry_0"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i0")
+price = 120
+
+[sub_resource type="Resource" id="Entry_1"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i1")
+price = 120
+
+[sub_resource type="Resource" id="Entry_2"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i2")
+price = 120
+
+[sub_resource type="Resource" id="Entry_3"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i3")
+price = 120
+
+[sub_resource type="Resource" id="Entry_4"]
+script = ExtResource("1_entry")
+item = ExtResource("10_i4")
+price = 120
+
+[resource]
+script = ExtResource("3_shop")
+shop_name = "The Last Bough"
+entries = Array[ExtResource("1_entry")]([SubResource("Entry_0"), SubResource("Entry_1"), SubResource("Entry_2"), SubResource("Entry_3"), SubResource("Entry_4")])
+accepted_trades = Array[ExtResource("2_trade")]([SubResource("Buyback_0"), SubResource("Buyback_1"), SubResource("Buyback_2"), SubResource("Buyback_3"), SubResource("Buyback_4")])
+metadata/slug = &"fairy_shop"

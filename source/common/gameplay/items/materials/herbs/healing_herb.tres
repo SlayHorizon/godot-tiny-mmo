@@ -12,7 +12,6 @@ script = ExtResource("2_script")
 item_name = &"Healing Herb"
 item_icon = SubResource("AtlasTexture_21x3k")
 description = "A common wildflower with mild healing properties. Found in clearings and along roadsides."
-vendor_value = 2
 metadata/_custom_type_script = "uid://nsr1timk430j"
 metadata/slug = &"healing_herb"
 metadata/id = 58

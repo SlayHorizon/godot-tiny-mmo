@@ -33,7 +33,7 @@ region = Rect2(160, 32, 16, 32)
 [resource]
 script = ExtResource("4_item")
 category = &"wand"
-capacity = 1
+capacity = 2
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
 required_level = 5
@@ -42,7 +42,6 @@ item_name = &"Spore Wand"
 item_icon = SubResource("Atlas_icon")
 description = "A wand sprouting luminous spores from the cave."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"wand_spore.item"
 metadata/id = 91

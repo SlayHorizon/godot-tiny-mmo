@@ -1,0 +1,61 @@
+[gd_resource type="Resource" script_class="NPCResource" format=3 uid="uid://dy11163ahw7sn"]
+
+[ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="1_inter"]
+[ext_resource type="Script" uid="uid://bpo804060rk5t" path="res://source/common/gameplay/characters/npc/interactions/shop_interaction.gd" id="2_shopint"]
+[ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="5_npc"]
+[ext_resource type="SpriteFrames" uid="uid://dlopdt61exewy" path="res://source/common/gameplay/characters/sprite_frames/scholar_researcher.tres" id="6_skin"]
+[ext_resource type="Resource" uid="uid://dgk6yl280gmyd" path="res://source/common/gameplay/shops/resources/start_shop.tres" id="10_s0"]
+[ext_resource type="Resource" uid="uid://dl7ria3hsmvco" path="res://source/common/gameplay/shops/resources/bone_shop.tres" id="10_s1"]
+[ext_resource type="Resource" uid="uid://djgywpgriaux" path="res://source/common/gameplay/shops/resources/spore_shop.tres" id="10_s2"]
+[ext_resource type="Resource" uid="uid://dw5hj55lha5ld" path="res://source/common/gameplay/shops/resources/rustic_shop.tres" id="10_s3"]
+[ext_resource type="Resource" uid="uid://bhrk4rp18pcwd" path="res://source/common/gameplay/shops/resources/poison_shop.tres" id="10_s4"]
+[ext_resource type="Resource" uid="uid://0rba8526bwk8" path="res://source/common/gameplay/shops/resources/fairy_shop.tres" id="10_s5"]
+[ext_resource type="Resource" uid="uid://b2wbi3qgevadv" path="res://source/common/gameplay/shops/resources/sunsteel_shop.tres" id="10_s6"]
+[ext_resource type="Resource" uid="uid://ck0kstghphmgi" path="res://source/common/gameplay/shops/resources/fire_shop.tres" id="10_s7"]
+
+[sub_resource type="Resource" id="Shop_0"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s0")
+label_override = "Wood · Starter Shop"
+
+[sub_resource type="Resource" id="Shop_1"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s1")
+label_override = "Bone · Bonecarver"
+
+[sub_resource type="Resource" id="Shop_2"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s2")
+label_override = "Spore · The Spore Cellar"
+
+[sub_resource type="Resource" id="Shop_3"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s3")
+label_override = "Rustic · Forge Smith"
+
+[sub_resource type="Resource" id="Shop_4"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s4")
+label_override = "Poison · The Undermarket"
+
+[sub_resource type="Resource" id="Shop_5"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s5")
+label_override = "Fairy · The Last Bough"
+
+[sub_resource type="Resource" id="Shop_6"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s6")
+label_override = "Sunsteel · The Tomb Bazaar"
+
+[sub_resource type="Resource" id="Shop_7"]
+script = ExtResource("2_shopint")
+shop = ExtResource("10_s7")
+label_override = "Fire · The Ashmonger's Hoard"
+
+[resource]
+script = ExtResource("5_npc")
+npc_name = "Horizon the Peddler of Everything"
+skin = ExtResource("6_skin")
+greeting = "Every shelf from the green country to the fire, in one bag. Do not ask how it fits. Testing purposes, friend. Testing purposes."
+interactions = Array[ExtResource("1_inter")]([SubResource("Shop_0"), SubResource("Shop_1"), SubResource("Shop_2"), SubResource("Shop_3"), SubResource("Shop_4"), SubResource("Shop_5"), SubResource("Shop_6"), SubResource("Shop_7")])

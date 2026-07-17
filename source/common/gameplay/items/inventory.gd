@@ -14,15 +14,31 @@ class_name Inventory
 
 
 ## Convert raw JSON-loaded data into a clean { int: { "id": int, "a": int } } dict.
+## Optional per-slot fields ("p" = pinned) survive the round-trip.
 static func normalize(raw: Dictionary) -> Dictionary:
 	var out: Dictionary
 	for key in raw:
 		var slot: Dictionary = raw[key]
-		out[int(key)] = {
+		var clean: Dictionary = {
 			"id": int(slot.get("id", 0)),
 			"a": int(slot.get("a", 1)),
 		}
+		if slot.get("p", false):
+			clean["p"] = true
+		out[int(key)] = clean
 	return out
+
+
+## Pin or unpin a slot (pinned items render first in the bag UI). No-op on a
+## missing slot. Returns true if the slot exists.
+static func set_pinned(inventory: Dictionary, slot_uid: int, pinned: bool) -> bool:
+	if not inventory.has(slot_uid):
+		return false
+	if pinned:
+		inventory[slot_uid]["p"] = true
+	else:
+		inventory[slot_uid].erase("p")
+	return true
 
 
 ## Add an item to the inventory, stacking when the item allows it.

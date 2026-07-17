@@ -108,9 +108,9 @@ func open(arg: Dictionary) -> void:
 	var currency: Item = ContentRegistryHub.load_by_id(&"items", _currency_id)
 	if currency and golds_icon:
 		golds_icon.texture = currency.item_icon
-	# Tab bar shown if the shop offers both flavors of interaction. Specialty trades
-	# live inside the Sell tab and force it open even when generic sells are off.
-	var has_sell_side: bool = _shop.allows_selling() or _shop.has_trades()
+	# Tab bar shown if the shop offers both flavors of interaction. The sell side
+	# IS the trades list (curated economy — no generic junk-sell).
+	var has_sell_side: bool = _shop.has_trades()
 	mode_tabs.visible = _shop.allows_buying() and has_sell_side
 	# Hide the unused tab so the available one is obviously the active one.
 	sell_tab.visible = has_sell_side
@@ -146,7 +146,6 @@ func _build_list() -> void:
 	else:
 		_equipped_ids = _get_equipped_ids()
 		_build_trade_rows()
-		_build_sell_rows()
 
 	_refresh_affordability()
 
@@ -169,27 +168,9 @@ func _build_buy_rows() -> void:
 		_add_row(slot, STOCK_INFINITE_TEXT)
 
 
-func _build_sell_rows() -> void:
-	# Specialty vendors (those with declared trades) refuse generic junk —
-	# the only sell-side affordance is the trade rows.
-	if not _shop.allows_selling() or _shop.has_trades():
-		return
-	for slot_uid in _inventory:
-		var data: Dictionary = _inventory[slot_uid]
-		var item: Item = ContentRegistryHub.load_by_id(&"items", int(data.get("id", 0)))
-		if item == null or item.is_currency or item.vendor_value <= 0:
-			continue # not sellable to vendors
-		var slot: ShopSlot = ShopSlot.new()
-		slot.item = item
-		slot.item_id = int(data.get("id", 0))
-		slot.price = item.vendor_value
-		slot.slot_uid = int(slot_uid)
-		slot.quantity = int(data.get("a", 0))
-		_add_row(slot, str(slot.quantity))
-
-
-## Specialty vendor trades — fixed item/amount/payout bundles, listed before
-## generic sell rows so the player sees them first.
+## The whole sell side: this vendor's accepted trades — fixed item/amount/payout
+## bundles (gold buy-backs included). THE CURATED ECONOMY: there is no generic
+## junk-sell; a vendor buys exactly what its trades list says (docs/economy.md).
 func _build_trade_rows() -> void:
 	if _shop.accepted_trades.is_empty():
 		return
@@ -438,10 +419,8 @@ func _on_action_button_pressed() -> void:
 		return
 	if _mode == Mode.BUY:
 		_buy()
-	elif _selected_slot.is_trade:
-		_trade()
 	else:
-		_sell()
+		_trade() # the sell side is trades-only (curated economy)
 
 
 func _buy() -> void:
@@ -473,29 +452,7 @@ func _buy() -> void:
 		_refresh_buy_action()
 
 
-func _sell() -> void:
-	var slot_uid: int = _selected_slot.slot_uid
-	var amount: int = int(quantity_spinbox.value)
-	action_button.disabled = true
-	var result: Array = await Client.request_data_await(
-		&"shop.sell.item",
-		{"shop_key": _shop_key, "slot_uid": slot_uid, "amount": amount},
-		InstanceClient.current.name
-	)
-	if result[1] != OK or not result[0].get("ok", false):
-		action_button.disabled = false
-		return
-	# Gold + counts refresh from the inventory fetch.
-	await _request_inventory() # rebuilds the Sell list with updated quantities
-	# Keep the same item selected if its stack still exists.
-	for slot in _slots:
-		if slot.slot_uid == slot_uid:
-			_on_row_pressed(slot)
-			return
-	_clear_detail()
-
-
-## Specialty vendor trade: hand over N bundles of trade.item for trade.payout * N gold.
+## Vendor trade: hand over N bundles of trade.item for trade.payout * N gold.
 func _trade() -> void:
 	var trade_index: int = _selected_slot.trade_index
 	var bundles: int = int(quantity_spinbox.value)

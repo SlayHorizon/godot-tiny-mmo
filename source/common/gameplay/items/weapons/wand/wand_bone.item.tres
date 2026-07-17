@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ap"]
 script = ExtResource("1_mod")
 stat_name = "ap"
-value = 6.0
+value = 8.0
 
 [sub_resource type="Resource" id="Mod_haste"]
 script = ExtResource("1_mod")
@@ -33,14 +33,15 @@ region = Rect2(80, 0, 32, 16)
 [resource]
 script = ExtResource("4_item")
 category = &"wand"
+capacity = 1
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
+required_level = 2
 base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ap"), SubResource("Mod_haste"), SubResource("Mod_wmana"), SubResource("Mod_wregen")])
 item_name = &"Bone Wand"
 item_icon = SubResource("Atlas_bone_wand")
 description = "A wand of polished bone. It casts swiftly, though its bolts carry a little less force."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"wand_bone.item"
 metadata/id = 83

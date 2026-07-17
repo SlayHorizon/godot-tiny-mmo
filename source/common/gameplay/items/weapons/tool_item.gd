@@ -8,3 +8,11 @@ extends WeaponItem
 ## What this tool can gather, e.g. &"pickaxe", &"axe". A MineableNode requires a
 ## matching tool_type to be worked.
 @export var tool_type: StringName
+
+
+func group_key() -> StringName:
+	return &"tools"
+
+
+func sort_key() -> Array:
+	return [String(tool_type), required_level, String(item_name)]

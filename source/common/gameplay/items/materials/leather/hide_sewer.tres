@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="MaterialItem" format=3 uid="uid://deajqapim5otj"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/items/icons/mat_hide_sewer.png" id="1_57ub3"]
+[ext_resource type="Texture2D" uid="uid://c0ef3isipb6nu" path="res://assets/sprites/items/icons/mat_hide_sewer.png" id="1_57ub3"]
 [ext_resource type="Script" uid="uid://nsr1timk430j" path="res://source/common/gameplay/items/material_item.gd" id="2_script"]
 
 [resource]

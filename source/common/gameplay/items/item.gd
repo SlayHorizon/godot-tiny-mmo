@@ -2,6 +2,20 @@ class_name Item
 extends Resource
 
 
+## Which bag tab an item belongs to. Canonical — the inventory UI must never
+## classify by `is`-type checks (that made Materials a fragile negation bucket).
+## Weapons/tools (equip + act) and armor (silent stat buffers) are deliberately
+## separate tabs (owner call, 2026-07-16).
+enum InventoryTab {
+	WEAPON,
+	ARMOR,
+	CONSUMABLE,
+	MATERIAL,
+	QUEST,
+	OTHER,
+}
+
+
 # Definition
 @export var item_name: StringName = &"ItemDefault"
 @export var item_icon: Texture2D = preload("res://assets/sprites/items/icons/Icon271.png")
@@ -20,15 +34,10 @@ extends Resource
 ## Can trade for goods between players.
 @export var can_trade: bool = false
 ## Can sell to the consigment house.
-@export var can_sell: bool = false
 ## Minimum price the item can be sold at consigment house.
 ## If 0 any price can be choosen.
 ## This is not shop price. If an item is sold at a shop, the price is defined in shop logic.
 @export var market_minimum_price: int = 0
-## Price an NPC vendor pays for this item when the player sells it.
-## 0 = NPC vendors won't buy it (quest/bound/junk-safe default).
-## Distinct from the consignment house fields above (player-to-player market).
-@export var vendor_value: int
 
 
 # Inventory
@@ -42,6 +51,25 @@ extends Resource
 
 func is_stackable() -> bool:
 	return stack_limit == 0 or stack_limit > 1
+
+
+## Which bag tab this item lives in. Subclasses override; plain items land in
+## OTHER, which the UI folds into Materials.
+func inventory_tab() -> InventoryTab:
+	return InventoryTab.OTHER
+
+
+## Section heading key within a tab (&"weapons" / &"armor" / ...). Groups only —
+## labels and group ORDER are the UI's concern. Subclasses override.
+func group_key() -> StringName:
+	return &"items"
+
+
+## Deterministic ordering inside a section. The UI sorts by group order, then
+## this array element-wise, then slot uid — so identical items always sit
+## together. Entries must be same-typed across items sharing a group_key.
+func sort_key() -> Array:
+	return [String(item_name)]
 
 
 ## Human-readable stat lines for tooltips, auto-generated from the item's REAL data

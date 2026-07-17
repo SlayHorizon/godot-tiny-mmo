@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Mod_ad"]
 script = ExtResource("1_mod")
 stat_name = "ad"
-value = 5.0
+value = 7.0
 
 [sub_resource type="AtlasTexture" id="Atlas_icon"]
 atlas = ExtResource("2_tex")
@@ -18,7 +18,7 @@ region = Rect2(0, 0, 16, 64)
 [resource]
 script = ExtResource("4_item")
 category = &"sword"
-capacity = 1
+capacity = 2
 right_hand_scene = ExtResource("3_scene")
 slot = ExtResource("5_slot")
 required_level = 5
@@ -27,7 +27,6 @@ item_name = &"Spore Sword"
 item_icon = SubResource("Atlas_icon")
 description = "A blade grown through with pale cave fungus."
 can_trade = true
-can_sell = true
 stack_limit = 1
 metadata/slug = &"sword_spore.item"
 metadata/id = 89
