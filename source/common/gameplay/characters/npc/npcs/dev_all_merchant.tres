@@ -8,9 +8,6 @@
 [ext_resource type="Resource" uid="uid://dl7ria3hsmvco" path="res://source/common/gameplay/shops/resources/bone_shop.tres" id="10_s1"]
 [ext_resource type="Resource" uid="uid://djgywpgriaux" path="res://source/common/gameplay/shops/resources/spore_shop.tres" id="10_s2"]
 [ext_resource type="Resource" uid="uid://dw5hj55lha5ld" path="res://source/common/gameplay/shops/resources/rustic_shop.tres" id="10_s3"]
-[ext_resource type="Resource" uid="uid://bhrk4rp18pcwd" path="res://source/common/gameplay/shops/resources/poison_shop.tres" id="10_s4"]
-[ext_resource type="Resource" uid="uid://0rba8526bwk8" path="res://source/common/gameplay/shops/resources/fairy_shop.tres" id="10_s5"]
-[ext_resource type="Resource" uid="uid://b2wbi3qgevadv" path="res://source/common/gameplay/shops/resources/sunsteel_shop.tres" id="10_s6"]
 [ext_resource type="Resource" uid="uid://ck0kstghphmgi" path="res://source/common/gameplay/shops/resources/fire_shop.tres" id="10_s7"]
 
 [sub_resource type="Resource" id="Shop_0"]
@@ -33,21 +30,6 @@ script = ExtResource("2_shopint")
 shop = ExtResource("10_s3")
 label_override = "Rustic · Forge Smith"
 
-[sub_resource type="Resource" id="Shop_4"]
-script = ExtResource("2_shopint")
-shop = ExtResource("10_s4")
-label_override = "Poison · The Undermarket"
-
-[sub_resource type="Resource" id="Shop_5"]
-script = ExtResource("2_shopint")
-shop = ExtResource("10_s5")
-label_override = "Fairy · The Last Bough"
-
-[sub_resource type="Resource" id="Shop_6"]
-script = ExtResource("2_shopint")
-shop = ExtResource("10_s6")
-label_override = "Sunsteel · The Tomb Bazaar"
-
 [sub_resource type="Resource" id="Shop_7"]
 script = ExtResource("2_shopint")
 shop = ExtResource("10_s7")
@@ -58,4 +40,4 @@ script = ExtResource("5_npc")
 npc_name = "Horizon the Peddler of Everything"
 skin = ExtResource("6_skin")
 greeting = "Every shelf from the green country to the fire, in one bag. Do not ask how it fits. Testing purposes, friend. Testing purposes."
-interactions = Array[ExtResource("1_inter")]([SubResource("Shop_0"), SubResource("Shop_1"), SubResource("Shop_2"), SubResource("Shop_3"), SubResource("Shop_4"), SubResource("Shop_5"), SubResource("Shop_6"), SubResource("Shop_7")])
+interactions = Array[ExtResource("1_inter")]([SubResource("Shop_0"), SubResource("Shop_1"), SubResource("Shop_2"), SubResource("Shop_3"), SubResource("Shop_7")])

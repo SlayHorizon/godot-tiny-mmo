@@ -11,7 +11,7 @@
 [ext_resource type="Resource" uid="uid://cx1parqqaupb5" path="res://source/common/gameplay/characters/npc/npcs/hall_keeper.tres" id="9_aldlr"]
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="9_fjcme"]
 [ext_resource type="Resource" uid="uid://dhdjy3c4ufju0" path="res://source/common/gameplay/characters/npc/npcs/starter_merchant.tres" id="9_lkcla"]
-[ext_resource type="Resource" path="res://source/common/gameplay/characters/npc/npcs/dev_all_merchant.tres" id="10_3dhf7"]
+[ext_resource type="Resource" uid="uid://dy11163ahw7sn" path="res://source/common/gameplay/characters/npc/npcs/dev_all_merchant.tres" id="10_3dhf7"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="10_subvk"]
 [ext_resource type="Resource" uid="uid://b7ty7yxpd32u2" path="res://source/common/gameplay/characters/npc/npcs/dungeon_keeper.tres" id="11_aldlr"]
 [ext_resource type="SpriteFrames" uid="uid://dlopdt61exewy" path="res://source/common/gameplay/characters/sprite_frames/scholar_researcher.tres" id="16_aldlr"]
