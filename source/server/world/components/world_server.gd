@@ -71,6 +71,13 @@ func start_world_server() -> void:
 
 
 func _on_periodic_save() -> void:
+	# Refresh last-seen for everyone online so a crash only loses at most one
+	# save interval of it (the authoritative stamp is on disconnect).
+	var now_unix_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
+	for pid: int in connected_players:
+		var p: PlayerResource = connected_players[pid]
+		if p != null:
+			p.lb_stats["last_seen_ms"] = now_unix_ms
 	var saved: int = database.save_all_connected(connected_players)
 	# The backup (checkpoint + full-file copy) only runs every Nth save — see
 	# BACKUP_EVERY_N_SAVES. Shutdown / master-triggered saves back up separately.
@@ -134,6 +141,10 @@ func _on_peer_disconnected(peer_id: int) -> void:
 		var session_seconds: int = (Time.get_ticks_msec() - player.session_start_ms) / 1000
 		if session_seconds > 0:
 			player.lb_stats["played_seconds"] = int(player.lb_stats.get("played_seconds", 0)) + session_seconds
+
+	# Last-seen stamp (unix ms). Rides lb_stats/stats_json like played_seconds —
+	# no schema change; profile.get buckets it into coarse "last seen" text.
+	player.lb_stats["last_seen_ms"] = int(Time.get_unix_time_from_system() * 1000.0)
 
 	database.save_player(player)
 

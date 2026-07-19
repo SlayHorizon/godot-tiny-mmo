@@ -28,13 +28,17 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	if not has_permission:
 		return {"error": 1, "ok": false, "message": "Not allowed."}
 
-	var description: String = str(args.get("description", ""))
-	description = description.substr(0, 240)
+	# Both fields are optional so callers can change one without knowing the
+	# other (the Hall's Cosmetics tab sends logo_id alone).
+	if args.has("description"):
+		guild.description = str(args.get("description", "")).substr(0, 240)
 
-	var logo_id: int = int(args.get("logo_id", 0))
-
-	guild.description = description
-	guild.logo_id = logo_id
+	if args.has("logo_id"):
+		var logo_id: int = int(args.get("logo_id", 0))
+		# Only an owned logo can be equipped (0 is always owned — free default).
+		if logo_id < 0 or logo_id >= GuildUpgrades.LOGO_COUNT or not guild.owned_logos.has(logo_id):
+			return {"error": 1, "ok": false, "message": "Your guild doesn't own that emblem."}
+		guild.logo_id = logo_id
 
 	store.save_guild(guild)
 

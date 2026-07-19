@@ -81,6 +81,10 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 			"pvp_kills": int(lb.get("pvp_kills_total", 0)),
 			"arena_wins": int(lb.get("arena_wins", 0)),
 			"arena_losses": int(lb.get("arena_losses", 0)),
+			# Coarse presence only ("Online now" / "Less than a week ago") —
+			# deliberately never an exact timestamp, so nobody can be stalked
+			# through their play schedule. Empty when unknown (pre-feature rows).
+			"last_seen": _last_seen_text(target_player, lb),
 		},
 		"animation": str(row.get("profile_animation", "idle")),
 		"description": str(row.get("profile_status", "")),
@@ -126,6 +130,28 @@ static func _parse_trophies(row: Dictionary) -> Array:
 		if trophies_v is Array:
 			return trophies_v
 	return []
+
+
+const DAY_MS: int = 24 * 60 * 60 * 1000
+
+
+## Coarse last-seen bucket for the profile. Online targets read "Online now";
+## offline ones bucket the lb_stats last_seen_ms stamp (written on disconnect +
+## periodic save). Empty string when the player predates the stamp.
+func _last_seen_text(target_player: PlayerResource, lb: Dictionary) -> String:
+	if target_player != null:
+		return "Online now"
+	var last_ms: int = int(lb.get("last_seen_ms", 0))
+	if last_ms <= 0:
+		return ""
+	var age_ms: int = int(Time.get_unix_time_from_system() * 1000.0) - last_ms
+	if age_ms < DAY_MS:
+		return "Less than a day ago"
+	if age_ms < 7 * DAY_MS:
+		return "Less than a week ago"
+	if age_ms < 30 * DAY_MS:
+		return "Less than a month ago"
+	return "Over a month ago"
 
 
 ## Total played hours, banked seconds + the current session's live elapsed for

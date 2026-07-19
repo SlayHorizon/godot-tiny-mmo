@@ -46,6 +46,8 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	store.save_player(target)
 	store.commit()
 
+	store.add_guild_log(guild_id, "kicked", actor.display_name, target.display_name)
+
 	# If the kicked player is online, sync their client's cached active_guild_id.
 	var target_peer: int = world_server.player_id_to_peer_id.get(target_id, 0)
 	if target_peer > 0:

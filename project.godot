@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Ekonia"
-config/version="0.25.1"
+config/version="0.26.3"
 run/main_scene="res://source/common/main.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="slayhorizon"
@@ -32,6 +32,8 @@ buses/default_bus_layout="uid://6a8ehqx05sqs"
 ClientState="*res://source/client/autoload/client_state.gd"
 Client="*res://source/client/autoload/client.tscn"
 Toaster="*res://source/client/autoload/toaster.gd"
+Announcer="*res://source/client/autoload/announcer.gd"
+MCPRuntime="*uid://bmdn775mlknqs"
 Transition="*res://source/client/autoload/transition.gd"
 
 [debug]
@@ -51,7 +53,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg", "res://addons/tinymmo/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg", "res://addons/godot_mcp/plugin.cfg", "res://addons/tinymmo/plugin.cfg")
 
 [file_customization]
 

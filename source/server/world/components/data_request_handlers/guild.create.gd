@@ -58,6 +58,8 @@ func data_request_handler(
 
 	store.commit()
 
+	store.add_guild_log(new_guild_id, "created", player.display_name)
+
 	# Creator is auto-tagged into the new guild — sync the client's cached value.
 	instance.world_server.data_push.rpc_id(peer_id, &"active_guild_id.set", {"active_guild_id": player.active_guild_id})
 	var pnode: Player = instance.players_by_peer_id.get(peer_id)

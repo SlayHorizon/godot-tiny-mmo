@@ -8,8 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://b8lt6fh1ogotd" path="res://assets/sprites/environment/building/Exterior/Garden.png" id="5_vf1no"]
 [ext_resource type="Script" uid="uid://ddtm11pnrdkyo" path="res://source/common/gameplay/maps/zone_patch_2d.gd" id="6_vf1no"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="7_aris3"]
-[ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/guild_house/guild_house.tres" id="8_m02lb"]
-[ext_resource type="Resource" uid="uid://c0m2t2hjlih2p" path="res://source/common/gameplay/maps/instance/instance_collection/woodland.tres" id="12_sgxfe"]
+[ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/building/guild_house.tres" id="8_m02lb"]
+[ext_resource type="Resource" uid="uid://c0m2t2hjlih2p" path="res://source/common/gameplay/maps/instance/instance_collection/biomes/woodland.tres" id="12_sgxfe"]
 [ext_resource type="Resource" uid="uid://dicfbsg4ycah2" path="res://source/common/gameplay/characters/npc/npcs/foreman.tres" id="13_anjaa"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="16_da30u"]
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="17_hnnrj"]
@@ -22,7 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://bm5002tcxs41l" path="res://source/common/gameplay/maps/maps/misc_buildings/house.tscn" id="21_sc04i"]
 [ext_resource type="Resource" uid="uid://pm3j1lgi0vig" path="res://source/common/gameplay/quests/resources/master_of_the_forge.tres" id="22_xjjg4"]
 [ext_resource type="Resource" uid="uid://doy47vraqsb02" path="res://source/common/gameplay/quests/resources/copper_for_the_smith.tres" id="23_sgxfe"]
-[ext_resource type="Resource" uid="uid://iuqxmo63ipnn" path="res://source/common/gameplay/maps/instance/instance_collection/fungus_cave/fungus_cave.tres" id="24_2sqao"]
+[ext_resource type="Resource" uid="uid://iuqxmo63ipnn" path="res://source/common/gameplay/maps/instance/instance_collection/biomes/fungus_cave.tres" id="24_2sqao"]
 [ext_resource type="Script" uid="uid://dka1daj2vrhn" path="res://source/common/gameplay/characters/npc/interactions/quest_interaction.gd" id="24_o1ke5"]
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="25_2opns"]
 [ext_resource type="PackedScene" path="res://source/common/gameplay/crafting/crafting_station.tscn" id="25_og50n"]
@@ -37,12 +37,12 @@
 [ext_resource type="PackedScene" uid="uid://0m5eq6iylq26" path="res://source/common/gameplay/maps/components/interaction_areas/warper/portal/portal.tscn" id="29_2sqao"]
 [ext_resource type="Texture2D" uid="uid://dh6njikiv0sxv" path="res://assets/sprites/environment/structures/stations/furnace/iron_02_sheet.png" id="29_o1ke5"]
 [ext_resource type="Resource" uid="uid://c8e62k6uutlp8" path="res://source/common/gameplay/crafting/resources/workbench.tres" id="30_2opns"]
-[ext_resource type="Resource" uid="uid://dfeyr0kdescac" path="res://source/common/gameplay/maps/instance/instance_collection/forest/forest.tres" id="30_og50n"]
+[ext_resource type="Resource" uid="uid://dfeyr0kdescac" path="res://source/common/gameplay/maps/instance/instance_collection/biomes/forest.tres" id="30_og50n"]
 [ext_resource type="Texture2D" uid="uid://d1o56hk11y82e" path="res://assets/sprites/environment/structures/stations/workbench/workbench.png" id="31_8i8tr"]
 [ext_resource type="Script" uid="uid://wq8klpndipnu" path="res://source/common/network/sync/replicated_props.gd" id="35_2opns"]
 [ext_resource type="PackedScene" uid="uid://v32667qwpj2l" path="res://source/common/gameplay/characters/npc/hostile_npc.tscn" id="35_o1ke5"]
 [ext_resource type="Resource" uid="uid://bdexx5ivs3jhf" path="res://source/common/gameplay/characters/npc/types/training_dummy.tres" id="36_2opns"]
-[ext_resource type="Resource" path="res://source/common/gameplay/maps/instance/instance_collection/bandit_hideout.tres" id="46_l3yo4"]
+[ext_resource type="Resource" path="res://source/common/gameplay/maps/instance/instance_collection/biomes/bandit_hideout.tres" id="46_l3yo4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_aris3"]
 size = Vector2(40, 32)
@@ -609,7 +609,6 @@ destination_label = "DimWood (Dark Forest)"
 target_instance = ExtResource("30_og50n")
 warper_id = 20
 target_id = 20
-required_level = 20
 
 [node name="BanditHideoutPortal" parent="Warpers" unique_id=706210769 instance=ExtResource("29_2sqao")]
 position = Vector2(856, 16)
@@ -618,13 +617,13 @@ destination_label = "Bandit Hideout"
 target_instance = ExtResource("46_l3yo4")
 warper_id = 22
 target_id = 22
-required_level = 10
 
 [node name="TheHollowPortal" parent="Warpers" unique_id=2072488891 instance=ExtResource("29_2sqao")]
 position = Vector2(992, 80)
 portal_color = Color(0.11549731, 0.1297065, 0.12632617, 1)
-destination_label = "The Hollow"
-required_level = 35
+destination_label = "The Hollow (Lv 35+)"
+warper_id = 27
+target_id = 27
 
 [node name="WoodlandPortal" parent="Warpers" unique_id=686472752 instance=ExtResource("29_2sqao")]
 position = Vector2(856, -112)
@@ -637,20 +636,21 @@ target_id = 23
 [node name="DesertPortal" parent="Warpers" unique_id=151131626 instance=ExtResource("29_2sqao")]
 position = Vector2(992, -48)
 portal_color = Color(0.5308139, 0.42815638, 0, 1)
-destination_label = "Desert"
-required_level = 25
+destination_label = "Desert (Lv 25+)"
+warper_id = 25
+target_id = 25
 
 [node name="DesertPortal2" parent="Warpers" unique_id=1638213698 instance=ExtResource("29_2sqao")]
 position = Vector2(856, 80)
 portal_color = Color(0, 0.526729, 0.27035004, 1)
-destination_label = "The Sewers"
-required_level = 15
+destination_label = "The Sewers (Lv 15+)"
 
 [node name="FireForgePortal" parent="Warpers" unique_id=121112763 instance=ExtResource("29_2sqao")]
 position = Vector2(992, 16)
 portal_color = Color(0.7412448, 0.25372657, 0, 1)
-destination_label = "Fire Forge"
-required_level = 30
+destination_label = "Fire Forge (Lv 30+)"
+warper_id = 26
+target_id = 26
 
 [node name="CavePortal" parent="Warpers" unique_id=396714839 instance=ExtResource("29_2sqao")]
 position = Vector2(856, -48)
@@ -659,4 +659,3 @@ destination_label = "Fungus Cave"
 target_instance = ExtResource("24_2sqao")
 warper_id = 21
 target_id = 21
-required_level = 5

@@ -24,8 +24,10 @@
 [ext_resource type="Texture2D" uid="uid://cyxm7wgu1engl" path="res://assets/sprites/environment/overworld/wall_variations.png" id="24_wallvar"]
 [ext_resource type="Resource" uid="uid://bdg1wvajij76o" path="res://source/common/gameplay/characters/npc/npcs/woodland/warden_bren.tres" id="25_bren"]
 [ext_resource type="Resource" uid="uid://m6ronoxklq18" path="res://source/common/gameplay/characters/npc/npcs/woodland/hermit.tres" id="26_hermit"]
+[ext_resource type="Resource" uid="uid://dsvbif0isp6d5" path="res://source/common/gameplay/maps/components/mineable_nodes/flax.tres" id="27_lebv5"]
 [ext_resource type="Texture2D" uid="uid://c8hkbwyu84tec" path="res://assets/sprites/environment/overworld/water_tiles.png" id="27_water"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="28_hub"]
+[ext_resource type="Resource" uid="uid://g8rxlnr0pfyk" path="res://source/common/gameplay/maps/components/mineable_nodes/healing_herb.tres" id="28_svn3l"]
 
 [sub_resource type="TileSetAtlasSource" id="atlas_floor"]
 texture = ExtResource("1_floor")
@@ -793,24 +795,32 @@ npc_resource = ExtResource("26_hermit")
 
 [node name="FlaxNode1" parent="MineableNodes" unique_id=2095842344 instance=ExtResource("7_jiw8u")]
 position = Vector2(1160, 1432)
+data = ExtResource("27_lebv5")
 
 [node name="FlaxNode2" parent="MineableNodes" unique_id=1808363242 instance=ExtResource("7_jiw8u")]
 position = Vector2(1480, 904)
+data = ExtResource("27_lebv5")
 
 [node name="FlaxNode3" parent="MineableNodes" unique_id=1786895945 instance=ExtResource("7_jiw8u")]
 position = Vector2(1352, 808)
+data = ExtResource("27_lebv5")
 
 [node name="FlaxNode4" parent="MineableNodes" unique_id=1753408026 instance=ExtResource("7_jiw8u")]
 position = Vector2(712, 936)
+data = ExtResource("27_lebv5")
 
 [node name="HerbNode1" parent="MineableNodes" unique_id=841461525 instance=ExtResource("7_jiw8u")]
 position = Vector2(328, 840)
+data = ExtResource("28_svn3l")
 
 [node name="HerbNode2" parent="MineableNodes" unique_id=1153492261 instance=ExtResource("7_jiw8u")]
 position = Vector2(552, 1096)
+data = ExtResource("28_svn3l")
 
 [node name="HerbNode3" parent="MineableNodes" unique_id=216772927 instance=ExtResource("7_jiw8u")]
 position = Vector2(232, 584)
+data = ExtResource("28_svn3l")
 
 [node name="SecretHerbNode" parent="MineableNodes" unique_id=548743243 instance=ExtResource("7_jiw8u")]
 position = Vector2(2760, 680)
+data = ExtResource("28_svn3l")

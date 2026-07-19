@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="InstanceResource" format=3 uid="uid://c0m2t2hjlih2p"]
+
+[ext_resource type="Script" uid="uid://deqjrbn7hm53u" path="res://source/common/gameplay/maps/instance/instance_resource.gd" id="1_28xyy"]
+
+[resource]
+script = ExtResource("1_28xyy")
+instance_name = &"woodland"
+map_path = "uid://cewfj4jpiebos"
+zone_title = "Goblin Woodland"
+level_min = 1
+level_max = 5
+show_discovery = true
+metadata/_custom_type_script = "uid://deqjrbn7hm53u"

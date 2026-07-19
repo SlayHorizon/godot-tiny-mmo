@@ -39,6 +39,9 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		"spar_score": guild.spar_score,
 		"treasury": guild.treasury,
 		"hall_upgrades": _build_hall_upgrades(guild),
+		"territories": _build_territories(world_server, guild),
+		"owned_logos": Array(guild.owned_logos),
+		"logo_cost": GuildUpgrades.LOGO_COST,
 		"viewer_gold": Inventory.count(player.inventory, Economy.gold_id()),
 		"is_active": player.active_guild_id == guild.guild_id,
 	}
@@ -52,17 +55,34 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 
 
 ## Server-computed upgrade rows so the client just renders (no shared resolver
-## calls on a dict). One entry per catalog upgrade with current level + next cost.
+## calls on a dict). One entry per catalog upgrade with current level + next
+## cost + human-readable current/next effect (the "what do I get" line).
 func _build_hall_upgrades(guild: Guild) -> Array:
 	var out: Array = []
 	for uid: StringName in GuildUpgrades.CATALOG:
 		var entry: Dictionary = GuildUpgrades.CATALOG[uid]
+		var level: int = GuildUpgrades.level_of(guild, uid)
 		out.append({
 			"id": String(uid),
 			"name": str(entry.get("name", "?")),
 			"desc": str(entry.get("desc", "")),
-			"level": GuildUpgrades.level_of(guild, uid),
+			"level": level,
 			"max_level": GuildUpgrades.max_level(uid),
 			"next_cost": GuildUpgrades.cost_for_next(guild, uid),
+			"effect_now": GuildUpgrades.effect_line_at(uid, level),
+			"effect_next": GuildUpgrades.effect_line_at(uid, level + 1) if not GuildUpgrades.is_maxed(guild, uid) else "",
+		})
+	return out
+
+
+## The guild's current holdings: one entry per owned flag with the live guard
+## count, so the Hall can show what the Defender upgrades are actually doing.
+func _build_territories(world_server: WorldServer, guild: Guild) -> Array:
+	var out: Array = []
+	for flag: TerritoryFlag in BasingService.held_flags(world_server, guild.guild_id):
+		out.append({
+			"name": flag.territory_name,
+			"defenders": BasingService.alive_defender_count(flag),
+			"defender_cap": GuildUpgrades.defender_count(guild) if flag.defenders_enabled else 0,
 		})
 	return out

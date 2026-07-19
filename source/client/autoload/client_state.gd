@@ -143,11 +143,15 @@ func _on_combat_reward(data: Dictionary) -> void:
 		lines.append("+%d XP" % xp)
 	for entry: Dictionary in data.get("loot", []):
 		lines.append("Looted %d %s" % [int(entry.get("amount", 1)), str(entry.get("name", "item"))])
-	# Level-up + mastery are rare, high-value one-offs: give them their OWN card so
-	# a stream of coalescing kills can't refresh the moment away.
-	var big: PackedStringArray = PackedStringArray()
+	# Character level-up = the ceremony lane: a center-screen banner (the in-world
+	# flare + camera kick ride the level.up broadcast, not this push). Mastery
+	# stays a corner card — frequent enough that a banner would wear thin.
 	if int(data.get("levels_gained", 0)) > 0:
-		big.append("Level %d! +%d attribute points" % [int(data.get("level", 1)), int(data.get("points_gained", 0))])
+		Announcer.announce(
+			"Level %d" % int(data.get("level", 1)),
+			"+%d attribute points" % int(data.get("points_gained", 0))
+		)
+	var big: PackedStringArray = PackedStringArray()
 	var mastery: Dictionary = data.get("mastery", {})
 	if bool(mastery.get("started", false)):
 		big.append("%s Mastery begun! +1 mastery point (Character > Mastery)" % str(mastery.get("category", "")).capitalize())
@@ -157,7 +161,7 @@ func _on_combat_reward(data: Dictionary) -> void:
 			int(mastery.get("level", 1)),
 		])
 	if not big.is_empty():
-		Toaster.toast_group("Level Up!" if int(data.get("levels_gained", 0)) > 0 else "Mastery", big)
+		Toaster.toast_group("Mastery", big)
 
 	if lines.is_empty() and enemy_type.is_empty():
 		return  # Nothing to show.

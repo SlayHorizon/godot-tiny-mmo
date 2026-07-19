@@ -108,16 +108,16 @@ func _ready() -> void:
 	# Dungeon FAILED (hardcore wipe — revive pool spent): same recap menu, "failed" variant.
 	Client.subscribe(&"dungeon.failed", func(payload: Dictionary) -> void:
 		ClientState.open_menu_requested.emit(&"dungeon_recap", payload))
-	# Dungeon entered — a soft welcome toast so the run doesn't start abruptly.
+	# Dungeon entered — a center-screen banner so the run opens with weight.
 	Client.subscribe(&"dungeon.entered", func(payload: Dictionary) -> void:
-		Toaster.toast_group(
-			"Entered %s" % str(payload.get("dungeon", "the dungeon")),
-			PackedStringArray(["Clear each room. Defeat the boss to escape."]),
-			4.0))
-	# Boss enrage (dungeon phase 2): a red banner + camera shake so the escalation
-	# reads — see BossController._announce_enrage.
+		Announcer.announce(
+			str(payload.get("dungeon", "The dungeon")),
+			"Clear each room. Defeat the boss to escape.",
+			{"delay": 0.6}))
+	# Boss enrage (dungeon phase 2): a red center banner + camera shake so the
+	# escalation reads — see BossController._announce_enrage.
 	Client.subscribe(&"boss.enrage", func(payload: Dictionary) -> void:
-		Toaster.toast("%s enrages!" % str(payload.get("name", "The boss")), 3.0, PVP_TOAST_COLOR)
+		Announcer.announce("%s enrages!" % str(payload.get("name", "The boss")), "", {"color": PVP_TOAST_COLOR})
 		shake_camera(0.6))
 
 

@@ -1,9 +1,10 @@
 extends MenuShell
-## Guild menu (Phase 1) — MenuShell split view, replacing the old Navigator
-## stack. Left: your joined guilds (★ = active/tagged) + Create + Browse.
-## Right: the selected guild's detail with Profile / Members / Glory / Settings
-## sub-views. Browse / view / create / leave / edit are wired here; tag, invite,
-## kick and rank-change land in Phase 2 (see docs/guild.md).
+## Guild menu — one full-screen view (rework 2026-07-19, replacing the old
+## split view whose left column spent 40% width on a guild list most players
+## never switch). Title bar owns everything: guild SWITCHER dropdown on the
+## left (joined guilds + Create + Browse), Profile / Members / More section
+## tabs in the center, Tag + Close on the right. Content renders full width
+## in a centered column. Same layout grammar as guild_hall / mastery_tree.
 
 const LOGOS: Array[Texture2D] = [
 	preload("res://assets/sprites/guild_logos/wyvern.png"),
@@ -16,11 +17,17 @@ const COLOR_GOLD: Color = Color(1.0, 0.95, 0.75)
 const COLOR_SECTION: Color = Color(1.0, 0.85, 0.5)
 const COLOR_MUTED: Color = Color(0.75, 0.77, 0.83)
 
-var _left_list: VBoxContainer
-var _right_host: VBoxContainer
+## Content column width cap — full-width rows read poorly on wide screens.
+const COLUMN_WIDTH: float = 560.0
+
+var _content_host: PanelContainer
+var _switcher_button: Button
+var _tag_button: Button
+## section key (String) -> tab Button in the header bar.
+var _tab_buttons: Dictionary
 
 var _joined: Array
-## Name of the guild currently shown on the right ("" = none / a special view).
+## Name of the guild currently shown ("" = none / create / browse).
 var _selected_name: String
 var _section: String = "profile"
 ## Last guild.get payload for the selected guild.
@@ -34,8 +41,22 @@ var _external_view: bool = false
 
 
 func _ready() -> void:
-	build_shell("Guild", null, true)
-	_build_layout()
+	build_shell("", null, true)
+	# Frosted-glass backdrop + no inner panel, matching settings/inventory —
+	# content (rows, buttons) sits directly on the blurred world.
+	var blur: ShaderMaterial = ShaderMaterial.new()
+	blur.shader = load("res://source/client/ui/shared/menu_blur_backdrop.gdshader")
+	blur.set_shader_parameter(&"blur_lod", 2.5)
+	blur.set_shader_parameter(&"dim_color", Color(0.073365234, 0.08239203, 0.122337736, 0.55))
+	backdrop.material = blur
+	_build_header()
+
+	_content_host = PanelContainer.new()
+	_content_host.add_theme_stylebox_override(&"panel", StyleBoxEmpty.new())
+	_content_host.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_content_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content.add_child(_content_host)
+
 	visibility_changed.connect(func() -> void:
 		if visible:
 			_refresh())
@@ -51,35 +72,56 @@ func open(arg: Variant) -> void:
 		_select_guild(arg as String)
 
 
-func _build_layout() -> void:
-	var hbox: HBoxContainer = HBoxContainer.new()
-	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	hbox.add_theme_constant_override(&"separation", 12)
-	content.add_child(hbox)
+## Header bar widgets: switcher (far left, replaces the shell title), section
+## tabs (center slot), Tag button (right slot, before Close). The switcher is
+## the old left column folded into a dropdown — switching guilds is rare, so
+## it costs a tap instead of permanent screen width.
+func _build_header() -> void:
+	var header: HBoxContainer = header_center.get_parent() as HBoxContainer
 
-	var left_scroll: ScrollContainer = ScrollContainer.new()
-	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	left_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_scroll.size_flags_stretch_ratio = 0.65
-	hbox.add_child(left_scroll)
+	# True centering: the tabs sit between TWO equal expanders. The switcher
+	# must live INSIDE the left expander (mirroring Tag/Close inside
+	# header_right) — placed outside it, it shoves the tabs off center by half
+	# its own width. The shell's empty title label is hidden so it stops
+	# acting as a second left spacer.
+	for child: Node in header.get_children():
+		if child is Label:
+			(child as Label).visible = false
+			break
+	var left_box: HBoxContainer = HBoxContainer.new()
+	left_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(left_box)
+	header.move_child(left_box, 0)
 
-	_left_list = VBoxContainer.new()
-	_left_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_left_list.add_theme_constant_override(&"separation", 4)
-	left_scroll.add_child(_left_list)
+	_switcher_button = Button.new()
+	_switcher_button.custom_minimum_size = Vector2(0, 36)
+	_switcher_button.expand_icon = true
+	_switcher_button.add_theme_color_override(&"font_color", COLOR_GOLD)
+	_switcher_button.pressed.connect(_open_switcher)
+	left_box.add_child(_switcher_button)
 
-	_right_host = VBoxContainer.new()
-	_right_host.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_right_host.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_right_host.size_flags_stretch_ratio = 1.6
-	_right_host.add_theme_constant_override(&"separation", 8)
-	hbox.add_child(_right_host)
+	for s: Array in [["profile", "Profile"], ["members", "Members"], ["more", "More"]]:
+		var btn: Button = Button.new()
+		btn.text = s[1]
+		btn.theme_type_variation = &"SectionTab"
+		btn.toggle_mode = true
+		btn.custom_minimum_size = Vector2(96, 32)
+		btn.pressed.connect(_select_section.bind(str(s[0])))
+		header_center.add_child(btn)
+		_tab_buttons[s[0]] = btn
+
+	_tag_button = Button.new()
+	_tag_button.custom_minimum_size = Vector2(90, 34)
+	_tag_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_tag_button.tooltip_text = "Set this as your active guild (safe zone only)."
+	_tag_button.visible = false
+	_tag_button.pressed.connect(_on_tag_pressed)
+	header_right.add_child(_tag_button)
+	header_right.move_child(_tag_button, 0)
 
 
 # ---------------------------------------------------------------------------
-# Left column — joined guilds + Create / Browse
+# Data flow — joined guilds -> selected guild -> view
 # ---------------------------------------------------------------------------
 
 func _refresh() -> void:
@@ -88,7 +130,6 @@ func _refresh() -> void:
 
 func _on_joined(data: Dictionary) -> void:
 	_joined = data.get("guilds", [])
-	_rebuild_left()
 	# Viewing another player's guild (Show Guild): keep it shown, don't snap to
 	# the default. One-shot — a later refresh returns to normal behavior.
 	if _external_view:
@@ -99,62 +140,13 @@ func _on_joined(data: Dictionary) -> void:
 	if _selected_name != "":
 		_select_guild(_selected_name)
 	else:
-		_show_message("You're not in a guild yet.\nCreate one or browse to find others.")
-
-
-func _rebuild_left() -> void:
-	for child: Node in _left_list.get_children():
-		child.queue_free()
-
-	_left_list.add_child(_make_section_header("My Guilds"))
-	if _joined.is_empty():
-		var none: Label = Label.new()
-		none.text = "None yet"
-		none.modulate.a = 0.55
-		_left_list.add_child(none)
-	for g: Dictionary in _joined:
-		var gname: String = str(g.get("name", "?"))
-		var btn: Button = Button.new()
-		btn.toggle_mode = true
-		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.custom_minimum_size = Vector2(0, 40)
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.button_pressed = (gname == _selected_name)
-		btn.text = ("★ " if bool(g.get("is_active", false)) else "") + gname
-		btn.pressed.connect(_select_guild.bind(gname))
-		_left_list.add_child(btn)
-
-	_left_list.add_child(HSeparator.new())
-	_left_list.add_child(_make_left_action("+  Create guild", _show_create))
-	_left_list.add_child(_make_left_action("Browse", _show_browse))
-
-	# Touch/mouse drag-to-scroll for the joined-guilds list.
-	DragScroll.enable(_left_list.get_parent() as ScrollContainer)
-
-
-func _make_left_action(text: String, on_pressed: Callable) -> Button:
-	var btn: Button = Button.new()
-	btn.text = text
-	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn.custom_minimum_size = Vector2(0, 38)
-	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	btn.pressed.connect(on_pressed)
-	return btn
+		_guild = {}
+		_show_empty_state()
 
 
 func _select_guild(guild_name: String) -> void:
 	_selected_name = guild_name
-	_clear_left_selection()
-	for child: Node in _left_list.get_children():
-		if child is Button and (child as Button).toggle_mode:
-			(child as Button).button_pressed = (child as Button).text.ends_with(guild_name)
 	Client.request_data(&"guild.get", _on_guild_loaded, {"q": guild_name}, _inst())
-
-
-func _clear_left_selection() -> void:
-	for child: Node in _left_list.get_children():
-		if child is Button and (child as Button).toggle_mode:
-			(child as Button).button_pressed = false
 
 
 func _on_guild_loaded(data: Dictionary) -> void:
@@ -163,108 +155,127 @@ func _on_guild_loaded(data: Dictionary) -> void:
 		return
 	_guild = data
 	_section = "profile"
-	_rebuild_right()
+	_rebuild_view()
+
+
+## The switcher dropdown: joined guilds (★ = tagged), then Create / Browse.
+## Same overlay technique as the member-manage popup, anchored to the button.
+func _open_switcher() -> void:
+	var overlay: Control = Control.new()
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(overlay)
+
+	var dim: ColorRect = ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.04, 0.05, 0.08, 0.35)
+	dim.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.pressed:
+			overlay.queue_free())
+	overlay.add_child(dim)
+
+	var panel: PanelContainer = PanelContainer.new()
+	panel.custom_minimum_size = Vector2(240, 0)
+	panel.position = _switcher_button.global_position - global_position \
+		+ Vector2(0, _switcher_button.size.y + 4)
+	overlay.add_child(panel)
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override(&"separation", 2)
+	panel.add_child(box)
+
+	var pick: Callable = func(gname: String) -> void:
+		overlay.queue_free()
+		_select_guild(gname)
+
+	for g: Dictionary in _joined:
+		var gname: String = str(g.get("name", "?"))
+		var entry: Button = Button.new()
+		entry.text = ("★ " if bool(g.get("is_active", false)) else "") + gname
+		entry.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		entry.custom_minimum_size = Vector2(0, 38)
+		entry.toggle_mode = true
+		entry.button_pressed = (gname == _selected_name)
+		entry.pressed.connect(pick.bind(gname))
+		box.add_child(entry)
+	# A foreign guild being viewed (Show Guild) appears too, so the switcher
+	# always reflects what's on screen.
+	if _selected_name != "" and not _is_joined(_selected_name):
+		var viewing: Button = Button.new()
+		viewing.text = _selected_name + "   (viewing)"
+		viewing.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		viewing.custom_minimum_size = Vector2(0, 38)
+		viewing.toggle_mode = true
+		viewing.button_pressed = true
+		viewing.pressed.connect(pick.bind(_selected_name))
+		box.add_child(viewing)
+
+	box.add_child(HSeparator.new())
+	var create: Button = Button.new()
+	create.text = "+  Create guild"
+	create.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	create.custom_minimum_size = Vector2(0, 38)
+	create.pressed.connect(func() -> void:
+		overlay.queue_free()
+		_show_create())
+	box.add_child(create)
+	var browse: Button = Button.new()
+	browse.text = "Browse guilds"
+	browse.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	browse.custom_minimum_size = Vector2(0, 38)
+	browse.pressed.connect(func() -> void:
+		overlay.queue_free()
+		_show_browse())
+	box.add_child(browse)
 
 
 # ---------------------------------------------------------------------------
-# Right column — guild detail (header + section tabs + section content)
+# View dispatch — header state + active section into the content host
 # ---------------------------------------------------------------------------
 
-func _rebuild_right() -> void:
-	for child: Node in _right_host.get_children():
-		child.queue_free()
-
+func _rebuild_view() -> void:
 	var is_member: bool = bool(_guild.get("is_member", false))
 
-	# --- Header: logo + name/leader + tag toggle ---
-	var header: HBoxContainer = HBoxContainer.new()
-	header.add_theme_constant_override(&"separation", 12)
-	_right_host.add_child(header)
-
-	var logo: TextureRect = TextureRect.new()
-	logo.custom_minimum_size = Vector2(56, 56)
-	logo.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	logo.texture = _logo_for(int(_guild.get("logo_id", 0)))
-	header.add_child(logo)
-
-	var title_col: VBoxContainer = VBoxContainer.new()
-	title_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title_col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	header.add_child(title_col)
-
-	var name_label: Label = Label.new()
-	name_label.text = str(_guild.get("name", "?"))
-	name_label.add_theme_font_size_override(&"font_size", 20)
-	name_label.add_theme_color_override(&"font_color", COLOR_GOLD)
-	title_col.add_child(name_label)
-
-	var sub: Label = Label.new()
-	sub.text = "Leader: %s   ·   %d / %d members" % [
-		str(_guild.get("leader_name", "?")),
-		int(_guild.get("size", 0)),
-		int(_guild.get("max_members", Guild.MAX_MEMBERS)),
-	]
-	sub.add_theme_color_override(&"font_color", COLOR_MUTED)
-	sub.add_theme_font_size_override(&"font_size", 12)
-	title_col.add_child(sub)
-
-	if is_member:
-		var tag_button: Button = Button.new()
-		tag_button.text = "Untag" if bool(_guild.get("is_active", false)) else "Tag"
-		tag_button.custom_minimum_size = Vector2(90, 36)
-		tag_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		tag_button.tooltip_text = "Set this as your active guild (safe zone only)."
-		tag_button.pressed.connect(_on_tag_pressed)
-		header.add_child(tag_button)
-
-	_right_host.add_child(HSeparator.new())
-
-	# --- Section tabs. "Settings" is a sub-view of the "More" hub (which also
-	# holds future features), so the More tab stays highlighted while it shows. ---
-	var sections: Array = [["profile", "Profile"], ["members", "Members"]]
-	if is_member:
-		sections.append(["more", "More"])
-	# "settings" is a sub-view of the More hub — keep More highlighted while on it.
-	# (Guild Hall is a modal overlay, not a section.)
-	if _section != "settings" and not _section_exists(sections, _section):
+	# Non-members can't reach the More hub or its sub-views.
+	if not is_member and _section in ["more", "settings", "log"]:
 		_section = "profile"
-	var active_tab: String = "more" if _section == "settings" else _section
+	_update_header()
 
-	var section_bar: HBoxContainer = HBoxContainer.new()
-	section_bar.add_theme_constant_override(&"separation", 4)
-	_right_host.add_child(section_bar)
-	for s: Array in sections:
-		var btn: Button = Button.new()
-		btn.text = s[1]
-		btn.theme_type_variation = &"SectionTab"
-		btn.toggle_mode = true
-		btn.button_pressed = (s[0] == active_tab)
-		btn.custom_minimum_size = Vector2(0, 32)
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.pressed.connect(_select_section.bind(str(s[0])))
-		section_bar.add_child(btn)
-
-	# --- Section content ---
-	var area: PanelContainer = PanelContainer.new()
-	area.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	area.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_right_host.add_child(area)
-
+	for child: Node in _content_host.get_children():
+		child.queue_free()
 	match _section:
 		"members":
-			_view_members(area)
+			_view_members(_content_host)
 		"more":
-			_view_more(area)
+			_view_more(_content_host)
 		"settings":
-			_view_settings(area)
+			_view_settings(_content_host)
+		"log":
+			_view_log(_content_host)
 		_:
-			_view_profile(area)
+			_view_profile(_content_host)
+
+
+## Sync the title-bar widgets to the selected guild: switcher emblem + name,
+## tab visibility/highlight ("settings"/"log" keep More lit), Tag button text.
+func _update_header() -> void:
+	var has_guild: bool = _selected_name != "" and _guild.has("name")
+	var is_member: bool = bool(_guild.get("is_member", false))
+
+	_switcher_button.icon = _logo_for(int(_guild.get("logo_id", 0))) if has_guild else null
+	_switcher_button.text = ("%s  ▾" % _selected_name) if has_guild else "Guild  ▾"
+
+	var active_tab: String = "more" if _section in ["settings", "log"] else _section
+	for key: String in _tab_buttons:
+		var btn: Button = _tab_buttons[key]
+		btn.visible = has_guild and (key != "more" or is_member)
+		btn.button_pressed = has_guild and (key == active_tab)
+
+	_tag_button.visible = is_member
+	_tag_button.text = "Untag ★" if bool(_guild.get("is_active", false)) else "Tag"
 
 
 func _select_section(section: String) -> void:
 	_section = section
-	_rebuild_right()
+	_rebuild_view()
 
 
 ## Tag / untag the selected guild. The server gates it (safe zone + cooldown);
@@ -282,7 +293,8 @@ func _on_tag_pressed() -> void:
 func _view_profile(parent: Node) -> void:
 	var box: VBoxContainer = _padded(parent)
 
-	# Top: big logo on the left, description on the right.
+	# Identity row: logo + name / leader / member count / description. This
+	# used to live in the old right-column header — now it's the tab's content.
 	var top: HBoxContainer = HBoxContainer.new()
 	top.add_theme_constant_override(&"separation", 16)
 	box.add_child(top)
@@ -291,16 +303,37 @@ func _view_profile(parent: Node) -> void:
 	# EXPAND_IGNORE_SIZE pins the node to custom_minimum_size no matter how tall
 	# the row gets — a long description must never inflate the logo. SHRINK_CENTER
 	# keeps the HBox from stretching it vertically.
-	big_logo.custom_minimum_size = Vector2(120, 120)
+	big_logo.custom_minimum_size = Vector2(96, 96)
 	big_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	big_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	big_logo.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	big_logo.texture = _logo_for(int(_guild.get("logo_id", 0)))
 	top.add_child(big_logo)
 
+	var id_col: VBoxContainer = VBoxContainer.new()
+	id_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	id_col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	top.add_child(id_col)
+
+	var name_label: Label = Label.new()
+	name_label.text = str(_guild.get("name", "?"))
+	name_label.add_theme_font_size_override(&"font_size", 20)
+	name_label.add_theme_color_override(&"font_color", COLOR_GOLD)
+	id_col.add_child(name_label)
+
+	var sub: Label = Label.new()
+	sub.text = "Leader: %s   ·   %d / %d members" % [
+		str(_guild.get("leader_name", "?")),
+		int(_guild.get("size", 0)),
+		int(_guild.get("max_members", Guild.MAX_MEMBERS)),
+	]
+	sub.add_theme_color_override(&"font_color", COLOR_MUTED)
+	sub.add_theme_font_size_override(&"font_size", 12)
+	id_col.add_child(sub)
+
 	var desc: String = str(_guild.get("description", ""))
-	# RichTextLabel with fit_content OFF: fixed-height box (matches the logo) that
-	# scrolls internally when the text overflows — the row's size is CONSTANT
+	# RichTextLabel with fit_content OFF: fixed-height box that scrolls
+	# internally when the text overflows — the row's size is CONSTANT
 	# regardless of description length. Also immune to the autowrap-Label-in-HBox
 	# min-size oscillation that used to hard-crash this view. bbcode stays OFF —
 	# descriptions are player-written, no tag injection.
@@ -308,12 +341,11 @@ func _view_profile(parent: Node) -> void:
 	desc_label.bbcode_enabled = true
 	desc_label.fit_content = false
 	desc_label.scroll_active = true
-	desc_label.custom_minimum_size = Vector2(0, 120)
+	desc_label.custom_minimum_size = Vector2(0, 64)
 	desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	desc_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	desc_label.text = desc if not desc.is_empty() else "No description."
 	desc_label.add_theme_color_override(&"default_color", COLOR_MUTED)
-	top.add_child(desc_label)
+	id_col.add_child(desc_label)
 
 	box.add_child(HSeparator.new())
 
@@ -335,15 +367,8 @@ func _view_profile(parent: Node) -> void:
 
 
 func _view_members(parent: Node) -> void:
-	var scroll: ScrollContainer = ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	parent.add_child(scroll)
-	var vbox: VBoxContainer = VBoxContainer.new()
-	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var vbox: VBoxContainer = _padded(parent)
 	vbox.add_theme_constant_override(&"separation", 4)
-	scroll.add_child(vbox)
 	Client.request_data(&"guild.get.members", func(data: Dictionary) -> void:
 		_fill_members(vbox, data), {"q": _selected_name}, _inst())
 
@@ -386,9 +411,6 @@ func _fill_members(vbox: VBoxContainer, data: Dictionary) -> void:
 		hbox.add_child(name_label)
 
 		vbox.add_child(row)
-
-	# Touch/mouse drag-to-scroll for the member roster.
-	DragScroll.enable(vbox.get_parent() as ScrollContainer)
 
 
 func _on_member_clicked(member: Dictionary) -> void:
@@ -481,6 +503,17 @@ func _open_member_popup(member: Dictionary) -> void:
 	profile_btn.pressed.connect(func() -> void:
 		ClientState.player_profile_requested.emit(member_id))
 	left.add_child(profile_btn)
+
+	# Leader-only: hand the guild over (any member, even offline — see
+	# docs/guild.md). Confirmed in a follow-up dialog.
+	if bool(viewer.get("is_leader", false)):
+		var crown: Button = Button.new()
+		crown.text = "Make leader"
+		crown.custom_minimum_size = Vector2(0, 36)
+		crown.pressed.connect(func() -> void:
+			overlay.queue_free()
+			_confirm_transfer(member))
+		left.add_child(crown)
 
 	if can_rank:
 		left.add_child(_make_section_header("Change rank"))
@@ -601,7 +634,7 @@ func _refresh_current() -> void:
 	Client.request_data(&"guild.get", func(data: Dictionary) -> void:
 		if data.has("name"):
 			_guild = data
-			_rebuild_right(),
+			_rebuild_view(),
 		{"q": _selected_name}, _inst())
 
 
@@ -609,7 +642,11 @@ func _refresh_current() -> void:
 ## live; the rest are placeholders that signal the roadmap (see docs/guild.md).
 func _view_more(parent: Node) -> void:
 	var box: VBoxContainer = _padded(parent)
-	box.add_child(_more_entry("Guild Hall", true, func() -> void: _open_hall_panel()))
+	# Guild Hall is its own full-screen menu now (mastery-tree pattern), not a
+	# modal — it layers over this menu and closes back to it.
+	box.add_child(_more_entry("Guild Hall", true, func() -> void:
+		ClientState.open_menu_requested.emit(&"guild_hall", _selected_name)))
+	box.add_child(_more_entry("Log", true, func() -> void: _select_section("log")))
 	box.add_child(_more_entry("Settings", true, func() -> void: _select_section("settings")))
 	box.add_child(_more_entry("Trophies", false, Callable()))
 	box.add_child(_more_entry("Allies", false, Callable()))
@@ -618,11 +655,19 @@ func _view_more(parent: Node) -> void:
 	box.add_child(HSeparator.new())
 	if bool(_guild.get("is_leader", false)):
 		var leader_note: Label = Label.new()
-		leader_note.text = "As the leader, you can't leave (disband/transfer comes later)."
+		leader_note.text = "To hand off leadership, open a member on the Members tab and choose Make Leader."
 		leader_note.modulate.a = 0.55
 		leader_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		leader_note.add_theme_font_size_override(&"font_size", 12)
 		box.add_child(leader_note)
+		var disband: Button = Button.new()
+		disband.text = "Disband guild"
+		disband.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		disband.custom_minimum_size = Vector2(0, 42)
+		disband.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		disband.add_theme_color_override(&"font_color", Color(0.95, 0.6, 0.55))
+		disband.pressed.connect(_confirm_disband)
+		box.add_child(disband)
 	else:
 		var leave: Button = Button.new()
 		leave.text = "Leave guild"
@@ -646,279 +691,87 @@ func _more_entry(text: String, enabled: bool, on_pressed: Callable) -> Button:
 	return btn
 
 
-# Live references into the open Guild Hall modal, so a buy/deposit updates these
-# widgets IN PLACE instead of closing + reopening the modal (which flickered and
-# reset the scroll position).
-var _hall_balance_label: Label
-var _hall_caps_label: Label
-var _hall_gold_label: Label
-var _hall_deposit_spin: SpinBox
-var _hall_rows: Dictionary # upgrade id (String) -> {"title": Label, "buy": Button}
+## The guild event log (members only): joins, leaves, kicks, ranks, deposits,
+## upgrade buys, territory captures/losses. Newest first, server-formatted text.
+func _view_log(parent: Node) -> void:
+	var box: VBoxContainer = _padded(parent)
 
-
-## Opens the Guild Hall as a focused modal (like the member popup) so treasury,
-## deposit, and the upgrade list have room instead of cramping the side panel.
-## Buy/deposit refresh the widgets in place (see _refresh_hall_in_place).
-func _open_hall_panel() -> void:
-	var overlay: Control = Control.new()
-	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(overlay)
-
-	var dim: ColorRect = ColorRect.new()
-	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	dim.color = Color(0.04, 0.05, 0.08, 0.6)
-	dim.gui_input.connect(func(event: InputEvent) -> void:
-		if event is InputEventMouseButton and event.pressed:
-			overlay.queue_free())
-	overlay.add_child(dim)
-
-	var center: CenterContainer = CenterContainer.new()
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay.add_child(center)
-
-	var card: PanelContainer = PanelContainer.new()
-	card.custom_minimum_size = Vector2(660, 0)
-	center.add_child(card)
-	var pad: MarginContainer = MarginContainer.new()
-	for side: String in ["left", "right", "top", "bottom"]:
-		pad.add_theme_constant_override("margin_" + side, 16)
-	card.add_child(pad)
-	var box: VBoxContainer = VBoxContainer.new()
-	box.add_theme_constant_override(&"separation", 10)
-	pad.add_child(box)
-
-	# Header: title + Close.
-	var header: HBoxContainer = HBoxContainer.new()
-	box.add_child(header)
-	var title: Label = Label.new()
-	title.text = "Guild Hall"
-	title.add_theme_font_size_override(&"font_size", 20)
-	title.add_theme_color_override(&"font_color", COLOR_GOLD)
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(title)
-	var close: Button = Button.new()
-	close.text = "Close"
-	close.pressed.connect(func() -> void: overlay.queue_free())
-	header.add_child(close)
+	var back: Button = Button.new()
+	back.text = "←  More"
+	back.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	back.pressed.connect(func() -> void: _select_section("more"))
+	box.add_child(back)
 	box.add_child(HSeparator.new())
+	box.add_child(_make_section_header("Guild Log"))
 
-	# Two columns so the panel stays short in Y: left treasury/deposit, right upgrades.
-	var cols: HBoxContainer = HBoxContainer.new()
-	cols.add_theme_constant_override(&"separation", 18)
-	box.add_child(cols)
+	var list: VBoxContainer = VBoxContainer.new()
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list.add_theme_constant_override(&"separation", 4)
+	box.add_child(list)
 
-	# --- Left: treasury + deposit ---
-	var left: VBoxContainer = VBoxContainer.new()
-	left.custom_minimum_size = Vector2(250, 0)
-	left.add_theme_constant_override(&"separation", 6)
-	cols.add_child(left)
-
-	left.add_child(_make_section_header("Treasury"))
-	var balance: Label = Label.new()
-	balance.text = "%d  Guild Funds" % int(_guild.get("treasury", 0))
-	balance.add_theme_font_size_override(&"font_size", 22)
-	balance.add_theme_color_override(&"font_color", COLOR_GOLD)
-	left.add_child(balance)
-	_hall_balance_label = balance
-
-	var caps: Label = Label.new()
-	caps.text = "Tag cap: %d online\nRoster: %d / %d" % [
-		int(_guild.get("tag_cap", 15)), int(_guild.get("size", 0)), int(_guild.get("max_members", 25))]
-	caps.add_theme_color_override(&"font_color", COLOR_MUTED)
-	caps.add_theme_font_size_override(&"font_size", 12)
-	left.add_child(caps)
-	_hall_caps_label = caps
-
-	left.add_child(HSeparator.new())
-	left.add_child(_make_section_header("Deposit gold"))
-	var gold: int = int(_guild.get("viewer_gold", 0))
-	var gold_label: Label = Label.new()
-	gold_label.text = "You have %d gold" % gold
-	gold_label.add_theme_color_override(&"font_color", COLOR_MUTED)
-	gold_label.add_theme_font_size_override(&"font_size", 12)
-	left.add_child(gold_label)
-	_hall_gold_label = gold_label
-
-	var dep_row: HBoxContainer = HBoxContainer.new()
-	dep_row.add_theme_constant_override(&"separation", 8)
-	left.add_child(dep_row)
-	var amount_field: SpinBox = SpinBox.new()
-	amount_field.min_value = 0
-	amount_field.max_value = maxi(gold, 0)
-	amount_field.value = mini(100, gold)
-	amount_field.step = 10
-	amount_field.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	dep_row.add_child(amount_field)
-	_hall_deposit_spin = amount_field
-	var deposit: Button = Button.new()
-	deposit.text = "Deposit"
-	deposit.disabled = gold <= 0
-	deposit.pressed.connect(func() -> void:
-		_deposit_treasury(int(amount_field.value)))
-	dep_row.add_child(deposit)
-
-	# --- Right: upgrades ---
-	var right: VBoxContainer = VBoxContainer.new()
-	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.add_theme_constant_override(&"separation", 6)
-	cols.add_child(right)
-	right.add_child(_make_section_header("Upgrades"))
-
-	var scroll: ScrollContainer = ScrollContainer.new()
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.custom_minimum_size = Vector2(330, 300)
-	right.add_child(scroll)
-	var ups_box: VBoxContainer = VBoxContainer.new()
-	ups_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ups_box.add_theme_constant_override(&"separation", 6)
-	scroll.add_child(ups_box)
-
-	var perms: int = int(_guild.get("permissions", 0))
-	var can_upgrade: bool = (perms & Guild.Permissions.EDIT) != 0
-	var treasury: int = int(_guild.get("treasury", 0))
-	_hall_rows = {}
-	for up: Dictionary in _guild.get("hall_upgrades", []):
-		ups_box.add_child(_upgrade_row(up, can_upgrade, treasury))
-
-	if not can_upgrade:
-		var note: Label = Label.new()
-		note.text = "Only members with the Edit permission can buy upgrades."
-		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		note.add_theme_color_override(&"font_color", COLOR_MUTED)
-		note.add_theme_font_size_override(&"font_size", 11)
-		right.add_child(note)
+	Client.request_data(&"guild.log.get", func(data: Dictionary) -> void:
+		_fill_log(list, data), {"q": _selected_name}, _inst())
 
 
-## One Guild Hall upgrade row: name + level, description, and a Buy button
-## (disabled if maxed, unaffordable, or the viewer lacks the Edit permission).
-## Registers its title/buy into _hall_rows so it can be refreshed in place.
-func _upgrade_row(up: Dictionary, can_upgrade: bool, treasury: int) -> Control:
-	var panel: PanelContainer = PanelContainer.new()
-	var pad: MarginContainer = MarginContainer.new()
-	for side: String in ["left", "right", "top", "bottom"]:
-		pad.add_theme_constant_override("margin_" + side, 8)
-	panel.add_child(pad)
-	var row: HBoxContainer = HBoxContainer.new()
-	row.add_theme_constant_override(&"separation", 10)
-	pad.add_child(row)
-
-	var info: VBoxContainer = VBoxContainer.new()
-	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(info)
-
-	var title: Label = Label.new()
-	title.add_theme_color_override(&"font_color", COLOR_GOLD)
-	info.add_child(title)
-
-	var desc: Label = Label.new()
-	desc.text = str(up.get("desc", ""))
-	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc.add_theme_color_override(&"font_color", COLOR_MUTED)
-	desc.add_theme_font_size_override(&"font_size", 11)
-	info.add_child(desc)
-
-	var uid: String = str(up.get("id", ""))
-	var buy: Button = Button.new()
-	buy.custom_minimum_size = Vector2(120, 36)
-	buy.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	buy.pressed.connect(func() -> void: _buy_upgrade(uid))
-	row.add_child(buy)
-
-	_hall_rows[uid] = {"title": title, "buy": buy}
-	# Title + buy state are filled by the shared updater (also used on refresh).
-	_update_upgrade_row(_hall_rows[uid], up, can_upgrade, treasury)
-	return panel
-
-
-## Set a row's title + buy-button state from an upgrade entry. Used both at build
-## time and when refreshing the modal in place.
-func _update_upgrade_row(refs: Dictionary, up: Dictionary, can_upgrade: bool, treasury: int) -> void:
-	var title: Label = refs.get("title")
-	var buy: Button = refs.get("buy")
-	if is_instance_valid(title):
-		title.text = "%s   (Lv %d / %d)" % [
-			str(up.get("name", "?")), int(up.get("level", 0)), int(up.get("max_level", 0))]
-	if not is_instance_valid(buy):
+func _fill_log(list: VBoxContainer, data: Dictionary) -> void:
+	if not is_instance_valid(list):
 		return
-	var next_cost: int = int(up.get("next_cost", -1))
-	if next_cost < 0:
-		buy.text = "Maxed"
-		buy.disabled = true
-		buy.tooltip_text = ""
-	else:
-		buy.text = "Buy (%d)" % next_cost
-		buy.disabled = not can_upgrade or treasury < next_cost
-		buy.tooltip_text = "Not enough Guild Funds." if (can_upgrade and treasury < next_cost) else ""
-
-
-## Buy the next level of a Guild Hall upgrade. Server gates permission + cost;
-## on success the open modal is refreshed in place (no flicker / scroll reset).
-func _buy_upgrade(upgrade_id: String) -> void:
-	if upgrade_id.is_empty():
+	var entries: Array = data.get("entries", [])
+	if not bool(data.get("ok", false)) or entries.is_empty():
+		var none: Label = Label.new()
+		none.text = "Nothing logged yet."
+		none.modulate.a = 0.55
+		none.add_theme_font_size_override(&"font_size", 12)
+		list.add_child(none)
 		return
-	Client.request_data(&"guild.hall.upgrade", func(data: Dictionary) -> void:
-		if not bool(data.get("ok", false)):
-			Toaster.toast(str(data.get("message", "Couldn't upgrade.")))
-			return
-		Toaster.toast("%s upgraded to Lv %d." % [
-			str(data.get("upgrade", "Upgrade")), int(data.get("level", 0))])
-		_refresh_hall_in_place(),
-		{"id": int(_guild.get("id", 0)), "upgrade": upgrade_id}, _inst())
+	for entry: Dictionary in entries:
+		var row: HBoxContainer = HBoxContainer.new()
+		row.add_theme_constant_override(&"separation", 10)
+		list.add_child(row)
+
+		var when: Label = Label.new()
+		when.text = _time_ago(int(entry.get("time_ms", 0)))
+		when.custom_minimum_size = Vector2(52, 0)
+		when.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		when.add_theme_color_override(&"font_color", COLOR_MUTED)
+		when.add_theme_font_size_override(&"font_size", 11)
+		row.add_child(when)
+
+		var text: Label = Label.new()
+		text.text = str(entry.get("text", ""))
+		text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		text.add_theme_font_size_override(&"font_size", 12)
+		row.add_child(text)
 
 
-## Deposit [param amount] gold into the active guild's treasury. Server gates it
-## (membership + gold balance); on success the open modal is refreshed in place.
-func _deposit_treasury(amount: int) -> void:
-	if amount <= 0:
-		return
-	Client.request_data(&"guild.treasury.deposit", func(data: Dictionary) -> void:
-		if not bool(data.get("ok", false)):
-			Toaster.toast(str(data.get("message", "Couldn't deposit.")))
-			return
-		Toaster.toast("Deposited %d to the treasury." % int(data.get("deposited", amount)))
-		_refresh_hall_in_place(),
-		{"id": int(_guild.get("id", 0)), "amount": amount}, _inst())
-
-
-## Re-fetch the guild and update the open Hall modal's widgets IN PLACE — no
-## close/reopen, so no flicker and the scroll position is preserved. Also quietly
-## rebuilds the side panel behind the overlay (member count etc. may have changed).
-func _refresh_hall_in_place() -> void:
-	if _selected_name == "":
-		return
-	Client.request_data(&"guild.get", func(data: Dictionary) -> void:
-		if not data.has("name"):
-			return
-		_guild = data
-		_rebuild_right()
-		_hall_apply_data(),
-		{"q": _selected_name}, _inst())
-
-
-## Push current _guild data into the open Hall widgets. Safe if the modal was
-## closed in the meantime (every write guards on is_instance_valid).
-func _hall_apply_data() -> void:
-	if is_instance_valid(_hall_balance_label):
-		_hall_balance_label.text = "%d  Guild Funds" % int(_guild.get("treasury", 0))
-	if is_instance_valid(_hall_caps_label):
-		_hall_caps_label.text = "Tag cap: %d online\nRoster: %d / %d" % [
-			int(_guild.get("tag_cap", 15)), int(_guild.get("size", 0)), int(_guild.get("max_members", 25))]
-	var gold: int = int(_guild.get("viewer_gold", 0))
-	if is_instance_valid(_hall_gold_label):
-		_hall_gold_label.text = "You have %d gold" % gold
-	if is_instance_valid(_hall_deposit_spin):
-		_hall_deposit_spin.max_value = maxi(gold, 0)
-	var can_upgrade: bool = (int(_guild.get("permissions", 0)) & Guild.Permissions.EDIT) != 0
-	var treasury: int = int(_guild.get("treasury", 0))
-	for up: Dictionary in _guild.get("hall_upgrades", []):
-		var id: String = str(up.get("id", ""))
-		if _hall_rows.has(id):
-			_update_upgrade_row(_hall_rows[id], up, can_upgrade, treasury)
+## Compact "how long ago" for log rows ("now", "5m", "3h", "12d").
+func _time_ago(unix_ms: int) -> String:
+	if unix_ms <= 0:
+		return ""
+	@warning_ignore("integer_division")
+	var secs: int = maxi(0, int(Time.get_unix_time_from_system()) - unix_ms / 1000)
+	if secs < 60:
+		return "now"
+	if secs < 3600:
+		@warning_ignore("integer_division")
+		return "%dm" % (secs / 60)
+	if secs < 86400:
+		@warning_ignore("integer_division")
+		return "%dh" % (secs / 3600)
+	@warning_ignore("integer_division")
+	return "%dd" % (secs / 86400)
 
 
 func _view_settings(parent: Node) -> void:
-	var box: VBoxContainer = _padded(parent)
+	# Scrollable fields on top, Save PINNED in a bottom bar outside the scroll —
+	# it can never scroll off screen again (the old layout needed scrolling to
+	# reach Save even on desktop).
+	var outer: VBoxContainer = VBoxContainer.new()
+	outer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	outer.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	parent.add_child(outer)
+	var box: VBoxContainer = _padded(outer)
 
 	var back: Button = Button.new()
 	back.text = "←  More"
@@ -961,6 +814,9 @@ func _view_settings(parent: Node) -> void:
 		logo_normal.set_border_width_all(1)
 		logo_normal.border_color = Color(0, 0, 0, 0.4)
 		logo_normal.set_corner_radius_all(4)
+		# Only owned emblems are selectable — the rest unlock in the Guild Hall
+		# Cosmetics tab (guild.edit rejects unowned ids server-side anyway).
+		var owned_logos: Array = _guild.get("owned_logos", [0])
 		for i: int in LOGOS.size():
 			var logo_btn: Button = Button.new()
 			logo_btn.toggle_mode = true
@@ -974,18 +830,32 @@ func _view_settings(parent: Node) -> void:
 			logo_btn.add_theme_stylebox_override(&"hover", logo_normal)
 			logo_btn.add_theme_stylebox_override(&"pressed", logo_selected)
 			logo_btn.add_theme_stylebox_override(&"hover_pressed", logo_selected)
+			if not owned_logos.has(i):
+				logo_btn.disabled = true
+				logo_btn.tooltip_text = "Unlock in the Guild Hall."
 			logo_row.add_child(logo_btn)
 
+		var unlock_hint: Label = Label.new()
+		unlock_hint.text = "Dimmed emblems unlock in the Guild Hall."
+		unlock_hint.add_theme_color_override(&"font_color", COLOR_MUTED)
+		unlock_hint.add_theme_font_size_override(&"font_size", 11)
+		box.add_child(unlock_hint)
+
+		# Pinned bottom bar — attached to the outer VBox, below the scroll.
+		outer.add_child(HSeparator.new())
+		var save_bar: HBoxContainer = HBoxContainer.new()
+		save_bar.alignment = BoxContainer.ALIGNMENT_END
+		outer.add_child(save_bar)
 		var save: Button = Button.new()
 		save.text = "Save changes"
-		save.custom_minimum_size = Vector2(0, 36)
+		save.custom_minimum_size = Vector2(160, 38)
 		save.pressed.connect(func() -> void:
 			var logo_id: int = current_logo
 			var pressed: Button = logo_group.get_pressed_button()
 			if pressed != null:
 				logo_id = int(pressed.get_meta(&"logo_id"))
 			_save_guild_edits(edit.text, logo_id))
-		box.add_child(save)
+		save_bar.add_child(save)
 	else:
 		var hint: Label = Label.new()
 		hint.text = "You don't have permission to edit the guild."
@@ -1000,10 +870,12 @@ func _view_settings(parent: Node) -> void:
 
 func _show_create() -> void:
 	_selected_name = ""
-	_clear_left_selection()
-	for child: Node in _right_host.get_children():
+	_guild = {}
+	_section = "create"
+	_update_header()
+	for child: Node in _content_host.get_children():
 		child.queue_free()
-	var box: VBoxContainer = _padded(_right_host)
+	var box: VBoxContainer = _padded(_content_host)
 
 	box.add_child(_make_title("Create your own guild"))
 
@@ -1042,10 +914,12 @@ func _show_create() -> void:
 
 func _show_browse() -> void:
 	_selected_name = ""
-	_clear_left_selection()
-	for child: Node in _right_host.get_children():
+	_guild = {}
+	_section = "browse"
+	_update_header()
+	for child: Node in _content_host.get_children():
 		child.queue_free()
-	var box: VBoxContainer = _padded(_right_host)
+	var box: VBoxContainer = _padded(_content_host)
 
 	box.add_child(_make_title("Browse guilds"))
 
@@ -1108,12 +982,142 @@ func _leave_guild() -> void:
 		{"guild_name": leaving}, _inst())
 
 
+## Yes/no confirm before handing leadership over. A plain dialog is enough —
+## the new leader can always hand it back (unlike disband).
+func _confirm_transfer(member: Dictionary) -> void:
+	var target_name: String = str(member.get("name", "?"))
+	var target_id: int = int(member.get("id", 0))
+	var card: VBoxContainer = _confirm_card("Hand leadership of %s to %s?" % [_selected_name, target_name])
+
+	var body: Label = Label.new()
+	body.text = "You keep your rank but lose leader powers. Only %s can hand them back." % target_name
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_theme_color_override(&"font_color", COLOR_MUTED)
+	body.add_theme_font_size_override(&"font_size", 13)
+	card.add_child(body)
+
+	_confirm_buttons(card, "Transfer leadership", true, func() -> void:
+		Client.request_data(&"guild.transfer", func(data: Dictionary) -> void:
+			Toaster.toast(str(data.get("message", "Done.")))
+			_refresh(),
+			{"guild_name": _selected_name, "target_id": target_id}, _inst()))
+
+
+## Type-the-guild-name confirm before disband — it's permanent (members
+## removed, territories released, treasury and log deleted).
+func _confirm_disband() -> void:
+	var disbanding: String = _selected_name
+	var card: VBoxContainer = _confirm_card("Disband %s?" % disbanding)
+
+	var body: Label = Label.new()
+	body.text = "This is permanent. Every member is removed, held territories are released, and the treasury and log are lost."
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_theme_color_override(&"font_color", COLOR_MUTED)
+	body.add_theme_font_size_override(&"font_size", 13)
+	card.add_child(body)
+
+	var prompt: Label = Label.new()
+	prompt.text = "Type the guild name to confirm:"
+	prompt.add_theme_font_size_override(&"font_size", 12)
+	card.add_child(prompt)
+	var confirm_edit: LineEdit = LineEdit.new()
+	confirm_edit.placeholder_text = disbanding
+	card.add_child(confirm_edit)
+
+	var confirm_btn: Button = _confirm_buttons(card, "Disband forever", false, func() -> void:
+		Client.request_data(&"guild.disband", func(data: Dictionary) -> void:
+			if not bool(data.get("ok", false)):
+				Toaster.toast(str(data.get("message", "Couldn't disband.")))
+				return
+			Toaster.toast("Guild disbanded.")
+			_selected_name = ""
+			_guild = {}
+			_refresh(),
+			{"guild_name": disbanding, "confirm": confirm_edit.text.strip_edges()}, _inst()))
+	confirm_edit.text_changed.connect(func(text: String) -> void:
+		confirm_btn.disabled = text.strip_edges() != disbanding)
+
+
+## Builds a centered modal confirm card (dim closes it) and returns its VBox
+## for content. Pair with _confirm_buttons for the action row.
+func _confirm_card(title_text: String) -> VBoxContainer:
+	var overlay: Control = Control.new()
+	overlay.name = "ConfirmOverlay"
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(overlay)
+
+	var dim: ColorRect = ColorRect.new()
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.color = Color(0.04, 0.05, 0.08, 0.6)
+	dim.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventMouseButton and event.pressed:
+			overlay.queue_free())
+	overlay.add_child(dim)
+
+	var center: CenterContainer = CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_child(center)
+
+	var panel: PanelContainer = PanelContainer.new()
+	panel.custom_minimum_size = Vector2(420, 0)
+	center.add_child(panel)
+	var pad: MarginContainer = MarginContainer.new()
+	for side: String in ["left", "right", "top", "bottom"]:
+		pad.add_theme_constant_override("margin_" + side, 14)
+	panel.add_child(pad)
+	var box: VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override(&"separation", 10)
+	pad.add_child(box)
+
+	var title: Label = Label.new()
+	title.text = title_text
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.add_theme_font_size_override(&"font_size", 17)
+	title.add_theme_color_override(&"font_color", COLOR_GOLD)
+	box.add_child(title)
+	# Direct overlay ref for _confirm_buttons — walking get_parent() chains to
+	# find it is how a menu accidentally frees itself.
+	box.set_meta(&"overlay", overlay)
+	return box
+
+
+## Adds the Cancel / red-confirm row to a _confirm_card. Returns the confirm
+## button (so a caller can gate it, e.g. type-to-confirm). Confirm also closes
+## the card before running [param on_confirm].
+func _confirm_buttons(card: VBoxContainer, confirm_label: String, start_enabled: bool, on_confirm: Callable) -> Button:
+	card.add_child(HSeparator.new())
+	var row: HBoxContainer = HBoxContainer.new()
+	row.add_theme_constant_override(&"separation", 8)
+	card.add_child(row)
+
+	var overlay: Node = card.get_meta(&"overlay")
+	var cancel: Button = Button.new()
+	cancel.text = "Cancel"
+	cancel.custom_minimum_size = Vector2(0, 38)
+	cancel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cancel.pressed.connect(func() -> void: overlay.queue_free())
+	row.add_child(cancel)
+
+	var confirm: Button = Button.new()
+	confirm.text = confirm_label
+	confirm.custom_minimum_size = Vector2(0, 38)
+	confirm.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	confirm.disabled = not start_enabled
+	confirm.add_theme_color_override(&"font_color", Color(0.95, 0.6, 0.55))
+	confirm.pressed.connect(func() -> void:
+		overlay.queue_free()
+		on_confirm.call())
+	row.add_child(confirm)
+	return confirm
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 func _show_message(text: String) -> void:
-	for child: Node in _right_host.get_children():
+	for child: Node in _content_host.get_children():
 		child.queue_free()
 	var label: Label = Label.new()
 	label.text = text
@@ -1122,12 +1126,51 @@ func _show_message(text: String) -> void:
 	label.modulate.a = 0.6
 	label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_right_host.add_child(label)
+	_content_host.add_child(label)
 
 
-## Adds a padded, SCROLLING VBox under [param parent] and returns it for content.
-## The scroll is essential: without it a tall section (e.g. More, or a long
-## description) grows the whole card past the screen edge.
+## Guildless onboarding: big Create / Browse actions front and center instead
+## of a bare "you're not in a guild" message.
+func _show_empty_state() -> void:
+	_section = "empty"
+	_update_header()
+	for child: Node in _content_host.get_children():
+		child.queue_free()
+	var center: CenterContainer = CenterContainer.new()
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_content_host.add_child(center)
+	var box: VBoxContainer = VBoxContainer.new()
+	box.custom_minimum_size = Vector2(320, 0)
+	box.add_theme_constant_override(&"separation", 10)
+	center.add_child(box)
+
+	var title: Label = _make_title("No guild yet")
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(title)
+	var sub: Label = Label.new()
+	sub.text = "Found your own or find one to join."
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.add_theme_color_override(&"font_color", COLOR_MUTED)
+	sub.add_theme_font_size_override(&"font_size", 13)
+	box.add_child(sub)
+
+	var create: Button = Button.new()
+	create.text = "Create guild  (%d gold)" % Guild.CREATION_COST
+	create.custom_minimum_size = Vector2(0, 44)
+	create.pressed.connect(_show_create)
+	box.add_child(create)
+	var browse: Button = Button.new()
+	browse.text = "Browse guilds"
+	browse.custom_minimum_size = Vector2(0, 44)
+	browse.pressed.connect(_show_browse)
+	box.add_child(browse)
+
+
+## Adds a padded, SCROLLING, width-capped centered VBox under [param parent]
+## and returns it for content. The scroll is essential: without it a tall
+## section grows past the screen edge. The COLUMN_WIDTH cap keeps full-width
+## sections readable on wide screens (rows don't stretch edge to edge).
 func _padded(parent: Node) -> VBoxContainer:
 	var scroll: ScrollContainer = ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -1140,9 +1183,11 @@ func _padded(parent: Node) -> VBoxContainer:
 		margin.add_theme_constant_override("margin_" + side, 12)
 	scroll.add_child(margin)
 	var box: VBoxContainer = VBoxContainer.new()
-	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.custom_minimum_size = Vector2(COLUMN_WIDTH, 0)
+	box.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	box.add_theme_constant_override(&"separation", 8)
 	margin.add_child(box)
+	DragScroll.enable(scroll)
 	return box
 
 
@@ -1188,13 +1233,6 @@ func _make_section_header(text: String) -> Label:
 	header.add_theme_font_size_override(&"font_size", 13)
 	header.add_theme_color_override(&"font_color", COLOR_SECTION)
 	return header
-
-
-func _section_exists(sections: Array, section: String) -> bool:
-	for s: Array in sections:
-		if str(s[0]) == section:
-			return true
-	return false
 
 
 func _logo_for(logo_id: int) -> Texture2D:

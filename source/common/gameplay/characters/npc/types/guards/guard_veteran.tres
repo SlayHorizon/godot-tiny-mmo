@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyTypeResource" format=3 uid="uid://bxajiceqvwemj"]
+
+[ext_resource type="Script" uid="uid://bhs3kv3tyysi7" path="res://source/common/gameplay/characters/npc/behaviors/mob_attack.gd" id="1_jmn8a"]
+[ext_resource type="Script" uid="uid://swk8b8q32qv2" path="res://source/common/gameplay/characters/npc/enemy_type_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://demrirc4r2iay" path="res://source/common/gameplay/characters/npc/behaviors/mob_behavior.gd" id="2_2l0jh"]
+[ext_resource type="SpriteFrames" uid="uid://bqcsne8jhbmi8" path="res://source/common/gameplay/characters/sprite_frames/knight.tres" id="2_skin"]
+[ext_resource type="Script" uid="uid://dyw7fn4hr7rbh" path="res://source/common/gameplay/combat/loot_drop.gd" id="3_dmnuu"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_type = &"guard_veteran"
+display_name = "Guard Veteran"
+skin = ExtResource("2_skin")
+max_health = 100.0
+attack_damage = 12.0
+attack_cooldown = 1.1
+move_speed = 85
+max_distance_from_spawn = 200
+detection_radius = 120
+chase_on_area = true
+xp_reward = 0
+metadata/slug = &"guard_veteran"
+metadata/id = 39

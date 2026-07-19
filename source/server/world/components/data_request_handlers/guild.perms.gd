@@ -43,4 +43,9 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		guild.member_perms[target_id] = permissions
 	store.save_guild(guild)
 
+	store.add_guild_log(
+		guild_id, "perms", actor.display_name,
+		store.get_player_display_name(target_id)
+	)
+
 	return {"error": 0, "ok": true, "message": "Permissions updated."}

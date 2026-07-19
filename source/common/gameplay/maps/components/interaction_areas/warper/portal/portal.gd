@@ -61,10 +61,11 @@ func _apply() -> void:
 		material_shader.set_shader_parameter(&"hue_offset", wrapf(portal_color.h - SOURCE_HUE, 0.0, 1.0))
 		material_shader.set_shader_parameter(&"sat_scale", portal_color.s / SOURCE_SAT)
 		material_shader.set_shader_parameter(&"val_scale", portal_color.v / SOURCE_VAL)
-	# Gated portals self-document ("Fungus Cave (Lv 5+)"). required_level lives on the
-	# Warper base (no setter), so the editor label preview refreshes on scene reload or
-	# when color/label change; runtime always reads the final value.
-	var gate_suffix: String = " (Lv %d+)" % required_level if required_level > 0 else ""
+	# Gated portals self-document ("Fungus Cave (Lv 5+)"). The floor comes from the
+	# DESTINATION InstanceResource (gate_level()), so the label can never disagree
+	# with the zone's actual band. Future-biome portals with no target_instance yet
+	# bake their "(Lv N+)" into destination_label by hand.
+	var gate_suffix: String = " (Lv %d+)" % gate_level() if gate_level() > 0 else ""
 	label.text = destination_label + gate_suffix
 	label.visible = not destination_label.is_empty()
 
@@ -77,10 +78,16 @@ func _on_local_body_entered(body: Node2D) -> void:
 	# departure — no fade, no rev.
 	if body.has_recently_teleported():
 		return
-	# Level-gated and we can't pass: skip the fade for a warp the server will refuse
-	# (its system-chat denial explains). Cosmetic pre-check only — the server enforces.
-	if required_level > 0 and ClientState.player_level < required_level:
-		return
+	# SOFT level gate (docs/pve_plan.md: floor - 2, warn-and-confirm): well below the
+	# zone's band we warn, but the warp still charges — staying through the dwell IS
+	# the confirm, stepping out is the cancel. No server round trip needed: the
+	# destination InstanceResource (and the local player's level) are client-known.
+	if gate_level() > 0 and ClientState.player_level < gate_level() - 2:
+		var zone_name: String = target_instance.display_title() if target_instance != null else "This area"
+		Toaster.toast(
+			"%s is dangerous below level %d. Step out to cancel." % [zone_name, gate_level()],
+			3.0, Color(1.0, 0.8, 0.4)
+		)
 	animated_sprite.speed_scale = REV_UP_SPEED
 	# Pass OUR peer id from the portal's multiplayer (scoped to the game branch, live
 	# peer). WarpFade sits under /root, where the DEFAULT MultiplayerAPI has no peer —

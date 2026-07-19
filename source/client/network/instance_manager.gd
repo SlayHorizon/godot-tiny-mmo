@@ -49,6 +49,11 @@ func charge_new_instance(map_path: String, instance_id: String) -> void:
 		instance_changed.emit.bind(new_instance),
 		CONNECT_ONE_SHOT
 	)
+	# First-visit region banner (client-only cosmetic; no-op for known/unlisted maps).
+	map.ready.connect(
+		ZoneDiscovery.on_map_loaded.bind(map_path),
+		CONNECT_ONE_SHOT
+	)
 	
 	if current_instance:
 		if current_instance.local_player:

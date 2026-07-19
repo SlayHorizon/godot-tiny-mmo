@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_cvgnw"]
 [ext_resource type="TileSet" uid="uid://cw70ipnip703i" path="res://source/common/gameplay/maps/tilesets/dungeon_tileset.tres" id="2_ln6fr"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="3_sxpnr"]
-[ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/guild_house/guild_house.tres" id="4_adxh6"]
+[ext_resource type="Resource" uid="uid://c0xqjh15bmdkm" path="res://source/common/gameplay/maps/instance/instance_collection/building/guild_house.tres" id="4_adxh6"]
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="5_ukoid"]
 [ext_resource type="Resource" uid="uid://df8ykjq6jvwb7" path="res://source/common/gameplay/characters/npc/npcs/charter_clerk.tres" id="6_31n01"]
 [ext_resource type="Script" uid="uid://bg3vv3lo3vxog" path="res://source/common/gameplay/characters/npc/interactions/npc_interaction.gd" id="6_ruchx"]

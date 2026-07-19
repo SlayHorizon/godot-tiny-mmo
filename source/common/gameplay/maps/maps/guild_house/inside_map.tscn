@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://dbrernsyt26qh" path="res://source/common/gameplay/characters/npc/npc.tscn" id="10_subvk"]
 [ext_resource type="Resource" uid="uid://b7ty7yxpd32u2" path="res://source/common/gameplay/characters/npc/npcs/dungeon_keeper.tres" id="11_aldlr"]
 [ext_resource type="SpriteFrames" uid="uid://dlopdt61exewy" path="res://source/common/gameplay/characters/sprite_frames/scholar_researcher.tres" id="16_aldlr"]
+[ext_resource type="Script" uid="uid://du561hesf7lyn" path="res://source/common/gameplay/characters/npc/interactions/name_change_interaction.gd" id="17_8uqpf"]
 [ext_resource type="SpriteFrames" uid="uid://bfer1b8yk1buk" path="res://source/common/gameplay/characters/sprite_frames/royal_archer.tres" id="17_c2wc5"]
 [ext_resource type="Script" uid="uid://beeyftaqtiwe3" path="res://source/common/gameplay/characters/npc/interactions/attribute_reset_interaction.gd" id="17_j3473"]
 [ext_resource type="PackedScene" uid="uid://otv230rdmir2" path="res://source/common/gameplay/sparring/duel_master.tscn" id="18_egdmy"]
@@ -36,11 +37,15 @@ metadata/_custom_type_script = "uid://bfh4whbd72q65"
 script = ExtResource("17_j3473")
 metadata/_custom_type_script = "uid://beeyftaqtiwe3"
 
+[sub_resource type="Resource" id="Resource_7whis"]
+script = ExtResource("17_8uqpf")
+metadata/_custom_type_script = "uid://du561hesf7lyn"
+
 [sub_resource type="Resource" id="Resource_luj30"]
 script = ExtResource("19_kqnsa")
 npc_name = "Horizon"
 skin = ExtResource("16_aldlr")
-interactions = Array[ExtResource("9_fjcme")]([SubResource("Resource_1whb7"), SubResource("Resource_whj3q")])
+interactions = Array[ExtResource("9_fjcme")]([SubResource("Resource_1whb7"), SubResource("Resource_whj3q"), SubResource("Resource_7whis")])
 metadata/_custom_type_script = "uid://ddps5vwhnf048"
 
 [sub_resource type="Resource" id="Resource_g5t2t"]

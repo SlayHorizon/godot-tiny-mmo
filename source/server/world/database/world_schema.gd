@@ -30,6 +30,9 @@ static func ensure_schema(db: SQLite) -> void:
 	if version < 7:
 		_migration_v7(db)
 		_set_schema_version(db, 7)
+	if version < 8:
+		_migration_v8(db)
+		_set_schema_version(db, 8)
 
 
 static func _migration_v1(db: SQLite) -> void:
@@ -183,6 +186,24 @@ static func _migration_v7(db: SQLite) -> void:
 		"deleted_at_ms": {"data_type": "int", "not_null": false}
 	})
 	db.query("CREATE UNIQUE INDEX IF NOT EXISTS idx_mail_state_pk ON mail_state(player_id, mail_id);")
+
+
+## v8: guild event log (see docs/guild.md). One row per guild event (join/leave/
+## kick/rank/deposit/upgrade/flag capture...), written by WorldStoreSqlite.
+## add_guild_log, which also prunes each guild to its newest rows. Names are
+## snapshotted at write time so the log stays a historical record even if a
+## player renames. Added via _create_table_if_missing — no DB wipe.
+static func _migration_v8(db: SQLite) -> void:
+	_create_table_if_missing(db, "guild_log", {
+		"log_id": {"data_type": "int", "primary_key": true, "not_null": true, "auto_increment": true},
+		"guild_id": {"data_type": "int", "not_null": true},
+		"time_ms": {"data_type": "int", "not_null": true},
+		"event": {"data_type": "text", "not_null": true},
+		"actor_name": {"data_type": "text", "not_null": true},
+		"target_name": {"data_type": "text", "not_null": true},
+		"data_json": {"data_type": "text", "not_null": true}
+	})
+	db.query("CREATE INDEX IF NOT EXISTS idx_guild_log_guild_time ON guild_log(guild_id, log_id DESC);")
 
 
 static func _column_exists(db: SQLite, table: String, column: String) -> bool:

@@ -46,4 +46,6 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	store.save_player(player)
 	store.commit()
 
+	store.add_guild_log(guild_id, "deposit", player.display_name, "", {"amount": gained})
+
 	return {"ok": true, "treasury": guild.treasury, "deposited": gained}

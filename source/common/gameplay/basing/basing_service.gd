@@ -60,28 +60,33 @@ static func _flush_pending_kills(world_server: Node) -> void:
 
 ## Spawn the owning guild's defender guards in a ring around [param flag]. Called
 ## on capture (deferred — _capture runs inside a physics callback, and spawning
-## an NPC's detection Area2D can't mutate physics mid-flush). Clears the previous
-## owner's guards first. Guards are single-life HostileNpcs that ignore the owning
-## guild. No-ops cleanly until the archetype is registered in `enemy_types`.
-static func spawn_defenders(flag: TerritoryFlag) -> void:
+## an NPC's detection Area2D can't mutate physics mid-flush) and by the
+## reinforce handler (direct — RPC context is flush-safe). Clears the previous
+## owner's guards first. Guards are single-life HostileNpcs that ignore the
+## owning guild. Returns how many guards actually spawned so callers charging
+## funds can fail closed — 0 with a ServerLog warning when the archetype slug
+## isn't in the `enemy_types` registry yet (fix: Generate + restart).
+static func spawn_defenders(flag: TerritoryFlag) -> int:
 	despawn_defenders(flag)
 	if flag == null or flag.owner_guild_id <= 0:
-		return
+		return 0
 	var container: ReplicatedPropsContainer = _flag_container(flag)
 	if container == null:
-		return
+		ServerLog.warn("spawn_defenders: flag %d's map has no replicated_props_container — no guards." % flag.flag_id)
+		return 0
 	var guild: Guild = WorldServer.curr.database.store.get_guild(flag.owner_guild_id)
 	if guild == null:
-		return
+		return 0
 	var count: int = GuildUpgrades.defender_count(guild)
 	if count <= 0:
-		return
+		return 0
 	# Per-tier archetype rides the spawn as a short slug; the NPC scene is a
 	# hardcoded constant (no scenes registry). Bail if the archetype isn't
 	# registered yet so we never spawn a guard with no enemy_data.
 	var slug: StringName = GuildUpgrades.defender_enemy_slug(guild)
 	if ContentRegistryHub.load_by_slug(&"enemy_types", slug) == null:
-		return
+		ServerLog.warn("spawn_defenders: enemy_types slug '%s' unresolved — run Generate and restart the server." % slug)
+		return 0
 	var origin: Vector2 = container.to_local(flag.global_position)
 	var ids: Array = []
 	for i: int in count:
@@ -97,6 +102,7 @@ static func spawn_defenders(flag: TerritoryFlag) -> void:
 		if pid >= 0:
 			ids.append(pid)
 	_defenders_by_flag[flag.flag_id] = ids
+	return ids.size()
 
 
 ## Despawn all guards currently defending [param flag] (server + clients).
@@ -110,6 +116,38 @@ static func despawn_defenders(flag: TerritoryFlag) -> void:
 			for pid: int in ids:
 				container.despawn_dynamic(pid)
 	_defenders_by_flag.erase(flag.flag_id)
+
+
+## Guards still standing at [param flag] — spawned ids whose dynamic prop is
+## still alive in the container (a dead guard despawns and leaves the map).
+static func alive_defender_count(flag: TerritoryFlag) -> int:
+	var ids: Array = _defenders_by_flag.get(flag.flag_id, [])
+	if ids.is_empty():
+		return 0
+	var container: ReplicatedPropsContainer = _flag_container(flag)
+	if container == null:
+		return 0
+	var alive: int = 0
+	for pid: int in ids:
+		if container.dynamic_nodes.has(pid):
+			alive += 1
+	return alive
+
+
+## Every live TerritoryFlag currently owned by [param guild_id], across all
+## charged instances. Used by guild.get to show a guild's holdings in the Hall.
+static func held_flags(world_server: Node, guild_id: int) -> Array[TerritoryFlag]:
+	var out: Array[TerritoryFlag] = []
+	if world_server == null or world_server.instance_manager == null or guild_id <= 0:
+		return out
+	for inst_res: InstanceResource in world_server.instance_manager.instance_collection.values():
+		for inst: Node in inst_res.charged_instances:
+			if inst.instance_map == null:
+				continue
+			for flag: TerritoryFlag in inst.instance_map.territory_flags.values():
+				if flag.owner_guild_id == guild_id:
+					out.append(flag)
+	return out
 
 
 static func _flag_container(flag: TerritoryFlag) -> ReplicatedPropsContainer:

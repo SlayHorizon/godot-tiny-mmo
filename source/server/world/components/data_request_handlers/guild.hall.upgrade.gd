@@ -43,6 +43,12 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	store.save_guild(guild)
 	store.commit()
 
+	store.add_guild_log(guild_id, "upgrade", player.display_name, "", {
+		"upgrade": str(GuildUpgrades.CATALOG[upgrade_id].get("name", String(upgrade_id))),
+		"level": GuildUpgrades.level_of(guild, upgrade_id),
+		"cost": cost,
+	})
+
 	return {
 		"error": 0,
 		"ok": true,

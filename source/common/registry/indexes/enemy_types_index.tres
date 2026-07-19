@@ -5,8 +5,8 @@
 [resource]
 script = ExtResource("1_b6pq3")
 content_name = &"enemy_types"
-version = 1783762906
-next_id = 36
+version = 1784473722
+next_id = 40
 entries = Array[Dictionary]([{
 &"hash": "6d50f92a83168ce4e753ce6357d845fa852278a30bb168b3f1919be3f915baa7",
 &"id": 1,
@@ -43,7 +43,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/npc/types/dungeon_boss.tres",
 &"slug": &"dungeon_boss"
 }, {
-&"hash": "6a8ae086721e59cf32bd287d0df7f16f949c11f262151fcd6409a871d7d36df1",
+&"hash": "5403a03403dc745e699e04ba45d16a6aa879e77eef617b53a732b0808059809d",
 &"id": 31,
 &"path": "res://source/common/gameplay/characters/npc/types/fungus/fungal_heart.tres",
 &"slug": &"fungal_heart"
@@ -78,7 +78,7 @@ entries = Array[Dictionary]([{
 &"path": "res://source/common/gameplay/characters/npc/types/goblins/goblin_cutter.tres",
 &"slug": &"goblin_cutter"
 }, {
-&"hash": "96d36ca18df8e7bb18c318141859d6c9ca90deed766618d57c7bc377483aa804",
+&"hash": "c16e3166f38baac00e160cfba64eba9bd9317f316c66cc93559b6c6440b951b7",
 &"id": 24,
 &"path": "res://source/common/gameplay/characters/npc/types/goblins/goblin_runt.tres",
 &"slug": &"goblin_runt"
@@ -92,6 +92,26 @@ entries = Array[Dictionary]([{
 &"id": 26,
 &"path": "res://source/common/gameplay/characters/npc/types/goblins/goblin_slinger.tres",
 &"slug": &"goblin_slinger"
+}, {
+&"hash": "a28fd20da00da32963242e66b163954237cf2177e3965c166e043e814f6042ee",
+&"id": 36,
+&"path": "res://source/common/gameplay/characters/npc/types/guards/guard_champion.tres",
+&"slug": &"guard_champion"
+}, {
+&"hash": "4e4991b251565cab0a0e0858179cd6c160c789f69f46412adaa9554e0ed70180",
+&"id": 37,
+&"path": "res://source/common/gameplay/characters/npc/types/guards/guard_knight.tres",
+&"slug": &"guard_knight"
+}, {
+&"hash": "f80667db004b4b29a71802480c9a0068f2439c72dc444507cf845f6ac3c3508c",
+&"id": 38,
+&"path": "res://source/common/gameplay/characters/npc/types/guards/guard_recruit.tres",
+&"slug": &"guard_recruit"
+}, {
+&"hash": "5bd6adde4026ca8bfd42884a18d61a81aeb8fba6f81fd9e5bfe51ec63ab695c4",
+&"id": 39,
+&"path": "res://source/common/gameplay/characters/npc/types/guards/guard_veteran.tres",
+&"slug": &"guard_veteran"
 }, {
 &"hash": "294aa84b352e01ae2e17b221f3c46ca304dee0dbaca9e5be2334cacc816a349f",
 &"id": 5,

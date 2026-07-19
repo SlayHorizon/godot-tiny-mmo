@@ -39,18 +39,16 @@ const CATALOG: Dictionary = {
 		"base_cost": 75,
 		"cost_step": 75,
 	},
-	# Defender upgrades are buyable & saved now; the spawn-on-capture logic ships
-	# later (see docs/guild.md). Levels persist so they're ready when it lands.
 	DEFENDER_COUNT: {
 		"name": "Defenders",
-		"desc": "NPC guards that spawn at your flag on capture. +1 per level. (effect coming soon)",
+		"desc": "NPC guards that spawn around your flag when you capture it. One life each, no respawn until the next capture. +1 guard per level.",
 		"max_level": 5,
 		"base_cost": 100,
 		"cost_step": 100,
 	},
 	DEFENDER_TIER: {
 		"name": "Defender Strength",
-		"desc": "Makes your flag defenders tougher. (effect coming soon)",
+		"desc": "Your flag defenders spawn as a tougher breed of guard.",
 		"max_level": 3,
 		"base_cost": 150,
 		"cost_step": 150,
@@ -115,11 +113,44 @@ static func defender_tier(guild: Guild) -> int:
 ## basename). Guards reuse the generic hostile_npc scene + this archetype (no
 ## per-tier scenes); the flag resolves the slug to an id and ships it in the
 ## spawn init. Index = tier - 1.
+## DEDICATED guard archetypes (types/guards/, owner call 2026-07-19): guards
+## get their own balance knobs and read as base security, not repurposed
+## nature mobs from the PvE bands.
 const DEFENDER_ENEMY_SLUG_BY_TIER: Array[StringName] = [
-	&"fungus_immature", &"goblin", &"bandit", &"bandit_captain",
+	&"guard_recruit", &"guard_veteran", &"guard_knight", &"guard_champion",
 ]
+
+# --- Treasury sinks beyond upgrades ---
+## Flat treasury price per non-default guild logo (logo 0 is free).
+const LOGO_COST: int = 250
+## Logo catalog size — mirrors the client LOGOS array; server-side bound for
+## guild.logo.buy / guild.edit validation.
+const LOGO_COUNT: int = 4
+## Treasury price per guard respawned via guild.defenders.reinforce.
+const REINFORCE_COST_PER_GUARD: int = 25
 
 
 static func defender_enemy_slug(guild: Guild) -> StringName:
 	var idx: int = clampi(defender_tier(guild) - 1, 0, DEFENDER_ENEMY_SLUG_BY_TIER.size() - 1)
 	return DEFENDER_ENEMY_SLUG_BY_TIER[idx]
+
+
+## Human-readable effect of [param upgrade_id] AT a given level — powers the
+## "Now / Next" lines on Guild Hall upgrade rows so buyers see exactly what a
+## level does before spending funds. Empty string for unknown ids.
+static func effect_line_at(upgrade_id: StringName, level: int) -> String:
+	match upgrade_id:
+		MEMBER_CAPACITY:
+			var tag: int = BASE_TAG_CAP + level * TAG_CAP_PER_LEVEL
+			return "%d tagged online, %d roster" % [tag, tag + ROSTER_BUFFER]
+		TREASURY_INCOME:
+			return "%d funds per territory, per payout" % (BASE_TREASURY_INCOME + level * TREASURY_INCOME_PER_LEVEL)
+		DEFENDER_COUNT:
+			if level <= 0:
+				return "no guards"
+			return "%d guard%s per flag" % [level, "s" if level > 1 else ""]
+		DEFENDER_TIER:
+			var tier: int = 1 + level
+			var idx: int = clampi(tier - 1, 0, DEFENDER_ENEMY_SLUG_BY_TIER.size() - 1)
+			return "tier %d (%s)" % [tier, String(DEFENDER_ENEMY_SLUG_BY_TIER[idx]).capitalize()]
+	return ""

@@ -439,6 +439,14 @@ func get_guild(guild_id: int) -> Guild:
 			for key: Variant in ups_raw:
 				guild.upgrades[StringName(key)] = int(ups_raw[key])
 
+		# Owned cosmetic logos — the free default (0) is always present so a
+		# pre-feature guild can never lose its current look.
+		guild.owned_logos.clear()
+		for lid: Variant in data.get("owned_logos", []):
+			guild.owned_logos.append(int(lid))
+		if not guild.owned_logos.has(0):
+			guild.owned_logos.append(0)
+
 	# members
 	db.query_with_bindings("SELECT player_id, rank FROM guild_members WHERE guild_id=?;", [guild_id])
 	guild.members = {}
@@ -465,6 +473,7 @@ func save_guild(guild: Guild) -> void:
 		"spar_score": guild.spar_score,
 		"treasury": guild.treasury,
 		"upgrades": guild.upgrades,
+		"owned_logos": guild.owned_logos,
 	})
 
 	db.query_with_bindings(
@@ -531,6 +540,24 @@ func get_guild_id_by_name(guild_name: String) -> int:
 	return int(db.query_result[0].get("guild_id", 0))
 
 
+## Permanently delete a guild: its row, membership rows, and its event log.
+## Player-side references (joined/active/led ids) and live flag ownership are
+## the DISBAND HANDLER's job — this only clears guild-owned tables.
+func delete_guild(guild_id: int) -> void:
+	db.query_with_bindings("DELETE FROM guilds WHERE guild_id=?;", [guild_id])
+	db.query_with_bindings("DELETE FROM guild_members WHERE guild_id=?;", [guild_id])
+	db.query_with_bindings("DELETE FROM guild_log WHERE guild_id=?;", [guild_id])
+
+
+## Release every flag a guild owns in the DB (covers flags in uncharged
+## instances that have no live node right now). last_capture_ms 0 = no grace.
+func release_guild_flags(guild_id: int) -> void:
+	db.query_with_bindings(
+		"UPDATE flags SET owner_guild_id=0, last_capture_ms=0 WHERE owner_guild_id=?;",
+		[guild_id]
+	)
+
+
 func search_guilds_by_name(query: String, limit: int) -> Array:
 	var q: String = query.strip_edges()
 	if q.is_empty():
@@ -571,6 +598,43 @@ func search_players(query: String, limit: int, by_account: bool) -> Array:
 		[like, limit]
 	)
 
+	return db.query_result
+
+#endregion
+
+
+#region Guild log
+
+## Newest guild-log rows kept per guild — older rows are pruned on every write.
+const MAX_GUILD_LOG_ROWS: int = 200
+
+
+## Append one event to a guild's log and prune that guild to the newest
+## MAX_GUILD_LOG_ROWS. Names are snapshotted at write time (renames don't
+## rewrite history). [param data] is a small event-specific payload (amounts,
+## rank names, territory names) serialized as JSON.
+func add_guild_log(guild_id: int, event: String, actor_name: String = "", target_name: String = "", data: Dictionary = {}) -> void:
+	if guild_id <= 0:
+		return
+	db.query_with_bindings(
+		"INSERT INTO guild_log(guild_id, time_ms, event, actor_name, target_name, data_json) VALUES(?, ?, ?, ?, ?, ?);",
+		[guild_id, int(Time.get_unix_time_from_system() * 1000.0), event, actor_name, target_name, JSON.stringify(data)]
+	)
+	db.query_with_bindings(
+		"DELETE FROM guild_log WHERE guild_id=? AND log_id NOT IN "
+		+ "(SELECT log_id FROM guild_log WHERE guild_id=? ORDER BY log_id DESC LIMIT ?);",
+		[guild_id, guild_id, MAX_GUILD_LOG_ROWS]
+	)
+
+
+## Newest-first log rows for a guild. Each row: {log_id, time_ms, event,
+## actor_name, target_name, data_json}.
+func get_guild_log(guild_id: int, limit: int = 100) -> Array:
+	db.query_with_bindings(
+		"SELECT log_id, time_ms, event, actor_name, target_name, data_json "
+		+ "FROM guild_log WHERE guild_id=? ORDER BY log_id DESC LIMIT ?;",
+		[guild_id, mini(limit, MAX_GUILD_LOG_ROWS)]
+	)
 	return db.query_result
 
 #endregion

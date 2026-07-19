@@ -45,6 +45,8 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 
 	store.commit()
 
+	store.add_guild_log(guild_id, "left", player.display_name)
+
 	# Sync the client's cached active_guild_id (it may have been cleared above).
 	world_server.data_push.rpc_id(peer_id, &"active_guild_id.set", {"active_guild_id": player.active_guild_id})
 	var pnode: Player = instance.players_by_peer_id.get(peer_id)

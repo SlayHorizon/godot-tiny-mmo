@@ -43,4 +43,10 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	guild.members[target_id] = rank_id
 	store.save_guild(guild)
 
+	store.add_guild_log(
+		guild_id, "rank", actor.display_name,
+		store.get_player_display_name(target_id),
+		{"rank": str(new_rank.get("name", "?"))}
+	)
+
 	return {"error": 0, "ok": true, "message": "Rank updated."}

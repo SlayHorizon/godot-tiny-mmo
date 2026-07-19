@@ -57,6 +57,10 @@ const PALETTE: PackedColorArray = [
 
 @export var flag_id: int = 0
 @export var territory_name: String = "Unnamed Territory"
+## Whether NPC defender guards spawn here on capture (owning guild's Defenders
+## upgrade). Designer-tunable per flag, so a territory can be kept PvP-only
+## (e.g. an exclusive-PvP event zone) without touching the guild upgrade system.
+@export var defenders_enabled: bool = true
 
 @export_group("Visuals")
 ## Sprite whose `modulate` is tinted to the owning guild's color.
@@ -114,6 +118,7 @@ func _ready() -> void:
 		_build_hp_label()
 		_build_emblem()
 		_style_health_bar()
+		_build_click_area()
 		_request_state.call_deferred()
 	_refresh_visuals()
 
@@ -233,14 +238,39 @@ func _capture(killer: Character) -> void:
 		flag_id, owner_guild_id, int(Time.get_unix_time_from_system() * 1000.0)
 	)
 	_announce_capture(killer as Player, previous_id, previous_name)
+	# Guild logs: the winner records the capture, the previous holder the loss.
+	var capturer_name: String = (killer as Player).player_resource.display_name if killer is Player else ""
+	WorldServer.curr.database.store.add_guild_log(
+		owner_guild_id, "flag_captured", capturer_name, "", {"territory": territory_name}
+	)
+	if previous_id > 0:
+		WorldServer.curr.database.store.add_guild_log(
+			previous_id, "flag_lost", "", owner_guild_name, {"territory": territory_name}
+		)
 	# Deferred: _capture runs inside the arrow's physics collision callback, and
 	# spawning the guards' detection areas can't mutate physics mid-flush.
-	# Temporary disable to focus on exclusive PvP
-	#BasingService.spawn_defenders.call_deferred(self)
+	if defenders_enabled:
+		BasingService.spawn_defenders.call_deferred(self)
 	_broadcast_state()
 
 
 # --- Server-side: helpers ---
+
+## Server: strip ownership without a capture (guild disband). Despawns any
+## guards, clears the owner fields + grace, persists, and broadcasts the
+## neutral state so clients re-tint immediately.
+func release_ownership() -> void:
+	if not multiplayer.is_server() or owner_guild_id <= 0:
+		return
+	BasingService.despawn_defenders(self)
+	owner_guild_id = 0
+	owner_guild_name = ""
+	owner_logo_id = 0
+	grace_until_ms = 0
+	_attack_notice_sent = false
+	WorldServer.curr.database.store.save_flag_state(flag_id, 0, 0)
+	_broadcast_state()
+
 
 func _load_state_from_db() -> void:
 	var row: Dictionary = WorldServer.curr.database.store.get_flag_state(flag_id)
@@ -475,6 +505,27 @@ func _update_emblem() -> void:
 	if tex != null and tex.get_width() > 0:
 		var n: int = maxi(1, ceili(tex.get_width() / EMBLEM_MAX_PX))
 		_emblem.scale = Vector2.ONE / float(n)
+
+
+## Client-only: clicking YOUR OWN guild's flag opens the Territory panel (info
+## + reinforce). Deliberately gated to the owning guild — enemies attack the
+## flag with weapon clicks, and popping a menu mid-assault would fight the
+## combat controls. Ownership is checked at click time (it changes).
+func _build_click_area() -> void:
+	var area: ClickableArea = ClickableArea.new()
+	var shape: CollisionShape2D = CollisionShape2D.new()
+	var circle: CircleShape2D = CircleShape2D.new()
+	circle.radius = 34.0
+	shape.shape = circle
+	area.add_child(shape)
+	area.clicked.connect(_on_flag_clicked)
+	add_child(area)
+
+
+func _on_flag_clicked() -> void:
+	if owner_guild_id <= 0 or owner_guild_id != Character.local_viewer_guild_id:
+		return
+	ClientState.open_menu_requested.emit(&"territory", flag_id)
 
 
 ## Restyle the flag HP bar to the navy theme with a danger-red fill (only shows

@@ -143,6 +143,16 @@ func _render_stats(stats: Dictionary) -> void:
 	for child in stats_list.get_children():
 		child.queue_free()
 
+	# Coarse presence, first row: "Online now" pops cyan, offline buckets stay
+	# dim. Hidden entirely when the server has no stamp yet (pre-feature rows).
+	var last_seen: String = str(stats.get("last_seen", ""))
+	if not last_seen.is_empty():
+		var online: bool = last_seen == "Online now"
+		stats_list.add_child(_stat_row(
+			"Last seen", last_seen,
+			COLOR_VALUE_PROGRESS if online else COLOR_DIM
+		))
+
 	# Hours: only show once the player has banked at least one full hour.
 	# Below an hour just reads as "0h" which feels like a bug.
 	var hours: int = int(stats.get("hours", 0))

@@ -112,6 +112,10 @@ const DEFAULT_MEMBER_RANK: int = 4
 # --- Guild Hall upgrades (upgrade_id -> level; see GuildUpgrades) ---
 @export var upgrades: Dictionary[StringName, int] = {}
 
+## Logo/emblem ids unlocked with treasury funds (Guild Hall cosmetics). Logo 0
+## is the free default; guild.edit only accepts owned ids.
+@export var owned_logos: Array[int] = [0]
+
 
 func add_member(player_id: int) -> void:
 	members[player_id] = DEFAULT_MEMBER_RANK

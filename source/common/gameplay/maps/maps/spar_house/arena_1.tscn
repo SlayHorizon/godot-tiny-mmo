@@ -3,9 +3,10 @@
 [ext_resource type="Script" uid="uid://7mbux4mybta0" path="res://source/common/gameplay/maps/map.gd" id="1_48v02"]
 [ext_resource type="TileSet" uid="uid://cp3aq00j7d6as" path="res://source/common/gameplay/maps/tilesets/buildings_inside_tileset.tres" id="2_5lp52"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="3_c8iah"]
-[ext_resource type="Resource" uid="uid://b832bjouifd56" path="res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_house.tres" id="4_7553i"]
+[ext_resource type="Resource" uid="uid://b832bjouifd56" path="res://source/common/gameplay/maps/instance/instance_collection/building/spar_house.tres" id="4_7553i"]
 [ext_resource type="PackedScene" uid="uid://otv230rdmir2" path="res://source/common/gameplay/sparring/duel_master.tscn" id="5_iyqdx"]
 [ext_resource type="Script" uid="uid://c1nyyoow8f4tw" path="res://source/common/gameplay/sparring/spar_team.gd" id="6_iyqdx"]
+
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d7ncd"]
 size = Vector2(456, 352)

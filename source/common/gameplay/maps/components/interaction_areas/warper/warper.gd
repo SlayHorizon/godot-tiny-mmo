@@ -10,10 +10,6 @@ extends InteractionArea
 ## for doors. Portals set this: the server re-checks overlap after the dwell (stepping
 ## out cancels), and the client times its warp fade to the same value.
 @export var warp_delay_s: float = 0.0
-## Minimum character level to pass (0 = open to all). Enforced server-side at entry
-## (denial goes to system chat); the Portal also pre-checks it client-side so the warp
-## fade doesn't start for an attempt the server will refuse, and gates its label.
-@export var required_level: int = 0
 
 
 func _ready() -> void:
@@ -21,6 +17,16 @@ func _ready() -> void:
 	var map: Map = Map.of(self)
 	if map != null:
 		map.register_keyed(map.warpers, warper_id, self, "warper")
+
+
+## The destination's intended level floor, read from the InstanceResource — the
+## zone owns its numbers, doors just present them, so every door into a zone
+## agrees (the old per-warper required_level export duplicated this and was
+## retired 2026-07-19). Gating is SOFT in alpha per docs/pve_plan.md: the Portal
+## warns below floor - 2 and the dwell is the confirm; the v1 wardstone key-gate
+## will hard-enforce in InstanceResource.can_join_instance. 0 = open.
+func gate_level() -> int:
+	return target_instance.level_min if target_instance != null else 0
 
 
 #func _init() -> void:

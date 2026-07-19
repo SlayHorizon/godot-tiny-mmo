@@ -5,7 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://dbg8y8if4vv5p" path="res://source/common/gameplay/maps/components/interaction_areas/teleporter/teleporter.tscn" id="3_q62f4"]
 [ext_resource type="PackedScene" uid="uid://b2ckixon7ryh6" path="res://source/common/gameplay/maps/components/interaction_areas/warper/warper.tscn" id="4_nfh6w"]
 [ext_resource type="Resource" uid="uid://doc0umc2oovri" path="res://source/common/gameplay/maps/instance/instance_collection/overworld.tres" id="5_10bed"]
-[ext_resource type="Resource" uid="uid://g3b32ong5pkq" path="res://source/common/gameplay/maps/instance/instance_collection/spar_house/spar_room_arena_1.tres" id="6_3ktqf"]
+[ext_resource type="Resource" uid="uid://g3b32ong5pkq" path="res://source/common/gameplay/maps/instance/instance_collection/building/spar_room_arena_1.tres" id="6_3ktqf"]
+
 
 [node name="Spar_house_inside" type="Node2D" unique_id=1368643614]
 y_sort_enabled = true
