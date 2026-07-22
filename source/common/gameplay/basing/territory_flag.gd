@@ -32,14 +32,8 @@ const REPAIR_FRACTION: float = 0.5
 const NAMEPLATE_WIDTH: float = 320.0
 const NAMEPLATE_SCALE: float = 0.28
 const NAMEPLATE_Y: float = -62.0
-## Guild logo emblem on the flag (client-only). Paths mirror the guild menu's
-## LOGOS; loaded at runtime so the server never touches the textures.
-const LOGO_PATHS: PackedStringArray = [
-	"res://assets/sprites/guild_logos/wyvern.png",
-	"res://assets/sprites/guild_logos/kawaii_skull.png",
-	"res://assets/sprites/guild_logos/cute_crown.png",
-	"res://assets/sprites/guild_logos/cute_fish.png",
-]
+## Guild emblem art comes from the shared GuildLogos catalog (client-only
+## loads; the server never touches the textures).
 ## Max on-screen size (px) for the emblem. Downscaled by an integer divisor (1/N)
 ## from the source texture so it stays crisp under nearest-neighbor filtering.
 const EMBLEM_MAX_PX: float = 32.0
@@ -76,6 +70,9 @@ var owner_guild_id: int = 0
 var owner_guild_name: String = ""
 ## Owning guild's logo id (for the banner emblem). Synced via flag.update.
 var owner_logo_id: int = 0
+## Owning guild's custom banner color (HTML hex, "" = palette hash default).
+## Synced via flag.update; a Guild Hall cosmetic (guild.banner.color).
+var owner_banner_color: String = ""
 var last_attacker: Character = null
 var grace_until_ms: int = 0
 
@@ -232,6 +229,7 @@ func _capture(killer: Character) -> void:
 	var owner_guild: Guild = WorldServer.curr.database.store.get_guild(new_owner_id)
 	owner_guild_name = owner_guild.guild_name if owner_guild != null else ""
 	owner_logo_id = owner_guild.logo_id if owner_guild != null else 0
+	owner_banner_color = owner_guild.banner_color if owner_guild != null else ""
 	grace_until_ms = Time.get_ticks_msec() + GRACE_MS
 
 	WorldServer.curr.database.store.save_flag_state(
@@ -266,6 +264,7 @@ func release_ownership() -> void:
 	owner_guild_id = 0
 	owner_guild_name = ""
 	owner_logo_id = 0
+	owner_banner_color = ""
 	grace_until_ms = 0
 	_attack_notice_sent = false
 	WorldServer.curr.database.store.save_flag_state(flag_id, 0, 0)
@@ -281,6 +280,7 @@ func _load_state_from_db() -> void:
 		var owner_guild: Guild = WorldServer.curr.database.store.get_guild(owner_guild_id)
 		owner_guild_name = owner_guild.guild_name if owner_guild != null else ""
 		owner_logo_id = owner_guild.logo_id if owner_guild != null else 0
+		owner_banner_color = owner_guild.banner_color if owner_guild != null else ""
 	# Grace from the persisted last_capture_ms — so a restart doesn't reset the
 	# defender's protection window. last_capture_ms is unix-ms; grace_until_ms
 	# is ticks-ms (uptime). Convert via the current offset.
@@ -316,10 +316,20 @@ func _state_payload() -> Dictionary:
 		"owner_guild_id": owner_guild_id,
 		"owner_guild_name": owner_guild_name,
 		"owner_logo_id": owner_logo_id,
+		"owner_banner_color": owner_banner_color,
 		"hp": hp,
 		"hp_max": MAX_HP,
 		"grace_until_ms_remaining": maxi(0, grace_until_ms - Time.get_ticks_msec()),
 	}
+
+
+## Server: apply a live banner-color change (guild.banner.color) and rebroadcast
+## so everyone watching re-tints without waiting for a recapture.
+func update_owner_banner(color_html: String) -> void:
+	if not multiplayer.is_server():
+		return
+	owner_banner_color = color_html
+	_broadcast_state()
 
 
 func _notify_under_attack() -> void:
@@ -381,6 +391,7 @@ func _on_flag_update_pushed(payload: Dictionary) -> void:
 	owner_guild_id = int(payload.get("owner_guild_id", 0))
 	owner_guild_name = str(payload.get("owner_guild_name", ""))
 	owner_logo_id = int(payload.get("owner_logo_id", 0))
+	owner_banner_color = str(payload.get("owner_banner_color", ""))
 	hp = float(payload.get("hp", MAX_HP))
 	var grace_left: int = int(payload.get("grace_until_ms_remaining", 0))
 	grace_until_ms = Time.get_ticks_msec() + grace_left
@@ -402,7 +413,7 @@ func _request_state() -> void:
 
 func _refresh_visuals() -> void:
 	if banner != null:
-		banner.modulate = _color_for_guild(owner_guild_id)
+		banner.modulate = _owner_color()
 	if health_bar != null:
 		health_bar.max_value = MAX_HP
 		health_bar.value = hp
@@ -476,7 +487,7 @@ func _update_nameplate() -> void:
 		_nameplate.add_theme_color_override(&"font_color", NEUTRAL_COLOR)
 	else:
 		_nameplate.text = "%s\n[%s]" % [territory_name, owner_guild_name]
-		_nameplate.add_theme_color_override(&"font_color", _color_for_guild(owner_guild_id))
+		_nameplate.add_theme_color_override(&"font_color", _owner_color())
 
 
 ## Build the client-side guild emblem on the flag. Sits on the banner if one is
@@ -499,8 +510,7 @@ func _update_emblem() -> void:
 		_emblem.visible = false
 		return
 	_emblem.visible = true
-	var idx: int = clampi(owner_logo_id, 0, LOGO_PATHS.size() - 1)
-	var tex: Texture2D = load(LOGO_PATHS[idx]) as Texture2D
+	var tex: Texture2D = GuildLogos.texture(owner_logo_id)
 	_emblem.texture = tex
 	if tex != null and tex.get_width() > 0:
 		var n: int = maxi(1, ceili(tex.get_width() / EMBLEM_MAX_PX))
@@ -546,6 +556,14 @@ func _style_health_bar() -> void:
 	bar.add_theme_stylebox_override(&"background", bg)
 	bar.add_theme_stylebox_override(&"fill", fill)
 	bar.show_percentage = false
+
+
+## The banner/nameplate color: the guild's purchased custom color when set,
+## else the per-guild palette hash.
+func _owner_color() -> Color:
+	if owner_guild_id > 0 and Color.html_is_valid(owner_banner_color):
+		return Color.html(owner_banner_color)
+	return _color_for_guild(owner_guild_id)
 
 
 static func _color_for_guild(guild_id: int) -> Color:

@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="NormalizedSparMode" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://source/common/gameplay/sparring/normalized_spar_mode.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+sync_level = 10

@@ -170,7 +170,7 @@ static func _dungeon_info(dres: DungeonResource) -> Dictionary:
 	return {
 		"name": str(dres.instance_name),
 		"description": dres.description,
-		"min_level": dres.min_level,
+		"min_level": dres.level_min,
 		"recommended_level": dres.recommended_level,
 		"reward": _reward_summary(dres.reward),
 		"hard_reward": _reward_summary(dres.hard_reward),
@@ -434,7 +434,7 @@ static func _enter_run(group_id: int, members: Array) -> void:
 	# mobs out of nowhere.
 	var dungeon_name: String = "the dungeon"
 	if instance.instance_resource != null:
-		dungeon_name = str(instance.instance_resource.instance_name)
+		dungeon_name = instance.instance_resource.display_title()
 	WorldServer.curr.get_tree().create_timer(1.5).timeout.connect(
 		func() -> void:
 			for peer: int in GroupService.members_of(group_id):
@@ -460,7 +460,7 @@ static func on_player_left(peer_id: int, left_instance: Node) -> void:
 	if not _ejecting.get(group_id, false) and WorldServer.curr != null:
 		var dungeon_name: String = "the dungeon"
 		if left_instance.instance_resource != null:
-			dungeon_name = str(left_instance.instance_resource.instance_name)
+			dungeon_name = left_instance.instance_resource.display_title()
 		WorldServer.curr.data_push.rpc_id(peer_id, &"dungeon.left", {"dungeon": dungeon_name})
 	if WorldServer.curr != null:
 		WorldServer.curr.data_push.rpc_id(peer_id, &"dungeon.hud", {"active": false}) # leaver's HUD off
@@ -490,7 +490,7 @@ static func on_dungeon_cleared(instance: Node) -> void:
 	var hard: bool = _run_hard.get(group_id, false)
 	var dungeon_name: String = "Dungeon"
 	if instance.instance_resource != null:
-		dungeon_name = str(instance.instance_resource.instance_name)
+		dungeon_name = instance.instance_resource.display_title()
 	# The completion reward lives on the dungeon's DungeonResource; pick Normal vs
 	# Hard here (Hard falls back to the normal reward if none authored).
 	var dres: DungeonResource = instance.instance_resource as DungeonResource
@@ -500,7 +500,7 @@ static func on_dungeon_cleared(instance: Node) -> void:
 	# Hard runs get a separate daily lockout (clear Normal AND Hard each per day) and
 	# a tagged recap label.
 	var lockout_key: String = dungeon_name + (" (Hard)" if hard else "")
-	var label: String = dungeon_name + (" — Hard" if hard else "")
+	var label: String = dungeon_name + (" (Hard)" if hard else "")
 	for peer: int in GroupService.members_of(group_id):
 		var player: Player = instance.get_player(peer) as Player # all members are in this run
 		# Only HARD clears are ranked — the fixed hand-designed course is the fair
@@ -590,7 +590,7 @@ static func _fail_run(group_id: int) -> void:
 	var instance: Node = _runs.get(group_id, null)
 	var dungeon_name: String = "the dungeon"
 	if instance != null and instance.instance_resource != null:
-		dungeon_name = str(instance.instance_resource.instance_name)
+		dungeon_name = instance.instance_resource.display_title()
 	var seconds: int = int(_elapsed_s(group_id)) # how long the party survived, for the recap
 	for peer: int in GroupService.members_of(group_id):
 		var player: Player = null

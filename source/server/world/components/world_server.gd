@@ -182,6 +182,11 @@ func _authentication_callback(peer_id: int, data: PackedByteArray) -> void:
 		token_list.erase(auth_token)
 		data_push.rpc_id.call_deferred(peer_id, &"player_id.set", {"player_id": connected_players[peer_id].player_id})
 		data_push.rpc_id.call_deferred(peer_id, &"active_guild_id.set", {"active_guild_id": connected_players[peer_id].active_guild_id})
+		# Wardstone mirror: lets sealed portals render + explain locally with zero
+		# round trips (docs/wardstones.md). Re-pushed on every grant. Backfill
+		# first: finales turned in before the system shipped still owe their stone.
+		QuestService.backfill_wardstones(connected_players[peer_id])
+		data_push.rpc_id.call_deferred(peer_id, &"wardstones.set", {"wardstones": connected_players[peer_id].wardstones})
 	else:
 		peer.disconnect_peer(peer_id)
 

@@ -118,10 +118,13 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 		return
 	if interaction_area is Warper and interaction_area.target_instance:
 		var warper: Warper = interaction_area
-		# NO hard level gate in alpha — the gate is SOFT by design (docs/pve_plan.md:
-		# floor - 2, warn-and-confirm, enforced as a client-side warning in Portal;
-		# the zone's floor lives on its InstanceResource.level_min). The v1 wardstone
-		# key-gate will hard-enforce here via target_instance.can_join_instance.
+		# Wardstone gate (docs/wardstones.md): the ONE hard access rule — no level
+		# or party bypass. Levels stay advisory (client-side warn + hesitation
+		# window only). SILENT refusal: the client renders the sealed state + its
+		# own banner (other portal outcomes never touch chat — consistency); this
+		# is purely the authoritative backstop against modified clients.
+		if not warper.target_instance.can_join_instance(player):
+			return
 		if warper.warp_delay_s > 0.0:
 			_warp_after_dwell(player, warper)
 		else:
@@ -144,9 +147,14 @@ func _on_player_entered_interaction_area(player: Player, interaction_area: Inter
 
 ## Portal-style delayed warp: fire only if the player is still inside the warper once
 ## its dwell elapses — stepping out cancels, mirroring the client-side fade cancel.
+## An under-leveled player gets the hesitation window on top (the client holds its
+## fade for the same span, so both ends stay in sync — see Warper.GATE_WARN_EXTRA_S).
 ## Runs outside the physics callback (post-await), so the emit needs no defer.
 func _warp_after_dwell(player: Player, warper: Warper) -> void:
-	await get_tree().create_timer(warper.warp_delay_s).timeout
+	# Mirror the client's phases exactly: [hesitation if warned] + spin-up + fade.
+	var total_s: float = Warper.SPIN_UP_S + warper.warp_delay_s \
+		+ warper.warn_extra_for(player.player_resource.level)
+	await get_tree().create_timer(total_s).timeout
 	if not is_instance_valid(self) or not is_instance_valid(player) or not is_instance_valid(warper):
 		return
 	if not warper.overlaps_body(player) or player.has_recently_teleported():

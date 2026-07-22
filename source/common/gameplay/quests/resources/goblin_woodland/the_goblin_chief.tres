@@ -20,5 +20,6 @@ requires_quests = Array[ExtResource("2_xnv0w")]([ExtResource("3_ivwvu")])
 reward_xp = 160
 reward_gold = 12
 grant_title = "Warrenbreaker"
+grants_wardstone = &"woodland"
 metadata/slug = &"the_goblin_chief"
 metadata/id = 32

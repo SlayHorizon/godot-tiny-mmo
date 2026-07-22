@@ -83,9 +83,13 @@ func _ready() -> void:
 
 	ClientState.input_changed.connect(_on_input_type_changed)
 
-	# Character level / xp bar.
+	# Character level / xp bar. The bar chrome starts hidden and only flashes
+	# on gains (see _flash_xp_bar); the level label stays visible throughout.
+	experience_bar.self_modulate.a = 0.0
 	Client.subscribe(&"combat.reward", _apply_progression)
 	Client.subscribe(&"player.died", _on_player_died)
+	# Fair-arena indicator: normalized spar matches carry sync_level > 0.
+	Client.subscribe(&"sparring.match.state", _on_spar_sync_state)
 	ClientState.local_player_ready.connect(func(_lp: LocalPlayer):
 		_refresh_progression()
 		_maybe_show_welcome())
@@ -108,11 +112,15 @@ func _on_chat_unread(has_unread: bool) -> void:
 	PixelIcon.set_art(_chat_icon, CHAT_ICON_UNREAD if has_unread else CHAT_ICON)
 
 
-## Fetch the current level/xp once (e.g. on spawn / map change).
+## Fetch the current level/xp once (e.g. on spawn / map change). A fetch is a
+## sync, not a gain — the bar stays hidden (no login/warp flash).
 func _refresh_progression() -> void:
 	if InstanceClient.current == null:
 		return
-	Client.request_data(&"progression.get", _apply_progression, {}, InstanceClient.current.name)
+	Client.request_data(&"progression.get", func(data: Dictionary) -> void:
+		_apply_progression(data)
+		_hide_xp_bar_now(),
+		{}, InstanceClient.current.name)
 
 
 ## First-run welcome modal, shown once via a client settings flag (so per install, not per character).
@@ -162,13 +170,24 @@ func _on_player_died(data: Dictionary) -> void:
 	death_screen.visible = false
 
 
+## Level the local player is currently SYNCED to by a normalized spar match
+## (0 = none). Drives the "Lv 38 (sync 10)" level-label state.
+var _spar_sync_level: int = 0
+## Seconds the xp bar stays visible after a gain before fading back out.
+const XP_BAR_LINGER_S: float = 3.0
+## Fade tween for the bar chrome (owner call: xp is moment-of-gain info, not
+## a 24/7 readout — the bar auto-shows on gain and hides again, like the
+## overhead bars. self_modulate so the LevelLabel child stays visible).
+var _xp_bar_fade: Tween
+
+
 ## Updates the xp bar + level label from progression.get or a combat.reward push.
 func _apply_progression(data: Dictionary) -> void:
 	if data.has("level"):
-		experience_level_label.text = "Lv %d" % int(data["level"])
 		# Mirror into ClientState so world nodes (gated portals) can read it without
 		# poking at HUD labels.
 		ClientState.player_level = int(data["level"])
+		_refresh_level_label()
 	if data.has("xp_to_next"):
 		experience_bar.max_value = maxi(1, int(data["xp_to_next"]))
 	if data.has("experience"):
@@ -182,6 +201,41 @@ func _apply_progression(data: Dictionary) -> void:
 			_xp_tween.tween_property(experience_bar, ^"value", new_xp, 0.3)
 		else:
 			experience_bar.value = new_xp
+		_flash_xp_bar()
+
+
+## Show the bar chrome, hold XP_BAR_LINGER_S, fade back out. Rapid gains keep
+## resetting the hold (one sequential tween, killed on re-entry).
+func _flash_xp_bar() -> void:
+	if _xp_bar_fade != null and _xp_bar_fade.is_valid():
+		_xp_bar_fade.kill()
+	_xp_bar_fade = create_tween()
+	_xp_bar_fade.tween_property(experience_bar, ^"self_modulate:a", 1.0, 0.15)
+	_xp_bar_fade.tween_interval(XP_BAR_LINGER_S)
+	_xp_bar_fade.tween_property(experience_bar, ^"self_modulate:a", 0.0, 0.4)
+
+
+func _hide_xp_bar_now() -> void:
+	if _xp_bar_fade != null and _xp_bar_fade.is_valid():
+		_xp_bar_fade.kill()
+	experience_bar.self_modulate.a = 0.0
+
+
+## While a fair-arena match is live the level label reads "Lv 38 (sync 10)"
+## in the section amber (owner reco) — players should never have to GUESS
+## they're normalized. Restored the moment the match ends.
+func _on_spar_sync_state(payload: Dictionary) -> void:
+	_spar_sync_level = int(payload.get("sync_level", 0)) if bool(payload.get("in_match", false)) else 0
+	_refresh_level_label()
+
+
+func _refresh_level_label() -> void:
+	if _spar_sync_level > 0:
+		experience_level_label.text = "Lv %d (sync %d)" % [ClientState.player_level, _spar_sync_level]
+		experience_level_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.5))
+	else:
+		experience_level_label.text = "Lv %d" % ClientState.player_level
+		experience_level_label.remove_theme_color_override(&"font_color")
 
 
 func _on_input_type_changed(input_type: InputComponent.InputType) -> void:

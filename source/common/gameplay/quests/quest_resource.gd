@@ -69,6 +69,11 @@ enum RequiresMode { ALL, ANY }
 ## Vanity title granted on turn-in. Empty = no title. Added to the player's
 ## titles_unlocked list; auto-equipped if no other title is active.
 @export var grant_title: String
+## Wardstone granted when this quest's climax OBJECTIVE completes (dungeon
+## cleared / boss slain) — NOT at turn-in, so the unlock lands on the triumph
+## (docs/wardstones.md). Empty = none. Only a biome chain's finale quest sets
+## this; the slug is the biome's (e.g. &"woodland").
+@export var grants_wardstone: StringName = &""
 @export_group("")
 
 

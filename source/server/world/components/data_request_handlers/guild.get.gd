@@ -42,6 +42,9 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		"territories": _build_territories(world_server, guild),
 		"owned_logos": Array(guild.owned_logos),
 		"logo_cost": GuildUpgrades.LOGO_COST,
+		"banner_color": guild.banner_color,
+		"banner_color_cost": GuildUpgrades.BANNER_COLOR_COST,
+		"displayed_trophies": _string_ids(guild.displayed_trophies),
 		"viewer_gold": Inventory.count(player.inventory, Economy.gold_id()),
 		"is_active": player.active_guild_id == guild.guild_id,
 	}
@@ -72,6 +75,15 @@ func _build_hall_upgrades(guild: Guild) -> Array:
 			"effect_now": GuildUpgrades.effect_line_at(uid, level),
 			"effect_next": GuildUpgrades.effect_line_at(uid, level + 1) if not GuildUpgrades.is_maxed(guild, uid) else "",
 		})
+	return out
+
+
+## StringName ids -> plain strings for the wire (client resolves names/icons
+## from the shared GuildTrophies catalog).
+func _string_ids(ids: Array[StringName]) -> Array:
+	var out: Array = []
+	for id: StringName in ids:
+		out.append(String(id))
 	return out
 
 

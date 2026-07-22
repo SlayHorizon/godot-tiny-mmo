@@ -27,6 +27,12 @@ enum SpawnOverride {
 ## Show the zone banner when a player enters this instance's map (see ZoneDiscovery).
 @export var show_discovery: bool = false
 
+@export_group("Progression")
+## Wardstone slug required to enter (docs/wardstones.md) — the previous biome's
+## stone on the critical path (e.g. fungus_cave requires &"woodland"). Empty =
+## open. Checked server-side in can_join_instance; levels are advisory only.
+@export var required_wardstone: StringName = &""
+
 var loading_instances: Array
 var charged_instances: Array[Node]
 
@@ -48,7 +54,13 @@ func level_band() -> String:
 
 @warning_ignore("unused_parameter")
 func can_join_instance(player: Player, index: int = -1) -> bool:
-	return true
+	# Wardstone gate (docs/wardstones.md): character-wide progress key, no
+	# level or party bypass. Everything else stays open.
+	if required_wardstone.is_empty():
+		return true
+	if player == null or player.player_resource == null:
+		return false
+	return player.player_resource.wardstones.has(String(required_wardstone))
 
 
 func get_instance(index: int = -1) -> Node:

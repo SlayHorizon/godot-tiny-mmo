@@ -38,6 +38,8 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 	# a first-time member. If the tag cap is full they join in the buffer (untagged).
 	if accepter.active_guild_id <= 0 and _online_tagged_count(world_server, guild_id) < GuildUpgrades.tag_cap(guild):
 		accepter.active_guild_id = guild_id
+	# Roster grew — the Full House trophy can only trigger here.
+	GuildTrophies.check_and_announce(world_server, guild)
 	store.save_guild(guild)
 	store.save_player(accepter)
 	store.commit()

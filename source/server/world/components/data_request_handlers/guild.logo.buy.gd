@@ -26,7 +26,7 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 		return {"error": 1, "ok": false, "message": "You don't have permission to buy cosmetics."}
 
 	var logo_id: int = int(args.get("logo_id", -1))
-	if logo_id <= 0 or logo_id >= GuildUpgrades.LOGO_COUNT:
+	if logo_id <= 0 or logo_id >= GuildLogos.count():
 		return {"error": 1, "ok": false, "message": "Unknown emblem."}
 	if guild.owned_logos.has(logo_id):
 		return {"error": 1, "ok": false, "message": "Already owned."}

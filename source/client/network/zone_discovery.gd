@@ -39,10 +39,13 @@ static func on_map_loaded(map_path: String) -> void:
 		config.set_value("discovered", stem, true)
 		config.save(SAVE_PATH)
 
+	# First visit = the unlock ceremony (eyebrow + sound + long dwell); repeats
+	# are a plain quiet zone-text echo.
 	Announcer.announce(zone.display_title(), zone.level_band(), {
 		"delay": 1.0,
 		"sound": first_visit,
 		"duration": 3.0 if first_visit else 1.8,
+		"eyebrow": "New region discovered" if first_visit else "",
 	})
 
 
@@ -60,6 +63,18 @@ static func _build_index() -> void:
 		var stem: String = _stem_of(res.map_path)
 		if not stem.is_empty():
 			_zones_by_stem[stem] = res
+
+
+## The zone whose portal [param stone] unlocks — pretty title for the grant
+## ceremony's "The way to X is open." line. Empty if no listed zone requires it
+## (the ceremony falls back to a generic line).
+static func zone_unlocked_by(stone: String) -> String:
+	if not _indexed:
+		_build_index()
+	for zone: InstanceResource in _zones_by_stem.values():
+		if String(zone.required_wardstone) == stone:
+			return zone.display_title()
+	return ""
 
 
 ## The scene-file stem is the join key between the charge_new_instance map_path

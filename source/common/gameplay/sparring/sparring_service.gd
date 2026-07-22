@@ -55,6 +55,13 @@ static func handle_queue_request(instance: Node, peer_id: int, master_id: int, a
 		"join":
 			if team_index < 0 or team_index >= teams.size():
 				return {"ok": false, "reason": "bad_team"}
+			if master.guild_only and player.player_resource.active_guild_id <= 0:
+				return {"ok": false, "reason": "guild_only"}
+			# Normalized brackets gate gear at the door: stats get synced, so the
+			# only way to smuggle power in would be over-bracket equipment.
+			if master.game_mode is NormalizedSparMode \
+					and (master.game_mode as NormalizedSparMode).gear_over_bracket(player.player_resource):
+				return {"ok": false, "reason": "gear_level"}
 			for roster: Array in queue:
 				if roster.has(peer_id):
 					return _queue_status(master, queue, peer_id, "already_queued")
@@ -100,6 +107,9 @@ static func _start_match(instance: Node, master: DuelMaster, rosters: Array) -> 
 		"rosters": rosters, "alive": alive, "team_of": team_of,
 		"instance_name": instance.name, "master_id": master.master_id,
 		"started_ms": now_ms, "pvp_enabled_at_ms": now_ms + PVP_ENABLE_DELAY_MS,
+		# Kept on the match so mid-match rules (bracket gear gate in item.equip)
+		# can resolve the mode without an instance/master lookup.
+		"game_mode": master.game_mode,
 	}
 
 	var ws: WorldServer = WorldServer.curr
@@ -145,6 +155,9 @@ static func _start_match(instance: Node, master: DuelMaster, rosters: Array) -> 
 					"allies": allies,
 					"opponents": opponents,
 					"countdown_ms": PVP_ENABLE_DELAY_MS, # freeze movement for the whole 3/2/1
+					# >0 = fair arena: the HUD shows "Lv real (sync N)" for the match.
+					"sync_level": (master.game_mode as NormalizedSparMode).sync_level \
+						if master.game_mode is NormalizedSparMode else 0,
 				})
 
 	if master.fight_zone != null:
@@ -280,6 +293,17 @@ static func _alive_count(match_data: Dictionary, team_index: int) -> int:
 	return n
 
 
+## The station game mode of the ACTIVE match [param peer_id] is fighting in,
+## or null (not in a match, or the station runs the default mode). Lets
+## mid-match rules (e.g. the normalized-bracket gear gate in item.equip)
+## resolve the mode without an instance/master lookup.
+static func active_mode_for_peer(peer_id: int) -> SparGameMode:
+	var key: Variant = _peer_to_match.get(peer_id)
+	if key == null:
+		return null
+	return _matches.get(key, {}).get("game_mode") as SparGameMode
+
+
 static func _end_match(key: String, winner_index: int) -> void:
 	var match_data: Dictionary = _matches.get(key, {})
 	if match_data.is_empty():
@@ -310,6 +334,13 @@ static func _end_match(key: String, winner_index: int) -> void:
 		for peer: int in rosters[t]:
 			_finalize_fighter(ws, instance, master, peer, return_pos, t == winner_index)
 			ws.data_push.rpc_id(peer, &"sparring.match.state", {"in_match": false, "position": return_pos})
+
+	# Guild spar settlement: two full-guild teams (2v2+) facing each other rate
+	# the winning guild — see GuildSpar. Runs while fighters are still connected
+	# so their guild tags resolve.
+	@warning_ignore("integer_division")
+	var duration_s: int = maxi(0, (Time.get_ticks_msec() - int(match_data.get("started_ms", 0))) / 1000)
+	GuildSpar.on_match_ended(ws, rosters, winner_index, duration_s)
 
 	_announce_result(ws, instance, master, rosters, winner_index)
 	_broadcast_result(instance, master, rosters, winner_index) # winner stays up until the next match

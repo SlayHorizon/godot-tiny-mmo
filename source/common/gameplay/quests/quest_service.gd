@@ -62,6 +62,9 @@ static func _advance_matching(
 				resource.quest_progress(quest_id, i), objective.required_amount
 			])
 		if not was_complete and is_complete(resource, quest_id, resource.inventory):
+			# Wardstone lands ON the triumph (the objective crossing), not at
+			# the turn-in walk-back — docs/wardstones.md.
+			grant_wardstone_if_due(resource, quest, peer_id)
 			if quest.auto_complete:
 				# apply_turn_in pushes its own quest.update toast — don't append
 				# the "ready — return" line that'd confuse the player.
@@ -129,6 +132,11 @@ static func apply_turn_in(
 	var quest_id: int = int(quest.get_meta(&"id", 0))
 	resource.set_quest_turned_in(quest_id)
 
+	# Safety net: normally granted at the objective crossing (see
+	# _advance_matching); idempotent, so this only catches odd shapes like
+	# no-objective quests that never cross.
+	grant_wardstone_if_due(resource, quest, peer_id)
+
 	# Vanity title grant — auto-equips only if no title currently displayed.
 	var quest_messages: Array = ["Quest complete: %s" % quest.quest_name]
 	if not quest.grant_title.is_empty() and not resource.titles_unlocked.has(quest.grant_title):
@@ -158,6 +166,39 @@ static func apply_turn_in(
 		LevelMilestoneService.on_levels_gained(
 			resource, level_before, int(progress.get("level", 1)), instance
 		)
+
+
+## Wardstone grant (docs/wardstones.md): a biome finale quest carries
+## grants_wardstone; the stone lands the MOMENT its objectives complete (boss
+## down / dungeon cleared) so the unlock rides the triumph, not the walk back.
+## Idempotent — safe to call from every completion path. Pushes the refreshed
+## mirror + the ceremony to the earning client. Server-only path.
+static func grant_wardstone_if_due(
+	resource: PlayerResource, quest: QuestResource, peer_id: int
+) -> void:
+	var stone: String = String(quest.grants_wardstone)
+	if stone.is_empty() or resource.wardstones.has(stone):
+		return
+	resource.wardstones.append(stone)
+	ServerLog.info("Player #%d (%s) reclaimed the %s Wardstone." % [
+		resource.player_id, resource.display_name, stone.capitalize()
+	])
+	if peer_id > 0:
+		WorldServer.curr.data_push.rpc_id(peer_id, &"wardstones.set", {"wardstones": resource.wardstones})
+		WorldServer.curr.data_push.rpc_id(peer_id, &"wardstone.granted", {"stone": stone})
+
+
+## Login backfill: finale quests turned in BEFORE the wardstone system shipped
+## (or before a stone was added to an existing quest) still owe their stone —
+## the objective crossing already happened and will never re-fire. Silent
+## (peer_id 0 = no ceremony; the login wardstones.set push carries the mirror).
+static func backfill_wardstones(resource: PlayerResource) -> void:
+	for quest_id: int in resource.quests:
+		if resource.quest_state(quest_id) != &"turned_in":
+			continue
+		var quest: QuestResource = QuestResource.load_quest(quest_id)
+		if quest != null:
+			grant_wardstone_if_due(resource, quest, 0)
 
 
 ## True when the quest's completion rule is satisfied. ALL = every objective met
@@ -198,6 +239,7 @@ static func notify_passive_ready(resource: PlayerResource, peer_id: int) -> void
 		var notified: bool = resource.quest_ready_notified(quest_id)
 		if complete and not notified:
 			resource.set_quest_ready_notified(quest_id, true)
+			grant_wardstone_if_due(resource, quest, peer_id) # COLLECT-path crossing
 			WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {
 				"messages": ["✓ %s ready to turn in. Return to the quest giver." % quest.quest_name]
 			})

@@ -35,8 +35,8 @@ func data_request_handler(peer_id: int, instance: ServerInstance, args: Dictiona
 
 	if args.has("logo_id"):
 		var logo_id: int = int(args.get("logo_id", 0))
-		# Only an owned logo can be equipped (0 is always owned — free default).
-		if logo_id < 0 or logo_id >= GuildUpgrades.LOGO_COUNT or not guild.owned_logos.has(logo_id):
+		# Only an owned emblem can be equipped (0 is always owned — free default).
+		if logo_id < 0 or logo_id >= GuildLogos.count() or not guild.owned_logos.has(logo_id):
 			return {"error": 1, "ok": false, "message": "Your guild doesn't own that emblem."}
 		guild.logo_id = logo_id
 

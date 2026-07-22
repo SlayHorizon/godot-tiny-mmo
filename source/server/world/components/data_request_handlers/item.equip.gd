@@ -32,6 +32,15 @@ func data_request_handler(
 			return {"ok": false, "reason": "level", "level": item.required_level}
 		return {"ok": false, "reason": "cant_equip"}
 
+	# Normalized spar bracket: while level-synced, gear ABOVE the bracket can't
+	# be equipped. Weapons are the reason this lives here and not only at queue
+	# join — they stay swappable mid-fight, so the join gate alone can't hold
+	# the bracket (a level 38 drawing a fire sword mid-match, real playtest).
+	var spar_mode: SparGameMode = SparringService.active_mode_for_peer(peer_id)
+	if spar_mode is NormalizedSparMode and item is GearItem \
+			and (item as GearItem).required_level > (spar_mode as NormalizedSparMode).sync_level:
+		return {"ok": false, "reason": "gear_level", "level": (spar_mode as NormalizedSparMode).sync_level}
+
 	if item is GearItem:
 		# Combat lock — but WEAPONS stay swappable mid-fight (sword for melee,
 		# bow for range is core play). Only armor/rings/etc. are locked so you

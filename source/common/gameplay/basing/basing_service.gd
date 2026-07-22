@@ -52,6 +52,7 @@ static func _flush_pending_kills(world_server: Node) -> void:
 		var guild: Guild = world_server.database.get_guild(gid)
 		if guild != null:
 			guild.total_kills += count
+			GuildTrophies.check_and_announce(world_server, guild)
 			world_server.database.save_guild(guild)
 	_pending_kills.clear()
 
@@ -192,6 +193,7 @@ static func credit_glory_kill(guild_id: int) -> void:
 		guild.kill_counter_for_glory -= grants * KILLS_PER_GLORY
 		grant_sg(guild, grants)
 		_announce_milestone(ws, guild, grants)
+		GuildTrophies.check_and_announce(ws, guild)
 	ws.database.save_guild(guild)
 
 
@@ -231,6 +233,8 @@ static func tick_all_territories(world_server: Node) -> void:
 		var guild: Guild = guilds_to_save[gid]
 		if guild == null:
 			continue
+		# Trophy unlocks ride the same save as the counters that earned them.
+		GuildTrophies.check_and_announce(world_server, guild)
 		world_server.database.save_guild(guild)
 		_announce_tick(world_server, guild, int(ticks_by_guild.get(gid, 0)))
 

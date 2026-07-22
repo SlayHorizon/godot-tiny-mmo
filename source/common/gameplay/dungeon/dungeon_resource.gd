@@ -13,9 +13,10 @@ extends InstanceResource
 @export var party_size: int = 4
 ## Shown in the dungeon manager / lobby.
 @export_multiline var description: String = ""
-## Entry floor (hard gate, future can_join_instance hook) + a soft suggestion the
-## manager surfaces.
-@export var min_level: int = 1
+## Soft level suggestion the dungeon manager surfaces. The entry FLOOR is the
+## inherited InstanceResource.level_min (the zone-owned single source of truth,
+## and the future v1 can_join_instance hard gate) — the duplicate min_level
+## export this class carried was retired 2026-07-20.
 @export var recommended_level: int = 1
 
 @export_group("Rewards")
@@ -30,6 +31,13 @@ extends InstanceResource
 @export var hard_damage_mult: float = 1.5
 
 
-## The lobby title — the pretty display_name, or the instance_name id if unset.
+## Pretty name everywhere (lobby title, entered/left banners, recap): prefers
+## display_name, else the base InstanceResource fallback (zone_title /
+## prettified instance_name).
+func display_title() -> String:
+	return display_name if not display_name.is_empty() else super.display_title()
+
+
+## Legacy alias — older lobby code calls title(); same value as display_title().
 func title() -> String:
-	return display_name if not display_name.is_empty() else str(instance_name)
+	return display_title()

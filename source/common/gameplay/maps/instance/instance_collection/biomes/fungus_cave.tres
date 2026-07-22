@@ -10,6 +10,7 @@ zone_title = "Fungus Cave"
 level_min = 5
 level_max = 10
 show_discovery = true
+required_wardstone = &"woodland"
 metadata/_custom_type_script = "uid://deqjrbn7hm53u"
 metadata/slug = &"cave_area1"
 metadata/id = 5

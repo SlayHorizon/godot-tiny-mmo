@@ -22,6 +22,7 @@
 [ext_resource type="Script" uid="uid://ddps5vwhnf048" path="res://source/common/gameplay/characters/npc/npc_resource.gd" id="19_kqnsa"]
 [ext_resource type="Script" uid="uid://c1nyyoow8f4tw" path="res://source/common/gameplay/sparring/spar_team.gd" id="19_wfdll"]
 [ext_resource type="Script" uid="uid://cmw2wguvs4l0k" path="res://source/common/gameplay/sparring/spar_banner.gd" id="20_0vpir"]
+[ext_resource type="Script" uid="uid://c8u5wuyqcyq7f" path="res://source/common/gameplay/sparring/normalized_spar_mode.gd" id="22_7whis"]
 [ext_resource type="Script" uid="uid://bfh4whbd72q65" path="res://source/common/gameplay/characters/npc/interactions/wardrobe_interaction.gd" id="24_8uqpf"]
 [ext_resource type="PackedScene" path="res://source/common/gameplay/leaderboard/champion_statue.tscn" id="26_7whis"]
 [ext_resource type="Script" uid="uid://b2j8gyjph35qx" path="res://source/common/gameplay/trade/trade_table.gd" id="30_0sb5n"]
@@ -53,6 +54,10 @@ script = ExtResource("19_kqnsa")
 npc_name = "Duel Master"
 skin = ExtResource("17_c2wc5")
 metadata/_custom_type_script = "uid://ddps5vwhnf048"
+
+[sub_resource type="Resource" id="Resource_0vpir"]
+script = ExtResource("22_7whis")
+metadata/_custom_type_script = "uid://c8u5wuyqcyq7f"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fjcme"]
 size = Vector2(350, 280)
@@ -150,6 +155,7 @@ npc_resource = SubResource("Resource_g5t2t")
 position = Vector2(-215, -575)
 master_id = 1
 fight_zone = NodePath("Area2D")
+game_mode = SubResource("Resource_0vpir")
 
 [node name="Area2D" type="Area2D" parent="DuelMaster" unique_id=1660179517]
 position = Vector2(1, -133)

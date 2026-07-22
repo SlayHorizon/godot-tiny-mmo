@@ -22,7 +22,9 @@ func _ready() -> void:
 	if not GameMode.is_client():
 		queue_free()
 		return
-	layer = 100 # Above the world + HUD; below Toaster (128).
+	layer = 110 # Above the world, HUD AND WarpFade (100) — a portal warning's tail
+	# stays readable as a fade starts, and zone text over the dark warp screen reads
+	# cinematic rather than swallowed. Toaster (128) stays on top.
 
 
 func announce(title: String, subtitle: String = "", opts: Dictionary = {}) -> void:
@@ -31,6 +33,7 @@ func announce(title: String, subtitle: String = "", opts: Dictionary = {}) -> vo
 	_queue.append({
 		"title": title,
 		"subtitle": subtitle,
+		"eyebrow": str(opts.get("eyebrow", "")),
 		"color": opts.get("color", TITLE_COLOR),
 		"duration": float(opts.get("duration", 3.0)),
 		"delay": float(opts.get("delay", 0.0)),
@@ -63,6 +66,12 @@ func _play_next() -> void:
 	add_child(box)
 
 	var title_color: Color = entry["color"]
+	# Optional eyebrow — the small tag line ABOVE the title ("New region
+	# discovered", "Warning"). Same color family as the title so a red warning
+	# reads red top to bottom.
+	var eyebrow_text: String = str(entry["eyebrow"])
+	if not eyebrow_text.is_empty():
+		box.add_child(_make_label(eyebrow_text, 13, title_color))
 	var title_label: Label = _make_label(str(entry["title"]), 34, title_color)
 	box.add_child(title_label)
 

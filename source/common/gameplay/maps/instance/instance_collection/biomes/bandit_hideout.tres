@@ -10,4 +10,5 @@ zone_title = "Bandit Hideout"
 level_min = 10
 level_max = 15
 show_discovery = true
+required_wardstone = &"fungus_cave"
 metadata/_custom_type_script = "uid://deqjrbn7hm53u"

@@ -17,6 +17,10 @@ extends Interactable
 @export var master_id: int = 0
 ## Shown as the lobby title (e.g. "Duel Arena", "2v2 Arena").
 @export var master_name: String = "Duel Arena"
+## Only guild-tagged players may queue here — for dedicated guild-spar venues
+## (e.g. a station inside a guild arena). Rating rules are unchanged; this
+## just filters the lobby so full-guild teams actually form.
+@export var guild_only: bool = false
 ## Optional Area2D enclosing the arena interior. If wired, a fighter who leaves
 ## the zone mid-match instantly loses (anti-exploit).
 @export var fight_zone: Area2D

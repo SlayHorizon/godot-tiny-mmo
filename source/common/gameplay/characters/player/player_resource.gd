@@ -108,6 +108,10 @@ const HEALTH_PER_LEVEL: float = 5.0
 ## title displayed. Auto-set to a newly-granted title only if no title is
 ## currently active — so players don't lose their chosen banner.
 @export var display_title: String
+## Earned wardstones — the biome-progression keys (docs/wardstones.md). Slugs
+## like "woodland"; granted the moment a biome's finale-quest climax completes,
+## checked by InstanceResource.can_join_instance. Character-wide by design.
+@export var wardstones: PackedStringArray
 ## Up to 3 trophies the player pins to their profile's right-side chip strip.
 ## Each entry must also be in titles_unlocked. Separate from display_title (the
 ## one shown under their name) — these are the "achievement flex" picks.

@@ -30,6 +30,12 @@ signal input_changed(input_type: InputComponent.InputType)
 
 var local_player: LocalPlayer
 var player_id: int
+## Fires when the wardstone mirror updates (login sync or a fresh grant) —
+## sealed portals listen so they unseal live, without a map reload.
+signal wardstones_changed
+## Earned wardstone slugs, mirrored from the server (wardstones.set push at login
+## + on every grant) — lets sealed portals render/explain with no round trip.
+var wardstones: PackedStringArray
 ## The local character's level, mirrored from progression data (progression.get on
 ## spawn/map change + combat.reward pushes — see HUD._apply_progression). Client-side
 ## cosmetic checks only (e.g. a gated Portal suppressing its fade); the server enforces.
@@ -107,6 +113,19 @@ func _ready() -> void:
 		player_id = payload.get("player_id", 0))
 	Client.subscribe(&"active_guild_id.set", func(payload: Dictionary):
 		active_guild_id = payload.get("active_guild_id", 0))
+	Client.subscribe(&"wardstones.set", func(payload: Dictionary):
+		wardstones = PackedStringArray(payload.get("wardstones", []))
+		wardstones_changed.emit())
+	# The campaign's heartbeat moment — bigger than a level-up (docs/wardstones.md).
+	Client.subscribe(&"wardstone.granted", func(payload: Dictionary):
+		var stone: String = str(payload.get("stone", ""))
+		var next_zone: String = ZoneDiscovery.zone_unlocked_by(stone)
+		Announcer.announce(
+			"%s Wardstone" % stone.capitalize(),
+			("The way to %s is open." % next_zone) if not next_zone.is_empty()
+				else "The frontier is pushed one gate deeper.",
+			{"eyebrow": "Wardstone reclaimed", "duration": 4.0}
+		))
 	Client.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
 	)

@@ -121,13 +121,22 @@ const DEFENDER_ENEMY_SLUG_BY_TIER: Array[StringName] = [
 ]
 
 # --- Treasury sinks beyond upgrades ---
-## Flat treasury price per non-default guild logo (logo 0 is free).
+## Flat treasury price per non-default guild emblem (logo 0 is free).
+## Catalog + valid id range live in GuildLogos.
 const LOGO_COST: int = 250
-## Logo catalog size — mirrors the client LOGOS array; server-side bound for
-## guild.logo.buy / guild.edit validation.
-const LOGO_COUNT: int = 4
 ## Treasury price per guard respawned via guild.defenders.reinforce.
 const REINFORCE_COST_PER_GUARD: int = 25
+## Treasury price PER CHANGE of the custom banner color (repeatable sink).
+const BANNER_COLOR_COST: int = 100
+## The purchasable banner colors — a CURATED preset list, not a free picker
+## (owner call 2026-07-19): every entry is bright enough to read on the dark
+## world, and the server only accepts colors from this list, so near-black /
+## near-invisible banners can't happen. Hex, lowercase, leading #.
+const BANNER_COLORS: PackedStringArray = [
+	"#e2504c", "#f07f2e", "#f2c14b", "#8fd14f",
+	"#4caf6e", "#39c6b5", "#4fa3e8", "#7d6ff0",
+	"#c46ff0", "#f06fb2", "#e8e4da", "#8a93a8",
+]
 
 
 static func defender_enemy_slug(guild: Guild) -> StringName:

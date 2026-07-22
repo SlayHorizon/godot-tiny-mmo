@@ -60,7 +60,7 @@ func _build_shell() -> void:
 func _refresh() -> void:
 	Client.request_data(
 		&"sparring.info", _apply_state, {"master_id": _master_id},
-		InstanceClient.current.name if InstanceClient.current else ""
+		String(InstanceClient.current.name) if InstanceClient.current else ""
 	)
 
 
@@ -74,6 +74,8 @@ func _apply_state(response: Dictionary) -> void:
 			"no_master": "Arena not found.",
 			"bad_station": "This arena isn't set up yet.",
 			"team_full": "That team is full.",
+			"guild_only": "This arena is for guild teams. Tag into a guild first.",
+			"gear_level": "Your equipped gear is above this arena's level bracket.",
 		}.get(reason, "Sparring unavailable."))
 		hide()
 		return
@@ -164,7 +166,7 @@ func _on_join(team_index: int) -> void:
 	Client.request_data(
 		&"sparring.queue", _apply_state,
 		{"master_id": _master_id, "action": "join", "team": team_index},
-		InstanceClient.current.name if InstanceClient.current else ""
+		String(InstanceClient.current.name) if InstanceClient.current else ""
 	)
 
 
@@ -173,7 +175,7 @@ func _on_leave() -> void:
 	Client.request_data(
 		&"sparring.queue", _apply_state,
 		{"master_id": _master_id, "action": "leave"},
-		InstanceClient.current.name if InstanceClient.current else ""
+		String(InstanceClient.current.name) if InstanceClient.current else ""
 	)
 
 

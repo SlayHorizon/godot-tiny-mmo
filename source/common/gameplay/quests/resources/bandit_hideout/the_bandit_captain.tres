@@ -20,5 +20,6 @@ requires_quests = Array[ExtResource("2_quest")]([ExtResource("3_q4")])
 reward_xp = 600
 reward_gold = 25
 grant_title = "Bandit Breaker"
+grants_wardstone = &"bandit_hideout"
 metadata/slug = &"the_bandit_captain"
 metadata/id = 20

@@ -9,14 +9,6 @@ extends MenuShell
 ## Upgrades (buy levels, Now/Next effect lines) and Cosmetics (emblem catalog,
 ## default free + fund-priced unlocks).
 
-## Mirrors guild_menu.LOGOS — keep both in sync with the logo assets.
-const LOGOS: Array[Texture2D] = [
-	preload("res://assets/sprites/guild_logos/wyvern.png"),
-	preload("res://assets/sprites/guild_logos/kawaii_skull.png"),
-	preload("res://assets/sprites/guild_logos/cute_crown.png"),
-	preload("res://assets/sprites/guild_logos/cute_fish.png"),
-]
-
 const COLOR_GOLD: Color = Color(1.0, 0.95, 0.75)
 const COLOR_SECTION: Color = Color(1.0, 0.85, 0.5)
 const COLOR_MUTED: Color = Color(0.75, 0.77, 0.83)
@@ -29,6 +21,8 @@ var _section: String = "upgrades"
 var _tab_buttons: Dictionary
 var _left_host: VBoxContainer
 var _right_host: VBoxContainer
+## Swatch the viewer has selected in Cosmetics ("" = none yet).
+var _selected_banner_color: String = ""
 
 
 func _ready() -> void:
@@ -276,68 +270,107 @@ func _upgrade_row(up: Dictionary, can_upgrade: bool, treasury: int) -> Control:
 func _build_cosmetics(host: VBoxContainer) -> void:
 	for child: Node in host.get_children():
 		child.queue_free()
-	host.add_child(_section_header("Guild Emblem"))
-
-	var blurb: Label = Label.new()
-	blurb.text = "Shown on your banner, flags and guild page. The first emblem is free; unlock more with Guild Funds."
-	blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	blurb.add_theme_color_override(&"font_color", COLOR_MUTED)
-	blurb.add_theme_font_size_override(&"font_size", 12)
-	host.add_child(blurb)
-
-	var owned: Array = _guild.get("owned_logos", [0])
-	var current: int = int(_guild.get("logo_id", 0))
-	var cost: int = int(_guild.get("logo_cost", 250))
-	var treasury: int = int(_guild.get("treasury", 0))
 	var can_edit: bool = _can_edit()
+	var treasury: int = int(_guild.get("treasury", 0))
 
-	var grid: HFlowContainer = HFlowContainer.new()
-	grid.add_theme_constant_override(&"h_separation", 12)
-	grid.add_theme_constant_override(&"v_separation", 12)
-	host.add_child(grid)
+	# --- Banner color FIRST (small section — visible without scrolling, so
+	# players actually find it; owner call). Curated preset swatches, not a
+	# free picker: the server only accepts colors from this list. ---
+	host.add_child(_section_header("Banner color"))
+	var color_cost: int = int(_guild.get("banner_color_cost", 100))
+	var color_blurb: Label = Label.new()
+	color_blurb.text = "Tints your territory banners and flag nameplates for everyone. %d funds per change." % color_cost
+	color_blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	color_blurb.add_theme_color_override(&"font_color", COLOR_MUTED)
+	color_blurb.add_theme_font_size_override(&"font_size", 12)
+	host.add_child(color_blurb)
 
-	for i: int in LOGOS.size():
-		grid.add_child(_logo_tile(i, owned.has(i), i == current, cost, treasury, can_edit))
+	var current_color: String = str(_guild.get("banner_color", ""))
+	if _selected_banner_color.is_empty():
+		_selected_banner_color = current_color
+
+	# Fixed 6 columns -> two even rows of 6 (12 presets), instead of the flow
+	# container wrapping 11+1 at some widths.
+	var swatches: GridContainer = GridContainer.new()
+	swatches.columns = 6
+	swatches.add_theme_constant_override(&"h_separation", 8)
+	swatches.add_theme_constant_override(&"v_separation", 8)
+	host.add_child(swatches)
+	for hex: String in GuildUpgrades.BANNER_COLORS:
+		swatches.add_child(_banner_swatch(hex, hex == _selected_banner_color, hex == current_color))
+
+	var apply_row: HBoxContainer = HBoxContainer.new()
+	apply_row.add_theme_constant_override(&"separation", 10)
+	host.add_child(apply_row)
+	var apply: Button = Button.new()
+	apply.text = "Apply (%d)" % color_cost
+	apply.custom_minimum_size = Vector2(140, 36)
+	apply.disabled = (
+		not can_edit or treasury < color_cost
+		or _selected_banner_color.is_empty() or _selected_banner_color == current_color
+	)
+	if can_edit and treasury < color_cost:
+		apply.tooltip_text = "Not enough Guild Funds."
+	apply.pressed.connect(func() -> void: _apply_banner_color(_selected_banner_color))
+	apply_row.add_child(apply)
+
+	# --- Emblem: compact current + Change (the full grid lives in a popup so
+	# this tab stays light as more cosmetics land). Description stays HERE so
+	# every cosmetic reads what it's about before any click (owner call). ---
+	host.add_child(HSeparator.new())
+	host.add_child(_section_header("Guild emblem"))
+	var emblem_blurb: Label = Label.new()
+	emblem_blurb.text = "Shown on your banner, flags and guild page. The first emblem is free; unlock more with Guild Funds."
+	emblem_blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	emblem_blurb.add_theme_color_override(&"font_color", COLOR_MUTED)
+	emblem_blurb.add_theme_font_size_override(&"font_size", 12)
+	host.add_child(emblem_blurb)
+	var emblem_row: HBoxContainer = HBoxContainer.new()
+	emblem_row.add_theme_constant_override(&"separation", 12)
+	host.add_child(emblem_row)
+	var current_logo: TextureRect = TextureRect.new()
+	current_logo.custom_minimum_size = Vector2(56, 56)
+	current_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	current_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	current_logo.texture = GuildLogos.texture(int(_guild.get("logo_id", 0)))
+	emblem_row.add_child(current_logo)
+	var change: Button = Button.new()
+	change.text = "Change emblem"
+	change.custom_minimum_size = Vector2(160, 36)
+	change.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# Full-screen emblem catalog menu (13 emblems and growing — a popup
+	# stopped fitting the moment the catalog got real).
+	change.pressed.connect(func() -> void:
+		ClientState.open_menu_requested.emit(&"guild_emblems", _guild_name))
+	emblem_row.add_child(change)
 
 	if not can_edit:
 		host.add_child(_perm_note())
 
 
-## One emblem tile: the logo + its state button (Current / Use / Buy).
-func _logo_tile(logo_id: int, is_owned: bool, is_current: bool, cost: int, treasury: int, can_edit: bool) -> Control:
-	var panel: PanelContainer = PanelContainer.new()
-	var pad: MarginContainer = MarginContainer.new()
-	for side: String in ["left", "right", "top", "bottom"]:
-		pad.add_theme_constant_override("margin_" + side, 10)
-	panel.add_child(pad)
-	var box: VBoxContainer = VBoxContainer.new()
-	box.add_theme_constant_override(&"separation", 8)
-	pad.add_child(box)
-
-	var icon: TextureRect = TextureRect.new()
-	icon.custom_minimum_size = Vector2(96, 96)
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.texture = LOGOS[logo_id]
-	icon.modulate = Color.WHITE if is_owned else Color(0.45, 0.45, 0.5)
-	box.add_child(icon)
-
-	var action: Button = Button.new()
-	action.custom_minimum_size = Vector2(120, 34)
-	if is_current:
-		action.text = "Current"
-		action.disabled = true
-	elif is_owned:
-		action.text = "Use"
-		action.disabled = not can_edit
-		action.pressed.connect(func() -> void: _use_logo(logo_id))
+## One preset banner-color swatch. Selected gets the thick amber frame; the
+## guild's CURRENT color gets a thin light frame so it reads at a glance.
+func _banner_swatch(hex: String, selected: bool, is_current: bool) -> Button:
+	var swatch: Button = Button.new()
+	swatch.custom_minimum_size = Vector2(40, 40)
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color.html(hex)
+	style.set_corner_radius_all(4)
+	if selected:
+		style.set_border_width_all(3)
+		style.border_color = Color(0.96, 0.74, 0.16)
+	elif is_current:
+		style.set_border_width_all(2)
+		style.border_color = Color(0.9, 0.92, 0.96)
 	else:
-		action.text = "Buy (%d)" % cost
-		action.disabled = not can_edit or treasury < cost
-		action.tooltip_text = "Not enough Guild Funds." if (can_edit and treasury < cost) else ""
-		action.pressed.connect(func() -> void: _buy_logo(logo_id))
-	box.add_child(action)
-	return panel
+		style.set_border_width_all(1)
+		style.border_color = Color(0, 0, 0, 0.5)
+	for state: StringName in [&"normal", &"hover", &"pressed", &"hover_pressed"]:
+		swatch.add_theme_stylebox_override(state, style)
+	swatch.pressed.connect(func() -> void:
+		_selected_banner_color = hex
+		_build_cosmetics(_right_host))
+	return swatch
 
 
 # ---------------------------------------------------------------------------
@@ -369,23 +402,14 @@ func _deposit(amount: int) -> void:
 		{"id": int(_guild.get("id", 0)), "amount": amount}, _inst())
 
 
-func _buy_logo(logo_id: int) -> void:
-	Client.request_data(&"guild.logo.buy", func(data: Dictionary) -> void:
+func _apply_banner_color(hex: String) -> void:
+	Client.request_data(&"guild.banner.color", func(data: Dictionary) -> void:
 		if not bool(data.get("ok", false)):
-			Toaster.toast(str(data.get("message", "Couldn't buy the emblem.")))
+			Toaster.toast(str(data.get("message", "Couldn't change the banner color.")))
 			return
-		Toaster.toast("Emblem unlocked.")
+		Toaster.toast("Banner color updated.")
 		_refresh(),
-		{"q": _guild_name, "logo_id": logo_id}, _inst())
-
-
-func _use_logo(logo_id: int) -> void:
-	Client.request_data(&"guild.edit", func(data: Dictionary) -> void:
-		if not bool(data.get("ok", false)):
-			Toaster.toast(str(data.get("message", "Couldn't change the emblem.")))
-			return
-		_refresh(),
-		{"name": _guild_name, "logo_id": logo_id}, _inst())
+		{"q": _guild_name, "color": hex}, _inst())
 
 
 # ---------------------------------------------------------------------------

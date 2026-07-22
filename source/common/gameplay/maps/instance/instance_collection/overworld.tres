@@ -7,5 +7,7 @@ script = ExtResource("1_5ydet")
 instance_name = &"Overworld"
 map_path = "uid://bundntjwhvar6"
 load_at_startup = true
+zone_title = "Castle Garden"
+show_discovery = true
 metadata/slug = &"overworld"
 metadata/id = 6

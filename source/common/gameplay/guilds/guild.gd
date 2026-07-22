@@ -116,6 +116,16 @@ const DEFAULT_MEMBER_RANK: int = 4
 ## is the free default; guild.edit only accepts owned ids.
 @export var owned_logos: Array[int] = [0]
 
+# --- Trophies (see GuildTrophies; docs/guild.md) ---
+## Trophy ids earned so far — persisted so each unlock announces exactly once.
+@export var trophies_unlocked: Array[StringName] = []
+## Up to GuildTrophies.MAX_DISPLAYED trophy ids pinned to the guild profile.
+@export var displayed_trophies: Array[StringName] = []
+
+## Custom banner color as an HTML hex string ("" = default per-guild palette
+## hash). Tints territory banners + nameplates; a Guild Hall cosmetic sink.
+@export var banner_color: String = ""
+
 
 func add_member(player_id: int) -> void:
 	members[player_id] = DEFAULT_MEMBER_RANK

@@ -87,6 +87,8 @@ func _on_item_action_result(result: Dictionary) -> void:
 			Toaster.toast("That's still on cooldown.")
 		"level":
 			Toaster.toast("Requires level %d to equip." % int(result.get("level", 0)))
+		"gear_level":
+			Toaster.toast("Fair arena: level %d gear only." % int(result.get("level", 0)))
 		"cant_equip":
 			Toaster.toast("You can't equip that.")
 

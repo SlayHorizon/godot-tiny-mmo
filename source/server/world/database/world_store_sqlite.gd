@@ -58,6 +58,7 @@ func save_player(player: PlayerResource) -> void:
 	})
 	var dungeon_lockouts_json: String = JSON.stringify(player.dungeon_lockouts)
 	var redeemed_codes_json: String = JSON.stringify(player.redeemed_codes)
+	var wardstones_json: String = JSON.stringify(player.wardstones)
 
 	var joined_guild_ids_json: String = JSON.stringify(player.joined_guild_ids)
 
@@ -65,9 +66,9 @@ func save_player(player: PlayerResource) -> void:
 		"INSERT OR REPLACE INTO players("
 		+ "player_id, account_name, display_name, skin_id, level, experience, available_attributes_points, "
 		+ "profile_status, profile_animation, "
-		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, owned_skins_json, server_roles_json, stats_json, titles_json, dailies_json, dungeon_lockouts_json, redeemed_codes_json, "
+		+ "attributes_json, inventory_json, equipment_json, skills_json, mastery_json, quests_json, friends_json, blocked_ids_json, owned_skins_json, server_roles_json, stats_json, titles_json, dailies_json, dungeon_lockouts_json, redeemed_codes_json, wardstones_json, "
 		+ "active_guild_id, joined_guild_ids_json, led_guild_id"
-		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+		+ ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
 		[
 			player.player_id,
 			player.account_name,
@@ -95,6 +96,7 @@ func save_player(player: PlayerResource) -> void:
 			dailies_json,
 			dungeon_lockouts_json,
 			redeemed_codes_json,
+			wardstones_json,
 
 			player.active_guild_id,
 			joined_guild_ids_json,
@@ -331,6 +333,9 @@ func _row_to_player(row: Dictionary) -> PlayerResource:
 	var redeemed_codes_v: Variant = JSON.parse_string(str(row.get("redeemed_codes_json", "[]")))
 	player.redeemed_codes = PackedStringArray(redeemed_codes_v if redeemed_codes_v is Array else [])
 
+	var wardstones_v: Variant = JSON.parse_string(str(row.get("wardstones_json", "[]")))
+	player.wardstones = PackedStringArray(wardstones_v if wardstones_v is Array else [])
+
 	player.server_roles = JSON.parse_string(str(row.get("server_roles_json", "{}"))) as Dictionary
 
 	var lb_stats_v: Variant = JSON.parse_string(str(row.get("stats_json", "{}")))
@@ -447,6 +452,15 @@ func get_guild(guild_id: int) -> Guild:
 		if not guild.owned_logos.has(0):
 			guild.owned_logos.append(0)
 
+		# Trophies + banner color (JSON strings -> StringName ids).
+		guild.trophies_unlocked.clear()
+		for tid: Variant in data.get("trophies_unlocked", []):
+			guild.trophies_unlocked.append(StringName(str(tid)))
+		guild.displayed_trophies.clear()
+		for tid: Variant in data.get("displayed_trophies", []):
+			guild.displayed_trophies.append(StringName(str(tid)))
+		guild.banner_color = str(data.get("banner_color", ""))
+
 	# members
 	db.query_with_bindings("SELECT player_id, rank FROM guild_members WHERE guild_id=?;", [guild_id])
 	guild.members = {}
@@ -474,6 +488,9 @@ func save_guild(guild: Guild) -> void:
 		"treasury": guild.treasury,
 		"upgrades": guild.upgrades,
 		"owned_logos": guild.owned_logos,
+		"trophies_unlocked": guild.trophies_unlocked,
+		"displayed_trophies": guild.displayed_trophies,
+		"banner_color": guild.banner_color,
 	})
 
 	db.query_with_bindings(

@@ -36,6 +36,11 @@ const FADE_IN_S: float = 0.3
 
 ## Client-side: the screen fade covering the local player's pending warp, if any.
 var _fade: WarpFade
+## True while the LOCAL player stands inside this portal (drives the delayed charge).
+var _local_inside: bool = false
+## Invalidation token for a pending hesitation window: bumped on every enter/exit so
+## a stale timer from an earlier visit can never start a charge.
+var _warn_token: int = 0
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var label: Label = $Label
@@ -49,6 +54,10 @@ func _ready() -> void:
 	if not Engine.is_editor_hint() and not multiplayer.is_server():
 		body_entered.connect(_on_local_body_entered)
 		body_exited.connect(_on_local_body_exited)
+		# Sealed state is per-character and can change LIVE (the stone is granted
+		# while this map is loaded) — re-skin on every wardstone update.
+		ClientState.wardstones_changed.connect(_apply_sealed)
+		_apply_sealed()
 
 
 ## Push color + label onto the child nodes. Safe to call before ready (setters fire on
@@ -78,29 +87,92 @@ func _on_local_body_entered(body: Node2D) -> void:
 	# departure — no fade, no rev.
 	if body.has_recently_teleported():
 		return
-	# SOFT level gate (docs/pve_plan.md: floor - 2, warn-and-confirm): well below the
-	# zone's band we warn, but the warp still charges — staying through the dwell IS
-	# the confirm, stepping out is the cancel. No server round trip needed: the
-	# destination InstanceResource (and the local player's level) are client-known.
-	if gate_level() > 0 and ClientState.player_level < gate_level() - 2:
-		var zone_name: String = target_instance.display_title() if target_instance != null else "This area"
-		Toaster.toast(
-			"%s is dangerous below level %d. Step out to cancel." % [zone_name, gate_level()],
-			3.0, Color(1.0, 0.8, 0.4)
+	_local_inside = true
+	_warn_token += 1
+	# Wardstone seal (docs/wardstones.md): the hard gate. No charge, no dwell —
+	# just the explanation. The server refuses independently (can_join_instance +
+	# its target_instance check), so a modified client gains nothing. Placeholder
+	# portals (no destination authored yet) read as sealed future content.
+	if _is_sealed():
+		var subtitle: String = "This land is not yet within reach." if required_stone().is_empty() \
+			else "Reclaim the %s Wardstone first." % String(required_stone()).capitalize()
+		Announcer.announce(
+			"The way is sealed", subtitle,
+			{"eyebrow": "Sealed", "color": Color(0.78, 0.7, 1.0), "duration": 2.2}
 		)
+		return
+	# SOFT level gate (docs/pve_plan.md: floor - 2, warn-and-confirm): well below the
+	# zone's band, entry starts with a HESITATION window — the warning shows on a
+	# clear screen and the charge (rev + fade) holds until the window elapses, so
+	# staying through it IS the confirm and stepping out cancels. The server delays
+	# its dwell by the same span (Warper.warn_extra_for), keeping both ends in sync
+	# with no round trip: the destination resource + our level are client-known.
+	var warn_s: float = warn_extra_for(ClientState.player_level)
+	if warn_s > 0.0:
+		var zone_name: String = target_instance.display_title() if target_instance != null else "This area"
+		Announcer.announce(
+			"%s is dangerous below level %d" % [zone_name, gate_level()],
+			"Step out to cancel.",
+			{"eyebrow": "Warning", "color": Color(1.0, 0.5, 0.4), "duration": warn_s - 0.5}
+		)
+		var token: int = _warn_token
+		get_tree().create_timer(warn_s).timeout.connect(func() -> void:
+			if _local_inside and token == _warn_token:
+				_start_charge())
+		return
+	_start_charge()
+
+
+## True on a client whose LOCAL character lacks this portal's wardstone — OR on
+## a placeholder portal with no destination yet (future biomes in the hub: the
+## fade used to rise and hold on nothing, since the server never warps a
+## target-less portal). Client UI only — the server enforces via
+## can_join_instance / its target_instance check.
+func _is_sealed() -> bool:
+	if target_instance == null:
+		return true
+	var stone: StringName = required_stone()
+	return not stone.is_empty() and not ClientState.wardstones.has(String(stone))
+
+
+## Skin the sealed state: dimmed, near-still swirl + "(Sealed)" label — the
+## portal is visible signage of the road ahead, just not usable yet. Called on
+## ready and on every wardstone update (unseals live on the grant). Placeholder
+## portals keep their authored label (it already carries the "(Lv N+)" text).
+func _apply_sealed() -> void:
+	var sealed: bool = _is_sealed()
+	animated_sprite.modulate = Color(0.42, 0.42, 0.5) if sealed else Color.WHITE
+	animated_sprite.speed_scale = 0.35 if sealed else 1.0
+	if not destination_label.is_empty() and target_instance != null:
+		var suffix: String = " (Lv %d+)" % gate_level() if gate_level() > 0 else ""
+		label.text = destination_label + (" (Sealed)" if sealed else suffix)
+
+
+## Begin the visible warp commitment in two phases: the swirl revs on a CLEAR
+## screen for SPIN_UP_S (so the acceleration actually reads — the fade used to
+## swallow it instantly), THEN the fade rises timed to the dwell. The server
+## waits SPIN_UP_S + warp_delay_s, so both ends stay in sync. Split out of
+## body-entered so a warned entry can hold the whole thing back.
+func _start_charge() -> void:
 	animated_sprite.speed_scale = REV_UP_SPEED
-	# Pass OUR peer id from the portal's multiplayer (scoped to the game branch, live
-	# peer). WarpFade sits under /root, where the DEFAULT MultiplayerAPI has no peer —
-	# get_unique_id() there errors and returns 0, which broke arrival detection and
-	# left every warp on the slow fallback reveal.
-	_fade = WarpFade.new(portal_color, warp_delay_s, FADE_IN_S, multiplayer.get_unique_id())
-	get_tree().root.add_child.call_deferred(_fade)
+	var token: int = _warn_token
+	get_tree().create_timer(SPIN_UP_S).timeout.connect(func() -> void:
+		if not _local_inside or token != _warn_token:
+			return # stepped out during the spin-up — no fade, server dwell recheck cancels too
+		# Pass OUR peer id from the portal's multiplayer (scoped to the game branch, live
+		# peer). WarpFade sits under /root, where the DEFAULT MultiplayerAPI has no peer —
+		# get_unique_id() there errors and returns 0, which broke arrival detection and
+		# left every warp on the slow fallback reveal.
+		_fade = WarpFade.new(portal_color, warp_delay_s, FADE_IN_S, multiplayer.get_unique_id())
+		get_tree().root.add_child.call_deferred(_fade))
 
 
 func _on_local_body_exited(body: Node2D) -> void:
 	if not _is_local_player(body):
 		return
-	animated_sprite.speed_scale = 1.0
+	_local_inside = false
+	_warn_token += 1 # invalidate any pending hesitation-window charge
+	animated_sprite.speed_scale = 0.35 if _is_sealed() else 1.0 # sealed stays dormant
 	# Stepped out before the dwell finished: abort the fade (the server cancels its side
 	# by re-checking overlap after the dwell). Once the fade-out completed, cancel() is
 	# a no-op — that exit is just our own despawn as the warp goes through.

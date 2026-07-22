@@ -64,6 +64,20 @@ func _format(row: Dictionary) -> String:
 				actor, str(data.get("upgrade", "?")), int(data.get("level", 0)), int(data.get("cost", 0))]
 		"logo":
 			return "%s unlocked a new guild emblem for %d funds." % [actor, int(data.get("cost", 0))]
+		"banner":
+			return "%s changed the banner color for %d funds." % [actor, int(data.get("cost", 0))]
+		"trophy":
+			return "The guild earned the trophy '%s'!" % str(data.get("trophy", "?"))
+		"spar_won":
+			var won_pts: int = int(data.get("points", 0))
+			if won_pts > 0:
+				return "Defeated %s in a guild spar (+%d rating)." % [target, won_pts]
+			return "Defeated %s in a guild spar." % target
+		"spar_lost":
+			var lost_pts: int = int(data.get("points", 0))
+			if lost_pts > 0:
+				return "Lost a guild spar against %s (-%d rating)." % [target, lost_pts]
+			return "Lost a guild spar against %s." % target
 		"reinforce":
 			return "%s reinforced '%s' with %d guards for %d funds." % [
 				actor, str(data.get("territory", "?")), int(data.get("count", 0)), int(data.get("cost", 0))]

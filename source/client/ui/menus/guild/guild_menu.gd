@@ -6,13 +6,6 @@ extends MenuShell
 ## tabs in the center, Tag + Close on the right. Content renders full width
 ## in a centered column. Same layout grammar as guild_hall / mastery_tree.
 
-const LOGOS: Array[Texture2D] = [
-	preload("res://assets/sprites/guild_logos/wyvern.png"),
-	preload("res://assets/sprites/guild_logos/kawaii_skull.png"),
-	preload("res://assets/sprites/guild_logos/cute_crown.png"),
-	preload("res://assets/sprites/guild_logos/cute_fish.png"),
-]
-
 const COLOR_GOLD: Color = Color(1.0, 0.95, 0.75)
 const COLOR_SECTION: Color = Color(1.0, 0.85, 0.5)
 const COLOR_MUTED: Color = Color(0.75, 0.77, 0.83)
@@ -355,15 +348,191 @@ func _view_profile(parent: Node) -> void:
 	box.add_child(_stat_row_str("Base time", _format_duration(int(_guild.get("territory_seconds", 0)))))
 	box.add_child(_stat_row("Seasonal glory", int(_guild.get("seasonal_glory", 0))))
 	box.add_child(_stat_row("Eternal glory", int(_guild.get("eternal_glory", 0))))
-	box.add_child(_stat_row("Spar score", int(_guild.get("spar_score", 0))))
+	box.add_child(_stat_row("Spar rating", int(_guild.get("spar_score", 0))))
 
+	# Trophies are read-only here — the Profile tab stays static; picking
+	# happens in Settings (single editing place, owner call).
 	box.add_child(_make_section_header("Trophies"))
-	var trophies: Label = Label.new()
-	trophies.text = "No trophies yet. Earn them through guild feats. (soon)"
-	trophies.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	trophies.add_theme_color_override(&"font_color", COLOR_MUTED)
-	trophies.add_theme_font_size_override(&"font_size", 12)
-	box.add_child(trophies)
+	var displayed: Array = _guild.get("displayed_trophies", [])
+	if displayed.is_empty():
+		var none: Label = Label.new()
+		none.text = "No trophies displayed yet. Earn them through guild feats."
+		none.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		none.add_theme_color_override(&"font_color", COLOR_MUTED)
+		none.add_theme_font_size_override(&"font_size", 12)
+		box.add_child(none)
+	else:
+		var chips: HBoxContainer = HBoxContainer.new()
+		chips.add_theme_constant_override(&"separation", 8)
+		box.add_child(chips)
+		for tid: Variant in displayed:
+			chips.add_child(_trophy_chip(StringName(str(tid))))
+
+
+## Flat chip for one displayed trophy (matches the frosted no-panel style).
+## Tapping it toasts the trophy's description — the mobile-safe "tooltip"
+## (hover tooltip_text still works on desktop for free).
+func _trophy_chip(trophy_id: StringName) -> Control:
+	var desc: String = str(GuildTrophies.CATALOG.get(trophy_id, {}).get("desc", ""))
+	var chip: Button = Button.new()
+	chip.flat = true
+	chip.custom_minimum_size = Vector2(0, 40)
+	chip.tooltip_text = desc
+	chip.focus_mode = Control.FOCUS_NONE
+	chip.pressed.connect(func() -> void:
+		Toaster.toast("%s: %s" % [GuildTrophies.display_name(trophy_id), desc]))
+
+	var row: HBoxContainer = HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	row.add_theme_constant_override(&"separation", 6)
+	chip.add_child(row)
+
+	var icon: TextureRect = TextureRect.new()
+	icon.custom_minimum_size = Vector2(30, 30)
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var icon_path: String = GuildTrophies.icon_path(trophy_id)
+	if ResourceLoader.exists(icon_path):
+		icon.texture = load(icon_path)
+	row.add_child(icon)
+
+	var name_label: Label = Label.new()
+	name_label.text = GuildTrophies.display_name(trophy_id)
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	name_label.add_theme_color_override(&"font_color", COLOR_GOLD)
+	name_label.add_theme_font_size_override(&"font_size", 13)
+	row.add_child(name_label)
+
+	# The row is a manual child (not button text/icon), so size the chip to it.
+	chip.custom_minimum_size = Vector2(46 + name_label.get_theme_font(&"font").get_string_size(
+		name_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x, 40)
+	return chip
+
+
+## Trophy case popup: every catalog trophy with unlock state + live progress;
+## EDIT holders pick up to GuildTrophies.MAX_DISPLAYED for the profile.
+func _open_trophy_case() -> void:
+	Client.request_data(&"guild.trophies.get", _show_trophy_case, {"q": _selected_name}, _inst())
+
+
+func _show_trophy_case(data: Dictionary) -> void:
+	if not bool(data.get("ok", false)):
+		Toaster.toast(str(data.get("message", "Couldn't open the trophy case.")))
+		return
+	var can_edit: bool = bool(data.get("can_edit", false))
+	var displayed: Array = data.get("displayed", [])
+
+	var card: VBoxContainer = _confirm_card("Trophy case")
+	if can_edit:
+		var hint: Label = Label.new()
+		hint.text = "Pick up to %d to display on the guild profile." % GuildTrophies.MAX_DISPLAYED
+		hint.add_theme_color_override(&"font_color", COLOR_MUTED)
+		hint.add_theme_font_size_override(&"font_size", 12)
+		card.add_child(hint)
+
+	var scroll: ScrollContainer = ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size = Vector2(0, 340)
+	card.add_child(scroll)
+	var list: VBoxContainer = VBoxContainer.new()
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list.add_theme_constant_override(&"separation", 4)
+	scroll.add_child(list)
+	DragScroll.enable(scroll)
+
+	var checks: Array[CheckBox] = []
+	for entry: Dictionary in data.get("entries", []):
+		var unlocked: bool = bool(entry.get("unlocked", false))
+		var row: PanelContainer = PanelContainer.new()
+		var pad: MarginContainer = MarginContainer.new()
+		for side: String in ["left", "right", "top", "bottom"]:
+			pad.add_theme_constant_override("margin_" + side, 8)
+		row.add_child(pad)
+		var hbox: HBoxContainer = HBoxContainer.new()
+		hbox.add_theme_constant_override(&"separation", 10)
+		pad.add_child(hbox)
+
+		var icon: TextureRect = TextureRect.new()
+		icon.custom_minimum_size = Vector2(40, 40)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.modulate = Color.WHITE if unlocked else Color(0.4, 0.4, 0.45)
+		var icon_path: String = GuildTrophies.icon_path(StringName(str(entry.get("id", ""))))
+		if ResourceLoader.exists(icon_path):
+			icon.texture = load(icon_path)
+		hbox.add_child(icon)
+
+		var info: VBoxContainer = VBoxContainer.new()
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		hbox.add_child(info)
+		var name_label: Label = Label.new()
+		name_label.text = str(entry.get("name", "?"))
+		name_label.add_theme_color_override(&"font_color", COLOR_GOLD if unlocked else COLOR_MUTED)
+		info.add_child(name_label)
+		var desc: Label = Label.new()
+		desc.text = str(entry.get("desc", ""))
+		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		desc.add_theme_color_override(&"font_color", COLOR_MUTED)
+		desc.add_theme_font_size_override(&"font_size", 11)
+		info.add_child(desc)
+
+		var progress: Label = Label.new()
+		progress.text = "Unlocked" if unlocked else str(entry.get("progress_text", ""))
+		progress.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		progress.add_theme_color_override(
+			&"font_color", Color(0.55, 0.85, 0.95) if unlocked else COLOR_MUTED)
+		progress.add_theme_font_size_override(&"font_size", 12)
+		hbox.add_child(progress)
+
+		if can_edit and unlocked:
+			var pick: CheckBox = CheckBox.new()
+			pick.button_pressed = displayed.has(entry.get("id", ""))
+			pick.set_meta(&"trophy_id", str(entry.get("id", "")))
+			pick.toggled.connect(func(_on: bool) -> void: _enforce_trophy_cap(checks))
+			hbox.add_child(pick)
+			checks.append(pick)
+		list.add_child(row)
+	_enforce_trophy_cap(checks)
+
+	if can_edit:
+		var save_btn: Button = _confirm_buttons(card, "Save picks", true, func() -> void:
+			var picks: Array = []
+			for c: CheckBox in checks:
+				if c.button_pressed:
+					picks.append(c.get_meta(&"trophy_id"))
+			Client.request_data(&"guild.trophies.display", func(d: Dictionary) -> void:
+				if not bool(d.get("ok", false)):
+					Toaster.toast(str(d.get("message", "Couldn't save picks.")))
+					return
+				_refresh_current(),
+				{"q": _selected_name, "picks": picks}, _inst()))
+		save_btn.add_theme_color_override(&"font_color", COLOR_GOLD)
+	else:
+		var close_row: HBoxContainer = HBoxContainer.new()
+		card.add_child(HSeparator.new())
+		card.add_child(close_row)
+		var close_btn: Button = Button.new()
+		close_btn.text = "Close"
+		close_btn.custom_minimum_size = Vector2(0, 38)
+		close_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		close_btn.pressed.connect(func() -> void:
+			(card.get_meta(&"overlay") as Node).queue_free())
+		close_row.add_child(close_btn)
+
+
+## Live pick-cap enforcement: at MAX_DISPLAYED checked, unchecked boxes lock.
+func _enforce_trophy_cap(checks: Array[CheckBox]) -> void:
+	var picked: int = 0
+	for c: CheckBox in checks:
+		if is_instance_valid(c) and c.button_pressed:
+			picked += 1
+	for c: CheckBox in checks:
+		if is_instance_valid(c):
+			c.disabled = picked >= GuildTrophies.MAX_DISPLAYED and not c.button_pressed
 
 
 func _view_members(parent: Node) -> void:
@@ -648,7 +817,7 @@ func _view_more(parent: Node) -> void:
 		ClientState.open_menu_requested.emit(&"guild_hall", _selected_name)))
 	box.add_child(_more_entry("Log", true, func() -> void: _select_section("log")))
 	box.add_child(_more_entry("Settings", true, func() -> void: _select_section("settings")))
-	box.add_child(_more_entry("Trophies", false, Callable()))
+	box.add_child(_more_entry("Trophies", true, _open_trophy_case))
 	box.add_child(_more_entry("Allies", false, Callable()))
 	box.add_child(_more_entry("Island", false, Callable()))
 
@@ -792,55 +961,27 @@ func _view_settings(parent: Node) -> void:
 	edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
 	box.add_child(edit)
 
+	# Emblem: shown here, MANAGED in the Guild Hall (single editing place —
+	# emblems are cosmetics, so their buy/equip catalog lives with the rest).
+	box.add_child(_make_section_header("Emblem"))
+	var emblem_row: HBoxContainer = HBoxContainer.new()
+	emblem_row.add_theme_constant_override(&"separation", 12)
+	box.add_child(emblem_row)
+	var current_emblem: TextureRect = TextureRect.new()
+	current_emblem.custom_minimum_size = Vector2(48, 48)
+	current_emblem.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	current_emblem.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	current_emblem.texture = _logo_for(int(_guild.get("logo_id", 0)))
+	emblem_row.add_child(current_emblem)
+	var change_emblem: Button = Button.new()
+	change_emblem.text = "Change emblem"
+	change_emblem.custom_minimum_size = Vector2(160, 36)
+	change_emblem.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	change_emblem.pressed.connect(func() -> void:
+		ClientState.open_menu_requested.emit(&"guild_emblems", _selected_name))
+	emblem_row.add_child(change_emblem)
+
 	if can_edit:
-		# Logo picker — choose among the preset logos for alpha (custom upload
-		# later). The selected one is the ButtonGroup's pressed button.
-		box.add_child(_make_section_header("Logo"))
-		var current_logo: int = int(_guild.get("logo_id", 0))
-		var logo_group: ButtonGroup = ButtonGroup.new()
-		var logo_row: HBoxContainer = HBoxContainer.new()
-		logo_row.add_theme_constant_override(&"separation", 8)
-		box.add_child(logo_row)
-		# Clear selection feedback: selected logo gets a thick amber frame,
-		# others a faint one (the theme's default pressed look is too subtle
-		# behind an icon).
-		var logo_selected: StyleBoxFlat = StyleBoxFlat.new()
-		logo_selected.bg_color = Color(0.1, 0.21, 0.34, 1)
-		logo_selected.set_border_width_all(3)
-		logo_selected.border_color = Color(0.96, 0.74, 0.16)
-		logo_selected.set_corner_radius_all(4)
-		var logo_normal: StyleBoxFlat = StyleBoxFlat.new()
-		logo_normal.bg_color = Color(0.06, 0.078, 0.117, 0.6)
-		logo_normal.set_border_width_all(1)
-		logo_normal.border_color = Color(0, 0, 0, 0.4)
-		logo_normal.set_corner_radius_all(4)
-		# Only owned emblems are selectable — the rest unlock in the Guild Hall
-		# Cosmetics tab (guild.edit rejects unowned ids server-side anyway).
-		var owned_logos: Array = _guild.get("owned_logos", [0])
-		for i: int in LOGOS.size():
-			var logo_btn: Button = Button.new()
-			logo_btn.toggle_mode = true
-			logo_btn.button_group = logo_group
-			logo_btn.custom_minimum_size = Vector2(64, 64)
-			logo_btn.icon = LOGOS[i]
-			logo_btn.expand_icon = true
-			logo_btn.button_pressed = (i == current_logo)
-			logo_btn.set_meta(&"logo_id", i)
-			logo_btn.add_theme_stylebox_override(&"normal", logo_normal)
-			logo_btn.add_theme_stylebox_override(&"hover", logo_normal)
-			logo_btn.add_theme_stylebox_override(&"pressed", logo_selected)
-			logo_btn.add_theme_stylebox_override(&"hover_pressed", logo_selected)
-			if not owned_logos.has(i):
-				logo_btn.disabled = true
-				logo_btn.tooltip_text = "Unlock in the Guild Hall."
-			logo_row.add_child(logo_btn)
-
-		var unlock_hint: Label = Label.new()
-		unlock_hint.text = "Dimmed emblems unlock in the Guild Hall."
-		unlock_hint.add_theme_color_override(&"font_color", COLOR_MUTED)
-		unlock_hint.add_theme_font_size_override(&"font_size", 11)
-		box.add_child(unlock_hint)
-
 		# Pinned bottom bar — attached to the outer VBox, below the scroll.
 		outer.add_child(HSeparator.new())
 		var save_bar: HBoxContainer = HBoxContainer.new()
@@ -850,11 +991,7 @@ func _view_settings(parent: Node) -> void:
 		save.text = "Save changes"
 		save.custom_minimum_size = Vector2(160, 38)
 		save.pressed.connect(func() -> void:
-			var logo_id: int = current_logo
-			var pressed: Button = logo_group.get_pressed_button()
-			if pressed != null:
-				logo_id = int(pressed.get_meta(&"logo_id"))
-			_save_guild_edits(edit.text, logo_id))
+			_save_guild_edits(edit.text))
 		save_bar.add_child(save)
 	else:
 		var hint: Label = Label.new()
@@ -862,6 +999,16 @@ func _view_settings(parent: Node) -> void:
 		hint.modulate.a = 0.55
 		hint.add_theme_font_size_override(&"font_size", 12)
 		box.add_child(hint)
+
+	# Trophy case lives here with the other guild editing (the Profile tab
+	# stays read-only). Any member can browse; picking needs EDIT.
+	box.add_child(_make_section_header("Trophies"))
+	var case_btn: Button = Button.new()
+	case_btn.text = "Trophy case"
+	case_btn.custom_minimum_size = Vector2(180, 36)
+	case_btn.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	case_btn.pressed.connect(_open_trophy_case)
+	box.add_child(case_btn)
 
 
 # ---------------------------------------------------------------------------
@@ -967,10 +1114,12 @@ func _show_browse() -> void:
 # Actions
 # ---------------------------------------------------------------------------
 
-func _save_guild_edits(description: String, logo_id: int) -> void:
+## Saves the description only — the emblem is equipped from the emblem catalog
+## (guild.edit treats both fields as optional).
+func _save_guild_edits(description: String) -> void:
 	Client.request_data(&"guild.edit", func(_d: Dictionary) -> void:
 		_select_guild(_selected_name),
-		{"name": _selected_name, "description": description, "logo_id": logo_id},
+		{"name": _selected_name, "description": description},
 		_inst())
 
 
@@ -1236,9 +1385,7 @@ func _make_section_header(text: String) -> Label:
 
 
 func _logo_for(logo_id: int) -> Texture2D:
-	if logo_id >= 0 and logo_id < LOGOS.size():
-		return LOGOS[logo_id]
-	return LOGOS[0]
+	return GuildLogos.texture(logo_id)
 
 
 func _inst() -> String:
