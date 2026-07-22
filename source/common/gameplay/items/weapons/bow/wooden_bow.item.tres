@@ -26,6 +26,7 @@ region = Rect2(48, 48, 16, 32)
 script = ExtResource("5_ts60e")
 category = &"bow"
 right_hand_scene = ExtResource("4_x4sqe")
+sprite_offset = Vector2(-3, -1)
 slot = ExtResource("6_j3qvs")
 base_modifiers = Array[ExtResource("3_10omy")]([SubResource("Resource_ibcoj"), SubResource("Mod_ad_bow")])
 item_name = &"Wood Bow"

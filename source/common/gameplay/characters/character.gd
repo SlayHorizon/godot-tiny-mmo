@@ -28,6 +28,12 @@ var flipped: bool = false:
 var pivot: float = 0.0:
 	set = _set_pivot
 
+@export var weapon: WeaponItem:
+	set = _set_weapon
+
+var weapon_instance: Weapon
+var weapon_sprites: Array[Sprite2D]
+
 ## Per-ability cooldown memory (resource_path -> last_action_time seconds), banked
 ## by the weapon on use and restored when an ability is (re)mounted — so swapping a
 ## weapon out and back can't wipe cooldowns. Transient (per session); each machine
@@ -67,16 +73,16 @@ func has_armed_shot() -> bool:
 @onready var hand_offset: Node2D = $HandOffset
 @onready var hand_pivot: Node2D = $HandOffset/HandPivot
 
-@onready var right_hand_spot: Node2D = $HandOffset/HandPivot/RightHandSpot
-@onready var left_hand_spot: Node2D = $HandOffset/HandPivot/LeftHandSpot
+@onready var right_hand_spot: Hand = $HandOffset/HandPivot/RightHandSpot
+@onready var left_hand_spot: Hand = $HandOffset/HandPivot/LeftHandSpot
 
 @onready var state_synchronizer: StateSynchronizer = $StateSynchronizer
 @onready var stats_component: StatsComponent = $StatsComponent
 @onready var equipment_component: EquipmentComponent = $EquipmentComponent
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var animation_tree: AnimationTree = $AnimationTree
-@onready var locomotion_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/LocomotionSM/playback")
-@onready var weapon_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/WeaponSM/playback")
+#@onready var locomotion_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/LocomotionSM/playback")
+#@onready var weapon_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/OnFoot/WeaponSM/playback")
 
 
 ## Over-head HP bar fill colors by relationship to the local viewer. Missing HP
@@ -396,20 +402,24 @@ func die(_killer: Character) -> void:
 ## do this on equip via add_animation_library.
 ##
 ## Server-side is a no-op; animation work is purely cosmetic.
+const player_animation_path : StringName = &"parameters/AnimationBlend/PlayerAnimation/transition_request"
+const shot_request : StringName = &"parameters/AnimationBlend/ShotRequest/request"
+#const idle_pause_request : StringName = &"parameters/AnimationBlend/WeaponIdleState/transition_request"
 func play_action_animation(anim_name: StringName) -> void:
 	if not GameMode.is_client() or anim_name.is_empty():
 		return
 	if animation_tree == null or animation_tree.tree_root == null:
 		return
 	# tree_root is a StateMachine; OnFoot is the BlendTree state we author in.
-	var on_foot: AnimationNodeBlendTree = animation_tree.tree_root.get_node(&"OnFoot") as AnimationNodeBlendTree
+	var on_foot: AnimationNodeBlendTree = animation_tree.tree_root.get_node(&"AnimationBlend") as AnimationNodeBlendTree
 	if on_foot == null:
 		return
-	var interrupt_anim: AnimationNodeAnimation = on_foot.get_node(&"InteruptAnimation") as AnimationNodeAnimation
+	var interrupt_anim: AnimationNodeAnimation = on_foot.get_node(&"ShotAnimation") as AnimationNodeAnimation
 	if interrupt_anim == null:
 		return
+
 	interrupt_anim.animation = anim_name
-	animation_tree[&"parameters/OnFoot/InteruptShot/request"] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
+	animation_tree[shot_request] = AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE
 
 
 func update_weapon_animation(state: String) -> void:
@@ -432,11 +442,14 @@ func _set_skin_id(id: int) -> void:
 func _set_anim(new_anim: Animations) -> void:
 	match new_anim:
 		Animations.IDLE:
-			locomotion_state_machine.travel(&"locomotion_idle")
+			animation_tree[player_animation_path] = "Idle"
+			#locomotion_state_machine.travel(&"locomotion_idle")
 		Animations.RUN:
-			locomotion_state_machine.travel(&"locomotion_run")
+			animation_tree[player_animation_path] = "Walk"
+			#locomotion_state_machine.travel(&"locomotion_run")
 		Animations.DEATH:
-			locomotion_state_machine.travel(&"locomotion_death")
+			animation_tree[player_animation_path] = "Death"
+			#locomotion_state_machine.travel(&"locomotion_death")
 	anim = new_anim
 
 
@@ -450,6 +463,37 @@ func _set_pivot(new_pivot: float) -> void:
 	pivot = new_pivot
 	hand_pivot.rotation = new_pivot
 
+func _set_weapon(new_weapon: WeaponItem) -> void:
+	weapon = new_weapon
+	
+	if weapon_instance != null:
+		weapon_instance.queue_free()
+	
+	if weapon == null:
+		if right_hand_spot != null:
+			right_hand_spot.status = Hand.Status.IDLE
+			
+		if weapon_sprites.size() > 0:
+			for obj in weapon_sprites:
+				obj.queue_free()
+				weapon_sprites.erase(obj)
+		return
+	
+	var weapon_scene: Weapon = weapon.right_hand_scene.instantiate()
+	weapon_instance = weapon_scene
+	add_child(weapon_scene)
+	
+	var weapon_sprite: Sprite2D = Sprite2D.new()
+	weapon_sprite.texture = weapon.item_icon
+	weapon_sprite.offset = weapon.sprite_offset
+	weapon_sprite.show_behind_parent = true
+	
+	weapon_sprites.append(weapon_sprite)
+	
+	right_hand_spot.status = Hand.Status.GRAB
+	right_hand_spot.add_child(weapon_sprite)
+	
+	weapon_scene.weapon_sprite = weapon_sprite
 
 func _set_display_name(new_name: String) -> void:
 	display_name = new_name

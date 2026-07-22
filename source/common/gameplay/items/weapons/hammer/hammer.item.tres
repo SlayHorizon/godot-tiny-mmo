@@ -24,6 +24,7 @@ region = Rect2(16, 16, 16, 32)
 script = ExtResource("4_weapon_item")
 category = &"hammer"
 right_hand_scene = ExtResource("3_scene")
+sprite_offset = Vector2(0, -6)
 slot = ExtResource("5_slot")
 base_modifiers = Array[ExtResource("1_mod")]([SubResource("Mod_ad_hammer"), SubResource("Mod_ms_hammer")])
 item_name = &"Wood Hammer"

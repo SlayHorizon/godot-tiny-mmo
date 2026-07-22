@@ -25,8 +25,15 @@ var _held: Dictionary[int, bool] = {}
 var _base_ability_count: int = 1
 
 @onready var hand: Hand = $Hand
-@onready var weapon_sprite: Sprite2D = $WeaponSprite
+@export var weapon_sprite: Sprite2D:
+	set = set_sprite# = $WeaponSprite
 
+func set_sprite(new_sprite: Sprite2D) -> void:
+	if new_sprite == null:
+		return
+		
+	weapon_sprite = new_sprite
+	print("set sprite: ", new_sprite)
 
 ## Drives the in-hand sprite from the equipped item's ICON, so a weapon SKIN
 ## (fire / rustic / ...) is pure item data — NO per-skin scene. The icon is an
@@ -67,7 +74,6 @@ func show_held_icon(icon: Texture2D) -> void:
 ## channel.start / channel.end push, so the stance shows on allies/enemies too.
 func set_channeling_pose(_active: bool) -> void:
 	pass
-
 
 func _ready() -> void:
 	if hand and character:

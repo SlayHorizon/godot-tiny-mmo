@@ -3,6 +3,7 @@
 class_name Hand
 extends Sprite2D
 
+@export_tool_button("Force Update", "Callable") var force_update = _update_hands
 
 const SIZE: int = 16
 
@@ -37,17 +38,16 @@ enum Types {
 @export var type: Types = Types.HUMAN:
 	set = _set_type
 
-
 func _init() -> void:
 	_update_hands()
 
-
 func _update_hands() -> void:
+	region_enabled = true
+	
 	if status == Status.PULL:
 		region_rect = Rect2(2 * SIZE, 1 * SIZE, SIZE, SIZE)
 	else:
 		region_rect = Rect2(side * SIZE, status * SIZE, SIZE, SIZE)
-
 
 func _set_type(new_type: Types) -> void:
 	match new_type:
