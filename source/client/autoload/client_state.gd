@@ -16,9 +16,15 @@ signal dm_requested(id: int)
 signal gather_succeeded(result: Dictionary)
 ## The quest currently shown on the HUD tracker changed (0 = none).
 signal tracked_quest_changed(quest_id: int)
+## An objective of [quest_id] ticked forward (server quest.update progress entry) —
+## the tracker listens to pulse its display (tracker-first, docs/notifications.md).
+signal quest_progressed(quest_id: int)
 
-## Quest id pinned to the HUD tracker (manually via the log, or the latest accepted).
-var tracked_quest_id: int
+## Quest id pinned to the HUD tracker (manually via the log, or the latest
+## accepted). -1 = none — the DEFAULT (owner call 2026-07-20): the tracker
+## starts hidden every session and only shows once the player pins/accepts a
+## quest; the choice is session-local, deliberately not persisted anywhere.
+var tracked_quest_id: int = -1
 
 ## The trade table whose panel is open (0 = closed). Independent of being seated: you can
 ## open a table's panel to view/join it, and closing the panel does NOT leave your seat.
@@ -124,7 +130,7 @@ func _ready() -> void:
 			"%s Wardstone" % stone.capitalize(),
 			("The way to %s is open." % next_zone) if not next_zone.is_empty()
 				else "The frontier is pushed one gate deeper.",
-			{"eyebrow": "Wardstone reclaimed", "duration": 4.0}
+			{"eyebrow": "Wardstone reclaimed", "duration": 4.0, "sfx": UISound.WARDSTONE}
 		))
 	Client.subscribe(&"stats.get", func(data: Dictionary):
 		stats.data.merge(data, true)
@@ -132,11 +138,34 @@ func _ready() -> void:
 	Client.subscribe(&"combat.reward", _on_combat_reward)
 	Client.subscribe(&"mining.gather_result", _on_gather_result)
 	Client.subscribe(&"quest.update", func(data: Dictionary):
-		# One push can carry several messages ("Quest complete" + "Title unlocked").
-		# Show them as ONE card, not a card per message (that was the worst spam).
-		var msgs: PackedStringArray = PackedStringArray(data.get("messages", []))
-		if not msgs.is_empty():
-			Toaster.toast_group("Quest", msgs)
+		# Tracker-first routing (docs/notifications.md, 2026-07-20): PROGRESS
+		# entries arrive as dicts {q, t} — live state belongs to the TRACKER
+		# (it pulses; no card for the tracked quest), untracked quests get ONE
+		# self-replacing card each (1/5 becomes 2/5 in place, never a stack).
+		# EVENT lines stay strings ("ready to turn in", "Quest complete",
+		# "Title unlocked") and keep the grouped card — one card per push.
+		var events: PackedStringArray = []
+		for entry: Variant in data.get("messages", []):
+			if entry is Dictionary:
+				var e: Dictionary = entry
+				var quest_id: int = int(e.get("q", 0))
+				quest_progressed.emit(quest_id)
+				if bool(e.get("ready", false)):
+					# Ready-to-turn-in: a state the tracked quest's TRACKER
+					# already shows (green + "Return to...") — card only when
+					# untracked. The kalimba chime marks the moment either way.
+					UISound.play(UISound.QUEST_READY, 1.0, -4.0)
+					if quest_id != tracked_quest_id:
+						events.append(str(e.get("t", "")))
+				elif quest_id != tracked_quest_id:
+					Toaster.toast_feed(
+						"questprog:%d" % quest_id, "Quest",
+						PackedStringArray([str(e.get("t", ""))])
+					)
+			elif not str(entry).is_empty():
+				events.append(str(entry))
+		if not events.is_empty():
+			Toaster.toast_group("Quest", events)
 	)
 
 	settings.load_file()
@@ -156,19 +185,21 @@ func _on_combat_reward(data: Dictionary) -> void:
 	var enemy_type: String = str(data.get("enemy_type", ""))
 	var title: String = "Defeated %s" % _readable_enemy_name(enemy_type) if not enemy_type.is_empty() else "Reward"
 
+	# Loot goes to the compact ICON feed (self-coalescing pills — see LootFeed),
+	# and +XP now reads on the XP BAR itself (hud floaty + pulse) — both moved
+	# off the kill card (docs/notifications.md toast-lane rework), so the card
+	# is just the "Defeated X ×N" headline.
 	var lines: PackedStringArray = PackedStringArray()
-	var xp: int = int(data.get("xp", 0))
-	if xp > 0:
-		lines.append("+%d XP" % xp)
 	for entry: Dictionary in data.get("loot", []):
-		lines.append("Looted %d %s" % [int(entry.get("amount", 1)), str(entry.get("name", "item"))])
+		LootFeed.add_item(int(entry.get("id", 0)), int(entry.get("amount", 1)), str(entry.get("name", "item")))
 	# Character level-up = the ceremony lane: a center-screen banner (the in-world
 	# flare + camera kick ride the level.up broadcast, not this push). Mastery
 	# stays a corner card — frequent enough that a banner would wear thin.
 	if int(data.get("levels_gained", 0)) > 0:
 		Announcer.announce(
 			"Level %d" % int(data.get("level", 1)),
-			"+%d attribute points" % int(data.get("points_gained", 0))
+			"+%d attribute points" % int(data.get("points_gained", 0)),
+			{"sfx": UISound.LEVELUP}
 		)
 	var big: PackedStringArray = PackedStringArray()
 	var mastery: Dictionary = data.get("mastery", {})
@@ -239,12 +270,12 @@ func _on_gather_result(data: Dictionary) -> void:
 
 	gather_succeeded.emit(data)
 
-	# Build a single grouped card so a yield reads as one event.
+	# The yield itself rides the icon feed; the card keeps only job XP + level-ups.
 	var title: String = "Mined"
 	var lines: PackedStringArray = PackedStringArray()
 	var amount: int = int(data.get("amount", 0))
 	if amount > 0:
-		lines.append("+%d %s" % [amount, str(data.get("ore_name", "ore"))])
+		LootFeed.add_item(int(data.get("ore_id", 0)), amount, str(data.get("ore_name", "ore")))
 	# XP entries — primary job first (verbose), additional grants compact.
 	var grants_v: Variant = data.get("grants", [])
 	if grants_v is Array:

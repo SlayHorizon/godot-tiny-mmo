@@ -57,10 +57,14 @@ static func _advance_matching(
 			if resource.quest_progress(quest_id, i) >= objective.required_amount:
 				continue # already done
 			resource.advance_quest(quest_id, i, 1)
-			updates.append("%s: %s (%d/%d)" % [
+			# Progress ticks are STRUCTURED entries (events stay plain strings):
+			# the client routes them tracker-first (docs/notifications.md) —
+			# tracked quest = tracker pulse, no card; untracked = one
+			# self-replacing card per quest. Callers just forward the array.
+			updates.append({"q": quest_id, "t": "%s: %s (%d/%d)" % [
 				quest.quest_name, objective.describe(),
 				resource.quest_progress(quest_id, i), objective.required_amount
-			])
+			]})
 		if not was_complete and is_complete(resource, quest_id, resource.inventory):
 			# Wardstone lands ON the triumph (the objective crossing), not at
 			# the turn-in walk-back — docs/wardstones.md.
@@ -72,7 +76,11 @@ static func _advance_matching(
 			else:
 				# Latch so notify_passive_ready (the COLLECT path) doesn't re-toast this.
 				resource.set_quest_ready_notified(quest_id, true)
-				updates.append("✓ %s ready to turn in. Return to the quest giver." % quest.quest_name)
+				# Structured like progress ticks: the tracked quest's tracker already
+				# shows the ready state (green + "Return to..."), so the client only
+				# cards this for UNTRACKED quests.
+				updates.append({"q": quest_id, "ready": true,
+					"t": "✓ %s ready to turn in. Return to the quest giver." % quest.quest_name})
 	for quest: QuestResource in pending_auto_complete:
 		apply_turn_in(resource, quest, peer_id, instance)
 	return updates
@@ -186,6 +194,27 @@ static func grant_wardstone_if_due(
 	if peer_id > 0:
 		WorldServer.curr.data_push.rpc_id(peer_id, &"wardstones.set", {"wardstones": resource.wardstones})
 		WorldServer.curr.data_push.rpc_id(peer_id, &"wardstone.granted", {"stone": stone})
+		# Guild record line (docs/notifications.md): guildmates see the milestone
+		# in chat — social proof, scroll-back-able, guild-scoped so it never
+		# spams the world. Live grants only (peer_id 0 = silent login backfill).
+		_announce_to_guild(resource, "%s reclaimed the %s Wardstone." % [
+			resource.display_name, stone.capitalize()
+		])
+
+
+## System chat line to every ONLINE member of the player's active guild
+## (including the player — it's their record too). Same pattern as
+## GuildTrophies' announce. No-op for guildless players.
+static func _announce_to_guild(resource: PlayerResource, message: String) -> void:
+	if resource.active_guild_id <= 0:
+		return
+	var ws: WorldServer = WorldServer.curr
+	if ws == null or ws.chat_service == null:
+		return
+	for other_peer: int in ws.connected_players:
+		var member: PlayerResource = ws.connected_players[other_peer]
+		if member != null and member.active_guild_id == resource.active_guild_id:
+			ws.chat_service.push_system_to_player(null, member.player_id, message)
 
 
 ## Login backfill: finale quests turned in BEFORE the wardstone system shipped
@@ -241,7 +270,8 @@ static func notify_passive_ready(resource: PlayerResource, peer_id: int) -> void
 			resource.set_quest_ready_notified(quest_id, true)
 			grant_wardstone_if_due(resource, quest, peer_id) # COLLECT-path crossing
 			WorldServer.curr.data_push.rpc_id(peer_id, &"quest.update", {
-				"messages": ["✓ %s ready to turn in. Return to the quest giver." % quest.quest_name]
+				"messages": [{"q": quest_id, "ready": true,
+					"t": "✓ %s ready to turn in. Return to the quest giver." % quest.quest_name}]
 			})
 		elif not complete and notified:
 			resource.set_quest_ready_notified(quest_id, false)

@@ -98,7 +98,8 @@ func _on_local_body_entered(body: Node2D) -> void:
 			else "Reclaim the %s Wardstone first." % String(required_stone()).capitalize()
 		Announcer.announce(
 			"The way is sealed", subtitle,
-			{"eyebrow": "Sealed", "color": Color(0.78, 0.7, 1.0), "duration": 2.2}
+			{"eyebrow": "Sealed", "color": Color(0.78, 0.7, 1.0), "duration": 2.2, "key": "portal",
+				"sfx": UISound.SEALED, "sfx_db": -3.0}
 		)
 		return
 	# SOFT level gate (docs/pve_plan.md: floor - 2, warn-and-confirm): well below the
@@ -113,7 +114,10 @@ func _on_local_body_entered(body: Node2D) -> void:
 		Announcer.announce(
 			"%s is dangerous below level %d" % [zone_name, gate_level()],
 			"Step out to cancel.",
-			{"eyebrow": "Warning", "color": Color(1.0, 0.5, 0.4), "duration": warn_s - 0.5}
+			{"eyebrow": "Warning", "color": Color(1.0, 0.5, 0.4), "duration": warn_s - 0.5, "key": "portal",
+				# Placeholder warning voice (owner call): the back cue pitched low
+				# reads "negative" — artist swaps the file later, wiring stands.
+				"sfx": UISound.BACK, "sfx_pitch": 0.6, "sfx_db": -2.0}
 		)
 		var token: int = _warn_token
 		get_tree().create_timer(warn_s).timeout.connect(func() -> void:
@@ -155,6 +159,7 @@ func _apply_sealed() -> void:
 ## body-entered so a warned entry can hold the whole thing back.
 func _start_charge() -> void:
 	animated_sprite.speed_scale = REV_UP_SPEED
+	UISound.play(UISound.PORTAL_CHARGE, 1.0, -4.0) # the whoosh IS the spin-up tell
 	var token: int = _warn_token
 	get_tree().create_timer(SPIN_UP_S).timeout.connect(func() -> void:
 		if not _local_inside or token != _warn_token:
@@ -173,6 +178,9 @@ func _on_local_body_exited(body: Node2D) -> void:
 	_local_inside = false
 	_warn_token += 1 # invalidate any pending hesitation-window charge
 	animated_sprite.speed_scale = 0.35 if _is_sealed() else 1.0 # sealed stays dormant
+	# Stepping out = the hint's context is gone; the banner vanishing doubles as
+	# the "cancelled" confirmation for the level warning.
+	Announcer.dismiss_positional()
 	# Stepped out before the dwell finished: abort the fade (the server cancels its side
 	# by re-checking overlap after the dwell). Once the fade-out completed, cancel() is
 	# a no-op — that exit is just our own despawn as the warp goes through.

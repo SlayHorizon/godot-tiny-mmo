@@ -202,6 +202,12 @@ func _apply_progression(data: Dictionary) -> void:
 		else:
 			experience_bar.value = new_xp
 		_flash_xp_bar()
+	# The GAIN amount reads at the bar itself (its one home — moved off the kill
+	# cards, docs/notifications.md): a small rising "+N XP" floaty, coalescing
+	# across rapid kills.
+	var gained: int = int(data.get("xp", 0))
+	if gained > 0:
+		_show_xp_gain(gained)
 
 
 ## Show the bar chrome, hold XP_BAR_LINGER_S, fade back out. Rapid gains keep
@@ -219,6 +225,38 @@ func _hide_xp_bar_now() -> void:
 	if _xp_bar_fade != null and _xp_bar_fade.is_valid():
 		_xp_bar_fade.kill()
 	experience_bar.self_modulate.a = 0.0
+
+
+## The live "+N XP" floaty above the bar (null when none). Rapid gains bump the
+## SAME label's number instead of stacking floaties.
+var _xp_floaty: Label
+var _xp_floaty_amount: int
+
+
+func _show_xp_gain(amount: int) -> void:
+	if is_instance_valid(_xp_floaty):
+		_xp_floaty_amount += amount
+		_xp_floaty.text = "+%d XP" % _xp_floaty_amount
+		return
+	_xp_floaty_amount = amount
+	var label: Label = Label.new()
+	label.text = "+%d XP" % amount
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.add_theme_font_size_override(&"font_size", 13)
+	label.add_theme_color_override(&"font_color", Color(0.72, 0.88, 1.0))
+	label.add_theme_color_override(&"font_outline_color", Color(0.05, 0.06, 0.1, 0.9))
+	label.add_theme_constant_override(&"outline_size", 4)
+	# Child of the BAR: escapes its self_modulate auto-hide (the LevelLabel
+	# trick) and rides its position for free.
+	experience_bar.add_child(label)
+	label.position = Vector2(experience_bar.size.x * 0.5 - 22.0, -20.0)
+	_xp_floaty = label
+	var tween: Tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(label, ^"position:y", label.position.y - 14.0, 0.9).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, ^"modulate:a", 0.0, 0.5).set_delay(0.5)
+	tween.set_parallel(false)
+	tween.tween_callback(label.queue_free)
 
 
 ## While a fair-arena match is live the level label reads "Lv 38 (sync 10)"
@@ -353,6 +391,18 @@ func _on_notification_received(payload: Dictionary) -> void:
 	notifications.append(payload)
 	notification_button.visible = true
 	notification_button.disabled = false
+	# Arrival ping (docs/notifications.md open item, built 2026-07-20): the badge
+	# persists until acted on, but alone it's easy to miss on a busy HUD — one
+	# toast points at it the moment something arrives.
+	match str(payload.get("topic", "")):
+		"friend.request":
+			Toaster.toast("Friend request from %s. Check your notifications." % str(payload.get("player_name", "someone")))
+		"guild.invite":
+			Toaster.toast("%s invited you to %s. Check your notifications." % [
+				str(payload.get("from_name", "Someone")), str(payload.get("guild_name", "a guild"))
+			])
+		_:
+			Toaster.toast("You have a new notification.")
 
 
 ## Big centered "3 / 2 / 1 / FIGHT!" pushed each second of the sparring countdown.

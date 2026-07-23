@@ -12,6 +12,16 @@ const BACK: String = "res://assets/audio/sfx/ui/ui_back.wav"
 const HOVER: String = "res://assets/audio/sfx/ui/ui_hover.wav"
 const REVEAL: String = "res://assets/audio/sfx/ui/ui_reveal.wav"
 
+# Notification cues (docs/notifications.md audio pass, 2026-07-20 — Sonniss
+# GDC bundle picks, owner-auditioned; artist-replaceable in place).
+const LEVELUP: String = "res://assets/audio/sfx/ui/ui_levelup.ogg"
+const WARDSTONE: String = "res://assets/audio/sfx/ui/ui_wardstone.ogg"
+const DISCOVERY: String = "res://assets/audio/sfx/ui/ui_discovery.ogg"
+const QUEST_READY: String = "res://assets/audio/sfx/ui/ui_quest_ready.ogg"
+const SEALED: String = "res://assets/audio/sfx/ui/ui_sealed.ogg"
+const PORTAL_CHARGE: String = "res://assets/audio/sfx/ui/ui_portal_charge.ogg"
+const COIN: String = "res://assets/audio/sfx/ui/ui_coin.ogg"
+
 ## Per-cue trim (dB under bus volume). Hover fires on every mouse-over, so it's the quietest.
 const CLICK_DB: float = -6.0
 const BACK_DB: float = -6.0

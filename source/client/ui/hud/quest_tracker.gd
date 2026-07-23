@@ -29,6 +29,7 @@ func _ready() -> void:
 
 	hide()
 	ClientState.tracked_quest_changed.connect(func(_id: int): _refresh())
+	ClientState.quest_progressed.connect(_on_quest_progressed)
 	Client.subscribe(&"quest.update", func(_data: Dictionary): _refresh())
 	# COLLECT objectives track live inventory, which never fires quest.update on its
 	# own. Refresh on the two open-world item-gain pushes — loot (combat.reward) and
@@ -45,6 +46,18 @@ func _ready() -> void:
 ## menu-hidden, and a blind show() would otherwise resurrect it.
 func refresh() -> void:
 	_refresh()
+
+
+## The tracked quest ticked forward: the tracker IS its progress surface
+## (tracker-first — no toast for the tracked quest), so draw the eye with a
+## brief brightness pulse. Content itself refreshes via the quest.update
+## subscription above.
+func _on_quest_progressed(quest_id: int) -> void:
+	if quest_id != ClientState.tracked_quest_id or not visible:
+		return
+	var tween: Tween = create_tween()
+	tween.tween_property(self, ^"modulate", Color(1.4, 1.32, 1.0), 0.1)
+	tween.tween_property(self, ^"modulate", Color.WHITE, 0.4)
 
 
 func _refresh() -> void:

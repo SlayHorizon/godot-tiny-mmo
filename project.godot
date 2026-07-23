@@ -33,6 +33,7 @@ ClientState="*res://source/client/autoload/client_state.gd"
 Client="*res://source/client/autoload/client.tscn"
 Toaster="*res://source/client/autoload/toaster.gd"
 Announcer="*res://source/client/autoload/announcer.gd"
+LootFeed="*res://source/client/autoload/loot_feed.gd"
 MCPRuntime="*uid://bmdn775mlknqs"
 Transition="*res://source/client/autoload/transition.gd"
 

@@ -46,6 +46,7 @@ static func on_map_loaded(map_path: String) -> void:
 		"sound": first_visit,
 		"duration": 3.0 if first_visit else 1.8,
 		"eyebrow": "New region discovered" if first_visit else "",
+		"sfx": UISound.DISCOVERY,
 	})
 
 
