@@ -39,4 +39,4 @@ Peer reuse, split-brain World claims, source death during handoff, target death 
 
 ## Current code / migration
 
-Current single-process instance lifecycle, session admission and SQLite graceful save remain authoritative. No cross-process transfer, realm-wide session coordinator or failure failover is asserted to exist by this document. See [world instance architecture](../../world-instance-architecture.md).
+Current single-process instance lifecycle, session admission and SQLite graceful save remain authoritative. No cross-process transfer, realm-wide session coordinator or failure failover is asserted to exist by this document. See [world instance architecture](../world-instance-architecture.md).
