@@ -2,7 +2,7 @@
 
 This document records the first, historical PvE stage. Current combat has four
 Wild Dogs, directional combos and attack RPCs without target IDs. Cooldowns and
-attack behavior below were superseded by [Combat Feel Pass](../combat-feel.md).
+attack behavior below was superseded by the [current Warrior combat contracts](combat/README.md).
 Reservation, transactional pickup and persistent UID rules still apply.
 
 Status: 2026-10-07; minimal slice on `codex/pve-ground-loot`:
