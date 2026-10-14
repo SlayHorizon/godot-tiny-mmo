@@ -129,7 +129,7 @@ changes. The small default suite downloads no browser and does not install Pillo
 
 The old CEF spike, its mock/diagnostic adapter, its renderer/measurement runners
 and the exact-layout browser matrix test were removed. The original adoption
-results remain in [the historical decision record](../cef-ui-spike.md). The inventory
+results belong to the retired CEF spike (recoverable from Git history). The inventory
 resolution matrix is a manual milestone checklist in [UI Contract v1](../ui/ui-contract.md),
 not a pixel-sensitive CI assertion. Use the root client for CEF/input/
 resize/transparency/shutdown checks; no parallel standalone UI mock.
