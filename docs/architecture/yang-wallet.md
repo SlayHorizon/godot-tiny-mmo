@@ -53,4 +53,4 @@ spend/replay, delta checkpoints, batch rollback and real disconnect.
 `tests/pve_session.tscn` through normal gateway/master/world verifies combat,
 item pickup/equip, XP/level, Yang autoloot and exact balance after logout/relog.
 Yang network tests share port 18098 with PvE/combat/progression/XP; run sequentially.
-All state categories: [Persistence policy](architecture/persistence-policy.md).
+All state categories: [Persistence policy](persistence-policy.md).
