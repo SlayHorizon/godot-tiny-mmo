@@ -1,12 +1,12 @@
 # Audyt docs — plik po pliku (`main` i `shop`)
 
-**Data:** 2026-10-14. **Status:** propozycja do review, a nie zrealizowane usunięcia. Sprawdzono zawartość/nagłówki i aktualność dokumentów tekstowych; dwa PDF-y oceniono na podstawie ich towarzyszących Markdown (zgodność PDF nie została porównana). Surowe pliki danych klasyfikowano według użycia i pochodzenia. Zanim usuniemy pliki, trzeba jeszcze sprawdzić wszystkie linki i odwołania z kodu.
+**Data:** 2026-10-14. **Status:** audyt oryginalnych ścieżek, **częściowo wykonany** na gałęzi porządkującej. Przeniesiono 39 dokumentów i usunięto 19 historycznych plików; `shop` pozostał nietknięty. Historyczne nazwy w tabeli nie oznaczają aktualnych lokalizacji. Sprawdzono zawartość/nagłówki i aktualność dokumentów tekstowych; dwa PDF-y oceniono na podstawie ich towarzyszących Markdown (zgodność PDF nie została porównana). Surowe pliki danych klasyfikowano według użycia i pochodzenia. Zanim usuniemy pliki, trzeba jeszcze sprawdzić wszystkie linki i odwołania z kodu.
 
 **Łącznie:** 66 istniejących plików `docs/` na `main` i 31 nowych na `shop` (razem 97). **Rekomendacje po przeglądzie:** ZOSTAW: 29, SCAL → USUŃ: 39, USUŃ: 26, DOWÓD: 3. Indeksy dodane w osobnym PR #5 są narzędziem nawigacyjnym, a nie częścią tej bazowej liczby.
 
 **Jak czytać:** *ZOSTAW* = aktywny kontrakt/decyzja/test; *SCAL → USUŃ* = przenieść istotną treść do kanonicznego przewodnika, następnie skasować oryginał; *USUŃ* = zakończone lub historyczne materiały, do skasowania po naprawieniu referencji; *DOWÓD* = raport danych, którego nie warto niszczyć tylko dla estetyki katalogu. Wszystko pozostaje w historii Gita.
 
-## Main — 66 plików
+## Main — 66 plików (oryginalne ścieżki przed cleanupem)
 
 | Plik | Propozycja | Powód |
 | --- | --- | --- |
@@ -77,7 +77,7 @@
 | `docs/world-instance-architecture.md` | **ZOSTAW** | Aktywny kontrakt, instrukcja lub materialne decyzje — zachować po aktualizacji linków |
 | `docs/yang-wallet.md` | **SCAL → USUŃ** | Stary wallet testowy; reguły aktualne w persistence, docelowe w C3 |
 
-## Shop — 31 dodatkowych plików
+## Shop — 31 dodatkowych plików (jeszcze nieporządkowane)
 
 **Uwaga:** `shop` jeszcze nie zawiera C1–C5 z nowego `main`. Po integracji należy powtórzyć sprawdzenie linków i nie uznawać starszego Marketplace E0–E5 za bieżącą specyfikację C3.
 
