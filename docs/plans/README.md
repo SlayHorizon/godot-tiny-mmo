@@ -4,7 +4,7 @@
 
 **Current technical priority:** [Pre-alpha architecture hardening and Auction integration](architecture-hardening.md) — ordered, testable PRs for authentication, RPC boundaries, Marketplace, persistence and World synchronization.
 
-**Gameplay / visuals:** [Project direction](../project-direction.md), [first region](../first-region-graybox.md), [Visual V4 Terrain3D](../visual-upgrade-v4-terrain3d.md), [Warrior feel](../warrior-action-polish.md).
+**Gameplay / visuals:** [Project direction](../decisions/project-direction.md), [first region](../world/first-region-graybox.md), [Visual V4 Terrain3D](../world/visuals/visual-upgrade-v4-terrain3d.md), [Warrior feel](../gameplay/combat/warrior-action-polish.md).
 
 **Historical implementation plans (not live backlogs):** [Spike graduation plan](../spike-graduation-plan.md), [Package B](../spike-package-b-plan.md), [Package C](../spike-package-c-plan.md). Their completed stages should not be rescheduled merely because the plan files remain.
 
