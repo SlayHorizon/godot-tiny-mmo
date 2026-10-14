@@ -6,7 +6,7 @@
 - [Economy C1–C5](../architecture/economy/README.md): accepted **architectural** decisions for a shared realm economy.
 - [Dynamic channels, dungeons and World topology](../architecture/world-instance-architecture.md): accepted future architecture, not yet deployed.
 - [Marketplace UX and contract gap](marketplace-v2-gaps.md): current `shop` behavior versus approved future Store/Listing behavior. Do **not** mistake a target feature for code already shipped.
-- [Design decisions](../Mandate_of_Three_Design_Decisions.md): earlier gameplay design; when overlapping with newer dated Economy/World decisions, use the later domain-specific contract.
+- [Gameplay direction](gameplay-direction.md): consolidated goals and explicitly deferred balancing ideas; older incompatible channel assumptions have been removed.
 
 ## Decision precedence
 
