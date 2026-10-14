@@ -1,13 +1,7 @@
-# Historical records
+# History
 
-These records preserve decisions/evidence, including configurations and limits
-that have since been replaced. They are not current setup instructions.
+Superseded plans, one-off spike notes and older validation reports are available in **Git history**, not maintained as a second active documentation set.
 
-- [Project direction through 2026-10-09](project-direction-2026-10-09.md).
-- [Web UI foundation native validation — 2026-10-08](web-ui-validation-2026-10-08.md).
-- [Initial Inventory browser/native validation — 2026-10-09](inventory-validation-2026-10-09.md).
+Use [documentation index](../README.md), [project direction](../decisions/project-direction.md), [testing](../development/testing.md) and [CEF integration](../ui/cef-addon-integration.md) for current guidance.
 
-Current entry points: [documentation map](../README.md), [root README](../../README.md), [project direction](../decisions/project-direction.md),
-[testing](../development/testing.md) and [CEF installation/export](../ui/cef-addon-integration.md).
-Other historical subject-specific records (CEF spike, asset pipeline and repository
-cleanup) remain explicitly labelled in their documents; they are not runtime policy.
+Retain concrete current measurement results under [evidence](../evidence/README.md), and add a dated citation to the commit whenever a past result materially supports a current decision.
