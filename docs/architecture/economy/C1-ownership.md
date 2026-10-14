@@ -37,7 +37,7 @@ This contract states the target authority boundaries for Economy V2. It does **n
 ## Current code and migration implications
 
 - The prototype's godot-sqlite writer, WorldDatabase account-wallet RAM/pending delta, Market/Exchange transactions, UID custody and durable command receipts remain in place.
-- Existing [persistence policy](../../persistence-policy.md) is the **current runtime contract** until migration. In particular, its local pending Yang delta and world-side equipment cache are not retroactively invalidated by this future-state document.
+- Existing [persistence policy](../persistence-policy.md) is the **current runtime contract** until migration. In particular, its local pending Yang delta and world-side equipment cache are not retroactively invalidated by this future-state document.
 - Future extraction should put the Economy API/domain boundary around working transaction semantics, not copy SQL calls or move SceneTree nodes into background threads. Both local SQLite and eventual PostgreSQL implementations must uphold the same externally visible invariants.
 - Transition requires a plan for multi-World session authority, shared wallet ownership, migration of current pending-income behavior and versioned cache refresh, specified by C2–C5.
 
