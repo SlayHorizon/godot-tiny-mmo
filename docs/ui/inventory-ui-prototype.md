@@ -148,7 +148,7 @@ without SQLite, plus CEF-free server packs. The [UI contract matrix](ui-contract
 is a manual layout milestone check, not exact-DOM CI.
 
 Initial browser/native results are preserved in
-[historical validation](history/inventory-validation-2026-10-09.md). Physical
+[historical validation](../history/inventory-validation-2026-10-09.md). Physical
 input/DPI/IME, full release packaging and long-session soak remain release gates;
 headless checks do not prove those behaviors.
 
