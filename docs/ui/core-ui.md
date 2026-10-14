@@ -6,7 +6,7 @@ with no frontend framework or public SDK contract.
 
 The production browser logic is maintained in TypeScript and emitted to the
 static ES modules under `web/`. The production entry remains
-`web/inventory/game.html` and `inventory/game.js`. See [build and test instructions](../source/client/ui_web/README.md).
+`web/inventory/game.html` and `inventory/game.js`. See [build and test instructions](../../source/client/ui_web/README.md).
 
 ## Ownership
 
@@ -153,7 +153,7 @@ Equipment require no edits. CSS fallback works in a clean checkout.
 
 ## Storage acceptance fixture
 
-[storage.fixture.mts](../source/client/ui_web/test/storage.fixture.mts) is an
+[storage.fixture.mts](../../source/client/ui_web/test/storage.fixture.mts) is an
 executable, typed example used by both headless contracts and the browser test.
 It composes `UiWindow`, `UiItemGrid`, `UiItemSlot` and `ItemTooltip`. Its screen
 function declares its window, creates the grid/tooltip and binds state/actions; it adds
@@ -236,7 +236,7 @@ compilation. No Godot, browser automation package or live backend is required.
 
 This checks presentation and composition. Native CEF embedding, focus/input
 handoff, IPC transport, real settings/snapshots and server effects remain Godot
-integration checks. See the [preview workflow](../source/client/ui_web/README.md#browser-development-without-godot).
+integration checks. See the [preview workflow](../../source/client/ui_web/README.md#browser-development-without-godot).
 
 ## Storage integration
 
