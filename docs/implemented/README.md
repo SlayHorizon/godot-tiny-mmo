@@ -6,12 +6,12 @@ This is a **map to implementation reports**, not a statement that every manual/n
 
 | System | Evidence / contract |
 | --- | --- |
-| Item UID, inventory, equipment and pickup | [ItemInstance](../item-instances.md), [ground loot](../pve-ground-loot.md) |
-| Yang checkpoints and critical spend | [Yang](../yang-wallet.md), [persistence](../persistence-policy.md) |
-| Server-authoritative 3D combat and mob packs | [Combat trace](../warrior-combat-trace-v1.md), [mob packs](../mob-packs-v1.md) |
-| First region, Metins and native visual passes | [First region](../first-region-graybox.md), [Metin encounter](../metin-encounter-v1.md), [Visual V4 terrain foundation](../visual-upgrade-v4-terrain3d.md) |
-| CEF Core UI, Storage, NPC Shop/Upgrade | [Core UI](../core-ui.md), [NPC services](../npc-services.md), [Upgrade](../npc-upgrade-ui.md) |
-| Build and regression policy | [Testing](../testing.md), [CI](../ci.md) |
+| Item UID, inventory, equipment and pickup | [ItemInstance](../architecture/item-instances.md), [ground loot](../gameplay/pve-ground-loot.md) |
+| Yang checkpoints and critical spend | [Yang](../yang-wallet.md), [persistence](../architecture/persistence-policy.md) |
+| Server-authoritative 3D combat and mob packs | [Combat trace](../gameplay/combat/warrior-combat-trace-v1.md), [mob packs](../gameplay/mob-packs-v1.md) |
+| First region, Metins and native visual passes | [First region](../world/first-region-graybox.md), [Metin encounter](../gameplay/metin-encounter-v1.md), [Visual V4 terrain foundation](../world/visuals/visual-upgrade-v4-terrain3d.md) |
+| CEF Core UI, Storage, NPC Shop/Upgrade | [Core UI](../ui/core-ui.md), [NPC services](../gameplay/npc/npc-services.md), [Upgrade](../gameplay/npc/npc-upgrade-ui.md) |
+| Build and regression policy | [Testing](../development/testing.md), [CI](../development/ci.md) |
 
 ## Implemented on `shop`, **not yet merged to `main`** (at time of writing)
 
