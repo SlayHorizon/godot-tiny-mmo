@@ -106,7 +106,7 @@ SQLite wallet and Shop smoke fixtures prove capacity/no-charge and item-write
 rollback with these helpers. `ShopStoreSqlite.purchase` implements this flow;
 `WorldDatabase.accept_committed_wallet_balance` synchronizes RAM only after commit.
 The authenticated Shop RPC revalidates the selected NPC service on every purchase.
-See [NPC Shop](npc-shop.md).
+See [NPC Shop](../gameplay/npc/npc-shop.md).
 
 GroundCurrency is a runtime entity: amount, loot rights/owner, position, expiry.
 Pickup adds to the wallet and removes the entity. It creates no persistent
@@ -156,7 +156,7 @@ or per-kill durability were added.
 
 ## Visual world calendar
 
-[Visual V2](visual-upgrade-v2.md) derives the shared presentation calendar from a
+[Visual V2](../world/visuals/visual-upgrade-v2.md) derives the shared presentation calendar from a
 fixed UTC/game epoch and advances it from monotonic server ticks. Restart recovers
 the ongoing calendar without SQL or dirty checkpoints. Client synchronization
 does not change combat/respawn/loot timers, progression checkpoint policy, or
