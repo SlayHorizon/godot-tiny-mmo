@@ -3,7 +3,7 @@
 Initial slice: 2026-10-07; inventory grid updated 2026-10-09. The new model works in Spike 3D through existing
 gateway/master/world login. **I** opens the panel; I, Esc or its button closes it.
 The CEF Inventory uses region-based input ownership; the old native panel has
-been removed. Browser startup failures show a technical message; see [Inventory UI](inventory-ui-prototype.md).
+been removed. Browser startup failures show a technical message; see [Inventory UI](../ui/inventory-ui-prototype.md).
 
 ## Model and implemented scope
 
@@ -25,7 +25,7 @@ The character's first Spike entry grants a one-time technical starter set:
 Base character attack is 10. Starter bonuses are fixed for repeatable instance
 separation tests. The bag has four 5×9 pages (180 cells); the Iron Sword occupies 1×3.
 Equipment has one `weapon` slot. Schema v15 migrates old one-cell anchors
-atomically; see [UI Contract v1](ui-contract.md).
+atomically; see [UI Contract v1](../ui/ui-contract.md).
 Equipping another weapon uses the vacated position when its footprint fits,
 otherwise the first free footprint. Unequip requires a free footprint. The panel abbreviates UIDs but sends the full
 UID. The model persists +0...+9 upgrade levels and sockets; upgrading, socketing
@@ -60,9 +60,9 @@ later runtime equipment/stat cache follows [persistence policy](persistence-poli
 Only the owner receives full inventory. Other players get the equipped weapon's
 definition ID and see a simple sword model attached to the capsule. New players
 also receive existing players' weapon state. Attack is used by
-[server-side 3D mob combat](pve-ground-loot.md).
+[server-side 3D mob combat](../gameplay/pve-ground-loot.md).
 
-The [first Item Progression Slice](item-progression.md) adds equipped-weapon
+The [first Item Progression Slice](../gameplay/item-progression.md) adds equipped-weapon
 comparison, post-swap attack preview and new-loot marking. A found instance can
 be equipped and retained with its stats after relog.
 
@@ -100,5 +100,5 @@ engine diagnostics remain.
 ## Next step
 
 PvE mobs, server damage and new-instance pickup are described in the
-[PvE slice](pve-ground-loot.md). Trade, upgrade and reroll should later reuse this
+[PvE slice](../gameplay/pve-ground-loot.md). Trade, upgrade and reroll should later reuse this
 model and atomic instance operations.
