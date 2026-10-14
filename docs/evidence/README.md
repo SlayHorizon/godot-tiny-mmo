@@ -4,10 +4,10 @@ Measured evidence must state **branch/commit**, platform, test command, runtime 
 
 ## On `main`
 
-- [Testing policy and reproduction](../testing.md)
-- [CI / platform checks](../ci.md)
+- [Testing policy and reproduction](../development/testing.md)
+- [CI / platform checks](../development/ci.md)
 - [Historical native validation](../history/README.md) (dated results, not current acceptance)
-- [Terrain3D adoption and verification](../visual-upgrade-v4-terrain3d.md)
+- [Terrain3D adoption and verification](../world/visuals/visual-upgrade-v4-terrain3d.md)
 
 ## Auction/Marketplace — on `shop` until PR #1 merges
 
