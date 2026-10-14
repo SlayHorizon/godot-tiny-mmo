@@ -1,8 +1,8 @@
 # Repository workflow
 
-Gameplay priorities and accepted scope are recorded in `docs/project-direction.md`.
+Gameplay priorities and accepted scope are recorded in `docs/decisions/project-direction.md`.
 Follow them when deciding the next implementation; avoid speculative frameworks.
-Persistence policy is in `docs/persistence-policy.md`: progression uses RAM and
+Persistence policy is in `docs/architecture/persistence-policy.md`: progression uses RAM and
 dirty checkpoints; item/economy changes remain immediate atomic transactions.
 
 - Work on a separate `codex/<short-topic>` branch for each coherent change.
@@ -35,7 +35,7 @@ classes is not a goal. Existing tests are regression evidence, not immutable API
 Preserve behavioral contracts, but freely rewrite/remove assertions of obsolete
 private state, implementation order or ownership. Never preserve old internals
 solely to keep a test green.
-See docs/testing.md for the full policy.
+See docs/development/testing.md for the full policy.
 
 Keep the default checks small, headless and based on durable contracts:
 item ownership/revision/rollback, inventory footprints/migration, progression
