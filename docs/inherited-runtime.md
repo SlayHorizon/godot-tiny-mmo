@@ -3,7 +3,7 @@
 The production First Region runtime lives in `common/gameplay/world3d/` and the
 Mandate domains beside it. `client/gameplay/` contains client-only combat control.
 The old TinyMMO native HUD/menu replacement was removed after graduation; see
-[cleanup audit](spike-graduation-cleanup.md).
+earlier cleanup audit (recoverable in Git history).
 
 The following code/content is retained for later work, without a folder-wide
 rewrite or a blanket move into a legacy directory:
