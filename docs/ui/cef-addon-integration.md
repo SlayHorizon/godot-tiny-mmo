@@ -28,7 +28,7 @@ window, disabled canvas stretch. UI scale remains independent of window size.
 CEF settings and permission/profile defaults are in the root `project.godot`.
 CEF is GDExtension, so an Editor Plugins checkbox is not its runtime switch.
 
-The [Visual V0 pass](visual-upgrade-v0.md) verified native Forward+ and Mobile
+The [Visual V0 pass](../world/visuals/visual-upgrade-v0.md) verified native Forward+ and Mobile
 with the installed pinned addon on 2026-10-12. `run.ps1` defaults to Forward+;
 `-RenderingMethod mobile` runs the comparison without editing project settings.
 `WebUiHost` checks Vulkan, the installed addon and a non-headless display, rather
