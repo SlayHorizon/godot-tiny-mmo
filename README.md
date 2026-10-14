@@ -12,12 +12,12 @@ This repository contains a working technical vertical slice, not a game alpha.
   instance and transactional SQLite persistence.
 - Initial loot progression: weapon attack shown on the ground, comparison with the
   equipped instance, attack preview after swapping and persistent sword equipment.
-- [First region graybox](docs/first-region-graybox.md): hub/Blacksmith, three combat areas,
+- [First region graybox](docs/world/first-region-graybox.md): hub/Blacksmith, three combat areas,
   six mixed packs (104 mobs) of increasing difficulty, roads/shortcuts, landmarks,
-  four Metin candidate sites and a visual water strip. [Pack AI](docs/mob-packs-v1.md),
+  four Metin candidate sites and a visual water strip. [Pack AI](docs/gameplay/mob-packs-v1.md),
   shared aggro and server-side straight-line movement; directional melee hitting multiple
-  targets, [Warrior 4/5/6-hit combo](docs/warrior-basic-combo-v2.md), hit reactions and final-hit knockdown/get-up with physical displacement.
-- [Metin Encounter v1](docs/metin-encounter-v1.md): one random active site, HP
+  targets, [Warrior 4/5/6-hit combo](docs/gameplay/combat/warrior-basic-combo-v2.md), hit reactions and final-hit knockdown/get-up with physical displacement.
+- [Metin Encounter v1](docs/gameplay/metin-encounter-v1.md): one random active site, HP
   threshold waves, shared combat/contribution, one ground reward and timed respawn.
 - Player and mob death/respawn, ground loot, reservation and persistent pickup.
   Two-client tests cover combat, death and competition for the same loot.
@@ -27,7 +27,7 @@ This repository contains a working technical vertical slice, not a game alpha.
   delta checkpoint every 30 seconds and an atomic test spend including pending income.
 - Active-character combat stats in RAM; swings do not query SQLite inventory.
   Item pickup and equipment retain immediate DB transactions.
-- An opt-in [Web UI foundation](docs/web-ui.md): protocol v1, explicit commands,
+- An opt-in [Web UI foundation](docs/ui/web-ui.md): protocol v1, explicit commands,
   domain snapshots and region-based input routing. The root gameplay client uses the new Inventory screen,
   with real server-authoritative item commands. CEF is installed into `addons/godot_cef`;
   server export presets exclude it. CEF officially
@@ -49,7 +49,7 @@ The normal login map is the graybox region; the small arena remains an integrati
 test fixture. Metin Encounter v1 is playable; a pack density/combat feel playtest, then pacing and visual passes are next.
 
 Camera v1 uses RMB orbit and wheel zoom, with independent view rotation and scenery
-collision. Settings and verification notes: [Camera v1](docs/camera-v1.md).
+collision. Settings and verification notes: [Camera v1](docs/gameplay/camera-v1.md).
 
 ## Local setup
 
@@ -94,9 +94,9 @@ servers above and launch the client:
 This installs pinned CEF into the root project and imports it; no game sources
 are copied. Subsequent source edits run directly from this checkout. I opens inventory;
 drag moves items, click picks up/places items and Escape cancels
-carrying before closing. See [inventory UI](docs/inventory-ui-prototype.md).
+carrying before closing. See [inventory UI](docs/ui/inventory-ui-prototype.md).
 The real bag now has four 5×9 pages with authoritative item footprints. Schema
-v15 migrates old placements atomically. See [UI Contract v1](docs/ui-contract.md).
+v15 migrates old placements atomically. See [UI Contract v1](docs/ui/ui-contract.md).
 
 Alternatively, use Godot **Debug -> Customize Run Instances** with separate feature
 tags `master-server`, `gateway-server`, `world-server` and `client`. Place `--mode`
@@ -112,7 +112,7 @@ characters and client preferences. The Godot icon is a temporary placeholder.
 Export presets: `Windows` (client), `ServerWindows` / `ServerUbuntu` (shared server
 roles), `LinuxClientUnverified`, `LegacyWebUnsupported` and
 `LegacyAndroidUnsupported`. The latter three are not verified release targets.
-See [export setup](docs/cef-addon-integration.md).
+See [export setup](docs/ui/cef-addon-integration.md).
 
 ## Tests and workflow
 
@@ -122,9 +122,9 @@ See [export setup](docs/cef-addon-integration.md).
 
 Default smoke protects persistence and the bridge without opening game windows.
 Choose extended network/gameplay tests only for the affected flow. See
-[testing policy](docs/testing.md). For addon/export changes, optionally run
+[testing policy](docs/development/testing.md). For addon/export changes, optionally run
 `tests/run-cef-export.ps1`; it checks client resources, CEF-free server packs
-and headless server-pack boot. See [CEF setup](docs/cef-addon-integration.md).
+and headless server-pack boot. See [CEF setup](docs/ui/cef-addon-integration.md).
 Work on `codex/<topic>` branches, review and verify changes, then merge locally
 with `--no-ff`. See [AGENTS.md](AGENTS.md).
 
@@ -132,24 +132,24 @@ with `--no-ff`. See [AGENTS.md](AGENTS.md).
 
 **Start with the [documentation map](docs/README.md)**: architecture, accepted decisions, implemented systems, active plans, historical records and evidence. For pre-alpha refactors see the [architecture hardening plan](docs/plans/architecture-hardening.md); future realm-wide Economy contracts are [C1–C5](docs/architecture/economy/README.md).
 
-- [Project direction and priorities](docs/project-direction.md)
+- [Project direction and priorities](docs/decisions/project-direction.md)
 - [Historical decisions and validation](docs/history/README.md)
-- [Persistence policy](docs/persistence-policy.md)
+- [Persistence policy](docs/architecture/persistence-policy.md)
 - [3D spike and movement transport](docs/spike3d.md)
-- [Item instances and persistence](docs/item-instances.md)
-- [PvE, ground loot and pickup](docs/pve-ground-loot.md)
+- [Item instances and persistence](docs/architecture/item-instances.md)
+- [PvE, ground loot and pickup](docs/gameplay/pve-ground-loot.md)
 - [Combat Feel Pass and controls](docs/combat-feel.md)
-- [Item progression: comparison, equipment and damage](docs/item-progression.md)
-- [Character XP and levels](docs/character-xp.md)
+- [Item progression: comparison, equipment and damage](docs/gameplay/item-progression.md)
+- [Character XP and levels](docs/gameplay/character-xp.md)
 - [Yang wallet and ground currency](docs/yang-wallet.md)
-- [Optional local development visuals](docs/local-dev-visuals.md)
-- [Warrior compatibility](docs/warrior-compatibility.md)
+- [Optional local development visuals](docs/development/local-dev-visuals.md)
+- [Warrior compatibility](docs/development/warrior-compatibility.md)
 - [External legacy asset pipeline history](docs/legacy-asset-pipeline.md)
-- [Web UI foundation](docs/web-ui.md)
-- [CEF addon installation and export boundary](docs/cef-addon-integration.md)
+- [Web UI foundation](docs/ui/web-ui.md)
+- [CEF addon installation and export boundary](docs/ui/cef-addon-integration.md)
 - [Historical CEF UI spike](docs/cef-ui-spike.md)
-- [Prototype testing and cleanup](docs/testing.md)
-- [CI](docs/ci.md)
+- [Prototype testing and cleanup](docs/development/testing.md)
+- [CI](docs/development/ci.md)
 - [Cleanup and remaining dependencies](docs/repository-cleanup.md)
 - [Open-MT2 reference analysis](docs/open-mt2-analysis.md)
 - [Original spike plan](docs/Mandate-of-Three_TinyMMO_Spike_Plan.pdf)
