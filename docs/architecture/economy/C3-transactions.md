@@ -78,4 +78,4 @@ Double purchase, partial settlement, duplicate pickup/UID, lost commit reply, gr
 
 ## Current code / migration
 
-Preserve the accepted [current persistence policy](../../persistence-policy.md): immediate critical economy writes and account-wallet pending-delta checkpointing. Future migration must explicitly replace only the pieces that cannot safely span World Processes; no current gameplay behavior is changed by this draft.
+Preserve the accepted [current persistence policy](../persistence-policy.md): immediate critical economy writes and account-wallet pending-delta checkpointing. Future migration must explicitly replace only the pieces that cannot safely span World Processes; no current gameplay behavior is changed by this draft.
