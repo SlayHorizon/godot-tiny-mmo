@@ -10,18 +10,18 @@ Vulkan Forward+ gameplay client. Other gameplay screens retain native Godot UI. 
 commands. The addon is installed locally in `addons/godot_cef`. Exported servers omit it.
 Local headless runs load the extension but never instantiate a browser.
 
-The original [CEF spike](cef-ui-spike.md) is historical evidence. This document
+The original [CEF spike](../cef-ui-spike.md) is historical evidence. This document
 specifies **protocol v1** and the current foundation. Its tests replace the old
 unversioned bridge tests; the standalone spike is retired.
 
 Browser source is TypeScript under `source/client/ui_web/ts`; the static emitted
-JS stays at the existing `web/` paths. See [the build/test contract](../source/client/ui_web/README.md)
+JS stays at the existing `web/` paths. See [the build/test contract](../../source/client/ui_web/README.md)
 for setup and generated asset ownership. Native IPC remains runtime validated.
 
 ## Official renderer target
 
 Decision accepted 2026-10-12: **CEF Web UI officially targets Vulkan Forward+**
-after the [Visual V0 native feasibility pass](visual-upgrade-v0.md). Mobile also
+after the [Visual V0 native feasibility pass](../world/visuals/visual-upgrade-v0.md). Mobile also
 passed the same fixture and remains an explicit launcher comparison option.
 Compatibility/OpenGL is **unsupported / best-effort**. Its failed drag test stays
 as historical evidence, but Compatibility parity is not a production adoption
@@ -245,18 +245,18 @@ See [addon setup and export checks](cef-addon-integration.md).
 
 Use the root client for milestone-level native UI checks. The default
 suite asserts transport/application and persistence contracts, not exact DOM,
-window dimensions, animation timing or screenshots. See [testing policy](testing.md).
+window dimensions, animation timing or screenshots. See [testing policy](../development/testing.md).
 
 ## Validation and limits
 
 Current repeatable checks cover persistence and bridge contracts, optional
 Inventory RPC integration and the client/server export boundary. See
-[testing policy](testing.md) and [addon integration](cef-addon-integration.md).
+[testing policy](../development/testing.md) and [addon integration](cef-addon-integration.md).
 The renderer/input/lifecycle adoption evidence from the retired fixture is
-preserved in [historical validation](history/web-ui-validation-2026-10-08.md).
+preserved in [historical validation](../history/web-ui-validation-2026-10-08.md).
 
 Recommendation remains **ADOPT WITH CAVEATS** for Windows Vulkan Forward+.
-The [V0 pass](visual-upgrade-v0.md) now covers native CEF lifecycle, synthetic
+The [V0 pass](../world/visuals/visual-upgrade-v0.md) now covers native CEF lifecycle, synthetic
 input/drag/camera orbit and real Shop/Upgrade/combat RPCs on First Region.
 Full non-debug client packaging/launch, physical input/IME/DPI/alt-tab, helper
 crash handling, long soak and target-device budgets remain release gates.
@@ -382,11 +382,11 @@ selects an exact position. Inventory right-click remains `item.activate`.
 The `npc` domain and explicit `npc.interact` / `npc.select_service` /
 `npc.clear_service` / `npc.close` commands compose the Core UI service menu.
 SHOP routes to the separate `shop` domain and `shop.open` / `shop.buy` commands;
-Upgrade has an [atomic +0 → +1 flow](npc-upgrade-ui.md) with server recipe/selection. Shop opens Inventory alongside it, with right-click
-first-fit and exact/receive-area offer drops. See [NPC Shop](npc-shop.md). World owns
+Upgrade has an [atomic +0 → +1 flow](../gameplay/npc/npc-upgrade-ui.md) with server recipe/selection. Shop opens Inventory alongside it, with right-click
+first-fit and exact/receive-area offer drops. See [NPC Shop](../gameplay/npc/npc-shop.md). World owns
 content, interaction context, current range and service authorization. The browser
 routes zero/one/many enabled services and restores current selection after reload.
-See [NPC services](npc-services.md) for content authoring, boundaries and tests.
+See [NPC services](../gameplay/npc/npc-services.md) for content authoring, boundaries and tests.
 
 ## Upgrade slice
 
@@ -395,7 +395,7 @@ The dispatcher adds `upgrade` (authoritative recipe/candidate) and `npc_targets`
 `upgrade.execute` and `npc.upgrade_item`; no client cost/stat/recipe mutation is
 accepted. The world drop is an opening intent; selection/upgrade revalidate through
 the same RPC path as the menu. `ui.ready` restores recipe/candidate state. See
-[NPC Upgrade](npc-upgrade-ui.md) for authority, transactions and scope.
+[NPC Upgrade](../gameplay/npc/npc-upgrade-ui.md) for authority, transactions and scope.
 
 ## Native command lifecycle
 
