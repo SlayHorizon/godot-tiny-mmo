@@ -27,7 +27,7 @@ Preview subtracts the equipped instance's attack and adds the compared instance:
 | No weapon | 10 | 13 | 23 (+13) |
 
 The difference concerns attack, not overall item quality. Combo hit three still
-uses a 1.5 multiplier; other rules are in [Combat Feel Pass](combat-feel.md).
+uses a 1.5 multiplier; other rules are in [Combat Feel Pass](../combat-feel.md).
 
 ## Server and persistence
 
@@ -49,7 +49,7 @@ requires a separate scope decision.
 The user subsequently selected [character XP and levels](character-xp.md).
 That stage added schema v12 reward receipts while retaining the item model.
 The later schema v13 refactor removes those XP receipts; current behavior is in
-[persistence policy](persistence-policy.md).
+[persistence policy](../architecture/persistence-policy.md).
 
 ## Verification
 
