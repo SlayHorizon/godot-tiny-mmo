@@ -22,7 +22,7 @@ The hub is at the southern end (+Z). Default camera forward faces north (-Z).
 All three use the existing dog visual/AI/combat/loot/XP pipeline. Health and damage
 increase by area; values are provisional and not a balance target. XP and drops
 retain current behavior. Each per-member replacement retains its definition and receives a new runtime ID.
-There are 104 mobs in six packs; [mob packs v1](mob-packs-v1.md) records composition,
+There are 104 mobs in six packs; [mob packs v1](../gameplay/mob-packs-v1.md) records composition,
 shared aggro and anchor leash. These are provisional density data. The hub starts
 outside pack wander/aggro envelopes.
 
@@ -33,7 +33,7 @@ shrine, stone arch and rock corners provide landmarks and camera collision cases
 Roads/zone tints are surface marks, not separate navigation authority.
 
 Four visible pads and `MetinSpawn1..4` markers reserve candidate sites at
-(-24,-20), (16,-44), (-20,-78), (10,-92). The pads themselves are not loot sources. [Metin Encounter v1](metin-encounter-v1.md)
+(-24,-20), (16,-44), (-20,-78), (10,-92). The pads themselves are not loot sources. [Metin Encounter v1](../gameplay/metin-encounter-v1.md)
 selects one site for its live stone and timed respawn.
 Edit geometry/routes in `first_region.gd`, pack markers/composition in
 `first_region_3d.tscn`, and combat stats in the separate MobDefinition resources; no procedural
@@ -66,20 +66,20 @@ fixed; native movement on the region still needs comparison against the arena.
 
 ## Next slices
 
-1. [Metin Encounter v1](metin-encounter-v1.md) is implemented at these sites;
+1. [Metin Encounter v1](../gameplay/metin-encounter-v1.md) is implemented at these sites;
    playtest stone combat, waves, ground reward and timed respawn.
 2. Spawn/pacing pass: evaluate a 10–15 minute route, pack density, return cost and
    event cadence. The encounter now supports the loop; its pacing has not yet been manually assessed.
 3. Visual pass after scale/gameplay feedback; final models, terrain and materials.
 
-The first [lighting baseline](visual-upgrade-v1.md) is now integrated: fixed
+The first [lighting baseline](visuals/visual-upgrade-v1.md) is now integrated: fixed
 15:30, Sky3D procedural sky/clouds, sun, AgX and light fog. The separate
-[V2 calendar pass](visual-upgrade-v2.md) now animates dawn/day/sunset/night,
+[V2 calendar pass](visuals/visual-upgrade-v2.md) now animates dawn/day/sunset/night,
 moon phases, stars, ambient light, exposure and haze. Geometry, routes,
 collisions and gameplay authority are unchanged. This is environment tuning;
 the authored ground/props remain graybox surfaces.
 
-[V3 water](visual-upgrade-v3.md) now replaces the water material/mesh and adds a
+[V3 water](visuals/visual-upgrade-v3.md) now replaces the water material/mesh and adds a
 minimal submerged visual slope for shallow/deep color. The original shore
 collision and route geometry remain; coastline/terrain art is a later V4 pass.
 
