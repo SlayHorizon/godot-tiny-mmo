@@ -137,7 +137,7 @@ The optional legacy asset manifest is generated local asset data, loaded as
 `unknown` and checked by its adapter. Skin/item icon paths stay in that adapter
 and the existing resolvers. The Core UI refactor preserves the production visual
 design, persistence policy and command wire format; see [ownership and Storage
-acceptance](../../../docs/core-ui.md).
+acceptance](../../../docs/ui/core-ui.md).
 
 The build first embeds `ts/core/window/templates/ui-window.html` in an ignored,
 generated TypeScript module. The emitted template JS is committed with the
@@ -155,12 +155,12 @@ There is one StorageSnapshot contract in protocol/contracts.ts, with geometry
 constants in screens/storage/storage-model.ts. `storage_open => inventory_open`
 is enforced by the native composition and fixture host; invalid HUD snapshots
 are rejected at the presentation boundary. Closing Inventory closes Storage.
-See [the UI follow-up TODO](../../../docs/TODO.md) for the transfer controller's limited scope.
+See [the UI follow-up TODO](../../../docs/plans/architecture-hardening.md) for the transfer controller's limited scope.
 
 
 Neutral NPC services use `ts/screens/npc/` and the `npc` domain. The development
 Blacksmith opens its Core UI menu from the game (click or N in range); selection
 routes Shop and Upgrade to their feature windows. Upgrade selects Inventory
 items without relocation and executes the atomic +0 → +1 server transaction.
-See [NPC services](../../../docs/npc-services.md). Edit TypeScript, then rebuild
+See [NPC services](../../../docs/gameplay/npc/npc-services.md). Edit TypeScript, then rebuild
 committed static modules; CEF never loads development dependencies.
