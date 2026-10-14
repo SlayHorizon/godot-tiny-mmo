@@ -97,7 +97,7 @@ finite stock would also belong in that transaction.
 A Player Shop purchase must atomically validate/commit the live listing, buyer
 currency, Inventory capacity, ownership transfer, buyer placement, seller payment
 and listing removal/reduction. Existing Storage errors/wire format are preserved;
-NPC Shop offers/RPC and the CEF view are implemented; see [NPC Shop](npc-shop.md).
+NPC Shop offers/RPC and the CEF view are implemented; see [NPC Shop](../gameplay/npc/npc-shop.md).
 `WalletStoreSqlite.spend_in_transaction`
 applies pending income and spends without committing. The purchase caller begins
 one transaction, validates the authoritative offer/price, resolves capacity, spends,
