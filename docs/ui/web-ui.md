@@ -10,7 +10,7 @@ Vulkan Forward+ gameplay client. Other gameplay screens retain native Godot UI. 
 commands. The addon is installed locally in `addons/godot_cef`. Exported servers omit it.
 Local headless runs load the extension but never instantiate a browser.
 
-The original [CEF spike](../cef-ui-spike.md) is historical evidence. This document
+The original CEF spike has been retired; its investigation is available in Git history. This document
 specifies **protocol v1** and the current foundation. Its tests replace the old
 unversioned bridge tests; the standalone spike is retired.
 
@@ -253,7 +253,7 @@ Current repeatable checks cover persistence and bridge contracts, optional
 Inventory RPC integration and the client/server export boundary. See
 [testing policy](../development/testing.md) and [addon integration](cef-addon-integration.md).
 The renderer/input/lifecycle adoption evidence from the retired fixture is
-preserved in [historical validation](../history/web-ui-validation-2026-10-08.md).
+preserved in historical validation records in Git history.
 
 Recommendation remains **ADOPT WITH CAVEATS** for Windows Vulkan Forward+.
 The [V0 pass](../world/visuals/visual-upgrade-v0.md) now covers native CEF lifecycle, synthetic
