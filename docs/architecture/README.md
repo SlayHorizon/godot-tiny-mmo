@@ -11,7 +11,7 @@ These documents intentionally distinguish **one logical authority** from **one p
 
 - [Persistence and crash window](persistence-policy.md): SQLite writer, wallet pending deltas, dirty XP checkpoints and immediate critical Item/Yang COMMIT.
 - [Server/client/Web UI boundary](../ui/web-ui.md): authoritative gameplay, explicit CEF commands, snapshots.
-- [Items and identity](item-instances.md) and [Yang wallet](../yang-wallet.md).
+- [Items and identity](item-instances.md) and [Yang wallet](yang-wallet.md).
 - [Current test contracts](../development/testing.md).
 
 **Authority rule:** where target contracts differ from the running prototype, the current persistence policy describes reality; accepted Economy/World ADRs describe future desired behavior. The [implementation plan](../plans/architecture-hardening.md) bridges them in testable packages.
