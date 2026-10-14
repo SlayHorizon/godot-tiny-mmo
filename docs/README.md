@@ -4,8 +4,12 @@
 
 | Area | Where to go | How to read it |
 | --- | --- | --- |
-| Architecture | [Architecture index](architecture/README.md) | Target boundaries, invariants and present persistence policy |
-| Decisions | [Decision index](decisions/README.md) | Accepted direction and decisions not yet implemented |
+| Architecture | [Architecture index](architecture/README.md) | Economy, World topology, persistence, items and Yang |
+| Decisions | [Decision index](decisions/README.md) | Current priorities, gameplay direction and product decisions |
+| Gameplay | [Gameplay index](gameplay/README.md) | Combat, mobs, Metins, NPCs, progression |
+| World | [World index](world/README.md) | First Region, visuals and Terrain3D |
+| UI | [UI index](ui/README.md) | CEF, Inventory, Core UI and contracts |
+| Development | [Development index](development/README.md) | Testing, CI, setup and local assets |
 | Implemented | [Implementation index](implemented/README.md) | What is verified on `main` versus still only on `shop` |
 | Plans | [Plan index](plans/README.md) | Ordered pre-alpha hardening and feature work |
 | History | [Historical records](history/README.md) | Superseded snapshots and dated investigations |
@@ -23,11 +27,11 @@
 
 ## File-by-file retention review
 
-Before deleting legacy Markdown or collapsing reports, see the [complete documentation audit](plans/documentation-file-audit.md). It covers every file currently on `main` and the additional docs/evidence on the open `shop` branch, with an explicit keep/consolidate/delete recommendation per file. Proposed removals are **not yet applied**; preserve links and unique evidence when executing the cleanup.
+Before deleting legacy Markdown or collapsing reports, see the [complete documentation audit](plans/documentation-file-audit.md). It covers every file currently on `main` and the additional docs/evidence on the open `shop` branch, with an explicit keep/consolidate/delete recommendation per file. A first **docs-only cleanup batch** moved 39 current guides and removed 19 obsolete files on its topic branch, with link repair. Additional Marketplace/Auction reports on `shop` remain for a post-merge review. The audit preserves original file names for provenance.
 
 ## How to maintain this index
 
 1. Mark **implemented**, **accepted design**, **proposed**, or **historical** explicitly; never equate a merged design document with finished code.
 2. When a decision changes, update its canonical decision/contract and add a link to the superseded history rather than silently altering old measurements.
 3. A plan is not a new implementation authorization by itself. Keep changes on separate topic branches and preserve the repository's testing/merge workflow.
-4. Many established links still target older files directly under `docs/`. This index organizes them **without moving or deleting them** while Marketplace PR #1 is in flight. Once `shop` is merged, a separate verified link/move sweep can physically relocate old documents without broken references.
+4. Active documentation is now grouped into subject folders. Do not reintroduce deleted historical plans as active references. After merging `shop`, assess its additional Auction reports without discarding useful evidence.
