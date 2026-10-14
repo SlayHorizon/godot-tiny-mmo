@@ -130,30 +130,17 @@ with `--no-ff`. See [AGENTS.md](AGENTS.md).
 
 ## Documentation
 
-**Start with the [documentation map](docs/README.md)**: architecture, accepted decisions, implemented systems, active plans, historical records and evidence. For pre-alpha refactors see the [architecture hardening plan](docs/plans/architecture-hardening.md); future realm-wide Economy contracts are [C1–C5](docs/architecture/economy/README.md).
+**Start with the [documentation index](docs/README.md)**. Current references are grouped by ownership instead of milestone dates:
 
-- [Project direction and priorities](docs/decisions/project-direction.md)
-- [Historical decisions and validation](docs/history/README.md)
-- [Persistence policy](docs/architecture/persistence-policy.md)
-- [3D spike and movement transport](docs/spike3d.md)
-- [Item instances and persistence](docs/architecture/item-instances.md)
-- [PvE, ground loot and pickup](docs/gameplay/pve-ground-loot.md)
-- [Combat Feel Pass and controls](docs/combat-feel.md)
-- [Item progression: comparison, equipment and damage](docs/gameplay/item-progression.md)
-- [Character XP and levels](docs/gameplay/character-xp.md)
-- [Yang wallet and ground currency](docs/yang-wallet.md)
-- [Optional local development visuals](docs/development/local-dev-visuals.md)
-- [Warrior compatibility](docs/development/warrior-compatibility.md)
-- [External legacy asset pipeline history](docs/legacy-asset-pipeline.md)
-- [Web UI foundation](docs/ui/web-ui.md)
-- [CEF addon installation and export boundary](docs/ui/cef-addon-integration.md)
-- [Historical CEF UI spike](docs/cef-ui-spike.md)
-- [Prototype testing and cleanup](docs/development/testing.md)
-- [CI](docs/development/ci.md)
-- [Cleanup and remaining dependencies](docs/repository-cleanup.md)
-- [Open-MT2 reference analysis](docs/open-mt2-analysis.md)
-- [Original spike plan](docs/Mandate-of-Three_TinyMMO_Spike_Plan.pdf)
-- [Design decisions](docs/Mandate_of_Three_Design_Decisions.pdf)
+- [Architecture and Economy contracts](docs/architecture/README.md)
+- [Gameplay, combat and NPC systems](docs/gameplay/README.md)
+- [World, maps, visuals and Terrain3D](docs/world/README.md)
+- [CEF and UI](docs/ui/README.md)
+- [Development, testing and CI](docs/development/README.md)
+- [Accepted decisions](docs/decisions/README.md) and [active plans](docs/plans/README.md)
+- [Historical evidence](docs/evidence/README.md); obsolete milestone plans are recoverable from Git history
+
+The running single-World + SQLite implementation is distinct from the accepted future Economy V2 and multi-World architecture.
 
 ## Upstream and credits
 
