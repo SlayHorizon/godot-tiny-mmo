@@ -7,7 +7,7 @@ This is a **map to implementation reports**, not a statement that every manual/n
 | System | Evidence / contract |
 | --- | --- |
 | Item UID, inventory, equipment and pickup | [ItemInstance](../architecture/item-instances.md), [ground loot](../gameplay/pve-ground-loot.md) |
-| Yang checkpoints and critical spend | [Yang](../yang-wallet.md), [persistence](../architecture/persistence-policy.md) |
+| Yang checkpoints and critical spend | [Yang](../architecture/yang-wallet.md), [persistence](../architecture/persistence-policy.md) |
 | Server-authoritative 3D combat and mob packs | [Combat trace](../gameplay/combat/warrior-combat-trace-v1.md), [mob packs](../gameplay/mob-packs-v1.md) |
 | First region, Metins and native visual passes | [First region](../world/first-region-graybox.md), [Metin encounter](../gameplay/metin-encounter-v1.md), [Visual V4 terrain foundation](../world/visuals/visual-upgrade-v4-terrain3d.md) |
 | CEF Core UI, Storage, NPC Shop/Upgrade | [Core UI](../ui/core-ui.md), [NPC services](../gameplay/npc/npc-services.md), [Upgrade](../gameplay/npc/npc-upgrade-ui.md) |
