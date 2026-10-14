@@ -35,7 +35,7 @@ WorldSchema v13 removes the earlier `kill_xp_rewards` table. No kill history or
 persistent kill ID is created. A mob's DEAD state prevents duplicate processing
 of that death in the single authoritative World Server. A crash may lose soft
 progression since the last checkpoint. Details and separation of items, XP and
-wallet state: [persistence policy](persistence-policy.md).
+wallet state: [persistence policy](../architecture/persistence-policy.md).
 
 ## Verification
 
