@@ -13,11 +13,11 @@
 
 ## Canonical current documents
 
-- [Project direction](project-direction.md) — gameplay/current milestone direction; see [architecture hardening plan](plans/architecture-hardening.md) for the newer pre-alpha technical work sequence.
-- [Persistence policy](persistence-policy.md) — **actual single-World + SQLite** checkpoint and transaction behavior.
-- [Testing policy](testing.md) and [CI](ci.md) — what checks prove and what still requires native testing.
+- [Project direction](decisions/project-direction.md) — gameplay/current milestone direction; see [architecture hardening plan](plans/architecture-hardening.md) for the newer pre-alpha technical work sequence.
+- [Persistence policy](architecture/persistence-policy.md) — **actual single-World + SQLite** checkpoint and transaction behavior.
+- [Testing policy](development/testing.md) and [CI](development/ci.md) — what checks prove and what still requires native testing.
 - [Economy V2 C1–C5](architecture/economy/README.md) — accepted **future** realm-wide Economy contracts; no distributed implementation yet.
-- [Dynamic World/CH architecture](world-instance-architecture.md) — accepted design for MapInstances, CH and host processes; implementation deferred.
+- [Dynamic World/CH architecture](architecture/world-instance-architecture.md) — accepted design for MapInstances, CH and host processes; implementation deferred.
 - [Marketplace policy gaps](decisions/marketplace-v2-gaps.md) — approved UX changes that **are not implemented** by the existing `shop` branch.
 - [Marketplace/Auction PR #1](https://github.com/PatrykCieszynski/Mandate-of-Three/pull/1) — open integration PR at the time this index was written. Auction PR #2 is merged **into `shop`**, not into `main`.
 
