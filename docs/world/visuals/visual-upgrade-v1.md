@@ -21,7 +21,7 @@ is normalized for repository checks, and Godot regenerates texture import
 metadata for our compression settings. The plugin is enabled for editor
 configuration. No demo/project/reference assets outside the addon are copied.
 MIT and third-party notices remain alongside the source/assets; see
-[provenance](../addons/sky_3d/UPSTREAM.md) and [credits](third-party-credits.md).
+[provenance](../../../addons/sky_3d/UPSTREAM.md) and [credits](../../third-party-credits.md).
 
 The scene's Environment, Sky, ShaderMaterial and CameraAttributes are local to
 each instantiated scene, since Sky3D mutates these resources during setup.
