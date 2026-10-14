@@ -129,6 +129,6 @@ after import has no missing-resource/parse errors. No legacy asset is involved.
 This existing cold-import limitation is not silently counted as a clean first
 import.
 
-External batch-conversion history: [legacy pipeline](legacy-asset-pipeline.md).
+External batch-conversion history: [legacy pipeline](../legacy-asset-pipeline.md).
 The in-repository converter has been removed. stage_asset.py remains available
 for the four original selected IDs.
