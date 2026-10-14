@@ -20,7 +20,7 @@ and VSync. These attempts are not evidence of an engine/addon deadlock.
 ## Repeatable native pass
 
 Install/import the pinned addon and build Web UI as described in
-[CEF integration](cef-addon-integration.md), then run from the repository root:
+[CEF integration](../../ui/cef-addon-integration.md), then run from the repository root:
 
 ```powershell
 & .\tests\run-visual-v0.ps1
