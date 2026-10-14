@@ -94,11 +94,11 @@ roles and writes guest fixture accounts; use it for actual session/login changes
 `run-first-region.ps1` loads the production graybox scene headlessly and checks
 connected navigation to NPC/pack/Metin sites, safe hub spawns, authored composition
 and the shore boundary. It opens no window and does not assert exact
-layout or balance. See [region notes](first-region-graybox.md).
+layout or balance. See [region notes](../world/first-region-graybox.md).
 
 Default smoke also covers mixed mob packs, shared aggro, anchor leash, unique
 replacement IDs, Metin pack expiry, a short 50-actor AI tick, compact mob wire
-round trips and serialized payload measurements for 50/100 actors. See [mob packs](mob-packs-v1.md).
+round trips and serialized payload measurements for 50/100 actors. See [mob packs](../gameplay/mob-packs-v1.md).
 
 `run-metin.ps1` covers the small stone lifecycle contracts.
 `run-metin-network.ps1` is the optional two-client production encounter/ground
@@ -110,17 +110,17 @@ changes: client Web assets and CEF registration, CEF-free server packs and
 client/server pack headless boot (including real client UID validation without
 SQLite). It requires the local CEF installation and opens no windows.
 
-`run-core-ui-browser.ps1` is an opt-in [Core UI milestone check](core-ui.md)
+`run-core-ui-browser.ps1` is an opt-in [Core UI milestone check](../ui/core-ui.md)
 using the production page, controlled IPC and an installed headless browser.
 It checks behavior and broad bounds, with no pixel/exact-tree assertions or downloads.
 It does not replace native root-client CEF verification.
 
-`run-shop-browser.ps1` is the analogous optional [NPC Shop view check](npc-shop.md).
+`run-shop-browser.ps1` is the analogous optional [NPC Shop view check](../gameplay/npc/npc-shop.md).
 Pass the installed `-PlaywrightModule` and `-BrowserExecutable`, and optionally
 `-ScreenshotDirectory`. It verifies rendered skin/fallback, broad frame bounds
 and Shop/Inventory placement, mouse purchase gestures, tooltip, catalog pages
 and close/Escape with controlled IPC; no game accounts or running servers. It also
-checks [Upgrade](npc-upgrade-ui.md): server-driven item selection/commit/rejection,
+checks [Upgrade](../gameplay/npc/npc-upgrade-ui.md): server-driven item selection/commit/rejection,
 a +0 → +1 snapshot and an explicit execute command without optimistic mutation.
 The separate developer page retains visual level controls.
 
@@ -129,8 +129,8 @@ changes. The small default suite downloads no browser and does not install Pillo
 
 The old CEF spike, its mock/diagnostic adapter, its renderer/measurement runners
 and the exact-layout browser matrix test were removed. The original adoption
-results remain in [the historical decision record](cef-ui-spike.md). The inventory
-resolution matrix is a manual milestone checklist in [UI Contract v1](ui-contract.md),
+results remain in [the historical decision record](../cef-ui-spike.md). The inventory
+resolution matrix is a manual milestone checklist in [UI Contract v1](../ui/ui-contract.md),
 not a pixel-sensitive CI assertion. Use the root client for CEF/input/
 resize/transparency/shutdown checks; no parallel standalone UI mock.
 
@@ -158,41 +158,41 @@ live under `.godot/verification`, rather than accumulating at the .godot root.
 material/item/wallet rollback fixture and small UI/bridge contracts.
 
 `run-camera.ps1` is the optional headless Camera v1 collision/picking fixture.
-See [Camera v1](camera-v1.md) for the native input/framing acceptance checklist.
+See [Camera v1](../gameplay/camera-v1.md) for the native input/framing acceptance checklist.
 
 Hit reaction smoke covers profiles, flinch without locks, bounded knockdown/get-up,
 independent displacement resistance, damped impulses and real scenery collision,
 interrupt independence and snapshot recovery. `run-combat` exercises the same
 authority with two clients, including the player-target pending-hit path. See
-[Hit Reactions v1](hit-reactions-v1.md).
+[Hit Reactions v1](../gameplay/combat/hit-reactions-v1.md).
 
 Warrior combo v2 reuses the durable `hit_reactions` smoke case for exact 4/5/6
 sequence and runtime reset contracts. `run-combat.ps1` verifies four/six native
 animation keys at both real clients, plus pending-toggle/interruption behavior.
-The optional [combo review](warrior-basic-combo-v2.md#verification-and-remaining-manual-review)
+The optional [combo review](../gameplay/combat/warrior-basic-combo-v2.md#verification-and-remaining-manual-review)
 uses the existing Warrior compatibility scene; rendered images are disposable
 verification artifacts, not snapshot assertions in smoke.
 
 `run-combat-trace.ps1` is the optional geometry plus two-client 50/100-target
 Warrior trace contract suite. It uses port 18098; run sequentially with PvE suites.
 `run-combat.ps1 -LegacyMelee` covers the retained fallback. Bake/native comparison
-commands and verification limits are in [Warrior Combat Trace v1](warrior-combat-trace-v1.md).
+commands and verification limits are in [Warrior Combat Trace v1](../gameplay/combat/warrior-combat-trace-v1.md).
 
 `run-combat.ps1 -Scene combat_feel_v2 -MarkerPrefix FEEL2` is the opt-in two-client
 Attack Speed/buffer/facing and pooled confirmed-feedback contract check. Native
 AS 100/122/150 and four/five/six-hit preview commands and verification boundaries
-are in [Warrior Combat Feel & Presentation v2](warrior-combat-feel-v2.md).
+are in [Warrior Combat Feel & Presentation v2](../gameplay/combat/warrior-combat-feel-v2.md).
 
 `run-combat.ps1 -Scene warrior_action_polish -MarkerPrefix ACTION` covers late
 scheduled impacts, full-motion movement locks, authoritative forward advance and
 scenery collision, visual turn blending, local finisher impulses and reusable
 trail resources. Preview controls and authoring sources are recorded in
-[Warrior basic action polish](warrior-action-polish.md).
+[Warrior basic action polish](../gameplay/combat/warrior-action-polish.md).
 
 The same ACTION suite also checks full-motion advance versus interrupted chaining,
 asymmetric movement BODY blocking, existing-overlap escape and finisher knockback
 freeing space. The actual-physics native volume preview and measurements are in
-[Warrior BODY collision](warrior-body-collision.md). These checks remain opt-in.
+[Warrior BODY collision](../gameplay/combat/warrior-body-collision.md). These checks remain opt-in.
 
 `run-visual-v0.ps1` is an optional native Windows/Vulkan/CEF feasibility pass for
 Mobile and Forward+ on the production First Region scene. It reuses the isolated
@@ -203,13 +203,13 @@ bridge/Node suites cannot exercise the native accelerated texture or GPU path.
 Logs, captures and a short timing sample remain ignored under `.godot/verification`.
 No pixel snapshots or balance/timing assertions are added to smoke. Physical
 mouse/keyboard, DPI/alt-tab, feel and release executable packaging remain separate.
-See [Visual V0](visual-upgrade-v0.md) for commands and current evidence.
+See [Visual V0](../world/visuals/visual-upgrade-v0.md) for commands and current evidence.
 
 The same runner's `-Scene visual_v1 -RenderingMethod forward_plus` reuses that
 native pass and adds four before/after world views in a separate SubViewport.
 It checks the new fixed-time contract across real rendered frames and confirms
 that the actual server omits the Sky3D environment. There are no image assertions:
-captures support manual review of the lighting milestone. See [Visual V1](visual-upgrade-v1.md).
+captures support manual review of the lighting milestone. See [Visual V1](../world/visuals/visual-upgrade-v1.md).
 
 `run-combat.ps1 -Scene world_time_network -MarkerPrefix WORLD_TIME` reuses the
 two-client fixture for shared authoritative calendar, late entry, epoch recovery,
@@ -218,7 +218,7 @@ Existing gameplay suites do not cover calendar synchronization. Run sequentially
 with other port-18098 fixtures. `run-visual-v0.ps1 -Scene visual_v2
 -RenderingMethod forward_plus` adds a full-day continuity review, nine hour views,
 moon/stars and 91 native timelapse frames to the existing CEF/transaction pass.
-There are no pixel baselines. See [Visual V2](visual-upgrade-v2.md) for artifacts,
+There are no pixel baselines. See [Visual V2](../world/visuals/visual-upgrade-v2.md) for artifacts,
 optional GIF encoding and verification boundaries.
 
 `run-visual-v0.ps1 -Scene visual_v3 -RenderingMethod forward_plus` adds paired
@@ -227,4 +227,4 @@ motion captures and paired GPU samples to the existing CEF/transaction pass.
 Shader compilation errors fail the native runner. No pixel baselines are added:
 headless suites cannot establish screen/depth sampling or temporal appearance.
 The existing `run-first-region.ps1` protects shore blocking/navigation. See
-[Visual V3](visual-upgrade-v3.md) for configuration, artifacts and limits.
+[Visual V3](../world/visuals/visual-upgrade-v3.md) for configuration, artifacts and limits.
